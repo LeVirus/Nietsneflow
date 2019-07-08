@@ -1,0 +1,131 @@
+						Nietsneflow
+
+Introduction============================================================================
+
+The purpose of this project is to reproduce the principles of Wolfenstein3d engine.
+
+Presentation of the original game============================================================================
+
+Quick review::
+
+Wolfenstein3d was released on the year 1992 by Id Software. The game take place during the WWII.
+The player incarnate a prisonner who have to escape from the wolfenstein castle, which is a prison. 
+The charachter is in subjective view. The game is divided in several levels. The levels is complete when we reach a 
+precise place, or we kill a boss.
+There are many static elements and mobile ennemies (AI) in the environment.
+There are many doors that we can open, and many secret areas hidden in that what appear like simple walls.
+All along the adventure the player have to pick up many objects:
+Like weapons, ammunations, gold and food.
+The game allow to save at any time.
+
+Technique precisions::
+
+The game is one of the first FPS in the history, the material of the time did not allow 3d render.
+So the engine simulate it in a 2d logic. The used technique was called raycasting.
+The levels in wolfenstein3d were respresented on a 2d map, to display the elements the engine calculate the distance between the player and 
+the concerned element. Depending on the angle and distance the element was displayed in consequences. 
+
+Controls::
+
+we can turn camera in right and left directions, but not up and down.
+Obviously we can go forward and backward and shoot. We can change weapons, go to menu.
+
+Menu::
+
+The menu allows to save load a party, to begin a new game after choosing a difficulty.
+
+Project objectives============================================================================
+==============================================================================================
+
+The main goal of the project is to reproduce 3d FPS simulation in a 2d context.
+
+Display========================================================================
+
+the game will be in 2d. A map will can be displayed in subjective mode from above.
+From this map a FPS 3d simulation will be displayed.
+All ennemies and static elements will be 2d sprites. The wall will be also be sprite, but the display will be more specific. This is detailed further.
+
+Wall=======================================================
+
+The environment will integrate walls which will be displayed according to the distance and the angle of the player. 
+The walls will have several texture 
+Those walls will be represented by square or rectangle perpendicular to x and y axes of the 2d map.
+Some wall will could move.
+
+There will be doors in environment that will can be open with animation of translations.
+Some doors will need a key to open.
+
+The floor and ceiling will also be displayed with eventually, static elements. 
+Some of those static elements will have a physical reality.
+Exemples : tables, lights...
+
+There will have severals enemies (detailed further), and bosses.
+The ennemies will have some animations while moving, attacking, get injured or dying.
+When an enemy is dead a sprite represent it dead.
+Ennemies will be represented by 2d sprites.
+
+As the walls and the static elements, the enemies will be displayed larger or smaller according to the distance of the player. 
+
+The game will integrate a level system, a level is finished when we reach a zone or if we kill a boss.
+When a level is finished some stats are displayed::
+--total killed, items found, secret found.
+There will be a level editor.
+
+A menu will be accessible at any time and means that the game will be in pause.
+
+A save load system will be integrate. The player will can save and load at any time in game.
+
+The game will have music and sounds.
+
+A map will can be displayed.
+
+When the player will take damage there will have visual and sonor signal.
+
+Many objects will can be take off :
+--Weapons
+	  Fire weapons will be automatic or semi-automatic, and cold steel.
+		When a new more powerfull weapons is reach, it is automatically equiped.
+--Ammunitions 
+		There will be sereval ammunitions types.
+--Life
+--Points (Score)
+
+In game the informations of the charachters will be displayed at the screen:
+--Life
+--Weapons
+--Ammunitions
+--Head of the charachters depending of his level of life.
+
+The used weapons will be displayed with animations while using it.
+
+Controls:::::::::
+
+The characters will can :
+--move backward and forward, strafe and turn around
+--action (interact with elements of environment like doors)
+--changing weapons 
+--use weapons
+
+Weapons::
+
+--Gun
+	Will shot a single bullet.
+--Shotgun
+	Will shot a group of bullet at a time
+--Machine gun
+	automatic guns :: a bullet at each shot
+--Bazooka
+	a rocket at time when the explosion is done a zone damage is done.
+This can injure the players's characters.
+
+Ennemies::
+
+The enemies will be controled by an AI.
+When enemies are injured or killed animations and/or sound are used to illustrate that.
+Enemies will can open doors.
+
+There will be several enemies::
+
+--Soldiers using weak weapons
+--Officers using medium weapons
+--Boss using heavy weapons
