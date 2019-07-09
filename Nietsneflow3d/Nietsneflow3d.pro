@@ -11,11 +11,11 @@ SOURCES += main.cpp \
     Game.cpp \
     MainEngine.cpp \
     LevelManager.cpp \
-    graphicengine.cpp
+    GraphicEngine.cpp
 
 HEADERS += \
     Game.hpp \
     MainEngine.hpp \
     LevelManager.hpp \
-    graphicengine.h
+    GraphicEngine.h
 
