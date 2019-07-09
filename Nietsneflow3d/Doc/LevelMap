@@ -1,0 +1,41 @@
+Global level date==============================
+
+Size of the level by square
+
+Textures used identified by number
+
+Apparence of ground and ceiling (color or texture)
+
+static Elements ground and ceiling associated to sprite from texture
+	Position + size from targeted texture
+	Size to display in game
+
+Object to reach 
+	Position + size from targeted texture
+	Size to display in game
+
+Wall associated to sprite from texture
+	Position + size from targeted texture
+
+Player departure position 
+
+Existing Elements==============================
+
+Wall ::
+	Position 
+  apparence
+	moveable?
+ground static elements ::
+	position
+	type
+	traversable?
+ceiling static elements ::
+	position
+	type
+Ennemies ::
+	position
+	type ennemy
+Objects ::
+	position
+	type
+	apparence

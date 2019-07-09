@@ -53,7 +53,9 @@ Those walls will be represented by square or rectangle perpendicular to x and y 
 Some wall will could move.
 
 There will be doors in environment that will can be open with animation of translations.
+The doors shut down after a moment.
 Some doors will need a key to open.
+if the player or an ennemy is in the door zone while it is open  the door doesn't close
 
 The floor and ceiling will also be displayed with eventually, static elements. 
 Some of those static elements will have a physical reality.
@@ -80,6 +82,8 @@ The game will have music and sounds.
 A map will can be displayed.
 
 When the player will take damage there will have visual and sonor signal.
+
+When the player die the camera turn right to ennemy who killed him
 
 Many objects will can be take off :
 --Weapons

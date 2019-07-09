@@ -1,0 +1,29 @@
+[Level]
+weight = 2
+height = 2
+textures = walltest.jpg	texture.png			; First texture is number 0, second is 1 and so on
+
+[Ground]
+apparence = color							; Texture or color
+texture = 0										; 0-n choosing from textures number as defined above, -1 for no texture
+colorR = -1.0 ; Set -1 is to ignore color. Set the value between 0.0 and 1.0
+colorG = -1.0
+colorB = -1.0
+
+[Ceiling]
+apparence = color							; Texture or color
+texture = -1									; integer 0-n choosing from textures number as defined above, -1 for no texture
+colorR = 0.0 ; floating Set -1 is to ignore color. Set the value between 0.0 and 1.0
+colorG = 0.0
+colorB = 1.0
+
+[GroundElementA]
+texture = 0
+TexturePosX = 80
+TexturePosY = 80
+TextureWeightX = 80
+TextureHeightY = 80
+SpriteWeightGame = 25 ; value in %
+SpriteHeightGame = 25
+GamePosition = 4 54 84 14 75 61 22 ;multi map position (x, y; x, y, ...)
+traversable = true
