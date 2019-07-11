@@ -30,10 +30,10 @@ void LevelManager::loadSpriteData(const INIReader &reader)
     {
         uint8_t textureNum = reader.GetInteger(*revIt, "texture", std::numeric_limits<char>::epsilon());
         assert(std::numeric_limits<char>::epsilon() != -1 && "Bad textureNumber");
-        float texturePosX = reader.GetReal(*revIt, "texturePosX", -1.0f);
-        float texturePosY = reader.GetReal(*revIt, "texturePosY", -1.0f);
-        float textureWeight = reader.GetReal(*revIt, "textureWeight", -1.0f);
-        float textureHeight = reader.GetReal(*revIt, "textureHeight", -1.0f);
+        float texturePosX = reader.GetReal(*revIt, "texturePosX", 1.0f);
+        float texturePosY = reader.GetReal(*revIt, "texturePosY", 1.0f);
+        float textureWeight = reader.GetReal(*revIt, "textureWeight", 1.0f);
+        float textureHeight = reader.GetReal(*revIt, "textureHeight", 1.0f);
         SpriteData spriteData{textureNum, {texturePosX, texturePosY},
                               {textureWeight, textureHeight}};
         m_pictureData.setSpriteData(spriteData, *revIt);
@@ -70,6 +70,64 @@ void LevelManager::loadGroundAndCeilingData(const INIReader &reader)
 }
 
 //===================================================================
+void LevelManager::loadLevelData(const INIReader &reader)
+{
+     std::pair<uint32_t, uint32_t> levelSize;
+     levelSize.first = reader.GetInteger("Level", "weight", 0);
+     levelSize.second = reader.GetInteger("Level", "height", 0);
+     m_level.setLevelSize(levelSize);
+}
+
+//===================================================================
+void LevelManager::loadPlayerData(const INIReader &reader)
+{
+    std::pair<uint32_t, uint32_t> playerOriginPosition;
+    Direction_e playerOriginDirection;
+    playerOriginPosition.first = reader.GetInteger("PlayerInit", "playerDepartureX", 0);
+    playerOriginPosition.second = reader.GetInteger("PlayerInit", "playerDepartureY", 0);
+    playerOriginDirection = (Direction_e)reader.GetInteger("PlayerInit", "PlayerOrientation", 0);
+    m_level.setPlayerInitData(playerOriginPosition, playerOriginDirection);
+}
+
+//===================================================================
+void LevelManager::loadGeneralStaticElement(const INIReader &reader,
+                                            LevelStaticElementType_e elementType)
+{
+    std::vector<std::string> vectINISections;
+    switch(elementType)
+    {
+        case LevelStaticElementType_e::GROUND:
+        vectINISections = reader.getAllSectionNamesContaining("Ground");
+        break;
+        case LevelStaticElementType_e::CEILING:
+        vectINISections = reader.getAllSectionNamesContaining("Ceiling");
+        break;
+        case LevelStaticElementType_e::OBJECT:
+        vectINISections = reader.getAllSectionNamesContaining("Object");
+        break;
+    }
+
+}
+
+//===================================================================
+void LevelManager::loadWallData(const INIReader &reader)
+{
+
+}
+
+//===================================================================
+void LevelManager::loadDoorData(const INIReader &reader)
+{
+
+}
+
+//===================================================================
+void LevelManager::loadEnemyData(const INIReader &reader)
+{
+
+}
+
+//===================================================================
 void LevelManager::loadTextureData(const std::string &INIFileName)
 {
     INIReader reader(std::string("../Nietsneflow3d/Ressources/Level1/") + INIFileName);
@@ -80,12 +138,18 @@ void LevelManager::loadTextureData(const std::string &INIFileName)
     loadTexturePath(reader);
     loadSpriteData(reader);
     loadGroundAndCeilingData(reader);
-    m_pictureData.display();
+    m_pictureData.display();//debug
 }
 
 //===================================================================
 void LevelManager::loadLevel(const std::string &INIFileName)
 {
-
+    INIReader reader(std::string("../Nietsneflow3d/Ressources/Level1/") + INIFileName);
+    if (reader.ParseError() < 0)
+    {
+        assert("Error while reading INI file.");
+    }
+    loadLevelData(reader);
+    loadPlayerData(reader);
 }
 

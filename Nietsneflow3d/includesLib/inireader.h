@@ -340,6 +340,7 @@ public:
     // and valid false values are "false", "no", "off", "0" (not case sensitive).
     bool GetBoolean(const std::string &section, const std::string &name, bool default_value) const;
 
+    std::vector<std::string> getAllSectionNamesContaining(const std::string &str) const;
 protected:
     int _error;
     std::map<std::string, std::string> _values;
@@ -415,6 +416,21 @@ inline bool INIReader::GetBoolean(const std::string &section, const std::string 
         return false;
     else
         return default_value;
+}
+
+inline std::vector<std::string> INIReader::getAllSectionNamesContaining(
+                                const std::string &str)const
+{
+    std::vector<std::string> final;
+    std::set<std::string>::const_iterator it = _sections.begin();
+    for(; it != _sections.end(); ++it)
+    {
+        if(it->find(str))
+        {
+            final.emplace_back(*it);
+        }
+    }
+    return final;
 }
 
 inline std::string INIReader::MakeKey(const std::string &section, const std::string &name)
