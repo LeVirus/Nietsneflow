@@ -41,6 +41,7 @@ private:
     GroundCeilingData m_groundData, m_ceilingData;
     std::vector<SpriteData> m_vectSpriteData;
     std::map<std::string, uint8_t> m_mapIdentifier;
+    bool m_upToDate = false;
 public:
     PictureData();
     void setTexturePath(const vectStr_t &vectTextures);
@@ -48,6 +49,8 @@ public:
     void setSpriteData(const SpriteData &spriteData, const std::string &identifier);
     uint8_t getIdentifier(const std::string &spriteName)const;
     void display();
+    void clear();
+    inline void setUpToDate(){m_upToDate = true;}
 };
 
 

@@ -1,4 +1,4 @@
-#ifndef LEVEL_H
+﻿#ifndef LEVEL_H
 #define LEVEL_H
 
 #include <stdint.h>
@@ -6,7 +6,8 @@
 #include <vector>
 #include <constants.hpp>
 
-using vectPairUI = std::vector<std::pair<uint32_t, uint32_t>>;
+using pairUI_t = std::pair<uint32_t, uint32_t>;
+using vectPairUI = std::vector<pairUI_t>;
 using pairFloat_t = std::pair<float, float>;
 
 struct StaticLevelElementData
@@ -53,18 +54,48 @@ struct EnemyData
 class Level
 {
 private:
-    std::pair<uint32_t, uint32_t> m_size,
+    pairUI_t m_size,
                                   m_playerDeparture;
     Direction_e m_playerDirection;
     std::vector<StaticLevelElementData> m_groundElement,
                                     m_ceilingElement,
                                     m_objectElement;
     std::vector<WallData> m_wallData;
+    std::vector<DoorData> m_doorData;
     std::vector<EnemyData> m_enemyData;
 public:
     Level();
-    void setLevelSize(const pairFloat_t &pairLevelSize);
     void setPlayerInitData(const pairFloat_t &pairInitPlayerPos, Direction_e playerDir);
+    inline void setLevelSize(const pairFloat_t &pairLevelSize)
+    {
+        m_size = pairLevelSize;
+    }
+    inline void setGroundElement(const std::vector<StaticLevelElementData> &vectGround)
+    {
+        m_groundElement = vectGround;
+    }
+    inline void setCeilingElement(const std::vector<StaticLevelElementData> &vectCeiling)
+    {
+        m_ceilingElement = vectCeiling;
+    }
+
+    inline void setObjectElement(const std::vector<StaticLevelElementData> &vectObject)
+    {
+        m_objectElement = vectObject;
+    }
+    inline void setWallElement(const std::vector<WallData> &vectWall)
+    {
+        m_wallData = vectWall;
+    }
+    inline void setDoorElement(const std::vector<DoorData> &vectDoor)
+    {
+        m_doorData = vectDoor;
+    }
+    inline void setEnemyElement(const std::vector<EnemyData> &vectEnemy)
+    {
+        m_enemyData = vectEnemy;
+    }
+    void display();//DEBUG
 };
 
 #endif // LEVEL_H

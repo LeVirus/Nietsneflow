@@ -23,11 +23,19 @@ private:
     //Level element datas loading
     void loadLevelData(const INIReader &reader);
     void loadPlayerData(const INIReader &reader);
-    void loadGeneralStaticElement(const INIReader &reader,
+    void loadGeneralStaticElements(const INIReader &reader,
                                   LevelStaticElementType_e elementType);
+    void readStaticElement(const INIReader &reader, StaticLevelElementData &staticElement, const std::__cxx11::string &sectionName,
+                                  LevelStaticElementType_e elementType);
+    void fillPositionVect(const INIReader &reader, const std::__cxx11::string &sectionName, vectPairUI &vectPos);
+    uint8_t getSpriteId(const INIReader &reader, const std::string &sectionName);
     void loadWallData(const INIReader &reader);
     void loadDoorData(const INIReader &reader);
     void loadEnemyData(const INIReader &reader);
+
+    void loadEnemySprites(const INIReader &reader, const std::string &sectionName,
+                          EnemySpriteType_e spriteType, EnemyData &enemyData);
+    std::vector<uint32_t> convertStrToVectUI(const std::string &str);
 public:
     LevelManager();
     void loadTextureData(const std::string &INIFileName);

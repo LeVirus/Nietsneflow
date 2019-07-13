@@ -15,6 +15,14 @@ enum Direction_e
     EAST
 };
 
+enum EnemySpriteType_e
+{
+    STATIC,
+    ATTACK,
+    MOVE,
+    DYING
+};
+
 enum LevelStaticElementType_e
 {
     GROUND,

@@ -340,7 +340,7 @@ public:
     // and valid false values are "false", "no", "off", "0" (not case sensitive).
     bool GetBoolean(const std::string &section, const std::string &name, bool default_value) const;
 
-    std::vector<std::string> getAllSectionNamesContaining(const std::string &str) const;
+    std::vector<std::string> getSectionNamesContaining(const std::string &str) const;
 protected:
     int _error;
     std::map<std::string, std::string> _values;
@@ -418,14 +418,14 @@ inline bool INIReader::GetBoolean(const std::string &section, const std::string 
         return default_value;
 }
 
-inline std::vector<std::string> INIReader::getAllSectionNamesContaining(
+inline std::vector<std::string> INIReader::getSectionNamesContaining(
                                 const std::string &str)const
 {
     std::vector<std::string> final;
     std::set<std::string>::const_iterator it = _sections.begin();
     for(; it != _sections.end(); ++it)
     {
-        if(it->find(str))
+        if(it->find(str) !=  std::string::npos)
         {
             final.emplace_back(*it);
         }

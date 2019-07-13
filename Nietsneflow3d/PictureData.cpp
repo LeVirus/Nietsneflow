@@ -1,5 +1,6 @@
 #include <PictureData.hpp>
 #include <limits>
+#include <cassert>
 
 #include <iostream>
 
@@ -18,6 +19,7 @@ void PictureData::setTexturePath(const vectStr_t &vectTextures)
 //===================================================================
 void PictureData::setSpriteData(const SpriteData &spriteData, const std::string &identifier)
 {
+    std::cerr << identifier << " INSERTT\n";
     m_mapIdentifier.insert({identifier, m_vectSpriteData.size()});
     m_vectSpriteData.emplace_back(spriteData);
 }
@@ -25,10 +27,12 @@ void PictureData::setSpriteData(const SpriteData &spriteData, const std::string 
 //===================================================================
 uint8_t PictureData::getIdentifier(const std::string &spriteName) const
 {
-    std::map<std::string, uint8_t>::const_iterator it = m_mapIdentifier.find(spriteName);
+    assert(m_upToDate && "PictureData isn't up to date.");
+    std::map<std::string, uint8_t>::const_iterator it = m_mapIdentifier.begin();
+            it = m_mapIdentifier.find(spriteName);
     if(it == m_mapIdentifier.end())
     {
-        return std::numeric_limits<char>::epsilon();
+        return std::numeric_limits<char>::max();
     }
     return it->second;
 }
@@ -36,7 +40,7 @@ uint8_t PictureData::getIdentifier(const std::string &spriteName) const
 //===================================================================
 void PictureData::display()
 {
-    std::cout << "PictureData" << std::endl;
+    std::cout << "PictureData===================================" << std::endl;
     std::cout << "Texture path ::" << std::endl;
     for(uint32_t i = 0; i < m_vectTexturePath.size(); ++i)
     {
@@ -68,11 +72,18 @@ void PictureData::display()
                      m_vectSpriteData[i].m_pairTextureSize.first << "  "
                   << m_vectSpriteData[i].m_pairTextureSize.second << "\n";
     }
+    std::cout << "END PictureData=============================" << std::endl;
+
 }
 
-/**
-    std::map<std::string, uint8_t> m_mapIdentifier;
-  */
+//===================================================================
+void PictureData::clear()
+{
+    m_vectTexturePath.clear();
+    m_vectSpriteData.clear();
+    m_mapIdentifier.clear();
+    m_upToDate = false;
+}
 
 //===================================================================
 void PictureData::setGroundAndCeilingData(const std::array<GroundCeilingData, 2>
