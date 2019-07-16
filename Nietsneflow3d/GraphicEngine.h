@@ -18,9 +18,9 @@ private:
     vectPairStr_t m_vectShaderPath;
     GLFWwindow* m_window = nullptr;
 private:
+    void loadShaderPathsFromFS();
     void initGLWindow();
     void initGLShader();
-    void loadShaderFromFS();
 public:
     GraphicEngine();
 };

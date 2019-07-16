@@ -288,9 +288,10 @@ std::vector<uint32_t> LevelManager::convertStrToVectUI(
 }
 
 //===================================================================
-void LevelManager::loadTextureData(const std::string &INIFileName)
+void LevelManager::loadTextureData(const std::string &INIFileName, uint32_t levelNum)
 {
-    INIReader reader(LEVEL_RESSOURCES_DIR_STR + INIFileName);
+    INIReader reader(LEVEL_RESSOURCES_DIR_STR + std::string("Level") +
+                     std::to_string(levelNum) + std::string ("/") + INIFileName);
     if (reader.ParseError() < 0)
     {
         assert("Error while reading INI file.");
@@ -298,14 +299,15 @@ void LevelManager::loadTextureData(const std::string &INIFileName)
     loadTexturePath(reader);
     loadSpriteData(reader);
     loadGroundAndCeilingData(reader);
-    m_pictureData.display();//debug
     m_pictureData.setUpToDate();
+    m_pictureData.display();//debug
 }
 
 //===================================================================
-void LevelManager::loadLevel(const std::string &INIFileName)
+void LevelManager::loadLevel(const std::string &INIFileName, uint32_t levelNum)
 {
-    INIReader reader(LEVEL_RESSOURCES_DIR_STR + INIFileName);
+    INIReader reader(LEVEL_RESSOURCES_DIR_STR + std::string("Level") +
+                     std::to_string(levelNum) + std::string ("/") + INIFileName);
     if (reader.ParseError() < 0)
     {
         assert("Error while reading INI file.");

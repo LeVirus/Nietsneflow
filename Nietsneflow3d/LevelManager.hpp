@@ -40,8 +40,8 @@ private:
     std::vector<uint32_t> convertStrToVectUI(const std::string &str);
 public:
     LevelManager();
-    void loadTextureData(const std::string &INIFileName);
-    void loadLevel(const std::string &INIFileName);
+    void loadTextureData(const std::string &INIFileName, uint32_t levelNum);
+    void loadLevel(const std::string &INIFileName, uint32_t levelNum);
 };
 
 #endif // LEVELMANAGER_H

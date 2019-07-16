@@ -12,6 +12,7 @@ private:
 public:
     Game();
     void loadLevelData();
+    void initEngine();
 };
 
 #endif // GAME_H

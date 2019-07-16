@@ -41,7 +41,7 @@ void Shader::setSources(const std::string &vertexPath,
     {
         std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ " << std::endl;
     }
-
+    generateShader();
 }
 
 //===================================================================
@@ -58,6 +58,7 @@ void Shader::generateShader()
     assert(success && "Error while generating vertex shader");
     success = generateFragmentShader();
     assert(success && "Error while generating fragment shader");
+    linkShader();
 }
 
 //===================================================================

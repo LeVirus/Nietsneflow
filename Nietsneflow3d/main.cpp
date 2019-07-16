@@ -3,9 +3,8 @@
 
 int main()
 {
-//    Game game;
-//    game.loadLevelData();
-    MainEngine mainEngine;
-    mainEngine.testGraphicEngine();
+    Game game;
+    game.loadLevelData();
+    game.initEngine();
     return 0;
 }

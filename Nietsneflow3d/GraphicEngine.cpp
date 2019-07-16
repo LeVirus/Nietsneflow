@@ -12,8 +12,8 @@ namespace fs = std::filesystem;
 //===================================================================
 GraphicEngine::GraphicEngine()
 {
-    loadShaderFromFS();
-//    initGLWindow();
+    initGLWindow();
+    initGLShader();
 }
 
 //TEST
@@ -56,38 +56,45 @@ void GraphicEngine::initGLWindow()
     }
 
     //TEST
-    while (!glfwWindowShouldClose(m_window))
-      {
-        // input
-        // -----
-        if (glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-            glfwSetWindowShouldClose(m_window, true);
+//    while (!glfwWindowShouldClose(m_window))
+//      {
+//        // input
+//        // -----
+//        if (glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+//            glfwSetWindowShouldClose(m_window, true);
 
-        // render
-        // ------
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+//        // render
+//        // ------
+//        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+//        glClear(GL_COLOR_BUFFER_BIT);
 
-        // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
-        // -------------------------------------------------------------------------------
-        glfwSwapBuffers(m_window);
-        glfwPollEvents();
-      }
+//        // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
+//        // -------------------------------------------------------------------------------
+//        glfwSwapBuffers(m_window);
+//        glfwPollEvents();
+//      }
     //FIN test
 }
 
 //===================================================================
 void GraphicEngine::initGLShader()
 {
-
+    loadShaderPathsFromFS();
+    size_t size = m_vectShaderPath.size();
+    m_vectShader.reserve(size);
+    for(uint32_t i = 0; i < size; ++i)
+    {
+        std::cerr << m_vectShaderPath[i].first << "  " << m_vectShaderPath[i].second << std::endl;
+        m_vectShader.emplace_back(Shader(m_vectShaderPath[i].first,
+                                         m_vectShaderPath[i].second));
+    }
 }
 
 //===================================================================
-void GraphicEngine::loadShaderFromFS()
+void GraphicEngine::loadShaderPathsFromFS()
 {
     std::vector<std::string> vectStr;
-    for(const fs::path &path :
-        fs::directory_iterator(SHADER_DIR_STR))
+    for(const fs::path &path : fs::directory_iterator(SHADER_DIR_STR))
     {
         std::string ext = path.extension();
         if(ext != ".fs" && ext != ".vs")
@@ -113,7 +120,6 @@ void GraphicEngine::loadShaderFromFS()
         {
             m_vectShaderPath.emplace_back(pairStr_t{SHADER_DIR_STR + vertPath, SHADER_DIR_STR + fragPath});
             vectStr.erase(it);
-
         }
         else
         {
