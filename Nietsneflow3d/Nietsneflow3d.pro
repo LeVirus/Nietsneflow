@@ -2,11 +2,10 @@ TEMPLATE = app
 CONFIG += console c++17
 CONFIG -= app_bundle
 CONFIG -= qt
-
-QMAKE_CXXFLAGS += -std=c++17
+QMAKE_CXXFLAGS += -std=c++17 -lstdc++fs
 QMAKE_CXXFLAGS_DEBUG += -Wall -Wextra -Wpedantic -Og
 INCLUDEPATH += includesLib
-LIBS += -L ../Nietsneflow3d/ECS/lib -lECS
+LIBS += -L ../Nietsneflow3d/lib -lECS -lglad -ldl -lglfw3 -lX11 -lXxf86vm -lXrandr -pthread -lXi
 
 SOURCES += main.cpp \
     Game.cpp \
@@ -14,7 +13,8 @@ SOURCES += main.cpp \
     LevelManager.cpp \
     GraphicEngine.cpp \
     Level.cpp \
-    PictureData.cpp
+    PictureData.cpp \
+    OpenGLUtils/Shader.cpp
 
 HEADERS += \
     Game.hpp \
@@ -37,5 +37,10 @@ HEADERS += \
     includesLib/BaseECS/systemmanager.hpp \
     Level.hpp \
     PictureData.hpp \
-    constants.hpp
+    constants.hpp \
+    ECS/Components/positioncomp.hpp \
+    ECS/Components/targetpicturedata.hpp \
+    ECS/Components/spritetexturedata.hpp \
+    OpenGLUtils/Shader.hpp \
+    includesLib/glad.h
 

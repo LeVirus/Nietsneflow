@@ -151,7 +151,7 @@ void LevelManager::readStaticElement(const INIReader &reader, StaticLevelElement
 //===================================================================
 void LevelManager::fillPositionVect(const INIReader &reader,
                                     const std::string & sectionName,
-                                    vectPairUI &vectPos)
+                                    vectPairUI_t &vectPos)
 {
     std::string gamePositions = reader.Get(sectionName, "GamePosition", "");
     assert(!gamePositions.empty() && "Error while getting positions.");
@@ -290,7 +290,7 @@ std::vector<uint32_t> LevelManager::convertStrToVectUI(
 //===================================================================
 void LevelManager::loadTextureData(const std::string &INIFileName)
 {
-    INIReader reader(std::string("../Nietsneflow3d/Ressources/Level1/") + INIFileName);
+    INIReader reader(LEVEL_RESSOURCES_DIR_STR + INIFileName);
     if (reader.ParseError() < 0)
     {
         assert("Error while reading INI file.");
@@ -305,7 +305,7 @@ void LevelManager::loadTextureData(const std::string &INIFileName)
 //===================================================================
 void LevelManager::loadLevel(const std::string &INIFileName)
 {
-    INIReader reader(std::string("../Nietsneflow3d/Ressources/Level1/") + INIFileName);
+    INIReader reader(LEVEL_RESSOURCES_DIR_STR + INIFileName);
     if (reader.ParseError() < 0)
     {
         assert("Error while reading INI file.");

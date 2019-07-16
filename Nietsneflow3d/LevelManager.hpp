@@ -25,9 +25,11 @@ private:
     void loadPlayerData(const INIReader &reader);
     void loadGeneralStaticElements(const INIReader &reader,
                                   LevelStaticElementType_e elementType);
-    void readStaticElement(const INIReader &reader, StaticLevelElementData &staticElement, const std::__cxx11::string &sectionName,
+    void readStaticElement(const INIReader &reader, StaticLevelElementData &staticElement,
+                           const std::string &sectionName,
                                   LevelStaticElementType_e elementType);
-    void fillPositionVect(const INIReader &reader, const std::__cxx11::string &sectionName, vectPairUI &vectPos);
+    void fillPositionVect(const INIReader &reader, const std::string &sectionName,
+                          vectPairUI_t &vectPos);
     uint8_t getSpriteId(const INIReader &reader, const std::string &sectionName);
     void loadWallData(const INIReader &reader);
     void loadDoorData(const INIReader &reader);

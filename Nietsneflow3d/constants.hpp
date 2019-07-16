@@ -1,6 +1,14 @@
 #ifndef CONSTANTS_HPP
 #define CONSTANTS_HPP
 
+#include <string>
+
+enum Components_e
+{
+    POSITION_COMPONENT = 0,
+    TARGET_PICTURE_DATA_COMPONENT
+};
+
 enum DisplayType_e
 {
     COLOR,
@@ -29,5 +37,8 @@ enum LevelStaticElementType_e
     CEILING,
     OBJECT
 };
+
+const std::string SHADER_DIR_STR = "../Nietsneflow3d/Ressources/Shader/";
+const std::string LEVEL_RESSOURCES_DIR_STR = "../Nietsneflow3d/Ressources/Level1/";
 #endif // CONSTANTS_HPP
 

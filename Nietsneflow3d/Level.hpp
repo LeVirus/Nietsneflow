@@ -7,7 +7,7 @@
 #include <constants.hpp>
 
 using pairUI_t = std::pair<uint32_t, uint32_t>;
-using vectPairUI = std::vector<pairUI_t>;
+using vectPairUI_t = std::vector<pairUI_t>;
 using pairFloat_t = std::pair<float, float>;
 
 struct StaticLevelElementData
@@ -15,20 +15,20 @@ struct StaticLevelElementData
     uint8_t m_numSprite;
     //In Game sprite size in % relative to a tile
     std::pair<float, float> m_inGameSpriteSize;
-    vectPairUI m_TileGamePosition;
+    vectPairUI_t m_TileGamePosition;
     bool m_traversable;
 };
 
 struct WallData
 {
     uint8_t m_numSprite;
-    vectPairUI m_TileGamePosition;
+    vectPairUI_t m_TileGamePosition;
 };
 
 struct DoorData
 {
     uint8_t m_numSprite;
-    vectPairUI m_TileGamePosition;
+    vectPairUI_t m_TileGamePosition;
     //Position of axe true = vertical false = horizontal
     bool m_vertical;
 };
@@ -47,7 +47,7 @@ struct EnemyData
 
     //In Game sprite size in % relative to a tile
     pairFloat_t m_inGameSpriteSize;
-    vectPairUI m_TileGamePosition;
+    vectPairUI_t m_TileGamePosition;
     bool m_traversable;
 };
 
