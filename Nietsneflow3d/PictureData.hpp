@@ -51,6 +51,7 @@ public:
     void display();
     void clear();
     inline void setUpToDate(){m_upToDate = true;}
+    inline const vectStr_t &getTexturePath()const {return m_vectTexturePath;}
 };
 
 

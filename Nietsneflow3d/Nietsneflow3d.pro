@@ -14,7 +14,8 @@ SOURCES += main.cpp \
     GraphicEngine.cpp \
     Level.cpp \
     PictureData.cpp \
-    OpenGLUtils/Shader.cpp
+    OpenGLUtils/Shader.cpp \
+    OpenGLUtils/Texture.cpp
 
 HEADERS += \
     Game.hpp \
@@ -42,5 +43,6 @@ HEADERS += \
     ECS/Components/targetpicturedata.hpp \
     ECS/Components/spritetexturedata.hpp \
     OpenGLUtils/Shader.hpp \
-    includesLib/glad.h
+    includesLib/glad.h \
+    OpenGLUtils/Texture.hpp
 

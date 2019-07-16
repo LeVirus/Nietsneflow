@@ -16,6 +16,7 @@ void Game::loadLevelData()
 //===================================================================
 void Game::initEngine()
 {
+    m_levelManager.getPictureData();
 //    m_mainEngine.testGraphicEngine();
 }
 

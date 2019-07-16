@@ -9,6 +9,7 @@ private:
     GraphicEngine m_graphicEngine;
 public:
     MainEngine();
+    void loadGraphicPicture(const PictureData &picData);
     void testGraphicEngine();
 };
 

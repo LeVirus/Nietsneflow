@@ -40,5 +40,6 @@ enum LevelStaticElementType_e
 
 const std::string SHADER_DIR_STR = "../Nietsneflow3d/Ressources/Shader/";
 const std::string LEVEL_RESSOURCES_DIR_STR = "../Nietsneflow3d/Ressources/";
+const std::string TEXTURES_DIR_STR = "../Nietsneflow3d/Ressources/Textures/";
 #endif // CONSTANTS_HPP
 

@@ -2,10 +2,12 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
+//#define STB_IMAGE_IMPLEMENTATION
+//#include <stb_image.h>
 #include <filesystem>
+#include <cassert>
 #include <constants.hpp>
+#include <PictureData.hpp>
 
 namespace fs = std::filesystem;
 
@@ -14,6 +16,12 @@ GraphicEngine::GraphicEngine()
 {
     initGLWindow();
     initGLShader();
+}
+
+//===================================================================
+void GraphicEngine::loadTextureAndSpriteData(const PictureData &pictureData)
+{
+    loadTextures(pictureData.getTexturePath());
 }
 
 //TEST
@@ -87,6 +95,17 @@ void GraphicEngine::initGLShader()
         std::cerr << m_vectShaderPath[i].first << "  " << m_vectShaderPath[i].second << std::endl;
         m_vectShader.emplace_back(Shader(m_vectShaderPath[i].first,
                                          m_vectShaderPath[i].second));
+    }
+}
+
+//===================================================================
+void GraphicEngine::loadTextures(const vectStr_t &vectTextures)
+{
+    size_t size = vectTextures.size();
+    m_vectTexture.reserve(size);
+    for(uint32_t i = 0; i < size; ++i)
+    {
+        m_vectTexture.emplace_back(TEXTURES_DIR_STR + vectTextures[i]);
     }
 }
 

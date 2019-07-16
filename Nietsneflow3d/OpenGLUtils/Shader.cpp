@@ -7,12 +7,6 @@
 #include "Shader.hpp"
 
 //===================================================================
-Shader::Shader()
-{
-
-}
-
-//===================================================================
 Shader::Shader(const std::string &vertexPath, const std::string &fragmentPath)
 {
     setSources(vertexPath, fragmentPath);

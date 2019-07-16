@@ -12,8 +12,6 @@ private:
     bool generateVertexShader();
     bool generateFragmentShader();
 public:
-    Shader();
-
     /**
      * @brief Shader
      * @param vertexPath Path to vertex shaders sources.

@@ -42,6 +42,8 @@ public:
     LevelManager();
     void loadTextureData(const std::string &INIFileName, uint32_t levelNum);
     void loadLevel(const std::string &INIFileName, uint32_t levelNum);
+    inline const PictureData &getPictureData()const {return m_pictureData;}
+    inline const Level &getLevel()const {return m_level;}
 };
 
 #endif // LEVELMANAGER_H
