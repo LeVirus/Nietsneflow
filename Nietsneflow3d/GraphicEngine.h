@@ -24,6 +24,7 @@ private:
 private:
     void loadShaderPathsFromFS();
     void initGLWindow();
+    void initGlad();
     void initGLShader();
     void loadTextures(const vectStr_t &vectTextures);
 public:

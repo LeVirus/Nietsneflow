@@ -44,5 +44,6 @@ HEADERS += \
     ECS/Components/spritetexturedata.hpp \
     OpenGLUtils/Shader.hpp \
     includesLib/glad.h \
-    OpenGLUtils/Texture.hpp
+    OpenGLUtils/Texture.hpp \
+    includesLib/glfw3.h
 

@@ -15,6 +15,7 @@ namespace fs = std::filesystem;
 GraphicEngine::GraphicEngine()
 {
     initGLWindow();
+    initGlad();
     initGLShader();
 }
 
@@ -56,12 +57,7 @@ void GraphicEngine::initGLWindow()
     glfwMakeContextCurrent(m_window);
     glfwSetFramebufferSizeCallback(m_window, framebuffer_size_callback);
 
-    // glad: load all OpenGL function pointers
-    // ---------------------------------------
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-    {
-        std::cout << "Failed to initialize GLAD" << std::endl;
-    }
+
 
     //TEST
 //    while (!glfwWindowShouldClose(m_window))
@@ -85,17 +81,41 @@ void GraphicEngine::initGLWindow()
 }
 
 //===================================================================
+void GraphicEngine::initGlad()
+{
+    // glad: load all OpenGL function pointers
+    // ---------------------------------------
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+    {
+        std::cout << "Failed to initialize GLAD" << std::endl;
+    }
+}
+
+//===================================================================
 void GraphicEngine::initGLShader()
 {
     loadShaderPathsFromFS();
     size_t size = m_vectShaderPath.size();
+    assert(size == Shader_e::TOTAL_SHADER);
     m_vectShader.reserve(size);
-    for(uint32_t i = 0; i < size; ++i)
+    for(uint32_t i = Shader_e::CEILING_FLOOR; i < Shader_e::TOTAL_SHADER; ++i)
     {
-        std::cerr << m_vectShaderPath[i].first << "  " << m_vectShaderPath[i].second << std::endl;
-        m_vectShader.emplace_back(Shader(m_vectShaderPath[i].first,
-                                         m_vectShaderPath[i].second));
+        for(uint32_t j = 0; j < m_vectShaderPath.size(); ++j)
+        {
+            const std::string &ref = m_vectShaderPath[j].first;
+            std::map<Shader_e, std::string>::const_iterator it =
+                    SHADER_ID_MAP.find(static_cast<Shader_e>(i));
+            std::string sub = ref.substr(ref.find_last_of('/') + 1,
+                                         it->second.size());
+            if(sub == it->second)
+            {
+                m_vectShader.emplace_back(Shader(m_vectShaderPath[j].first,
+                                                 m_vectShaderPath[j].second));
+                break;
+            }
+        }
     }
+    assert(m_vectShader.size() == Shader_e::TOTAL_SHADER && "Bad shader files.");
 }
 
 //===================================================================
