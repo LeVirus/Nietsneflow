@@ -19,7 +19,6 @@ void PictureData::setTexturePath(const vectStr_t &vectTextures)
 //===================================================================
 void PictureData::setSpriteData(const SpriteData &spriteData, const std::string &identifier)
 {
-    std::cerr << identifier << " INSERTT\n";
     m_mapIdentifier.insert({identifier, m_vectSpriteData.size()});
     m_vectSpriteData.emplace_back(spriteData);
 }
@@ -32,7 +31,7 @@ uint8_t PictureData::getIdentifier(const std::string &spriteName) const
             it = m_mapIdentifier.find(spriteName);
     if(it == m_mapIdentifier.end())
     {
-        return std::numeric_limits<char>::max();
+        return std::numeric_limits<uint8_t>::max();
     }
     return it->second;
 }
@@ -66,11 +65,12 @@ void PictureData::display()
     std::cout << "Vect SpriteData ::" << std::endl;
     for(uint32_t i = 0; i < m_vectSpriteData.size(); ++i)
     {
-        std::cout << m_vectSpriteData[i].m_textureNum << "\n" <<
-                     m_vectSpriteData[i].m_pairTexturePosition.first << "  "
-                  << m_vectSpriteData[i].m_pairTexturePosition.second << "\n" <<
-                     m_vectSpriteData[i].m_pairTextureSize.first << "  "
-                  << m_vectSpriteData[i].m_pairTextureSize.second << "\n";
+        std::cout << m_vectSpriteData[i].m_textureNum << "\n";
+        for(uint32_t j = 0; j <  m_vectSpriteData[i].m_texturePosVertex.size(); ++j)
+        {
+            std::cout << m_vectSpriteData[i].m_texturePosVertex[j].first << "  "
+                      << m_vectSpriteData[i].m_texturePosVertex[j].second << "\n";
+        }
     }
     std::cout << "END PictureData=============================" << std::endl;
 

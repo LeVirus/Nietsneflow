@@ -54,8 +54,7 @@ struct EnemyData
 class Level
 {
 private:
-    pairUI_t m_size,
-                                  m_playerDeparture;
+    pairUI_t m_size, m_playerDeparture;
     Direction_e m_playerDirection;
     std::vector<StaticLevelElementData> m_groundElement,
                                     m_ceilingElement,
@@ -65,7 +64,8 @@ private:
     std::vector<EnemyData> m_enemyData;
 public:
     Level();
-    void setPlayerInitData(const pairFloat_t &pairInitPlayerPos, Direction_e playerDir);
+    void setPlayerInitData(const pairFloat_t &pairInitPlayerPos,
+                           Direction_e playerDir);
     inline void setLevelSize(const pairFloat_t &pairLevelSize)
     {
         m_size = pairLevelSize;

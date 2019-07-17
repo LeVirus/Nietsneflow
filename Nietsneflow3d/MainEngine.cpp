@@ -9,7 +9,7 @@ MainEngine::MainEngine()
 //===================================================================
 void MainEngine::loadGraphicPicture(const PictureData &picData)
 {
-    m_graphicEngine.loadTextureAndSpriteData(picData);
+    m_graphicEngine.loadPictureData(picData);
 }
 
 //TEST

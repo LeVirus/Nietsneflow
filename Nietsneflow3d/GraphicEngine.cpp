@@ -15,9 +15,10 @@ GraphicEngine::GraphicEngine()
 }
 
 //===================================================================
-void GraphicEngine::loadTextureAndSpriteData(const PictureData &pictureData)
+void GraphicEngine::loadPictureData(const PictureData &pictureData)
 {
-    loadTextures(pictureData.getTexturePath());
+    loadTexturesPath(pictureData.getTexturePath());
+    loadSprites(pictureData.getSpriteData());
 }
 
 //TEST
@@ -102,7 +103,7 @@ void GraphicEngine::initGLShader()
 }
 
 //===================================================================
-void GraphicEngine::loadTextures(const vectStr_t &vectTextures)
+void GraphicEngine::loadTexturesPath(const vectStr_t &vectTextures)
 {
     size_t size = vectTextures.size();
     assert(size == Texture_t::TOTAL_TEXTURE);
@@ -111,4 +112,18 @@ void GraphicEngine::loadTextures(const vectStr_t &vectTextures)
     {
         m_vectTexture.emplace_back(TEXTURES_DIR_STR + vectTextures[i]);
     }
+}
+
+//===================================================================
+void GraphicEngine::loadGroundAndCeiling(const GroundCeilingData &groundData,
+                                         const GroundCeilingData &ceilingData)
+{
+    m_groundData = &groundData;
+    m_ceilingData = &ceilingData;
+}
+
+//===================================================================
+void GraphicEngine::loadSprites(const std::vector<SpriteData> &vectSprites)
+{
+    m_ptrSpriteData = &vectSprites;
 }

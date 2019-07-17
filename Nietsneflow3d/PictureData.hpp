@@ -29,8 +29,13 @@ struct GroundCeilingData
 struct SpriteData
 {
     uint8_t m_textureNum;
-    std::pair<float, float> m_pairTexturePosition;
-    std::pair<float, float> m_pairTextureSize;
+    /*
+     * 0 top left
+     * 1 top right
+     * 2 bottom right
+     * 3 bottom left
+    */
+    std::array<std::pair<float, float>, 4> m_texturePosVertex;
 };
 
 
@@ -52,6 +57,7 @@ public:
     void clear();
     inline void setUpToDate(){m_upToDate = true;}
     inline const vectStr_t &getTexturePath()const {return m_vectTexturePath;}
+    inline const std::vector<SpriteData> &getSpriteData()const {return m_vectSpriteData;}
 };
 
 
