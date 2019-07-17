@@ -19,10 +19,8 @@ class GraphicEngine
 private:
     std::vector<Shader> m_vectShader;
     std::vector<Texture> m_vectTexture;
-    vectPairStr_t m_vectShaderPath;
     GLFWwindow* m_window = nullptr;
 private:
-    void loadShaderPathsFromFS();
     void initGLWindow();
     void initGlad();
     void initGLShader();

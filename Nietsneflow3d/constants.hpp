@@ -47,6 +47,13 @@ enum Shader_e
     TOTAL_SHADER
 };
 
+enum Texture_t
+{
+    WALL_T,
+    GLOBAL, // TMP
+    TOTAL_TEXTURE
+};
+
 const std::string SHADER_DIR_STR = "../Nietsneflow3d/Ressources/Shader/";
 const std::string LEVEL_RESSOURCES_DIR_STR = "../Nietsneflow3d/Ressources/";
 const std::string TEXTURES_DIR_STR = "../Nietsneflow3d/Ressources/Textures/";
