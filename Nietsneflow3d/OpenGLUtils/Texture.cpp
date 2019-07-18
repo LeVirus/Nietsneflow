@@ -1,5 +1,8 @@
 #include <OpenGLUtils/Texture.hpp>
+//#ifndef __glad_h_
+//#define __glad_h_
 #include <glad/glad.h>
+//#endif
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 

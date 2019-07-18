@@ -13,6 +13,7 @@ public:
     Game();
     void loadLevelData();
     void initEngine();
+    void launchGame();
 };
 
 #endif // GAME_H

@@ -26,9 +26,11 @@ class System
 protected:
 	unsigned int muiIdSystem, muiTypeSystem, muiMemNumberComponent;
     std::vector< unsigned int > mVectNumEntity;
-	std::vector< bool > mBitSetComponentSystem;
-	ecs::SystemManager* mptrSystemManager;
-    bool bAddComponentToSystem(unsigned int uiTypeComponent);
+    std::vector<bool> mBitSetComponentSystem;
+    std::vector<bool> mBitSetExcludeComponentSystem;
+    ecs::SystemManager* mptrSystemManager;
+    void bAddComponentToSystem(unsigned int uiTypeComponent);
+    void bAddExcludeComponentToSystem(unsigned int uiTypeComponent);
 public:
     System();
 	const std::vector< unsigned int > &getVectNumEntity()const;

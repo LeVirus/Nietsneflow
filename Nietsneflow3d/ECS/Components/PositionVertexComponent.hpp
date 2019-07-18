@@ -10,18 +10,18 @@ using pairFloat_t = std::pair<float, float>;
 using vertexArray_t = std::array<pairFloat_t, 4>;
 
 /**
- * @brief The TargetPictureDataComp struct
+ * @brief The VertexComponent struct
  * Coordinated data for OpenGL displaying.
  */
-struct TargetPictureDataComp : public ecs::Component
+struct PositionVertexComponent : public ecs::Component
 {
-    TargetPictureDataComp()
+    PositionVertexComponent()
     {
-        muiTypeComponent = Components_e::TARGET_PICTURE_DATA_COMPONENT;
+        muiTypeComponent = Components_e::POSITION_VERTEX_COMPONENT;
     }
 
     vertexArray_t m_vertex;
-    virtual ~TargetPictureDataComp() = default;
+    virtual ~PositionVertexComponent() = default;
 };
 
 #endif // TARGETPICTUREDATA_HPP

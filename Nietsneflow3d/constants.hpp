@@ -6,14 +6,17 @@
 
 enum Components_e
 {
-    POSITION_COMPONENT = 0,
-    TARGET_PICTURE_DATA_COMPONENT
+    POSITION_VERTEX_COMPONENT,
+    SPRITE_TEXTURE_COMPONENT,
+    COLOR_VERTEX_COMPONENT,
+    TOTAL_COMPONENTS
 };
 
 enum DisplayType_e
 {
     COLOR,
-    TEXTURE
+    TEXTURE,
+    BOTH
 };
 
 enum Direction_e

@@ -5,6 +5,7 @@
 #include <vector>
 #include <string>
 #include <PictureData.hpp>
+#include <ECS/Systems/ColorDisplaySystem.hpp>
 #include <OpenGLUtils/Shader.hpp>
 #include <OpenGLUtils/Texture.hpp>
 
@@ -23,19 +24,25 @@ private:
     //PictureData
     std::vector<Texture> m_vectTexture;
     std::vector<SpriteData> const *m_ptrSpriteData = nullptr;
-    GroundCeilingData const *m_groundData = nullptr;
-    GroundCeilingData const *m_ceilingData = nullptr;
+    //Systems
+    ColorDisplaySystem m_colorSystem;
 private:
     void initGLWindow();
     void initGlad();
     void initGLShader();
+    void setShaderToLocalSystems();
     void loadTexturesPath(const vectStr_t &vectTextures);
     void loadGroundAndCeiling(const GroundCeilingData &groundData,
                               const GroundCeilingData &ceilingData);
     void loadSprites(const std::vector<SpriteData> &vectSprites);
 public:
     GraphicEngine();
+    void setSystemsComponents();
     void loadPictureData(const PictureData &pictureData);
+    void runIteration();
+    bool windowShouldClose();
 };
+
+void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
 #endif // GRAPHICENGINE_H

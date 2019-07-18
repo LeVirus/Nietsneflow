@@ -58,6 +58,8 @@ public:
     inline void setUpToDate(){m_upToDate = true;}
     inline const vectStr_t &getTexturePath()const {return m_vectTexturePath;}
     inline const std::vector<SpriteData> &getSpriteData()const {return m_vectSpriteData;}
+    inline const GroundCeilingData &getCeilingData()const {return m_ceilingData;}
+    inline const GroundCeilingData &getGroundData()const {return m_groundData;}
 };
 
 

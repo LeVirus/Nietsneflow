@@ -1,4 +1,4 @@
-#include "GraphicEngine.h"
+#include "GraphicEngine.hpp"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
@@ -12,6 +12,13 @@ GraphicEngine::GraphicEngine()
     initGLWindow();
     initGlad();
     initGLShader();
+    setShaderToLocalSystems();
+}
+
+//===================================================================
+void GraphicEngine::setSystemsComponents()
+{
+    m_colorSystem.setUsedComponents();
 }
 
 //===================================================================
@@ -21,13 +28,36 @@ void GraphicEngine::loadPictureData(const PictureData &pictureData)
     loadSprites(pictureData.getSpriteData());
 }
 
-//TEST
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+void GraphicEngine::runIteration()
 {
-  // make sure the viewport matches the new window dimensions; note that width and
-  // height will be significantly larger than specified on retina displays.
-  glViewport(0, 0, width, height);
+
+    //TEST
+//    while (!glfwWindowShouldClose(m_window))
+//      {
+        // input
+        // -----
+        if (glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+            glfwSetWindowShouldClose(m_window, true);
+
+        // render
+        // ------
+        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+        m_colorSystem.execSystem();
+        // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
+        // -------------------------------------------------------------------------------
+        glfwSwapBuffers(m_window);
+        glfwPollEvents();
+//      }
+    //FIN test
 }
+
+bool GraphicEngine::windowShouldClose()
+{
+    return glfwWindowShouldClose(m_window);
+}
+
+
 
 //===================================================================
 void GraphicEngine::initGLWindow()
@@ -52,28 +82,6 @@ void GraphicEngine::initGLWindow()
     }
     glfwMakeContextCurrent(m_window);
     glfwSetFramebufferSizeCallback(m_window, framebuffer_size_callback);
-
-
-
-    //TEST
-//    while (!glfwWindowShouldClose(m_window))
-//      {
-//        // input
-//        // -----
-//        if (glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-//            glfwSetWindowShouldClose(m_window, true);
-
-//        // render
-//        // ------
-//        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-//        glClear(GL_COLOR_BUFFER_BIT);
-
-//        // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
-//        // -------------------------------------------------------------------------------
-//        glfwSwapBuffers(m_window);
-//        glfwPollEvents();
-//      }
-    //FIN test
 }
 
 //===================================================================
@@ -103,6 +111,12 @@ void GraphicEngine::initGLShader()
 }
 
 //===================================================================
+void GraphicEngine::setShaderToLocalSystems()
+{
+    m_colorSystem.setShader(m_vectShader[Shader_e::CEILING_FLOOR]);
+}
+
+//===================================================================
 void GraphicEngine::loadTexturesPath(const vectStr_t &vectTextures)
 {
     size_t size = vectTextures.size();
@@ -115,15 +129,15 @@ void GraphicEngine::loadTexturesPath(const vectStr_t &vectTextures)
 }
 
 //===================================================================
-void GraphicEngine::loadGroundAndCeiling(const GroundCeilingData &groundData,
-                                         const GroundCeilingData &ceilingData)
-{
-    m_groundData = &groundData;
-    m_ceilingData = &ceilingData;
-}
-
-//===================================================================
 void GraphicEngine::loadSprites(const std::vector<SpriteData> &vectSprites)
 {
     m_ptrSpriteData = &vectSprites;
+}
+
+//===================================================================
+void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+{
+  // make sure the viewport matches the new window dimensions; note that width and
+  // height will be significantly larger than specified on retina displays.
+  glViewport(0, 0, width, height);
 }

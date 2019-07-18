@@ -310,7 +310,7 @@ void LevelManager::loadTextureData(const std::string &INIFileName, uint32_t leve
     loadSpriteData(reader);
     loadGroundAndCeilingData(reader);
     m_pictureData.setUpToDate();
-    m_pictureData.display();//debug
+//    m_pictureData.display();//debug
 }
 
 //===================================================================
@@ -330,6 +330,6 @@ void LevelManager::loadLevel(const std::string &INIFileName, uint32_t levelNum)
     loadWallData(reader);
     loadDoorData(reader);
     loadEnemyData(reader);
-    m_level.display();
+//    m_level.display();
 }
 
