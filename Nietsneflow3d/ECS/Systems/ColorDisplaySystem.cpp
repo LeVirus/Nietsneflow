@@ -1,5 +1,7 @@
 #include "ColorDisplaySystem.hpp"
 #include <constants.hpp>
+#include <includesLib/BaseECS/engine.hpp>
+#include <ECS/Components/ColorVertexComponent.hpp>
 
 //===================================================================
 ColorDisplaySystem::ColorDisplaySystem()
@@ -18,6 +20,7 @@ void ColorDisplaySystem::setUsedComponents()
 void ColorDisplaySystem::execSystem()
 {
     System::execSystem();
+
 }
 
 //===================================================================

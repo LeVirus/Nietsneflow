@@ -26,7 +26,7 @@ struct Component
     {
 		muiIDEntityAssociated = uiEntityID;
 	}
-
+    virtual ~Component() = default;
 protected:
 	unsigned int muiTypeComponent, muiIDComponent, muiIDEntityAssociated;
 	inline Component(){}

@@ -12,13 +12,13 @@ GraphicEngine::GraphicEngine()
     initGLWindow();
     initGlad();
     initGLShader();
-    setShaderToLocalSystems();
 }
 
 //===================================================================
-void GraphicEngine::setSystemsComponents()
+void GraphicEngine::confSystems()
 {
-    m_colorSystem.setUsedComponents();
+    setShaderToLocalSystems();
+    m_colorSystem->setUsedComponents();
 }
 
 //===================================================================
@@ -30,31 +30,33 @@ void GraphicEngine::loadPictureData(const PictureData &pictureData)
 
 void GraphicEngine::runIteration()
 {
+    assert(m_colorSystem && "colorSystem is null");
 
-    //TEST
-//    while (!glfwWindowShouldClose(m_window))
-//      {
-        // input
-        // -----
-        if (glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-            glfwSetWindowShouldClose(m_window, true);
 
-        // render
-        // ------
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
-        m_colorSystem.execSystem();
-        // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
-        // -------------------------------------------------------------------------------
-        glfwSwapBuffers(m_window);
-        glfwPollEvents();
-//      }
-    //FIN test
+    if (glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        glfwSetWindowShouldClose(m_window, true);//TMP
+
+    // render
+    // ------
+    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    m_colorSystem->execSystem();
+    // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
+    // -------------------------------------------------------------------------------
+    glfwSwapBuffers(m_window);
+    glfwPollEvents();
 }
 
+//===================================================================
 bool GraphicEngine::windowShouldClose()
 {
     return glfwWindowShouldClose(m_window);
+}
+
+//===================================================================
+void GraphicEngine::linkSystems(ColorDisplaySystem *system)
+{
+    m_colorSystem = system;//A MODIFIER
 }
 
 
@@ -113,7 +115,8 @@ void GraphicEngine::initGLShader()
 //===================================================================
 void GraphicEngine::setShaderToLocalSystems()
 {
-    m_colorSystem.setShader(m_vectShader[Shader_e::CEILING_FLOOR]);
+    assert(m_colorSystem && "colorSystem is null");
+    m_colorSystem->setShader(m_vectShader[Shader_e::CEILING_FLOOR]);
 }
 
 //===================================================================

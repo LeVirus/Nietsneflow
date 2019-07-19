@@ -10,7 +10,14 @@ MainEngine::MainEngine()
 void MainEngine::init()
 {
     m_ecsManager.init();
-    m_graphicEngine.setSystemsComponents();
+    linkSystemsToEngine();
+    m_graphicEngine.confSystems();
+}
+
+//===================================================================
+void MainEngine::loadECSEntities()
+{
+
 }
 
 //===================================================================
@@ -20,7 +27,6 @@ void MainEngine::launchLoop()
     {
         m_graphicEngine.runIteration();
     }while(!m_graphicEngine.windowShouldClose());
-    std::cerr << "out \n";
 }
 
 //===================================================================
@@ -53,7 +59,14 @@ void MainEngine::loadGroundAndCeilingEntities(const GroundCeilingData &groundDat
             bitsetComponents[Components_e::SPRITE_TEXTURE_COMPONENT] = true;
             bitsetComponents[Components_e::COLOR_VERTEX_COMPONENT] = true;
         }
-        m_ecsManager.addEntity(bitsetComponents);
+        m_ecsManager.addEntity(bitsetComponents);//CRASH HERE
         ptr = &ceilingData;
     }
+}
+
+//===================================================================
+void MainEngine::linkSystemsToEngine()
+{
+    m_graphicEngine.linkSystems(m_ecsManager.getSystemManager().
+                    searchSystemByType<ColorDisplaySystem>(Systems_e::COLOR_DISPLAY_SYSTEM));
 }

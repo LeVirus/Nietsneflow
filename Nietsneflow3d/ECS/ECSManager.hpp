@@ -17,7 +17,6 @@ private:
     void initSystems();
     void syncComponentsFromEntities(uint32_t numEntity,
                                     const std::vector<Components_e> &vectComp);
-    void confECSMemory();
 public:
     ECSManager();
     void init();
@@ -25,7 +24,6 @@ public:
     inline ecs::Engine &getEngine(){return m_ecsEngine;}
     inline ecs::ComponentManager &getComponentManager(){return *m_componentManager;}
     inline ecs::SystemManager &getSystemManager(){return *m_systemManager;}
-
 };
 
 #endif // ECSMANAGER_H

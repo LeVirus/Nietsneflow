@@ -12,6 +12,7 @@ private:
 private:
     void loadGroundAndCeilingEntities(const GroundCeilingData &groundData,
                                       const GroundCeilingData &ceilingData);
+    void linkSystemsToEngine();
 public:
     MainEngine();
     void loadGraphicPicture(const PictureData &picData);

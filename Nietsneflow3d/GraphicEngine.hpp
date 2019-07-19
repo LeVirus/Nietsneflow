@@ -25,7 +25,7 @@ private:
     std::vector<Texture> m_vectTexture;
     std::vector<SpriteData> const *m_ptrSpriteData = nullptr;
     //Systems
-    ColorDisplaySystem m_colorSystem;
+    ColorDisplaySystem *m_colorSystem = nullptr;
 private:
     void initGLWindow();
     void initGlad();
@@ -37,10 +37,11 @@ private:
     void loadSprites(const std::vector<SpriteData> &vectSprites);
 public:
     GraphicEngine();
-    void setSystemsComponents();
+    void confSystems();
     void loadPictureData(const PictureData &pictureData);
     void runIteration();
     bool windowShouldClose();
+    void linkSystems(ColorDisplaySystem *system);
 };
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);

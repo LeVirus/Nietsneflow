@@ -12,6 +12,11 @@ enum Components_e
     TOTAL_COMPONENTS
 };
 
+enum Systems_e
+{
+    COLOR_DISPLAY_SYSTEM
+};
+
 enum DisplayType_e
 {
     COLOR,

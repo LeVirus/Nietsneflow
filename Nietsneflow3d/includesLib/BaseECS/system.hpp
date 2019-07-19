@@ -33,7 +33,8 @@ protected:
     void bAddExcludeComponentToSystem(unsigned int uiTypeComponent);
 public:
     System();
-	const std::vector< unsigned int > &getVectNumEntity()const;
+    virtual ~System() = default;
+    const std::vector< unsigned int > &getVectNumEntity()const;
     void linkSystemManager(SystemManager* ptrSystemManager);
     void refreshEntity();
     virtual void execSystem();
