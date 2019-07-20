@@ -1,10 +1,9 @@
 #include "GraphicEngine.hpp"
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
 #include <iostream>
 #include <cassert>
 #include <constants.hpp>
-#include <PictureData.hpp>
+#include <OpenGLUtils/glheaders.hpp>
+
 
 //===================================================================
 GraphicEngine::GraphicEngine()
@@ -19,6 +18,7 @@ void GraphicEngine::confSystems()
 {
     setShaderToLocalSystems();
     m_colorSystem->setUsedComponents();
+    m_colorSystem->setWindow(m_window);
 }
 
 //===================================================================
@@ -28,6 +28,7 @@ void GraphicEngine::loadPictureData(const PictureData &pictureData)
     loadSprites(pictureData.getSpriteData());
 }
 
+//===================================================================
 void GraphicEngine::runIteration()
 {
     assert(m_colorSystem && "colorSystem is null");
@@ -41,6 +42,7 @@ void GraphicEngine::runIteration()
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     m_colorSystem->execSystem();
+//    m_colorSystem->display();
     // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
     // -------------------------------------------------------------------------------
     glfwSwapBuffers(m_window);

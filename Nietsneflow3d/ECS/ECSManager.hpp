@@ -20,7 +20,7 @@ private:
 public:
     ECSManager();
     void init();
-    void addEntity(const std::bitset<Components_e::TOTAL_COMPONENTS> &bitsetComponents);
+    uint32_t addEntity(const std::bitset<Components_e::TOTAL_COMPONENTS> &bitsetComponents);
     inline ecs::Engine &getEngine(){return m_ecsEngine;}
     inline ecs::ComponentManager &getComponentManager(){return *m_componentManager;}
     inline ecs::SystemManager &getSystemManager(){return *m_systemManager;}

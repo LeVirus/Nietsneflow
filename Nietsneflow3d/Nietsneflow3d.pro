@@ -49,5 +49,6 @@ HEADERS += \
     ECS/Components/ColorVertexComponent.hpp \
     ECS/ECSManager.hpp \
     GraphicEngine.hpp \
-    ECS/Systems/ColorDisplaySystem.hpp
+    ECS/Systems/ColorDisplaySystem.hpp \
+    OpenGLUtils/glheaders.hpp
 

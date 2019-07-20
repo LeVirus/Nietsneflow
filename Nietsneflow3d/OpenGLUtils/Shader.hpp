@@ -23,6 +23,7 @@ public:
     bool compileSource()const;
     void setSources(const std::string &vertexPath, const std::string &fragmentPath);
     void use();
+    void display()const;
 };
 
 #endif // SHADER_H

@@ -25,9 +25,11 @@ void Shader::setSources(const std::string &vertexPath,
         fragmentShaderFile.open(fragmentPath);
         std::stringstream vertexShaderStream, fragmentShaderStream;
         vertexShaderStream << vertexShaderFile.rdbuf();
-        fragmentShaderStream << vertexShaderFile.rdbuf();
+        fragmentShaderStream << fragmentShaderFile.rdbuf();
         m_vertexSource = vertexShaderStream.str();
+        assert(!m_vertexSource.empty());
         m_fragmentSource = fragmentShaderStream.str();
+        assert(!m_fragmentSource.empty());
         vertexShaderFile.close();
         fragmentShaderFile.close();
     }
@@ -42,6 +44,16 @@ void Shader::setSources(const std::string &vertexPath,
 void Shader::use()
 {
     glUseProgram(m_shaderProgram);
+}
+
+//===================================================================
+void Shader::display() const
+{
+    std::cerr << "vs ::\n"
+              << m_vertexSource << std::endl;
+    std::cerr << "fs ::\n"
+                 << m_fragmentSource << std::endl;
+
 }
 
 //===================================================================
@@ -71,6 +83,7 @@ void Shader::linkShader()
         glGetProgramInfoLog(m_shaderProgram, 512, NULL, infoLog);
         std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
         assert("ERROR::SHADER::PROGRAM::LINKING_FAILED");
+        assert(false);
     }
     glDeleteShader(m_vertexShader);
     glDeleteShader(m_fragmentShader);
@@ -91,6 +104,7 @@ bool Shader::generateVertexShader()
     {
         glGetShaderInfoLog(m_vertexShader, 512, NULL, infoLog);
         std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
+        assert(false);
     }
     return success;
 }
@@ -109,7 +123,9 @@ bool Shader::generateFragmentShader()
     if (!success)
     {
         glGetShaderInfoLog(m_fragmentShader, 512, NULL, infoLog);
+
         std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
+        assert(false);
     }
     return success;
 }

@@ -37,7 +37,7 @@ void ECSManager::init()
 
 //===================================================================
 //Execute syncComponentsFromEntities before launching game
-void ECSManager::addEntity(const std::bitset<Components_e::TOTAL_COMPONENTS> &bitsetComponents)
+uint32_t ECSManager::addEntity(const std::bitset<Components_e::TOTAL_COMPONENTS> &bitsetComponents)
 {
     uint32_t newEntity = m_ecsEngine.AddEntity();
     std::vector<Components_e> vectMemComponent;
@@ -49,7 +49,8 @@ void ECSManager::addEntity(const std::bitset<Components_e::TOTAL_COMPONENTS> &bi
             vectMemComponent.emplace_back(static_cast<Components_e>(i));
         }
     }
-    syncComponentsFromEntities(newEntity, vectMemComponent);//CRASH HERE
+    syncComponentsFromEntities(newEntity, vectMemComponent);
+    return newEntity;
 }
 
 //===================================================================
@@ -64,27 +65,23 @@ void ECSManager::syncComponentsFromEntities(uint32_t numEntity,
         {
         case Components_e::POSITION_VERTEX_COMPONENT:
         {
-            std::unique_ptr<PositionVertexComponent> ptrPosComp = std::make_unique<PositionVertexComponent>();
-            ptrPosComp->setIDEntityAssociated(numEntity);
-            m_componentManager->instanciateExternComponent(numEntity, std::move(ptrPosComp));
-            //Test on base component doesn't crash
-//            std::unique_ptr<ecs::Component> ptrPosComp = std::make_unique<ecs::Component>();
-//                        ptrPosComp->setIDEntityAssociated(numEntity);
-//                        m_componentManager->instanciateExternComponent(numEntity, std::move(ptrPosComp));
+            m_componentManager->instanciateExternComponent(
+                        numEntity,
+                        std::make_unique<PositionVertexComponent>());
         }
             break;
         case Components_e::COLOR_VERTEX_COMPONENT:
         {
             m_componentManager->instanciateExternComponent(
                         numEntity,
-                        std::make_unique<ColorVertexComponent>(numEntity));
+                        std::make_unique<ColorVertexComponent>());
         }
             break;
         case Components_e::SPRITE_TEXTURE_COMPONENT:
         {
-            std::unique_ptr<SpriteTextureComponent> ptrSpriteComp = std::make_unique<SpriteTextureComponent>();
-            ptrSpriteComp->setIDEntityAssociated(numEntity);
-            m_componentManager->instanciateExternComponent(numEntity, std::move(ptrSpriteComp));
+            m_componentManager->instanciateExternComponent(
+                        numEntity,
+                        std::make_unique<SpriteTextureComponent>());
         }
             break;
         case Components_e::TOTAL_COMPONENTS:

@@ -1,4 +1,7 @@
 #include "MainEngine.hpp"
+#include <ECS/Components/PositionVertexComponent.hpp>
+#include <ECS/Components/ColorVertexComponent.hpp>
+#include <cassert>
 
 //===================================================================
 MainEngine::MainEngine()
@@ -59,9 +62,42 @@ void MainEngine::loadGroundAndCeilingEntities(const GroundCeilingData &groundDat
             bitsetComponents[Components_e::SPRITE_TEXTURE_COMPONENT] = true;
             bitsetComponents[Components_e::COLOR_VERTEX_COMPONENT] = true;
         }
-        m_ecsManager.addEntity(bitsetComponents);//CRASH HERE
+        uint32_t entityNum = m_ecsManager.addEntity(bitsetComponents);
+        confGroundAndCeilingComponents(entityNum);
         ptr = &ceilingData;
     }
+}
+
+//===================================================================
+void MainEngine::confGroundAndCeilingComponents(uint32_t entityNum)
+{
+    PositionVertexComponent *posComp = m_ecsManager.getComponentManager().
+            searchComponentByType<PositionVertexComponent>(entityNum, Components_e::POSITION_VERTEX_COMPONENT);
+    assert(posComp);
+    posComp->m_vertex[0].first = 0.0f;
+    posComp->m_vertex[0].second = 0.0f;
+    posComp->m_vertex[1].first = 1.0f;
+    posComp->m_vertex[1].second = 0.0f;
+    posComp->m_vertex[2].first = 1.0f;
+    posComp->m_vertex[2].second = 0.5f;
+    posComp->m_vertex[3].first = 0.0f;
+    posComp->m_vertex[3].second = 0.5f;
+
+    ColorVertexComponent *colorComp = m_ecsManager.getComponentManager().
+            searchComponentByType<ColorVertexComponent>(entityNum, Components_e::COLOR_VERTEX_COMPONENT);
+    assert(colorComp);
+    std::get<0>(colorComp->m_vertex[0]) = 0.5f;
+    std::get<1>(colorComp->m_vertex[0]) = 0.5f;
+    std::get<2>(colorComp->m_vertex[0]) = 0.5f;
+    std::get<0>(colorComp->m_vertex[1]) = 0.0f;
+    std::get<1>(colorComp->m_vertex[1]) = 0.5f;
+    std::get<2>(colorComp->m_vertex[1]) = 0.5f;
+    std::get<0>(colorComp->m_vertex[2]) = 0.5f;
+    std::get<1>(colorComp->m_vertex[2]) = 0.5f;
+    std::get<2>(colorComp->m_vertex[2]) = 0.0f;
+    std::get<0>(colorComp->m_vertex[3]) = 0.5f;
+    std::get<1>(colorComp->m_vertex[3]) = 0.0f;
+    std::get<2>(colorComp->m_vertex[3]) = 0.5f;
 }
 
 //===================================================================
