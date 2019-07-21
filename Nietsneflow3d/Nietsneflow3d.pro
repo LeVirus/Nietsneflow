@@ -17,7 +17,8 @@ SOURCES += main.cpp \
     OpenGLUtils/Shader.cpp \
     OpenGLUtils/Texture.cpp \
     ECS/ECSManager.cpp \
-    ECS/Systems/ColorDisplaySystem.cpp
+    ECS/Systems/ColorDisplaySystem.cpp \
+    OpenGLUtils/VerticesData.cpp
 
 HEADERS += \
     Game.hpp \
@@ -50,5 +51,6 @@ HEADERS += \
     ECS/ECSManager.hpp \
     GraphicEngine.hpp \
     ECS/Systems/ColorDisplaySystem.hpp \
-    OpenGLUtils/glheaders.hpp
+    OpenGLUtils/glheaders.hpp \
+    OpenGLUtils/VerticesData.hpp
 

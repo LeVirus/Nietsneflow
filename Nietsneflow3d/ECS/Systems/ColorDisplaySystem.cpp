@@ -39,16 +39,16 @@ void ColorDisplaySystem::fillVertexFromEntities()
 //===================================================================
 void ColorDisplaySystem::drawVertex()
 {
-    unsigned int indices[] = {  // Notons que l’on commence à 0!
-                                0, 1, 3,   // premier triangle
-                                1, 2, 3,   // second triangle
-                                4, 5, 7,   // premier triangle
-                                5, 6, 7    // second triangle
-                             };
-    unsigned int EBO;
+    uint32_t indices[] = {
+        0, 1, 3,   // premier triangle
+        1, 2, 3,   // second triangle
+        4, 5, 7,   // premier triangle
+        5, 6, 7    // second triangle
+    };
+    uint32_t EBO;
     glGenBuffers(1, &EBO);
 
-    unsigned int VBO, VAO;
+    uint32_t VBO, VAO;
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
     // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
