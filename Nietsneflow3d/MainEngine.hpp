@@ -12,7 +12,8 @@ private:
 private:
     void loadGroundAndCeilingEntities(const GroundCeilingData &groundData,
                                       const GroundCeilingData &ceilingData);
-    void confGroundAndCeilingComponents(uint32_t entityNum);
+    void confCeilingComponents(uint32_t entityNum);
+    void confGroundComponents(uint32_t entityNum);
     void linkSystemsToEngine();
 public:
     MainEngine();

@@ -29,8 +29,8 @@ void LevelManager::loadSpriteData(const INIReader &reader)
     for(uint32_t i = 0; i < sections.size(); ++i)
     {
         uint8_t textureNum = reader.GetInteger(sections[i], "texture",
-                                               std::numeric_limits<uint8_t>::epsilon());
-        assert(std::numeric_limits<uint8_t>::epsilon() != -1 && "Bad textureNumber");
+                                               std::numeric_limits<uint8_t>::max());
+        assert(textureNum != std::numeric_limits<uint8_t>::max() && "Bad textureNumber");
         float texturePosX = reader.GetReal(sections[i], "texturePosX", 1.0f);
         float texturePosY = reader.GetReal(sections[i], "texturePosY", 1.0f);
         float textureWeight = reader.GetReal(sections[i], "textureWeight", 1.0f);
@@ -62,11 +62,9 @@ void LevelManager::loadGroundAndCeilingData(const INIReader &reader)
         if(displayType == DisplayType_e::TEXTURE)
         {
             std::string sprite = reader.Get("Ground", "sprite", "");
-            std::cout << " ddd"<<std::endl<<std::endl<<std::endl<<std::endl;
-            uint8_t id = m_pictureData.getIdentifier(sprite);
-            std::cerr << (uint16_t)id << " ddd"<<std::endl<<std::endl<<std::endl<<std::endl;
-            assert(id != std::numeric_limits<uint8_t>::epsilon() && "Cannot get texture identifier.");
-            arrayGAndCData[i].m_spriteNum = id;
+            std::optional<uint8_t> id = m_pictureData.getIdentifier(sprite);
+            assert(id && "Cannot get tegetIdentifierier.");
+            arrayGAndCData[i].m_spriteNum = *id;
         }
         else
         {
@@ -182,12 +180,12 @@ uint8_t LevelManager::getSpriteId(const INIReader &reader,
                                   const std::string &sectionName)
 {
     std::string sprite = reader.Get(sectionName, "Sprite", "");
-    uint8_t id = m_pictureData.getIdentifier(sprite);
-    assert(id != std::numeric_limits<uint8_t>::max() && "picture data does not exists.");
-    return id;
+    std::optional<uint8_t> id = m_pictureData.getIdentifier(sprite);
+    assert(id && "picture data does not exists.");
+    return *id;
 }
 
-//===================================================================
+//===========getIdentifier===========================================
 void LevelManager::loadWallData(const INIReader &reader)
 {
     std::vector<WallData> vectWall;
@@ -284,11 +282,11 @@ void LevelManager::loadEnemySprites(const INIReader &reader, const std::string &
     vectPtr->reserve(results.size());
     for(uint32_t i = 0; i < results.size(); ++i)
     {
-        vectPtr->emplace_back(m_pictureData.getIdentifier(results[i]));
+        vectPtr->emplace_back(*m_pictureData.getIdentifier(results[i]));
     }
 }
 
-//===================================================================
+//=======================================getIdentifier===============
 std::vector<uint32_t> LevelManager::convertStrToVectUI(
         const std::string &str)
 {

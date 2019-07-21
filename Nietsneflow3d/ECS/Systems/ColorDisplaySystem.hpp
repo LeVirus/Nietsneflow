@@ -20,7 +20,6 @@ public:
     void execSystem()override;
     void setShader(Shader &shader);
     void display()const;
-    inline void setWindow(GLFWwindow* window){window = m_window;}
 };
 
 #endif // COLORDISPLAYSYSTEM_H

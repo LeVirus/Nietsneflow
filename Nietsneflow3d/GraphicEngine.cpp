@@ -18,7 +18,6 @@ void GraphicEngine::confSystems()
 {
     setShaderToLocalSystems();
     m_colorSystem->setUsedComponents();
-    m_colorSystem->setWindow(m_window);
 }
 
 //===================================================================

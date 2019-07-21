@@ -39,15 +39,11 @@ void ColorDisplaySystem::fillVertexFromEntities()
 //===================================================================
 void ColorDisplaySystem::drawVertex()
 {
-//    float vertices[] = {
-//        0,  0,  0.5,  0.5,  0.5,
-//        1,  0,  0 , 0.5 , 0.5,
-//        1 , 0.5 , 0.5 , 0.5 , 0,
-//        0,  0.5 , 0.5 , 0,  0.5
-//    };
     unsigned int indices[] = {  // Notons que l’on commence à 0!
                                 0, 1, 3,   // premier triangle
-                                1, 2, 3    // second triangle
+                                1, 2, 3,   // second triangle
+                                4, 5, 7,   // premier triangle
+                                5, 6, 7    // second triangle
                              };
     unsigned int EBO;
     glGenBuffers(1, &EBO);
@@ -80,7 +76,10 @@ void ColorDisplaySystem::drawVertex()
 
     // draw our first triangle
     glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, 0);
+//    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+//    glDrawArrays(GL_TRIANGLES, 0, 4);
+//    glDrawArrays(GL_TRIANGLES, 4, 4);
 
     glBindVertexArray(0); // no need to unbind it every time
 }

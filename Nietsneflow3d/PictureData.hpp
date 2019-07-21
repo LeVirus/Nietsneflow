@@ -52,7 +52,7 @@ public:
     void setTexturePath(const vectStr_t &vectTextures);
     void setGroundAndCeilingData(const std::array<GroundCeilingData, 2> &arrayGAndCData);
     void setSpriteData(const SpriteData &spriteData, const std::string &identifier);
-    uint8_t getIdentifier(const std::string &spriteName)const;
+    std::optional<uint8_t> getIdentifier(const std::string &spriteName)const;
     void display();
     void clear();
     inline void setUpToDate(){m_upToDate = true;}
