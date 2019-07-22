@@ -6,12 +6,13 @@
 //===================================================================
 Texture::Texture(const std::string &path) : m_path(path)
 {
-    init();
+    memPathExtension();
+    initGLData();
     load();
 }
 
 //===================================================================
-void Texture::init()
+void Texture::initGLData()
 {
     glGenTextures(1, &m_textureNum);
     glBindTexture(GL_TEXTURE_2D, m_textureNum);
@@ -28,7 +29,7 @@ void Texture::load()
 {
     int width, height, nrChannels;
     uint8_t *data = stbi_load(m_path.c_str(), &width, &height, &nrChannels, 0);
-    std::string ext = getPathExtension();
+    std::string ext = getExtension();
     uint32_t targetRGB;
     if(ext == "png")
     {
@@ -52,15 +53,9 @@ void Texture::load()
 }
 
 //===================================================================
-std::string Texture::getPathExtension() const
+void Texture::memPathExtension()
 {
-    size_t size = m_path.size();
-
-    std::string substr = m_path.substr(size - 3);
-    if(substr != "jpg" && substr != "png")
-    {
-        assert("Extension not supported.");
-    }
-    return substr;
+    m_extension = m_path.substr(m_path.size() - 3);
+    assert((m_extension != "jpg" && m_extension != "png") && "Extension not supported.");
 }
 

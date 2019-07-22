@@ -6,14 +6,18 @@
 class Texture
 {
 private:
-    std::string m_path;
+    std::string m_path, m_extension;
     uint32_t m_textureNum;
 private:
-    void init();
+    void initGLData();
     void load();
-    std::string getPathExtension()const;
+    void memPathExtension();
 public:
     Texture(const std::string &path);
+    inline const std::string getExtension()const
+    {
+        return m_extension;
+    }
 };
 
 #endif // TEXTURE_H
