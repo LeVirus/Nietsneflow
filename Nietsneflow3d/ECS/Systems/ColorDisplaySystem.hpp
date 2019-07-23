@@ -10,7 +10,6 @@ class ColorDisplaySystem : public ecs::System
 {
 private:
     Shader *m_shader;
-    std::vector<float> m_vectVertex;
     VerticesData m_verticesData;
 private:
     void fillVertexFromEntities();

@@ -63,6 +63,13 @@ enum Texture_t
     TOTAL_TEXTURE
 };
 
+enum BaseShapeType_t
+{
+    TRIANGLE,
+    RECTANGLE
+};
+
+
 const std::string SHADER_DIR_STR = "../Nietsneflow3d/Ressources/Shader/";
 const std::string LEVEL_RESSOURCES_DIR_STR = "../Nietsneflow3d/Ressources/";
 const std::string TEXTURES_DIR_STR = "../Nietsneflow3d/Ressources/Textures/";

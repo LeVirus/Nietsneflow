@@ -15,6 +15,7 @@ ColorDisplaySystem::ColorDisplaySystem():m_verticesData(Shader_e::CEILING_FLOOR)
 //===================================================================
 void ColorDisplaySystem::fillVertexFromEntities()
 {
+    m_verticesData.clear();
     for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
     {
         NumberVertexComponent *numVertexComp = stairwayToComponentManager().
@@ -54,12 +55,6 @@ void ColorDisplaySystem::fillVertexFromEntities()
 //===================================================================
 void ColorDisplaySystem::drawVertex()
 {
-    uint32_t indices[] = {
-        0, 1, 3,   // premier triangle
-        1, 2, 3,   // second triangle
-        4, 5, 7,   // premier triangle
-        5, 6, 7    // second triangle
-    };
     uint32_t EBO;
     glGenBuffers(1, &EBO);
 
@@ -70,12 +65,14 @@ void ColorDisplaySystem::drawVertex()
     glBindVertexArray(VAO);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * m_verticesData.getvectVertex().size(),
-                 &m_verticesData.getvectVertex()[0], GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * m_verticesData.getVectVertex().size(),
+                 &m_verticesData.getVectVertex()[0], GL_STATIC_DRAW);
 //    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+//    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint32_t) * m_verticesData.getVectIndices().size(),
+                 &m_verticesData.getVectIndices()[0], GL_STATIC_DRAW);
 
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
@@ -126,15 +123,6 @@ void ColorDisplaySystem::setShader(Shader &shader)
 //===================================================================
 void ColorDisplaySystem::display() const
 {
-    std::cerr << "vertex\n";
-    for(uint32_t i = 0; i < m_vectVertex.size(); ++i)
-    {
-        std::cerr << m_vectVertex[i] << "  " <<
-                     m_vectVertex[++i] << "  " <<
-                     m_vectVertex[++i] << "  " <<
-                     m_vectVertex[++i] << "  " <<
-                     m_vectVertex[++i] << "\n";
-    }
     m_shader->display();
 }
 
