@@ -64,7 +64,7 @@ void MainEngine::loadGroundAndCeilingEntities(const GroundCeilingData &groundDat
             bitsetComponents[Components_e::SPRITE_TEXTURE_COMPONENT] = true;
             bitsetComponents[Components_e::COLOR_VERTEX_COMPONENT] = true;
         }
-        uint32_t entityNum = m_ecsManager.addEntity(bitsetComponents, 4);
+        uint32_t entityNum = m_ecsManager.addEntity(bitsetComponents, BaseShapeType_t::RECTANGLE);
         if(i)
         {
             confGroundComponents(entityNum);

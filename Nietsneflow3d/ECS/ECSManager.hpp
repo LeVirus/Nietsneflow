@@ -16,13 +16,15 @@ private:
     void initComponents();
     void initSystems();
     void syncComponentsFromEntities(uint32_t numEntity,
-                                    const std::vector<Components_e> &vectComp, const size_t numVertex = 0);
-    void instanciatePositionVertexComponent(uint32_t numEntity, size_t numVertex);
-    void instanciateColorVertexComponent(uint32_t numEntity, size_t numVertex);
+                                    const std::vector<Components_e> &vectComp,
+                                    BaseShapeType_t shapeType = BaseShapeType_t::NONE);
+    void instanciatePositionVertexComponent(uint32_t numEntity, BaseShapeType_t shapeType);
+    void instanciateColorVertexComponent(uint32_t numEntity, BaseShapeType_t shapeType);
 public:
     ECSManager();
     void init();
-    uint32_t addEntity(const std::bitset<Components_e::TOTAL_COMPONENTS> &bitsetComponents, size_t numVertex = 0);
+    uint32_t addEntity(const std::bitset<Components_e::TOTAL_COMPONENTS> &bitsetComponents,
+                       BaseShapeType_t baseShape = BaseShapeType_t::NONE);
     inline ecs::Engine &getEngine(){return m_ecsEngine;}
     inline ecs::ComponentManager &getComponentManager(){return *m_componentManager;}
     inline ecs::SystemManager &getSystemManager(){return *m_systemManager;}

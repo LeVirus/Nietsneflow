@@ -38,7 +38,8 @@ void ECSManager::init()
 
 //===================================================================
 //Execute syncComponentsFromEntities before launching game
-uint32_t ECSManager::addEntity(const std::bitset<Components_e::TOTAL_COMPONENTS> &bitsetComponents, size_t numVertex)
+uint32_t ECSManager::addEntity(const std::bitset<Components_e::TOTAL_COMPONENTS> &bitsetComponents,
+                               BaseShapeType_t baseShape)
 {
     uint32_t newEntity = m_ecsEngine.AddEntity();
     std::vector<Components_e> vectMemComponent;
@@ -50,14 +51,14 @@ uint32_t ECSManager::addEntity(const std::bitset<Components_e::TOTAL_COMPONENTS>
             vectMemComponent.emplace_back(static_cast<Components_e>(i));
         }
     }
-    syncComponentsFromEntities(newEntity, vectMemComponent, numVertex);
+    syncComponentsFromEntities(newEntity, vectMemComponent, baseShape);
     return newEntity;
 }
 
 //===================================================================
 void ECSManager::syncComponentsFromEntities(uint32_t numEntity,
                                             const std::vector<Components_e> &vectComp,
-                                            const size_t numVertex)
+                                            BaseShapeType_t shapeType)
 {
     assert(m_componentManager && "m_componentManager is null.");
     m_componentManager->updateComponentFromEntity();
@@ -68,7 +69,7 @@ void ECSManager::syncComponentsFromEntities(uint32_t numEntity,
         case Components_e::NUMBER_VERTEX_COMPONENT: // == 0
         {
             m_componentManager->instanciateExternComponent(
-                        numEntity, std::make_unique<NumberVertexComponent>(numVertex));
+                        numEntity, std::make_unique<NumberVertexComponent>(shapeType));
             NumberVertexComponent *numVertexComp = m_componentManager->
                     searchComponentByType<NumberVertexComponent>(numEntity,
                                                                  Components_e::NUMBER_VERTEX_COMPONENT);
@@ -77,12 +78,12 @@ void ECSManager::syncComponentsFromEntities(uint32_t numEntity,
             break;
         case Components_e::POSITION_VERTEX_COMPONENT:
         {
-            instanciatePositionVertexComponent(numEntity, numVertex);
+            instanciatePositionVertexComponent(numEntity, shapeType);
         }
             break;
         case Components_e::COLOR_VERTEX_COMPONENT:
         {
-            instanciateColorVertexComponent(numEntity, numVertex);
+            instanciateColorVertexComponent(numEntity, shapeType);
         }
             break;
         case Components_e::SPRITE_TEXTURE_COMPONENT:
@@ -100,15 +101,16 @@ void ECSManager::syncComponentsFromEntities(uint32_t numEntity,
 }
 
 //===================================================================
-void ECSManager::instanciatePositionVertexComponent(uint32_t numEntity, size_t numVertex)
+void ECSManager::instanciatePositionVertexComponent(uint32_t numEntity,
+                                                    BaseShapeType_t shapeType)
 {
-    if(numVertex == 4)
+    if(shapeType == BaseShapeType_t::RECTANGLE)
     {
         m_componentManager->instanciateExternComponent(
                     numEntity,
                     std::make_unique<PositionVertexComponent<4>>());
     }
-    else if(numVertex == 3)
+    else if(shapeType == BaseShapeType_t::TRIANGLE)
     {
         m_componentManager->instanciateExternComponent(
                     numEntity,
@@ -116,20 +118,21 @@ void ECSManager::instanciatePositionVertexComponent(uint32_t numEntity, size_t n
     }
     else
     {
-        assert(false && "Bad vertex number.");
+        assert("Bad vertex number.");
     }
 }
 
 //===================================================================
-void ECSManager::instanciateColorVertexComponent(uint32_t numEntity, size_t numVertex)
+void ECSManager::instanciateColorVertexComponent(uint32_t numEntity,
+                                                 BaseShapeType_t shapeType)
 {
-    if(numVertex == 4)
+    if(shapeType == BaseShapeType_t::RECTANGLE)
     {
         m_componentManager->instanciateExternComponent(
                     numEntity,
                     std::make_unique<ColorVertexComponent<4>>());
     }
-    else if(numVertex == 3)
+    else if(shapeType == BaseShapeType_t::TRIANGLE)
     {
         m_componentManager->instanciateExternComponent(
                     numEntity,
@@ -137,7 +140,7 @@ void ECSManager::instanciateColorVertexComponent(uint32_t numEntity, size_t numV
     }
     else
     {
-        assert(false && "Bad vertex number.");
+        assert("Bad vertex number.");
     }
 
 }

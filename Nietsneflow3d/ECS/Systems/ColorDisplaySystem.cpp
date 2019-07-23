@@ -22,8 +22,8 @@ void ColorDisplaySystem::fillVertexFromEntities()
                 searchComponentByType<NumberVertexComponent>(mVectNumEntity[i],
                                                              Components_e::NUMBER_VERTEX_COMPONENT);
         assert(numVertexComp);
-        size_t numVertex = numVertexComp->m_numberVertex;
-        if(numVertex == 3)
+        BaseShapeType_t shapeType = numVertexComp->m_shapeType;
+        if(shapeType == BaseShapeType_t::TRIANGLE)
         {
 
             PositionVertexComponent<3> *posComp = stairwayToComponentManager().
@@ -36,7 +36,7 @@ void ColorDisplaySystem::fillVertexFromEntities()
             assert(colorComp);
             m_verticesData.loadVertexComponent(posComp, colorComp);
         }
-        else if(numVertex == 4)
+        else if(shapeType == BaseShapeType_t::RECTANGLE)
         {
 
             PositionVertexComponent<4> *posComp = stairwayToComponentManager().

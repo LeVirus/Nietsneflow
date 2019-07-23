@@ -66,7 +66,8 @@ enum Texture_t
 enum BaseShapeType_t
 {
     TRIANGLE,
-    RECTANGLE
+    RECTANGLE,
+    NONE
 };
 
 
