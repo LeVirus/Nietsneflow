@@ -6,6 +6,7 @@
 
 enum Components_e
 {
+    NUMBER_VERTEX_COMPONENT = 0,
     POSITION_VERTEX_COMPONENT,
     SPRITE_TEXTURE_COMPONENT,
     COLOR_VERTEX_COMPONENT,
@@ -69,7 +70,7 @@ const std::map<Shader_e, std::string> SHADER_ID_MAP
 {
     {CEILING_FLOOR, "ceilingFloor"},
     {WALL, "wall"},
-    {STATIC_ELEMENT, "staticElement"},
+    {STATIC_ELEMENT, "staticElement"}
 };
 #endif // CONSTANTS_HPP
 

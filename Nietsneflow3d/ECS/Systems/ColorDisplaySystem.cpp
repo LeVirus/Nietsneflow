@@ -1,37 +1,52 @@
 #include "ColorDisplaySystem.hpp"
 #include <constants.hpp>
 #include <includesLib/BaseECS/engine.hpp>
+#include <ECS/Components/NumberVertexComponent.hpp>
 #include <ECS/Components/ColorVertexComponent.hpp>
 #include <ECS/Components/PositionVertexComponent.hpp>
 #include <cassert>
 #include <OpenGLUtils/glheaders.hpp>
 
 //===================================================================
-ColorDisplaySystem::ColorDisplaySystem()
+ColorDisplaySystem::ColorDisplaySystem():m_verticesData(Shader_e::CEILING_FLOOR)
 {
 }
 
-//TEST
 //===================================================================
 void ColorDisplaySystem::fillVertexFromEntities()
 {
     for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
     {
-        PositionVertexComponent *posComp = stairwayToComponentManager().
-                searchComponentByType<PositionVertexComponent>(mVectNumEntity[i],
-                                                               Components_e::POSITION_VERTEX_COMPONENT);
-        assert(posComp);
-        ColorVertexComponent *colorComp = stairwayToComponentManager().
-                searchComponentByType<ColorVertexComponent>(mVectNumEntity[i],
-                                                               Components_e::COLOR_VERTEX_COMPONENT);
-        assert(colorComp);
-        for(uint32_t j = 0; j < 4; ++j)
+        NumberVertexComponent *numVertexComp = stairwayToComponentManager().
+                searchComponentByType<NumberVertexComponent>(mVectNumEntity[i],
+                                                             Components_e::NUMBER_VERTEX_COMPONENT);
+        assert(numVertexComp);
+        size_t numVertex = numVertexComp->m_numberVertex;
+        if(numVertex == 3)
         {
-            m_vectVertex.emplace_back(posComp->m_vertex[j].first);
-            m_vectVertex.emplace_back(posComp->m_vertex[j].second);
-            m_vectVertex.emplace_back(std::get<0>(colorComp->m_vertex[j]));
-            m_vectVertex.emplace_back(std::get<1>(colorComp->m_vertex[j]));
-            m_vectVertex.emplace_back(std::get<2>(colorComp->m_vertex[j]));
+
+            PositionVertexComponent<3> *posComp = stairwayToComponentManager().
+                    searchComponentByType<PositionVertexComponent<3>>(mVectNumEntity[i],
+                                                                              Components_e::POSITION_VERTEX_COMPONENT);
+            ColorVertexComponent<3> *colorComp = stairwayToComponentManager().
+                    searchComponentByType<ColorVertexComponent<3>>(mVectNumEntity[i],
+                                                                           Components_e::COLOR_VERTEX_COMPONENT);
+            assert(posComp);
+            assert(colorComp);
+            m_verticesData.loadVertexComponent(posComp, colorComp);
+        }
+        else if(numVertex == 4)
+        {
+
+            PositionVertexComponent<4> *posComp = stairwayToComponentManager().
+                    searchComponentByType<PositionVertexComponent<4>>(mVectNumEntity[i],
+                                                                              Components_e::POSITION_VERTEX_COMPONENT);
+            ColorVertexComponent<4> *colorComp = stairwayToComponentManager().
+                    searchComponentByType<ColorVertexComponent<4>>(mVectNumEntity[i],
+                                                                           Components_e::COLOR_VERTEX_COMPONENT);
+            assert(posComp);
+            assert(colorComp);
+            m_verticesData.loadVertexComponent(posComp, colorComp);
         }
     }
 }
@@ -55,7 +70,8 @@ void ColorDisplaySystem::drawVertex()
     glBindVertexArray(VAO);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * m_vectVertex.size(), &m_vectVertex[0], GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * m_verticesData.getvectVertex().size(),
+                 &m_verticesData.getvectVertex()[0], GL_STATIC_DRAW);
 //    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
@@ -107,6 +123,7 @@ void ColorDisplaySystem::setShader(Shader &shader)
     m_shader = &shader;
 }
 
+//===================================================================
 void ColorDisplaySystem::display() const
 {
     std::cerr << "vertex\n";

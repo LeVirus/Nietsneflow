@@ -1,8 +1,17 @@
 #include "VerticesData.hpp"
 
 //===================================================================
-VerticesData::VerticesData()
+VerticesData::VerticesData(Shader_e shaderNum) : m_shaderNum(shaderNum)
 {
+}
+
+//===================================================================
+void VerticesData::loadGLBuffer()
+{
+    if(m_vertexBuffer.empty() || m_indices.empty())
+    {
+        return;
+    }
 
 }
 

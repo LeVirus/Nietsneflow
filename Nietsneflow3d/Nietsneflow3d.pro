@@ -52,5 +52,6 @@ HEADERS += \
     GraphicEngine.hpp \
     ECS/Systems/ColorDisplaySystem.hpp \
     OpenGLUtils/glheaders.hpp \
-    OpenGLUtils/VerticesData.hpp
+    OpenGLUtils/VerticesData.hpp \
+    ECS/Components/NumberVertexComponent.hpp
 

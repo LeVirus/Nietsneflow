@@ -4,16 +4,16 @@
 #include <BaseECS/component.hpp>
 #include <constants.hpp>
 
-using vertexTupleArray_t = std::array<std::tuple<float, float, float>, 4>;
+using tupleTriFloat = std::tuple<float, float, float>;
 
+template<size_t SIZE>
 struct ColorVertexComponent : public ecs::Component
 {
     ColorVertexComponent()
     {
         muiTypeComponent = Components_e::COLOR_VERTEX_COMPONENT;
     }
-
-    vertexTupleArray_t m_vertex;
+    std::array<tupleTriFloat, SIZE> m_vertex;
     virtual ~ColorVertexComponent() = default;
 };
 

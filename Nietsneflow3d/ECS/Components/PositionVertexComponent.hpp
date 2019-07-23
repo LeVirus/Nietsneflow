@@ -7,12 +7,12 @@
 #include <functional>
 
 using pairFloat_t = std::pair<float, float>;
-using vertexArray_t = std::array<pairFloat_t, 4>;
 
 /**
  * @brief The VertexComponent struct
  * Coordinated data for OpenGL displaying.
  */
+template<size_t SIZE>
 struct PositionVertexComponent : public ecs::Component
 {
     PositionVertexComponent()
@@ -20,7 +20,7 @@ struct PositionVertexComponent : public ecs::Component
         muiTypeComponent = Components_e::POSITION_VERTEX_COMPONENT;
     }
 
-    vertexArray_t m_vertex;
+    std::array<pairFloat_t, SIZE> m_vertex;
     virtual ~PositionVertexComponent() = default;
 };
 

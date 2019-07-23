@@ -18,9 +18,9 @@ public:
      * @param fragmentPath Path to fragment shaders sources.
      */
     Shader(const std::string &vertexPath, const std::string &fragmentPath);
-    void generateShader();
-    void linkShader();
     bool compileSource()const;
+    void linkShader();
+    void generateShader();
     void setSources(const std::string &vertexPath, const std::string &fragmentPath);
     void use();
     void display()const;

@@ -56,6 +56,6 @@ void Texture::load()
 void Texture::memPathExtension()
 {
     m_extension = m_path.substr(m_path.size() - 3);
-    assert((m_extension != "jpg" && m_extension != "png") && "Extension not supported.");
+    assert((m_extension == "jpg" || m_extension == "png") && "Extension not supported.");
 }
 
