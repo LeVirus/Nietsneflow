@@ -14,22 +14,22 @@ class VerticesData
 {
 private:
     std::vector<float> m_vertexBuffer;
-    std::vector<uint32_t> m_indices;
+    std::vector<uint32_t> m_indices, m_shaderInterpretData;
     const Shader_e m_shaderNum;
-    uint32_t m_cursor = 0;
+    uint32_t m_cursor = 0, m_sizeOfVertex;
     uint32_t m_ebo, m_vao, m_vbo;
 private:
     void addIndices(BaseShapeType_e shapeType);
     void init();
     void genGLBuffers();
+    void setVectGLPointer();
+    void bindGLBuffers();
+    void attribGLVertexPointer();
 public:
     VerticesData(Shader_e shaderNum);
-    void bindGLBuffers();
-    bool bindGLVertexArray();
-    void attribGLVertexPointer();
+    void confVertexBuffer();
     void drawElement();
     void clear();
-    void TESST(Shader &m_shader);
     inline const std::vector<float> &getVectVertex()const{return m_vertexBuffer;}
     inline const std::vector<uint32_t> &getVectIndices()const{return m_indices;}
 

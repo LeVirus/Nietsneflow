@@ -5,7 +5,6 @@
 #include <ECS/Components/ColorVertexComponent.hpp>
 #include <ECS/Components/PositionVertexComponent.hpp>
 #include <cassert>
-#include <OpenGLUtils/glheaders.hpp>
 
 //===================================================================
 ColorDisplaySystem::ColorDisplaySystem():m_verticesData(Shader_e::CEILING_FLOOR)
@@ -55,8 +54,7 @@ void ColorDisplaySystem::fillVertexFromEntities()
 //===================================================================
 void ColorDisplaySystem::drawVertex()
 {
-    m_verticesData.bindGLBuffers();
-    m_verticesData.attribGLVertexPointer();
+    m_verticesData.confVertexBuffer();
     m_shader->use();
     m_verticesData.drawElement();
 }
