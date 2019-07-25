@@ -63,7 +63,7 @@ enum Texture_t
     TOTAL_TEXTURE
 };
 
-enum BaseShapeType_t
+enum BaseShapeType_e
 {
     TRIANGLE,
     RECTANGLE,

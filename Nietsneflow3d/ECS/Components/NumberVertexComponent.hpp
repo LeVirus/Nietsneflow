@@ -6,11 +6,11 @@
 
 struct NumberVertexComponent : public ecs::Component
 {
-    NumberVertexComponent(BaseShapeType_t shapeType) : m_shapeType(shapeType)
+    NumberVertexComponent(BaseShapeType_e shapeType) : m_shapeType(shapeType)
     {
         muiTypeComponent = Components_e::NUMBER_VERTEX_COMPONENT;
     }
-    const BaseShapeType_t m_shapeType;
+    const BaseShapeType_e m_shapeType;
     virtual ~NumberVertexComponent() = default;
 };
 

@@ -49,9 +49,9 @@ void Shader::use()
 //===================================================================
 void Shader::display() const
 {
-    std::cerr << "vs ::\n"
+    std::cout << "vs ::\n"
               << m_vertexSource << std::endl;
-    std::cerr << "fs ::\n"
+    std::cout << "fs ::\n"
                  << m_fragmentSource << std::endl;
 
 }
