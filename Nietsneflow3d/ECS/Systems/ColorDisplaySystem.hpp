@@ -14,9 +14,9 @@ private:
 private:
     void fillVertexFromEntities();
     void drawVertex();
+    void setUsedComponents();
 public:
     ColorDisplaySystem();
-    void setUsedComponents();
     void execSystem()override;
     void setShader(Shader &shader);
     void display()const;

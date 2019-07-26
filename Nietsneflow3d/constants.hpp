@@ -15,7 +15,8 @@ enum Components_e
 
 enum Systems_e
 {
-    COLOR_DISPLAY_SYSTEM
+    COLOR_DISPLAY_SYSTEM,
+    MAP_DISPLAY_SYSTEM
 };
 
 enum DisplayType_e
@@ -79,6 +80,12 @@ const std::map<Shader_e, std::string> SHADER_ID_MAP
     {Shader_e::COLOR_S, "ceilingFloor"},
     {Shader_e::TEXTURE_S, "wall"},
     {Shader_e::STATIC_ELEMENT, "staticElement"}
+};
+
+const std::map<Texture_t, std::string> TEXTURE_ID_PATH_MAP
+{
+    {Texture_t::WALL_T, "Global.png"},
+    {Texture_t::GLOBAL, "walltest.jpg"}
 };
 #endif // CONSTANTS_HPP
 

@@ -3,6 +3,7 @@
 #include <cassert>
 #include <constants.hpp>
 #include <OpenGLUtils/glheaders.hpp>
+#include <ECS/Systems/ColorDisplaySystem.hpp>
 
 
 //===================================================================
@@ -11,13 +12,13 @@ GraphicEngine::GraphicEngine()
     initGLWindow();
     initGlad();
     initGLShader();
+    initGLTexture();
 }
 
 //===================================================================
 void GraphicEngine::confSystems()
 {
     setShaderToLocalSystems();
-    m_colorSystem->setUsedComponents();
 }
 
 //===================================================================
@@ -55,9 +56,12 @@ bool GraphicEngine::windowShouldClose()
 }
 
 //===================================================================
-void GraphicEngine::linkSystems(ColorDisplaySystem *system)
+void GraphicEngine::linkSystems(ColorDisplaySystem *colorSystem,
+                                MapDisplaySystem *mapSystem)
+
 {
-    m_colorSystem = system;//A MODIFIER
+    m_colorSystem = colorSystem;
+    m_mapSystem = mapSystem;
 }
 
 
@@ -110,7 +114,19 @@ void GraphicEngine::initGLShader()
         m_vectShader.emplace_back(Shader(base + std::string(".vs"),
                                          base + std::string(".fs")));
     }
-    assert(m_vectShader.size() == Shader_e::TOTAL_SHADER && "Bad shader files.");
+}
+
+//===================================================================
+void GraphicEngine::initGLTexture()
+{
+    m_vectTexture.reserve(Texture_t::TOTAL_TEXTURE);
+    for(uint32_t i = Texture_t::WALL_T; i < Texture_t::TOTAL_TEXTURE; ++i)
+    {
+        std::map<Texture_t, std::string>::const_iterator it =
+                TEXTURE_ID_PATH_MAP.find(static_cast<Texture_t>(i));
+        std::string path = TEXTURES_DIR_STR + it->second;
+                m_vectTexture.emplace_back(Texture(path));
+    }
 }
 
 //===================================================================

@@ -2,6 +2,7 @@
 #include <OpenGLUtils/glheaders.hpp>
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
+#include <iostream>
 
 //===================================================================
 Texture::Texture(const std::string &path) : m_path(path)
@@ -9,6 +10,18 @@ Texture::Texture(const std::string &path) : m_path(path)
     memPathExtension();
     initGLData();
     load();
+}
+
+//===================================================================
+void Texture::bind()
+{
+    glBindTexture(GL_TEXTURE_2D, m_textureNum);
+}
+
+//===================================================================
+void Texture::unbind()
+{
+    glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 //===================================================================
@@ -29,9 +42,8 @@ void Texture::load()
 {
     int width, height, nrChannels;
     uint8_t *data = stbi_load(m_path.c_str(), &width, &height, &nrChannels, 0);
-    std::string ext = getExtension();
     uint32_t targetRGB;
-    if(ext == "png")
+    if(m_extension == "png")
     {
         targetRGB = GL_RGBA;
     }

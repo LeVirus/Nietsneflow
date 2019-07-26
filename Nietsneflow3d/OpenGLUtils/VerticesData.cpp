@@ -87,7 +87,7 @@ void VerticesData::bindGLBuffers()
 //===================================================================
 void VerticesData::attribGLVertexPointer()
 {
-    uint32_t offset = 0;
+    uint64_t offset = 0;
     for(uint32_t i = 0; i < m_shaderInterpretData.size(); ++i)
     {
         glVertexAttribPointer(i, m_shaderInterpretData[i], GL_FLOAT, GL_FALSE,

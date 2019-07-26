@@ -5,7 +5,6 @@
 #include <vector>
 #include <string>
 #include <PictureData.hpp>
-#include <ECS/Systems/ColorDisplaySystem.hpp>
 #include <OpenGLUtils/Shader.hpp>
 #include <OpenGLUtils/Texture.hpp>
 
@@ -15,6 +14,8 @@ using vectStr_t = std::vector<std::string>;
 
 struct GLFWwindow;
 class PictureData;
+class ColorDisplaySystem;
+class MapDisplaySystem;
 
 class GraphicEngine
 {
@@ -26,10 +27,12 @@ private:
     std::vector<SpriteData> const *m_ptrSpriteData = nullptr;
     //Systems
     ColorDisplaySystem *m_colorSystem = nullptr;
+    MapDisplaySystem *m_mapSystem = nullptr;
 private:
     void initGLWindow();
     void initGlad();
     void initGLShader();
+    void initGLTexture();
     void setShaderToLocalSystems();
     void loadTexturesPath(const vectStr_t &vectTextures);
     void loadGroundAndCeiling(const GroundCeilingData &groundData,
@@ -41,7 +44,7 @@ public:
     void loadPictureData(const PictureData &pictureData);
     void runIteration();
     bool windowShouldClose();
-    void linkSystems(ColorDisplaySystem *system);
+    void linkSystems(ColorDisplaySystem *colorSystem, MapDisplaySystem *mapSystem);
 };
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);

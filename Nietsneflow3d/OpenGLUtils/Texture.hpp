@@ -14,10 +14,8 @@ private:
     void memPathExtension();
 public:
     Texture(const std::string &path);
-    inline const std::string getExtension()const
-    {
-        return m_extension;
-    }
+    void bind();
+    void unbind();
 };
 
 #endif // TEXTURE_H

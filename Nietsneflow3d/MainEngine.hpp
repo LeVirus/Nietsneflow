@@ -14,7 +14,7 @@ private:
                                       const GroundCeilingData &ceilingData);
     void confCeilingComponents(uint32_t entityNum);
     void confGroundComponents(uint32_t entityNum);
-    void linkSystemsToEngine();
+    void linkSystemsToGraphicEngine();
 public:
     MainEngine();
     void loadGraphicPicture(const PictureData &picData);

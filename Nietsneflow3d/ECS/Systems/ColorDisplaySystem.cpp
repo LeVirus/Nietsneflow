@@ -9,6 +9,15 @@
 //===================================================================
 ColorDisplaySystem::ColorDisplaySystem():m_verticesData(Shader_e::COLOR_S)
 {
+    setUsedComponents();
+}
+
+//===================================================================
+void ColorDisplaySystem::setUsedComponents()
+{
+    bAddComponentToSystem(Components_e::COLOR_VERTEX_COMPONENT);
+    bAddComponentToSystem(Components_e::POSITION_VERTEX_COMPONENT);
+    bAddExcludeComponentToSystem(Components_e::SPRITE_TEXTURE_COMPONENT);
 }
 
 //===================================================================
@@ -57,15 +66,6 @@ void ColorDisplaySystem::drawVertex()
     m_verticesData.confVertexBuffer();
     m_shader->use();
     m_verticesData.drawElement();
-}
-
-
-//===================================================================
-void ColorDisplaySystem::setUsedComponents()
-{
-    bAddComponentToSystem(Components_e::COLOR_VERTEX_COMPONENT);
-    bAddComponentToSystem(Components_e::POSITION_VERTEX_COMPONENT);
-    bAddExcludeComponentToSystem(Components_e::SPRITE_TEXTURE_COMPONENT);
 }
 
 //===================================================================

@@ -4,6 +4,7 @@
 #include <ECS/Components/ColorVertexComponent.hpp>
 #include <ECS/Components/NumberVertexComponent.hpp>
 #include <ECS/Systems/ColorDisplaySystem.hpp>
+#include <ECS/Systems/MapDisplaySystem.hpp>
 #include <constants.hpp>
 #include <memory>
 #include <cassert>
@@ -26,6 +27,7 @@ void ECSManager::initSystems()
 {
     assert(m_systemManager && "m_systemManager is null.");
     m_systemManager->bAddExternSystem(std::make_unique<ColorDisplaySystem>());
+    m_systemManager->bAddExternSystem(std::make_unique<MapDisplaySystem>());
 }
 
 

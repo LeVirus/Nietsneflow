@@ -2,6 +2,8 @@
 #include <ECS/Components/PositionVertexComponent.hpp>
 #include <ECS/Components/ColorVertexComponent.hpp>
 #include <ECS/Components/NumberVertexComponent.hpp>
+#include <ECS/Systems/ColorDisplaySystem.hpp>
+#include <ECS/Systems/MapDisplaySystem.hpp>
 #include <cassert>
 
 //===================================================================
@@ -14,7 +16,7 @@ MainEngine::MainEngine()
 void MainEngine::init()
 {
     m_ecsManager.init();
-    linkSystemsToEngine();
+    linkSystemsToGraphicEngine();
     m_graphicEngine.confSystems();
 }
 
@@ -142,8 +144,12 @@ void MainEngine::confCeilingComponents(uint32_t entityNum)
 }
 
 //===================================================================
-void MainEngine::linkSystemsToEngine()
+void MainEngine::linkSystemsToGraphicEngine()
 {
-    m_graphicEngine.linkSystems(m_ecsManager.getSystemManager().
-                    searchSystemByType<ColorDisplaySystem>(Systems_e::COLOR_DISPLAY_SYSTEM));
+    ColorDisplaySystem *color = m_ecsManager.getSystemManager().
+            searchSystemByType<ColorDisplaySystem>(Systems_e::COLOR_DISPLAY_SYSTEM);
+    MapDisplaySystem *map = m_ecsManager.getSystemManager().
+            searchSystemByType<MapDisplaySystem>(Systems_e::MAP_DISPLAY_SYSTEM);
+
+    m_graphicEngine.linkSystems(color, map);
 }
