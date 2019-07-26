@@ -7,7 +7,7 @@
 #include <cassert>
 
 //===================================================================
-ColorDisplaySystem::ColorDisplaySystem():m_verticesData(Shader_e::CEILING_FLOOR)
+ColorDisplaySystem::ColorDisplaySystem():m_verticesData(Shader_e::COLOR_S)
 {
 }
 

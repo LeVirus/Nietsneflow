@@ -50,8 +50,8 @@ enum LevelStaticElementType_e
 
 enum Shader_e
 {
-    CEILING_FLOOR = 0,
-    WALL,
+    COLOR_S = 0,
+    TEXTURE_S,
     STATIC_ELEMENT,
     TOTAL_SHADER
 };
@@ -76,9 +76,9 @@ const std::string LEVEL_RESSOURCES_DIR_STR = "../Nietsneflow3d/Ressources/";
 const std::string TEXTURES_DIR_STR = "../Nietsneflow3d/Ressources/Textures/";
 const std::map<Shader_e, std::string> SHADER_ID_MAP
 {
-    {CEILING_FLOOR, "ceilingFloor"},
-    {WALL, "wall"},
-    {STATIC_ELEMENT, "staticElement"}
+    {Shader_e::COLOR_S, "ceilingFloor"},
+    {Shader_e::TEXTURE_S, "wall"},
+    {Shader_e::STATIC_ELEMENT, "staticElement"}
 };
 #endif // CONSTANTS_HPP
 

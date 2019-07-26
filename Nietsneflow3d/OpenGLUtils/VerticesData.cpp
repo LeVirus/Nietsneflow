@@ -28,10 +28,10 @@ void VerticesData::setVectGLPointer()
 {
     switch (m_shaderNum)
     {
-    case Shader_e::CEILING_FLOOR:
+    case Shader_e::COLOR_S:
         m_shaderInterpretData = {2,3};
         break;
-    case Shader_e::WALL:
+    case Shader_e::TEXTURE_S:
 //        m_shaderInterpretData = {2,3};
         break;
     case Shader_e::STATIC_ELEMENT:

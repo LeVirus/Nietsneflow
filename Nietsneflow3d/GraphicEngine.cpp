@@ -102,7 +102,7 @@ void GraphicEngine::initGlad()
 void GraphicEngine::initGLShader()
 {
     m_vectShader.reserve(Shader_e::TOTAL_SHADER);
-    for(uint32_t i = Shader_e::CEILING_FLOOR; i < Shader_e::TOTAL_SHADER; ++i)
+    for(uint32_t i = Shader_e::COLOR_S; i < Shader_e::TOTAL_SHADER; ++i)
     {
         std::map<Shader_e, std::string>::const_iterator it =
                 SHADER_ID_MAP.find(static_cast<Shader_e>(i));
@@ -117,7 +117,7 @@ void GraphicEngine::initGLShader()
 void GraphicEngine::setShaderToLocalSystems()
 {
     assert(m_colorSystem && "colorSystem is null");
-    m_colorSystem->setShader(m_vectShader[Shader_e::CEILING_FLOOR]);
+    m_colorSystem->setShader(m_vectShader[Shader_e::COLOR_S]);
 }
 
 //===================================================================

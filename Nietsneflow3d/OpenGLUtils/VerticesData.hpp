@@ -37,12 +37,12 @@ public:
     bool loadVertexComponent(const PositionVertexComponent<SIZE> *posComp,
                              const ColorVertexComponent<SIZE> *colorComp)
     {
-        assert(posComp && "Position component is Null.");
-        assert(colorComp && "Color component is Null.");
-        if(m_shaderNum != Shader_e::CEILING_FLOOR)
+        if(m_shaderNum != Shader_e::COLOR_S)
         {
             return false;
         }
+        assert(posComp && "Position component is Null.");
+        assert(colorComp && "Color component is Null.");
         for(uint32_t j = 0; j < SIZE; ++j)
         {
             m_vertexBuffer.emplace_back(posComp->m_vertex[j].first);
