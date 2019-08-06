@@ -12,7 +12,6 @@ using pairFloat_t = std::pair<float, float>;
  * @brief The VertexComponent struct
  * Coordinated data for OpenGL displaying.
  */
-template<size_t SIZE>
 struct PositionVertexComponent : public ecs::Component
 {
     PositionVertexComponent()
@@ -20,7 +19,7 @@ struct PositionVertexComponent : public ecs::Component
         muiTypeComponent = Components_e::POSITION_VERTEX_COMPONENT;
     }
 
-    std::array<pairFloat_t, SIZE> m_vertex;
+    std::vector<pairFloat_t> m_vertex;
     virtual ~PositionVertexComponent() = default;
 };
 

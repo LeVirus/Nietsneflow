@@ -1,7 +1,6 @@
 #include "MainEngine.hpp"
 #include <ECS/Components/PositionVertexComponent.hpp>
 #include <ECS/Components/ColorVertexComponent.hpp>
-#include <ECS/Components/NumberVertexComponent.hpp>
 #include <ECS/Systems/ColorDisplaySystem.hpp>
 #include <ECS/Systems/MapDisplaySystem.hpp>
 #include <Level.hpp>
@@ -47,7 +46,6 @@ void MainEngine::loadGroundAndCeilingEntities(const GroundCeilingData &groundDat
     {
         std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComponents;
         bitsetComponents[Components_e::POSITION_VERTEX_COMPONENT] = true;
-        bitsetComponents[Components_e::NUMBER_VERTEX_COMPONENT] = true;
         if(ptr->m_apparence == DisplayType_e::COLOR)
         {
             bitsetComponents[Components_e::COLOR_VERTEX_COMPONENT] = true;
@@ -87,9 +85,10 @@ void MainEngine::loadLevelEntities(const Level &level)
 //===================================================================
 void MainEngine::confGroundComponents(uint32_t entityNum)
 {
-    PositionVertexComponent<4> *posComp = m_ecsManager.getComponentManager().
-            searchComponentByType<PositionVertexComponent<4>>(entityNum, Components_e::POSITION_VERTEX_COMPONENT);
+    PositionVertexComponent *posComp = m_ecsManager.getComponentManager().
+            searchComponentByType<PositionVertexComponent>(entityNum, Components_e::POSITION_VERTEX_COMPONENT);
     assert(posComp);
+    posComp->m_vertex.resize(4);
     posComp->m_vertex[0].first  = -1.0f;
     posComp->m_vertex[0].second = 0.0f;
     posComp->m_vertex[1].first  = 1.0f;
@@ -99,9 +98,10 @@ void MainEngine::confGroundComponents(uint32_t entityNum)
     posComp->m_vertex[3].first  = -1.0f;
     posComp->m_vertex[3].second = -1.0f;
 
-    ColorVertexComponent<4> *colorComp = m_ecsManager.getComponentManager().
-            searchComponentByType<ColorVertexComponent<4>>(entityNum, Components_e::COLOR_VERTEX_COMPONENT);
+    ColorVertexComponent *colorComp = m_ecsManager.getComponentManager().
+            searchComponentByType<ColorVertexComponent>(entityNum, Components_e::COLOR_VERTEX_COMPONENT);
     assert(colorComp);
+    colorComp->m_vertex.resize(4);
     std::get<0>(colorComp->m_vertex[0]) = 0.1f;
     std::get<1>(colorComp->m_vertex[0]) = 0.2f;
     std::get<2>(colorComp->m_vertex[0]) = 0.3f;
@@ -119,9 +119,10 @@ void MainEngine::confGroundComponents(uint32_t entityNum)
 //===================================================================
 void MainEngine::confCeilingComponents(uint32_t entityNum)
 {
-    PositionVertexComponent<4> *posComp = m_ecsManager.getComponentManager().
-            searchComponentByType<PositionVertexComponent<4>>(entityNum, Components_e::POSITION_VERTEX_COMPONENT);
+    PositionVertexComponent *posComp = m_ecsManager.getComponentManager().
+            searchComponentByType<PositionVertexComponent>(entityNum, Components_e::POSITION_VERTEX_COMPONENT);
     assert(posComp);
+    posComp->m_vertex.resize(4);
     posComp->m_vertex[0].first  = -1.0f;
     posComp->m_vertex[0].second = 1.0f;
     posComp->m_vertex[1].first  = 1.0f;
@@ -131,9 +132,10 @@ void MainEngine::confCeilingComponents(uint32_t entityNum)
     posComp->m_vertex[3].first  = -1.0f;
     posComp->m_vertex[3].second = 0.0f;
 
-    ColorVertexComponent<4> *colorComp = m_ecsManager.getComponentManager().
-            searchComponentByType<ColorVertexComponent<4>>(entityNum, Components_e::COLOR_VERTEX_COMPONENT);
+    ColorVertexComponent *colorComp = m_ecsManager.getComponentManager().
+            searchComponentByType<ColorVertexComponent>(entityNum, Components_e::COLOR_VERTEX_COMPONENT);
     assert(colorComp);
+    colorComp->m_vertex.resize(4);
     std::get<0>(colorComp->m_vertex[0]) = 0.5f;
     std::get<1>(colorComp->m_vertex[0]) = 0.5f;
     std::get<2>(colorComp->m_vertex[0]) = 0.5f;

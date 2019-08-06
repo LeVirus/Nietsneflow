@@ -1,7 +1,6 @@
 #include "ColorDisplaySystem.hpp"
 #include <constants.hpp>
 #include <includesLib/BaseECS/engine.hpp>
-#include <ECS/Components/NumberVertexComponent.hpp>
 #include <ECS/Components/ColorVertexComponent.hpp>
 #include <ECS/Components/PositionVertexComponent.hpp>
 #include <cassert>
@@ -26,37 +25,15 @@ void ColorDisplaySystem::fillVertexFromEntities()
     m_verticesData.clear();
     for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
     {
-        NumberVertexComponent *numVertexComp = stairwayToComponentManager().
-                searchComponentByType<NumberVertexComponent>(mVectNumEntity[i],
-                                                             Components_e::NUMBER_VERTEX_COMPONENT);
-        assert(numVertexComp);
-        BaseShapeType_e shapeType = numVertexComp->m_shapeType;
-        if(shapeType == BaseShapeType_e::TRIANGLE)
-        {
-
-            PositionVertexComponent<3> *posComp = stairwayToComponentManager().
-                    searchComponentByType<PositionVertexComponent<3>>(mVectNumEntity[i],
-                                                                              Components_e::POSITION_VERTEX_COMPONENT);
-            ColorVertexComponent<3> *colorComp = stairwayToComponentManager().
-                    searchComponentByType<ColorVertexComponent<3>>(mVectNumEntity[i],
-                                                                           Components_e::COLOR_VERTEX_COMPONENT);
-            assert(posComp);
-            assert(colorComp);
-            m_verticesData.loadVertexComponent(posComp, colorComp);
-        }
-        else if(shapeType == BaseShapeType_e::RECTANGLE)
-        {
-
-            PositionVertexComponent<4> *posComp = stairwayToComponentManager().
-                    searchComponentByType<PositionVertexComponent<4>>(mVectNumEntity[i],
-                                                                              Components_e::POSITION_VERTEX_COMPONENT);
-            ColorVertexComponent<4> *colorComp = stairwayToComponentManager().
-                    searchComponentByType<ColorVertexComponent<4>>(mVectNumEntity[i],
-                                                                           Components_e::COLOR_VERTEX_COMPONENT);
-            assert(posComp);
-            assert(colorComp);
-            m_verticesData.loadVertexComponent(posComp, colorComp);
-        }
+        PositionVertexComponent *posComp = stairwayToComponentManager().
+                searchComponentByType<PositionVertexComponent>(mVectNumEntity[i],
+                                                               Components_e::POSITION_VERTEX_COMPONENT);
+        ColorVertexComponent *colorComp = stairwayToComponentManager().
+                searchComponentByType<ColorVertexComponent>(mVectNumEntity[i],
+                                                            Components_e::COLOR_VERTEX_COMPONENT);
+        assert(posComp);
+        assert(colorComp);
+        m_verticesData.loadVertexComponent<4>(posComp, colorComp);
     }
 }
 

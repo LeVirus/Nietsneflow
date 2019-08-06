@@ -18,8 +18,8 @@ private:
     void syncComponentsFromEntities(uint32_t numEntity,
                                     const std::vector<Components_e> &vectComp,
                                     BaseShapeType_e shapeType = BaseShapeType_e::NONE);
-    void instanciatePositionVertexComponent(uint32_t numEntity, BaseShapeType_e shapeType);
-    void instanciateColorVertexComponent(uint32_t numEntity, BaseShapeType_e shapeType);
+    void instanciatePositionVertexComponent(uint32_t numEntity);
+    void instanciateColorVertexComponent(uint32_t numEntity);
 public:
     ECSManager();
     void init();

@@ -54,6 +54,5 @@ HEADERS += \
     ECS/Systems/ColorDisplaySystem.hpp \
     OpenGLUtils/glheaders.hpp \
     OpenGLUtils/VerticesData.hpp \
-    ECS/Components/NumberVertexComponent.hpp \
     ECS/Systems/MapDisplaySystem.hpp
 

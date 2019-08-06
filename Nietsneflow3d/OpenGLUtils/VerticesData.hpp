@@ -34,8 +34,8 @@ public:
     inline const std::vector<uint32_t> &getVectIndices()const{return m_indices;}
 
     template<size_t SIZE>
-    bool loadVertexComponent(const PositionVertexComponent<SIZE> *posComp,
-                             const ColorVertexComponent<SIZE> *colorComp)
+    bool loadVertexComponent(const PositionVertexComponent *posComp,
+                             const ColorVertexComponent *colorComp)
     {
         if(m_shaderNum != Shader_e::COLOR_S)
         {
