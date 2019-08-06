@@ -11,7 +11,7 @@ private:
     LevelManager m_levelManager;
 public:
     Game();
-    void loadLevelData();
+    void loadLevelData(uint32_t levelNum);
     void initEngine();
     void launchGame();
 };

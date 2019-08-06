@@ -5,6 +5,8 @@
 
 class MapDisplaySystem : public ecs::System
 {
+private:
+    void setUsedComponents();
 public:
     MapDisplaySystem();
 };

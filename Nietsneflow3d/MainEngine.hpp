@@ -4,6 +4,8 @@
 #include <GraphicEngine.hpp>
 #include <ECS/ECSManager.hpp>
 
+class Level;
+
 class MainEngine
 {
 private:
@@ -19,7 +21,7 @@ public:
     MainEngine();
     void loadGraphicPicture(const PictureData &picData);
     void init();
-    void loadECSEntities();
+    void loadLevelEntities(const Level &level);
     void launchLoop();
 };
 

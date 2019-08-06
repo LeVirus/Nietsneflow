@@ -66,6 +66,11 @@ public:
     Level();
     void setPlayerInitData(const pairFloat_t &pairInitPlayerPos,
                            Direction_e playerDir);
+    inline const std::vector<WallData> &getWallData()const
+    {
+        return m_wallData;
+    }
+
     inline void setLevelSize(const pairFloat_t &pairLevelSize)
     {
         m_size = pairLevelSize;

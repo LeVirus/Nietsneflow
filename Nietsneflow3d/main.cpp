@@ -4,7 +4,7 @@
 int main()
 {
     Game game;
-    game.loadLevelData();
+    game.loadLevelData(1);
     game.initEngine();
     game.launchGame();
     return 0;
