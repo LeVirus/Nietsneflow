@@ -4,6 +4,7 @@
 #include <constants.hpp>
 #include <OpenGLUtils/glheaders.hpp>
 #include <ECS/Systems/ColorDisplaySystem.hpp>
+#include <ECS/Systems/MapDisplaySystem.hpp>
 
 
 //===================================================================
@@ -32,8 +33,6 @@ void GraphicEngine::loadPictureData(const PictureData &pictureData)
 void GraphicEngine::runIteration()
 {
     assert(m_colorSystem && "colorSystem is null");
-
-
     if (glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(m_window, true);//TMP
 
@@ -42,7 +41,7 @@ void GraphicEngine::runIteration()
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     m_colorSystem->execSystem();
-//    m_colorSystem->display();
+    m_mapSystem->execSystem();
     // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
     // -------------------------------------------------------------------------------
     glfwSwapBuffers(m_window);
@@ -133,7 +132,9 @@ void GraphicEngine::initGLTexture()
 void GraphicEngine::setShaderToLocalSystems()
 {
     assert(m_colorSystem && "colorSystem is null");
+    assert(m_mapSystem && "mapSystem is null");
     m_colorSystem->setShader(m_vectShader[Shader_e::COLOR_S]);
+    m_mapSystem->setShader(m_vectShader[Shader_e::TEXTURE_S]);
 }
 
 //===================================================================

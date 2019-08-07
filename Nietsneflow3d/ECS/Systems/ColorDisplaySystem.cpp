@@ -33,7 +33,7 @@ void ColorDisplaySystem::fillVertexFromEntities()
                                                             Components_e::COLOR_VERTEX_COMPONENT);
         assert(posComp);
         assert(colorComp);
-        m_verticesData.loadVertexComponent<4>(posComp, colorComp);
+        m_verticesData.loadVertexColorComponent(posComp, colorComp);
     }
 }
 

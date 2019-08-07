@@ -1,6 +1,10 @@
 #include "VerticesData.hpp"
 #include <OpenGLUtils/glheaders.hpp>
 #include <OpenGLUtils/Shader.hpp>
+#include <ECS/Components/PositionVertexComponent.hpp>
+#include <ECS/Components/ColorVertexComponent.hpp>
+#include <ECS/Components/SpriteTextureComponent.hpp>
+#include <PictureData.hpp>
 #include <numeric>
 
 //===================================================================
@@ -32,16 +36,59 @@ void VerticesData::setVectGLPointer()
         m_shaderInterpretData = {2,3};
         break;
     case Shader_e::TEXTURE_S:
-//        m_shaderInterpretData = {2,3};
-        break;
-    case Shader_e::STATIC_ELEMENT:
-//        m_shaderInterpretData = {2,3};
+        m_shaderInterpretData = {2,2};
         break;
     case Shader_e::TOTAL_SHADER:
         assert("Incoherant shader enum.");
     }
     m_sizeOfVertex = std::accumulate(m_shaderInterpretData.begin(),
                                          m_shaderInterpretData.end(), 0);
+}
+
+//===================================================================
+bool VerticesData::loadVertexColorComponent(const PositionVertexComponent *posComp,
+                                            const ColorVertexComponent *colorComp)
+{
+    if(m_shaderNum != Shader_e::COLOR_S)
+    {
+        return false;
+    }
+    assert(posComp && "Position component is Null.");
+    assert(colorComp && "Color component is Null.");
+    uint32_t sizeVertex = posComp->m_vertex.size();
+    for(uint32_t j = 0; j < sizeVertex; ++j)
+    {
+        m_vertexBuffer.emplace_back(posComp->m_vertex[j].first);
+        m_vertexBuffer.emplace_back(posComp->m_vertex[j].second);
+        m_vertexBuffer.emplace_back(std::get<0>(colorComp->m_vertex[j]));
+        m_vertexBuffer.emplace_back(std::get<1>(colorComp->m_vertex[j]));
+        m_vertexBuffer.emplace_back(std::get<2>(colorComp->m_vertex[j]));
+    }
+    BaseShapeType_e shapeType = (sizeVertex == 3 ? BaseShapeType_e::TRIANGLE :
+                                             BaseShapeType_e::RECTANGLE);
+    addIndices(shapeType);
+    return true;
+}
+
+//===================================================================
+void VerticesData::loadVertexTextureComponent(const PositionVertexComponent &posComp,
+                                              const SpriteTextureComponent &spriteComp)
+{
+    if(m_shaderNum != Shader_e::TEXTURE_S)
+    {
+        return;
+    }
+    uint32_t sizeVertex = posComp.m_vertex.size();
+    for(uint32_t j = 0; j < sizeVertex; ++j)
+    {
+        m_vertexBuffer.emplace_back(posComp.m_vertex[j].first);
+        m_vertexBuffer.emplace_back(posComp.m_vertex[j].second);
+        m_vertexBuffer.emplace_back(spriteComp.m_spriteData->m_texturePosVertex[j].first);
+        m_vertexBuffer.emplace_back(spriteComp.m_spriteData->m_texturePosVertex[j].second);
+    }
+    BaseShapeType_e shapeType = (sizeVertex == 3 ? BaseShapeType_e::TRIANGLE :
+                                             BaseShapeType_e::RECTANGLE);
+    addIndices(shapeType);
 }
 
 //===================================================================

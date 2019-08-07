@@ -54,7 +54,6 @@ enum Shader_e
 {
     COLOR_S = 0,
     TEXTURE_S,
-    STATIC_ELEMENT,
     TOTAL_SHADER
 };
 
@@ -79,8 +78,7 @@ const std::string TEXTURES_DIR_STR = "../Nietsneflow3d/Ressources/Textures/";
 const std::map<Shader_e, std::string> SHADER_ID_MAP
 {
     {Shader_e::COLOR_S, "ceilingFloor"},
-    {Shader_e::TEXTURE_S, "wall"},
-    {Shader_e::STATIC_ELEMENT, "staticElement"}
+    {Shader_e::TEXTURE_S, "wall"}
 };
 
 const std::map<Texture_t, std::string> TEXTURE_ID_PATH_MAP

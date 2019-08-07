@@ -22,6 +22,7 @@ public:
     void linkShader();
     void generateShader();
     void setSources(const std::string &vertexPath, const std::string &fragmentPath);
+    void setUniformValueInt(const std::string &id, int value);
     void use();
     void display()const;
 };

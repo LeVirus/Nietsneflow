@@ -40,6 +40,12 @@ void Shader::setSources(const std::string &vertexPath,
 }
 
 //===================================================================
+void Shader::setUniformValueInt(const std::string &id, int value)
+{
+    glUniform1i(glGetUniformLocation(m_shaderProgram, id.c_str()), value);
+}
+
+//===================================================================
 void Shader::use()
 {
     glUseProgram(m_shaderProgram);
