@@ -2,6 +2,8 @@
 #include <ECS/Components/PositionVertexComponent.hpp>
 #include <ECS/Components/SpriteTextureComponent.hpp>
 #include <ECS/Components/ColorVertexComponent.hpp>
+#include <ECS/Components/MapPositionComponent.hpp>
+#include <ECS/Components/StaticElementComponent.hpp>
 #include <ECS/Systems/ColorDisplaySystem.hpp>
 #include <ECS/Systems/MapDisplaySystem.hpp>
 #include <constants.hpp>
@@ -39,8 +41,7 @@ void ECSManager::init()
 
 //===================================================================
 //Execute syncComponentsFromEntities before launching game
-uint32_t ECSManager::addEntity(const std::bitset<Components_e::TOTAL_COMPONENTS> &bitsetComponents,
-                               BaseShapeType_e baseShape)
+uint32_t ECSManager::addEntity(const std::bitset<Components_e::TOTAL_COMPONENTS> &bitsetComponents)
 {
     uint32_t newEntity = m_ecsEngine.AddEntity();
     std::vector<Components_e> vectMemComponent;
@@ -52,14 +53,13 @@ uint32_t ECSManager::addEntity(const std::bitset<Components_e::TOTAL_COMPONENTS>
             vectMemComponent.emplace_back(static_cast<Components_e>(i));
         }
     }
-    syncComponentsFromEntities(newEntity, vectMemComponent, baseShape);
+    syncComponentsFromEntities(newEntity, vectMemComponent);
     return newEntity;
 }
 
 //===================================================================
 void ECSManager::syncComponentsFromEntities(uint32_t numEntity,
-                                            const std::vector<Components_e> &vectComp,
-                                            BaseShapeType_e shapeType)
+                                            const std::vector<Components_e> &vectComp)
 {
     assert(m_componentManager && "m_componentManager is null.");
     m_componentManager->updateComponentFromEntity();
@@ -82,6 +82,20 @@ void ECSManager::syncComponentsFromEntities(uint32_t numEntity,
             m_componentManager->instanciateExternComponent(
                         numEntity,
                         std::make_unique<SpriteTextureComponent>());
+        }
+            break;
+        case Components_e::MAP_POSITION_COMPONENT:
+        {
+            m_componentManager->instanciateExternComponent(
+                        numEntity,
+                        std::make_unique<MapPositionComponent>());
+        }
+            break;
+        case Components_e::STATIC_ELEMENT_COMPONENT:
+        {
+            m_componentManager->instanciateExternComponent(
+                        numEntity,
+                        std::make_unique<StaticElementComponent>());
         }
             break;
         case Components_e::TOTAL_COMPONENTS:

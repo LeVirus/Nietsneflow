@@ -1,9 +1,11 @@
 #include "MainEngine.hpp"
 #include <ECS/Components/PositionVertexComponent.hpp>
 #include <ECS/Components/ColorVertexComponent.hpp>
+#include <ECS/Components/MapPositionComponent.hpp>
+#include <ECS/Components/SpriteTextureComponent.hpp>
 #include <ECS/Systems/ColorDisplaySystem.hpp>
 #include <ECS/Systems/MapDisplaySystem.hpp>
-#include <Level.hpp>
+#include <LevelManager.hpp>
 #include <cassert>
 
 //===================================================================
@@ -59,7 +61,7 @@ void MainEngine::loadGroundAndCeilingEntities(const GroundCeilingData &groundDat
             bitsetComponents[Components_e::SPRITE_TEXTURE_COMPONENT] = true;
             bitsetComponents[Components_e::COLOR_VERTEX_COMPONENT] = true;
         }
-        uint32_t entityNum = m_ecsManager.addEntity(bitsetComponents, BaseShapeType_e::RECTANGLE);
+        uint32_t entityNum = m_ecsManager.addEntity(bitsetComponents);
         if(i)
         {
             confGroundComponents(entityNum);
@@ -73,13 +75,56 @@ void MainEngine::loadGroundAndCeilingEntities(const GroundCeilingData &groundDat
 }
 
 //===================================================================
-void MainEngine::loadLevelEntities(const Level &level)
+void MainEngine::loadLevelEntities(const LevelManager &levelManager)
 {
-    const std::vector<WallData> &wallData = level.getWallData();
+    loadWallEntities(levelManager);
+    loadStaticElementEntities(levelManager);
+
+}
+
+//===================================================================
+void MainEngine::loadWallEntities(const LevelManager &levelManager)
+{
+    const std::vector<WallData> &wallData = levelManager.getLevel().getWallData();
     for(uint32_t i = 0; i < wallData.size(); ++i)
     {
-
+        const SpriteData &memSpriteData = levelManager.getPictureData().getSpriteData()[wallData[i].m_numSprite];
+        for(uint32_t j = 0; j < wallData[i].m_TileGamePosition.size(); ++j)
+        {
+            confBaseMapComponent(createWallEntity(), memSpriteData, wallData[i].m_TileGamePosition[j]);
+        }
     }
+}
+
+//===================================================================
+uint32_t MainEngine::createWallEntity()
+{
+    std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComponents;
+    bitsetComponents[Components_e::POSITION_VERTEX_COMPONENT] = true;
+    bitsetComponents[Components_e::SPRITE_TEXTURE_COMPONENT] = true;
+    bitsetComponents[Components_e::MAP_POSITION_COMPONENT] = true;
+    return m_ecsManager.addEntity(bitsetComponents);
+}
+
+//===================================================================
+void MainEngine::confBaseMapComponent(uint32_t entityNum,
+                                      const SpriteData &memSpriteData,
+                                      const pairUI_t& coordLevel)
+{
+    SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().
+            searchComponentByType<SpriteTextureComponent>(entityNum, Components_e::SPRITE_TEXTURE_COMPONENT);
+    assert(spriteComp);
+    spriteComp->m_spriteData = &memSpriteData;
+    MapPositionComponent *mapComp = m_ecsManager.getComponentManager().
+            searchComponentByType<MapPositionComponent>(entityNum, Components_e::MAP_POSITION_COMPONENT);
+    assert(mapComp);
+    mapComp->m_coord = coordLevel;
+}
+
+//===================================================================
+void MainEngine::loadStaticElementEntities(const LevelManager &levelManager)
+{
+
 }
 
 //===================================================================
