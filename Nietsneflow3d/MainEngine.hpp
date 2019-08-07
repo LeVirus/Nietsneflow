@@ -5,6 +5,7 @@
 #include <ECS/ECSManager.hpp>
 
 using pairUI_t = std::pair<uint32_t, uint32_t>;
+using pairFloat_t = std::pair<float, float>;
 
 class LevelManager;
 
@@ -23,7 +24,11 @@ private:
     uint32_t createWallEntity();
     void confBaseMapComponent(uint32_t entityNum, const SpriteData &memSpriteData, const pairUI_t &coordLevel);
     void loadStaticElementEntities(const LevelManager &levelManager);
-
+    uint32_t createStaticEntity();
+    void confStaticMapComponent(uint32_t entityNum,
+                                const pairFloat_t &elementSize,
+                                bool traversable,
+                                LevelStaticElementType_e type);
 public:
     MainEngine();
     void loadGraphicPicture(const PictureData &picData);

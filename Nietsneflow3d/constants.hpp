@@ -45,7 +45,7 @@ enum EnemySpriteType_e
 
 enum LevelStaticElementType_e
 {
-    GROUND,
+    GROUND = 0,
     CEILING,
     OBJECT
 };

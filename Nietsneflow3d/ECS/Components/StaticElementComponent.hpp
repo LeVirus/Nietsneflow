@@ -12,6 +12,7 @@ struct StaticElementComponent : public ecs::Component
     }
     std::pair<float, float> m_inGameSpriteSize;
     LevelStaticElementType_e m_type;
+    bool m_traversable;
     virtual ~StaticElementComponent() = default;
 };
 

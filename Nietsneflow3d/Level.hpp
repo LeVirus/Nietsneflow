@@ -14,8 +14,8 @@ struct StaticLevelElementData
 {
     uint8_t m_numSprite;
     //In Game sprite size in % relative to a tile
-    std::pair<float, float> m_inGameSpriteSize;
     vectPairUI_t m_TileGamePosition;
+    std::pair<float, float> m_inGameSpriteSize;
     bool m_traversable;
 };
 
@@ -69,6 +69,21 @@ public:
     inline const std::vector<WallData> &getWallData()const
     {
         return m_wallData;
+    }
+
+    inline const std::vector<StaticLevelElementData> &getGroundElementData()const
+    {
+        return m_groundElement;
+    }
+
+    inline const std::vector<StaticLevelElementData> &getCeilingElementData()const
+    {
+        return m_ceilingElement;
+    }
+
+    inline const std::vector<StaticLevelElementData> &getObjectElementData()const
+    {
+        return m_objectElement;
     }
 
     inline void setLevelSize(const pairFloat_t &pairLevelSize)

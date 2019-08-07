@@ -3,6 +3,7 @@
 #include <ECS/Components/ColorVertexComponent.hpp>
 #include <ECS/Components/MapPositionComponent.hpp>
 #include <ECS/Components/SpriteTextureComponent.hpp>
+#include <ECS/Components/StaticElementComponent.hpp>
 #include <ECS/Systems/ColorDisplaySystem.hpp>
 #include <ECS/Systems/MapDisplaySystem.hpp>
 #include <LevelManager.hpp>
@@ -91,7 +92,9 @@ void MainEngine::loadWallEntities(const LevelManager &levelManager)
         const SpriteData &memSpriteData = levelManager.getPictureData().getSpriteData()[wallData[i].m_numSprite];
         for(uint32_t j = 0; j < wallData[i].m_TileGamePosition.size(); ++j)
         {
-            confBaseMapComponent(createWallEntity(), memSpriteData, wallData[i].m_TileGamePosition[j]);
+            confBaseMapComponent(createWallEntity(),
+                                 memSpriteData,
+                                 wallData[i].m_TileGamePosition[j]);
         }
     }
 }
@@ -103,6 +106,17 @@ uint32_t MainEngine::createWallEntity()
     bitsetComponents[Components_e::POSITION_VERTEX_COMPONENT] = true;
     bitsetComponents[Components_e::SPRITE_TEXTURE_COMPONENT] = true;
     bitsetComponents[Components_e::MAP_POSITION_COMPONENT] = true;
+    return m_ecsManager.addEntity(bitsetComponents);
+}
+
+//===================================================================
+uint32_t MainEngine::createStaticEntity()
+{
+    std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComponents;
+    bitsetComponents[Components_e::POSITION_VERTEX_COMPONENT] = true;
+    bitsetComponents[Components_e::SPRITE_TEXTURE_COMPONENT] = true;
+    bitsetComponents[Components_e::MAP_POSITION_COMPONENT] = true;
+    bitsetComponents[Components_e::STATIC_ELEMENT_COMPONENT] = true;
     return m_ecsManager.addEntity(bitsetComponents);
 }
 
@@ -122,9 +136,51 @@ void MainEngine::confBaseMapComponent(uint32_t entityNum,
 }
 
 //===================================================================
+void MainEngine::confStaticMapComponent(uint32_t entityNum,
+                                        const pairFloat_t& elementSize,
+                                        bool traversable,
+                                        LevelStaticElementType_e type)
+{
+    StaticElementComponent *staticComp = m_ecsManager.getComponentManager().
+            searchComponentByType<StaticElementComponent>(entityNum, Components_e::STATIC_ELEMENT_COMPONENT);
+    assert(staticComp);
+    staticComp->m_inGameSpriteSize = elementSize;
+    staticComp->m_traversable = traversable;
+    staticComp->m_type = type;
+}
+
+//===================================================================
 void MainEngine::loadStaticElementEntities(const LevelManager &levelManager)
 {
-
+    std::vector<StaticLevelElementData> const *staticData =
+            &levelManager.getLevel().getGroundElementData();//0
+    for(uint32_t h = 0; h < 3; ++h)
+    {
+        for(uint32_t i = 0; i < staticData->size(); ++i)
+        {
+            const SpriteData &memSpriteData = levelManager.getPictureData().
+                    getSpriteData()[staticData->operator[](i).m_numSprite];
+            for(uint32_t j = 0; j < staticData->operator[](i).m_TileGamePosition.size(); ++j)
+            {
+                uint32_t entityNum = createStaticEntity();
+                confBaseMapComponent(entityNum,
+                                     memSpriteData,
+                                     staticData->operator[](i).m_TileGamePosition[j]);
+                confStaticMapComponent(entityNum,
+                                       staticData->operator[](i).m_inGameSpriteSize,
+                                       staticData->operator[](i).m_traversable,
+                                       static_cast<LevelStaticElementType_e>(h));
+            }
+        }
+        if(!h)//h == 1
+        {
+            staticData = &levelManager.getLevel().getCeilingElementData();
+        }
+        else// h == 2
+        {
+            staticData = &levelManager.getLevel().getObjectElementData();
+        }
+    }
 }
 
 //===================================================================
