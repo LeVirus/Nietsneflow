@@ -7,14 +7,14 @@
 
 using pairUint_t = std::pair<uint32_t, uint32_t>;
 
-struct MapPositionComponent : public ecs::Component
+struct MapCoordComponent : public ecs::Component
 {
-    MapPositionComponent()
+    MapCoordComponent()
     {
         muiTypeComponent = Components_e::MAP_POSITION_COMPONENT;
     }
     pairUint_t m_coord;
-    virtual ~MapPositionComponent() = default;
+    virtual ~MapCoordComponent() = default;
 };
 
 #endif // MAPPOSITIONCOMPONENT_HPP

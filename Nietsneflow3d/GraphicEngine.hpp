@@ -45,6 +45,11 @@ public:
     void runIteration();
     bool windowShouldClose();
     void linkSystems(ColorDisplaySystem *colorSystem, MapDisplaySystem *mapSystem);
+
+    inline MapDisplaySystem &getMapDisplaySystem()
+    {
+        return *m_mapSystem;
+    }
 };
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);

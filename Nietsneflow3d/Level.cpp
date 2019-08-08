@@ -1,4 +1,7 @@
 #include "Level.hpp"
+#include "constants.hpp"
+#include <ECS/Components/MapPositionComponent.hpp>
+#include <ECS/Components/MoveableComponent.hpp>
 #include <iostream>
 
 //===================================================================
@@ -11,7 +14,7 @@ Level::Level()
 void Level::setPlayerInitData(const pairFloat_t &pairInitPlayerPos, Direction_e playerDir)
 {
     m_playerDeparture = pairInitPlayerPos;
-    m_playerDirection = playerDir;
+    m_playerDepartureDirection = playerDir;
 }
 
 //===================================================================
@@ -24,7 +27,7 @@ void Level::display()
     std::cout << "Player departure ::" << std::endl;
     std::cout << "X :: " << m_playerDeparture.first <<
                  "  Y :: " << m_playerDeparture.second <<
-              "  Player Direction " << m_playerDirection << std::endl;
+              "  Player Direction " << m_playerDepartureDirection << std::endl;
     for(uint32_t i = 0; i < m_groundElement.size(); ++i)
     {
         std::cout << "Vect Ground Element   \n"
@@ -127,4 +130,17 @@ void Level::display()
         }
     }
     std::cout << "END LEVEL===================" << std::endl;
+}
+
+//===================================================================
+pairFloat_t Level::getAbsolutePosition(const pairUI_t &coord)
+{
+    return {coord.first * LEVEL_TILE_SIZE, coord.second * LEVEL_TILE_SIZE};
+}
+
+//===================================================================
+void Level::updateOrientation(const MoveableComponent &moveComp,
+                              PositionVertexComponent &posComp)
+{
+
 }

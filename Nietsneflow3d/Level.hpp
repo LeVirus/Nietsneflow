@@ -10,6 +10,9 @@ using pairUI_t = std::pair<uint32_t, uint32_t>;
 using vectPairUI_t = std::vector<pairUI_t>;
 using pairFloat_t = std::pair<float, float>;
 
+struct MoveableComponent;
+struct PositionVertexComponent;
+
 struct StaticLevelElementData
 {
     uint8_t m_numSprite;
@@ -55,7 +58,7 @@ class Level
 {
 private:
     pairUI_t m_size, m_playerDeparture;
-    Direction_e m_playerDirection;
+    Direction_e m_playerDepartureDirection;
     std::vector<StaticLevelElementData> m_groundElement,
                                     m_ceilingElement,
                                     m_objectElement;
@@ -69,6 +72,16 @@ public:
     inline const std::vector<WallData> &getWallData()const
     {
         return m_wallData;
+    }
+
+    inline const pairUI_t &getPlayerDeparture()const
+    {
+        return m_playerDeparture;
+    }
+
+    inline Direction_e getPlayerDepartureDirection()const
+    {
+        return m_playerDepartureDirection;
     }
 
     inline const std::vector<StaticLevelElementData> &getGroundElementData()const
@@ -116,6 +129,14 @@ public:
         m_enemyData = vectEnemy;
     }
     void display();//DEBUG
+
+    static pairFloat_t getAbsolutePosition(const pairUI_t &coord);
+
+    /**
+     * @brief updateVisualOrientation Modify vertex position relative to orientation.
+     */
+    static void updateOrientation(const MoveableComponent &moveComp,
+                                  PositionVertexComponent &posComp);
 };
 
 #endif // LEVEL_H

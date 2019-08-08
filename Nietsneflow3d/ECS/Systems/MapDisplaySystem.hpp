@@ -10,14 +10,22 @@
 class MapDisplaySystem : public ecs::System
 {
 private:
+    uint32_t m_playerNum;
     Shader *m_shader;
     VerticesData m_verticesData;
 private:
     void setUsedComponents();
     void fillVertexFromEntities();
     void drawVertex();
+    void drawPlayerOnMap();
 public:
     MapDisplaySystem();
+
+    inline void setPlayerEntityNum(uint32_t playerNum)
+    {
+        m_playerNum = playerNum;
+    }
+
     void execSystem()override;
     void setShader(Shader &shader);
 };

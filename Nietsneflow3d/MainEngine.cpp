@@ -4,6 +4,7 @@
 #include <ECS/Components/MapPositionComponent.hpp>
 #include <ECS/Components/SpriteTextureComponent.hpp>
 #include <ECS/Components/StaticElementComponent.hpp>
+#include <ECS/Components/MoveableComponent.hpp>
 #include <ECS/Systems/ColorDisplaySystem.hpp>
 #include <ECS/Systems/MapDisplaySystem.hpp>
 #include <LevelManager.hpp>
@@ -78,9 +79,9 @@ void MainEngine::loadGroundAndCeilingEntities(const GroundCeilingData &groundDat
 //===================================================================
 void MainEngine::loadLevelEntities(const LevelManager &levelManager)
 {
+    loadPlayerEntity(levelManager.getLevel());
     loadWallEntities(levelManager);
     loadStaticElementEntities(levelManager);
-
 }
 
 //===================================================================
@@ -129,8 +130,8 @@ void MainEngine::confBaseMapComponent(uint32_t entityNum,
             searchComponentByType<SpriteTextureComponent>(entityNum, Components_e::SPRITE_TEXTURE_COMPONENT);
     assert(spriteComp);
     spriteComp->m_spriteData = &memSpriteData;
-    MapPositionComponent *mapComp = m_ecsManager.getComponentManager().
-            searchComponentByType<MapPositionComponent>(entityNum, Components_e::MAP_POSITION_COMPONENT);
+    MapCoordComponent *mapComp = m_ecsManager.getComponentManager().
+            searchComponentByType<MapCoordComponent>(entityNum, Components_e::MAP_POSITION_COMPONENT);
     assert(mapComp);
     mapComp->m_coord = coordLevel;
 }
@@ -147,6 +148,70 @@ void MainEngine::confStaticMapComponent(uint32_t entityNum,
     staticComp->m_inGameSpriteSize = elementSize;
     staticComp->m_traversable = traversable;
     staticComp->m_type = type;
+}
+
+//===================================================================
+void MainEngine::loadPlayerEntity(const Level &level)
+{
+    std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComponents;
+    bitsetComponents[Components_e::POSITION_VERTEX_COMPONENT] = true;
+    bitsetComponents[Components_e::MAP_POSITION_COMPONENT] = true;
+    bitsetComponents[Components_e::MOVEABLE_COMPONENT] = true;
+    bitsetComponents[Components_e::COLOR_VERTEX_COMPONENT] = true;
+    uint32_t entityNum = m_ecsManager.addEntity(bitsetComponents);
+    confPlayerEntity(entityNum, level);
+    //notify player entity number
+    m_graphicEngine.getMapDisplaySystem().setPlayerEntityNum(entityNum);
+}
+
+//===================================================================
+void MainEngine::confPlayerEntity(uint32_t entityNum, const Level &level)
+{
+    PositionVertexComponent *pos = m_ecsManager.getComponentManager().
+            searchComponentByType<PositionVertexComponent>(entityNum,
+                                                           Components_e::POSITION_VERTEX_COMPONENT);
+    MapCoordComponent *map = m_ecsManager.getComponentManager().
+            searchComponentByType<MapCoordComponent>(entityNum,
+                                                     Components_e::MAP_POSITION_COMPONENT);
+    MoveableComponent *move = m_ecsManager.getComponentManager().
+            searchComponentByType<MoveableComponent>(entityNum,
+                                                     Components_e::MOVEABLE_COMPONENT);
+    ColorVertexComponent *color = m_ecsManager.getComponentManager().
+            searchComponentByType<ColorVertexComponent>(entityNum,
+                                                     Components_e::COLOR_VERTEX_COMPONENT);
+    assert(pos);
+    assert(map);
+    assert(move);
+    map->m_coord = level.getPlayerDeparture();
+    Direction_e playerDir = level.getPlayerDepartureDirection();
+    switch(playerDir)
+    {
+    case Direction_e::NORTH:
+        move->m_degreeOrientation = 0.0f;
+        break;
+    case Direction_e::EAST:
+        move->m_degreeOrientation = 90.0f;
+        break;
+    case Direction_e::SOUTH:
+        move->m_degreeOrientation = 180.0f;
+        break;
+    case Direction_e::WEST:
+        move->m_degreeOrientation = 270.0f;
+        break;
+    }
+    move->m_absoluteMapPosition = Level::getAbsolutePosition(map->m_coord);
+    Level::updateOrientation(*move, *pos);//A implémenter
+    //TMP
+    pos->m_vertex.reserve(3);
+    pos->m_vertex.emplace_back(0.75f,-0.70f);//FORWARD
+    pos->m_vertex.emplace_back(0.70f,-0.80f);
+    pos->m_vertex.emplace_back(0.80f,-0.80f);
+    //TMP
+
+    color->m_vertex.reserve(3);
+    color->m_vertex.emplace_back(0.9f,0.00f, 0.00f);//FORWARD
+    color->m_vertex.emplace_back(0.9f,0.00f, 0.00f);//FORWARD
+    color->m_vertex.emplace_back(0.9f,0.00f, 0.00f);//FORWARD
 }
 
 //===================================================================

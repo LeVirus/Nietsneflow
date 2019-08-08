@@ -11,6 +11,7 @@ enum Components_e
     COLOR_VERTEX_COMPONENT,
     MAP_POSITION_COMPONENT,
     STATIC_ELEMENT_COMPONENT,
+    MOVEABLE_COMPONENT,
     TOTAL_COMPONENTS
 };
 
@@ -71,6 +72,7 @@ enum BaseShapeType_e
     NONE
 };
 
+const uint32_t LEVEL_TILE_SIZE = 30;
 
 const std::string SHADER_DIR_STR = "../Nietsneflow3d/Ressources/Shader/";
 const std::string LEVEL_RESSOURCES_DIR_STR = "../Nietsneflow3d/Ressources/";

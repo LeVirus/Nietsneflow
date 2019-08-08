@@ -17,6 +17,7 @@ void ColorDisplaySystem::setUsedComponents()
     bAddComponentToSystem(Components_e::COLOR_VERTEX_COMPONENT);
     bAddComponentToSystem(Components_e::POSITION_VERTEX_COMPONENT);
     bAddExcludeComponentToSystem(Components_e::SPRITE_TEXTURE_COMPONENT);
+    bAddExcludeComponentToSystem(Components_e::MAP_POSITION_COMPONENT);
 }
 
 //===================================================================
@@ -57,6 +58,15 @@ void ColorDisplaySystem::execSystem()
 void ColorDisplaySystem::setShader(Shader &shader)
 {
     m_shader = &shader;
+}
+
+//===================================================================
+void ColorDisplaySystem::drawEntity(const PositionVertexComponent *posComp,
+                                    const ColorVertexComponent *colorComp)
+{
+    m_verticesData.clear();
+    m_verticesData.loadVertexColorComponent(posComp, colorComp);
+    drawVertex();
 }
 
 //===================================================================

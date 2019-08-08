@@ -2,12 +2,23 @@
 #include <ECS/Components/PositionVertexComponent.hpp>
 #include <ECS/Components/MapPositionComponent.hpp>
 #include <ECS/Components/SpriteTextureComponent.hpp>
+#include <ECS/Components/ColorVertexComponent.hpp>
+#include <ECS/Systems/ColorDisplaySystem.hpp>
 #include <constants.hpp>
 
 //===================================================================
 MapDisplaySystem::MapDisplaySystem():m_verticesData(Shader_e::TEXTURE_S)
 {
     setUsedComponents();
+}
+
+
+//===================================================================
+void MapDisplaySystem::setUsedComponents()
+{
+    bAddComponentToSystem(Components_e::POSITION_VERTEX_COMPONENT);
+    bAddComponentToSystem(Components_e::SPRITE_TEXTURE_COMPONENT);
+    bAddComponentToSystem(Components_e::MAP_POSITION_COMPONENT);
 }
 
 //===================================================================
@@ -23,6 +34,7 @@ void MapDisplaySystem::execSystem()
 //    confEntity();
     fillVertexFromEntities();
     drawVertex();
+    drawPlayerOnMap();
 }
 
 //===================================================================
@@ -60,12 +72,20 @@ void MapDisplaySystem::drawVertex()
     m_verticesData.confVertexBuffer();
     m_shader->use();
     m_verticesData.drawElement();
+    drawPlayerOnMap();
 }
 
 //===================================================================
-void MapDisplaySystem::setUsedComponents()
+void MapDisplaySystem::drawPlayerOnMap()
 {
-    bAddComponentToSystem(Components_e::POSITION_VERTEX_COMPONENT);
-    bAddComponentToSystem(Components_e::SPRITE_TEXTURE_COMPONENT);
-    bAddComponentToSystem(Components_e::MAP_POSITION_COMPONENT);
+    PositionVertexComponent *posComp = stairwayToComponentManager().
+            searchComponentByType<PositionVertexComponent>(m_playerNum,
+                                                           Components_e::POSITION_VERTEX_COMPONENT);
+    ColorVertexComponent *colorComp = stairwayToComponentManager().
+            searchComponentByType<ColorVertexComponent>(m_playerNum,
+                                                           Components_e::COLOR_VERTEX_COMPONENT);
+    assert(posComp);
+    assert(colorComp);
+    mptrSystemManager->searchSystemByType<ColorDisplaySystem>(
+                Systems_e::COLOR_DISPLAY_SYSTEM)->drawEntity(posComp, colorComp);
 }

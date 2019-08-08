@@ -14,11 +14,18 @@ private:
 private:
     void fillVertexFromEntities();
     void drawVertex();
+
+    /**
+     * @brief drawEntity Draw a single entity from the two components
+     * in parameters.
+     */
     void setUsedComponents();
 public:
     ColorDisplaySystem();
     void execSystem()override;
     void setShader(Shader &shader);
+    void drawEntity(const PositionVertexComponent *posComp,
+                    const ColorVertexComponent *colorComp);
     void display()const;
 };
 

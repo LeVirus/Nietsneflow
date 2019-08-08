@@ -4,6 +4,7 @@
 #include <ECS/Components/ColorVertexComponent.hpp>
 #include <ECS/Components/MapPositionComponent.hpp>
 #include <ECS/Components/StaticElementComponent.hpp>
+#include <ECS/Components/MoveableComponent.hpp>
 #include <ECS/Systems/ColorDisplaySystem.hpp>
 #include <ECS/Systems/MapDisplaySystem.hpp>
 #include <constants.hpp>
@@ -88,7 +89,7 @@ void ECSManager::syncComponentsFromEntities(uint32_t numEntity,
         {
             m_componentManager->instanciateExternComponent(
                         numEntity,
-                        std::make_unique<MapPositionComponent>());
+                        std::make_unique<MapCoordComponent>());
         }
             break;
         case Components_e::STATIC_ELEMENT_COMPONENT:
@@ -96,6 +97,13 @@ void ECSManager::syncComponentsFromEntities(uint32_t numEntity,
             m_componentManager->instanciateExternComponent(
                         numEntity,
                         std::make_unique<StaticElementComponent>());
+        }
+            break;
+        case Components_e::MOVEABLE_COMPONENT:
+        {
+            m_componentManager->instanciateExternComponent(
+                        numEntity,
+                        std::make_unique<MoveableComponent>());
         }
             break;
         case Components_e::TOTAL_COMPONENTS:
