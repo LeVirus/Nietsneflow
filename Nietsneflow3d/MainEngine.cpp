@@ -286,10 +286,10 @@ void MainEngine::confCeilingComponents(uint32_t entityNum)
             searchComponentByType<ColorVertexComponent>(entityNum, Components_e::COLOR_VERTEX_COMPONENT);
     assert(colorComp);
     colorComp->m_vertex.reserve(4);
-    colorComp->m_vertex.emplace_back(0.5f,0.5f,0.5f);
-    colorComp->m_vertex.emplace_back(0.0f,0.5f,0.5f);
-    colorComp->m_vertex.emplace_back(0.5f,0.5f,0.0f);
-    colorComp->m_vertex.emplace_back(0.5f,0.0f,0.5f);
+    colorComp->m_vertex.emplace_back(0.5f, 0.5f, 0.5f);
+    colorComp->m_vertex.emplace_back(0.0f, 0.5f, 0.5f);
+    colorComp->m_vertex.emplace_back(0.5f, 0.5f, 0.0f);
+    colorComp->m_vertex.emplace_back(0.5f, 0.0f, 0.5f);
 }
 
 //===================================================================

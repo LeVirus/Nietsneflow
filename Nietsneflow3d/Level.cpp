@@ -4,10 +4,12 @@
 #include <ECS/Components/MoveableComponent.hpp>
 #include <iostream>
 
+float Level::m_rangeView;
+
 //===================================================================
 Level::Level()
 {
-
+    m_rangeView = 100.0f;
 }
 
 //===================================================================
@@ -135,7 +137,8 @@ void Level::display()
 //===================================================================
 pairFloat_t Level::getAbsolutePosition(const pairUI_t &coord)
 {
-    return {coord.first * LEVEL_TILE_SIZE, coord.second * LEVEL_TILE_SIZE};
+    return {float(coord.first + 0.5f) * LEVEL_TILE_SIZE,
+                float(coord.second + 0.5f) * LEVEL_TILE_SIZE};
 }
 
 //===================================================================
