@@ -18,6 +18,7 @@ private:
     void fillVertexFromEntities();
     void drawVertex();
     void drawPlayerOnMap();
+    void confEntity();
 public:
     MapDisplaySystem();
 

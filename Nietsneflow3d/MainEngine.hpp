@@ -24,9 +24,9 @@ private:
     void loadPlayerEntity(const Level &level);
     void confPlayerEntity(uint32_t entityNum, const Level &level);
     void loadWallEntities(const LevelManager &levelManager);
+    void loadStaticElementEntities(const LevelManager &levelManager);
     uint32_t createWallEntity();
     void confBaseMapComponent(uint32_t entityNum, const SpriteData &memSpriteData, const pairUI_t &coordLevel);
-    void loadStaticElementEntities(const LevelManager &levelManager);
     uint32_t createStaticEntity();
     void confStaticMapComponent(uint32_t entityNum,
                                 const pairFloat_t &elementSize,

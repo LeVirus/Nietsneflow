@@ -209,9 +209,9 @@ void MainEngine::confPlayerEntity(uint32_t entityNum, const Level &level)
     //TMP
 
     color->m_vertex.reserve(3);
-    color->m_vertex.emplace_back(0.9f,0.00f, 0.00f);//FORWARD
-    color->m_vertex.emplace_back(0.9f,0.00f, 0.00f);//FORWARD
-    color->m_vertex.emplace_back(0.9f,0.00f, 0.00f);//FORWARD
+    color->m_vertex.emplace_back(0.9f,0.00f, 0.00f);
+    color->m_vertex.emplace_back(0.9f,0.00f, 0.00f);
+    color->m_vertex.emplace_back(0.9f,0.00f, 0.00f);
 }
 
 //===================================================================
@@ -254,32 +254,20 @@ void MainEngine::confGroundComponents(uint32_t entityNum)
     PositionVertexComponent *posComp = m_ecsManager.getComponentManager().
             searchComponentByType<PositionVertexComponent>(entityNum, Components_e::POSITION_VERTEX_COMPONENT);
     assert(posComp);
-    posComp->m_vertex.resize(4);
-    posComp->m_vertex[0].first  = -1.0f;
-    posComp->m_vertex[0].second = 0.0f;
-    posComp->m_vertex[1].first  = 1.0f;
-    posComp->m_vertex[1].second = 0.0f;
-    posComp->m_vertex[2].first  = 1.0f;
-    posComp->m_vertex[2].second = -1.0f;
-    posComp->m_vertex[3].first  = -1.0f;
-    posComp->m_vertex[3].second = -1.0f;
+    posComp->m_vertex.reserve(4);
+    posComp->m_vertex.emplace_back(-1.0f, 0.0f);
+    posComp->m_vertex.emplace_back(1.0f, 0.0f);
+    posComp->m_vertex.emplace_back(1.0f, -1.0f);
+    posComp->m_vertex.emplace_back(-1.0f, -1.0f);
 
     ColorVertexComponent *colorComp = m_ecsManager.getComponentManager().
             searchComponentByType<ColorVertexComponent>(entityNum, Components_e::COLOR_VERTEX_COMPONENT);
     assert(colorComp);
-    colorComp->m_vertex.resize(4);
-    std::get<0>(colorComp->m_vertex[0]) = 0.1f;
-    std::get<1>(colorComp->m_vertex[0]) = 0.2f;
-    std::get<2>(colorComp->m_vertex[0]) = 0.3f;
-    std::get<0>(colorComp->m_vertex[1]) = 1.0f;
-    std::get<1>(colorComp->m_vertex[1]) = 0.8f;
-    std::get<2>(colorComp->m_vertex[1]) = 0.1f;
-    std::get<0>(colorComp->m_vertex[2]) = 0.3f;
-    std::get<1>(colorComp->m_vertex[2]) = 0.9f;
-    std::get<2>(colorComp->m_vertex[2]) = 0.8f;
-    std::get<0>(colorComp->m_vertex[3]) = 0.6f;
-    std::get<1>(colorComp->m_vertex[3]) = 0.5f;
-    std::get<2>(colorComp->m_vertex[3]) = 0.1f;
+    colorComp->m_vertex.reserve(4);
+    colorComp->m_vertex.emplace_back(0.1f, 0.2f, 0.3f);
+    colorComp->m_vertex.emplace_back(1.0f, 0.8f, 0.1f);
+    colorComp->m_vertex.emplace_back(0.3f, 0.9f, 0.8f);
+    colorComp->m_vertex.emplace_back(0.6f, 0.5f, 0.1f);
 }
 
 //===================================================================
@@ -288,32 +276,20 @@ void MainEngine::confCeilingComponents(uint32_t entityNum)
     PositionVertexComponent *posComp = m_ecsManager.getComponentManager().
             searchComponentByType<PositionVertexComponent>(entityNum, Components_e::POSITION_VERTEX_COMPONENT);
     assert(posComp);
-    posComp->m_vertex.resize(4);
-    posComp->m_vertex[0].first  = -1.0f;
-    posComp->m_vertex[0].second = 1.0f;
-    posComp->m_vertex[1].first  = 1.0f;
-    posComp->m_vertex[1].second = 1.0f;
-    posComp->m_vertex[2].first  = 1.0f;
-    posComp->m_vertex[2].second = 0.0f;
-    posComp->m_vertex[3].first  = -1.0f;
-    posComp->m_vertex[3].second = 0.0f;
+    posComp->m_vertex.reserve(4);
+    posComp->m_vertex.emplace_back(-1.0f, 1.0f);
+    posComp->m_vertex.emplace_back(1.0f, 1.0f);
+    posComp->m_vertex.emplace_back(1.0f, 0.0f);
+    posComp->m_vertex.emplace_back(-1.0f, 0.0f);
 
     ColorVertexComponent *colorComp = m_ecsManager.getComponentManager().
             searchComponentByType<ColorVertexComponent>(entityNum, Components_e::COLOR_VERTEX_COMPONENT);
     assert(colorComp);
-    colorComp->m_vertex.resize(4);
-    std::get<0>(colorComp->m_vertex[0]) = 0.5f;
-    std::get<1>(colorComp->m_vertex[0]) = 0.5f;
-    std::get<2>(colorComp->m_vertex[0]) = 0.5f;
-    std::get<0>(colorComp->m_vertex[1]) = 0.0f;
-    std::get<1>(colorComp->m_vertex[1]) = 0.5f;
-    std::get<2>(colorComp->m_vertex[1]) = 0.5f;
-    std::get<0>(colorComp->m_vertex[2]) = 0.5f;
-    std::get<1>(colorComp->m_vertex[2]) = 0.5f;
-    std::get<2>(colorComp->m_vertex[2]) = 0.0f;
-    std::get<0>(colorComp->m_vertex[3]) = 0.5f;
-    std::get<1>(colorComp->m_vertex[3]) = 0.0f;
-    std::get<2>(colorComp->m_vertex[3]) = 0.5f;
+    colorComp->m_vertex.reserve(4);
+    colorComp->m_vertex.emplace_back(0.5f,0.5f,0.5f);
+    colorComp->m_vertex.emplace_back(0.0f,0.5f,0.5f);
+    colorComp->m_vertex.emplace_back(0.5f,0.5f,0.0f);
+    colorComp->m_vertex.emplace_back(0.5f,0.0f,0.5f);
 }
 
 //===================================================================

@@ -31,10 +31,31 @@ void MapDisplaySystem::setShader(Shader &shader)
 void MapDisplaySystem::execSystem()
 {
     System::execSystem();
-//    confEntity();
+    confEntity();
     fillVertexFromEntities();
     drawVertex();
     drawPlayerOnMap();
+}
+
+//===================================================================
+void MapDisplaySystem::confEntity()
+{
+    for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
+    {
+//        PositionVertexComponent *posComp = stairwayToComponentManager().
+//                searchComponentByType<PositionVertexComponent>(mVectNumEntity[i],
+//                                                               Components_e::POSITION_VERTEX_COMPONENT);
+//        //TEST
+//        posComp->m_vertex.reserve(4);
+//        posComp->m_vertex[0].first  = -1.0f;
+//        posComp->m_vertex[0].second = 0.0f;
+//        posComp->m_vertex[1].first  = 1.0f;
+//        posComp->m_vertex[1].second = 0.0f;
+//        posComp->m_vertex[2].first  = 1.0f;
+//        posComp->m_vertex[2].second = -1.0f;
+//        posComp->m_vertex[3].first  = -1.0f;
+//        posComp->m_vertex[3].second = -1.0f;
+    }
 }
 
 //===================================================================
@@ -48,10 +69,15 @@ void MapDisplaySystem::fillVertexFromEntities()
                                                                Components_e::POSITION_VERTEX_COMPONENT);
         //TEST
         posComp->m_vertex.resize(4);
+//        posComp->m_vertex.emplace_back(-1.0f, 0.0f);
+//        posComp->m_vertex.emplace_back(1.0f, 0.0f);
+//        posComp->m_vertex.emplace_back(1.0f, -1.0f);
+//        posComp->m_vertex.emplace_back(-1.0f, -1.0f);
         posComp->m_vertex[0].first  = -1.0f;
         posComp->m_vertex[0].second = 0.0f;
         posComp->m_vertex[1].first  = 1.0f;
         posComp->m_vertex[1].second = 0.0f;
+
         posComp->m_vertex[2].first  = 1.0f;
         posComp->m_vertex[2].second = -1.0f;
         posComp->m_vertex[3].first  = -1.0f;
