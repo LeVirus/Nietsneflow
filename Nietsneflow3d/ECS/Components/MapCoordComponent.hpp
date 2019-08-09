@@ -11,7 +11,7 @@ struct MapCoordComponent : public ecs::Component
 {
     MapCoordComponent()
     {
-        muiTypeComponent = Components_e::MAP_POSITION_COMPONENT;
+        muiTypeComponent = Components_e::MAP_COORD_COMPONENT;
     }
     pairUint_t m_coord;
     virtual ~MapCoordComponent() = default;

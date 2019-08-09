@@ -1,10 +1,11 @@
 #include "Level.hpp"
 #include "constants.hpp"
-#include <ECS/Components/MapPositionComponent.hpp>
+#include <ECS/Components/MapCoordComponent.hpp>
 #include <ECS/Components/MoveableComponent.hpp>
 #include <iostream>
 
 float Level::m_rangeView;
+pairUI_t Level::m_size;
 
 //===================================================================
 Level::Level()
@@ -137,8 +138,15 @@ void Level::display()
 //===================================================================
 pairFloat_t Level::getAbsolutePosition(const pairUI_t &coord)
 {
-    return {float(coord.first + 0.5f) * LEVEL_TILE_SIZE,
-                float(coord.second + 0.5f) * LEVEL_TILE_SIZE};
+    return {float(coord.first + 0.5f) * LEVEL_TILE_SIZE_PX,
+                float(coord.second + 0.5f) * LEVEL_TILE_SIZE_PX};
+}
+
+//===================================================================
+pairUI_t Level::getLevelCoord(const pairFloat_t &position)
+{
+    return {uint32_t(position.first / LEVEL_TILE_SIZE_PX),
+                uint32_t(position.second / LEVEL_TILE_SIZE_PX)};
 }
 
 //===================================================================

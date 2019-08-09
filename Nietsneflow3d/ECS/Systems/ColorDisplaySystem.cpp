@@ -17,7 +17,7 @@ void ColorDisplaySystem::setUsedComponents()
     bAddComponentToSystem(Components_e::COLOR_VERTEX_COMPONENT);
     bAddComponentToSystem(Components_e::POSITION_VERTEX_COMPONENT);
     bAddExcludeComponentToSystem(Components_e::SPRITE_TEXTURE_COMPONENT);
-    bAddExcludeComponentToSystem(Components_e::MAP_POSITION_COMPONENT);
+    bAddExcludeComponentToSystem(Components_e::MAP_COORD_COMPONENT);
 }
 
 //===================================================================

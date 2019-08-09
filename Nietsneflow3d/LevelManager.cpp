@@ -83,8 +83,9 @@ void LevelManager::loadGroundAndCeilingData(const INIReader &reader)
 void LevelManager::loadLevelData(const INIReader &reader)
 {
      pairUI_t levelSize;
-     levelSize.first = reader.GetInteger("Level", "weight", 0);
-     levelSize.second = reader.GetInteger("Level", "height", 0);
+     //ERROR ON LOAD
+     levelSize.first = reader.GetInteger("Level", "weight", 10);
+     levelSize.second = reader.GetInteger("Level", "height", 10);
      m_level.setLevelSize(levelSize);
 }
 

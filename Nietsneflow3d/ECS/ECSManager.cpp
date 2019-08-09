@@ -2,7 +2,7 @@
 #include <ECS/Components/PositionVertexComponent.hpp>
 #include <ECS/Components/SpriteTextureComponent.hpp>
 #include <ECS/Components/ColorVertexComponent.hpp>
-#include <ECS/Components/MapPositionComponent.hpp>
+#include <ECS/Components/MapCoordComponent.hpp>
 #include <ECS/Components/StaticElementComponent.hpp>
 #include <ECS/Components/MoveableComponent.hpp>
 #include <ECS/Systems/ColorDisplaySystem.hpp>
@@ -85,7 +85,7 @@ void ECSManager::syncComponentsFromEntities(uint32_t numEntity,
                         std::make_unique<SpriteTextureComponent>());
         }
             break;
-        case Components_e::MAP_POSITION_COMPONENT:
+        case Components_e::MAP_COORD_COMPONENT:
         {
             m_componentManager->instanciateExternComponent(
                         numEntity,

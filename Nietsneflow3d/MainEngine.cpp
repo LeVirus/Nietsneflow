@@ -1,7 +1,7 @@
 #include "MainEngine.hpp"
 #include <ECS/Components/PositionVertexComponent.hpp>
 #include <ECS/Components/ColorVertexComponent.hpp>
-#include <ECS/Components/MapPositionComponent.hpp>
+#include <ECS/Components/MapCoordComponent.hpp>
 #include <ECS/Components/SpriteTextureComponent.hpp>
 #include <ECS/Components/StaticElementComponent.hpp>
 #include <ECS/Components/MoveableComponent.hpp>
@@ -27,6 +27,7 @@ void MainEngine::init()
 //===================================================================
 void MainEngine::launchLoop()
 {
+    m_graphicEngine.getMapDisplaySystem().confLevelData();
     do
     {
         m_graphicEngine.runIteration();
@@ -106,7 +107,7 @@ uint32_t MainEngine::createWallEntity()
     std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComponents;
     bitsetComponents[Components_e::POSITION_VERTEX_COMPONENT] = true;
     bitsetComponents[Components_e::SPRITE_TEXTURE_COMPONENT] = true;
-    bitsetComponents[Components_e::MAP_POSITION_COMPONENT] = true;
+    bitsetComponents[Components_e::MAP_COORD_COMPONENT] = true;
     return m_ecsManager.addEntity(bitsetComponents);
 }
 
@@ -116,7 +117,7 @@ uint32_t MainEngine::createStaticEntity()
     std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComponents;
     bitsetComponents[Components_e::POSITION_VERTEX_COMPONENT] = true;
     bitsetComponents[Components_e::SPRITE_TEXTURE_COMPONENT] = true;
-    bitsetComponents[Components_e::MAP_POSITION_COMPONENT] = true;
+    bitsetComponents[Components_e::MAP_COORD_COMPONENT] = true;
     bitsetComponents[Components_e::STATIC_ELEMENT_COMPONENT] = true;
     return m_ecsManager.addEntity(bitsetComponents);
 }
@@ -131,7 +132,7 @@ void MainEngine::confBaseMapComponent(uint32_t entityNum,
     assert(spriteComp);
     spriteComp->m_spriteData = &memSpriteData;
     MapCoordComponent *mapComp = m_ecsManager.getComponentManager().
-            searchComponentByType<MapCoordComponent>(entityNum, Components_e::MAP_POSITION_COMPONENT);
+            searchComponentByType<MapCoordComponent>(entityNum, Components_e::MAP_COORD_COMPONENT);
     assert(mapComp);
     mapComp->m_coord = coordLevel;
 }
@@ -155,7 +156,7 @@ void MainEngine::loadPlayerEntity(const Level &level)
 {
     std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComponents;
     bitsetComponents[Components_e::POSITION_VERTEX_COMPONENT] = true;
-    bitsetComponents[Components_e::MAP_POSITION_COMPONENT] = true;
+    bitsetComponents[Components_e::MAP_COORD_COMPONENT] = true;
     bitsetComponents[Components_e::MOVEABLE_COMPONENT] = true;
     bitsetComponents[Components_e::COLOR_VERTEX_COMPONENT] = true;
     uint32_t entityNum = m_ecsManager.addEntity(bitsetComponents);
@@ -172,7 +173,7 @@ void MainEngine::confPlayerEntity(uint32_t entityNum, const Level &level)
                                                            Components_e::POSITION_VERTEX_COMPONENT);
     MapCoordComponent *map = m_ecsManager.getComponentManager().
             searchComponentByType<MapCoordComponent>(entityNum,
-                                                     Components_e::MAP_POSITION_COMPONENT);
+                                                     Components_e::MAP_COORD_COMPONENT);
     MoveableComponent *move = m_ecsManager.getComponentManager().
             searchComponentByType<MoveableComponent>(entityNum,
                                                      Components_e::MOVEABLE_COMPONENT);

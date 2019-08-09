@@ -9,7 +9,7 @@ enum Components_e
     POSITION_VERTEX_COMPONENT = 0,
     SPRITE_TEXTURE_COMPONENT,
     COLOR_VERTEX_COMPONENT,
-    MAP_POSITION_COMPONENT,
+    MAP_COORD_COMPONENT,
     STATIC_ELEMENT_COMPONENT,
     MOVEABLE_COMPONENT,
     TOTAL_COMPONENTS
@@ -72,7 +72,9 @@ enum BaseShapeType_e
     NONE
 };
 
-const uint32_t LEVEL_TILE_SIZE = 30;
+const float LEVEL_TILE_SIZE_PX = 30.0f;
+const float MAP_CENTER_GL = 0.75f;
+const float MAP_SIZE_GL = 0.50f;
 
 const std::string SHADER_DIR_STR = "../Nietsneflow3d/Ressources/Shader/";
 const std::string LEVEL_RESSOURCES_DIR_STR = "../Nietsneflow3d/Ressources/";

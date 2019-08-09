@@ -57,7 +57,8 @@ struct EnemyData
 class Level
 {
 private:
-    pairUI_t m_size, m_playerDeparture;
+    pairUI_t m_playerDeparture;
+    static pairUI_t m_size;
     Direction_e m_playerDepartureDirection;
     std::vector<StaticLevelElementData> m_groundElement,
                                     m_ceilingElement,
@@ -80,6 +81,11 @@ public:
         return m_playerDeparture;
     }
 
+    static inline pairUI_t &getSize()
+    {
+        return m_size;
+    }
+
     inline Direction_e getPlayerDepartureDirection()const
     {
         return m_playerDepartureDirection;
@@ -100,7 +106,7 @@ public:
         return m_objectElement;
     }
 
-    inline void setLevelSize(const pairFloat_t &pairLevelSize)
+    static inline void setLevelSize(const pairFloat_t &pairLevelSize)
     {
         m_size = pairLevelSize;
     }
@@ -138,13 +144,13 @@ public:
 
     static pairFloat_t getAbsolutePosition(const pairUI_t &coord);
 
+    static pairUI_t getLevelCoord(const pairFloat_t &position);
+
     /**
      * @brief updateVisualOrientation Modify vertex position relative to orientation.
      */
     static void updateOrientation(const MoveableComponent &moveComp,
                                   PositionVertexComponent &posComp);
 };
-
-//float Level::m_rangeView(100.0f);
 
 #endif // LEVEL_H
