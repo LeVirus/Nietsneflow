@@ -1,4 +1,5 @@
 #include "MainEngine.hpp"
+#include "constants.hpp"
 #include <ECS/Components/PositionVertexComponent.hpp>
 #include <ECS/Components/ColorVertexComponent.hpp>
 #include <ECS/Components/MapCoordComponent.hpp>
@@ -205,9 +206,12 @@ void MainEngine::confPlayerEntity(uint32_t entityNum, const Level &level)
     Level::updateOrientation(*move, *pos);//A implémenter
     //TMP
     pos->m_vertex.reserve(3);
-    pos->m_vertex.emplace_back(0.75f,-0.70f);//FORWARD
-    pos->m_vertex.emplace_back(0.70f,-0.80f);
-    pos->m_vertex.emplace_back(0.80f,-0.80f);
+    pos->m_vertex.emplace_back(MAP_LOCAL_CENTER_X_GL,
+                               MAP_LOCAL_CENTER_Y_GL + 0.03f);//FORWARD
+    pos->m_vertex.emplace_back(MAP_LOCAL_CENTER_X_GL - 0.015f,
+                               MAP_LOCAL_CENTER_Y_GL - 0.03f);
+    pos->m_vertex.emplace_back(MAP_LOCAL_CENTER_X_GL + 0.015f,
+                               MAP_LOCAL_CENTER_Y_GL - 0.03f);
     //TMP
 
     color->m_vertex.reserve(3);

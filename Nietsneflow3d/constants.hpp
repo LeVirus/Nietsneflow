@@ -4,6 +4,9 @@
 #include <string>
 #include <map>
 
+using pairUI_t = std::pair<uint32_t, uint32_t>;
+using pairFloat_t = std::pair<float, float>;
+
 enum Components_e
 {
     POSITION_VERTEX_COMPONENT = 0,

@@ -20,6 +20,7 @@ GraphicEngine::GraphicEngine()
 void GraphicEngine::confSystems()
 {
     setShaderToLocalSystems();
+    m_mapSystem->setVectTextures(m_vectTexture);
 }
 
 //===================================================================

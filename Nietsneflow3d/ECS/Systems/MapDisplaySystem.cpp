@@ -1,5 +1,6 @@
 #include "MapDisplaySystem.hpp"
 #include "Level.hpp"
+#include "PictureData.hpp"
 #include <ECS/Components/PositionVertexComponent.hpp>
 #include <ECS/Components/MapCoordComponent.hpp>
 #include <ECS/Components/SpriteTextureComponent.hpp>
@@ -55,7 +56,7 @@ void MapDisplaySystem::confVertexEntities()
                                                      Components_e::MAP_COORD_COMPONENT);
     assert(playerMapCoordComp);
     pairFloat_t playerPos = playerMapCoordComp->m_absoluteMapPositionPX;
-    pairUint_t max, min;
+    pairUI_t max, min;
     getMapDisplayLimit(playerPos, min, max);
     m_entitiesToDisplay.clear();
     m_entitiesToDisplay.reserve(20);
@@ -148,6 +149,7 @@ void MapDisplaySystem::fillVertexFromEntities()
                                                             Components_e::SPRITE_TEXTURE_COMPONENT);
         assert(posComp);
         assert(spriteComp);
+//        m_ptrVectTexture->operator[](spriteComp->m_spriteData->m_textureNum).bind();
         m_verticesData.loadVertexTextureComponent(*posComp, *spriteComp);
     }
 }

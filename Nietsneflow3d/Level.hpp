@@ -6,9 +6,7 @@
 #include <vector>
 #include <constants.hpp>
 
-using pairUI_t = std::pair<uint32_t, uint32_t>;
 using vectPairUI_t = std::vector<pairUI_t>;
-using pairFloat_t = std::pair<float, float>;
 
 struct MoveableComponent;
 struct PositionVertexComponent;

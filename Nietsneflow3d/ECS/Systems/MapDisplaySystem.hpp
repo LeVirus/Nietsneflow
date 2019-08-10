@@ -6,9 +6,7 @@
 #include <OpenGLUtils/Shader.hpp>
 #include <OpenGLUtils/glheaders.hpp>
 #include <OpenGLUtils/VerticesData.hpp>
-
-using pairUI_t = std::pair<uint32_t, uint32_t>;
-using pairFloat_t = std::pair<float, float>;
+#include <OpenGLUtils/Texture.hpp>
 
 struct MapCoordComponent;
 
@@ -21,6 +19,7 @@ private:
     std::vector<uint32_t> m_entitiesToDisplay;
     float m_levelSizePX, m_localLevelSizePX;
     float m_tileSizeGL;
+    std::vector<Texture> *m_ptrVectTexture = nullptr;
 private:
     void setUsedComponents();
     void fillVertexFromEntities();
@@ -37,6 +36,11 @@ public:
     inline void setPlayerEntityNum(uint32_t playerNum)
     {
         m_playerNum = playerNum;
+    }
+
+    inline void setVectTextures(std::vector<Texture> &vectTexture)
+    {
+        m_ptrVectTexture = &vectTexture;
     }
 
     void execSystem()override;

@@ -2,10 +2,8 @@
 #define MAINENGINE_H
 
 #include <GraphicEngine.hpp>
+#include <PhysicalEngine.hpp>
 #include <ECS/ECSManager.hpp>
-
-using pairUI_t = std::pair<uint32_t, uint32_t>;
-using pairFloat_t = std::pair<float, float>;
 
 class LevelManager;
 class Level;
@@ -14,6 +12,7 @@ class MainEngine
 {
 private:
     GraphicEngine m_graphicEngine;
+    PhysicalEngine m_physicalEngine;
     ECSManager m_ecsManager;
 private:
     void loadGroundAndCeilingEntities(const GroundCeilingData &groundData,
