@@ -18,14 +18,14 @@ private:
     Shader *m_shader;
     VerticesData m_verticesData;
     std::vector<uint32_t> m_entitiesToDisplay;
-    float m_levelSizePX;
+    float m_levelSizePX, m_localLevelSizePX;
     float m_halfTileSizeGL;
 private:
     void setUsedComponents();
     void fillVertexFromEntities();
     void drawVertex();
     void drawPlayerOnMap();
-    void confEntity();
+    void confVertexEntities();
     void setVertexStaticElementPosition(uint32_t entityNum);
     bool checkBoundEntityMap(const MapCoordComponent &mapCoordComp, const pairUI_t &minBound, const pairUI_t &maxBound);
 public:
@@ -40,8 +40,9 @@ public:
     void setShader(Shader &shader);
 };
 
+//Adapt to GL context
 template <typename T>
 std::pair<T,T> operator-(const std::pair<T,T> & l,const std::pair<T,T> & r) {
-    return {l.first - r.first,l.second - r.second};
+    return {l.first - r.first,r.second - l.second};
 }
 #endif // MAPDISPLAYSYSTEM_H

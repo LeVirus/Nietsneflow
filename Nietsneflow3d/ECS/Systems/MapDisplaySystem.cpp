@@ -18,8 +18,9 @@ MapDisplaySystem::MapDisplaySystem():m_verticesData(Shader_e::TEXTURE_S)
 //===================================================================
 void MapDisplaySystem::confLevelData()
 {
+    m_localLevelSizePX = Level::getRangeView() * 2;
     m_levelSizePX = Level::getSize().first * LEVEL_TILE_SIZE_PX;
-    m_halfTileSizeGL = (LEVEL_TILE_SIZE_PX / 2) * MAP_SIZE_GL / m_levelSizePX;
+    m_halfTileSizeGL = ((LEVEL_TILE_SIZE_PX / 2) * MAP_LOCAL_SIZE_GL) / (Level::getRangeView() * 2);
 }
 
 //===================================================================
@@ -40,14 +41,14 @@ void MapDisplaySystem::setShader(Shader &shader)
 void MapDisplaySystem::execSystem()
 {
     System::execSystem();
-    confEntity();
+    confVertexEntities();
     fillVertexFromEntities();
     drawVertex();
     drawPlayerOnMap();
 }
 
 //===================================================================
-void MapDisplaySystem::confEntity()
+void MapDisplaySystem::confVertexEntities()
 {
     MoveableComponent *playerMoveableComp = stairwayToComponentManager().
             searchComponentByType<MoveableComponent>(m_playerNum,
@@ -72,10 +73,8 @@ void MapDisplaySystem::confEntity()
                 searchComponentByType<MapCoordComponent>(mVectNumEntity[i],
                                                                Components_e::MAP_COORD_COMPONENT);
         assert(mapComp);
-//        if(checkBoundEntityMap(*mapComp, min, max))
-//        {
-        //DEBUG
-//        if(i == 9){
+        if(checkBoundEntityMap(*mapComp, min, max))
+        {
             m_entitiesToDisplay.emplace_back(mVectNumEntity[i]);
             PositionVertexComponent *posComp = stairwayToComponentManager().
                     searchComponentByType<PositionVertexComponent>(mVectNumEntity[i],
@@ -83,46 +82,31 @@ void MapDisplaySystem::confEntity()
             assert(posComp);
             pairFloat_t absolutePositionElement =
                     Level::getAbsolutePosition(mapComp->m_coord);
-            std::cerr << absolutePositionElement.first << " dddzze " << mapComp->m_coord.first << "\n";
-            std::cerr << absolutePositionElement.second << " dddzze " << mapComp->m_coord.second << "\n\n";
 
-            pairFloat_t diffPos = playerMoveableComp->m_absoluteMapPosition -
-                    absolutePositionElement;
-            std::cerr << diffPos.first << " aaaa " <<playerMoveableComp->m_absoluteMapPosition.first << "\n";
-            std::cerr << diffPos.second << " aaaa " << playerMoveableComp->m_absoluteMapPosition.second << "\n\n";
-            pairFloat_t relativePosCenterGL = {diffPos.first * MAP_SIZE_GL / m_levelSizePX,
-                                              diffPos.second * MAP_SIZE_GL / m_levelSizePX};
+            pairFloat_t diffPosPX = absolutePositionElement -
+                    playerMoveableComp->m_absoluteMapPosition;
+            pairFloat_t relativePosMapGL = {diffPosPX.first * MAP_LOCAL_SIZE_GL / m_localLevelSizePX,
+                                              diffPosPX.second * MAP_LOCAL_SIZE_GL / m_localLevelSizePX};
+
             //CONSIDER THAT MAP X AND Y ARE THE SAME
             if(posComp->m_vertex.empty())
             {
                 posComp->m_vertex.resize(4);
             }
-            posComp->m_vertex[0] = {relativePosCenterGL.first - m_halfTileSizeGL,
-                                         relativePosCenterGL.second + m_halfTileSizeGL};
-            posComp->m_vertex[1] = {relativePosCenterGL.first + m_halfTileSizeGL,
-                                         relativePosCenterGL.second + m_halfTileSizeGL};
-            posComp->m_vertex[2] = {relativePosCenterGL.first + m_halfTileSizeGL,
-                                         relativePosCenterGL.second - m_halfTileSizeGL};
-            posComp->m_vertex[3] = {relativePosCenterGL.first - m_halfTileSizeGL,
-                                         relativePosCenterGL.second - m_halfTileSizeGL};
+            posComp->m_vertex[0] = {MAP_LOCAL_CENTER_X_GL + relativePosMapGL.first - m_halfTileSizeGL,
+                                         MAP_LOCAL_CENTER_Y_GL + relativePosMapGL.second + m_halfTileSizeGL};
+            posComp->m_vertex[1] = {MAP_LOCAL_CENTER_X_GL + relativePosMapGL.first + m_halfTileSizeGL,
+                                         MAP_LOCAL_CENTER_Y_GL + relativePosMapGL.second + m_halfTileSizeGL};
+            posComp->m_vertex[2] = {MAP_LOCAL_CENTER_X_GL + relativePosMapGL.first + m_halfTileSizeGL,
+                                         MAP_LOCAL_CENTER_Y_GL + relativePosMapGL.second - m_halfTileSizeGL};
+            posComp->m_vertex[3] = {MAP_LOCAL_CENTER_X_GL + relativePosMapGL.first - m_halfTileSizeGL,
+                                         MAP_LOCAL_CENTER_Y_GL + relativePosMapGL.second - m_halfTileSizeGL};
 
-            //TEST
-//            posComp->m_vertex[0] = {0.5f, -0.5};
-//            posComp->m_vertex[1] = {0.65f,-0.5};
-//            posComp->m_vertex[2] = {0.65f,-0.6};
-//            posComp->m_vertex[3] = {0.5f, -0.6};
+            std::cerr << mapComp->m_coord.first << " coord " << mapComp->m_coord.second << "\n" ;
 
-            std::cerr << relativePosCenterGL.first << "ddd " << m_halfTileSizeGL << "\n";
+            std::cerr << relativePosMapGL.first << " ddd " << m_halfTileSizeGL << "\n" ;
 
-            std::cerr << posComp->m_vertex[0].first << " " <<
-                         posComp->m_vertex[0].second << "\n";
-            std::cerr << posComp->m_vertex[1].first << " " <<
-                         posComp->m_vertex[1].second << "\n";
-            std::cerr << posComp->m_vertex[2].first << " " <<
-                         posComp->m_vertex[2].second << "\n";
-            std::cerr << posComp->m_vertex[3].first << " " <<
-                         posComp->m_vertex[3].second << "\n\n";
-//        }
+        }
     }
 }
 

@@ -73,8 +73,9 @@ enum BaseShapeType_e
 };
 
 const float LEVEL_TILE_SIZE_PX = 30.0f;
-const float MAP_CENTER_GL = 0.75f;
-const float MAP_SIZE_GL = 0.50f;
+const float MAP_LOCAL_CENTER_X_GL = 0.75f;
+const float MAP_LOCAL_CENTER_Y_GL = -0.75f;
+const float MAP_LOCAL_SIZE_GL = 0.50f;
 
 const std::string SHADER_DIR_STR = "../Nietsneflow3d/Ressources/Shader/";
 const std::string LEVEL_RESSOURCES_DIR_STR = "../Nietsneflow3d/Ressources/";

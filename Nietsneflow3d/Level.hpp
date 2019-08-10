@@ -66,7 +66,7 @@ private:
     std::vector<WallData> m_wallData;
     std::vector<DoorData> m_doorData;
     std::vector<EnemyData> m_enemyData;
-    static float m_rangeView;
+    static float m_rangeViewPX;
 public:
     Level();
     void setPlayerInitData(const pairFloat_t &pairInitPlayerPos,
@@ -139,7 +139,7 @@ public:
 
     inline static float getRangeView()
     {
-        return Level::m_rangeView;
+        return Level::m_rangeViewPX;
     }
 
     static pairFloat_t getAbsolutePosition(const pairUI_t &coord);

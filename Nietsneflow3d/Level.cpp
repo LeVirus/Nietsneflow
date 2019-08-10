@@ -4,13 +4,13 @@
 #include <ECS/Components/MoveableComponent.hpp>
 #include <iostream>
 
-float Level::m_rangeView;
+float Level::m_rangeViewPX;
 pairUI_t Level::m_size;
 
 //===================================================================
 Level::Level()
 {
-    m_rangeView = 100.0f;
+    m_rangeViewPX = 100.0f;
 }
 
 //===================================================================
