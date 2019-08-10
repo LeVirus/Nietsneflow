@@ -14,7 +14,8 @@ Level::Level()
 }
 
 //===================================================================
-void Level::setPlayerInitData(const pairFloat_t &pairInitPlayerPos, Direction_e playerDir)
+void Level::setPlayerInitData(const pairFloat_t &pairInitPlayerPos,
+                              Direction_e playerDir)
 {
     m_playerDeparture = pairInitPlayerPos;
     m_playerDepartureDirection = playerDir;
@@ -138,8 +139,8 @@ void Level::display()
 //===================================================================
 pairFloat_t Level::getAbsolutePosition(const pairUI_t &coord)
 {
-    return {float(coord.first + 0.5f) * LEVEL_TILE_SIZE_PX,
-                float(coord.second + 0.5f) * LEVEL_TILE_SIZE_PX};
+    return {float(coord.first) * LEVEL_TILE_SIZE_PX,
+                float(coord.second) * LEVEL_TILE_SIZE_PX};
 }
 
 //===================================================================

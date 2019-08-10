@@ -8,6 +8,7 @@
 #include <OpenGLUtils/VerticesData.hpp>
 
 using pairUI_t = std::pair<uint32_t, uint32_t>;
+using pairFloat_t = std::pair<float, float>;
 
 struct MapCoordComponent;
 
@@ -19,15 +20,17 @@ private:
     VerticesData m_verticesData;
     std::vector<uint32_t> m_entitiesToDisplay;
     float m_levelSizePX, m_localLevelSizePX;
-    float m_halfTileSizeGL;
+    float m_tileSizeGL;
 private:
     void setUsedComponents();
     void fillVertexFromEntities();
     void drawVertex();
     void drawPlayerOnMap();
     void confVertexEntities();
+    void confVertexElement(const pairFloat_t &glPosition, uint32_t entityNum);
     void setVertexStaticElementPosition(uint32_t entityNum);
     bool checkBoundEntityMap(const MapCoordComponent &mapCoordComp, const pairUI_t &minBound, const pairUI_t &maxBound);
+    void getMapDisplayLimit(pairFloat_t &playerPos, pairUI_t &min, pairUI_t &max);
 public:
     MapDisplaySystem();
     void confLevelData();

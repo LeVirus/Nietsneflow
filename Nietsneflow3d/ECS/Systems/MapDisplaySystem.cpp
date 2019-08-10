@@ -20,7 +20,7 @@ void MapDisplaySystem::confLevelData()
 {
     m_localLevelSizePX = Level::getRangeView() * 2;
     m_levelSizePX = Level::getSize().first * LEVEL_TILE_SIZE_PX;
-    m_halfTileSizeGL = ((LEVEL_TILE_SIZE_PX / 2) * MAP_LOCAL_SIZE_GL) / (Level::getRangeView() * 2);
+    m_tileSizeGL = (LEVEL_TILE_SIZE_PX * MAP_LOCAL_SIZE_GL) / m_localLevelSizePX;
 }
 
 //===================================================================
@@ -50,64 +50,70 @@ void MapDisplaySystem::execSystem()
 //===================================================================
 void MapDisplaySystem::confVertexEntities()
 {
-    MoveableComponent *playerMoveableComp = stairwayToComponentManager().
-            searchComponentByType<MoveableComponent>(m_playerNum,
-                                                           Components_e::MOVEABLE_COMPONENT);
-    assert(playerMoveableComp);
-    //getBound
-    float rangeView = Level::getRangeView();
-    pairFloat_t playerPos = playerMoveableComp->m_absoluteMapPosition;
-    playerPos.first += rangeView;
-    playerPos.second += rangeView;
-    pairUint_t max = Level::getLevelCoord(playerPos);
-    playerPos.first -= rangeView * 2;
-    playerPos.second -= rangeView * 2;
-    pairUint_t min = Level::getLevelCoord(playerPos);
-
+    MapCoordComponent *playerMapCoordComp = stairwayToComponentManager().
+            searchComponentByType<MapCoordComponent>(m_playerNum,
+                                                     Components_e::MAP_COORD_COMPONENT);
+    assert(playerMapCoordComp);
+    pairFloat_t playerPos = playerMapCoordComp->m_absoluteMapPositionPX;
+    pairUint_t max, min;
+    getMapDisplayLimit(playerPos, min, max);
     m_entitiesToDisplay.clear();
     m_entitiesToDisplay.reserve(20);
     for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
     {
-
         MapCoordComponent *mapComp = stairwayToComponentManager().
                 searchComponentByType<MapCoordComponent>(mVectNumEntity[i],
-                                                               Components_e::MAP_COORD_COMPONENT);
+                                                         Components_e::MAP_COORD_COMPONENT);
         assert(mapComp);
         if(checkBoundEntityMap(*mapComp, min, max))
         {
             m_entitiesToDisplay.emplace_back(mVectNumEntity[i]);
-            PositionVertexComponent *posComp = stairwayToComponentManager().
-                    searchComponentByType<PositionVertexComponent>(mVectNumEntity[i],
-                                                                   Components_e::POSITION_VERTEX_COMPONENT);
-            assert(posComp);
-            pairFloat_t absolutePositionElement =
-                    Level::getAbsolutePosition(mapComp->m_coord);
 
-            pairFloat_t diffPosPX = absolutePositionElement -
-                    playerMoveableComp->m_absoluteMapPosition;
+            pairFloat_t diffPosPX = mapComp->m_absoluteMapPositionPX -
+                    playerMapCoordComp->m_absoluteMapPositionPX;
             pairFloat_t relativePosMapGL = {diffPosPX.first * MAP_LOCAL_SIZE_GL / m_localLevelSizePX,
-                                              diffPosPX.second * MAP_LOCAL_SIZE_GL / m_localLevelSizePX};
-
-            //CONSIDER THAT MAP X AND Y ARE THE SAME
-            if(posComp->m_vertex.empty())
-            {
-                posComp->m_vertex.resize(4);
-            }
-            posComp->m_vertex[0] = {MAP_LOCAL_CENTER_X_GL + relativePosMapGL.first - m_halfTileSizeGL,
-                                         MAP_LOCAL_CENTER_Y_GL + relativePosMapGL.second + m_halfTileSizeGL};
-            posComp->m_vertex[1] = {MAP_LOCAL_CENTER_X_GL + relativePosMapGL.first + m_halfTileSizeGL,
-                                         MAP_LOCAL_CENTER_Y_GL + relativePosMapGL.second + m_halfTileSizeGL};
-            posComp->m_vertex[2] = {MAP_LOCAL_CENTER_X_GL + relativePosMapGL.first + m_halfTileSizeGL,
-                                         MAP_LOCAL_CENTER_Y_GL + relativePosMapGL.second - m_halfTileSizeGL};
-            posComp->m_vertex[3] = {MAP_LOCAL_CENTER_X_GL + relativePosMapGL.first - m_halfTileSizeGL,
-                                         MAP_LOCAL_CENTER_Y_GL + relativePosMapGL.second - m_halfTileSizeGL};
-
-            std::cerr << mapComp->m_coord.first << " coord " << mapComp->m_coord.second << "\n" ;
-
-            std::cerr << relativePosMapGL.first << " ddd " << m_halfTileSizeGL << "\n" ;
+                                            diffPosPX.second * MAP_LOCAL_SIZE_GL / m_localLevelSizePX};
+            confVertexElement(relativePosMapGL, mVectNumEntity[i]);
 
         }
     }
+}
+
+//===================================================================
+void MapDisplaySystem::getMapDisplayLimit(pairFloat_t &playerPos,
+                                          pairUI_t &min, pairUI_t &max)
+{
+    //getBound
+    float rangeView = Level::getRangeView();
+    playerPos.first += rangeView;
+    playerPos.second += rangeView;
+    max = Level::getLevelCoord(playerPos);
+    playerPos.first -= rangeView * 2;
+    playerPos.second -= rangeView * 2;
+    min = Level::getLevelCoord(playerPos);
+}
+
+//===================================================================
+void MapDisplaySystem::confVertexElement(const pairFloat_t &glPosition,
+                                         uint32_t entityNum)
+{
+    PositionVertexComponent *posComp = stairwayToComponentManager().
+            searchComponentByType<PositionVertexComponent>(entityNum,
+                                                           Components_e::POSITION_VERTEX_COMPONENT);
+    assert(posComp);
+    //CONSIDER THAT MAP X AND Y ARE THE SAME
+    if(posComp->m_vertex.empty())
+    {
+        posComp->m_vertex.resize(4);
+    }
+    posComp->m_vertex[0] = {MAP_LOCAL_CENTER_X_GL + glPosition.first,
+                            MAP_LOCAL_CENTER_Y_GL + glPosition.second};
+    posComp->m_vertex[1] = {MAP_LOCAL_CENTER_X_GL + glPosition.first + m_tileSizeGL,
+                            MAP_LOCAL_CENTER_Y_GL + glPosition.second};
+    posComp->m_vertex[2] = {MAP_LOCAL_CENTER_X_GL + glPosition.first + m_tileSizeGL,
+                            MAP_LOCAL_CENTER_Y_GL + glPosition.second - m_tileSizeGL};
+    posComp->m_vertex[3] = {MAP_LOCAL_CENTER_X_GL + glPosition.first,
+                            MAP_LOCAL_CENTER_Y_GL + glPosition.second - m_tileSizeGL};
 }
 
 //===================================================================

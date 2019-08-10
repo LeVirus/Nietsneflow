@@ -135,6 +135,7 @@ void MainEngine::confBaseMapComponent(uint32_t entityNum,
             searchComponentByType<MapCoordComponent>(entityNum, Components_e::MAP_COORD_COMPONENT);
     assert(mapComp);
     mapComp->m_coord = coordLevel;
+    mapComp->m_absoluteMapPositionPX = Level::getAbsolutePosition(coordLevel);
 }
 
 //===================================================================
@@ -200,7 +201,7 @@ void MainEngine::confPlayerEntity(uint32_t entityNum, const Level &level)
         move->m_degreeOrientation = 270.0f;
         break;
     }
-    move->m_absoluteMapPosition = Level::getAbsolutePosition(map->m_coord);
+    map->m_absoluteMapPositionPX = Level::getAbsolutePosition(map->m_coord);
     Level::updateOrientation(*move, *pos);//A implémenter
     //TMP
     pos->m_vertex.reserve(3);

@@ -6,6 +6,7 @@
 #include <functional>
 
 using pairUint_t = std::pair<uint32_t, uint32_t>;
+using pairFloat_t = std::pair<float, float>;
 
 struct MapCoordComponent : public ecs::Component
 {
@@ -14,6 +15,7 @@ struct MapCoordComponent : public ecs::Component
         muiTypeComponent = Components_e::MAP_COORD_COMPONENT;
     }
     pairUint_t m_coord;
+    pairFloat_t m_absoluteMapPositionPX;
     virtual ~MapCoordComponent() = default;
 };
 

@@ -13,10 +13,8 @@ struct MoveableComponent : public ecs::Component
     {
         muiTypeComponent = Components_e::MOVEABLE_COMPONENT;
     }
-    pairFloat_t m_absoluteMapPosition;
     float m_degreeOrientation;
     virtual ~MoveableComponent() = default;
 };
 
 #endif // MOVEABLECOMPONENT_HPP
-
