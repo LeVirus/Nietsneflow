@@ -20,6 +20,7 @@ private:
     void confCeilingComponents(uint32_t entityNum);
     void confGroundComponents(uint32_t entityNum);
     void linkSystemsToGraphicEngine();
+    void linkSystemsToPhysicalEngine();
     void loadPlayerEntity(const Level &level);
     void confPlayerEntity(uint32_t entityNum, const Level &level);
     void loadWallEntities(const LevelManager &levelManager);

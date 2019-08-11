@@ -20,7 +20,8 @@ SOURCES += main.cpp \
     ECS/Systems/ColorDisplaySystem.cpp \
     OpenGLUtils/VerticesData.cpp \
     ECS/Systems/MapDisplaySystem.cpp \
-    PhysicalEngine.cpp
+    PhysicalEngine.cpp \
+    ECS/Systems/InputSystem.cpp
 
 HEADERS += \
     Game.hpp \
@@ -59,5 +60,7 @@ HEADERS += \
     ECS/Components/StaticElementComponent.hpp \
     ECS/Components/MoveableComponent.hpp \
     ECS/Components/MapCoordComponent.hpp \
-    PhysicalEngine.hpp
+    PhysicalEngine.hpp \
+    ECS/Systems/InputSystem.hpp \
+    ECS/Components/InputComponent.hpp
 

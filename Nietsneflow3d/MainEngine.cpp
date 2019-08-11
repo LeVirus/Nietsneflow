@@ -22,6 +22,7 @@ void MainEngine::init()
 {
     m_ecsManager.init();
     linkSystemsToGraphicEngine();
+    linkSystemsToPhysicalEngine();
     m_graphicEngine.confSystems();
 }
 
@@ -32,6 +33,7 @@ void MainEngine::launchLoop()
     do
     {
         m_graphicEngine.runIteration();
+        m_physicalEngine.runIteration();
     }while(!m_graphicEngine.windowShouldClose());
 }
 
@@ -161,6 +163,7 @@ void MainEngine::loadPlayerEntity(const Level &level)
     bitsetComponents[Components_e::MAP_COORD_COMPONENT] = true;
     bitsetComponents[Components_e::MOVEABLE_COMPONENT] = true;
     bitsetComponents[Components_e::COLOR_VERTEX_COMPONENT] = true;
+    bitsetComponents[Components_e::INPUT_COMPONENT] = true;
     uint32_t entityNum = m_ecsManager.addEntity(bitsetComponents);
     confPlayerEntity(entityNum, level);
     //notify player entity number
@@ -305,6 +308,14 @@ void MainEngine::linkSystemsToGraphicEngine()
             searchSystemByType<ColorDisplaySystem>(Systems_e::COLOR_DISPLAY_SYSTEM);
     MapDisplaySystem *map = m_ecsManager.getSystemManager().
             searchSystemByType<MapDisplaySystem>(Systems_e::MAP_DISPLAY_SYSTEM);
-
     m_graphicEngine.linkSystems(color, map);
+}
+
+//===================================================================
+void MainEngine::linkSystemsToPhysicalEngine()
+{
+    InputSystem *input = m_ecsManager.getSystemManager().
+            searchSystemByType<InputSystem>(Systems_e::INPUT_SYSTEM);
+    input->setGLWindow(m_graphicEngine.getGLWindow());
+    m_physicalEngine.linkSystems(input);
 }

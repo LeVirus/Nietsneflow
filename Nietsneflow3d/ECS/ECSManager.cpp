@@ -5,8 +5,10 @@
 #include <ECS/Components/MapCoordComponent.hpp>
 #include <ECS/Components/StaticElementComponent.hpp>
 #include <ECS/Components/MoveableComponent.hpp>
+#include <ECS/Components/InputComponent.hpp>
 #include <ECS/Systems/ColorDisplaySystem.hpp>
 #include <ECS/Systems/MapDisplaySystem.hpp>
+#include <ECS/Systems/InputSystem.hpp>
 #include <constants.hpp>
 #include <memory>
 #include <cassert>
@@ -30,6 +32,7 @@ void ECSManager::initSystems()
     assert(m_systemManager && "m_systemManager is null.");
     m_systemManager->bAddExternSystem(std::make_unique<ColorDisplaySystem>());
     m_systemManager->bAddExternSystem(std::make_unique<MapDisplaySystem>());
+    m_systemManager->bAddExternSystem(std::make_unique<InputSystem>());
 }
 
 
@@ -104,6 +107,13 @@ void ECSManager::syncComponentsFromEntities(uint32_t numEntity,
             m_componentManager->instanciateExternComponent(
                         numEntity,
                         std::make_unique<MoveableComponent>());
+        }
+            break;
+        case Components_e::INPUT_COMPONENT:
+        {
+            m_componentManager->instanciateExternComponent(
+                        numEntity,
+                        std::make_unique<InputComponent>());
         }
             break;
         case Components_e::TOTAL_COMPONENTS:

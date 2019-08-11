@@ -34,8 +34,6 @@ void GraphicEngine::loadPictureData(const PictureData &pictureData)
 void GraphicEngine::runIteration()
 {
     assert(m_colorSystem && "colorSystem is null");
-    if (glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(m_window, true);//TMP
 
     // render
     // ------

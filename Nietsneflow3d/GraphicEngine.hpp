@@ -50,6 +50,11 @@ public:
     {
         return *m_mapSystem;
     }
+
+    inline GLFWwindow &getGLWindow()
+    {
+        return *m_window;
+    }
 };
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
