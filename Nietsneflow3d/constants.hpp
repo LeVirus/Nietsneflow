@@ -91,8 +91,8 @@ const std::map<Shader_e, std::string> SHADER_ID_MAP
 
 const std::map<Texture_t, std::string> TEXTURE_ID_PATH_MAP
 {
-    {Texture_t::WALL_T, "Global.png"},
-    {Texture_t::GLOBAL, "walltest.jpg"}
+    {Texture_t::GLOBAL, "Global.png"},
+    {Texture_t::WALL_T, "walltest.jpg"}
 };
 #endif // CONSTANTS_HPP
 

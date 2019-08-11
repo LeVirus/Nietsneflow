@@ -10,7 +10,7 @@
 #include <constants.hpp>
 
 //===================================================================
-MapDisplaySystem::MapDisplaySystem():m_verticesData(Shader_e::TEXTURE_S)
+MapDisplaySystem::MapDisplaySystem()
 //WARNING CONSIDER THAT LENGHT AND WEIGHT ARE THE SAME
 {
     setUsedComponents();
@@ -42,14 +42,14 @@ void MapDisplaySystem::setShader(Shader &shader)
 void MapDisplaySystem::execSystem()
 {
     System::execSystem();
-    confVertexEntities();
+    confPositionVertexEntities();
     fillVertexFromEntities();
     drawVertex();
     drawPlayerOnMap();
 }
 
 //===================================================================
-void MapDisplaySystem::confVertexEntities()
+void MapDisplaySystem::confPositionVertexEntities()
 {
     MapCoordComponent *playerMapCoordComp = stairwayToComponentManager().
             searchComponentByType<MapCoordComponent>(m_playerNum,
@@ -121,7 +121,7 @@ void MapDisplaySystem::confVertexElement(const pairFloat_t &glPosition,
 bool MapDisplaySystem::checkBoundEntityMap(const MapCoordComponent &mapCoordComp,
                                            const pairUI_t &minBound,
                                            const pairUI_t &maxBound)
-{
+{return true;
     if(mapCoordComp.m_coord.first < minBound.first ||
             mapCoordComp.m_coord.second < minBound.second)
     {
@@ -138,7 +138,10 @@ bool MapDisplaySystem::checkBoundEntityMap(const MapCoordComponent &mapCoordComp
 //===================================================================
 void MapDisplaySystem::fillVertexFromEntities()
 {
-    m_verticesData.clear();
+    for(uint32_t h = 0; h < m_vectVerticesData.size(); ++h)
+    {
+        m_vectVerticesData[h].clear();
+    }
     for(uint32_t i = 0; i < m_entitiesToDisplay.size(); ++i)
     {
         PositionVertexComponent *posComp = stairwayToComponentManager().
@@ -149,17 +152,21 @@ void MapDisplaySystem::fillVertexFromEntities()
                                                             Components_e::SPRITE_TEXTURE_COMPONENT);
         assert(posComp);
         assert(spriteComp);
-//        m_ptrVectTexture->operator[](spriteComp->m_spriteData->m_textureNum).bind();
-        m_verticesData.loadVertexTextureComponent(*posComp, *spriteComp);
+        assert(spriteComp->m_spriteData->m_textureNum < m_vectVerticesData.size());
+        m_vectVerticesData[spriteComp->m_spriteData->m_textureNum].loadVertexTextureComponent(*posComp, *spriteComp);
     }
 }
 
 //===================================================================
 void MapDisplaySystem::drawVertex()
 {
-    m_verticesData.confVertexBuffer();
     m_shader->use();
-    m_verticesData.drawElement();
+    for(uint32_t h = 0; h < m_vectVerticesData.size(); ++h)
+    {
+        m_ptrVectTexture->operator[](h).bind();
+        m_vectVerticesData[h].confVertexBuffer();
+        m_vectVerticesData[h].drawElement();
+    }
     drawPlayerOnMap();
 }
 

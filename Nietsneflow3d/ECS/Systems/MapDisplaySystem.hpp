@@ -15,7 +15,7 @@ class MapDisplaySystem : public ecs::System
 private:
     uint32_t m_playerNum;
     Shader *m_shader;
-    VerticesData m_verticesData;
+    std::vector<VerticesData> m_vectVerticesData;
     std::vector<uint32_t> m_entitiesToDisplay;
     float m_levelSizePX, m_localLevelSizePX;
     float m_tileSizeGL;
@@ -25,7 +25,7 @@ private:
     void fillVertexFromEntities();
     void drawVertex();
     void drawPlayerOnMap();
-    void confVertexEntities();
+    void confPositionVertexEntities();
     void confVertexElement(const pairFloat_t &glPosition, uint32_t entityNum);
     void setVertexStaticElementPosition(uint32_t entityNum);
     bool checkBoundEntityMap(const MapCoordComponent &mapCoordComp, const pairUI_t &minBound, const pairUI_t &maxBound);
@@ -41,6 +41,11 @@ public:
     inline void setVectTextures(std::vector<Texture> &vectTexture)
     {
         m_ptrVectTexture = &vectTexture;
+        m_vectVerticesData.reserve(vectTexture.size());
+        for(uint32_t h = 0; h < vectTexture.size(); ++h)
+        {
+            m_vectVerticesData.emplace_back(VerticesData(Shader_e::TEXTURE_S));
+        }
     }
 
     void execSystem()override;
