@@ -144,8 +144,16 @@ pairFloat_t Level::getAbsolutePosition(const pairUI_t &coord)
 }
 
 //===================================================================
-pairUI_t Level::getLevelCoord(const pairFloat_t &position)
+pairUI_t Level::getLevelCoord(pairFloat_t &position)
 {
+    if(position.first < 0.0f)
+    {
+        position.first = 0.0f;
+    }
+    if(position.second < 0.0f)
+    {
+        position.second = 0.0f;
+    }
     return {uint32_t(position.first / LEVEL_TILE_SIZE_PX),
                 uint32_t(position.second / LEVEL_TILE_SIZE_PX)};
 }

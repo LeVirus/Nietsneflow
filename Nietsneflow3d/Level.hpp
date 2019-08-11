@@ -142,7 +142,7 @@ public:
 
     static pairFloat_t getAbsolutePosition(const pairUI_t &coord);
 
-    static pairUI_t getLevelCoord(const pairFloat_t &position);
+    static pairUI_t getLevelCoord(pairFloat_t &position);
 
     /**
      * @brief updateVisualOrientation Modify vertex position relative to orientation.

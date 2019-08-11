@@ -66,6 +66,7 @@ void MapDisplaySystem::confPositionVertexEntities()
                 searchComponentByType<MapCoordComponent>(mVectNumEntity[i],
                                                          Components_e::MAP_COORD_COMPONENT);
         assert(mapComp);
+
         if(checkBoundEntityMap(*mapComp, min, max))
         {
             m_entitiesToDisplay.emplace_back(mVectNumEntity[i]);
@@ -121,7 +122,7 @@ void MapDisplaySystem::confVertexElement(const pairFloat_t &glPosition,
 bool MapDisplaySystem::checkBoundEntityMap(const MapCoordComponent &mapCoordComp,
                                            const pairUI_t &minBound,
                                            const pairUI_t &maxBound)
-{return true;
+{
     if(mapCoordComp.m_coord.first < minBound.first ||
             mapCoordComp.m_coord.second < minBound.second)
     {
@@ -132,6 +133,10 @@ bool MapDisplaySystem::checkBoundEntityMap(const MapCoordComponent &mapCoordComp
     {
         return false;
     }
+    MapCoordComponent *mapComp = stairwayToComponentManager().
+            searchComponentByType<MapCoordComponent>(m_playerNum,
+                                                     Components_e::MAP_COORD_COMPONENT);
+    assert(mapComp);
     return true;
 }
 
