@@ -13,7 +13,7 @@ struct MoveableComponent : public ecs::Component
     {
         muiTypeComponent = Components_e::MOVEABLE_COMPONENT;
     }
-    float m_degreeOrientation;
+    int32_t m_degreeOrientation;
     float m_velocity = 3.0f;
     virtual ~MoveableComponent() = default;
 };

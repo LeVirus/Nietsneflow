@@ -1,8 +1,10 @@
 #include "InputSystem.hpp"
 #include "constants.hpp"
 #include <ECS/Components/MoveableComponent.hpp>
-#include <cassert>
 #include <ECS/Components/MapCoordComponent.hpp>
+#include <ECS/Components/PositionVertexComponent.hpp>
+#include "PhysicalEngine.hpp"
+#include <cassert>
 
 
 //===================================================================
@@ -35,7 +37,28 @@ void InputSystem::treatPlayerInput()
                 searchComponentByType<MoveableComponent>(mVectNumEntity[i],
                                                          Components_e::MOVEABLE_COMPONENT);
         assert(moveComp);
-
+        PositionVertexComponent *posComp = stairwayToComponentManager().
+                searchComponentByType<PositionVertexComponent>(mVectNumEntity[i],
+                                                         Components_e::POSITION_VERTEX_COMPONENT);
+        assert(posComp);
+        if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS)
+        {
+            moveComp->m_degreeOrientation -= 3;
+            if(moveComp->m_degreeOrientation < 0)
+            {
+                moveComp->m_degreeOrientation += 360;
+            }
+            updatePlayerOrientation(*moveComp, *posComp);
+        }
+        else if (glfwGetKey(m_window, GLFW_KEY_Q) == GLFW_PRESS)
+        {
+            moveComp->m_degreeOrientation += 3;
+            if(moveComp->m_degreeOrientation > 360)
+            {
+                moveComp->m_degreeOrientation -= 360;
+            }
+            updatePlayerOrientation(*moveComp, *posComp);
+        }
         //TEST
         if (glfwGetKey(m_window, GLFW_KEY_UP) == GLFW_PRESS)
         {

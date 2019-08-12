@@ -147,7 +147,7 @@ public:
     /**
      * @brief updateVisualOrientation Modify vertex position relative to orientation.
      */
-    static void updateOrientation(const MoveableComponent &moveComp,
+    static void updatePlayerOrientation(const MoveableComponent &moveComp,
                                   PositionVertexComponent &posComp);
 };
 

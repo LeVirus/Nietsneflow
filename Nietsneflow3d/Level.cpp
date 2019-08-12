@@ -157,10 +157,3 @@ pairUI_t Level::getLevelCoord(pairFloat_t &position)
     return {uint32_t(position.first / LEVEL_TILE_SIZE_PX),
                 uint32_t(position.second / LEVEL_TILE_SIZE_PX)};
 }
-
-//===================================================================
-void Level::updateOrientation(const MoveableComponent &moveComp,
-                              PositionVertexComponent &posComp)
-{
-
-}

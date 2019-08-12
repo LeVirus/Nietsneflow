@@ -77,6 +77,8 @@ enum BaseShapeType_e
     NONE
 };
 
+const float PI = 3.14159265359f;
+const float PLAYER_RAY_DISPLAY = 0.03f;
 const float LEVEL_TILE_SIZE_PX = 30.0f;
 const float MAP_LOCAL_CENTER_X_GL = 0.75f;
 const float MAP_LOCAL_CENTER_Y_GL = -0.75f;

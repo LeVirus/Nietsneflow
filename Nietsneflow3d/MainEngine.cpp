@@ -193,29 +193,20 @@ void MainEngine::confPlayerEntity(uint32_t entityNum, const Level &level)
     switch(playerDir)
     {
     case Direction_e::NORTH:
-        move->m_degreeOrientation = 0.0f;
-        break;
-    case Direction_e::EAST:
         move->m_degreeOrientation = 90.0f;
         break;
+    case Direction_e::EAST:
+        move->m_degreeOrientation = 0.0f;
+        break;
     case Direction_e::SOUTH:
-        move->m_degreeOrientation = 180.0f;
+        move->m_degreeOrientation = 270.0f;
         break;
     case Direction_e::WEST:
-        move->m_degreeOrientation = 270.0f;
+        move->m_degreeOrientation = 180.0f;
         break;
     }
     map->m_absoluteMapPositionPX = Level::getAbsolutePosition(map->m_coord);
-    Level::updateOrientation(*move, *pos);//A implémenter
-    //TMP
-    pos->m_vertex.reserve(3);
-    pos->m_vertex.emplace_back(MAP_LOCAL_CENTER_X_GL,
-                               MAP_LOCAL_CENTER_Y_GL + 0.03f);//FORWARD
-    pos->m_vertex.emplace_back(MAP_LOCAL_CENTER_X_GL - 0.015f,
-                               MAP_LOCAL_CENTER_Y_GL - 0.03f);
-    pos->m_vertex.emplace_back(MAP_LOCAL_CENTER_X_GL + 0.015f,
-                               MAP_LOCAL_CENTER_Y_GL - 0.03f);
-    //TMP
+    updatePlayerOrientation(*move, *pos);//A implémenter
 
     color->m_vertex.reserve(3);
     color->m_vertex.emplace_back(0.9f,0.00f, 0.00f);
