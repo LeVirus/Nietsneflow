@@ -2,9 +2,11 @@
 #define PHYSICALENGINE_H
 
 #include <ECS/Systems/InputSystem.hpp>
+#include "constants.hpp"
 
 struct MoveableComponent;
 struct PositionVertexComponent;
+struct MapCoordComponent;
 
 class PhysicalEngine
 {
@@ -17,6 +19,8 @@ public:
     void linkSystems(InputSystem *inputSystem);
 };
 
+void movePlayer(MoveableComponent &moveComp,
+                MapCoordComponent &mapComp, MoveOrientation_e moveDirection);
 void updatePlayerOrientation(const MoveableComponent &moveComp,
                               PositionVertexComponent &posComp);
 float getRadiantAngle(int32_t angle);

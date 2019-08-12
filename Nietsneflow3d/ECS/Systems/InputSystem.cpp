@@ -41,7 +41,24 @@ void InputSystem::treatPlayerInput()
                 searchComponentByType<PositionVertexComponent>(mVectNumEntity[i],
                                                          Components_e::POSITION_VERTEX_COMPONENT);
         assert(posComp);
+        //STRAFE
         if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS)
+        {
+            movePlayer(*moveComp, *mapComp, MoveOrientation_e::RIGHT);
+        }
+        else if (glfwGetKey(m_window, GLFW_KEY_Q) == GLFW_PRESS)
+        {
+            movePlayer(*moveComp, *mapComp, MoveOrientation_e::LEFT);
+        }
+        if (glfwGetKey(m_window, GLFW_KEY_UP) == GLFW_PRESS)
+        {
+            movePlayer(*moveComp, *mapComp, MoveOrientation_e::FORWARD);
+        }
+        else if (glfwGetKey(m_window, GLFW_KEY_DOWN) == GLFW_PRESS)
+        {
+            movePlayer(*moveComp, *mapComp, MoveOrientation_e::BACKWARD);
+        }
+        if (glfwGetKey(m_window, GLFW_KEY_RIGHT) == GLFW_PRESS)
         {
             moveComp->m_degreeOrientation -= 3;
             if(moveComp->m_degreeOrientation < 0)
@@ -50,7 +67,7 @@ void InputSystem::treatPlayerInput()
             }
             updatePlayerOrientation(*moveComp, *posComp);
         }
-        else if (glfwGetKey(m_window, GLFW_KEY_Q) == GLFW_PRESS)
+        else if (glfwGetKey(m_window, GLFW_KEY_LEFT) == GLFW_PRESS)
         {
             moveComp->m_degreeOrientation += 3;
             if(moveComp->m_degreeOrientation > 360)
@@ -59,25 +76,6 @@ void InputSystem::treatPlayerInput()
             }
             updatePlayerOrientation(*moveComp, *posComp);
         }
-        //TEST
-        if (glfwGetKey(m_window, GLFW_KEY_UP) == GLFW_PRESS)
-        {
-            mapComp->m_absoluteMapPositionPX.second -= moveComp->m_velocity;
-        }
-        else if (glfwGetKey(m_window, GLFW_KEY_DOWN) == GLFW_PRESS)
-        {
-            mapComp->m_absoluteMapPositionPX.second += moveComp->m_velocity;
-
-        }
-        if (glfwGetKey(m_window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-        {
-            mapComp->m_absoluteMapPositionPX.first += moveComp->m_velocity;
-        }
-        else if (glfwGetKey(m_window, GLFW_KEY_LEFT) == GLFW_PRESS)
-        {
-            mapComp->m_absoluteMapPositionPX.first -= moveComp->m_velocity;
-        }
-        //TEST
     }
 }
 

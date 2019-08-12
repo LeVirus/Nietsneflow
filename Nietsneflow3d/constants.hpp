@@ -41,6 +41,14 @@ enum Direction_e
     EAST
 };
 
+enum MoveOrientation_e
+{
+    FORWARD,
+    BACKWARD,
+    LEFT,
+    RIGHT
+};
+
 enum EnemySpriteType_e
 {
     STATIC,

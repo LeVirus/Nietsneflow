@@ -1,6 +1,7 @@
 #include "PhysicalEngine.hpp"
 #include <math.h>
 #include <ECS/Components/PositionVertexComponent.hpp>
+#include <ECS/Components/MapCoordComponent.hpp>
 #include <ECS/Components/MoveableComponent.hpp>
 
 
@@ -20,6 +21,34 @@ void PhysicalEngine::runIteration()
 void PhysicalEngine::linkSystems(InputSystem *inputSystem)
 {
     m_inputSystem = inputSystem;
+}
+
+//===================================================================
+void movePlayer(MoveableComponent &moveComp,
+                MapCoordComponent &mapComp, MoveOrientation_e moveDirection)
+{
+    float radiantAngle;
+    float angle = moveComp.m_degreeOrientation;
+    switch(moveDirection)
+    {
+    case MoveOrientation_e::FORWARD:
+        break;
+    case MoveOrientation_e::BACKWARD:
+        angle += 180;
+        break;
+    case MoveOrientation_e::LEFT:
+        angle += 90;
+        break;
+    case MoveOrientation_e::RIGHT:
+        angle += 270;
+        break;
+    }
+    radiantAngle = getRadiantAngle(angle);
+    mapComp.m_absoluteMapPositionPX.first +=
+            cos(radiantAngle) * moveComp.m_velocity;
+
+    mapComp.m_absoluteMapPositionPX.second -=
+            sin(radiantAngle) * moveComp.m_velocity;
 }
 
 //===================================================================
@@ -54,6 +83,7 @@ void updatePlayerOrientation(const MoveableComponent &moveComp,
             sin(radiantAngle) * PLAYER_RAY_DISPLAY;
 }
 
+//===================================================================
 float getRadiantAngle(int32_t angle)
 {
     return angle * PI / 180;
