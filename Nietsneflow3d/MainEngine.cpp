@@ -6,6 +6,9 @@
 #include <ECS/Components/SpriteTextureComponent.hpp>
 #include <ECS/Components/StaticElementComponent.hpp>
 #include <ECS/Components/MoveableComponent.hpp>
+#include <ECS/Components/CircleCollisionComponent.hpp>
+#include <ECS/Components/RectangleCollisionComponent.hpp>
+#include <ECS/Components/TagComponent.hpp>
 #include <ECS/Systems/ColorDisplaySystem.hpp>
 #include <ECS/Systems/MapDisplaySystem.hpp>
 #include <ECS/Systems/CollisionSystem.hpp>
@@ -112,6 +115,8 @@ uint32_t MainEngine::createWallEntity()
     bitsetComponents[Components_e::POSITION_VERTEX_COMPONENT] = true;
     bitsetComponents[Components_e::SPRITE_TEXTURE_COMPONENT] = true;
     bitsetComponents[Components_e::MAP_COORD_COMPONENT] = true;
+    bitsetComponents[Components_e::RECTANGLE_COLLISION_COMPONENT] = true;
+    bitsetComponents[Components_e::TAG_COMPONENT] = true;
     return m_ecsManager.addEntity(bitsetComponents);
 }
 
@@ -123,6 +128,8 @@ uint32_t MainEngine::createStaticEntity()
     bitsetComponents[Components_e::SPRITE_TEXTURE_COMPONENT] = true;
     bitsetComponents[Components_e::MAP_COORD_COMPONENT] = true;
     bitsetComponents[Components_e::STATIC_ELEMENT_COMPONENT] = true;
+    bitsetComponents[Components_e::RECTANGLE_COLLISION_COMPONENT] = true;
+    bitsetComponents[Components_e::TAG_COMPONENT] = true;
     return m_ecsManager.addEntity(bitsetComponents);
 }
 
@@ -138,8 +145,16 @@ void MainEngine::confBaseMapComponent(uint32_t entityNum,
     MapCoordComponent *mapComp = m_ecsManager.getComponentManager().
             searchComponentByType<MapCoordComponent>(entityNum, Components_e::MAP_COORD_COMPONENT);
     assert(mapComp);
+    RectangleCollisionComponent *rectComp = m_ecsManager.getComponentManager().
+            searchComponentByType<RectangleCollisionComponent>(entityNum, Components_e::RECTANGLE_COLLISION_COMPONENT);
+    assert(rectComp);
+    TagComponent *tagComp = m_ecsManager.getComponentManager().
+            searchComponentByType<TagComponent>(entityNum, Components_e::TAG_COMPONENT);
+    assert(tagComp);
     mapComp->m_coord = coordLevel;
     mapComp->m_absoluteMapPositionPX = Level::getAbsolutePosition(coordLevel);
+    rectComp->m_size = {LEVEL_TILE_SIZE_PX, LEVEL_TILE_SIZE_PX};
+    tagComp->m_tag = CollisionTag_e::WALL_C;
 }
 
 //===================================================================
@@ -165,6 +180,8 @@ void MainEngine::loadPlayerEntity(const Level &level)
     bitsetComponents[Components_e::MOVEABLE_COMPONENT] = true;
     bitsetComponents[Components_e::COLOR_VERTEX_COMPONENT] = true;
     bitsetComponents[Components_e::INPUT_COMPONENT] = true;
+    bitsetComponents[Components_e::CIRCLE_COLLISION_COMPONENT] = true;
+    bitsetComponents[Components_e::TAG_COMPONENT] = true;
     uint32_t entityNum = m_ecsManager.addEntity(bitsetComponents);
     confPlayerEntity(entityNum, level);
     //notify player entity number
@@ -186,9 +203,19 @@ void MainEngine::confPlayerEntity(uint32_t entityNum, const Level &level)
     ColorVertexComponent *color = m_ecsManager.getComponentManager().
             searchComponentByType<ColorVertexComponent>(entityNum,
                                                      Components_e::COLOR_VERTEX_COMPONENT);
+    CircleCollisionComponent *circleColl = m_ecsManager.getComponentManager().
+            searchComponentByType<CircleCollisionComponent>(entityNum,
+                                                     Components_e::CIRCLE_COLLISION_COMPONENT);
+    TagComponent *tagColl = m_ecsManager.getComponentManager().
+            searchComponentByType<TagComponent>(entityNum,
+                                                     Components_e::TAG_COMPONENT);
+    assert(pos);
     assert(pos);
     assert(map);
     assert(move);
+    assert(color);
+    assert(circleColl);
+    assert(tagColl);
     map->m_coord = level.getPlayerDeparture();
     Direction_e playerDir = level.getPlayerDepartureDirection();
     switch(playerDir)
@@ -213,6 +240,8 @@ void MainEngine::confPlayerEntity(uint32_t entityNum, const Level &level)
     color->m_vertex.emplace_back(0.9f,0.00f, 0.00f);
     color->m_vertex.emplace_back(0.9f,0.00f, 0.00f);
     color->m_vertex.emplace_back(0.9f,0.00f, 0.00f);
+    circleColl->m_ray = 2.0f;
+    tagColl->m_tag = CollisionTag_e::PLAYER;
 }
 
 //===================================================================

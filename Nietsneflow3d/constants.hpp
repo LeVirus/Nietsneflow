@@ -94,7 +94,9 @@ enum CollisionTag_e
     PLAYER,
     WALL_C,
     ENNEMY,
-    BULLET
+    BULLET_PLAYER,
+    BULLET_ENEMY,
+    OBJECT_C
 };
 
 inline const float PI = 3.14159265359f;
