@@ -8,6 +8,7 @@
 #include <ECS/Components/MoveableComponent.hpp>
 #include <ECS/Systems/ColorDisplaySystem.hpp>
 #include <ECS/Systems/MapDisplaySystem.hpp>
+#include <ECS/Systems/CollisionSystem.hpp>
 #include <LevelManager.hpp>
 #include <cassert>
 
@@ -307,6 +308,8 @@ void MainEngine::linkSystemsToPhysicalEngine()
 {
     InputSystem *input = m_ecsManager.getSystemManager().
             searchSystemByType<InputSystem>(Systems_e::INPUT_SYSTEM);
+    CollisionSystem *coll = m_ecsManager.getSystemManager().
+            searchSystemByType<CollisionSystem>(Systems_e::COLLISION_SYSTEM);
     input->setGLWindow(m_graphicEngine.getGLWindow());
-    m_physicalEngine.linkSystems(input);
+    m_physicalEngine.linkSystems(input, coll);
 }

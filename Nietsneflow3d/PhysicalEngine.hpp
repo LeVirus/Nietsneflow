@@ -2,6 +2,7 @@
 #define PHYSICALENGINE_H
 
 #include <ECS/Systems/InputSystem.hpp>
+#include <ECS/Systems/CollisionSystem.hpp>
 #include "constants.hpp"
 
 struct MoveableComponent;
@@ -12,11 +13,13 @@ class PhysicalEngine
 {
 private:
     InputSystem *m_inputSystem = nullptr;
+    CollisionSystem *m_collisionSystem = nullptr;
 private:
 public:
     PhysicalEngine();
     void runIteration();
-    void linkSystems(InputSystem *inputSystem);
+    void linkSystems(InputSystem *inputSystem,
+                     CollisionSystem * collisionSystem);
 };
 
 void movePlayer(MoveableComponent &moveComp,

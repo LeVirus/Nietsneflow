@@ -15,12 +15,15 @@ PhysicalEngine::PhysicalEngine()
 void PhysicalEngine::runIteration()
 {
     m_inputSystem->execSystem();
+    m_collisionSystem->execSystem();
 }
 
 //===================================================================
-void PhysicalEngine::linkSystems(InputSystem *inputSystem)
+void PhysicalEngine::linkSystems(InputSystem *inputSystem,
+                                 CollisionSystem *collisionSystem)
 {
     m_inputSystem = inputSystem;
+    m_collisionSystem = collisionSystem;
 }
 
 //===================================================================

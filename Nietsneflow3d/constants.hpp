@@ -14,7 +14,10 @@ enum Components_e
     COLOR_VERTEX_COMPONENT,
     MAP_COORD_COMPONENT,
     INPUT_COMPONENT,
+    CIRCLE_COLLISION_COMPONENT,
+    RECTANGLE_COLLISION_COMPONENT,
     STATIC_ELEMENT_COMPONENT,
+    TAG_COMPONENT,
     MOVEABLE_COMPONENT,
     TOTAL_COMPONENTS
 };
@@ -23,7 +26,8 @@ enum Systems_e
 {
     COLOR_DISPLAY_SYSTEM,
     MAP_DISPLAY_SYSTEM,
-    INPUT_SYSTEM
+    INPUT_SYSTEM,
+    COLLISION_SYSTEM
 };
 
 enum DisplayType_e
@@ -85,23 +89,31 @@ enum BaseShapeType_e
     NONE
 };
 
-const float PI = 3.14159265359f;
-const float PLAYER_RAY_DISPLAY = 0.03f;
-const float LEVEL_TILE_SIZE_PX = 30.0f;
-const float MAP_LOCAL_CENTER_X_GL = 0.75f;
-const float MAP_LOCAL_CENTER_Y_GL = -0.75f;
-const float MAP_LOCAL_SIZE_GL = 0.50f;
+enum CollisionTag_e
+{
+    PLAYER,
+    WALL_C,
+    ENNEMY,
+    BULLET
+};
 
-const std::string SHADER_DIR_STR = "../Nietsneflow3d/Ressources/Shader/";
-const std::string LEVEL_RESSOURCES_DIR_STR = "../Nietsneflow3d/Ressources/";
-const std::string TEXTURES_DIR_STR = "../Nietsneflow3d/Ressources/Textures/";
-const std::map<Shader_e, std::string> SHADER_ID_MAP
+inline const float PI = 3.14159265359f;
+inline const float PLAYER_RAY_DISPLAY = 0.03f;
+inline const float LEVEL_TILE_SIZE_PX = 30.0f;
+inline const float MAP_LOCAL_CENTER_X_GL = 0.75f;
+inline const float MAP_LOCAL_CENTER_Y_GL = -0.75f;
+inline const float MAP_LOCAL_SIZE_GL = 0.50f;
+
+inline const std::string SHADER_DIR_STR = "../Nietsneflow3d/Ressources/Shader/";
+inline const std::string LEVEL_RESSOURCES_DIR_STR = "../Nietsneflow3d/Ressources/";
+inline const std::string TEXTURES_DIR_STR = "../Nietsneflow3d/Ressources/Textures/";
+inline const std::map<Shader_e, std::string> SHADER_ID_MAP
 {
     {Shader_e::COLOR_S, "ceilingFloor"},
     {Shader_e::TEXTURE_S, "wall"}
 };
 
-const std::map<Texture_t, std::string> TEXTURE_ID_PATH_MAP
+inline const std::map<Texture_t, std::string> TEXTURE_ID_PATH_MAP
 {
     {Texture_t::GLOBAL, "Global.png"},
     {Texture_t::WALL_T, "walltest.jpg"}

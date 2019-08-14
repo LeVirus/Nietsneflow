@@ -21,7 +21,8 @@ SOURCES += main.cpp \
     OpenGLUtils/VerticesData.cpp \
     ECS/Systems/MapDisplaySystem.cpp \
     PhysicalEngine.cpp \
-    ECS/Systems/InputSystem.cpp
+    ECS/Systems/InputSystem.cpp \
+    ECS/Systems/CollisionSystem.cpp
 
 HEADERS += \
     Game.hpp \
@@ -62,5 +63,9 @@ HEADERS += \
     ECS/Components/MapCoordComponent.hpp \
     PhysicalEngine.hpp \
     ECS/Systems/InputSystem.hpp \
-    ECS/Components/InputComponent.hpp
+    ECS/Components/InputComponent.hpp \
+    ECS/Systems/CollisionSystem.hpp \
+    ECS/Components/TagComponent.hpp \
+    ECS/Components/CircleCollisionComponent.hpp \
+    ECS/Components/RectangleCollisionComponent.hpp
 
