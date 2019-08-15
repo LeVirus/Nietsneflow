@@ -93,7 +93,7 @@ enum CollisionTag_e
 {
     PLAYER,
     WALL_C,
-    ENNEMY,
+    ENEMY,
     BULLET_PLAYER,
     BULLET_ENEMY,
     OBJECT_C
