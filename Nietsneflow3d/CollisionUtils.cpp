@@ -1,4 +1,5 @@
 #include "CollisionUtils.hpp"
+#include <cmath>
 
 //===================================================================
 bool checkCircleRectCollision(const pairFloat_t &cicleCenter,
@@ -45,10 +46,10 @@ bool checkCircleCircleCollision(const pairFloat_t &circleCenterA,
 }
 
 //===================================================================
-bool checkRectRectCollision(const pairFloat_t &rectSizeA,
-                    const pairFloat_t &rectSizeB,
-                    const pairFloat_t &rectOriginA,
-                    const pairFloat_t &rectOriginB)
+bool checkRectRectCollision(const pairFloat_t &rectOriginA,
+                            const pairFloat_t &rectSizeA,
+                            const pairFloat_t &rectOriginB,
+                            const pairFloat_t &rectSizeB)
 {
     if(rectOriginA.first + rectSizeA.first < rectOriginB.first ||
        rectOriginB.first + rectSizeB.second < rectOriginA.first ||
@@ -66,7 +67,7 @@ bool checkLineRectCollision(const pairFloat_t &lineFirstPoint,
                     const pairFloat_t &rectOrigin,
                     const pairFloat_t &rectSize)
 {
-
+    float min = std::min(rectSize.first, rectSize.second);
 }
 
 //===================================================================
@@ -80,9 +81,9 @@ bool checkCircleLineCollision(const pairFloat_t &circleCenter,
 
 //===================================================================
 bool checkLineLineCollision(const pairFloat_t &lineFirstPointA,
-                    const pairFloat_t &lineSecondPointA,
-                    const pairFloat_t &lineFirstPointB,
-                    const pairFloat_t &lineSecondPointB)
+                            const pairFloat_t &lineSecondPointA,
+                            const pairFloat_t &lineFirstPointB,
+                            const pairFloat_t &lineSecondPointB)
 {
 
 }
@@ -90,7 +91,7 @@ bool checkLineLineCollision(const pairFloat_t &lineFirstPointA,
 //===================================================================
 float getDistance(const pairFloat_t &pointA, const pairFloat_t &pointB)
 {
-    float distanceX = std::abs(pointA.first - pairB.first),
-    distanceY = std::abs(pointA.second - pairB.second);
+    float distanceX = std::abs(pointA.first - pointB.first),
+    distanceY = std::abs(pointA.second - pointB.second);
     return std::sqrt(distanceX * distanceX + distanceY * distanceY);
 }
