@@ -21,7 +21,7 @@ private:
     uint32_t m_cursor = 0, m_sizeOfVertex;
     uint32_t m_ebo, m_vao, m_vbo;
 private:
-    void addIndices(BaseShapeType_e shapeType);
+    void addIndices(BaseShapeTypeGL_e shapeType);
     void init();
     void genGLBuffers();
     void setVectGLPointer();

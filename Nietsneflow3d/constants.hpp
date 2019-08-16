@@ -15,6 +15,7 @@ enum Components_e
     MAP_COORD_COMPONENT,
     INPUT_COMPONENT,
     CIRCLE_COLLISION_COMPONENT,
+    LINE_COLLISION_COMPONENT,
     RECTANGLE_COLLISION_COMPONENT,
     STATIC_ELEMENT_COMPONENT,
     TAG_COMPONENT,
@@ -82,7 +83,7 @@ enum Texture_t
     TOTAL_TEXTURE
 };
 
-enum BaseShapeType_e
+enum BaseShapeTypeGL_e
 {
     TRIANGLE,
     RECTANGLE,
@@ -97,6 +98,13 @@ enum CollisionTag_e
     BULLET_PLAYER,
     BULLET_ENEMY,
     OBJECT_C
+};
+
+enum CollisionShape_e
+{
+    CIRCLE,
+    RECTANGLE_C,
+    LINE
 };
 
 inline const float PI = 3.14159265359f;

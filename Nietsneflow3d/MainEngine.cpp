@@ -8,7 +8,7 @@
 #include <ECS/Components/MoveableComponent.hpp>
 #include <ECS/Components/CircleCollisionComponent.hpp>
 #include <ECS/Components/RectangleCollisionComponent.hpp>
-#include <ECS/Components/TagComponent.hpp>
+#include <ECS/Components/CollisionComponent.hpp>
 #include <ECS/Systems/ColorDisplaySystem.hpp>
 #include <ECS/Systems/MapDisplaySystem.hpp>
 #include <ECS/Systems/CollisionSystem.hpp>
@@ -148,13 +148,14 @@ void MainEngine::confBaseMapComponent(uint32_t entityNum,
     RectangleCollisionComponent *rectComp = m_ecsManager.getComponentManager().
             searchComponentByType<RectangleCollisionComponent>(entityNum, Components_e::RECTANGLE_COLLISION_COMPONENT);
     assert(rectComp);
-    TagComponent *tagComp = m_ecsManager.getComponentManager().
-            searchComponentByType<TagComponent>(entityNum, Components_e::TAG_COMPONENT);
+    CollisionComponent *tagComp = m_ecsManager.getComponentManager().
+            searchComponentByType<CollisionComponent>(entityNum, Components_e::TAG_COMPONENT);
     assert(tagComp);
     mapComp->m_coord = coordLevel;
     mapComp->m_absoluteMapPositionPX = Level::getAbsolutePosition(coordLevel);
     rectComp->m_size = {LEVEL_TILE_SIZE_PX, LEVEL_TILE_SIZE_PX};
     tagComp->m_tag = CollisionTag_e::WALL_C;
+    tagComp->m_shape = CollisionShape_e::RECTANGLE_C;
 }
 
 //===================================================================
@@ -206,8 +207,8 @@ void MainEngine::confPlayerEntity(uint32_t entityNum, const Level &level)
     CircleCollisionComponent *circleColl = m_ecsManager.getComponentManager().
             searchComponentByType<CircleCollisionComponent>(entityNum,
                                                      Components_e::CIRCLE_COLLISION_COMPONENT);
-    TagComponent *tagColl = m_ecsManager.getComponentManager().
-            searchComponentByType<TagComponent>(entityNum,
+    CollisionComponent *tagColl = m_ecsManager.getComponentManager().
+            searchComponentByType<CollisionComponent>(entityNum,
                                                      Components_e::TAG_COMPONENT);
     assert(pos);
     assert(pos);
@@ -242,6 +243,7 @@ void MainEngine::confPlayerEntity(uint32_t entityNum, const Level &level)
     color->m_vertex.emplace_back(0.9f,0.00f, 0.00f);
     circleColl->m_ray = 2.0f;
     tagColl->m_tag = CollisionTag_e::PLAYER;
+    tagColl->m_shape = CollisionShape_e::CIRCLE;
 }
 
 //===================================================================

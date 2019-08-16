@@ -6,8 +6,9 @@
 #include <ECS/Components/StaticElementComponent.hpp>
 #include <ECS/Components/MoveableComponent.hpp>
 #include <ECS/Components/InputComponent.hpp>
-#include <ECS/Components/TagComponent.hpp>
+#include <ECS/Components/CollisionComponent.hpp>
 #include <ECS/Components/CircleCollisionComponent.hpp>
+#include <ECS/Components/LineCollisionComponent.hpp>
 #include <ECS/Components/RectangleCollisionComponent.hpp>
 #include <ECS/Systems/ColorDisplaySystem.hpp>
 #include <ECS/Systems/MapDisplaySystem.hpp>
@@ -125,7 +126,7 @@ void ECSManager::syncComponentsFromEntities(uint32_t numEntity,
         {
             m_componentManager->instanciateExternComponent(
                         numEntity,
-                        std::make_unique<TagComponent>());
+                        std::make_unique<CollisionComponent>());
         }
             break;
         case Components_e::CIRCLE_COLLISION_COMPONENT:
@@ -133,6 +134,13 @@ void ECSManager::syncComponentsFromEntities(uint32_t numEntity,
             m_componentManager->instanciateExternComponent(
                         numEntity,
                         std::make_unique<CircleCollisionComponent>());
+        }
+            break;
+        case Components_e::LINE_COLLISION_COMPONENT:
+        {
+            m_componentManager->instanciateExternComponent(
+                        numEntity,
+                        std::make_unique<LineCollisionComponent>());
         }
             break;
         case Components_e::RECTANGLE_COLLISION_COMPONENT:

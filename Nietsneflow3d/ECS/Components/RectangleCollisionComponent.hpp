@@ -11,7 +11,7 @@ struct RectangleCollisionComponent : public ecs::Component
         muiTypeComponent = Components_e::RECTANGLE_COLLISION_COMPONENT;
     }
     //position up left
-    std::pair<float, float> m_position, m_size;
+    std::pair<float, float> m_size;
     virtual ~RectangleCollisionComponent() = default;
 };
 #endif // RECTANGLECOLLISIONCOMPONENT_HPP

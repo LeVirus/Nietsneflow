@@ -10,7 +10,6 @@ struct CircleCollisionComponent : public ecs::Component
     {
         muiTypeComponent = Components_e::CIRCLE_COLLISION_COMPONENT;
     }
-    std::pair<float, float> m_center;
     float m_ray;
     virtual ~CircleCollisionComponent() = default;
 };

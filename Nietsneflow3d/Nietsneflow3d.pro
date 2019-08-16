@@ -65,7 +65,8 @@ HEADERS += \
     ECS/Systems/InputSystem.hpp \
     ECS/Components/InputComponent.hpp \
     ECS/Systems/CollisionSystem.hpp \
-    ECS/Components/TagComponent.hpp \
     ECS/Components/CircleCollisionComponent.hpp \
-    ECS/Components/RectangleCollisionComponent.hpp
+    ECS/Components/RectangleCollisionComponent.hpp \
+    ECS/Components/CollisionComponent.hpp \
+    ECS/Components/LineCollisionComponent.hpp
 

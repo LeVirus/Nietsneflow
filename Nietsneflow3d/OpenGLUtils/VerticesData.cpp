@@ -64,8 +64,8 @@ bool VerticesData::loadVertexColorComponent(const PositionVertexComponent *posCo
         m_vertexBuffer.emplace_back(std::get<1>(colorComp->m_vertex[j]));
         m_vertexBuffer.emplace_back(std::get<2>(colorComp->m_vertex[j]));
     }
-    BaseShapeType_e shapeType = (sizeVertex == 3 ? BaseShapeType_e::TRIANGLE :
-                                             BaseShapeType_e::RECTANGLE);
+    BaseShapeTypeGL_e shapeType = (sizeVertex == 3 ? BaseShapeTypeGL_e::TRIANGLE :
+                                             BaseShapeTypeGL_e::RECTANGLE);
     addIndices(shapeType);
     return true;
 }
@@ -86,13 +86,13 @@ void VerticesData::loadVertexTextureComponent(const PositionVertexComponent &pos
         m_vertexBuffer.emplace_back(spriteComp.m_spriteData->m_texturePosVertex[j].first);
         m_vertexBuffer.emplace_back(spriteComp.m_spriteData->m_texturePosVertex[j].second);
     }
-    BaseShapeType_e shapeType = (sizeVertex == 3 ? BaseShapeType_e::TRIANGLE :
-                                             BaseShapeType_e::RECTANGLE);
+    BaseShapeTypeGL_e shapeType = (sizeVertex == 3 ? BaseShapeTypeGL_e::TRIANGLE :
+                                             BaseShapeTypeGL_e::RECTANGLE);
     addIndices(shapeType);
 }
 
 //===================================================================
-void VerticesData::addIndices(BaseShapeType_e shapeType)
+void VerticesData::addIndices(BaseShapeTypeGL_e shapeType)
 {
     uint32_t curent = m_cursor;
     //first triangle
@@ -100,7 +100,7 @@ void VerticesData::addIndices(BaseShapeType_e shapeType)
     m_indices.emplace_back(++curent);
     m_indices.emplace_back(++curent);
     //if Triangle stop here
-    if(shapeType == BaseShapeType_e::RECTANGLE)
+    if(shapeType == BaseShapeTypeGL_e::RECTANGLE)
     {
         m_indices.emplace_back(curent);
         m_indices.emplace_back(++curent);
