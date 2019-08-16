@@ -22,7 +22,8 @@ SOURCES += main.cpp \
     ECS/Systems/MapDisplaySystem.cpp \
     PhysicalEngine.cpp \
     ECS/Systems/InputSystem.cpp \
-    ECS/Systems/CollisionSystem.cpp
+    ECS/Systems/CollisionSystem.cpp \
+    CollisionUtils.cpp
 
 HEADERS += \
     Game.hpp \
@@ -68,5 +69,6 @@ HEADERS += \
     ECS/Components/CircleCollisionComponent.hpp \
     ECS/Components/RectangleCollisionComponent.hpp \
     ECS/Components/CollisionComponent.hpp \
-    ECS/Components/LineCollisionComponent.hpp
+    ECS/Components/LineCollisionComponent.hpp \
+    CollisionUtils.hpp
 
