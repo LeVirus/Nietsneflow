@@ -9,6 +9,7 @@ struct RectangleCollisionComponent;
 struct LineCollisionComponent;
 struct MapCoordComponent;
 struct CollisionComponent;
+struct CollisionArgs;
 
 class CollisionSystem : public ecs::System
 {
@@ -19,7 +20,11 @@ private:
     void initArrayTag();
     bool checkTag(CollisionTag_e entityTagA, CollisionTag_e entityTagB);
     void treatCollision(uint32_t entityNumA, uint32_t entityNumB,
-                        CollisionComponent *tagCompA, CollisionComponent *tagCompB);
+                        CollisionComponent *tagCompA,
+                        CollisionComponent *tagCompB);
+    void treatCollisionFirstRect(const CollisionArgs &args);
+    void treatCollisionFirstCircle(const CollisionArgs &args);
+    void treatCollisionFirstLine(const CollisionArgs &args);
     //Components accessors
     CircleCollisionComponent &getCircleComponent(uint32_t entityNum);
     RectangleCollisionComponent &getRectangleComponent(uint32_t entityNum);
@@ -28,6 +33,13 @@ private:
 public:
     CollisionSystem();
     void execSystem()override;
+};
+
+struct CollisionArgs
+{
+    uint32_t entityNumA, entityNumB;
+    CollisionShape_e tag;
+    const pairFloat_t &originA, &originB;
 };
 
 #endif // COLLISIONSYSTEM_H

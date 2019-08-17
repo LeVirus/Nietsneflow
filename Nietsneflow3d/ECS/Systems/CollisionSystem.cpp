@@ -73,89 +73,109 @@ void CollisionSystem::treatCollision(uint32_t entityNumA, uint32_t entityNumB,
             &mapCompB = getMapComponent(entityNumB);
     const pairFloat_t &posOriginA = mapCompA.m_absoluteMapPositionPX,
     &posOriginB = mapCompB.m_absoluteMapPositionPX;
+    const CollisionArgs args = {entityNumA, entityNumB,
+                          tagCompB->m_shape,
+                          posOriginA, posOriginB};
     if(tagCompA->m_shape == CollisionShape_e::RECTANGLE_C)
     {
-        RectangleCollisionComponent &rectCompA = getRectangleComponent(entityNumA);
-        switch(tagCompB->m_shape)
-        {
-        case CollisionShape_e::RECTANGLE_C:
-        {
-            RectangleCollisionComponent &rectCompB = getRectangleComponent(entityNumB);
-            checkRectRectCollision(posOriginA, rectCompA.m_size,
-                                   posOriginB, rectCompB.m_size);
-        }
-            break;
-        case CollisionShape_e::CIRCLE:
-        {
-            CircleCollisionComponent &circleCompB = getCircleComponent(entityNumB);
-            checkCircleRectCollision(posOriginB, circleCompB.m_ray,
-                                     posOriginA, rectCompA.m_size);
-        }
-            break;
-        case CollisionShape_e::LINE:
-        {
-            LineCollisionComponent &lineCompB = getLineComponent(entityNumB);
-            checkLineRectCollision(posOriginB, lineCompB.m_secondPoint,
-                                   posOriginA, rectCompA.m_size);
-        }
-            break;
-        }
+        treatCollisionFirstRect(args);
     }
     else if(tagCompA->m_shape == CollisionShape_e::CIRCLE)
     {
-        CircleCollisionComponent &circleCompA = getCircleComponent(entityNumA);
-        switch(tagCompB->m_shape)
-        {
-        case CollisionShape_e::RECTANGLE_C:
-        {
-            RectangleCollisionComponent &rectCompB = getRectangleComponent(entityNumA);
-            checkCircleRectCollision(posOriginA, circleCompA.m_ray,
-                                     posOriginB, rectCompB.m_size);
-        }
-            break;
-        case CollisionShape_e::CIRCLE:
-        {
-            CircleCollisionComponent &circleCompB = getCircleComponent(entityNumB);
-            checkCircleCircleCollision(posOriginA, circleCompA.m_ray,
-                                       posOriginB, circleCompB.m_ray);
-        }
-            break;
-        case CollisionShape_e::LINE:
-        {
-            LineCollisionComponent &lineCompB = getLineComponent(entityNumB);
-            checkCircleLineCollision(posOriginA, circleCompA.m_ray,
-                                     posOriginB, lineCompB.m_secondPoint);
-        }
-            break;
-        }
+        treatCollisionFirstCircle(args);
     }
     else if(tagCompA->m_shape == CollisionShape_e::LINE)
     {
-        LineCollisionComponent &lineCompA = getLineComponent(entityNumA);
-        switch(tagCompB->m_shape)
-        {
-        case CollisionShape_e::RECTANGLE_C:
-        {
-            RectangleCollisionComponent &rectCompB = getRectangleComponent(entityNumA);
-            checkLineRectCollision(posOriginA, lineCompA.m_secondPoint,
-                                   posOriginB, rectCompB.m_size);
-        }
-            break;
-        case CollisionShape_e::CIRCLE:
-        {
-            CircleCollisionComponent &circleCompB = getCircleComponent(entityNumB);
-            checkCircleLineCollision(posOriginB, circleCompB.m_ray,
-                                     posOriginA, lineCompA.m_secondPoint);
-        }
-            break;
-        case CollisionShape_e::LINE:
-        {
-            LineCollisionComponent &lineCompB = getLineComponent(entityNumB);
-            checkLineLineCollision(posOriginA, lineCompA.m_secondPoint,
-                                   posOriginB, lineCompB.m_secondPoint);
-        }
-            break;
-        }
+        treatCollisionFirstLine(args);
+    }
+}
+
+void CollisionSystem::treatCollisionFirstRect(const CollisionArgs &args)
+{
+    RectangleCollisionComponent &rectCompA = getRectangleComponent(args.entityNumA);
+    switch(args.tag)
+    {
+    case CollisionShape_e::RECTANGLE_C:
+    {
+        RectangleCollisionComponent &rectCompB = getRectangleComponent(args.entityNumB);
+        checkRectRectCollision(args.originA, rectCompA.m_size,
+                               args.originB, rectCompB.m_size);
+    }
+        break;
+    case CollisionShape_e::CIRCLE:
+    {
+        CircleCollisionComponent &circleCompB = getCircleComponent(args.entityNumB);
+        checkCircleRectCollision(args.originB, circleCompB.m_ray,
+                                 args.originA, rectCompA.m_size);
+    }
+        break;
+    case CollisionShape_e::LINE:
+    {
+        LineCollisionComponent &lineCompB = getLineComponent(args.entityNumB);
+        checkLineRectCollision(args.originB, lineCompB.m_secondPoint,
+                               args.originA, rectCompA.m_size);
+    }
+        break;
+    }
+}
+
+//===================================================================
+void CollisionSystem::treatCollisionFirstCircle(const CollisionArgs &args)
+{
+    CircleCollisionComponent &circleCompA = getCircleComponent(args.entityNumA);
+    switch(args.tag)
+    {
+    case CollisionShape_e::RECTANGLE_C:
+    {
+        RectangleCollisionComponent &rectCompB = getRectangleComponent(args.entityNumB);
+        checkCircleRectCollision(args.originA, circleCompA.m_ray,
+                                 args.originB, rectCompB.m_size);
+    }
+        break;
+    case CollisionShape_e::CIRCLE:
+    {
+        CircleCollisionComponent &circleCompB = getCircleComponent(args.entityNumB);
+        checkCircleCircleCollision(args.originA, circleCompA.m_ray,
+                                   args.originB, circleCompB.m_ray);
+    }
+        break;
+    case CollisionShape_e::LINE:
+    {
+        LineCollisionComponent &lineCompB = getLineComponent(args.entityNumB);
+        checkCircleLineCollision(args.originA, circleCompA.m_ray,
+                                 args.originB, lineCompB.m_secondPoint);
+    }
+        break;
+    }
+}
+
+//===================================================================
+void CollisionSystem::treatCollisionFirstLine(const CollisionArgs &args)
+{
+    LineCollisionComponent &lineCompA = getLineComponent(args.entityNumA);
+    switch(args.tag)
+    {
+    case CollisionShape_e::RECTANGLE_C:
+    {
+        RectangleCollisionComponent &rectCompB = getRectangleComponent(args.entityNumB);
+        checkLineRectCollision(args.originA, lineCompA.m_secondPoint,
+                               args.originB, rectCompB.m_size);
+    }
+        break;
+    case CollisionShape_e::CIRCLE:
+    {
+        CircleCollisionComponent &circleCompB = getCircleComponent(args.entityNumB);
+        checkCircleLineCollision(args.originB, circleCompB.m_ray,
+                                 args.originA, lineCompA.m_secondPoint);
+    }
+        break;
+    case CollisionShape_e::LINE:
+    {
+        LineCollisionComponent &lineCompB = getLineComponent(args.entityNumB);
+        checkLineLineCollision(args.originA, lineCompA.m_secondPoint,
+                               args.originB, lineCompB.m_secondPoint);
+    }
+        break;
     }
 }
 
