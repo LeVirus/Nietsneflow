@@ -90,6 +90,7 @@ void CollisionSystem::treatCollision(uint32_t entityNumA, uint32_t entityNumB,
     }
 }
 
+//===================================================================
 void CollisionSystem::treatCollisionFirstRect(const CollisionArgs &args)
 {
     RectangleCollisionComponent &rectCompA = getRectangleComponent(args.entityNumA);
@@ -169,13 +170,13 @@ void CollisionSystem::treatCollisionFirstLine(const CollisionArgs &args)
                                  args.originA, lineCompA.m_secondPoint);
     }
         break;
-    case CollisionShape_e::LINE:
-    {
-        LineCollisionComponent &lineCompB = getLineComponent(args.entityNumB);
-        checkLineLineCollision(args.originA, lineCompA.m_secondPoint,
-                               args.originB, lineCompB.m_secondPoint);
-    }
-        break;
+//    case CollisionShape_e::LINE:
+//    {
+//        LineCollisionComponent &lineCompB = getLineComponent(args.entityNumB);
+//        checkLineLineCollision(args.originA, lineCompA.m_secondPoint,
+//                               args.originB, lineCompB.m_secondPoint);
+//    }
+//        break;
     }
 }
 
