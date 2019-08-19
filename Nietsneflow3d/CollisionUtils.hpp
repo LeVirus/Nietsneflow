@@ -20,7 +20,7 @@ bool checkRectRectCollision(const pairFloat_t &rectOriginA,
                             const pairFloat_t &rectOriginB,
                             const pairFloat_t &rectSizeB);
 
-bool checkLineRectCollision(const pairFloat_t &lineFirstPoint,
+bool checkSegmentRectCollision(const pairFloat_t &lineFirstPoint,
                             const pairFloat_t &lineSecondPoint,
                             const pairFloat_t &rectOrigin,
                             const pairFloat_t &rectSize);
@@ -37,12 +37,12 @@ bool checkPointSegmentCollision(const pairFloat_t &point,
                                 const pairFloat_t &firstSegmentPoint,
                                 const pairFloat_t &secondSegmentPoint);
 
-bool checkCircleLineCollision(const pairFloat_t &circleCenter,
+bool checkCircleSegmentCollision(const pairFloat_t &circleCenter,
                               const float circleRay,
                               const pairFloat_t &lineFirstPoint,
                               const pairFloat_t &lineSecondPoint);
 
-//bool checkLineLineCollision(const pairFloat_t &lineFirstPointA,
+//bool checkSegmentSegmentCollision(const pairFloat_t &lineFirstPointA,
 //                            const pairFloat_t &lineSecondPointA,
 //                            const pairFloat_t &lineFirstPointB,
 //                            const pairFloat_t &lineSecondPointB);
@@ -53,6 +53,8 @@ bool checkPointPosition(const pairFloat_t &firstPoint,
                         const pairFloat_t &currentPoint);
 
 float getDistance(const pairFloat_t &pointA, const pairFloat_t &pointB);
+
+bool checkFloatEquals(float a, float b);
 
 //Adapt to GL context
 template <typename T>

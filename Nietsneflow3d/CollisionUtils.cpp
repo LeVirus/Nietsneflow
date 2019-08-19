@@ -1,22 +1,23 @@
 #include "CollisionUtils.hpp"
 #include <cmath>
 #include <limits>
+#include <iostream>
 
 //===================================================================
 bool checkCircleRectCollision(const pairFloat_t &cicleCenter,
-                    const float circleRay,
-                    const pairFloat_t &rectOrigin,
-                    const pairFloat_t &rectSize)
+        const float circleRay,
+        const pairFloat_t &rectOrigin,
+        const pairFloat_t &rectSize)
 {
     if(cicleCenter.first + circleRay < rectOrigin.first ||
-       cicleCenter.first - circleRay > rectOrigin.first + rectSize.first ||
-       cicleCenter.second + circleRay < rectOrigin.second ||
-       cicleCenter.second - circleRay > rectOrigin.second + rectSize.second)
+            cicleCenter.first - circleRay > rectOrigin.first + rectSize.first ||
+            cicleCenter.second + circleRay < rectOrigin.second ||
+            cicleCenter.second - circleRay > rectOrigin.second + rectSize.second)
     {
         return false;
     }
     pairFloat_t rectCenterPoint = {rectOrigin.first + rectSize.first / 2,
-                                   rectOrigin.second + rectSize.second / 2};
+        rectOrigin.second + rectSize.second / 2};
     float rectDiagonal = getDistance(rectOrigin, rectCenterPoint);
     //Add test
     if(getDistance(rectCenterPoint, cicleCenter) > (circleRay + rectDiagonal))
@@ -28,14 +29,14 @@ bool checkCircleRectCollision(const pairFloat_t &cicleCenter,
 
 //===================================================================
 bool checkCircleCircleCollision(const pairFloat_t &circleCenterA,
-                    const float rayCircleA,
-                    const pairFloat_t &circleCenterB,
-                    const float rayCircleB)
+        const float rayCircleA,
+        const pairFloat_t &circleCenterB,
+        const float rayCircleB)
 {
     if((circleCenterA.first + rayCircleA) < (circleCenterB.first - rayCircleB) ||
-       (circleCenterB.first + rayCircleB) < (circleCenterA.first - rayCircleA) ||
-       (circleCenterA.second + rayCircleA) < (circleCenterB.second - rayCircleB) ||
-       (circleCenterB.second + rayCircleB) < (circleCenterA.second - rayCircleA))
+            (circleCenterB.first + rayCircleB) < (circleCenterA.first - rayCircleA) ||
+            (circleCenterA.second + rayCircleA) < (circleCenterB.second - rayCircleB) ||
+            (circleCenterB.second + rayCircleB) < (circleCenterA.second - rayCircleA))
     {
         return false;
     }
@@ -48,28 +49,36 @@ bool checkCircleCircleCollision(const pairFloat_t &circleCenterA,
 
 //===================================================================
 bool checkRectRectCollision(const pairFloat_t &rectOriginA,
-                            const pairFloat_t &rectSizeA,
-                            const pairFloat_t &rectOriginB,
-                            const pairFloat_t &rectSizeB)
+        const pairFloat_t &rectSizeA,
+        const pairFloat_t &rectOriginB,
+        const pairFloat_t &rectSizeB)
 {
     return !(rectOriginA.first + rectSizeA.first < rectOriginB.first ||
-       rectOriginB.first + rectSizeB.second < rectOriginA.first ||
-       rectOriginA.second + rectSizeA.second < rectOriginB.second ||
-       rectOriginB.second + rectSizeB.second < rectOriginA.second);
+            rectOriginB.first + rectSizeB.second < rectOriginA.first ||
+            rectOriginA.second + rectSizeA.second < rectOriginB.second ||
+            rectOriginB.second + rectSizeB.second < rectOriginA.second);
 }
 
 //===================================================================
-bool checkLineRectCollision(const pairFloat_t &lineFirstPoint,
-                    const pairFloat_t &lineSecondPoint,
-                    const pairFloat_t &rectOrigin,
-                    const pairFloat_t &rectSize)
+bool checkSegmentRectCollision(const pairFloat_t &lineFirstPoint,
+        const pairFloat_t &lineSecondPoint,
+        const pairFloat_t &rectOrigin,
+        const pairFloat_t &rectSize)
 {
+    float minX = std::min(lineFirstPoint.first, lineSecondPoint.first);
+    float maxX = std::max(lineFirstPoint.first, lineSecondPoint.first);
+    float minY = std::min(lineFirstPoint.second, lineSecondPoint.second);
+    float maxY = std::max(lineFirstPoint.second, lineSecondPoint.second);
+    if(!checkRectRectCollision(rectOrigin, rectSize, {minX, minY}, {maxX - minX, maxY - minY}))
+    {
+        return false;
+    }
     pairFloat_t currentPoint = lineFirstPoint;
-    float minRectLine = std::min(rectSize.first, rectSize.second);
+    float minRectSegment = std::min(rectSize.first, rectSize.second);
     float angle = atan((lineSecondPoint.first - lineFirstPoint.first) -
-                       (lineSecondPoint.second - lineFirstPoint.second));
-    pairFloat_t iterationPointValue = {std::cos(angle) * minRectLine,
-                                       std::sin(angle) * minRectLine};
+            (lineSecondPoint.second - lineFirstPoint.second));
+    pairFloat_t iterationPointValue = {std::cos(angle) * minRectSegment,
+        std::sin(angle) * minRectSegment};
     //iterate while second point isn't reach
     do
     {
@@ -79,21 +88,20 @@ bool checkLineRectCollision(const pairFloat_t &lineFirstPoint,
         }
         currentPoint += iterationPointValue;
         if(!checkPointPosition(lineFirstPoint, lineSecondPoint,
-                             currentPoint))
+                    currentPoint))
         {
             return checkPointRectCollision(lineSecondPoint, rectOrigin,
-                                           rectSize);
+                    rectSize);
         }
     }while(true);
 }
 
 //===================================================================
 bool checkPointPosition(const pairFloat_t &firstPoint,
-                        const pairFloat_t &secondPoint,
-                        const pairFloat_t &currentPoint)
+        const pairFloat_t &secondPoint,
+        const pairFloat_t &currentPoint)
 {
-    float checkEquality = firstPoint.first - secondPoint.first;
-    if(checkEquality > std::numeric_limits<float>::epsilon())
+    if(!checkFloatEquals(firstPoint.first, secondPoint.first))
     {
         if(firstPoint.first < secondPoint.first)
         {
@@ -101,8 +109,7 @@ bool checkPointPosition(const pairFloat_t &firstPoint,
         }
         return currentPoint.first < currentPoint.first;
     }
-    checkEquality = firstPoint.second - secondPoint.second;
-    if(checkEquality > std::numeric_limits<float>::epsilon())
+    if(!checkFloatEquals(firstPoint.second, secondPoint.second))
     {
         if(firstPoint.second < secondPoint.second)
         {
@@ -117,68 +124,68 @@ bool checkPointPosition(const pairFloat_t &firstPoint,
 }
 
 //===================================================================
-bool checkCircleLineCollision(const pairFloat_t &circleCenter,
-                              const float circleRay,
-                              const pairFloat_t &lineFirstPoint,
-                              const pairFloat_t &lineSecondPoint)
+bool checkCircleSegmentCollision(const pairFloat_t &circleCenter,
+        const float circleRay,
+        const pairFloat_t &lineFirstPoint,
+        const pairFloat_t &lineSecondPoint)
 {
-    if(checkPointCircleCollision(lineFirstPoint, circleCenter, circleRay) ||
-       checkPointCircleCollision(lineSecondPoint, circleCenter, circleRay))
+    float minX = std::min(lineFirstPoint.first, lineSecondPoint.first);
+    float maxX = std::max(lineFirstPoint.first, lineSecondPoint.first);
+    float minY = std::min(lineFirstPoint.second, lineSecondPoint.second);
+    float maxY = std::max(lineFirstPoint.second, lineSecondPoint.second);
+    if(!checkCircleRectCollision(circleCenter, circleRay, {minX, minY}, {maxX - minX, maxY - minY}))
     {
-        return true;
+        return false;
     }
-    float size = getDistance(lineFirstPoint, lineSecondPoint);
-    //produit scalaire segment cercle
-    float dot = ( ((circleCenter.first - lineFirstPoint.first) *
-             (lineSecondPoint.first - lineFirstPoint.first)) +
-            ((circleCenter.second - lineFirstPoint.second) *
-             (lineSecondPoint.second - lineFirstPoint.second)) ) /
-            (size * size);
+    float distanceX = maxX - minX;
+    float distanceY = maxY - minY;
+    float A = distanceX * distanceX + distanceY * distanceY;
+    float B = 2 * (distanceX * (lineFirstPoint.first - circleCenter.first) + distanceY * (lineFirstPoint.second - circleCenter.second));
+    float C = (lineFirstPoint.first - circleCenter.first) * (lineFirstPoint.first - circleCenter.first) 
+    + (lineFirstPoint.second - circleCenter.second) * (lineFirstPoint.second - circleCenter.second) - circleRay * circleRay;
 
-    float closestX = lineFirstPoint.first +
-            (dot * (lineSecondPoint.first - lineFirstPoint.first));
-    float closestY = lineFirstPoint.second +
-            (dot * (lineSecondPoint.second - lineFirstPoint.second));
-    return checkPointSegmentCollision({closestX, closestY}, lineFirstPoint,
-                               lineSecondPoint);
+    float det = B * B - 4 * A * C;
+    return det >= std::numeric_limits<float>::epsilon();
 }
 
 //===================================================================
 bool checkPointSegmentCollision(const pairFloat_t &point,
-                                const pairFloat_t &firstSegmentPoint,
-                                const pairFloat_t &secondSegmentPoint)
+        const pairFloat_t &firstSegmentPoint,
+        const pairFloat_t &secondSegmentPoint)
 {
-    float thalesA = (point.first - firstSegmentPoint.first) /
-            (secondSegmentPoint.first - firstSegmentPoint.first),
-    thalesB = (point.second - firstSegmentPoint.second) /
-            (secondSegmentPoint.second - firstSegmentPoint.second);
-    //if point is on segment
-    if((thalesA - thalesB) <= std::numeric_limits<float>::epsilon())
+    float minX = std::min(firstSegmentPoint.first, secondSegmentPoint.first);
+    float maxX = std::max(firstSegmentPoint.first, secondSegmentPoint.first);
+    float minY = std::min(firstSegmentPoint.second, secondSegmentPoint.second);
+    float maxY = std::max(firstSegmentPoint.second, secondSegmentPoint.second);
+    if(point.first < minX || point.first > maxX ||
+            point.second < minY || point.second > maxY)
     {
-        float minX = std::min(firstSegmentPoint.first, secondSegmentPoint.first);
-        float maxX = std::max(firstSegmentPoint.first, secondSegmentPoint.first);
-        float minY = std::min(firstSegmentPoint.second, secondSegmentPoint.second);
-        float maxY = std::max(firstSegmentPoint.second, secondSegmentPoint.second);
-        if(point.first < minX || point.first > maxX ||
-                point.second < minY || point.second > maxY)
-        {
-            return false;
-        }
-        return true;
+        return false;
     }
-    return false;
+    //calculate equation
+    //    y = ax + b
+    float a = (maxY - minY) / (maxX - minX);
+    float b = minY - a * minX;
+    return checkFloatEquals(point.second, a * point.first + b);
+}
+
+//===================================================================
+bool checkFloatEquals(float a, float b)
+{
+    float check = std::fabs(a - b);
+    return check <= std::numeric_limits<float>::epsilon();
 }
 
 //===================================================================
 bool checkPointCircleCollision(const pairFloat_t &point,
-                               const pairFloat_t &cicleCenter,
-                               const float circleRay)
+        const pairFloat_t &cicleCenter,
+        const float circleRay)
 {
     return getDistance(point, cicleCenter) <= circleRay;
 }
 
 //===================================================================
-//bool checkLineLineCollision(const pairFloat_t &lineFirstPointA,
+//bool checkSegmentSegmentCollision(const pairFloat_t &lineFirstPointA,
 //                            const pairFloat_t &lineSecondPointA,
 //                            const pairFloat_t &lineFirstPointB,
 //                            const pairFloat_t &lineSecondPointB)
@@ -190,17 +197,17 @@ bool checkPointCircleCollision(const pairFloat_t &point,
 float getDistance(const pairFloat_t &pointA, const pairFloat_t &pointB)
 {
     float distanceX = std::abs(pointA.first - pointB.first),
-    distanceY = std::abs(pointA.second - pointB.second);
+          distanceY = std::abs(pointA.second - pointB.second);
     return std::sqrt(distanceX * distanceX + distanceY * distanceY);
 }
 
 //===================================================================
 bool checkPointRectCollision(const pairFloat_t &point,
-                             const pairFloat_t &rectOrigin,
-                             const pairFloat_t &rectSize)
+        const pairFloat_t &rectOrigin,
+        const pairFloat_t &rectSize)
 {
     return !(point.first < rectOrigin.first ||
-             point.first > rectOrigin.first + rectSize.first ||
-             point.second < rectOrigin.second ||
-             point.second > rectOrigin.second + rectSize.second);
+            point.first > rectOrigin.first + rectSize.first ||
+            point.second < rectOrigin.second ||
+            point.second > rectOrigin.second + rectSize.second);
 }
