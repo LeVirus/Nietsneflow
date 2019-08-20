@@ -10,6 +10,10 @@ bool checkCircleRectCollision(const pairFloat_t &cicleCenter,
                               const pairFloat_t &rectOrigin,
                               const pairFloat_t &rectSize);
 
+bool checkSegmentSegmentCollision(const pairFloat_t &firstPointSegmentA, 
+                                  const pairFloat_t &secondPointSegmentA, 
+                                  const pairFloat_t &firstPointSegmentB, 
+                                  const pairFloat_t &secondPointSegmentB);
 bool checkCircleCircleCollision(const pairFloat_t &circleCenterA,
                                 const float rayCircleA,
                                 const pairFloat_t &circleCenterB,

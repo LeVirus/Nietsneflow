@@ -73,27 +73,64 @@ bool checkSegmentRectCollision(const pairFloat_t &lineFirstPoint,
     {
         return false;
     }
-    pairFloat_t currentPoint = lineFirstPoint;
-    float minRectSegment = std::min(rectSize.first, rectSize.second);
-    float angle = atan((lineSecondPoint.first - lineFirstPoint.first) -
-            (lineSecondPoint.second - lineFirstPoint.second));
-    pairFloat_t iterationPointValue = {std::cos(angle) * minRectSegment,
-        std::sin(angle) * minRectSegment};
-    //iterate while second point isn't reach
-    do
+    if(checkPointRectCollision(lineFirstPoint, rectOrigin, rectSize) ||
+            checkPointRectCollision(lineSecondPoint, rectOrigin, rectSize))
     {
-        if(checkPointRectCollision(currentPoint, rectOrigin, rectSize))
-        {
-            return true;
-        }
-        currentPoint += iterationPointValue;
-        if(!checkPointPosition(lineFirstPoint, lineSecondPoint,
-                    currentPoint))
-        {
-            return checkPointRectCollision(lineSecondPoint, rectOrigin,
-                    rectSize);
-        }
-    }while(true);
+        return true;
+    }
+    pairFloat_t secondRectPoint = {rectOrigin.first, rectOrigin.second + rectSize.second};
+    pairFloat_t thirdRectPoint = {rectOrigin.first + rectSize.first, rectOrigin.second};
+    if(checkSegmentSegmentCollision(lineFirstPoint, lineSecondPoint, rectOrigin, secondRectPoint))
+    {
+        return true;
+    }
+    if(checkSegmentSegmentCollision(lineFirstPoint, lineSecondPoint, rectOrigin, thirdRectPoint))
+    {
+        return true;
+    }
+    pairFloat_t fourthRectPoint = {rectOrigin.first + rectSize.first, rectOrigin.second + rectSize.second};
+    if(checkSegmentSegmentCollision(lineFirstPoint, lineSecondPoint, fourthRectPoint, secondRectPoint))
+    {
+        return true;
+    }
+    if(checkSegmentSegmentCollision(lineFirstPoint, lineSecondPoint, fourthRectPoint, thirdRectPoint))
+    {
+        return true;
+    }
+    return false;
+}
+
+//===================================================================
+bool checkSegmentSegmentCollision(const pairFloat_t &firstPointSegmentA, const pairFloat_t &secondPointSegmentA, 
+        const pairFloat_t &firstPointSegmentB, const pairFloat_t &secondPointSegmentB)
+{
+    float distXA = secondPointSegmentA.first - firstPointSegmentA.first;
+    float distYA = secondPointSegmentA.second - firstPointSegmentA.second;
+    float distXB = secondPointSegmentB.first - firstPointSegmentB.first;
+    float distYB = secondPointSegmentB.second - firstPointSegmentB.second;
+    float denom = distXA * distYB - distYA * distXB;
+    std::numeric_limits<float>::epsilon();
+    if(denom == std::numeric_limits<float>::epsilon())
+    {
+        return false;   // erreur, cas limite
+    }
+    float t = - (firstPointSegmentA.first * distYB - 
+                 firstPointSegmentB.first * distYB - 
+                 distXB * firstPointSegmentA.second + 
+                 distXB * firstPointSegmentB.second) / denom;
+    if (t < 0 || t >= 1)
+    {
+        return false;
+    }
+    float u = - (-distXA * firstPointSegmentA.second + 
+            distXA * firstPointSegmentB.second + 
+            distYA * firstPointSegmentA.first - 
+            distYA * firstPointSegmentB.first) / denom;
+    if (u < 0 || u >= 1)
+    {
+        return false;
+    }
+    return true;
 }
 
 //===================================================================
@@ -142,7 +179,7 @@ bool checkCircleSegmentCollision(const pairFloat_t &circleCenter,
     float A = distanceX * distanceX + distanceY * distanceY;
     float B = 2 * (distanceX * (lineFirstPoint.first - circleCenter.first) + distanceY * (lineFirstPoint.second - circleCenter.second));
     float C = (lineFirstPoint.first - circleCenter.first) * (lineFirstPoint.first - circleCenter.first) 
-    + (lineFirstPoint.second - circleCenter.second) * (lineFirstPoint.second - circleCenter.second) - circleRay * circleRay;
+        + (lineFirstPoint.second - circleCenter.second) * (lineFirstPoint.second - circleCenter.second) - circleRay * circleRay;
 
     float det = B * B - 4 * A * C;
     return det >= std::numeric_limits<float>::epsilon();
