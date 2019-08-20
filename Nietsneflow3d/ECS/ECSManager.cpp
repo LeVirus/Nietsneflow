@@ -140,7 +140,7 @@ void ECSManager::syncComponentsFromEntities(uint32_t numEntity,
         {
             m_componentManager->instanciateExternComponent(
                         numEntity,
-                        std::make_unique<LineCollisionComponent>());
+                        std::make_unique<SegmentCollisionComponent>());
         }
             break;
         case Components_e::RECTANGLE_COLLISION_COMPONENT:

@@ -66,7 +66,7 @@ bool CollisionSystem::checkTag(CollisionTag_e entityTagA,
 }
 
 //===================================================================
-void CollisionSystem::treatCollision(uint32_t entityNumA, uint32_t entityNumB,
+void CollisionSystem::checkCollision(uint32_t entityNumA, uint32_t entityNumB,
                                      CollisionComponent *tagCompA, CollisionComponent *tagCompB)
 {
     MapCoordComponent &mapCompA = getMapComponent(entityNumA),
@@ -78,95 +78,106 @@ void CollisionSystem::treatCollision(uint32_t entityNumA, uint32_t entityNumB,
                           posOriginA, posOriginB};
     if(tagCompA->m_shape == CollisionShape_e::RECTANGLE_C)
     {
-        treatCollisionFirstRect(args);
+        checkCollisionFirstRect(args);
     }
     else if(tagCompA->m_shape == CollisionShape_e::CIRCLE)
     {
-        treatCollisionFirstCircle(args);
+        checkCollisionFirstCircle(args);
     }
-    else if(tagCompA->m_shape == CollisionShape_e::LINE)
+    else if(tagCompA->m_shape == CollisionShape_e::SEGMENT)
     {
-        treatCollisionFirstLine(args);
+        checkCollisionFirstLine(args);
     }
 }
 
 //===================================================================
-void CollisionSystem::treatCollisionFirstRect(const CollisionArgs &args)
+void CollisionSystem::checkCollisionFirstRect(const CollisionArgs &args)
 {
     RectangleCollisionComponent &rectCompA = getRectangleComponent(args.entityNumA);
+    bool collision;
     switch(args.tag)
     {
     case CollisionShape_e::RECTANGLE_C:
     {
         RectangleCollisionComponent &rectCompB = getRectangleComponent(args.entityNumB);
-        checkRectRectCollision(args.originA, rectCompA.m_size,
+        collision = checkRectRectCollision(args.originA, rectCompA.m_size,
                                args.originB, rectCompB.m_size);
     }
         break;
     case CollisionShape_e::CIRCLE:
     {
         CircleCollisionComponent &circleCompB = getCircleComponent(args.entityNumB);
-        checkCircleRectCollision(args.originB, circleCompB.m_ray,
+        collision = checkCircleRectCollision(args.originB, circleCompB.m_ray,
                                  args.originA, rectCompA.m_size);
     }
         break;
-    case CollisionShape_e::LINE:
+    case CollisionShape_e::SEGMENT:
     {
-        LineCollisionComponent &lineCompB = getLineComponent(args.entityNumB);
-        checkLineRectCollision(args.originB, lineCompB.m_secondPoint,
+        SegmentCollisionComponent &segmentCompB = getSegmentComponent(args.entityNumB);
+        collision = checkSegmentRectCollision(args.originB, segmentCompB.m_secondPoint,
                                args.originA, rectCompA.m_size);
     }
         break;
     }
+    if(collision)
+    {
+        treatCollision(args.entityNumA, args.entityNumB);
+    }
 }
 
 //===================================================================
-void CollisionSystem::treatCollisionFirstCircle(const CollisionArgs &args)
+void CollisionSystem::checkCollisionFirstCircle(const CollisionArgs &args)
 {
     CircleCollisionComponent &circleCompA = getCircleComponent(args.entityNumA);
+    bool collision;
     switch(args.tag)
     {
     case CollisionShape_e::RECTANGLE_C:
     {
         RectangleCollisionComponent &rectCompB = getRectangleComponent(args.entityNumB);
-        checkCircleRectCollision(args.originA, circleCompA.m_ray,
+        collision = checkCircleRectCollision(args.originA, circleCompA.m_ray,
                                  args.originB, rectCompB.m_size);
     }
         break;
     case CollisionShape_e::CIRCLE:
     {
         CircleCollisionComponent &circleCompB = getCircleComponent(args.entityNumB);
-        checkCircleCircleCollision(args.originA, circleCompA.m_ray,
+        collision = checkCircleCircleCollision(args.originA, circleCompA.m_ray,
                                    args.originB, circleCompB.m_ray);
     }
         break;
-    case CollisionShape_e::LINE:
+    case CollisionShape_e::SEGMENT:
     {
-        LineCollisionComponent &lineCompB = getLineComponent(args.entityNumB);
-        checkCircleLineCollision(args.originA, circleCompA.m_ray,
-                                 args.originB, lineCompB.m_secondPoint);
+        SegmentCollisionComponent &segmentCompB = getSegmentComponent(args.entityNumB);
+        collision = checkCircleSegmentCollision(args.originA, circleCompA.m_ray,
+                                 args.originB, segmentCompB.m_secondPoint);
     }
         break;
+    }
+    if(collision)
+    {
+        treatCollision(args.entityNumA, args.entityNumB);
     }
 }
 
 //===================================================================
-void CollisionSystem::treatCollisionFirstLine(const CollisionArgs &args)
+void CollisionSystem::checkCollisionFirstLine(const CollisionArgs &args)
 {
-    LineCollisionComponent &lineCompA = getLineComponent(args.entityNumA);
+    bool collision;
+    SegmentCollisionComponent &lineCompA = getSegmentComponent(args.entityNumA);
     switch(args.tag)
     {
     case CollisionShape_e::RECTANGLE_C:
     {
         RectangleCollisionComponent &rectCompB = getRectangleComponent(args.entityNumB);
-        checkLineRectCollision(args.originA, lineCompA.m_secondPoint,
+        collision = checkSegmentRectCollision(args.originA, lineCompA.m_secondPoint,
                                args.originB, rectCompB.m_size);
     }
         break;
     case CollisionShape_e::CIRCLE:
     {
         CircleCollisionComponent &circleCompB = getCircleComponent(args.entityNumB);
-        checkCircleLineCollision(args.originB, circleCompB.m_ray,
+        collision = checkCircleSegmentCollision(args.originB, circleCompB.m_ray,
                                  args.originA, lineCompA.m_secondPoint);
     }
         break;
@@ -178,6 +189,16 @@ void CollisionSystem::treatCollisionFirstLine(const CollisionArgs &args)
 //    }
 //        break;
     }
+    if(collision)
+    {
+        treatCollision(args.entityNumA, args.entityNumB);
+    }
+}
+
+//===================================================================
+void CollisionSystem::treatCollision(uint32_t entityNumA, uint32_t entityNumB)
+{
+
 }
 
 //===================================================================
@@ -201,10 +222,10 @@ RectangleCollisionComponent &CollisionSystem::getRectangleComponent(uint32_t ent
 }
 
 //===================================================================
-LineCollisionComponent &CollisionSystem::getLineComponent(uint32_t entityNum)
+SegmentCollisionComponent &CollisionSystem::getSegmentComponent(uint32_t entityNum)
 {
-    LineCollisionComponent *collComp = stairwayToComponentManager().
-            searchComponentByType<LineCollisionComponent>(entityNum,
+    SegmentCollisionComponent *collComp = stairwayToComponentManager().
+            searchComponentByType<SegmentCollisionComponent>(entityNum,
                                   Components_e::LINE_COLLISION_COMPONENT);
     assert(collComp);
     return *collComp;
@@ -228,6 +249,11 @@ void CollisionSystem::execSystem()
         CollisionComponent *tagCompA = stairwayToComponentManager().
                 searchComponentByType<CollisionComponent>(mVectNumEntity[i],
                                                          Components_e::TAG_COMPONENT);
+//        if(tagCompA->m_tag == CollisionTag_e::WALL_C ||
+//                tagCompA->m_tag == CollisionTag_e::OBJECT_C)
+//        {
+//            continue;
+//        }
         assert(tagCompA);
         for(uint32_t j = i + 1; j < mVectNumEntity.size(); ++j)
         {
@@ -237,7 +263,7 @@ void CollisionSystem::execSystem()
             assert(tagCompB);
             if(checkTag(tagCompA->m_tag, tagCompB->m_tag))
             {
-                treatCollision(mVectNumEntity[i], mVectNumEntity[j],
+                checkCollision(mVectNumEntity[i], mVectNumEntity[j],
                                tagCompA, tagCompB);
             }
         }

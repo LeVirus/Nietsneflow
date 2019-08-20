@@ -6,7 +6,7 @@
 #include <map>
 struct CircleCollisionComponent;
 struct RectangleCollisionComponent;
-struct LineCollisionComponent;
+struct SegmentCollisionComponent;
 struct MapCoordComponent;
 struct CollisionComponent;
 struct CollisionArgs;
@@ -19,16 +19,17 @@ private:
     void setUsedComponents();
     void initArrayTag();
     bool checkTag(CollisionTag_e entityTagA, CollisionTag_e entityTagB);
-    void treatCollision(uint32_t entityNumA, uint32_t entityNumB,
+    void checkCollision(uint32_t entityNumA, uint32_t entityNumB,
                         CollisionComponent *tagCompA,
                         CollisionComponent *tagCompB);
-    void treatCollisionFirstRect(const CollisionArgs &args);
-    void treatCollisionFirstCircle(const CollisionArgs &args);
-    void treatCollisionFirstLine(const CollisionArgs &args);
+    void checkCollisionFirstRect(const CollisionArgs &args);
+    void checkCollisionFirstCircle(const CollisionArgs &args);
+    void checkCollisionFirstLine(const CollisionArgs &args);
+    void treatCollision(uint32_t entityNumA, uint32_t entityNumB);
     //Components accessors
     CircleCollisionComponent &getCircleComponent(uint32_t entityNum);
     RectangleCollisionComponent &getRectangleComponent(uint32_t entityNum);
-    LineCollisionComponent &getLineComponent(uint32_t entityNum);
+    SegmentCollisionComponent &getSegmentComponent(uint32_t entityNum);
     MapCoordComponent &getMapComponent(uint32_t entityNum);
 public:
     CollisionSystem();

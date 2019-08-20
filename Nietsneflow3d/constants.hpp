@@ -104,7 +104,7 @@ enum CollisionShape_e
 {
     CIRCLE,
     RECTANGLE_C,
-    LINE
+    SEGMENT
 };
 
 inline const float PI = 3.14159265359f;
