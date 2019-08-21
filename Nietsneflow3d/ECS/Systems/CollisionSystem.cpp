@@ -25,6 +25,35 @@ void CollisionSystem::setUsedComponents()
 }
 
 //===================================================================
+void CollisionSystem::execSystem()
+{
+    for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
+    {
+        CollisionComponent *tagCompA = stairwayToComponentManager().
+                searchComponentByType<CollisionComponent>(mVectNumEntity[i],
+                                                         Components_e::TAG_COMPONENT);
+        if(tagCompA->m_tag == CollisionTag_e::WALL_C ||
+                tagCompA->m_tag == CollisionTag_e::OBJECT_C)
+        {
+            continue;
+        }
+        assert(tagCompA);
+        for(uint32_t j = i + 1; j < mVectNumEntity.size(); ++j)
+        {
+            CollisionComponent *tagCompB = stairwayToComponentManager().
+                    searchComponentByType<CollisionComponent>(mVectNumEntity[j],
+                                                        Components_e::TAG_COMPONENT);
+            assert(tagCompB);
+            if(checkTag(tagCompA->m_tag, tagCompB->m_tag))
+            {
+                checkCollision(mVectNumEntity[i], mVectNumEntity[j],
+                               tagCompA, tagCompB);
+            }
+        }
+    }
+}
+
+//===================================================================
 void CollisionSystem::initArrayTag()
 {
     m_tagArray.insert({PLAYER, WALL_C});
@@ -239,33 +268,4 @@ MapCoordComponent &CollisionSystem::getMapComponent(uint32_t entityNum)
                                   Components_e::MAP_COORD_COMPONENT);
     assert(mapComp);
     return *mapComp;
-}
-
-//===================================================================
-void CollisionSystem::execSystem()
-{
-    for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
-    {
-        CollisionComponent *tagCompA = stairwayToComponentManager().
-                searchComponentByType<CollisionComponent>(mVectNumEntity[i],
-                                                         Components_e::TAG_COMPONENT);
-//        if(tagCompA->m_tag == CollisionTag_e::WALL_C ||
-//                tagCompA->m_tag == CollisionTag_e::OBJECT_C)
-//        {
-//            continue;
-//        }
-        assert(tagCompA);
-        for(uint32_t j = i + 1; j < mVectNumEntity.size(); ++j)
-        {
-            CollisionComponent *tagCompB = stairwayToComponentManager().
-                    searchComponentByType<CollisionComponent>(mVectNumEntity[j],
-                                                        Components_e::TAG_COMPONENT);
-            assert(tagCompB);
-            if(checkTag(tagCompA->m_tag, tagCompB->m_tag))
-            {
-                checkCollision(mVectNumEntity[i], mVectNumEntity[j],
-                               tagCompA, tagCompB);
-            }
-        }
-    }
 }
