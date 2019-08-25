@@ -116,7 +116,7 @@ uint32_t MainEngine::createWallEntity()
     bitsetComponents[Components_e::SPRITE_TEXTURE_COMPONENT] = true;
     bitsetComponents[Components_e::MAP_COORD_COMPONENT] = true;
     bitsetComponents[Components_e::RECTANGLE_COLLISION_COMPONENT] = true;
-    bitsetComponents[Components_e::TAG_COMPONENT] = true;
+    bitsetComponents[Components_e::COLLISION_COMPONENT] = true;
     return m_ecsManager.addEntity(bitsetComponents);
 }
 
@@ -129,7 +129,7 @@ uint32_t MainEngine::createStaticEntity()
     bitsetComponents[Components_e::MAP_COORD_COMPONENT] = true;
     bitsetComponents[Components_e::STATIC_ELEMENT_COMPONENT] = true;
     bitsetComponents[Components_e::RECTANGLE_COLLISION_COMPONENT] = true;
-    bitsetComponents[Components_e::TAG_COMPONENT] = true;
+    bitsetComponents[Components_e::COLLISION_COMPONENT] = true;
     return m_ecsManager.addEntity(bitsetComponents);
 }
 
@@ -149,7 +149,7 @@ void MainEngine::confBaseMapComponent(uint32_t entityNum,
             searchComponentByType<RectangleCollisionComponent>(entityNum, Components_e::RECTANGLE_COLLISION_COMPONENT);
     assert(rectComp);
     CollisionComponent *tagComp = m_ecsManager.getComponentManager().
-            searchComponentByType<CollisionComponent>(entityNum, Components_e::TAG_COMPONENT);
+            searchComponentByType<CollisionComponent>(entityNum, Components_e::COLLISION_COMPONENT);
     assert(tagComp);
     mapComp->m_coord = coordLevel;
     mapComp->m_absoluteMapPositionPX = Level::getAbsolutePosition(coordLevel);
@@ -182,7 +182,7 @@ void MainEngine::loadPlayerEntity(const Level &level)
     bitsetComponents[Components_e::COLOR_VERTEX_COMPONENT] = true;
     bitsetComponents[Components_e::INPUT_COMPONENT] = true;
     bitsetComponents[Components_e::CIRCLE_COLLISION_COMPONENT] = true;
-    bitsetComponents[Components_e::TAG_COMPONENT] = true;
+    bitsetComponents[Components_e::COLLISION_COMPONENT] = true;
     uint32_t entityNum = m_ecsManager.addEntity(bitsetComponents);
     confPlayerEntity(entityNum, level);
     //notify player entity number
@@ -209,7 +209,7 @@ void MainEngine::confPlayerEntity(uint32_t entityNum, const Level &level)
                                                      Components_e::CIRCLE_COLLISION_COMPONENT);
     CollisionComponent *tagColl = m_ecsManager.getComponentManager().
             searchComponentByType<CollisionComponent>(entityNum,
-                                                     Components_e::TAG_COMPONENT);
+                                                     Components_e::COLLISION_COMPONENT);
     assert(pos);
     assert(pos);
     assert(map);
@@ -241,7 +241,7 @@ void MainEngine::confPlayerEntity(uint32_t entityNum, const Level &level)
     color->m_vertex.emplace_back(0.9f,0.00f, 0.00f);
     color->m_vertex.emplace_back(0.9f,0.00f, 0.00f);
     color->m_vertex.emplace_back(0.9f,0.00f, 0.00f);
-    circleColl->m_ray = 2.0f;
+    circleColl->m_ray = 5.0f;
     tagColl->m_tag = CollisionTag_e::PLAYER;
     tagColl->m_shape = CollisionShape_e::CIRCLE;
 }

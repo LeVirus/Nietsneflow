@@ -4,6 +4,7 @@
 #include <includesLib/BaseECS/system.hpp>
 #include "constants.hpp"
 #include <map>
+
 struct CircleCollisionComponent;
 struct RectangleCollisionComponent;
 struct SegmentCollisionComponent;
@@ -22,10 +23,21 @@ private:
     void checkCollision(uint32_t entityNumA, uint32_t entityNumB,
                         CollisionComponent *tagCompA,
                         CollisionComponent *tagCompB);
-    void checkCollisionFirstRect(const CollisionArgs &args);
-    void checkCollisionFirstCircle(const CollisionArgs &args);
-    void checkCollisionFirstLine(const CollisionArgs &args);
-    void treatCollision(uint32_t entityNumA, uint32_t entityNumB);
+    //Collisions detection
+    void checkCollisionFirstRect(CollisionArgs &args);
+    void checkCollisionFirstCircle(CollisionArgs &args);
+    void checkCollisionFirstLine(CollisionArgs &args);
+
+    //Collisions treatment
+    void treatCollisionCircleRect(CollisionArgs &args,
+                                const CircleCollisionComponent &circleCollA,
+                                const RectangleCollisionComponent &rectCollB);
+    void treatCollisionCircleCircle(CollisionArgs &args,
+                                const CircleCollisionComponent &circleCollA,
+                                const CircleCollisionComponent &circleCollB);
+    void treatCollisionCircleSegment(CollisionArgs &args,
+                                const CircleCollisionComponent &circleCollA,
+                                const SegmentCollisionComponent &segmCollB);
     //Components accessors
     CircleCollisionComponent &getCircleComponent(uint32_t entityNum);
     RectangleCollisionComponent &getRectangleComponent(uint32_t entityNum);
@@ -39,8 +51,8 @@ public:
 struct CollisionArgs
 {
     uint32_t entityNumA, entityNumB;
-    CollisionShape_e tag;
-    const pairFloat_t &originA, &originB;
+    const CollisionComponent *tagCompA, *tagCompB;
+    MapCoordComponent &mapCompA, &mapCompB;
 };
 
 #endif // COLLISIONSYSTEM_H

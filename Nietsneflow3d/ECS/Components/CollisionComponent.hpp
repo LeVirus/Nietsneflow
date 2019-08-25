@@ -8,7 +8,7 @@ struct CollisionComponent : public ecs::Component
 {
     CollisionComponent()
     {
-        muiTypeComponent = Components_e::TAG_COMPONENT;
+        muiTypeComponent = Components_e::COLLISION_COMPONENT;
     }
     CollisionTag_e m_tag;
     CollisionShape_e m_shape;

@@ -122,7 +122,7 @@ void ECSManager::syncComponentsFromEntities(uint32_t numEntity,
                         std::make_unique<InputComponent>());
         }
             break;
-        case Components_e::TAG_COMPONENT:
+        case Components_e::COLLISION_COMPONENT:
         {
             m_componentManager->instanciateExternComponent(
                         numEntity,

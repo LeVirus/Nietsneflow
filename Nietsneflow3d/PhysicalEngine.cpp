@@ -46,6 +46,7 @@ void movePlayer(MoveableComponent &moveComp,
         angle += 270;
         break;
     }
+    moveComp.m_currentDegreeDirection = angle;
     radiantAngle = getRadiantAngle(angle);
     mapComp.m_absoluteMapPositionPX.first +=
             cos(radiantAngle) * moveComp.m_velocity;
