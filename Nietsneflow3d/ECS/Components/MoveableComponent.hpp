@@ -15,6 +15,7 @@ struct MoveableComponent : public ecs::Component
     }
     int32_t m_degreeOrientation;
     float m_velocity = 3.0f;
+    float m_rotationangle = 3.000f;
     virtual ~MoveableComponent() = default;
     float m_currentDegreeDirection;
 };

@@ -20,7 +20,8 @@ bool checkCircleRectCollision(const pairFloat_t &cicleCenter,
         rectOrigin.second + rectSize.second / 2};
     float rectDiagonal = getDistance(rectOrigin, rectCenterPoint);
     //Add test
-    if(getDistance(rectCenterPoint, cicleCenter) > (circleRay + rectDiagonal))
+    if(getDistance(rectCenterPoint, cicleCenter) >
+            (circleRay + rectDiagonal))
     {
         return false;
     }

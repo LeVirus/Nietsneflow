@@ -16,9 +16,13 @@ class CollisionSystem : public ecs::System
 {
 private:
     std::multimap<CollisionTag_e, CollisionTag_e> m_tagArray;
+    float m_memPosX, m_memPosY;
+    bool m_memPosActive, m_memVelocity;
+    MapCoordComponent *m_memMapComp;
 private:
     void setUsedComponents();
     void initArrayTag();
+    void postProcessBehavior();
     bool checkTag(CollisionTag_e entityTagA, CollisionTag_e entityTagB);
     void checkCollision(uint32_t entityNumA, uint32_t entityNumB,
                         CollisionComponent *tagCompA,
@@ -38,6 +42,8 @@ private:
     void treatCollisionCircleSegment(CollisionArgs &args,
                                 const CircleCollisionComponent &circleCollA,
                                 const SegmentCollisionComponent &segmCollB);
+    void collisionEjectCircleRect(MapCoordComponent &mapComp,
+                                     float diffX, float diffY, float velocity, bool angleBehavior);
     //Components accessors
     CircleCollisionComponent &getCircleComponent(uint32_t entityNum);
     RectangleCollisionComponent &getRectangleComponent(uint32_t entityNum);
