@@ -55,7 +55,7 @@ void CollisionSystem::execSystem()
                                tagCompA, tagCompB);
             }
         }
-        postProcessBehavior();
+//        postProcessBehavior();
     }
 }
 
@@ -260,7 +260,7 @@ void CollisionSystem::treatCollisionCircleRect(CollisionArgs &args,
         float elementSecondPosY = elementPosY + rectCollB.m_size.second;
         float diffX, diffY;
 
-        bool angleBehavior = false;
+        bool angleBehavior = false, dd = false;
         //collision on angle of rect
         if(circlePosX < elementPosX || circlePosX > elementSecondPosX &&
                 circlePosY < elementPosY || circlePosY > elementSecondPosY)
@@ -278,6 +278,11 @@ void CollisionSystem::treatCollisionCircleRect(CollisionArgs &args,
             m_memMapComp = &mapComp;
             angleBehavior = true;
             m_memPosActive = true;
+            if(moveComp->m_currentDegreeDirection == 0.0f ||
+                    moveComp->m_currentDegreeDirection == 180.0f)
+            {
+                dd = true;
+            }
         }
         if(std::cos(radDegree) > 0.0f)
         {
@@ -295,11 +300,8 @@ void CollisionSystem::treatCollisionCircleRect(CollisionArgs &args,
         {
             diffY = circleCollA.m_ray - (circlePosY - elementSecondPosY);
         }
-//        if(!angleBehavior)
-        {
-            collisionEjectCircleRect(mapComp, diffX, diffY,
-                                     moveComp->m_velocity, angleBehavior);
-        }
+        collisionEjectCircleRect(mapComp, diffX, diffY,
+                                 moveComp->m_velocity, dd);
     }
 }
 
@@ -324,26 +326,18 @@ void CollisionSystem::collisionEjectCircleRect(MapCoordComponent &mapComp,
                                                float diffX, float diffY,
                                                float velocity, bool angleBehavior)
 {
-    //if previous collision angle rect
-    if(!angleBehavior && m_memPosActive)
-    {
-        //reinit position
-//        mapComp.m_absoluteMapPositionPX = {m_memPosX, m_memPosY};
-    }
     m_memPosActive = false;
-    if(std::abs(diffX) < std::abs(diffY))
+    bool treatX = std::abs(diffX) < std::abs(diffY);
+    if(treatX)
     {
-        //quick fix
         std::cerr << diffX << " diffX\n";
         mapComp.m_absoluteMapPositionPX.first += diffX;
     }
     else
     {
-        if(std::abs(diffY) <= velocity)
-        {
-            std::cerr << diffY << " diffY\n";
-            mapComp.m_absoluteMapPositionPX.second += diffY;
-        }
+
+        std::cerr << diffY << " diffY\n";
+        mapComp.m_absoluteMapPositionPX.second += diffY;
     }
 }
 
