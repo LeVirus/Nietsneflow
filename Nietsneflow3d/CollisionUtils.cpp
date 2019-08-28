@@ -9,10 +9,10 @@ bool checkCircleRectCollision(const pairFloat_t &cicleCenter,
         const pairFloat_t &rectOrigin,
         const pairFloat_t &rectSize)
 {
-    if(cicleCenter.first + circleRay < rectOrigin.first ||
-            cicleCenter.first - circleRay > rectOrigin.first + rectSize.first ||
-            cicleCenter.second + circleRay < rectOrigin.second ||
-            cicleCenter.second - circleRay > rectOrigin.second + rectSize.second)
+    if(cicleCenter.first + circleRay <= rectOrigin.first ||
+            cicleCenter.first - circleRay >= rectOrigin.first + rectSize.first ||
+            cicleCenter.second + circleRay <= rectOrigin.second ||
+            cicleCenter.second - circleRay >= rectOrigin.second + rectSize.second)
     {
         return false;
     }
