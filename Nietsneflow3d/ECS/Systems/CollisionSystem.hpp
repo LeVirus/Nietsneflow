@@ -11,6 +11,7 @@ struct SegmentCollisionComponent;
 struct MapCoordComponent;
 struct CollisionComponent;
 struct CollisionArgs;
+struct EjectArgs;
 
 class CollisionSystem : public ecs::System
 {
@@ -36,6 +37,7 @@ private:
     void treatCollisionCircleRect(CollisionArgs &args,
                                 const CircleCollisionComponent &circleCollA,
                                 const RectangleCollisionComponent &rectCollB);
+    float getVerticalEject(const EjectArgs& args);
     void treatCollisionCircleCircle(CollisionArgs &args,
                                 const CircleCollisionComponent &circleCollA,
                                 const CircleCollisionComponent &circleCollB);
@@ -59,6 +61,13 @@ struct CollisionArgs
     uint32_t entityNumA, entityNumB;
     const CollisionComponent *tagCompA, *tagCompB;
     MapCoordComponent &mapCompA, &mapCompB;
+};
+
+struct EjectArgs
+{
+    float circlePosX, pointElementX, circlePosY, elementPosY,
+    elementSecondPosY, ray, radDegree;
+    bool angleMode;
 };
 
 #endif // COLLISIONSYSTEM_H
