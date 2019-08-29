@@ -18,9 +18,6 @@ class CollisionSystem : public ecs::System
 {
 private:
     std::multimap<CollisionTag_e, CollisionTag_e> m_tagArray;
-    float m_memPosX, m_memPosY;
-    bool m_memPosActive, m_memVelocity;
-    MapCoordComponent *m_memMapComp;
 private:
     void setUsedComponents();
     void initArrayTag();

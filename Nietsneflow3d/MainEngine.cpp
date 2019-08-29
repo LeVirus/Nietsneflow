@@ -109,6 +109,21 @@ void MainEngine::loadWallEntities(const LevelManager &levelManager)
 }
 
 //===================================================================
+void MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
+{
+    const std::vector<EnemyData> &enemiesData = levelManager.getLevel().getEnemiesData();
+    for(uint32_t i = 0; i < enemiesData.size(); ++i)
+    {
+//        const SpriteData &memSpriteData = levelManager.getPictureData().
+//                getSpriteData()[enemiesData[i].m_numSprite];
+        for(uint32_t j = 0; j < enemiesData[i].m_TileGamePosition.size(); ++j)
+        {
+
+        }
+    }
+}
+
+//===================================================================
 uint32_t MainEngine::createWallEntity()
 {
     std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComponents;

@@ -33,7 +33,6 @@ void CollisionSystem::execSystem()
     System::execSystem();
     for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
     {
-        m_memPosActive = false;
         CollisionComponent *tagCompA = stairwayToComponentManager().
                 searchComponentByType<CollisionComponent>(mVectNumEntity[i],
                                                          Components_e::COLLISION_COMPONENT);
@@ -243,11 +242,10 @@ void CollisionSystem::treatCollisionCircleRect(CollisionArgs &args,
                                                const CircleCollisionComponent &circleCollA,
                                                const RectangleCollisionComponent &rectCollB)
 {
-    std::cerr << "\n\ntreatCollisionCircleRect-- \n";
-    MapCoordComponent &mapComp = getMapComponent(args.entityNumA);
     if(args.tagCompA->m_tag == CollisionTag_e::PLAYER ||
             args.tagCompA->m_tag == CollisionTag_e::ENEMY)
     {
+        MapCoordComponent &mapComp = getMapComponent(args.entityNumA);
         MoveableComponent *moveComp = stairwayToComponentManager().
                 searchComponentByType<MoveableComponent>(args.entityNumA,
                                       Components_e::MOVEABLE_COMPONENT);
@@ -259,31 +257,13 @@ void CollisionSystem::treatCollisionCircleRect(CollisionArgs &args,
         float elementPosY = args.mapCompB.m_absoluteMapPositionPX.second;
         float elementSecondPosX = elementPosX + rectCollB.m_size.first;
         float elementSecondPosY = elementPosY + rectCollB.m_size.second;
-        float diffX, diffY;
 
-        bool angleBehavior = false, dd = false;
+        bool angleBehavior = false;
         //collision on angle of rect
         if((circlePosX < elementPosX || circlePosX > elementSecondPosX) &&
                 (circlePosY < elementPosY || circlePosY > elementSecondPosY))
         {
-//            std::cerr << "elementPosX " << elementPosX
-//                      << " circlePosX " << circlePosX
-//                      << " elementSecondPosX " << elementSecondPosX
-//                      << "\n elementPosY " << elementPosY
-//                      << " circlePosY " << circlePosY
-//                      << " elementSecondPosY " << elementSecondPosY << "\n\n";
-            //memorize initial position
-            m_memPosX = circlePosX;
-            m_memPosY = circlePosY;
-            m_memVelocity = moveComp->m_velocity;
-            m_memMapComp = &mapComp;
             angleBehavior = true;
-            m_memPosActive = true;
-            if(moveComp->m_currentDegreeDirection == 0.0f ||
-                    moveComp->m_currentDegreeDirection == 180.0f)
-            {
-                dd = true;
-            }
         }
 
         float pointElementX = circlePosX < elementPosX ?
@@ -291,12 +271,12 @@ void CollisionSystem::treatCollisionCircleRect(CollisionArgs &args,
         float pointElementY = circlePosY < elementPosY ?
                     elementPosY : elementSecondPosY;
 
-        diffY = getVerticalCircleRectEject({circlePosX, circlePosY, pointElementX,
+        float diffY = getVerticalCircleRectEject({circlePosX, circlePosY, pointElementX,
                                   elementPosY,
                                   elementSecondPosY,
                                   circleCollA.m_ray, radDegree,
                                   angleBehavior});
-        diffX = getHorizontalCircleRectEject({circlePosX, circlePosY, pointElementY,
+        float diffX = getHorizontalCircleRectEject({circlePosX, circlePosY, pointElementY,
                                   elementPosX,
                                   elementSecondPosX,
                                   circleCollA.m_ray, radDegree,
@@ -379,14 +359,60 @@ float CollisionSystem::getHorizontalCircleRectEject(const EjectXArgs &args)
     return diffX;
 }
 
+//===================================================================
+void CollisionSystem::collisionEjectCircleRect(MapCoordComponent &mapComp,
+                                               float diffX, float diffY)
+{
+    bool treatX = std::abs(diffX) < std::abs(diffY);
+    if(treatX)
+    {
+        mapComp.m_absoluteMapPositionPX.first += diffX;
+    }
+    else
+    {
 
+        mapComp.m_absoluteMapPositionPX.second += diffY;
+    }
+}
 
 //===================================================================
 void CollisionSystem::treatCollisionCircleCircle(CollisionArgs &args,
                                                  const CircleCollisionComponent &circleCollA,
                                                  const CircleCollisionComponent &circleCollB)
 {
+//    if(args.tagCompA->m_tag == CollisionTag_e::PLAYER ||
+//            args.tagCompA->m_tag == CollisionTag_e::ENEMY)
+//    {
+//        MapCoordComponent &mapComp = getMapComponent(args.entityNumA);
+//        MoveableComponent *moveComp = stairwayToComponentManager().
+//                searchComponentByType<MoveableComponent>(args.entityNumA,
+//                                      Components_e::MOVEABLE_COMPONENT);
+//        assert(moveComp);
+//        float radDegree = getRadiantAngle(moveComp->m_currentDegreeDirection);
+//        float circlePosX = args.mapCompA.m_absoluteMapPositionPX.first;
+//        float circlePosY = args.mapCompA.m_absoluteMapPositionPX.second;
+//        float elementPosX = args.mapCompB.m_absoluteMapPositionPX.first;
+//        float elementPosY = args.mapCompB.m_absoluteMapPositionPX.second;
+//        float elementSecondPosX = elementPosX + rectCollB.m_size.first;
+//        float elementSecondPosY = elementPosY + rectCollB.m_size.second;
 
+//        float pointElementX = circlePosX < elementPosX ?
+//                    elementPosX : elementSecondPosX;
+//        float pointElementY = circlePosY < elementPosY ?
+//                    elementPosY : elementSecondPosY;
+
+//        float diffY = getVerticalCircleRectEject({circlePosX, circlePosY, pointElementX,
+//                                  elementPosY,
+//                                  elementSecondPosY,
+//                                  circleCollA.m_ray, radDegree,
+//                                  angleBehavior});
+//        float diffX = getHorizontalCircleRectEject({circlePosX, circlePosY, pointElementY,
+//                                  elementPosX,
+//                                  elementSecondPosX,
+//                                  circleCollA.m_ray, radDegree,
+//                                  angleBehavior});
+//        collisionEjectCircleRect(mapComp, diffX, diffY);
+//    }
 }
 
 //===================================================================
@@ -397,24 +423,7 @@ void CollisionSystem::treatCollisionCircleSegment(CollisionArgs &args,
 
 }
 
-//===================================================================
-void CollisionSystem::collisionEjectCircleRect(MapCoordComponent &mapComp,
-                                               float diffX, float diffY)
-{
-    m_memPosActive = false;
-    bool treatX = std::abs(diffX) < std::abs(diffY);
-    if(treatX)
-    {
-        std::cerr << diffX << " diffXEject\n";
-        mapComp.m_absoluteMapPositionPX.first += diffX;
-    }
-    else
-    {
 
-        std::cerr << diffY << " diffYEject\n";
-        mapComp.m_absoluteMapPositionPX.second += diffY;
-    }
-}
 
 //===================================================================
 CircleCollisionComponent &CollisionSystem::getCircleComponent(uint32_t entityNum)

@@ -104,6 +104,11 @@ public:
         return m_objectElement;
     }
 
+    inline const std::vector<EnemyData> &getEnemiesData()const
+    {
+        return m_enemyData;
+    }
+
     static inline void setLevelSize(const pairFloat_t &pairLevelSize)
     {
         m_size = pairLevelSize;
