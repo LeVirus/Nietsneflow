@@ -11,7 +11,8 @@ struct SegmentCollisionComponent;
 struct MapCoordComponent;
 struct CollisionComponent;
 struct CollisionArgs;
-struct EjectArgs;
+struct EjectYArgs;
+struct EjectXArgs;
 
 class CollisionSystem : public ecs::System
 {
@@ -37,7 +38,8 @@ private:
     void treatCollisionCircleRect(CollisionArgs &args,
                                 const CircleCollisionComponent &circleCollA,
                                 const RectangleCollisionComponent &rectCollB);
-    float getVerticalEject(const EjectArgs& args);
+    float getVerticalCircleRectEject(const EjectYArgs& args);
+    float getHorizontalCircleRectEject(const EjectXArgs &args);
     void treatCollisionCircleCircle(CollisionArgs &args,
                                 const CircleCollisionComponent &circleCollA,
                                 const CircleCollisionComponent &circleCollB);
@@ -45,7 +47,7 @@ private:
                                 const CircleCollisionComponent &circleCollA,
                                 const SegmentCollisionComponent &segmCollB);
     void collisionEjectCircleRect(MapCoordComponent &mapComp,
-                                     float diffX, float diffY, float velocity, bool angleBehavior);
+                                     float diffX, float diffY);
     //Components accessors
     CircleCollisionComponent &getCircleComponent(uint32_t entityNum);
     RectangleCollisionComponent &getRectangleComponent(uint32_t entityNum);
@@ -63,9 +65,16 @@ struct CollisionArgs
     MapCoordComponent &mapCompA, &mapCompB;
 };
 
-struct EjectArgs
+struct EjectXArgs
 {
-    float circlePosX, pointElementX, circlePosY, elementPosY,
+    float circlePosX, circlePosY, elementPosY, elementPosX,
+    elementSecondPosX, ray, radDegree;
+    bool angleMode;
+};
+
+struct EjectYArgs
+{
+    float circlePosX, circlePosY, elementPosX, elementPosY,
     elementSecondPosY, ray, radDegree;
     bool angleMode;
 };
