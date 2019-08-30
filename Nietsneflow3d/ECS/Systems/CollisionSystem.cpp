@@ -353,8 +353,7 @@ float CollisionSystem::getHorizontalCircleRectEject(const EjectXArgs &args)
 void CollisionSystem::collisionEjectCircleCircle(MapCoordComponent &mapComp,
                                                  float diffX, float diffY)
 {
-    bool treatX = std::abs(diffX) > std::abs(diffY);
-    if(treatX)
+    if(std::abs(diffX) < std::abs(diffY))
     {
         mapComp.m_absoluteMapPositionPX.first += diffX;
     }
@@ -368,8 +367,7 @@ void CollisionSystem::collisionEjectCircleCircle(MapCoordComponent &mapComp,
 void CollisionSystem::collisionEjectCircleRect(MapCoordComponent &mapComp,
                                                float diffX, float diffY)
 {
-    bool treatX = std::abs(diffX) < std::abs(diffY);
-    if(treatX)
+    if(std::abs(diffX) < std::abs(diffY))
     {
         mapComp.m_absoluteMapPositionPX.first += diffX;
     }
@@ -390,7 +388,6 @@ void CollisionSystem::treatCollisionCircleCircle(CollisionArgs &args,
                 searchComponentByType<MoveableComponent>(args.entityNumA,
                                       Components_e::MOVEABLE_COMPONENT);
         assert(moveCompA);
-        float radDegree = getRadiantAngle(moveCompA->m_currentDegreeDirection);
         float circleAPosX = args.mapCompA.m_absoluteMapPositionPX.first;
         float circleAPosY = args.mapCompA.m_absoluteMapPositionPX.second;
         float circleBPosX = args.mapCompB.m_absoluteMapPositionPX.first;
@@ -401,16 +398,16 @@ void CollisionSystem::treatCollisionCircleCircle(CollisionArgs &args,
         assert(hyp > distanceX && hyp > distanceY);
         float diffY = std::sqrt(hyp * hyp - distanceX * distanceX);
         float diffX = std::sqrt(hyp * hyp - distanceY * distanceY);
-
-        if(std::cos(radDegree) > 0.0f)
+        diffX -= distanceX;
+        diffY -= distanceY;
+        if(circleAPosX < circleBPosX)
         {
             diffX = -diffX;
         }
-        if(std::sin(radDegree) < 0.0f)
+        if(circleAPosY < circleBPosY)
         {
             diffY = -diffY;
         }
-        std::cerr << "diffX================ " << diffX << " diffY============= " << diffY << "\n";
         collisionEjectCircleCircle(args.mapCompA, diffX, diffY);
     }
 }

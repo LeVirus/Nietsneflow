@@ -45,8 +45,6 @@ bool checkCircleCircleCollision(const pairFloat_t &circleCenterA,
     {
         return false;
     }
-    std::cerr << "\n\nCOLLA " << circleCenterA.first << " " << circleCenterA.second << " ray " << rayCircleA <<"\n";
-    std::cerr << "B " << circleCenterB.first << " " << circleCenterB.second << " ray " << rayCircleB << "\n";
     return true;
 }
 
