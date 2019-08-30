@@ -4,15 +4,15 @@
 #include <BaseECS/component.hpp>
 #include <constants.hpp>
 
-struct CollisionComponent : public ecs::Component
+struct GeneralCollisionComponent : public ecs::Component
 {
-    CollisionComponent()
+    GeneralCollisionComponent()
     {
-        muiTypeComponent = Components_e::COLLISION_COMPONENT;
+        muiTypeComponent = Components_e::GENERAL_COLLISION_COMPONENT;
     }
     CollisionTag_e m_tag;
     CollisionShape_e m_shape;
-    virtual ~CollisionComponent() = default;
+    virtual ~GeneralCollisionComponent() = default;
 };
 
 #endif // TAGCOMPONENT_HPP

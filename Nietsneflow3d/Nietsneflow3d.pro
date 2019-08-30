@@ -68,7 +68,7 @@ HEADERS += \
     ECS/Systems/CollisionSystem.hpp \
     ECS/Components/CircleCollisionComponent.hpp \
     ECS/Components/RectangleCollisionComponent.hpp \
-    ECS/Components/CollisionComponent.hpp \
     ECS/Components/LineCollisionComponent.hpp \
-    CollisionUtils.hpp
+    CollisionUtils.hpp \
+    ECS/Components/GeneralCollisionComponent.hpp
 

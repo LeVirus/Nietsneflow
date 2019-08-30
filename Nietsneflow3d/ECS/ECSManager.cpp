@@ -6,7 +6,7 @@
 #include <ECS/Components/StaticElementComponent.hpp>
 #include <ECS/Components/MoveableComponent.hpp>
 #include <ECS/Components/InputComponent.hpp>
-#include <ECS/Components/CollisionComponent.hpp>
+#include <ECS/Components/GeneralCollisionComponent.hpp>
 #include <ECS/Components/CircleCollisionComponent.hpp>
 #include <ECS/Components/LineCollisionComponent.hpp>
 #include <ECS/Components/RectangleCollisionComponent.hpp>
@@ -122,11 +122,11 @@ void ECSManager::syncComponentsFromEntities(uint32_t numEntity,
                         std::make_unique<InputComponent>());
         }
             break;
-        case Components_e::COLLISION_COMPONENT:
+        case Components_e::GENERAL_COLLISION_COMPONENT:
         {
             m_componentManager->instanciateExternComponent(
                         numEntity,
-                        std::make_unique<CollisionComponent>());
+                        std::make_unique<GeneralCollisionComponent>());
         }
             break;
         case Components_e::CIRCLE_COLLISION_COMPONENT:

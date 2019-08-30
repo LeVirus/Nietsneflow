@@ -186,7 +186,7 @@ uint8_t LevelManager::getSpriteId(const INIReader &reader,
     return *id;
 }
 
-//===========getIdentifier===========================================
+//===================================================================
 void LevelManager::loadWallData(const INIReader &reader)
 {
     std::vector<WallData> vectWall;

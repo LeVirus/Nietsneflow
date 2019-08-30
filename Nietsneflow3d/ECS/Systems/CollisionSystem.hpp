@@ -9,7 +9,7 @@ struct CircleCollisionComponent;
 struct RectangleCollisionComponent;
 struct SegmentCollisionComponent;
 struct MapCoordComponent;
-struct CollisionComponent;
+struct GeneralCollisionComponent;
 struct CollisionArgs;
 struct EjectYArgs;
 struct EjectXArgs;
@@ -21,11 +21,10 @@ private:
 private:
     void setUsedComponents();
     void initArrayTag();
-    void postProcessBehavior();
     bool checkTag(CollisionTag_e entityTagA, CollisionTag_e entityTagB);
     void checkCollision(uint32_t entityNumA, uint32_t entityNumB,
-                        CollisionComponent *tagCompA,
-                        CollisionComponent *tagCompB);
+                        GeneralCollisionComponent *tagCompA,
+                        GeneralCollisionComponent *tagCompB);
     //Collisions detection
     void checkCollisionFirstRect(CollisionArgs &args);
     void checkCollisionFirstCircle(CollisionArgs &args);
@@ -58,7 +57,7 @@ public:
 struct CollisionArgs
 {
     uint32_t entityNumA, entityNumB;
-    const CollisionComponent *tagCompA, *tagCompB;
+    const GeneralCollisionComponent *tagCompA, *tagCompB;
     MapCoordComponent &mapCompA, &mapCompB;
 };
 

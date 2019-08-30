@@ -1,7 +1,7 @@
 #include "CollisionSystem.hpp"
 #include "constants.hpp"
 #include <ECS/Components/MapCoordComponent.hpp>
-#include <ECS/Components/CollisionComponent.hpp>
+#include <ECS/Components/GeneralCollisionComponent.hpp>
 #include <ECS/Components/CircleCollisionComponent.hpp>
 #include <ECS/Components/RectangleCollisionComponent.hpp>
 #include <ECS/Components/LineCollisionComponent.hpp>
@@ -23,7 +23,7 @@ CollisionSystem::CollisionSystem()
 //===================================================================
 void CollisionSystem::setUsedComponents()
 {
-    bAddComponentToSystem(Components_e::COLLISION_COMPONENT);
+    bAddComponentToSystem(Components_e::GENERAL_COLLISION_COMPONENT);
     bAddComponentToSystem(Components_e::MAP_COORD_COMPONENT);
 }
 
@@ -33,9 +33,9 @@ void CollisionSystem::execSystem()
     System::execSystem();
     for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
     {
-        CollisionComponent *tagCompA = stairwayToComponentManager().
-                searchComponentByType<CollisionComponent>(mVectNumEntity[i],
-                                                         Components_e::COLLISION_COMPONENT);
+        GeneralCollisionComponent *tagCompA = stairwayToComponentManager().
+                searchComponentByType<GeneralCollisionComponent>(mVectNumEntity[i],
+                                                         Components_e::GENERAL_COLLISION_COMPONENT);
         if(tagCompA->m_tag == CollisionTag_e::WALL_C ||
                 tagCompA->m_tag == CollisionTag_e::OBJECT_C)
         {
@@ -44,9 +44,9 @@ void CollisionSystem::execSystem()
         assert(tagCompA);
         for(uint32_t j = 0; j < mVectNumEntity.size(); ++j)
         {
-            CollisionComponent *tagCompB = stairwayToComponentManager().
-                    searchComponentByType<CollisionComponent>(mVectNumEntity[j],
-                                                        Components_e::COLLISION_COMPONENT);
+            GeneralCollisionComponent *tagCompB = stairwayToComponentManager().
+                    searchComponentByType<GeneralCollisionComponent>(mVectNumEntity[j],
+                                                        Components_e::GENERAL_COLLISION_COMPONENT);
             assert(tagCompB);
             if(checkTag(tagCompA->m_tag, tagCompB->m_tag))
             {
@@ -54,7 +54,6 @@ void CollisionSystem::execSystem()
                                tagCompA, tagCompB);
             }
         }
-//        postProcessBehavior();
     }
 }
 
@@ -85,16 +84,6 @@ void CollisionSystem::initArrayTag()
 }
 
 //===================================================================
-//void CollisionSystem::postProcessBehavior()
-//{
-//    if(m_memPosActive)
-//    {
-//        collisionEjectCircleRect(*m_memMapComp, m_memPosX,
-//                                 m_memPosY, m_memVelocity, false);
-//    }
-//}
-
-//===================================================================
 bool CollisionSystem::checkTag(CollisionTag_e entityTagA,
                                CollisionTag_e entityTagB)
 {
@@ -111,7 +100,7 @@ bool CollisionSystem::checkTag(CollisionTag_e entityTagA,
 
 //===================================================================
 void CollisionSystem::checkCollision(uint32_t entityNumA, uint32_t entityNumB,
-                                     CollisionComponent *tagCompA, CollisionComponent *tagCompB)
+                                     GeneralCollisionComponent *tagCompA, GeneralCollisionComponent *tagCompB)
 {
     MapCoordComponent &mapCompA = getMapComponent(entityNumA),
             &mapCompB = getMapComponent(entityNumB);

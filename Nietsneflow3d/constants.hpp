@@ -18,7 +18,7 @@ enum Components_e
     LINE_COLLISION_COMPONENT,
     RECTANGLE_COLLISION_COMPONENT,
     STATIC_ELEMENT_COMPONENT,
-    COLLISION_COMPONENT,
+    GENERAL_COLLISION_COMPONENT,
     MOVEABLE_COMPONENT,
     TOTAL_COMPONENTS
 };
@@ -109,6 +109,7 @@ enum CollisionShape_e
 
 inline const float PI = 3.14159265359f;
 inline const float PLAYER_RAY_DISPLAY = 0.03f;
+inline const float ENEMY_RAY = 3.0f;
 inline const float LEVEL_TILE_SIZE_PX = 30.0f;
 inline const float MAP_LOCAL_CENTER_X_GL = 0.75f;
 inline const float MAP_LOCAL_CENTER_Y_GL = -0.75f;
