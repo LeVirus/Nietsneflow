@@ -28,7 +28,7 @@ private:
     //Collisions detection
     void checkCollisionFirstRect(CollisionArgs &args);
     void checkCollisionFirstCircle(CollisionArgs &args);
-    void checkCollisionFirstLine(CollisionArgs &args);
+    void checkCollisionFirstSegment(CollisionArgs &args);
 
     //Collisions treatment
     void treatCollisionCircleRect(CollisionArgs &args,
@@ -49,6 +49,7 @@ private:
     RectangleCollisionComponent &getRectangleComponent(uint32_t entityNum);
     SegmentCollisionComponent &getSegmentComponent(uint32_t entityNum);
     MapCoordComponent &getMapComponent(uint32_t entityNum);
+    void collisionEjectCircleCircle(MapCoordComponent &mapComp, float diffX, float diffY);
 public:
     CollisionSystem();
     void execSystem()override;

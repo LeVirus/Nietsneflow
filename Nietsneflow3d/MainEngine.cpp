@@ -186,6 +186,7 @@ void MainEngine::confBaseMapComponent(uint32_t entityNum,
                 searchComponentByType<RectangleCollisionComponent>(entityNum, Components_e::RECTANGLE_COLLISION_COMPONENT);
         assert(rectComp);
         rectComp->m_size = {LEVEL_TILE_SIZE_PX, LEVEL_TILE_SIZE_PX};
+        tagComp->m_tag = CollisionTag_e::WALL_C;
     }
     else if(collisionShape == CollisionShape_e::CIRCLE)
     {
@@ -193,10 +194,10 @@ void MainEngine::confBaseMapComponent(uint32_t entityNum,
                 searchComponentByType<CircleCollisionComponent>(entityNum, Components_e::CIRCLE_COLLISION_COMPONENT);
         assert(circleComp);
         circleComp->m_ray = ENEMY_RAY;
+        tagComp->m_tag = CollisionTag_e::ENEMY;
     }
     mapComp->m_coord = coordLevel;
     mapComp->m_absoluteMapPositionPX = Level::getAbsolutePosition(coordLevel);
-    tagComp->m_tag = CollisionTag_e::WALL_C;
     tagComp->m_shape = collisionShape;
 }
 
