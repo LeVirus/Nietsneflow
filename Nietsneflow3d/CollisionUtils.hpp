@@ -68,4 +68,10 @@ std::pair<T,T> &operator+=(std::pair<T,T> & l, const std::pair<T,T> & r)
     l.second += r.second;
     return l;
 }
+
+template <typename T>
+std::pair<T,T> operator+(const std::pair<T,T> & l, const std::pair<T,T> & r)
+{
+    return {l.first + r.first, l.second + r.second};
+}
 #endif // COLLISIONUTILS_H

@@ -42,14 +42,13 @@ private:
     void treatCollisionCircleSegment(CollisionArgs &args,
                                 const CircleCollisionComponent &circleCollA,
                                 const SegmentCollisionComponent &segmCollB);
-    void collisionEjectCircleRect(MapCoordComponent &mapComp,
+    void collisionEject(MapCoordComponent &mapComp,
                                      float diffX, float diffY);
     //Components accessors
     CircleCollisionComponent &getCircleComponent(uint32_t entityNum);
     RectangleCollisionComponent &getRectangleComponent(uint32_t entityNum);
     SegmentCollisionComponent &getSegmentComponent(uint32_t entityNum);
     MapCoordComponent &getMapComponent(uint32_t entityNum);
-    void collisionEjectCircleCircle(MapCoordComponent &mapComp, float diffX, float diffY);
 public:
     CollisionSystem();
     void execSystem()override;
