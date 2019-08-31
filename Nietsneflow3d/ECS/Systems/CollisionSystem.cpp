@@ -180,7 +180,9 @@ void CollisionSystem::checkCollisionFirstCircle(CollisionArgs &args)
         //first circle is always player
         CircleCollisionComponent &circleCompB = getCircleComponent(args.entityNumB);
         collision = checkCircleCircleCollision(args.mapCompA.m_absoluteMapPositionPX, circleCompA.m_ray,
-                                   args.mapCompB.m_absoluteMapPositionPX, circleCompB.m_ray);
+                                   args.mapCompB.m_absoluteMapPositionPX +
+                                               pairFloat_t{LEVEL_HALF_TILE_SIZE_PX, LEVEL_HALF_TILE_SIZE_PX},
+                                               circleCompB.m_ray);
         if(collision)
         {
             treatCollisionCircleCircle(args, circleCompA, circleCompB);
@@ -377,8 +379,10 @@ void CollisionSystem::treatCollisionCircleCircle(CollisionArgs &args,
         assert(moveCompA);
         float circleAPosX = args.mapCompA.m_absoluteMapPositionPX.first;
         float circleAPosY = args.mapCompA.m_absoluteMapPositionPX.second;
-        float circleBPosX = args.mapCompB.m_absoluteMapPositionPX.first;
-        float circleBPosY = args.mapCompB.m_absoluteMapPositionPX.second;
+        float circleBPosX = args.mapCompB.m_absoluteMapPositionPX.first
+                + LEVEL_HALF_TILE_SIZE_PX;
+        float circleBPosY = args.mapCompB.m_absoluteMapPositionPX.second
+                + LEVEL_HALF_TILE_SIZE_PX;
         float distanceX = std::abs(circleAPosX - circleBPosX);
         float distanceY = std::abs(circleAPosY - circleBPosY);
         float hyp = circleCollA.m_ray + circleCollB.m_ray;

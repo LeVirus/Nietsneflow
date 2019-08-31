@@ -76,7 +76,6 @@ void MapDisplaySystem::confPositionVertexEntities()
             pairFloat_t relativePosMapGL = {diffPosPX.first * MAP_LOCAL_SIZE_GL / m_localLevelSizePX,
                                             diffPosPX.second * MAP_LOCAL_SIZE_GL / m_localLevelSizePX};
             confVertexElement(relativePosMapGL, mVectNumEntity[i]);
-
         }
     }
 }
@@ -158,7 +157,8 @@ void MapDisplaySystem::fillVertexFromEntities()
         assert(posComp);
         assert(spriteComp);
         assert(spriteComp->m_spriteData->m_textureNum < m_vectVerticesData.size());
-        m_vectVerticesData[spriteComp->m_spriteData->m_textureNum].loadVertexTextureComponent(*posComp, *spriteComp);
+        m_vectVerticesData[spriteComp->m_spriteData->m_textureNum].
+                loadVertexTextureComponent(*posComp, *spriteComp);
     }
 }
 
