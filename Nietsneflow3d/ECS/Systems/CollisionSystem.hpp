@@ -54,6 +54,10 @@ public:
     void execSystem()override;
 };
 
+void updateCircleCollisionPosition(const MapCoordComponent &mapPosComp,
+                                   const GeneralCollisionComponent &tagComp,
+                                   CircleCollisionComponent &circleComp);
+
 struct CollisionArgs
 {
     uint32_t entityNumA, entityNumB;
