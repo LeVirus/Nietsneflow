@@ -454,8 +454,8 @@ MapCoordComponent &CollisionSystem::getMapComponent(uint32_t entityNum)
 
 //===================================================================
 void updateCircleCollisionPosition(const MapCoordComponent &mapPosComp,
-                                                    const GeneralCollisionComponent &tagComp,
-                                                    CircleCollisionComponent &circleComp)
+                                   const GeneralCollisionComponent &tagComp,
+                                   CircleCollisionComponent &circleComp)
 {
     if(tagComp.m_tag == CollisionTag_e::PLAYER)
     {

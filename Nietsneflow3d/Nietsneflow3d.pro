@@ -23,7 +23,8 @@ SOURCES += main.cpp \
     PhysicalEngine.cpp \
     ECS/Systems/InputSystem.cpp \
     ECS/Systems/CollisionSystem.cpp \
-    CollisionUtils.cpp
+    CollisionUtils.cpp \
+    ECS/Systems/FirstPersonDisplaySystem.cpp
 
 HEADERS += \
     Game.hpp \
@@ -70,5 +71,6 @@ HEADERS += \
     ECS/Components/RectangleCollisionComponent.hpp \
     ECS/Components/LineCollisionComponent.hpp \
     CollisionUtils.hpp \
-    ECS/Components/GeneralCollisionComponent.hpp
+    ECS/Components/GeneralCollisionComponent.hpp \
+    ECS/Systems/FirstPersonDisplaySystem.hpp
 
