@@ -28,13 +28,13 @@ void LevelManager::loadSpriteData(const INIReader &reader)
     std::vector<std::string> sections = reader.getSectionNamesContaining("Sprite");
     for(uint32_t i = 0; i < sections.size(); ++i)
     {
-        uint8_t textureNum = reader.GetInteger(sections[i], "texture",
+        long textureNum = reader.GetInteger(sections[i], "texture",
                                                std::numeric_limits<uint8_t>::max());
         assert(textureNum != std::numeric_limits<uint8_t>::max() && "Bad textureNumber");
-        float texturePosX = reader.GetReal(sections[i], "texturePosX", 1.0f);
-        float texturePosY = reader.GetReal(sections[i], "texturePosY", 1.0f);
-        float textureWeight = reader.GetReal(sections[i], "textureWeight", 1.0f);
-        float textureHeight = reader.GetReal(sections[i], "textureHeight", 1.0f);
+        double texturePosX = reader.GetReal(sections[i], "texturePosX", 1.0);
+        double texturePosY = reader.GetReal(sections[i], "texturePosY", 1.0);
+        double textureWeight = reader.GetReal(sections[i], "textureWeight", 1.0);
+        double textureHeight = reader.GetReal(sections[i], "textureHeight", 1.0);
         SpriteData spriteData
         {
             textureNum,
@@ -68,9 +68,9 @@ void LevelManager::loadGroundAndCeilingData(const INIReader &reader)
         }
         else
         {
-            float colorR = reader.GetReal("Ground", "colorR", -1.0f);
-            float colorG = reader.GetReal("Ground", "colorG", -1.0f);
-            float colorB = reader.GetReal("Ground", "colorB", -1.0f);
+            double colorR = reader.GetReal("Ground", "colorR", -1.0);
+            double colorG = reader.GetReal("Ground", "colorG", -1.0);
+            double colorB = reader.GetReal("Ground", "colorB", -1.0);
             tupleFloat_t tupleFloat = std::make_tuple(colorR, colorG, colorB);
             arrayGAndCData[i].m_tupleColor = tupleFloat;
         }
@@ -82,7 +82,7 @@ void LevelManager::loadGroundAndCeilingData(const INIReader &reader)
 //===================================================================
 void LevelManager::loadLevelData(const INIReader &reader)
 {
-     pairUI_t levelSize;
+     pairLong_t levelSize;
      //ERROR ON LOAD
      levelSize.first = reader.GetInteger("Level", "weight", 10);
      levelSize.second = reader.GetInteger("Level", "height", 10);
@@ -92,11 +92,11 @@ void LevelManager::loadLevelData(const INIReader &reader)
 //===================================================================
 void LevelManager::loadPlayerData(const INIReader &reader)
 {
-    pairUI_t playerOriginPosition;
+    pairLong_t playerOriginPosition;
     Direction_e playerOriginDirection;
     playerOriginPosition.first = reader.GetInteger("PlayerInit", "playerDepartureX", 0);
     playerOriginPosition.second = reader.GetInteger("PlayerInit", "playerDepartureY", 0);
-    playerOriginDirection = (Direction_e)reader.GetInteger("PlayerInit", "PlayerOrientation", 0);
+    playerOriginDirection = static_cast<Direction_e>(reader.GetInteger("PlayerInit", "PlayerOrientation", 0));
     m_level.setPlayerInitData(playerOriginPosition, playerOriginDirection);
 }
 
@@ -145,9 +145,9 @@ void LevelManager::readStaticElement(const INIReader &reader, StaticLevelElement
 {
     staticElement.m_numSprite = getSpriteId(reader, sectionName);
     staticElement.m_inGameSpriteSize.first =
-            reader.GetReal(sectionName, "SpriteWeightGame", 1.0f);
+            reader.GetReal(sectionName, "SpriteWeightGame", 1.0);
     staticElement.m_inGameSpriteSize.second =
-            reader.GetReal(sectionName, "SpriteHeightGame", 1.0f);
+            reader.GetReal(sectionName, "SpriteHeightGame", 1.0);
 
     fillPositionVect(reader, sectionName, staticElement.m_TileGamePosition);
     if(elementType == LevelStaticElementType_e::GROUND)
@@ -170,9 +170,9 @@ void LevelManager::fillPositionVect(const INIReader &reader,
     assert(!(results.size() % 2) && "Error inconsistent position datas.");
 
     vectPos.reserve(finalSize);
-    for(uint32_t j = 0; j < results.size(); ++j)
+    for(uint32_t j = 0; j < results.size(); j += 2)
     {
-        vectPos.emplace_back(pairUI_t{results[j], results[++j]});
+        vectPos.emplace_back(pairUI_t{results[j], results[j + 1]});
     }
 }
 
@@ -234,9 +234,9 @@ void LevelManager::loadEnemyData(const INIReader &reader)
         vectEnemy.back().m_traversable = reader.GetBoolean(vectINISections[i],
                                                        "traversable", false);
         vectEnemy.back().m_inGameSpriteSize.first =
-                reader.GetReal(vectINISections[i], "SpriteWeightGame", 1.0f);
+                reader.GetReal(vectINISections[i], "SpriteWeightGame", 1.0);
         vectEnemy.back().m_inGameSpriteSize.second =
-                reader.GetReal(vectINISections[i], "SpriteHeightGame", 1.0f);
+                reader.GetReal(vectINISections[i], "SpriteHeightGame", 1.0);
         loadEnemySprites(reader, vectINISections[i], EnemySpriteType_e::STATIC,
                          vectEnemy.back());
         loadEnemySprites(reader, vectINISections[i], EnemySpriteType_e::MOVE,
@@ -253,7 +253,7 @@ void LevelManager::loadEnemyData(const INIReader &reader)
 void LevelManager::loadEnemySprites(const INIReader &reader, const std::string &sectionName,
                               EnemySpriteType_e spriteTypeEnum, EnemyData &enemyData)
 {
-    std::vector<uint8_t> *vectPtr;
+    std::vector<uint8_t> *vectPtr = nullptr;
     std::string spriteType;
     switch(spriteTypeEnum)
     {
@@ -274,7 +274,7 @@ void LevelManager::loadEnemySprites(const INIReader &reader, const std::string &
         vectPtr = &enemyData.m_dyingSprites;
         break;
     }
-
+    assert(vectPtr);
     std::string sprites = reader.Get(sectionName, spriteType, "");
     assert(!sprites.empty() && "Enemy sprites cannot be loaded.");
     std::istringstream iss(sprites);

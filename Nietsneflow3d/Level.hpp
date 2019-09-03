@@ -16,7 +16,7 @@ struct StaticLevelElementData
     uint8_t m_numSprite;
     //In Game sprite size in % relative to a tile
     vectPairUI_t m_TileGamePosition;
-    std::pair<float, float> m_inGameSpriteSize;
+    pairDouble_t m_inGameSpriteSize;
     bool m_traversable;
 };
 
@@ -47,7 +47,7 @@ struct EnemyData
     m_attackSprites, m_dyingSprites;
 
     //In Game sprite size in % relative to a tile
-    pairFloat_t m_inGameSpriteSize;
+    pairDouble_t m_inGameSpriteSize;
     vectPairUI_t m_TileGamePosition;
     bool m_traversable;
 };

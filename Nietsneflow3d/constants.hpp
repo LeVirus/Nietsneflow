@@ -5,7 +5,9 @@
 #include <map>
 
 using pairUI_t = std::pair<uint32_t, uint32_t>;
+using pairLong_t = std::pair<long, long>;
 using pairFloat_t = std::pair<float, float>;
+using pairDouble_t = std::pair<double, double>;
 
 enum Components_e
 {

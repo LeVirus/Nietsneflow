@@ -7,7 +7,7 @@ class Shader
 {
 private:
     std::string m_vertexSource, m_fragmentSource;
-    int m_vertexShader, m_fragmentShader, m_shaderProgram;
+    uint32_t m_vertexShader, m_fragmentShader, m_shaderProgram;
 private:
     bool generateVertexShader();
     bool generateFragmentShader();

@@ -63,7 +63,7 @@ void updatePlayerOrientation(const MoveableComponent &moveComp,
     {
         posComp.m_vertex.resize(3);
     }
-    int32_t angle = moveComp.m_degreeOrientation;
+    int angle = static_cast<int>(moveComp.m_degreeOrientation);
     float radiantAngle = getRadiantAngle(angle);
     posComp.m_vertex[0].first = MAP_LOCAL_CENTER_X_GL +
             cos(radiantAngle) * PLAYER_RAY_DISPLAY;
@@ -88,7 +88,7 @@ void updatePlayerOrientation(const MoveableComponent &moveComp,
 }
 
 //===================================================================
-float getRadiantAngle(int32_t angle)
+float getRadiantAngle(float angle)
 {
     return angle * PI / 180;
 }

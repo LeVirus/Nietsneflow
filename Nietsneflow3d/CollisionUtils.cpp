@@ -111,7 +111,7 @@ bool checkSegmentSegmentCollision(const pairFloat_t &firstPointSegmentA, const p
     float distYB = secondPointSegmentB.second - firstPointSegmentB.second;
     float denom = distXA * distYB - distYA * distXB;
     std::numeric_limits<float>::epsilon();
-    if(denom == std::numeric_limits<float>::epsilon())
+    if(std::abs(denom) <= std::numeric_limits<float>::epsilon())
     {
         return false;   // erreur, cas limite
     }

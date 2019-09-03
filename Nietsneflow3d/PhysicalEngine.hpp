@@ -26,5 +26,5 @@ void movePlayer(MoveableComponent &moveComp,
                 MapCoordComponent &mapComp, MoveOrientation_e moveDirection);
 void updatePlayerOrientation(const MoveableComponent &moveComp,
                               PositionVertexComponent &posComp);
-float getRadiantAngle(int32_t angle);
+float getRadiantAngle(float angle);
 #endif // PHYSICALENGINE_H

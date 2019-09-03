@@ -13,12 +13,12 @@ struct MapCoordComponent;
 class MapDisplaySystem : public ecs::System
 {
 private:
-    uint32_t m_playerNum;
     Shader *m_shader;
     std::vector<VerticesData> m_vectVerticesData;
-    std::vector<uint32_t> m_entitiesToDisplay;
+    uint32_t m_playerNum;
     float m_levelSizePX, m_localLevelSizePX;
     float m_tileSizeGL;
+    std::vector<uint32_t> m_entitiesToDisplay;
     std::vector<Texture> *m_ptrVectTexture = nullptr;
 private:
     void setUsedComponents();

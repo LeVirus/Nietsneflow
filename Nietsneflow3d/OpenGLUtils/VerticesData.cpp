@@ -55,7 +55,7 @@ bool VerticesData::loadVertexColorComponent(const PositionVertexComponent *posCo
     }
     assert(posComp && "Position component is Null.");
     assert(colorComp && "Color component is Null.");
-    uint32_t sizeVertex = posComp->m_vertex.size();
+    size_t sizeVertex = posComp->m_vertex.size();
     for(uint32_t j = 0; j < sizeVertex; ++j)
     {
         m_vertexBuffer.emplace_back(posComp->m_vertex[j].first);
@@ -78,7 +78,7 @@ void VerticesData::loadVertexTextureComponent(const PositionVertexComponent &pos
     {
         return;
     }
-    uint32_t sizeVertex = posComp.m_vertex.size();
+    size_t sizeVertex = posComp.m_vertex.size();
     for(uint32_t j = 0; j < sizeVertex; ++j)
     {
         m_vertexBuffer.emplace_back(posComp.m_vertex[j].first);
@@ -138,7 +138,7 @@ void VerticesData::attribGLVertexPointer()
     for(uint32_t i = 0; i < m_shaderInterpretData.size(); ++i)
     {
         glVertexAttribPointer(i, m_shaderInterpretData[i], GL_FLOAT, GL_FALSE,
-                              m_sizeOfVertex * sizeof(float), (void*)offset);
+                              m_sizeOfVertex * sizeof(float), (void*)(offset));
         offset = m_shaderInterpretData[i] * sizeof(float);
         glEnableVertexAttribArray(i);
     }
@@ -148,7 +148,7 @@ void VerticesData::attribGLVertexPointer()
 void VerticesData::drawElement()
 {
     glBindVertexArray(m_vao);
-    glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, nullptr);
     glBindVertexArray(0);
 }
 

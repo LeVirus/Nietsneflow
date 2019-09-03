@@ -122,7 +122,7 @@ void CollisionSystem::checkCollision(uint32_t entityNumA, uint32_t entityNumB,
     }
     else if(tagCompA->m_shape == CollisionShape_e::SEGMENT)
     {
-        checkCollisionFirstSegment(args);
+//        checkCollisionFirstSegment(args);
     }
 }
 
@@ -205,31 +205,31 @@ void CollisionSystem::checkCollisionFirstCircle(CollisionArgs &args)
 }
 
 //===================================================================
-void CollisionSystem::checkCollisionFirstSegment(CollisionArgs &args)
-{
-    bool collision = false;
-    SegmentCollisionComponent &lineCompA = getSegmentComponent(args.entityNumA);
-    switch(args.tagCompB->m_shape)
-    {
-    case CollisionShape_e::RECTANGLE_C:
-    {
-        RectangleCollisionComponent &rectCompB = getRectangleComponent(args.entityNumB);
-        collision = checkSegmentRectCollision(args.mapCompA.m_absoluteMapPositionPX, lineCompA.m_secondPoint,
-                               args.mapCompB.m_absoluteMapPositionPX, rectCompB.m_size);
-    }
-        break;
-    case CollisionShape_e::CIRCLE:
-    {
-        CircleCollisionComponent &circleCompB = getCircleComponent(args.entityNumB);
-        collision = checkCircleSegmentCollision(args.mapCompB.m_absoluteMapPositionPX, circleCompB.m_ray,
-                                 args.mapCompA.m_absoluteMapPositionPX, lineCompA.m_secondPoint);
-    }
-        break;
-    case CollisionShape_e::SEGMENT:
-    {}
-        break;
-    }
-}
+//void CollisionSystem::checkCollisionFirstSegment(CollisionArgs &args)
+//{
+//    bool collision = false;
+//    SegmentCollisionComponent &lineCompA = getSegmentComponent(args.entityNumA);
+//    switch(args.tagCompB->m_shape)
+//    {
+//    case CollisionShape_e::RECTANGLE_C:
+//    {
+//        RectangleCollisionComponent &rectCompB = getRectangleComponent(args.entityNumB);
+//        collision = checkSegmentRectCollision(args.mapCompA.m_absoluteMapPositionPX, lineCompA.m_secondPoint,
+//                               args.mapCompB.m_absoluteMapPositionPX, rectCompB.m_size);
+//    }
+//        break;
+//    case CollisionShape_e::CIRCLE:
+//    {
+//        CircleCollisionComponent &circleCompB = getCircleComponent(args.entityNumB);
+//        collision = checkCircleSegmentCollision(args.mapCompB.m_absoluteMapPositionPX, circleCompB.m_ray,
+//                                 args.mapCompA.m_absoluteMapPositionPX, lineCompA.m_secondPoint);
+//    }
+//        break;
+//    case CollisionShape_e::SEGMENT:
+//    {}
+//        break;
+//    }
+//}
 
 //===================================================================
 void CollisionSystem::treatCollisionCircleRect(CollisionArgs &args,
