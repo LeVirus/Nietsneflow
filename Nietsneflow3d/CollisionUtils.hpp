@@ -57,6 +57,8 @@ bool checkPointPosition(const pairFloat_t &firstPoint,
                         const pairFloat_t &currentPoint);
 
 float getDistance(const pairFloat_t &pointA, const pairFloat_t &pointB);
+float getRectTriangleSide(float adj, float hyp);
+
 
 bool checkFloatEquals(float a, float b);
 
