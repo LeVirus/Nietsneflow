@@ -51,11 +51,8 @@ void MapDisplaySystem::execSystem()
 //===================================================================
 void MapDisplaySystem::confPositionVertexEntities()
 {
-    MapCoordComponent *playerMapCoordComp = stairwayToComponentManager().
-            searchComponentByType<MapCoordComponent>(m_playerNum,
-                                                     Components_e::MAP_COORD_COMPONENT);
-    assert(playerMapCoordComp);
-    pairFloat_t playerPos = playerMapCoordComp->m_absoluteMapPositionPX;
+    assert(m_playerComp.m_mapCoordComp);
+    pairFloat_t playerPos = m_playerComp.m_mapCoordComp->m_absoluteMapPositionPX;
     pairUI_t max, min;
     getMapDisplayLimit(playerPos, min, max);
     m_entitiesToDisplay.clear();
@@ -72,7 +69,7 @@ void MapDisplaySystem::confPositionVertexEntities()
             m_entitiesToDisplay.emplace_back(mVectNumEntity[i]);
 
             pairFloat_t diffPosPX = mapComp->m_absoluteMapPositionPX -
-                    playerMapCoordComp->m_absoluteMapPositionPX;
+                    m_playerComp.m_mapCoordComp->m_absoluteMapPositionPX;
             pairFloat_t relativePosMapGL = {diffPosPX.first * MAP_LOCAL_SIZE_GL / m_localLevelSizePX,
                                             diffPosPX.second * MAP_LOCAL_SIZE_GL / m_localLevelSizePX};
             confVertexElement(relativePosMapGL, mVectNumEntity[i]);
@@ -132,10 +129,6 @@ bool MapDisplaySystem::checkBoundEntityMap(const MapCoordComponent &mapCoordComp
     {
         return false;
     }
-    MapCoordComponent *mapComp = stairwayToComponentManager().
-            searchComponentByType<MapCoordComponent>(m_playerNum,
-                                                     Components_e::MAP_COORD_COMPONENT);
-    assert(mapComp);
     return true;
 }
 
@@ -178,14 +171,27 @@ void MapDisplaySystem::drawVertex()
 //===================================================================
 void MapDisplaySystem::drawPlayerOnMap()
 {
-    PositionVertexComponent *posComp = stairwayToComponentManager().
+    assert(m_playerComp.m_posComp);
+    assert(m_playerComp.m_colorComp);
+    mptrSystemManager->searchSystemByType<ColorDisplaySystem>(
+                Systems_e::COLOR_DISPLAY_SYSTEM)->drawEntity(m_playerComp.m_posComp,
+                                                             m_playerComp.m_colorComp);
+}
+
+//===================================================================
+void MapDisplaySystem::setPlayerEntityNum(uint32_t playerNum)
+{
+    m_playerNum = playerNum;
+    m_playerComp.m_mapCoordComp = stairwayToComponentManager().
+            searchComponentByType<MapCoordComponent>(m_playerNum,
+                                                     Components_e::MAP_COORD_COMPONENT);
+    m_playerComp.m_posComp = stairwayToComponentManager().
             searchComponentByType<PositionVertexComponent>(m_playerNum,
                                                            Components_e::POSITION_VERTEX_COMPONENT);
-    ColorVertexComponent *colorComp = stairwayToComponentManager().
+    m_playerComp.m_colorComp = stairwayToComponentManager().
             searchComponentByType<ColorVertexComponent>(m_playerNum,
                                                            Components_e::COLOR_VERTEX_COMPONENT);
-    assert(posComp);
-    assert(colorComp);
-    mptrSystemManager->searchSystemByType<ColorDisplaySystem>(
-                Systems_e::COLOR_DISPLAY_SYSTEM)->drawEntity(posComp, colorComp);
+    assert(m_playerComp.m_posComp);
+    assert(m_playerComp.m_colorComp);
+    assert(m_playerComp.m_mapCoordComp);
 }
