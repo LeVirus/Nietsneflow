@@ -324,7 +324,6 @@ float CollisionSystem::getHorizontalCircleRectEject(const EjectXArgs &args)
     {
         adj = std::abs(args.circlePosY - args.elementPosY);
         diffX = getRectTriangleSide(adj, args.ray);
-//        diffX = std::sqrt(args.ray * args.ray - adj * adj);
     }
     //RIGHT
     if(std::cos(args.radDegree) > 0.0f)
@@ -390,8 +389,6 @@ void CollisionSystem::treatCollisionCircleCircle(CollisionArgs &args,
         float diffX = getRectTriangleSide(distanceY, hyp);
         float diffY = getRectTriangleSide(distanceX, hyp);
 
-//        float diffY = std::sqrt(hyp * hyp - distanceX * distanceX);
-//        float diffX = std::sqrt(hyp * hyp - distanceY * distanceY);
         diffX -= distanceX;
         diffY -= distanceY;
         if(circleAPosX < circleBPosX)

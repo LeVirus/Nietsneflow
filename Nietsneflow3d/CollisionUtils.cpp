@@ -9,13 +9,12 @@ bool checkCircleRectCollision(const pairFloat_t &cicleCenter,
                               const pairFloat_t &rectOrigin,
                               const pairFloat_t &rectSize)
 {
-    if(cicleCenter.first + circleRay <= rectOrigin.first ||
-            cicleCenter.first - circleRay >= rectOrigin.first + rectSize.first ||
-            cicleCenter.second + circleRay <= rectOrigin.second ||
-            cicleCenter.second - circleRay >= rectOrigin.second + rectSize.second)
+    float circleDiameter = circleRay * 2.0f;
+    if(!checkRectRectCollision({cicleCenter.first - circleRay, cicleCenter.second - circleRay}, {circleDiameter, circleDiameter}, rectOrigin, rectSize))
     {
         return false;
     }
+
     pairFloat_t rectCenterPoint = {rectOrigin.first + rectSize.first / 2,
         rectOrigin.second + rectSize.second / 2};
     float rectDiagonal = getDistance(rectOrigin, rectCenterPoint);
@@ -34,10 +33,13 @@ bool checkCircleCircleCollision(const pairFloat_t &circleCenterA,
         const pairFloat_t &circleCenterB,
         const float rayCircleB)
 {
-    if((circleCenterA.first + rayCircleA) < (circleCenterB.first - rayCircleB) ||
-            (circleCenterB.first + rayCircleB) < (circleCenterA.first - rayCircleA) ||
-            (circleCenterA.second + rayCircleA) < (circleCenterB.second - rayCircleB) ||
-            (circleCenterB.second + rayCircleB) < (circleCenterA.second - rayCircleA))
+    float circleDiameterA = rayCircleA * 2.0f,
+    circleDiameterB = rayCircleB * 2.0f;
+    if(!checkRectRectCollision(
+        {circleCenterA.first - rayCircleA, circleCenterA.second - rayCircleA},
+        {circleDiameterA, circleDiameterA},
+        {circleCenterB.first - rayCircleB, circleCenterB.second - rayCircleB},
+        {circleDiameterB, circleDiameterB}))
     {
         return false;
     }
@@ -54,10 +56,10 @@ bool checkRectRectCollision(const pairFloat_t &rectOriginA,
         const pairFloat_t &rectOriginB,
         const pairFloat_t &rectSizeB)
 {
-    return !(rectOriginA.first + rectSizeA.first < rectOriginB.first ||
-            rectOriginB.first + rectSizeB.second < rectOriginA.first ||
-            rectOriginA.second + rectSizeA.second < rectOriginB.second ||
-            rectOriginB.second + rectSizeB.second < rectOriginA.second);
+    return !(rectOriginA.first + rectSizeA.first <= rectOriginB.first ||
+            rectOriginB.first + rectSizeB.first <= rectOriginA.first ||
+            rectOriginA.second + rectSizeA.second <= rectOriginB.second ||
+            rectOriginB.second + rectSizeB.second <= rectOriginA.second);
 }
 
 //===================================================================
@@ -102,7 +104,7 @@ bool checkSegmentRectCollision(const pairFloat_t &lineFirstPoint,
 }
 
 //===================================================================
-bool checkSegmentSegmentCollision(const pairFloat_t &firstPointSegmentA, const pairFloat_t &secondPointSegmentA, 
+bool checkSegmentSegmentCollision(const pairFloat_t &firstPointSegmentA, const pairFloat_t &secondPointSegmentA,
         const pairFloat_t &firstPointSegmentB, const pairFloat_t &secondPointSegmentB)
 {
     float distXA = secondPointSegmentA.first - firstPointSegmentA.first;
@@ -115,17 +117,17 @@ bool checkSegmentSegmentCollision(const pairFloat_t &firstPointSegmentA, const p
     {
         return false;   // erreur, cas limite
     }
-    float t = - (firstPointSegmentA.first * distYB - 
-                 firstPointSegmentB.first * distYB - 
-                 distXB * firstPointSegmentA.second + 
+    float t = - (firstPointSegmentA.first * distYB -
+                 firstPointSegmentB.first * distYB -
+                 distXB * firstPointSegmentA.second +
                  distXB * firstPointSegmentB.second) / denom;
     if (t < 0 || t >= 1)
     {
         return false;
     }
-    float u = - (-distXA * firstPointSegmentA.second + 
-            distXA * firstPointSegmentB.second + 
-            distYA * firstPointSegmentA.first - 
+    float u = - (-distXA * firstPointSegmentA.second +
+            distXA * firstPointSegmentB.second +
+            distYA * firstPointSegmentA.first -
             distYA * firstPointSegmentB.first) / denom;
     if (u < 0 || u >= 1)
     {
@@ -179,7 +181,7 @@ bool checkCircleSegmentCollision(const pairFloat_t &circleCenter,
     float distanceY = maxY - minY;
     float A = distanceX * distanceX + distanceY * distanceY;
     float B = 2 * (distanceX * (lineFirstPoint.first - circleCenter.first) + distanceY * (lineFirstPoint.second - circleCenter.second));
-    float C = (lineFirstPoint.first - circleCenter.first) * (lineFirstPoint.first - circleCenter.first) 
+    float C = (lineFirstPoint.first - circleCenter.first) * (lineFirstPoint.first - circleCenter.first)
         + (lineFirstPoint.second - circleCenter.second) * (lineFirstPoint.second - circleCenter.second) - circleRay * circleRay;
 
     float det = B * B - 4 * A * C;

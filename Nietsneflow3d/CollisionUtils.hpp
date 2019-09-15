@@ -5,6 +5,7 @@
 
 using pairFloat_t = std::pair<float, float>;
 
+
 bool checkCircleRectCollision(const pairFloat_t &cicleCenter,
                               const float circleRay,
                               const pairFloat_t &rectOrigin,
