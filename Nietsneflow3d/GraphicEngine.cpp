@@ -55,11 +55,13 @@ bool GraphicEngine::windowShouldClose()
 
 //===================================================================
 void GraphicEngine::linkSystems(ColorDisplaySystem *colorSystem,
-                                MapDisplaySystem *mapSystem)
+                                MapDisplaySystem *mapSystem,
+                                FirstPersonDisplaySystem *firstPersonSystem)
 
 {
     m_colorSystem = colorSystem;
     m_mapSystem = mapSystem;
+    m_firstPersonSystem = firstPersonSystem;
 }
 
 

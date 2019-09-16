@@ -179,19 +179,29 @@ void MapDisplaySystem::drawPlayerOnMap()
 }
 
 //===================================================================
-void MapDisplaySystem::setPlayerEntityNum(uint32_t playerNum)
+void MapDisplaySystem::confPlayerComp(uint32_t playerNum)
 {
-    m_playerNum = playerNum;
     m_playerComp.m_mapCoordComp = stairwayToComponentManager().
-            searchComponentByType<MapCoordComponent>(m_playerNum,
+            searchComponentByType<MapCoordComponent>(playerNum,
                                                      Components_e::MAP_COORD_COMPONENT);
     m_playerComp.m_posComp = stairwayToComponentManager().
-            searchComponentByType<PositionVertexComponent>(m_playerNum,
+            searchComponentByType<PositionVertexComponent>(playerNum,
                                                            Components_e::POSITION_VERTEX_COMPONENT);
     m_playerComp.m_colorComp = stairwayToComponentManager().
-            searchComponentByType<ColorVertexComponent>(m_playerNum,
+            searchComponentByType<ColorVertexComponent>(playerNum,
                                                            Components_e::COLOR_VERTEX_COMPONENT);
     assert(m_playerComp.m_posComp);
     assert(m_playerComp.m_colorComp);
     assert(m_playerComp.m_mapCoordComp);
+}
+
+//===================================================================
+void MapDisplaySystem::setVectTextures(std::vector<Texture> &vectTexture)
+{
+    m_ptrVectTexture = &vectTexture;
+    m_vectVerticesData.reserve(vectTexture.size());
+    for(uint32_t h = 0; h < vectTexture.size(); ++h)
+    {
+        m_vectVerticesData.emplace_back(VerticesData(Shader_e::TEXTURE_S));
+    }
 }

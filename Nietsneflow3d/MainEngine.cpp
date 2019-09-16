@@ -12,6 +12,7 @@
 #include <ECS/Systems/ColorDisplaySystem.hpp>
 #include <ECS/Systems/MapDisplaySystem.hpp>
 #include <ECS/Systems/CollisionSystem.hpp>
+#include <ECS/Systems/FirstPersonDisplaySystem.hpp>
 #include <LevelManager.hpp>
 #include <cassert>
 
@@ -229,7 +230,8 @@ void MainEngine::loadPlayerEntity(const Level &level)
     uint32_t entityNum = m_ecsManager.addEntity(bitsetComponents);
     confPlayerEntity(entityNum, level);
     //notify player entity number
-    m_graphicEngine.getMapDisplaySystem().setPlayerEntityNum(entityNum);
+    m_graphicEngine.getMapDisplaySystem().confPlayerComp(entityNum);
+    m_graphicEngine.getFirstPersonSystem().confPlayerComp(entityNum);
 }
 
 //===================================================================
@@ -375,7 +377,9 @@ void MainEngine::linkSystemsToGraphicEngine()
             searchSystemByType<ColorDisplaySystem>(Systems_e::COLOR_DISPLAY_SYSTEM);
     MapDisplaySystem *map = m_ecsManager.getSystemManager().
             searchSystemByType<MapDisplaySystem>(Systems_e::MAP_DISPLAY_SYSTEM);
-    m_graphicEngine.linkSystems(color, map);
+    FirstPersonDisplaySystem *first = m_ecsManager.getSystemManager().
+            searchSystemByType<FirstPersonDisplaySystem>(Systems_e::FIRST_PERSON_DISPLAY_SYSTEM);
+    m_graphicEngine.linkSystems(color, map, first);
 }
 
 //===================================================================

@@ -16,6 +16,7 @@ struct GLFWwindow;
 class PictureData;
 class ColorDisplaySystem;
 class MapDisplaySystem;
+class FirstPersonDisplaySystem;
 
 class GraphicEngine
 {
@@ -28,6 +29,7 @@ private:
     //Systems
     ColorDisplaySystem *m_colorSystem = nullptr;
     MapDisplaySystem *m_mapSystem = nullptr;
+    FirstPersonDisplaySystem *m_firstPersonSystem = nullptr;
 private:
     void initGLWindow();
     void initGlad();
@@ -44,11 +46,18 @@ public:
     void loadPictureData(const PictureData &pictureData);
     void runIteration();
     bool windowShouldClose();
-    void linkSystems(ColorDisplaySystem *colorSystem, MapDisplaySystem *mapSystem);
+    void linkSystems(ColorDisplaySystem *colorSystem,
+                     MapDisplaySystem *mapSystem,
+                     FirstPersonDisplaySystem *firstPersonSystem);
 
     inline MapDisplaySystem &getMapDisplaySystem()
     {
         return *m_mapSystem;
+    }
+
+    inline FirstPersonDisplaySystem &getFirstPersonSystem()
+    {
+        return *m_firstPersonSystem;
     }
 
     inline GLFWwindow &getGLWindow()
