@@ -71,8 +71,8 @@ void LevelManager::loadGroundAndCeilingData(const INIReader &reader)
             double colorR = reader.GetReal("Ground", "colorR", -1.0);
             double colorG = reader.GetReal("Ground", "colorG", -1.0);
             double colorB = reader.GetReal("Ground", "colorB", -1.0);
-            tupleFloat_t tupleFloat = std::make_tuple(colorR, colorG, colorB);
-            arrayGAndCData[i].m_tupleColor = tupleFloat;
+            tupleDouble_t tupleDouble = std::make_tuple(colorR, colorG, colorB);
+            arrayGAndCData[i].m_tupleColor = tupleDouble;
         }
         arrayGAndCData[i].m_apparence = displayType;
     }

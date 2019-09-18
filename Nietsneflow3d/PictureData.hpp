@@ -10,6 +10,7 @@
 #include <stdint.h>
 
 using tupleFloat_t = std::tuple<float, float, float>;
+using tupleDouble_t = std::tuple<double, double, double>;
 using vectStr_t = std::vector<std::string>;
 
 /**
