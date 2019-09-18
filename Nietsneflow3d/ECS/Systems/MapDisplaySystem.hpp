@@ -10,6 +10,13 @@
 
 struct MapCoordComponent;
 
+struct PlayerComp
+{
+    MapCoordComponent const *m_mapCoordComp = nullptr;
+    PositionVertexComponent const *m_posComp = nullptr;
+    ColorVertexComponent const *m_colorComp = nullptr;
+};
+
 class MapDisplaySystem : public ecs::System
 {
 private:
@@ -20,6 +27,7 @@ private:
     float m_tileSizeGL;
     std::vector<uint32_t> m_entitiesToDisplay;
     std::vector<Texture> *m_ptrVectTexture = nullptr;
+    PlayerComp m_playerComp;
 private:
     void setUsedComponents();
     void fillVertexFromEntities();
@@ -33,21 +41,8 @@ private:
 public:
     MapDisplaySystem();
     void confLevelData();
-    inline void setPlayerEntityNum(uint32_t playerNum)
-    {
-        m_playerNum = playerNum;
-    }
-
-    inline void setVectTextures(std::vector<Texture> &vectTexture)
-    {
-        m_ptrVectTexture = &vectTexture;
-        m_vectVerticesData.reserve(vectTexture.size());
-        for(uint32_t h = 0; h < vectTexture.size(); ++h)
-        {
-            m_vectVerticesData.emplace_back(VerticesData(Shader_e::TEXTURE_S));
-        }
-    }
-
+    void confPlayerComp(uint32_t playerNum);
+    void setVectTextures(std::vector<Texture> &vectTexture);
     void execSystem()override;
     void setShader(Shader &shader);
 };

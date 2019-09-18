@@ -14,6 +14,7 @@
 #include <ECS/Systems/MapDisplaySystem.hpp>
 #include <ECS/Systems/InputSystem.hpp>
 #include <ECS/Systems/CollisionSystem.hpp>
+#include <ECS/Systems/FirstPersonDisplaySystem.hpp>
 #include <constants.hpp>
 #include <memory>
 #include <cassert>
@@ -39,6 +40,7 @@ void ECSManager::initSystems()
     m_systemManager->bAddExternSystem(std::make_unique<MapDisplaySystem>());
     m_systemManager->bAddExternSystem(std::make_unique<InputSystem>());
     m_systemManager->bAddExternSystem(std::make_unique<CollisionSystem>());
+    m_systemManager->bAddExternSystem(std::make_unique<FirstPersonDisplaySystem>());
 }
 
 

@@ -5,6 +5,7 @@
 
 using pairFloat_t = std::pair<float, float>;
 
+
 bool checkCircleRectCollision(const pairFloat_t &cicleCenter,
                               const float circleRay,
                               const pairFloat_t &rectOrigin,
@@ -57,6 +58,8 @@ bool checkPointPosition(const pairFloat_t &firstPoint,
                         const pairFloat_t &currentPoint);
 
 float getDistance(const pairFloat_t &pointA, const pairFloat_t &pointB);
+float getRectTriangleSide(float adj, float hyp);
+
 
 bool checkFloatEquals(float a, float b);
 

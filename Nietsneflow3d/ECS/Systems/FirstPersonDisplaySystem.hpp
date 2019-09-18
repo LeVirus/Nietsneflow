@@ -7,15 +7,19 @@
 #include <OpenGLUtils/glheaders.hpp>
 #include <OpenGLUtils/VerticesData.hpp>
 #include <OpenGLUtils/Texture.hpp>
+#include <ECS/Systems/MapDisplaySystem.hpp>
 
-class FirstPersonDisplaySystem
+class FirstPersonDisplaySystem : public ecs::System
 {
 private:
     Shader *m_shader;
     std::vector<VerticesData> m_vectVerticesData;
     std::vector<Texture> *m_ptrVectTexture = nullptr;
+    PlayerComp m_playerComp;
 public:
     FirstPersonDisplaySystem();
+    void execSystem()override;
+    void confPlayerComp(uint32_t playerNum);
 };
 
 #endif // FIRSTPERSONDISPLAYSYSTEM_H

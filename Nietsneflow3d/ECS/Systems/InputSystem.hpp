@@ -11,7 +11,6 @@ private:
 private:
     void setUsedComponents();
     void treatPlayerInput();
-
 public:
     InputSystem();
     void execSystem()override;

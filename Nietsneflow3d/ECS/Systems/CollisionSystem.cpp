@@ -286,7 +286,7 @@ float CollisionSystem::getVerticalCircleRectEject(const EjectYArgs& args)
     if(args.angleMode)
     {
         adj = std::abs(args.circlePosX - args.elementPosX);
-        diffY = std::sqrt(args.ray * args.ray - adj * adj);
+        diffY = getRectTriangleSide(adj, args.ray);
     }
     //DOWN
     if(std::sin(args.radDegree) < 0.0f)
@@ -323,7 +323,7 @@ float CollisionSystem::getHorizontalCircleRectEject(const EjectXArgs &args)
     if(args.angleMode)
     {
         adj = std::abs(args.circlePosY - args.elementPosY);
-        diffX = std::sqrt(args.ray * args.ray - adj * adj);
+        diffX = getRectTriangleSide(adj, args.ray);
     }
     //RIGHT
     if(std::cos(args.radDegree) > 0.0f)
@@ -386,8 +386,9 @@ void CollisionSystem::treatCollisionCircleCircle(CollisionArgs &args,
         float distanceY = std::abs(circleAPosY - circleBPosY);
         float hyp = circleCollA.m_ray + circleCollB.m_ray;
         assert(hyp > distanceX && hyp > distanceY);
-        float diffY = std::sqrt(hyp * hyp - distanceX * distanceX);
-        float diffX = std::sqrt(hyp * hyp - distanceY * distanceY);
+        float diffX = getRectTriangleSide(distanceY, hyp);
+        float diffY = getRectTriangleSide(distanceX, hyp);
+
         diffX -= distanceX;
         diffY -= distanceY;
         if(circleAPosX < circleBPosX)
