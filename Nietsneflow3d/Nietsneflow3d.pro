@@ -2,12 +2,13 @@ TEMPLATE = app
 CONFIG += console c++17
 CONFIG -= app_bundle
 CONFIG -= qt
-QMAKE_CXXFLAGS += -std=c++17
+QMAKE_CXXFLAGS += -std=c++2a
 QMAKE_CXXFLAGS_DEBUG += -Wall -Wextra -Wpedantic -Og
 INCLUDEPATH += includesLib
 LIBS += -L../Nietsneflow3d/lib  -lECS -lglad -ldl -lglfw3 -lX11 -lXxf86vm -lXrandr -pthread -lXi
 
 SOURCES += main.cpp \
+    ECS/Systems/VisionSystem.cpp \
     Game.cpp \
     MainEngine.cpp \
     LevelManager.cpp \
@@ -27,6 +28,8 @@ SOURCES += main.cpp \
     ECS/Systems/FirstPersonDisplaySystem.cpp
 
 HEADERS += \
+    ECS/Components/VisionComponent.hpp \
+    ECS/Systems/VisionSystem.hpp \
     Game.hpp \
     MainEngine.hpp \
     LevelManager.hpp \

@@ -1,5 +1,4 @@
-#ifndef GRAPHICENGINE_H
-#define GRAPHICENGINE_H
+#pragma once
 
 #include <functional>
 #include <vector>
@@ -67,5 +66,3 @@ public:
 };
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
-
-#endif // GRAPHICENGINE_H

@@ -1,4 +1,4 @@
-#include "ColorDisplaySystem.hpp"
+    #include "ColorDisplaySystem.hpp"
 #include <constants.hpp>
 #include <includesLib/BaseECS/engine.hpp>
 #include <ECS/Components/ColorVertexComponent.hpp>
@@ -6,7 +6,7 @@
 #include <cassert>
 
 //===================================================================
-ColorDisplaySystem::ColorDisplaySystem():m_verticesData(Shader_e::COLOR_S)
+ColorDisplaySystem::ColorDisplaySystem() : m_verticesData(Shader_e::COLOR_S)
 {
     setUsedComponents();
 }

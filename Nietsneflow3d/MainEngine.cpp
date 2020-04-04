@@ -32,7 +32,7 @@ void MainEngine::init()
 }
 
 //===================================================================
-void MainEngine::launchLoop()
+void MainEngine::mainLoop()
 {
     m_graphicEngine.getMapDisplaySystem().confLevelData();
     do
@@ -52,7 +52,7 @@ void MainEngine::loadGraphicPicture(const PictureData &picData)
 
 //===================================================================
 void MainEngine::loadGroundAndCeilingEntities(const GroundCeilingData &groundData,
-                                         const GroundCeilingData &ceilingData)
+                                              const GroundCeilingData &ceilingData)
 {
     GroundCeilingData const *ptr = &groundData;
     for(uint32_t i = 0; i < 2; ++i)
@@ -122,7 +122,7 @@ void MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
         {
             confBaseMapComponent(createMapEnemyEntity(),
                                  memSpriteData,
-                                 enemiesData[i].m_TileGamePosition[j], CollisionShape_e::CIRCLE);
+                                 enemiesData[i].m_TileGamePosition[j], CollisionShape_e::CIRCLE_C);
         }
     }
 }
@@ -187,15 +187,15 @@ void MainEngine::confBaseMapComponent(uint32_t entityNum,
                 searchComponentByType<RectangleCollisionComponent>(entityNum, Components_e::RECTANGLE_COLLISION_COMPONENT);
         assert(rectComp);
         rectComp->m_size = {LEVEL_TILE_SIZE_PX, LEVEL_TILE_SIZE_PX};
-        tagComp->m_tag = CollisionTag_e::WALL_C;
+        tagComp->m_tag = CollisionTag_e::WALL_CT;
     }
-    else if(collisionShape == CollisionShape_e::CIRCLE)
+    else if(collisionShape == CollisionShape_e::CIRCLE_C)
     {
         CircleCollisionComponent *circleComp = m_ecsManager.getComponentManager().
                 searchComponentByType<CircleCollisionComponent>(entityNum, Components_e::CIRCLE_COLLISION_COMPONENT);
         assert(circleComp);
         circleComp->m_ray = ENEMY_RAY;
-        tagComp->m_tag = CollisionTag_e::ENEMY;
+        tagComp->m_tag = CollisionTag_e::ENEMY_CT;
     }
     mapComp->m_coord = coordLevel;
     mapComp->m_absoluteMapPositionPX = Level::getAbsolutePosition(coordLevel);
@@ -287,8 +287,8 @@ void MainEngine::confPlayerEntity(uint32_t entityNum, const Level &level)
     color->m_vertex.emplace_back(0.9f,0.00f, 0.00f);
     color->m_vertex.emplace_back(0.9f,0.00f, 0.00f);
     circleColl->m_ray = 25.0f;
-    tagColl->m_tag = CollisionTag_e::PLAYER;
-    tagColl->m_shape = CollisionShape_e::CIRCLE;
+    tagColl->m_tag = CollisionTag_e::PLAYER_CT;
+    tagColl->m_shape = CollisionShape_e::CIRCLE_C;
 }
 
 //===================================================================

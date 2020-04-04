@@ -38,7 +38,7 @@ void VerticesData::setVectGLPointer()
     case Shader_e::TEXTURE_S:
         m_shaderInterpretData = {2,2};
         break;
-    case Shader_e::TOTAL_SHADER:
+    case Shader_e::TOTAL_SHADER_S:
         assert("Incoherant shader enum.");
     }
     m_sizeOfVertex = std::accumulate(m_shaderInterpretData.begin(),
@@ -94,6 +94,11 @@ void VerticesData::loadVertexTextureComponent(const PositionVertexComponent &pos
 //===================================================================
 void VerticesData::addIndices(BaseShapeTypeGL_e shapeType)
 {
+    if(shapeType == BaseShapeTypeGL_e::NONE)
+    {
+        assert(false);
+        return;
+    }
     uint32_t curent = m_cursor;
     //first triangle
     m_indices.emplace_back(curent);

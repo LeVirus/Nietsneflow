@@ -1,5 +1,4 @@
-#ifndef MAPDISPLAYSYSTEM_H
-#define MAPDISPLAYSYSTEM_H
+#pragma once
 
 #include <BaseECS/system.hpp>
 #include <functional>
@@ -52,4 +51,3 @@ template <typename T>
 std::pair<T,T> operator-(const std::pair<T,T> & l,const std::pair<T,T> & r) {
     return {l.first - r.first,r.second - l.second};
 }
-#endif // MAPDISPLAYSYSTEM_H

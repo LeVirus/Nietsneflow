@@ -1,5 +1,4 @@
-﻿#ifndef LEVEL_H
-#define LEVEL_H
+﻿#pragma once
 
 #include <stdint.h>
 #include <functional>
@@ -155,5 +154,3 @@ public:
     static void updatePlayerOrientation(const MoveableComponent &moveComp,
                                   PositionVertexComponent &posComp);
 };
-
-#endif // LEVEL_H

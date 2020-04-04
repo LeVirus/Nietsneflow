@@ -1,5 +1,4 @@
-#ifndef COLORDISPLAYSYSTEM_H
-#define COLORDISPLAYSYSTEM_H
+#pragma once
 
 #include <includesLib/BaseECS/system.hpp>
 #include <OpenGLUtils/Shader.hpp>
@@ -28,5 +27,3 @@ public:
                     const ColorVertexComponent *colorComp);
     void display()const;
 };
-
-#endif // COLORDISPLAYSYSTEM_H

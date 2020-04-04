@@ -10,7 +10,8 @@ bool checkCircleRectCollision(const pairFloat_t &cicleCenter,
                               const pairFloat_t &rectSize)
 {
     float circleDiameter = circleRay * 2.0f;
-    if(!checkRectRectCollision({cicleCenter.first - circleRay, cicleCenter.second - circleRay}, {circleDiameter, circleDiameter}, rectOrigin, rectSize))
+    if(!checkRectRectCollision({cicleCenter.first - circleRay, cicleCenter.second - circleRay},
+                               {circleDiameter, circleDiameter}, rectOrigin, rectSize))
     {
         return false;
     }
@@ -138,8 +139,8 @@ bool checkSegmentSegmentCollision(const pairFloat_t &firstPointSegmentA, const p
 
 //===================================================================
 bool checkPointPosition(const pairFloat_t &firstPoint,
-        const pairFloat_t &secondPoint,
-        const pairFloat_t &currentPoint)
+                        const pairFloat_t &secondPoint,
+                        const pairFloat_t &currentPoint)
 {
     if(!checkFloatEquals(firstPoint.first, secondPoint.first))
     {
@@ -225,15 +226,6 @@ bool checkPointCircleCollision(const pairFloat_t &point,
 }
 
 //===================================================================
-//bool checkSegmentSegmentCollision(const pairFloat_t &lineFirstPointA,
-//                            const pairFloat_t &lineSecondPointA,
-//                            const pairFloat_t &lineFirstPointB,
-//                            const pairFloat_t &lineSecondPointB)
-//{
-
-//}
-
-//===================================================================
 float getDistance(const pairFloat_t &pointA, const pairFloat_t &pointB)
 {
     float distanceX = std::abs(pointA.first - pointB.first),
@@ -258,4 +250,46 @@ bool checkPointRectCollision(const pairFloat_t &point,
             point.first > rectOrigin.first + rectSize.first ||
             point.second < rectOrigin.second ||
             point.second > rectOrigin.second + rectSize.second);
+}
+
+//===================================================================
+bool checkTriangleCircleCollision(const array3PairFloat_t &trianglePoints,
+                                  const pairFloat_t &cicleCenter, const float circleRay)
+{
+    pairPairFloat_t rectShapeTriangle = getRectShapeFromTriangle(trianglePoints);
+    if(!checkCircleRectCollision(cicleCenter, circleRay, rectShapeTriangle.first, rectShapeTriangle.second))
+    {
+        return false;
+    }
+    return true;
+}
+
+//===================================================================
+bool checkTriangleRectCollision(const array3PairFloat_t &trianglePoints,
+                                const pairPairFloat_t &rectShape)
+{
+    pairPairFloat_t rectShapeTriangle = getRectShapeFromTriangle(trianglePoints);
+    if(!checkRectRectCollision(rectShape.first, rectShape.second,
+                               rectShapeTriangle.first, rectShapeTriangle.second))
+    {
+        return false;
+    }
+    return true;
+}
+
+//===================================================================
+pairPairFloat_t getRectShapeFromTriangle(const array3PairFloat_t &trianglePoints)
+{
+    float minX, maxX, minY, maxY;
+    minX = std::min(trianglePoints[0].first, trianglePoints[1].first);
+    minX = std::min(minX, trianglePoints[2].first);
+    maxX = std::max(trianglePoints[0].first, trianglePoints[1].first);
+    maxX = std::max(maxX, trianglePoints[2].first);
+
+    minY = std::min(trianglePoints[0].second, trianglePoints[1].second);
+    minY = std::min(minY, trianglePoints[2].second);
+    maxY = std::max(trianglePoints[0].second, trianglePoints[1].second);
+    maxY = std::max(maxY, trianglePoints[2].second);
+
+    return {{minX, minY}, {(maxX - minX), (maxY - minY)}};
 }

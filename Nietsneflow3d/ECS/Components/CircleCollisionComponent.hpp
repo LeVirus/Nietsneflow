@@ -1,5 +1,4 @@
-#ifndef CIRCLECOLLISIONCOMPONENT_HPP
-#define CIRCLECOLLISIONCOMPONENT_HPP
+#pragma once
 
 #include <BaseECS/component.hpp>
 #include <constants.hpp>
@@ -14,6 +13,3 @@ struct CircleCollisionComponent : public ecs::Component
     float m_ray;
     virtual ~CircleCollisionComponent() = default;
 };
-
-#endif // CIRCLECOLLISIONCOMPONENT_HPP
-

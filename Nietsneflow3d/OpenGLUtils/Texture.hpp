@@ -1,5 +1,4 @@
-#ifndef TEXTURE_H
-#define TEXTURE_H
+#pragma once
 
 #include <string>
 
@@ -17,5 +16,3 @@ public:
     void bind();
     void unbind();
 };
-
-#endif // TEXTURE_H

@@ -1,5 +1,4 @@
-#ifndef ECSMANAGER_H
-#define ECSMANAGER_H
+#pragma once
 
 #include <includesLib/BaseECS/componentmanager.hpp>
 #include <includesLib/BaseECS/systemmanager.hpp>
@@ -23,9 +22,8 @@ public:
     ECSManager();
     void init();
     uint32_t addEntity(const std::bitset<Components_e::TOTAL_COMPONENTS> &bitsetComponents);
+    std::vector<uint32_t> getEntityContainingComponents(const std::bitset<Components_e::TOTAL_COMPONENTS> &bitsetComponents)const;
     inline ecs::Engine &getEngine(){return m_ecsEngine;}
     inline ecs::ComponentManager &getComponentManager(){return *m_componentManager;}
     inline ecs::SystemManager &getSystemManager(){return *m_systemManager;}
 };
-
-#endif // ECSMANAGER_H

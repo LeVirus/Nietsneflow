@@ -1,5 +1,4 @@
-#ifndef TAGCOMPONENT_HPP
-#define TAGCOMPONENT_HPP
+#pragma once
 
 #include <BaseECS/component.hpp>
 #include <constants.hpp>
@@ -14,5 +13,3 @@ struct GeneralCollisionComponent : public ecs::Component
     CollisionShape_e m_shape;
     virtual ~GeneralCollisionComponent() = default;
 };
-
-#endif // TAGCOMPONENT_HPP

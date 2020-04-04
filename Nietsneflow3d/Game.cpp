@@ -24,5 +24,5 @@ void Game::initEngine()
 //===================================================================
 void Game::launchGame()
 {
-    m_mainEngine.launchLoop();
+    m_mainEngine.mainLoop();
 }

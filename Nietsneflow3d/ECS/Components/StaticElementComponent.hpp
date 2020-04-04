@@ -1,5 +1,4 @@
-#ifndef STATICELEMENTCOMPONENT_HPP
-#define STATICELEMENTCOMPONENT_HPP
+#pragma once
 
 #include <BaseECS/component.hpp>
 #include <constants.hpp>
@@ -15,6 +14,3 @@ struct StaticElementComponent : public ecs::Component
     bool m_traversable;
     virtual ~StaticElementComponent() = default;
 };
-
-#endif // STATICELEMENTCOMPONENT_HPP
-

@@ -105,8 +105,8 @@ void GraphicEngine::initGlad()
 //===================================================================
 void GraphicEngine::initGLShader()
 {
-    m_vectShader.reserve(Shader_e::TOTAL_SHADER);
-    for(uint32_t i = Shader_e::COLOR_S; i < Shader_e::TOTAL_SHADER; ++i)
+    m_vectShader.reserve(Shader_e::TOTAL_SHADER_S);
+    for(uint32_t i = Shader_e::COLOR_S; i < Shader_e::TOTAL_SHADER_S; ++i)
     {
         std::map<Shader_e, std::string>::const_iterator it =
                 SHADER_ID_MAP.find(static_cast<Shader_e>(i));
@@ -119,8 +119,8 @@ void GraphicEngine::initGLShader()
 //===================================================================
 void GraphicEngine::initGLTexture()
 {
-    m_vectTexture.reserve(Texture_t::TOTAL_TEXTURE);
-    for(uint32_t i = Texture_t::WALL_T; i < Texture_t::TOTAL_TEXTURE; ++i)
+    m_vectTexture.reserve(Texture_t::TOTAL_TEXTURE_T);
+    for(uint32_t i = Texture_t::WALL_T; i < Texture_t::TOTAL_TEXTURE_T; ++i)
     {
         std::map<Texture_t, std::string>::const_iterator it =
                 TEXTURE_ID_PATH_MAP.find(static_cast<Texture_t>(i));
@@ -142,7 +142,7 @@ void GraphicEngine::setShaderToLocalSystems()
 void GraphicEngine::loadTexturesPath(const vectStr_t &vectTextures)
 {
     size_t size = vectTextures.size();
-    assert(size == Texture_t::TOTAL_TEXTURE);
+    assert(size == Texture_t::TOTAL_TEXTURE_T);
     m_vectTexture.reserve(size);
     for(uint32_t i = 0; i < size; ++i)
     {

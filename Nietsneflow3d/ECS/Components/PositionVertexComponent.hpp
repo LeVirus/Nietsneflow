@@ -1,5 +1,4 @@
-#ifndef TARGETPICTUREDATA_HPP
-#define TARGETPICTUREDATA_HPP
+#pragma once
 
 #include <BaseECS/component.hpp>
 #include <constants.hpp>
@@ -22,6 +21,3 @@ struct PositionVertexComponent : public ecs::Component
     std::vector<pairFloat_t> m_vertex;
     virtual ~PositionVertexComponent() = default;
 };
-
-#endif // TARGETPICTUREDATA_HPP
-

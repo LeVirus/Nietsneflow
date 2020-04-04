@@ -1,5 +1,4 @@
-#ifndef LEVELMANAGER_H
-#define LEVELMANAGER_H
+#pragma once
 
 #include <Level.hpp>
 #include <PictureData.hpp>
@@ -45,5 +44,3 @@ public:
     inline const PictureData &getPictureData()const {return m_pictureData;}
     inline const Level &getLevel()const {return m_level;}
 };
-
-#endif // LEVELMANAGER_H

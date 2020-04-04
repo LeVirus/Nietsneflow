@@ -10,8 +10,8 @@
 #include <constants.hpp>
 
 //===================================================================
-MapDisplaySystem::MapDisplaySystem()
 //WARNING CONSIDER THAT LENGHT AND WEIGHT ARE THE SAME
+MapDisplaySystem::MapDisplaySystem()
 {
     setUsedComponents();
 }
@@ -56,7 +56,7 @@ void MapDisplaySystem::confPositionVertexEntities()
     pairUI_t max, min;
     getMapDisplayLimit(playerPos, min, max);
     m_entitiesToDisplay.clear();
-    m_entitiesToDisplay.reserve(20);
+    m_entitiesToDisplay.reserve(mVectNumEntity.size());
     for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
     {
         MapCoordComponent *mapComp = stairwayToComponentManager().

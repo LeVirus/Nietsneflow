@@ -1,5 +1,4 @@
-#ifndef SHADER_H
-#define SHADER_H
+#pragma once
 
 #include <string>
 
@@ -26,5 +25,3 @@ public:
     void use();
     void display()const;
 };
-
-#endif // SHADER_H

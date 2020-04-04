@@ -1,5 +1,4 @@
-#ifndef VERTICESDATA_H
-#define VERTICESDATA_H
+#pragma once
 
 #include <vector>
 #include <stdint.h>
@@ -38,5 +37,3 @@ public:
                              const ColorVertexComponent *colorComp);
     void loadVertexTextureComponent(const PositionVertexComponent &posComp, const SpriteTextureComponent &spriteComp);
 };
-
-#endif // VERTICESDATA_H

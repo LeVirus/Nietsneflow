@@ -1,5 +1,5 @@
-#ifndef SPRITETEXTUREDATA_HPP
-#define SPRITETEXTUREDATA_HPP
+#pragma once
+
 
 #include <BaseECS/component.hpp>
 #include <constants.hpp>
@@ -15,5 +15,3 @@ struct SpriteTextureComponent : public ecs::Component
     SpriteData const *m_spriteData;
     virtual ~SpriteTextureComponent() = default;
 };
-#endif // SPRITETEXTUREDATA_HPP
-

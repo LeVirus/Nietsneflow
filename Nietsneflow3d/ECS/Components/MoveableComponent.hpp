@@ -1,5 +1,4 @@
-#ifndef MOVEABLECOMPONENT_HPP
-#define MOVEABLECOMPONENT_HPP
+#pragma once
 
 #include <BaseECS/component.hpp>
 #include <constants.hpp>
@@ -14,10 +13,8 @@ struct MoveableComponent : public ecs::Component
         muiTypeComponent = Components_e::MOVEABLE_COMPONENT;
     }
     float m_degreeOrientation;
-    float m_velocity = 3.0f;
-    float m_rotationangle = 3.000f;
-    virtual ~MoveableComponent() = default;
     float m_currentDegreeDirection;
+    float m_velocity = 3.0f;
+    float m_rotationAngle = 3.000f;
+    virtual ~MoveableComponent() = default;
 };
-
-#endif // MOVEABLECOMPONENT_HPP

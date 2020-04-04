@@ -1,5 +1,4 @@
-#ifndef MAPPOSITIONCOMPONENT_HPP
-#define MAPPOSITIONCOMPONENT_HPP
+#pragma once
 
 #include <BaseECS/component.hpp>
 #include <constants.hpp>
@@ -15,6 +14,3 @@ struct MapCoordComponent : public ecs::Component
     pairFloat_t m_absoluteMapPositionPX;
     virtual ~MapCoordComponent() = default;
 };
-
-#endif // MAPPOSITIONCOMPONENT_HPP
-

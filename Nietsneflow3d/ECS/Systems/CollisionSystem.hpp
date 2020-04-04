@@ -1,5 +1,4 @@
-#ifndef COLLISIONSYSTEM_H
-#define COLLISIONSYSTEM_H
+#pragma once
 
 #include <includesLib/BaseECS/system.hpp>
 #include "constants.hpp"
@@ -22,13 +21,13 @@ private:
     void setUsedComponents();
     void initArrayTag();
     bool checkTag(CollisionTag_e entityTagA, CollisionTag_e entityTagB);
-    void checkCollision(uint32_t entityNumA, uint32_t entityNumB,
+    void treatCollision(uint32_t entityNumA, uint32_t entityNumB,
                         GeneralCollisionComponent *tagCompA,
                         GeneralCollisionComponent *tagCompB);
     //Collisions detection
-    void checkCollisionFirstRect(CollisionArgs &args);
-    void checkCollisionFirstCircle(CollisionArgs &args);
-    void checkCollisionFirstSegment(CollisionArgs &args);
+    void treatCollisionFirstRect(CollisionArgs &args);
+    void treatCollisionFirstCircle(CollisionArgs &args);
+    void treatCollisionFirstSegment(CollisionArgs &args);
 
     //Collisions treatment
     void treatCollisionCircleRect(CollisionArgs &args,
@@ -78,5 +77,3 @@ struct EjectYArgs
     elementSecondPosY, ray, radDegree;
     bool angleMode;
 };
-
-#endif // COLLISIONSYSTEM_H

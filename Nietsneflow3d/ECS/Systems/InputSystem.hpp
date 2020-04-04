@@ -1,5 +1,4 @@
-#ifndef INPUTSYSTEM_H
-#define INPUTSYSTEM_H
+#pragma once
 
 #include <includesLib/BaseECS/system.hpp>
 #include <OpenGLUtils/glheaders.hpp>
@@ -19,5 +18,3 @@ public:
         m_window = &window;
     }
 };
-
-#endif // INPUTSYSTEM_H

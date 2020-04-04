@@ -1,5 +1,4 @@
-#ifndef INPUTCOMPONENT_HPP
-#define INPUTCOMPONENT_HPP
+#pragma once
 
 #include <BaseECS/component.hpp>
 #include <constants.hpp>
@@ -13,6 +12,3 @@ struct InputComponent : public ecs::Component
     uint32_t m_controlMode = 0;
     virtual ~InputComponent() = default;
 };
-
-#endif // INPUTCOMPONENT_HPP
-

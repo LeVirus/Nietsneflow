@@ -36,8 +36,8 @@ void CollisionSystem::execSystem()
         GeneralCollisionComponent *tagCompA = stairwayToComponentManager().
                 searchComponentByType<GeneralCollisionComponent>(mVectNumEntity[i],
                                                          Components_e::GENERAL_COLLISION_COMPONENT);
-        if(tagCompA->m_tag == CollisionTag_e::WALL_C ||
-                tagCompA->m_tag == CollisionTag_e::OBJECT_C)
+        if(tagCompA->m_tag == CollisionTag_e::WALL_CT ||
+                tagCompA->m_tag == CollisionTag_e::OBJECT_CT)
         {
             continue;
         }
@@ -54,7 +54,7 @@ void CollisionSystem::execSystem()
             assert(tagCompB);
             if(checkTag(tagCompA->m_tag, tagCompB->m_tag))
             {
-                checkCollision(mVectNumEntity[i], mVectNumEntity[j],
+                treatCollision(mVectNumEntity[i], mVectNumEntity[j],
                                tagCompA, tagCompB);
             }
         }
@@ -64,27 +64,27 @@ void CollisionSystem::execSystem()
 //===================================================================
 void CollisionSystem::initArrayTag()
 {
-    m_tagArray.insert({PLAYER, WALL_C});
-    m_tagArray.insert({PLAYER, ENEMY});
-    m_tagArray.insert({PLAYER, BULLET_ENEMY});
-    m_tagArray.insert({PLAYER, OBJECT_C});
+    m_tagArray.insert({PLAYER_CT, WALL_CT});
+    m_tagArray.insert({PLAYER_CT, ENEMY_CT});
+    m_tagArray.insert({PLAYER_CT, BULLET_ENEMY_CT});
+    m_tagArray.insert({PLAYER_CT, OBJECT_CT});
 
-    m_tagArray.insert({ENEMY, BULLET_PLAYER});
-    m_tagArray.insert({ENEMY, PLAYER});
-    m_tagArray.insert({ENEMY, WALL_C});
+    m_tagArray.insert({ENEMY_CT, BULLET_PLAYER_CT});
+    m_tagArray.insert({ENEMY_CT, PLAYER_CT});
+    m_tagArray.insert({ENEMY_CT, WALL_CT});
 
-    m_tagArray.insert({WALL_C, PLAYER});
-    m_tagArray.insert({WALL_C, ENEMY});
-    m_tagArray.insert({WALL_C, BULLET_ENEMY});
-    m_tagArray.insert({WALL_C, BULLET_PLAYER});
+    m_tagArray.insert({WALL_CT, PLAYER_CT});
+    m_tagArray.insert({WALL_CT, ENEMY_CT});
+    m_tagArray.insert({WALL_CT, BULLET_ENEMY_CT});
+    m_tagArray.insert({WALL_CT, BULLET_PLAYER_CT});
 
-    m_tagArray.insert({BULLET_ENEMY, PLAYER});
-    m_tagArray.insert({BULLET_ENEMY, WALL_C});
+    m_tagArray.insert({BULLET_ENEMY_CT, PLAYER_CT});
+    m_tagArray.insert({BULLET_ENEMY_CT, WALL_CT});
 
-    m_tagArray.insert({BULLET_PLAYER, ENEMY});
-    m_tagArray.insert({BULLET_PLAYER, WALL_C});
+    m_tagArray.insert({BULLET_PLAYER_CT, ENEMY_CT});
+    m_tagArray.insert({BULLET_PLAYER_CT, WALL_CT});
 
-    m_tagArray.insert({OBJECT_C, PLAYER});
+    m_tagArray.insert({OBJECT_CT, PLAYER_CT});
 }
 
 //===================================================================
@@ -103,7 +103,7 @@ bool CollisionSystem::checkTag(CollisionTag_e entityTagA,
 }
 
 //===================================================================
-void CollisionSystem::checkCollision(uint32_t entityNumA, uint32_t entityNumB,
+void CollisionSystem::treatCollision(uint32_t entityNumA, uint32_t entityNumB,
                                      GeneralCollisionComponent *tagCompA,
                                      GeneralCollisionComponent *tagCompB)
 {
@@ -116,11 +116,11 @@ void CollisionSystem::checkCollision(uint32_t entityNumA, uint32_t entityNumB,
     {
 //        checkCollisionFirstRect(args);
     }
-    else if(tagCompA->m_shape == CollisionShape_e::CIRCLE)
+    else if(tagCompA->m_shape == CollisionShape_e::CIRCLE_C)
     {
-        checkCollisionFirstCircle(args);
+        treatCollisionFirstCircle(args);
     }
-    else if(tagCompA->m_shape == CollisionShape_e::SEGMENT)
+    else if(tagCompA->m_shape == CollisionShape_e::SEGMENT_C)
     {
 //        checkCollisionFirstSegment(args);
     }
@@ -158,7 +158,7 @@ void CollisionSystem::checkCollision(uint32_t entityNumA, uint32_t entityNumB,
 //}
 
 //===================================================================
-void CollisionSystem::checkCollisionFirstCircle(CollisionArgs &args)
+void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
 {
     CircleCollisionComponent &circleCompA = getCircleComponent(args.entityNumA);
     updateCircleCollisionPosition(args.mapCompA, *args.tagCompA, circleCompA);
@@ -176,7 +176,7 @@ void CollisionSystem::checkCollisionFirstCircle(CollisionArgs &args)
         }
     }
         break;
-    case CollisionShape_e::CIRCLE:
+    case CollisionShape_e::CIRCLE_C:
     {
         CircleCollisionComponent &circleCompB = getCircleComponent(args.entityNumB);
         updateCircleCollisionPosition(args.mapCompB, *args.tagCompB, circleCompB);
@@ -190,7 +190,7 @@ void CollisionSystem::checkCollisionFirstCircle(CollisionArgs &args)
         }
     }
         break;
-    case CollisionShape_e::SEGMENT:
+    case CollisionShape_e::SEGMENT_C:
     {
         SegmentCollisionComponent &segmentCompB = getSegmentComponent(args.entityNumB);
         collision = checkCircleSegmentCollision(args.mapCompA.m_absoluteMapPositionPX, circleCompA.m_ray,
@@ -236,8 +236,8 @@ void CollisionSystem::treatCollisionCircleRect(CollisionArgs &args,
                                                const CircleCollisionComponent &circleCollA,
                                                const RectangleCollisionComponent &rectCollB)
 {
-    if(args.tagCompA->m_tag == CollisionTag_e::PLAYER ||
-            args.tagCompA->m_tag == CollisionTag_e::ENEMY)
+    if(args.tagCompA->m_tag == CollisionTag_e::PLAYER_CT ||
+            args.tagCompA->m_tag == CollisionTag_e::ENEMY_CT)
     {
         MapCoordComponent &mapComp = getMapComponent(args.entityNumA);
         MoveableComponent *moveComp = stairwayToComponentManager().
@@ -372,7 +372,7 @@ void CollisionSystem::treatCollisionCircleCircle(CollisionArgs &args,
                                                  const CircleCollisionComponent &circleCollA,
                                                  const CircleCollisionComponent &circleCollB)
 {
-    if(args.tagCompA->m_tag == CollisionTag_e::PLAYER)
+    if(args.tagCompA->m_tag == CollisionTag_e::PLAYER_CT)
     {
         MoveableComponent *moveCompA = stairwayToComponentManager().
                 searchComponentByType<MoveableComponent>(args.entityNumA,
@@ -458,7 +458,7 @@ void updateCircleCollisionPosition(const MapCoordComponent &mapPosComp,
                                    const GeneralCollisionComponent &tagComp,
                                    CircleCollisionComponent &circleComp)
 {
-    if(tagComp.m_tag == CollisionTag_e::PLAYER)
+    if(tagComp.m_tag == CollisionTag_e::PLAYER_CT)
     {
         circleComp.m_center = mapPosComp.m_absoluteMapPositionPX;
     }

@@ -1,5 +1,4 @@
-#ifndef PICTUREDATA_H
-#define PICTUREDATA_H
+#pragma once
 
 #include <vector>
 #include <map>
@@ -62,7 +61,3 @@ public:
     inline const GroundCeilingData &getCeilingData()const {return m_ceilingData;}
     inline const GroundCeilingData &getGroundData()const {return m_groundData;}
 };
-
-
-
-#endif // PICTUREDATA_H

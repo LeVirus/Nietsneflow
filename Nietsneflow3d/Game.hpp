@@ -1,5 +1,4 @@
-#ifndef GAME_H
-#define GAME_H
+#pragma once
 
 #include <MainEngine.hpp>
 #include <LevelManager.hpp>
@@ -15,5 +14,3 @@ public:
     void initEngine();
     void launchGame();
 };
-
-#endif // GAME_H

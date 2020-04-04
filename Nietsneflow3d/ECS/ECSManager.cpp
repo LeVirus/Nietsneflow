@@ -10,11 +10,13 @@
 #include <ECS/Components/CircleCollisionComponent.hpp>
 #include <ECS/Components/LineCollisionComponent.hpp>
 #include <ECS/Components/RectangleCollisionComponent.hpp>
+#include <ECS/Components/VisionComponent.hpp>
 #include <ECS/Systems/ColorDisplaySystem.hpp>
 #include <ECS/Systems/MapDisplaySystem.hpp>
 #include <ECS/Systems/InputSystem.hpp>
 #include <ECS/Systems/CollisionSystem.hpp>
 #include <ECS/Systems/FirstPersonDisplaySystem.hpp>
+#include <ECS/Systems/VisionSystem.hpp>
 #include <constants.hpp>
 #include <memory>
 #include <cassert>
@@ -41,6 +43,7 @@ void ECSManager::initSystems()
     m_systemManager->bAddExternSystem(std::make_unique<InputSystem>());
     m_systemManager->bAddExternSystem(std::make_unique<CollisionSystem>());
     m_systemManager->bAddExternSystem(std::make_unique<FirstPersonDisplaySystem>());
+    m_systemManager->bAddExternSystem(std::make_unique<VisionSystem>(this));
 }
 
 
@@ -67,6 +70,32 @@ uint32_t ECSManager::addEntity(const std::bitset<Components_e::TOTAL_COMPONENTS>
     }
     syncComponentsFromEntities(newEntity, vectMemComponent);
     return newEntity;
+}
+
+//===================================================================
+std::vector<uint32_t> ECSManager::getEntityContainingComponents(const std::bitset<TOTAL_COMPONENTS> &bitsetComponents) const
+{
+    std::vector<uint32_t> vectReturn;
+    const std::vector<ecs::Entity> &vectEntity = m_ecsEngine.getVectEntity();
+    bool ok = true;
+    for(uint32_t i = 0; i < vectEntity.size(); ++i)
+    {
+        const std::vector<bool> &vectComp = vectEntity[i].getEntityBitSet();
+        for(uint32_t j = 0; j < bitsetComponents.size(); ++j)
+        {
+            if(bitsetComponents[j] && !vectComp[j])
+            {
+                ok = false;
+                break;
+            }
+        }
+        if(ok)
+        {
+            vectReturn.push_back(vectEntity[i].muiGetIDEntity());
+        }
+        ok = true;
+    }
+    return vectReturn;
 }
 
 //===================================================================
@@ -150,6 +179,13 @@ void ECSManager::syncComponentsFromEntities(uint32_t numEntity,
             m_componentManager->instanciateExternComponent(
                         numEntity,
                         std::make_unique<RectangleCollisionComponent>());
+        }
+            break;
+        case Components_e::VISION_COMPONENT:
+        {
+            m_componentManager->instanciateExternComponent(
+                        numEntity,
+                        std::make_unique<VisionComponent>());
         }
             break;
         case Components_e::TOTAL_COMPONENTS:

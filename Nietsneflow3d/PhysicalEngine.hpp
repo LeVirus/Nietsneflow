@@ -1,5 +1,4 @@
-#ifndef PHYSICALENGINE_H
-#define PHYSICALENGINE_H
+#pragma once
 
 #include <ECS/Systems/InputSystem.hpp>
 #include <ECS/Systems/CollisionSystem.hpp>
@@ -27,4 +26,3 @@ void movePlayer(MoveableComponent &moveComp,
 void updatePlayerOrientation(const MoveableComponent &moveComp,
                               PositionVertexComponent &posComp);
 float getRadiantAngle(float angle);
-#endif // PHYSICALENGINE_H

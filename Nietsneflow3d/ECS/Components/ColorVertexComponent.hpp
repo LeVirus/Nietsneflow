@@ -1,5 +1,4 @@
-#ifndef COLORVERTEXCOMPONENT_HPP
-#define COLORVERTEXCOMPONENT_HPP
+#pragma once
 
 #include <BaseECS/component.hpp>
 #include <constants.hpp>
@@ -15,6 +14,3 @@ struct ColorVertexComponent : public ecs::Component
     std::vector<tupleTriFloat> m_vertex;
     virtual ~ColorVertexComponent() = default;
 };
-
-#endif // COLORVERTEXCOMPONENT_HPP
-

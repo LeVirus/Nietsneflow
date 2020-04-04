@@ -1,5 +1,4 @@
-#ifndef RECTANGLECOLLISIONCOMPONENT_HPP
-#define RECTANGLECOLLISIONCOMPONENT_HPP
+#pragma once
 
 #include <BaseECS/component.hpp>
 #include <constants.hpp>
@@ -14,5 +13,3 @@ struct RectangleCollisionComponent : public ecs::Component
     std::pair<float, float> m_size;
     virtual ~RectangleCollisionComponent() = default;
 };
-#endif // RECTANGLECOLLISIONCOMPONENT_HPP
-

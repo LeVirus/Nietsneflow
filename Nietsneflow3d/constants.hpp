@@ -1,5 +1,4 @@
-#ifndef CONSTANTS_HPP
-#define CONSTANTS_HPP
+#pragma once
 
 #include <string>
 #include <map>
@@ -11,7 +10,7 @@ using pairDouble_t = std::pair<double, double>;
 
 enum Components_e
 {
-    POSITION_VERTEX_COMPONENT = 0,
+    POSITION_VERTEX_COMPONENT,
     SPRITE_TEXTURE_COMPONENT,
     COLOR_VERTEX_COMPONENT,
     MAP_COORD_COMPONENT,
@@ -22,6 +21,7 @@ enum Components_e
     STATIC_ELEMENT_COMPONENT,
     GENERAL_COLLISION_COMPONENT,
     MOVEABLE_COMPONENT,
+    VISION_COMPONENT,
     TOTAL_COMPONENTS
 };
 
@@ -67,23 +67,23 @@ enum EnemySpriteType_e
 
 enum LevelStaticElementType_e
 {
-    GROUND = 0,
+    GROUND,
     CEILING,
     OBJECT
 };
 
 enum Shader_e
 {
-    COLOR_S = 0,
+    COLOR_S,
     TEXTURE_S,
-    TOTAL_SHADER
+    TOTAL_SHADER_S
 };
 
 enum Texture_t
 {
     WALL_T,
-    GLOBAL, // TMP
-    TOTAL_TEXTURE
+    GLOBAL_T, // TMP
+    TOTAL_TEXTURE_T
 };
 
 enum BaseShapeTypeGL_e
@@ -95,19 +95,19 @@ enum BaseShapeTypeGL_e
 
 enum CollisionTag_e
 {
-    PLAYER,
-    WALL_C,
-    ENEMY,
-    BULLET_PLAYER,
-    BULLET_ENEMY,
-    OBJECT_C
+    PLAYER_CT,
+    WALL_CT,
+    ENEMY_CT,
+    BULLET_PLAYER_CT,
+    BULLET_ENEMY_CT,
+    OBJECT_CT
 };
 
 enum CollisionShape_e
 {
-    CIRCLE,
+    CIRCLE_C,
     RECTANGLE_C,
-    SEGMENT
+    SEGMENT_C
 };
 
 inline const float PI = 3.14159265359f;
@@ -130,8 +130,6 @@ inline const std::map<Shader_e, std::string> SHADER_ID_MAP
 
 inline const std::map<Texture_t, std::string> TEXTURE_ID_PATH_MAP
 {
-    {Texture_t::GLOBAL, "Global.png"},
+    {Texture_t::GLOBAL_T, "Global.png"},
     {Texture_t::WALL_T, "walltest.jpg"}
 };
-#endif // CONSTANTS_HPP
-

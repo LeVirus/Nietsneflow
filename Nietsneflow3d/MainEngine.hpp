@@ -1,5 +1,4 @@
-#ifndef MAINENGINE_H
-#define MAINENGINE_H
+#pragma once
 
 #include <GraphicEngine.hpp>
 #include <PhysicalEngine.hpp>
@@ -39,7 +38,5 @@ public:
     void loadGraphicPicture(const PictureData &picData);
     void init();
     void loadLevelEntities(const LevelManager &levelManager);
-    void launchLoop();
+    void mainLoop();
 };
-
-#endif // MAINENGINE_H
