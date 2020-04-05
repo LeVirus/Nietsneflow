@@ -12,5 +12,4 @@ struct MapCoordComponent : public ecs::Component
     }
     pairUI_t m_coord;
     pairFloat_t m_absoluteMapPositionPX;
-    virtual ~MapCoordComponent() = default;
 };

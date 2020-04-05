@@ -2,7 +2,9 @@
 #include "VisionSystem.hpp"
 #include <constants.hpp>
 #include <CollisionUtils.hpp>
+#include <PhysicalEngine.hpp>
 #include <ECS/ECSManager.hpp>
+#include <math.h>
 #include <ECS/Components/PositionVertexComponent.hpp>
 #include <ECS/Components/MapCoordComponent.hpp>
 #include <ECS/Components/GeneralCollisionComponent.hpp>
@@ -10,6 +12,7 @@
 #include <ECS/Components/CircleCollisionComponent.hpp>
 #include <ECS/Components/RectangleCollisionComponent.hpp>
 #include <ECS/Components/PositionVertexComponent.hpp>
+#include <ECS/Components/MoveableComponent.hpp>
 
 //===========================================================================
 VisionSystem::VisionSystem(const ECSManager *memECSManager) :
@@ -65,11 +68,14 @@ void VisionSystem::treatVisible(uint32_t observerId, uint32_t checkVisibleId, Co
             searchComponentByType<MapCoordComponent>(observerId, Components_e::MAP_COORD_COMPONENT);
     MapCoordComponent *mapCompB = stairwayToComponentManager().
             searchComponentByType<MapCoordComponent>(checkVisibleId, Components_e::MAP_COORD_COMPONENT);
+    MoveableComponent *movCompA = stairwayToComponentManager().
+            searchComponentByType<MoveableComponent>(checkVisibleId, Components_e::MOVEABLE_COMPONENT);
     assert(visionCompA);
     assert(mapCompA);
     assert(mapCompB);
+    assert(movCompA);
 
-    //maj triangle a faire
+    updateTriangleVisionFromPosition(visionCompA, mapCompA, movCompA);
     switch(shapeElement)
     {
     case CollisionShape_e::CIRCLE_C:
@@ -77,7 +83,7 @@ void VisionSystem::treatVisible(uint32_t observerId, uint32_t checkVisibleId, Co
         CircleCollisionComponent *circleColl = stairwayToComponentManager().
                 searchComponentByType<CircleCollisionComponent>(checkVisibleId, Components_e::CIRCLE_COLLISION_COMPONENT);
         assert(circleColl);
-        if(checkTriangleCircleCollision(visionCompA->m_triangleVision, circleColl->m_center, circleColl->m_ray))
+        if(checkTriangleCircleCollision(visionCompA->m_triangleVision, mapCompB->m_absoluteMapPositionPX, circleColl->m_ray))
         {
             visionCompA->m_vectVisibleEntities.push_back(checkVisibleId);
         }
@@ -99,3 +105,32 @@ void VisionSystem::treatVisible(uint32_t observerId, uint32_t checkVisibleId, Co
     }
 }
 
+void updateTriangleVisionFromPosition(VisionComponent *visionComp, const MapCoordComponent *mapComp,
+                                      const MoveableComponent *movComp)
+{
+    assert(visionComp);
+    assert(mapComp);
+    assert(movComp);
+    visionComp->m_triangleVision[0] = mapComp->m_absoluteMapPositionPX;
+    visionComp->m_triangleVision[1] = mapComp->m_absoluteMapPositionPX;
+    visionComp->m_triangleVision[2] = mapComp->m_absoluteMapPositionPX;
+    //second point of view
+    float angleDegree = movComp->m_degreeOrientation - (visionComp->m_coneVision / 2);
+    if(angleDegree < 0.0f)
+    {
+        angleDegree += 360.0f;
+    }
+    float radiantAngle = getRadiantAngle(angleDegree);
+    visionComp->m_triangleVision[1].first += cos(radiantAngle) * visionComp->m_distanceVisibility;
+    visionComp->m_triangleVision[1].second += sin(radiantAngle) * visionComp->m_distanceVisibility;
+
+    //third point of view
+    angleDegree += visionComp->m_coneVision;
+    if(angleDegree > 360.0f)
+    {
+        angleDegree -= 360.0f;
+    }
+    radiantAngle = getRadiantAngle(angleDegree);
+    visionComp->m_triangleVision[2].first += cos(radiantAngle) * visionComp->m_distanceVisibility;
+    visionComp->m_triangleVision[2].second += sin(radiantAngle) * visionComp->m_distanceVisibility;
+}

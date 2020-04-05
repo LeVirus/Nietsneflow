@@ -161,7 +161,6 @@ void CollisionSystem::treatCollision(uint32_t entityNumA, uint32_t entityNumB,
 void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
 {
     CircleCollisionComponent &circleCompA = getCircleComponent(args.entityNumA);
-    updateCircleCollisionPosition(args.mapCompA, *args.tagCompA, circleCompA);
     bool collision = false;
     switch(args.tagCompB->m_shape)
     {
@@ -179,10 +178,8 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
     case CollisionShape_e::CIRCLE_C:
     {
         CircleCollisionComponent &circleCompB = getCircleComponent(args.entityNumB);
-        updateCircleCollisionPosition(args.mapCompB, *args.tagCompB, circleCompB);
         collision = checkCircleCircleCollision(args.mapCompA.m_absoluteMapPositionPX, circleCompA.m_ray,
-                                   args.mapCompB.m_absoluteMapPositionPX +
-                                               pairFloat_t{LEVEL_HALF_TILE_SIZE_PX, LEVEL_HALF_TILE_SIZE_PX},
+                                               args.mapCompB.m_absoluteMapPositionPX,
                                                circleCompB.m_ray);
         if(collision)
         {
@@ -244,9 +241,9 @@ void CollisionSystem::treatCollisionCircleRect(CollisionArgs &args,
                 searchComponentByType<MoveableComponent>(args.entityNumA,
                                       Components_e::MOVEABLE_COMPONENT);
         assert(moveComp);
-        float radDegree = getRadiantAngle(moveComp->m_currentDegreeDirection);
-        float circlePosX = circleCollA.m_center.first;
-        float circlePosY = circleCollA.m_center.second;
+        float radDegree = getRadiantAngle(moveComp->m_currentDegreeMoveDirection);
+        float circlePosX = args.mapCompA.m_absoluteMapPositionPX.first;
+        float circlePosY = args.mapCompA.m_absoluteMapPositionPX.second;
         float elementPosX = args.mapCompB.m_absoluteMapPositionPX.first;
         float elementPosY = args.mapCompB.m_absoluteMapPositionPX.second;
         float elementSecondPosX = elementPosX + rectCollB.m_size.first;
@@ -378,10 +375,11 @@ void CollisionSystem::treatCollisionCircleCircle(CollisionArgs &args,
                 searchComponentByType<MoveableComponent>(args.entityNumA,
                                       Components_e::MOVEABLE_COMPONENT);
         assert(moveCompA);
-        float circleAPosX = circleCollA.m_center.first;
-        float circleAPosY = circleCollA.m_center.second;
-        float circleBPosX = circleCollB.m_center.first;
-        float circleBPosY = circleCollB.m_center.second;
+
+        float circleAPosX = args.mapCompA.m_absoluteMapPositionPX.first;
+        float circleAPosY = args.mapCompA.m_absoluteMapPositionPX.second;
+        float circleBPosX = args.mapCompB.m_absoluteMapPositionPX.first;
+        float circleBPosY = args.mapCompB.m_absoluteMapPositionPX.second;
         float distanceX = std::abs(circleAPosX - circleBPosX);
         float distanceY = std::abs(circleAPosY - circleBPosY);
         float hyp = circleCollA.m_ray + circleCollB.m_ray;
@@ -451,21 +449,4 @@ MapCoordComponent &CollisionSystem::getMapComponent(uint32_t entityNum)
                                   Components_e::MAP_COORD_COMPONENT);
     assert(mapComp);
     return *mapComp;
-}
-
-//===================================================================
-void updateCircleCollisionPosition(const MapCoordComponent &mapPosComp,
-                                   const GeneralCollisionComponent &tagComp,
-                                   CircleCollisionComponent &circleComp)
-{
-    if(tagComp.m_tag == CollisionTag_e::PLAYER_CT)
-    {
-        circleComp.m_center = mapPosComp.m_absoluteMapPositionPX;
-    }
-    else
-    {
-        circleComp.m_center = mapPosComp.m_absoluteMapPositionPX +
-                pairFloat_t{circleComp.m_ray, circleComp.m_ray};
-
-    }
 }

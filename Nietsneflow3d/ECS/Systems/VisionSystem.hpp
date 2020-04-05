@@ -4,6 +4,9 @@
 #include <constants.hpp>
 
 class ECSManager;
+struct VisionComponent;
+struct MapCoordComponent;
+struct MoveableComponent;
 
 class VisionSystem : public ecs::System
 {
@@ -17,3 +20,6 @@ private:
 private:
     const ECSManager* m_memECSManager;
 };
+
+void updateTriangleVisionFromPosition(VisionComponent *visionComp, const MapCoordComponent *mapComp,
+                                      const MoveableComponent *movComp);

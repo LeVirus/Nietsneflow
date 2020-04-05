@@ -37,6 +37,7 @@ private:
     void setVertexStaticElementPosition(uint32_t entityNum);
     bool checkBoundEntityMap(const MapCoordComponent &mapCoordComp, const pairUI_t &minBound, const pairUI_t &maxBound);
     void getMapDisplayLimit(pairFloat_t &playerPos, pairUI_t &min, pairUI_t &max);
+    pairFloat_t getUpLeftCorner(const MapCoordComponent *mapCoordComp, uint32_t entityNum);
 public:
     MapDisplaySystem();
     void confLevelData();

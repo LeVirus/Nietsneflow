@@ -6,6 +6,9 @@
 #include <ECS/Components/SpriteTextureComponent.hpp>
 #include <ECS/Components/ColorVertexComponent.hpp>
 #include <ECS/Components/MoveableComponent.hpp>
+#include <ECS/Components/GeneralCollisionComponent.hpp>
+#include <ECS/Components/CircleCollisionComponent.hpp>
+#include <ECS/Components/RectangleCollisionComponent.hpp>
 #include <ECS/Systems/ColorDisplaySystem.hpp>
 #include <constants.hpp>
 
@@ -63,17 +66,36 @@ void MapDisplaySystem::confPositionVertexEntities()
                 searchComponentByType<MapCoordComponent>(mVectNumEntity[i],
                                                          Components_e::MAP_COORD_COMPONENT);
         assert(mapComp);
-
+        pairFloat_t corner = getUpLeftCorner(mapComp, mVectNumEntity[i]);
         if(checkBoundEntityMap(*mapComp, min, max))
         {
             m_entitiesToDisplay.emplace_back(mVectNumEntity[i]);
-
-            pairFloat_t diffPosPX = mapComp->m_absoluteMapPositionPX -
-                    m_playerComp.m_mapCoordComp->m_absoluteMapPositionPX;
+            pairFloat_t diffPosPX = corner - m_playerComp.m_mapCoordComp->m_absoluteMapPositionPX;
             pairFloat_t relativePosMapGL = {diffPosPX.first * MAP_LOCAL_SIZE_GL / m_localLevelSizePX,
                                             diffPosPX.second * MAP_LOCAL_SIZE_GL / m_localLevelSizePX};
             confVertexElement(relativePosMapGL, mVectNumEntity[i]);
         }
+    }
+}
+
+//===================================================================
+pairFloat_t MapDisplaySystem::getUpLeftCorner(const MapCoordComponent *mapCoordComp, uint32_t entityNum)
+{
+    GeneralCollisionComponent *genCollComp = stairwayToComponentManager().
+            searchComponentByType<GeneralCollisionComponent>(entityNum, Components_e::GENERAL_COLLISION_COMPONENT);
+    assert(genCollComp);
+    assert(mapCoordComp);
+    if(genCollComp->m_shape == CollisionShape_e::CIRCLE_C)
+    {
+        CircleCollisionComponent *circleCollComp = stairwayToComponentManager().
+                searchComponentByType<CircleCollisionComponent>(entityNum, Components_e::CIRCLE_COLLISION_COMPONENT);
+        assert(circleCollComp);
+        return {mapCoordComp->m_absoluteMapPositionPX.first - circleCollComp->m_ray,
+                    mapCoordComp->m_absoluteMapPositionPX.second - circleCollComp->m_ray};
+    }
+    else
+    {
+        return mapCoordComp->m_absoluteMapPositionPX;//tmp
     }
 }
 
@@ -90,6 +112,7 @@ void MapDisplaySystem::getMapDisplayLimit(pairFloat_t &playerPos,
     playerPos.second -= rangeView * 2;
     min = Level::getLevelCoord(playerPos);
 }
+
 
 //===================================================================
 void MapDisplaySystem::confVertexElement(const pairFloat_t &glPosition,
