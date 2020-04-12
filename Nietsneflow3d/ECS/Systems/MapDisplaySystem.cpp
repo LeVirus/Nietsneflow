@@ -199,10 +199,9 @@ void MapDisplaySystem::drawVertex()
 void MapDisplaySystem::drawPlayerVision()
 {
     assert(m_playerComp.m_visionComp);
-    assert(m_playerComp.m_colorComp);
     mptrSystemManager->searchSystemByType<ColorDisplaySystem>(
-                Systems_e::COLOR_DISPLAY_SYSTEM)->drawEntity(&m_playerComp.m_visionComp->m_vertexComp,
-                                                             m_playerComp.m_colorComp);
+                Systems_e::COLOR_DISPLAY_SYSTEM)->drawEntity(&m_playerComp.m_visionComp->m_positionVertexComp,
+                                                             &m_playerComp.m_visionComp->m_colorVertexComp);
 }
 
 //===================================================================
@@ -227,13 +226,18 @@ void MapDisplaySystem::confPlayerComp(uint32_t playerNum)
     m_playerComp.m_colorComp = stairwayToComponentManager().
             searchComponentByType<ColorVertexComponent>(playerNum,
                                                         Components_e::COLOR_VERTEX_COMPONENT);
-    m_playerComp.m_visionComp = stairwayToComponentManager().
+    VisionComponent *visionComp = stairwayToComponentManager().
             searchComponentByType<VisionComponent>(playerNum,
                                                    Components_e::VISION_COMPONENT);
+    assert(visionComp);
+    visionComp->m_colorVertexComp.m_vertex.reserve(3);
+    visionComp->m_colorVertexComp.m_vertex.emplace_back(0.00f, 100.00f, 0.00f);
+    visionComp->m_colorVertexComp.m_vertex.emplace_back(0.00f, 10.00f, 0.00f);
+    visionComp->m_colorVertexComp.m_vertex.emplace_back(0.00f, 10.00f, 0.00f);
+    m_playerComp.m_visionComp = visionComp;
     assert(m_playerComp.m_posComp);
     assert(m_playerComp.m_colorComp);
     assert(m_playerComp.m_mapCoordComp);
-    assert(m_playerComp.m_visionComp);
 }
 
 //===================================================================

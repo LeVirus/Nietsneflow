@@ -5,6 +5,7 @@
 #include <OpenGLUtils/glheaders.hpp>
 #include <ECS/Systems/ColorDisplaySystem.hpp>
 #include <ECS/Systems/MapDisplaySystem.hpp>
+#include <ECS/Systems/VisionSystem.hpp>
 
 
 //===================================================================
@@ -41,6 +42,7 @@ void GraphicEngine::runIteration()
     glClear(GL_COLOR_BUFFER_BIT);
     m_colorSystem->execSystem();
     m_mapSystem->execSystem();
+    m_visionSystem->execSystem();
     // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
     // -------------------------------------------------------------------------------
     glfwSwapBuffers(m_window);
@@ -56,12 +58,14 @@ bool GraphicEngine::windowShouldClose()
 //===================================================================
 void GraphicEngine::linkSystems(ColorDisplaySystem *colorSystem,
                                 MapDisplaySystem *mapSystem,
-                                FirstPersonDisplaySystem *firstPersonSystem)
+                                FirstPersonDisplaySystem *firstPersonSystem,
+                                VisionSystem *visionSystem)
 
 {
     m_colorSystem = colorSystem;
     m_mapSystem = mapSystem;
     m_firstPersonSystem = firstPersonSystem;
+    m_visionSystem = visionSystem;
 }
 
 

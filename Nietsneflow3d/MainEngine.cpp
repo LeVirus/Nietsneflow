@@ -14,6 +14,7 @@
 #include <ECS/Systems/MapDisplaySystem.hpp>
 #include <ECS/Systems/CollisionSystem.hpp>
 #include <ECS/Systems/FirstPersonDisplaySystem.hpp>
+#include <ECS/Systems/VisionSystem.hpp>
 #include <LevelManager.hpp>
 #include <cassert>
 
@@ -268,6 +269,8 @@ void MainEngine::confPlayerEntity(uint32_t entityNum, const Level &level)
     assert(circleColl);
     assert(tagColl);
     assert(vision);
+//    vision->m_coneVision = 90.0f;
+
     map->m_coord = level.getPlayerDeparture();
     Direction_e playerDir = level.getPlayerDepartureDirection();
     switch(playerDir)
@@ -385,7 +388,9 @@ void MainEngine::linkSystemsToGraphicEngine()
             searchSystemByType<MapDisplaySystem>(Systems_e::MAP_DISPLAY_SYSTEM);
     FirstPersonDisplaySystem *first = m_ecsManager.getSystemManager().
             searchSystemByType<FirstPersonDisplaySystem>(Systems_e::FIRST_PERSON_DISPLAY_SYSTEM);
-    m_graphicEngine.linkSystems(color, map, first);
+    VisionSystem *vision = m_ecsManager.getSystemManager().
+            searchSystemByType<VisionSystem>(Systems_e::VISION_SYSTEM);
+    m_graphicEngine.linkSystems(color, map, first, vision);
 }
 
 //===================================================================

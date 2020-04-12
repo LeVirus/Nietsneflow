@@ -66,14 +66,14 @@ void VisionSystem::treatVisible(uint32_t observerId, uint32_t checkVisibleId, Co
             searchComponentByType<VisionComponent>(observerId, Components_e::VISION_COMPONENT);
     MapCoordComponent *mapCompA = stairwayToComponentManager().
             searchComponentByType<MapCoordComponent>(observerId, Components_e::MAP_COORD_COMPONENT);
+    MoveableComponent *movCompA = stairwayToComponentManager().
+            searchComponentByType<MoveableComponent>(observerId, Components_e::MOVEABLE_COMPONENT);
     MapCoordComponent *mapCompB = stairwayToComponentManager().
             searchComponentByType<MapCoordComponent>(checkVisibleId, Components_e::MAP_COORD_COMPONENT);
-    MoveableComponent *movCompA = stairwayToComponentManager().
-            searchComponentByType<MoveableComponent>(checkVisibleId, Components_e::MOVEABLE_COMPONENT);
     assert(visionCompA);
     assert(mapCompA);
-    assert(mapCompB);
     assert(movCompA);
+    assert(mapCompB);
 
     updateTriangleVisionFromPosition(visionCompA, mapCompA, movCompA);
     switch(shapeElement)

@@ -78,7 +78,6 @@ void updatePlayerArrow(const MoveableComponent &moveComp, PositionVertexComponen
     posComp.m_vertex[0].second = MAP_LOCAL_CENTER_Y_GL +
             sin(radiantAngle) * PLAYER_RAY_DISPLAY;
     angle += 150.0f;
-//    angle %= 360.0f;
     radiantAngle = getRadiantAngle(angle);
 
     posComp.m_vertex[1].first = MAP_LOCAL_CENTER_X_GL +
@@ -86,7 +85,6 @@ void updatePlayerArrow(const MoveableComponent &moveComp, PositionVertexComponen
     posComp.m_vertex[1].second = MAP_LOCAL_CENTER_Y_GL +
             sin(radiantAngle) * PLAYER_RAY_DISPLAY;
     angle += 60.0f;
-//    angle %= 360.0f;
     radiantAngle = getRadiantAngle(angle);
 
     posComp.m_vertex[2].first = MAP_LOCAL_CENTER_X_GL +
@@ -98,23 +96,24 @@ void updatePlayerArrow(const MoveableComponent &moveComp, PositionVertexComponen
 //===================================================================
 void updatePlayerConeVision(const MoveableComponent &moveComp, VisionComponent &visionComp)
 {
+
     float degreeAngle= moveComp.m_degreeOrientation - (visionComp.m_coneVision / 2);
     float radiantAngle = getRadiantAngle(degreeAngle);
-    if(visionComp.m_vertexComp.m_vertex.empty())
+    if(visionComp.m_positionVertexComp.m_vertex.empty())
     {
-        visionComp.m_vertexComp.m_vertex.resize(3);
+        visionComp.m_positionVertexComp.m_vertex.resize(3);
     }
-    visionComp.m_vertexComp.m_vertex[0].first = MAP_LOCAL_CENTER_X_GL;
-    visionComp.m_vertexComp.m_vertex[0].second = MAP_LOCAL_CENTER_Y_GL;
-    visionComp.m_vertexComp.m_vertex[1].first = MAP_LOCAL_CENTER_X_GL +
-            cos(radiantAngle) * PLAYER_RAY_DISPLAY * 3;//TEST
-    visionComp.m_vertexComp.m_vertex[1].second = MAP_LOCAL_CENTER_Y_GL +
-            sin(radiantAngle) * PLAYER_RAY_DISPLAY * 3;
+    visionComp.m_positionVertexComp.m_vertex[0].first = MAP_LOCAL_CENTER_X_GL;
+    visionComp.m_positionVertexComp.m_vertex[0].second = MAP_LOCAL_CENTER_Y_GL;
+    visionComp.m_positionVertexComp.m_vertex[1].first = MAP_LOCAL_CENTER_X_GL +
+            cos(radiantAngle) * PLAYER_RAY_DISPLAY * 5;//TEST
+    visionComp.m_positionVertexComp.m_vertex[1].second = MAP_LOCAL_CENTER_Y_GL +
+            sin(radiantAngle) * PLAYER_RAY_DISPLAY * 5;
     radiantAngle = getRadiantAngle(degreeAngle + visionComp.m_coneVision);
-    visionComp.m_vertexComp.m_vertex[2].first = MAP_LOCAL_CENTER_X_GL +
-            cos(radiantAngle) * PLAYER_RAY_DISPLAY * 3;//TEST
-    visionComp.m_vertexComp.m_vertex[2].second = MAP_LOCAL_CENTER_Y_GL +
-            sin(radiantAngle) * PLAYER_RAY_DISPLAY * 3;
+    visionComp.m_positionVertexComp.m_vertex[2].first = MAP_LOCAL_CENTER_X_GL +
+            cos(radiantAngle) * PLAYER_RAY_DISPLAY * 5;//TEST
+    visionComp.m_positionVertexComp.m_vertex[2].second = MAP_LOCAL_CENTER_Y_GL +
+            sin(radiantAngle) * PLAYER_RAY_DISPLAY * 5;
 }
 
 //===================================================================

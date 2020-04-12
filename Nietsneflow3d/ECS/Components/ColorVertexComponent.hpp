@@ -2,6 +2,7 @@
 
 #include <BaseECS/component.hpp>
 #include <constants.hpp>
+#include <vector>
 
 using tupleTriFloat = std::tuple<float, float, float>;
 

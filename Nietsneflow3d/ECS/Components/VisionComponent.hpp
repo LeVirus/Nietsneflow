@@ -4,6 +4,7 @@
 #include <constants.hpp>
 #include <vector>
 #include <ECS/Components/PositionVertexComponent.hpp>
+#include <ECS/Components/ColorVertexComponent.hpp>
 
 struct VisionComponent : public ecs::Component
 {
@@ -14,12 +15,13 @@ struct VisionComponent : public ecs::Component
     //first point angle ref
     float m_distanceVisibility = 100.0f,
     //total cone vision
-    m_coneVision = 40.0f;
+    m_coneVision = 90.0f;
     std::vector<uint32_t> m_vectVisibleEntities;
 
     //absolute position
     std::array<pairFloat_t, 3> m_triangleVision;
     //relative position (map)
-    PositionVertexComponent m_vertexComp;
+    PositionVertexComponent m_positionVertexComp;
+    ColorVertexComponent m_colorVertexComp;
     virtual ~VisionComponent() = default;
 };

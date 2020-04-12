@@ -16,6 +16,7 @@ class PictureData;
 class ColorDisplaySystem;
 class MapDisplaySystem;
 class FirstPersonDisplaySystem;
+class VisionSystem;
 
 class GraphicEngine
 {
@@ -29,6 +30,7 @@ private:
     ColorDisplaySystem *m_colorSystem = nullptr;
     MapDisplaySystem *m_mapSystem = nullptr;
     FirstPersonDisplaySystem *m_firstPersonSystem = nullptr;
+    VisionSystem *m_visionSystem = nullptr;
 private:
     void initGLWindow();
     void initGlad();
@@ -47,7 +49,8 @@ public:
     bool windowShouldClose();
     void linkSystems(ColorDisplaySystem *colorSystem,
                      MapDisplaySystem *mapSystem,
-                     FirstPersonDisplaySystem *firstPersonSystem);
+                     FirstPersonDisplaySystem *firstPersonSystem,
+                     VisionSystem *visionSystem);
 
     inline MapDisplaySystem &getMapDisplaySystem()
     {
