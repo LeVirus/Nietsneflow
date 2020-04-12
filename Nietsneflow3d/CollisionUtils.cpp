@@ -106,7 +106,7 @@ bool checkSegmentRectCollision(const pairFloat_t &lineFirstPoint,
 
 //===================================================================
 bool checkSegmentSegmentCollision(const pairFloat_t &firstPointSegmentA, const pairFloat_t &secondPointSegmentA,
-        const pairFloat_t &firstPointSegmentB, const pairFloat_t &secondPointSegmentB)
+                                  const pairFloat_t &firstPointSegmentB, const pairFloat_t &secondPointSegmentB)
 {
     float distXA = secondPointSegmentA.first - firstPointSegmentA.first;
     float distYA = secondPointSegmentA.second - firstPointSegmentA.second;
@@ -122,7 +122,7 @@ bool checkSegmentSegmentCollision(const pairFloat_t &firstPointSegmentA, const p
                  firstPointSegmentB.first * distYB -
                  distXB * firstPointSegmentA.second +
                  distXB * firstPointSegmentB.second) / denom;
-    if (t < 0 || t >= 1)
+    if (t < 0.0f || t >= 1.0f)
     {
         return false;
     }
@@ -130,7 +130,7 @@ bool checkSegmentSegmentCollision(const pairFloat_t &firstPointSegmentA, const p
             distXA * firstPointSegmentB.second +
             distYA * firstPointSegmentA.first -
             distYA * firstPointSegmentB.first) / denom;
-    if (u < 0 || u >= 1)
+    if (u < 0.0f || u >= 1.0f)
     {
         return false;
     }
@@ -256,12 +256,25 @@ bool checkPointRectCollision(const pairFloat_t &point,
 bool checkTriangleCircleCollision(const array3PairFloat_t &trianglePoints,
                                   const pairFloat_t &cicleCenter, const float circleRay)
 {
+    float circleDiameter = circleRay * 2;
     pairPairFloat_t rectShapeTriangle = getRectShapeFromTriangle(trianglePoints);
-    if(!checkCircleRectCollision(cicleCenter, circleRay, rectShapeTriangle.first, rectShapeTriangle.second))
+    if(!checkRectRectCollision({cicleCenter.first - circleRay, cicleCenter.second - circleRay},
+                               {circleDiameter, circleDiameter}, rectShapeTriangle.first,
+                               rectShapeTriangle.second))
     {
         return false;
     }
-    return true;
+    if(checkTrianglePointCollision(trianglePoints, cicleCenter))
+    {
+        return true;
+    }
+    if(checkCircleSegmentCollision(cicleCenter, circleRay, trianglePoints[0], trianglePoints[1]) ||
+            checkCircleSegmentCollision(cicleCenter, circleRay, trianglePoints[0], trianglePoints[2]) ||
+            checkCircleSegmentCollision(cicleCenter, circleRay, trianglePoints[1], trianglePoints[2]))
+    {
+        return true;
+    }
+    return false;
 }
 
 //===================================================================
@@ -273,6 +286,72 @@ bool checkTriangleRectCollision(const array3PairFloat_t &trianglePoints,
                                rectShapeTriangle.first, rectShapeTriangle.second))
     {
         return false;
+    }
+    if(checkTrianglePointCollision(trianglePoints, {rectShape.first.first,
+                                                    rectShape.first.second}) ||
+            checkTrianglePointCollision(trianglePoints, {rectShape.first.first + rectShape.second.first,
+                                                         rectShape.first.second}) ||
+            checkTrianglePointCollision(trianglePoints, {rectShape.first.first + rectShape.second.first,
+                                                         rectShape.first.second + rectShape.second.second}) ||
+            checkTrianglePointCollision(trianglePoints, {rectShape.first.first,
+                                                         rectShape.first.second + rectShape.second.second}))
+    {
+        return true;
+    }
+    uint32_t j;
+    for(uint32_t i = 0; i < 3; ++i)
+    {
+        j = (i == 2) ?  0 : (i + 1);
+        if(checkSegmentSegmentCollision(trianglePoints[i], trianglePoints[j],
+                                        {rectShape.first.first, rectShape.first.second},
+                                        {rectShape.first.first + rectShape.second.first, rectShape.first.second}) ||
+                checkSegmentSegmentCollision(trianglePoints[i], trianglePoints[j],
+                                             {rectShape.first.first + rectShape.second.first, rectShape.first.second},
+                                             {rectShape.first.first + rectShape.second.first,
+                                             rectShape.first.second + rectShape.second.second}) ||
+                checkSegmentSegmentCollision(trianglePoints[i], trianglePoints[j],
+                                             {rectShape.first.first + rectShape.second.first,
+                                             rectShape.first.second + rectShape.second.second},
+                                             {rectShape.first.first, rectShape.first.second + rectShape.second.second}) ||
+                checkSegmentSegmentCollision(trianglePoints[i], trianglePoints[j],
+                                             {rectShape.first.first, rectShape.first.second + rectShape.second.second},
+                                             {rectShape.first.first, rectShape.first.second}))
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+//===================================================================
+bool checkTrianglePointCollision(const array3PairFloat_t &trianglePoints,
+                                 const pairFloat_t &point)
+{
+//    d = Dx ∗ Ty − Dy ∗ Tx
+    float determinant, j;
+    bool memPrevious = true;//remove warning
+    pairFloat_t vectA, vectB;
+    for(uint32_t i = 0; i < 3; ++i)
+    {
+        j = (i == 2) ?  0 : (i + 1);
+        vectA = {trianglePoints[j].first - trianglePoints[i].first,
+                 trianglePoints[j].second - trianglePoints[i].second};
+        vectB = {point.first - trianglePoints[i].first,
+                 point.second - trianglePoints[i].second};
+        determinant = vectA.first * vectB.second - vectA.second * vectB.first;
+        //point on the line
+        if(floatEqualsZero(determinant))
+        {
+            return true;
+        }
+        if(i == 0)
+        {
+            memPrevious = (determinant < 0.00f);
+        }
+        else if(memPrevious != (determinant < 0.00f))
+        {
+            return false;
+        }
     }
     return true;
 }
@@ -292,4 +371,15 @@ pairPairFloat_t getRectShapeFromTriangle(const array3PairFloat_t &trianglePoints
     maxY = std::max(maxY, trianglePoints[2].second);
 
     return {{minX, minY}, {(maxX - minX), (maxY - minY)}};
+}
+
+//===================================================================
+bool floatEqualsZero(float value)
+{
+    return static_cast<int32_t>(value * 100.0f) == 0;
+}
+
+bool checkFloatEqualsZero(float valueA, float valueB)
+{
+    return static_cast<int32_t>(valueA * 100.0f) == static_cast<int32_t>(valueB * 100.0f);
 }

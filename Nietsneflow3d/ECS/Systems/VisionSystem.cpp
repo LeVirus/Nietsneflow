@@ -116,21 +116,26 @@ void updateTriangleVisionFromPosition(VisionComponent *visionComp, const MapCoor
     visionComp->m_triangleVision[2] = mapComp->m_absoluteMapPositionPX;
     //second point of view
     float angleDegree = movComp->m_degreeOrientation - (visionComp->m_coneVision / 2);
-    if(angleDegree < 0.0f)
+    float radiantAngle;
+    for(uint32_t i = 1; i < 3; ++i)
     {
-        angleDegree += 360.0f;
+        radiantAngle = getRadiantAngle(angleDegree);
+        visionComp->m_triangleVision[i].first += cos(radiantAngle) * visionComp->m_distanceVisibility;
+        visionComp->m_triangleVision[i].second += sin(radiantAngle) * visionComp->m_distanceVisibility;
+        if(i == 2)
+        {
+            break;
+        }
+        angleDegree += visionComp->m_coneVision;
     }
-    float radiantAngle = getRadiantAngle(angleDegree);
-    visionComp->m_triangleVision[1].first += cos(radiantAngle) * visionComp->m_distanceVisibility;
-    visionComp->m_triangleVision[1].second += sin(radiantAngle) * visionComp->m_distanceVisibility;
+//    if(angleDegree < 0.0f)
+//    {
+//        angleDegree += 360.0f;
+//    }
 
     //third point of view
-    angleDegree += visionComp->m_coneVision;
-    if(angleDegree > 360.0f)
-    {
-        angleDegree -= 360.0f;
-    }
-    radiantAngle = getRadiantAngle(angleDegree);
-    visionComp->m_triangleVision[2].first += cos(radiantAngle) * visionComp->m_distanceVisibility;
-    visionComp->m_triangleVision[2].second += sin(radiantAngle) * visionComp->m_distanceVisibility;
+//    if(angleDegree > 360.0f)
+//    {
+//        angleDegree -= 360.0f;
+//    }
 }
