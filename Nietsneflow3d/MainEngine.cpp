@@ -9,6 +9,7 @@
 #include <ECS/Components/CircleCollisionComponent.hpp>
 #include <ECS/Components/RectangleCollisionComponent.hpp>
 #include <ECS/Components/GeneralCollisionComponent.hpp>
+#include <ECS/Components/VisionComponent.hpp>
 #include <ECS/Systems/ColorDisplaySystem.hpp>
 #include <ECS/Systems/MapDisplaySystem.hpp>
 #include <ECS/Systems/CollisionSystem.hpp>
@@ -227,6 +228,7 @@ void MainEngine::loadPlayerEntity(const Level &level)
     bitsetComponents[Components_e::INPUT_COMPONENT] = true;
     bitsetComponents[Components_e::CIRCLE_COLLISION_COMPONENT] = true;
     bitsetComponents[Components_e::GENERAL_COLLISION_COMPONENT] = true;
+    bitsetComponents[Components_e::VISION_COMPONENT] = true;
     uint32_t entityNum = m_ecsManager.addEntity(bitsetComponents);
     confPlayerEntity(entityNum, level);
     //notify player entity number
@@ -255,6 +257,9 @@ void MainEngine::confPlayerEntity(uint32_t entityNum, const Level &level)
     GeneralCollisionComponent *tagColl = m_ecsManager.getComponentManager().
             searchComponentByType<GeneralCollisionComponent>(entityNum,
                                                      Components_e::GENERAL_COLLISION_COMPONENT);
+    VisionComponent *vision = m_ecsManager.getComponentManager().
+            searchComponentByType<VisionComponent>(entityNum,
+                                                     Components_e::VISION_COMPONENT);
     assert(pos);
     assert(pos);
     assert(map);
@@ -262,6 +267,7 @@ void MainEngine::confPlayerEntity(uint32_t entityNum, const Level &level)
     assert(color);
     assert(circleColl);
     assert(tagColl);
+    assert(vision);
     map->m_coord = level.getPlayerDeparture();
     Direction_e playerDir = level.getPlayerDepartureDirection();
     switch(playerDir)
@@ -280,7 +286,7 @@ void MainEngine::confPlayerEntity(uint32_t entityNum, const Level &level)
         break;
     }
     map->m_absoluteMapPositionPX = Level::getAbsolutePosition(map->m_coord);
-    updatePlayerOrientation(*move, *pos);//A implémenter
+    updatePlayerOrientation(*move, *pos, *vision);
 
     color->m_vertex.reserve(3);
     color->m_vertex.emplace_back(0.9f,0.00f, 0.00f);

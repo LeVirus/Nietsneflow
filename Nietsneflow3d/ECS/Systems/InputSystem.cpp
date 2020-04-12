@@ -3,6 +3,7 @@
 #include <ECS/Components/MoveableComponent.hpp>
 #include <ECS/Components/MapCoordComponent.hpp>
 #include <ECS/Components/PositionVertexComponent.hpp>
+#include <ECS/Components/VisionComponent.hpp>
 #include "PhysicalEngine.hpp"
 #include <cassert>
 
@@ -41,6 +42,10 @@ void InputSystem::treatPlayerInput()
                 searchComponentByType<PositionVertexComponent>(mVectNumEntity[i],
                                                          Components_e::POSITION_VERTEX_COMPONENT);
         assert(posComp);
+        VisionComponent *visionComp = stairwayToComponentManager().
+                searchComponentByType<VisionComponent>(mVectNumEntity[i],
+                                                         Components_e::VISION_COMPONENT);
+        assert(visionComp);
         //STRAFE
         if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS)
         {
@@ -65,7 +70,7 @@ void InputSystem::treatPlayerInput()
             {
                 moveComp->m_degreeOrientation += 360;
             }
-            updatePlayerOrientation(*moveComp, *posComp);
+            updatePlayerOrientation(*moveComp, *posComp, *visionComp);
         }
         else if (glfwGetKey(m_window, GLFW_KEY_LEFT) == GLFW_PRESS)
         {
@@ -74,7 +79,7 @@ void InputSystem::treatPlayerInput()
             {
                 moveComp->m_degreeOrientation -= 360;
             }
-            updatePlayerOrientation(*moveComp, *posComp);
+            updatePlayerOrientation(*moveComp, *posComp, *visionComp);
         }
     }
 }

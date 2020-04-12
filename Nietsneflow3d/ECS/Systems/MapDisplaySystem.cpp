@@ -9,6 +9,7 @@
 #include <ECS/Components/GeneralCollisionComponent.hpp>
 #include <ECS/Components/CircleCollisionComponent.hpp>
 #include <ECS/Components/RectangleCollisionComponent.hpp>
+#include <ECS/Components/VisionComponent.hpp>
 #include <ECS/Systems/ColorDisplaySystem.hpp>
 #include <constants.hpp>
 
@@ -66,11 +67,13 @@ void MapDisplaySystem::confPositionVertexEntities()
                 searchComponentByType<MapCoordComponent>(mVectNumEntity[i],
                                                          Components_e::MAP_COORD_COMPONENT);
         assert(mapComp);
+        //get absolute position corner
         pairFloat_t corner = getUpLeftCorner(mapComp, mVectNumEntity[i]);
         if(checkBoundEntityMap(*mapComp, min, max))
         {
             m_entitiesToDisplay.emplace_back(mVectNumEntity[i]);
             pairFloat_t diffPosPX = corner - m_playerComp.m_mapCoordComp->m_absoluteMapPositionPX;
+            //convert absolute position to relative
             pairFloat_t relativePosMapGL = {diffPosPX.first * MAP_LOCAL_SIZE_GL / m_localLevelSizePX,
                                             diffPosPX.second * MAP_LOCAL_SIZE_GL / m_localLevelSizePX};
             confVertexElement(relativePosMapGL, mVectNumEntity[i]);
@@ -181,6 +184,7 @@ void MapDisplaySystem::fillVertexFromEntities()
 //===================================================================
 void MapDisplaySystem::drawVertex()
 {
+    drawPlayerVision();
     m_shader->use();
     for(uint32_t h = 0; h < m_vectVerticesData.size(); ++h)
     {
@@ -189,6 +193,16 @@ void MapDisplaySystem::drawVertex()
         m_vectVerticesData[h].drawElement();
     }
     drawPlayerOnMap();
+}
+
+//===================================================================
+void MapDisplaySystem::drawPlayerVision()
+{
+    assert(m_playerComp.m_visionComp);
+    assert(m_playerComp.m_colorComp);
+    mptrSystemManager->searchSystemByType<ColorDisplaySystem>(
+                Systems_e::COLOR_DISPLAY_SYSTEM)->drawEntity(&m_playerComp.m_visionComp->m_vertexComp,
+                                                             m_playerComp.m_colorComp);
 }
 
 //===================================================================
@@ -212,10 +226,14 @@ void MapDisplaySystem::confPlayerComp(uint32_t playerNum)
                                                            Components_e::POSITION_VERTEX_COMPONENT);
     m_playerComp.m_colorComp = stairwayToComponentManager().
             searchComponentByType<ColorVertexComponent>(playerNum,
-                                                           Components_e::COLOR_VERTEX_COMPONENT);
+                                                        Components_e::COLOR_VERTEX_COMPONENT);
+    m_playerComp.m_visionComp = stairwayToComponentManager().
+            searchComponentByType<VisionComponent>(playerNum,
+                                                   Components_e::VISION_COMPONENT);
     assert(m_playerComp.m_posComp);
     assert(m_playerComp.m_colorComp);
     assert(m_playerComp.m_mapCoordComp);
+    assert(m_playerComp.m_visionComp);
 }
 
 //===================================================================

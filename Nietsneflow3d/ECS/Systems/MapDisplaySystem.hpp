@@ -8,12 +8,14 @@
 #include <OpenGLUtils/Texture.hpp>
 
 struct MapCoordComponent;
+struct VisionComponent;
 
 struct PlayerComp
 {
     MapCoordComponent const *m_mapCoordComp = nullptr;
     PositionVertexComponent const *m_posComp = nullptr;
     ColorVertexComponent const *m_colorComp = nullptr;
+    VisionComponent const *m_visionComp = nullptr;
 };
 
 class MapDisplaySystem : public ecs::System
@@ -31,6 +33,7 @@ private:
     void setUsedComponents();
     void fillVertexFromEntities();
     void drawVertex();
+    void drawPlayerVision();
     void drawPlayerOnMap();
     void confPositionVertexEntities();
     void confVertexElement(const pairFloat_t &glPosition, uint32_t entityNum);

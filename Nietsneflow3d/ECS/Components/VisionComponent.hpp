@@ -3,8 +3,7 @@
 #include <BaseECS/component.hpp>
 #include <constants.hpp>
 #include <vector>
-
-using array3PairFloat_t = std::array<pairFloat_t, 3>;
+#include <ECS/Components/PositionVertexComponent.hpp>
 
 struct VisionComponent : public ecs::Component
 {
@@ -13,7 +12,14 @@ struct VisionComponent : public ecs::Component
         muiTypeComponent = Components_e::VISION_COMPONENT;
     }
     //first point angle ref
-    float m_distanceVisibility = 100.0f, m_coneVision = 40.0f;
-    array3PairFloat_t m_triangleVision;
+    float m_distanceVisibility = 100.0f,
+    //total cone vision
+    m_coneVision = 40.0f;
     std::vector<uint32_t> m_vectVisibleEntities;
+
+    //absolute position
+    std::array<pairFloat_t, 3> m_triangleVision;
+    //relative position (map)
+    PositionVertexComponent m_vertexComp;
+    virtual ~VisionComponent() = default;
 };
