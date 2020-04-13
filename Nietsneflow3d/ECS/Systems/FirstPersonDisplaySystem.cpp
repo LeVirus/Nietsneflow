@@ -33,9 +33,9 @@ void FirstPersonDisplaySystem::excludeOutVisionEntities()
             continue;
         }
         MapCoordComponent *mapComp = stairwayToComponentManager().
-                searchComponentByType<MapCoordComponent>(i, Components_e::MAP_COORD_COMPONENT);
+                searchComponentByType<MapCoordComponent>(mVectNumEntity[i], Components_e::MAP_COORD_COMPONENT);
         GeneralCollisionComponent *collComp = stairwayToComponentManager().
-                searchComponentByType<GeneralCollisionComponent>(i, Components_e::GENERAL_COLLISION_COMPONENT);
+                searchComponentByType<GeneralCollisionComponent>(mVectNumEntity[i], Components_e::GENERAL_COLLISION_COMPONENT);
         assert(mapComp);
         assert(collComp);
         switch (collComp->m_shape)
@@ -45,14 +45,14 @@ void FirstPersonDisplaySystem::excludeOutVisionEntities()
         case CollisionShape_e::CIRCLE_C:
         {
             CircleCollisionComponent *circle = stairwayToComponentManager().
-                    searchComponentByType<CircleCollisionComponent>(i, Components_e::CIRCLE_COLLISION_COMPONENT);
+                    searchComponentByType<CircleCollisionComponent>(mVectNumEntity[i], Components_e::CIRCLE_COLLISION_COMPONENT);
             assert(circle);
         }
             break;
         case CollisionShape_e::RECTANGLE_C:
         {
             RectangleCollisionComponent *rectangle = stairwayToComponentManager().
-                    searchComponentByType<RectangleCollisionComponent>(i, Components_e::RECTANGLE_COLLISION_COMPONENT);
+                    searchComponentByType<RectangleCollisionComponent>(mVectNumEntity[i], Components_e::RECTANGLE_COLLISION_COMPONENT);
             assert(rectangle);
         }
             break;

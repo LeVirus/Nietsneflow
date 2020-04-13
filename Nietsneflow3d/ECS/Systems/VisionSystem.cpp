@@ -40,6 +40,15 @@ void VisionSystem::execSystem()
         std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComp;
         bitsetComp[Components_e::MAP_COORD_COMPONENT] = true;
         std::vector<uint32_t> vectEntities = m_memECSManager->getEntityContainingComponents(bitsetComp);
+
+        VisionComponent *visionCompA = stairwayToComponentManager().
+                searchComponentByType<VisionComponent>(mVectNumEntity[i], Components_e::VISION_COMPONENT);
+        MapCoordComponent *mapCompA = stairwayToComponentManager().
+                searchComponentByType<MapCoordComponent>(mVectNumEntity[i], Components_e::MAP_COORD_COMPONENT);
+        MoveableComponent *movCompA = stairwayToComponentManager().
+                searchComponentByType<MoveableComponent>(mVectNumEntity[i], Components_e::MOVEABLE_COMPONENT);
+        updateTriangleVisionFromPosition(visionCompA, mapCompA, movCompA);
+
         for(uint32_t j = 0; j < vectEntities.size(); ++j)
         {
             if(mVectNumEntity[i] == vectEntities[j])
@@ -54,28 +63,20 @@ void VisionSystem::execSystem()
             {
                 continue;
             }
-            treatVisible(mVectNumEntity[i], vectEntities[j], collCompB->m_shape);
+            //FAIRE DES TESTS POUR LES COLLISIONS
+            treatVisible(visionCompA, vectEntities[j], collCompB->m_shape);
         }
     }
 }
 
 //===========================================================================
-void VisionSystem::treatVisible(uint32_t observerId, uint32_t checkVisibleId, CollisionShape_e shapeElement)
+void VisionSystem::treatVisible(VisionComponent *visionComp, uint32_t checkVisibleId, CollisionShape_e shapeElement)
 {
-    VisionComponent *visionCompA = stairwayToComponentManager().
-            searchComponentByType<VisionComponent>(observerId, Components_e::VISION_COMPONENT);
-    MapCoordComponent *mapCompA = stairwayToComponentManager().
-            searchComponentByType<MapCoordComponent>(observerId, Components_e::MAP_COORD_COMPONENT);
-    MoveableComponent *movCompA = stairwayToComponentManager().
-            searchComponentByType<MoveableComponent>(observerId, Components_e::MOVEABLE_COMPONENT);
     MapCoordComponent *mapCompB = stairwayToComponentManager().
             searchComponentByType<MapCoordComponent>(checkVisibleId, Components_e::MAP_COORD_COMPONENT);
-    assert(visionCompA);
-    assert(mapCompA);
-    assert(movCompA);
+    assert(visionComp);
     assert(mapCompB);
 
-    updateTriangleVisionFromPosition(visionCompA, mapCompA, movCompA);
     switch(shapeElement)
     {
     case CollisionShape_e::CIRCLE_C:
@@ -83,9 +84,9 @@ void VisionSystem::treatVisible(uint32_t observerId, uint32_t checkVisibleId, Co
         CircleCollisionComponent *circleColl = stairwayToComponentManager().
                 searchComponentByType<CircleCollisionComponent>(checkVisibleId, Components_e::CIRCLE_COLLISION_COMPONENT);
         assert(circleColl);
-        if(checkTriangleCircleCollision(visionCompA->m_triangleVision, mapCompB->m_absoluteMapPositionPX, circleColl->m_ray))
+        if(checkTriangleCircleCollision(visionComp->m_triangleVision, mapCompB->m_absoluteMapPositionPX, circleColl->m_ray))
         {
-            visionCompA->m_vectVisibleEntities.push_back(checkVisibleId);
+            visionComp->m_vectVisibleEntities.push_back(checkVisibleId);
         }
     }
         break;
@@ -94,9 +95,9 @@ void VisionSystem::treatVisible(uint32_t observerId, uint32_t checkVisibleId, Co
         RectangleCollisionComponent *rectColl = stairwayToComponentManager().
                 searchComponentByType<RectangleCollisionComponent>(checkVisibleId, Components_e::RECTANGLE_COLLISION_COMPONENT);
         assert(rectColl);
-        if(checkTriangleRectCollision(visionCompA->m_triangleVision, {mapCompB->m_absoluteMapPositionPX, rectColl->m_size}))
+        if(checkTriangleRectCollision(visionComp->m_triangleVision, {mapCompB->m_absoluteMapPositionPX, rectColl->m_size}))
         {
-            visionCompA->m_vectVisibleEntities.push_back(checkVisibleId);
+            visionComp->m_vectVisibleEntities.push_back(checkVisibleId);
         }
     }
         break;
@@ -105,6 +106,7 @@ void VisionSystem::treatVisible(uint32_t observerId, uint32_t checkVisibleId, Co
     }
 }
 
+//===========================================================================
 void updateTriangleVisionFromPosition(VisionComponent *visionComp, const MapCoordComponent *mapComp,
                                       const MoveableComponent *movComp)
 {
@@ -128,14 +130,4 @@ void updateTriangleVisionFromPosition(VisionComponent *visionComp, const MapCoor
         }
         angleDegree += visionComp->m_coneVision;
     }
-//    if(angleDegree < 0.0f)
-//    {
-//        angleDegree += 360.0f;
-//    }
-
-    //third point of view
-//    if(angleDegree > 360.0f)
-//    {
-//        angleDegree -= 360.0f;
-//    }
 }

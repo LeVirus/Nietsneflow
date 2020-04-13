@@ -6,6 +6,7 @@
 #include <ECS/Systems/ColorDisplaySystem.hpp>
 #include <ECS/Systems/MapDisplaySystem.hpp>
 #include <ECS/Systems/VisionSystem.hpp>
+#include <ECS/Systems/FirstPersonDisplaySystem.hpp>
 
 
 //===================================================================
@@ -43,6 +44,7 @@ void GraphicEngine::runIteration()
     m_colorSystem->execSystem();
     m_mapSystem->execSystem();
     m_visionSystem->execSystem();
+    m_firstPersonSystem->execSystem();
     // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
     // -------------------------------------------------------------------------------
     glfwSwapBuffers(m_window);

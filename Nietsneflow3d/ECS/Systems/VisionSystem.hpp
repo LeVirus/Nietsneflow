@@ -16,7 +16,7 @@ public:
     void execSystem()override;
 private:
     void setUsedComponents();
-    void treatVisible(uint32_t observerId, uint32_t checkVisibleId, CollisionShape_e shapeElement);
+    void treatVisible(VisionComponent *visionComp, uint32_t checkVisibleId, CollisionShape_e shapeElement);
 private:
     const ECSManager* m_memECSManager;
 };
