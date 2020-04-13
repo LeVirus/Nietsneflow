@@ -34,6 +34,6 @@ public:
     inline const std::vector<float> &getVectVertex()const{return m_vertexBuffer;}
     inline const std::vector<uint32_t> &getVectIndices()const{return m_indices;}
     bool loadVertexColorComponent(const PositionVertexComponent *posComp,
-                             const ColorVertexComponent *colorComp);
+                                  const ColorVertexComponent *colorComp);
     void loadVertexTextureComponent(const PositionVertexComponent &posComp, const SpriteTextureComponent &spriteComp);
 };

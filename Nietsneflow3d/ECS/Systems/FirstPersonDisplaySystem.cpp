@@ -1,11 +1,7 @@
 #include "FirstPersonDisplaySystem.hpp"
 #include <CollisionUtils.hpp>
-#include <ECS/Components/MapCoordComponent.hpp>
-#include <ECS/Components/PositionVertexComponent.hpp>
-#include <ECS/Components/ColorVertexComponent.hpp>
+#include <ECS/Components/VisionComponent.hpp>
 #include <ECS/Components/GeneralCollisionComponent.hpp>
-#include <ECS/Components/CircleCollisionComponent.hpp>
-#include <ECS/Components/RectangleCollisionComponent.hpp>
 
 //===================================================================
 FirstPersonDisplaySystem::FirstPersonDisplaySystem()
@@ -16,72 +12,48 @@ FirstPersonDisplaySystem::FirstPersonDisplaySystem()
 //===================================================================
 void FirstPersonDisplaySystem::setUsedComponents()
 {
-    bAddComponentToSystem(Components_e::POSITION_VERTEX_COMPONENT);
-    bAddComponentToSystem(Components_e::SPRITE_TEXTURE_COMPONENT);
-    bAddComponentToSystem(Components_e::MAP_COORD_COMPONENT);
-}
-
-//===================================================================
-void FirstPersonDisplaySystem::excludeOutVisionEntities()
-{
-//    m_playerComp.m_mapCoordComp;
-    array3PairFloat_t playerVisionTriangle;
-    for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
-    {
-        if(mVectNumEntity[i] == m_memPlayerEntity)
-        {
-            continue;
-        }
-        MapCoordComponent *mapComp = stairwayToComponentManager().
-                searchComponentByType<MapCoordComponent>(mVectNumEntity[i], Components_e::MAP_COORD_COMPONENT);
-        GeneralCollisionComponent *collComp = stairwayToComponentManager().
-                searchComponentByType<GeneralCollisionComponent>(mVectNumEntity[i], Components_e::GENERAL_COLLISION_COMPONENT);
-        assert(mapComp);
-        assert(collComp);
-        switch (collComp->m_shape)
-        {
-        case CollisionShape_e::SEGMENT_C:
-            break;
-        case CollisionShape_e::CIRCLE_C:
-        {
-            CircleCollisionComponent *circle = stairwayToComponentManager().
-                    searchComponentByType<CircleCollisionComponent>(mVectNumEntity[i], Components_e::CIRCLE_COLLISION_COMPONENT);
-            assert(circle);
-        }
-            break;
-        case CollisionShape_e::RECTANGLE_C:
-        {
-            RectangleCollisionComponent *rectangle = stairwayToComponentManager().
-                    searchComponentByType<RectangleCollisionComponent>(mVectNumEntity[i], Components_e::RECTANGLE_COLLISION_COMPONENT);
-            assert(rectangle);
-        }
-            break;
-        }
-    }
+    bAddComponentToSystem(Components_e::VISION_COMPONENT);
 }
 
 //===================================================================
 void FirstPersonDisplaySystem::execSystem()
 {
     System::execSystem();
-    excludeOutVisionEntities();
+    createVerticesFromMemEntities();
+    drawVertex();
 }
 
 //===================================================================
-void FirstPersonDisplaySystem::confPlayerComp(uint32_t playerNum)
+void FirstPersonDisplaySystem::createVerticesFromMemEntities()
 {
-    m_memPlayerEntity = playerNum;
-    m_playerComp.m_mapCoordComp = stairwayToComponentManager().
-            searchComponentByType<MapCoordComponent>(playerNum,
-                                                     Components_e::MAP_COORD_COMPONENT);
-    m_playerComp.m_posComp = stairwayToComponentManager().
-            searchComponentByType<PositionVertexComponent>(playerNum,
-                                                           Components_e::POSITION_VERTEX_COMPONENT);
-    m_playerComp.m_colorComp = stairwayToComponentManager().
-            searchComponentByType<ColorVertexComponent>(playerNum,
-                                                        Components_e::COLOR_VERTEX_COMPONENT);
-    assert(m_playerComp.m_posComp);
-    assert(m_playerComp.m_colorComp);
-    assert(m_playerComp.m_mapCoordComp);
+    //treat one player
+    for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
+    {
+        VisionComponent *visionComp = stairwayToComponentManager().
+                searchComponentByType<VisionComponent>(mVectNumEntity[i], Components_e::VISION_COMPONENT);
+        assert(visionComp);
+        for(uint32_t j = 0; j < visionComp->m_vectVisibleEntities.size(); ++j)
+        {
+            GeneralCollisionComponent *genCollComp = stairwayToComponentManager().
+                    searchComponentByType<GeneralCollisionComponent>(mVectNumEntity[i], Components_e::GENERAL_COLLISION_COMPONENT);
+            assert(genCollComp);
+            switch(genCollComp->m_shape)
+            {
+            case CollisionShape_e::CIRCLE_C:
+                break;
+            case CollisionShape_e::RECTANGLE_C:
+                break;
+            case CollisionShape_e::SEGMENT_C:
+                break;
+            }
+        }
+    }
 }
+
+//===================================================================
+void FirstPersonDisplaySystem::drawVertex()
+{
+
+}
+
 

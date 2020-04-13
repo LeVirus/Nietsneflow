@@ -48,7 +48,7 @@ void VisionSystem::execSystem()
         MoveableComponent *movCompA = stairwayToComponentManager().
                 searchComponentByType<MoveableComponent>(mVectNumEntity[i], Components_e::MOVEABLE_COMPONENT);
         updateTriangleVisionFromPosition(visionCompA, mapCompA, movCompA);
-
+        visionCompA->m_vectVisibleEntities.clear();
         for(uint32_t j = 0; j < vectEntities.size(); ++j)
         {
             if(mVectNumEntity[i] == vectEntities[j])

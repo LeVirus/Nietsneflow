@@ -82,6 +82,29 @@ void MapDisplaySystem::confPositionVertexEntities()
 }
 
 //===================================================================
+void MapDisplaySystem::fillVertexFromEntities()
+{
+    for(uint32_t h = 0; h < m_vectVerticesData.size(); ++h)
+    {
+        m_vectVerticesData[h].clear();
+    }
+    for(uint32_t i = 0; i < m_entitiesToDisplay.size(); ++i)
+    {
+        PositionVertexComponent *posComp = stairwayToComponentManager().
+                searchComponentByType<PositionVertexComponent>(m_entitiesToDisplay[i],
+                                                               Components_e::POSITION_VERTEX_COMPONENT);
+        SpriteTextureComponent *spriteComp = stairwayToComponentManager().
+                searchComponentByType<SpriteTextureComponent>(m_entitiesToDisplay[i],
+                                                            Components_e::SPRITE_TEXTURE_COMPONENT);
+        assert(posComp);
+        assert(spriteComp);
+        assert(static_cast<size_t>(spriteComp->m_spriteData->m_textureNum) < m_vectVerticesData.size());
+        m_vectVerticesData[static_cast<size_t>(spriteComp->m_spriteData->m_textureNum)].
+                loadVertexTextureComponent(*posComp, *spriteComp);
+    }
+}
+
+//===================================================================
 pairFloat_t MapDisplaySystem::getUpLeftCorner(const MapCoordComponent *mapCoordComp, uint32_t entityNum)
 {
     GeneralCollisionComponent *genCollComp = stairwayToComponentManager().
@@ -156,29 +179,6 @@ bool MapDisplaySystem::checkBoundEntityMap(const MapCoordComponent &mapCoordComp
         return false;
     }
     return true;
-}
-
-//===================================================================
-void MapDisplaySystem::fillVertexFromEntities()
-{
-    for(uint32_t h = 0; h < m_vectVerticesData.size(); ++h)
-    {
-        m_vectVerticesData[h].clear();
-    }
-    for(uint32_t i = 0; i < m_entitiesToDisplay.size(); ++i)
-    {
-        PositionVertexComponent *posComp = stairwayToComponentManager().
-                searchComponentByType<PositionVertexComponent>(m_entitiesToDisplay[i],
-                                                               Components_e::POSITION_VERTEX_COMPONENT);
-        SpriteTextureComponent *spriteComp = stairwayToComponentManager().
-                searchComponentByType<SpriteTextureComponent>(m_entitiesToDisplay[i],
-                                                            Components_e::SPRITE_TEXTURE_COMPONENT);
-        assert(posComp);
-        assert(spriteComp);
-        assert(static_cast<size_t>(spriteComp->m_spriteData->m_textureNum) < m_vectVerticesData.size());
-        m_vectVerticesData[static_cast<size_t>(spriteComp->m_spriteData->m_textureNum)].
-                loadVertexTextureComponent(*posComp, *spriteComp);
-    }
 }
 
 //===================================================================

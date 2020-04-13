@@ -234,7 +234,6 @@ void MainEngine::loadPlayerEntity(const Level &level)
     confPlayerEntity(entityNum, level);
     //notify player entity number
     m_graphicEngine.getMapDisplaySystem().confPlayerComp(entityNum);
-    m_graphicEngine.getFirstPersonSystem().confPlayerComp(entityNum);
 }
 
 //===================================================================
