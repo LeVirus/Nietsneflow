@@ -105,6 +105,9 @@ void FirstPersonDisplaySystem::confVertex(uint32_t numEntity, GeneralCollisionCo
 {
     PositionVertexComponent *positionComp = stairwayToComponentManager().
             searchComponentByType<PositionVertexComponent>(numEntity, Components_e::POSITION_VERTEX_COMPONENT);
+    SpriteTextureComponent *spriteComp = stairwayToComponentManager().
+                searchComponentByType<SpriteTextureComponent>(numEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
+    assert(spriteComp);
     assert(positionComp);
     assert(visionComp);
     assert(genCollComp);
@@ -112,14 +115,22 @@ void FirstPersonDisplaySystem::confVertex(uint32_t numEntity, GeneralCollisionCo
     //ISSUE WITH ANGLE ROTATION
     float lateralPos = (angle / visionComp->m_coneVision * 2.0f) - 1.0f;
     float depthPos = std::abs((distance / visionComp->m_distanceVisibility) - 1.0f);
-    positionComp->m_vertex[0].first = lateralPos - depthPos;
-    positionComp->m_vertex[0].second = /*lateralPos*/ - depthPos;
-    positionComp->m_vertex[1].first = lateralPos - depthPos;
-    positionComp->m_vertex[1].second = /*lateralPos*/ depthPos;
-    positionComp->m_vertex[2].first = lateralPos + depthPos;
-    positionComp->m_vertex[2].second = /*lateralPos*/ depthPos;
-    positionComp->m_vertex[3].first = lateralPos + depthPos;
-    positionComp->m_vertex[3].second = /*lateralPos*/ - depthPos;
+//    positionComp->m_vertex[0].first = lateralPos - depthPos;
+//    positionComp->m_vertex[0].second = /*lateralPos*/ - depthPos;
+//    positionComp->m_vertex[1].first = lateralPos - depthPos;
+//    positionComp->m_vertex[1].second = /*lateralPos*/ depthPos;
+//    positionComp->m_vertex[2].first = lateralPos + depthPos;
+//    positionComp->m_vertex[2].second = /*lateralPos*/ depthPos;
+//    positionComp->m_vertex[3].first = lateralPos + depthPos;
+//    positionComp->m_vertex[3].second = /*lateralPos*/ - depthPos;
+    positionComp->m_vertex[0].first = lateralPos - spriteComp->m_glFpsSize.first / 2;
+    positionComp->m_vertex[0].second = depthPos + spriteComp->m_glFpsSize.second / 2;
+    positionComp->m_vertex[1].first = lateralPos + spriteComp->m_glFpsSize.first / 2;
+    positionComp->m_vertex[1].second = depthPos + spriteComp->m_glFpsSize.second / 2;
+    positionComp->m_vertex[2].first = lateralPos + spriteComp->m_glFpsSize.first / 2;
+    positionComp->m_vertex[2].second = depthPos - spriteComp->m_glFpsSize.second / 2;
+    positionComp->m_vertex[3].first = lateralPos - spriteComp->m_glFpsSize.first / 2;
+    positionComp->m_vertex[3].second = depthPos - spriteComp->m_glFpsSize.second / 2;
     switch (genCollComp->m_shape)
     {
     case CollisionShape_e::CIRCLE_C:

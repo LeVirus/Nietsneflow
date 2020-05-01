@@ -13,5 +13,6 @@ struct SpriteTextureComponent : public ecs::Component
         muiTypeComponent = Components_e::SPRITE_TEXTURE_COMPONENT;
     }
     SpriteData const *m_spriteData;
+    pairFloat_t m_glFpsSize = {1.0f, 1.0f};
     virtual ~SpriteTextureComponent() = default;
 };
