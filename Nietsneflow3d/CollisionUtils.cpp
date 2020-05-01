@@ -1,4 +1,5 @@
 #include "CollisionUtils.hpp"
+#include "PhysicalEngine.hpp"
 #include <cmath>
 #include <limits>
 #include <iostream>
@@ -235,6 +236,19 @@ float getDistance(const pairFloat_t &pointA, const pairFloat_t &pointB)
 }
 
 //===================================================================
+float getTrigoAngle(const pairFloat_t &pointA, const pairFloat_t &pointB)
+{
+    float X = std::abs(pointA.first - pointB.first);
+    float Y = std::abs(pointA.second - pointB.second);
+    if((pointA.first < pointB.first && pointA.second < pointB.second) &&
+            (pointB.first < pointA.first && pointB.second < pointA.second))
+    {
+       return getDegreeAngle(std::atan(X / Y));
+    }
+    return getDegreeAngle(std::atan(Y / X));
+}
+
+//===================================================================
 float getRectTriangleSide(float adj, float hyp)
 {
     float radAngle = std::acos(adj / hyp);
@@ -379,7 +393,14 @@ bool floatEqualsZero(float value)
     return static_cast<int32_t>(value * 100.0f) == 0;
 }
 
+//===================================================================
 bool checkFloatEqualsZero(float valueA, float valueB)
 {
     return static_cast<int32_t>(valueA * 100.0f) == static_cast<int32_t>(valueB * 100.0f);
+}
+
+//===================================================================
+pairFloat_t getCircleUpLeftCorner(const pairFloat_t &point, float ray)
+{
+    return {point.first - ray, point.second - ray};
 }

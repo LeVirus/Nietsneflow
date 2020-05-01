@@ -23,6 +23,7 @@ void GraphicEngine::confSystems()
 {
     setShaderToLocalSystems();
     m_mapSystem->setVectTextures(m_vectTexture);
+    m_firstPersonSystem->setVectTextures(m_vectTexture);
 }
 
 //===================================================================
@@ -142,6 +143,7 @@ void GraphicEngine::setShaderToLocalSystems()
     assert(m_mapSystem && "mapSystem is null");
     m_colorSystem->setShader(m_vectShader[Shader_e::COLOR_S]);
     m_mapSystem->setShader(m_vectShader[Shader_e::TEXTURE_S]);
+    m_firstPersonSystem->setShader(m_vectShader[Shader_e::TEXTURE_S]);
 }
 
 //===================================================================

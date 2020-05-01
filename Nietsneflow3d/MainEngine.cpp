@@ -200,7 +200,7 @@ void MainEngine::confBaseMapComponent(uint32_t entityNum,
         tagComp->m_tag = CollisionTag_e::ENEMY_CT;
     }
     mapComp->m_coord = coordLevel;
-    mapComp->m_absoluteMapPositionPX = Level::getAbsolutePosition(coordLevel);
+    mapComp->m_absoluteMapPositionPX = getAbsolutePosition(coordLevel);
     tagComp->m_shape = collisionShape;
 }
 
@@ -287,7 +287,7 @@ void MainEngine::confPlayerEntity(uint32_t entityNum, const Level &level)
         move->m_degreeOrientation = 180.0f;
         break;
     }
-    map->m_absoluteMapPositionPX = Level::getAbsolutePosition(map->m_coord);
+    map->m_absoluteMapPositionPX = getAbsolutePosition(map->m_coord);
     updatePlayerOrientation(*move, *pos, *vision);
 
     color->m_vertex.reserve(3);

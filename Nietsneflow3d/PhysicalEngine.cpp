@@ -1,4 +1,5 @@
 #include "PhysicalEngine.hpp"
+#include "Level.hpp"
 #include <math.h>
 #include <ECS/Components/PositionVertexComponent.hpp>
 #include <ECS/Components/MapCoordComponent.hpp>
@@ -28,8 +29,8 @@ void PhysicalEngine::linkSystems(InputSystem *inputSystem,
 }
 
 //===================================================================
-void movePlayer(MoveableComponent &moveComp,
-                MapCoordComponent &mapComp, MoveOrientation_e moveDirection)
+void moveElement(MoveableComponent &moveComp,
+                 MapCoordComponent &mapComp, MoveOrientation_e moveDirection)
 {
     float radiantAngle;
     float angle = moveComp.m_degreeOrientation;
@@ -51,9 +52,9 @@ void movePlayer(MoveableComponent &moveComp,
     radiantAngle = getRadiantAngle(angle);
     mapComp.m_absoluteMapPositionPX.first +=
             cos(radiantAngle) * moveComp.m_velocity;
-
     mapComp.m_absoluteMapPositionPX.second -=
             sin(radiantAngle) * moveComp.m_velocity;
+    mapComp.m_coord = getLevelCoord(mapComp.m_absoluteMapPositionPX);
 }
 
 //===================================================================
@@ -120,4 +121,10 @@ void updatePlayerConeVision(const MoveableComponent &moveComp, VisionComponent &
 float getRadiantAngle(float angle)
 {
     return angle * PI / 180;
+}
+
+//===================================================================
+float getDegreeAngle(float angle)
+{
+    return angle / PI * 180;
 }

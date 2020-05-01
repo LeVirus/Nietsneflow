@@ -2,6 +2,13 @@
 #include <CollisionUtils.hpp>
 #include <ECS/Components/VisionComponent.hpp>
 #include <ECS/Components/GeneralCollisionComponent.hpp>
+#include <ECS/Components/MapCoordComponent.hpp>
+#include <ECS/Components/PositionVertexComponent.hpp>
+#include <ECS/Components/RectangleCollisionComponent.hpp>
+#include <ECS/Components/MoveableComponent.hpp>
+#include <ECS/Components/SpriteTextureComponent.hpp>
+#include <PictureData.hpp>
+#include <cmath>
 
 //===================================================================
 FirstPersonDisplaySystem::FirstPersonDisplaySystem()
@@ -19,41 +26,149 @@ void FirstPersonDisplaySystem::setUsedComponents()
 void FirstPersonDisplaySystem::execSystem()
 {
     System::execSystem();
-    createVerticesFromMemEntities();
+    confCompVertexMemEntities();
     drawVertex();
 }
 
 //===================================================================
-void FirstPersonDisplaySystem::createVerticesFromMemEntities()
+void FirstPersonDisplaySystem::confCompVertexMemEntities()
 {
+    m_numVertexToDraw = 0;
     //treat one player
     for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
     {
         VisionComponent *visionComp = stairwayToComponentManager().
                 searchComponentByType<VisionComponent>(mVectNumEntity[i], Components_e::VISION_COMPONENT);
+        MoveableComponent *moveComp = stairwayToComponentManager().
+                searchComponentByType<MoveableComponent>(mVectNumEntity[i], Components_e::MOVEABLE_COMPONENT);
+        MapCoordComponent *mapCompA = stairwayToComponentManager().
+                searchComponentByType<MapCoordComponent>(mVectNumEntity[i], Components_e::MAP_COORD_COMPONENT);
         assert(visionComp);
+        assert(mapCompA);
+        assert(moveComp);
+        float leftAngleVision = moveComp->m_degreeOrientation - (visionComp->m_coneVision / 2);
         for(uint32_t j = 0; j < visionComp->m_vectVisibleEntities.size(); ++j)
         {
             GeneralCollisionComponent *genCollComp = stairwayToComponentManager().
-                    searchComponentByType<GeneralCollisionComponent>(mVectNumEntity[i], Components_e::GENERAL_COLLISION_COMPONENT);
+                    searchComponentByType<GeneralCollisionComponent>(visionComp->m_vectVisibleEntities[j], Components_e::GENERAL_COLLISION_COMPONENT);
+            MapCoordComponent *mapCompB = stairwayToComponentManager().
+                    searchComponentByType<MapCoordComponent>(visionComp->m_vectVisibleEntities[j], Components_e::MAP_COORD_COMPONENT);
+            assert(mapCompB);
             assert(genCollComp);
-            switch(genCollComp->m_shape)
-            {
-            case CollisionShape_e::CIRCLE_C:
-                break;
-            case CollisionShape_e::RECTANGLE_C:
-                break;
-            case CollisionShape_e::SEGMENT_C:
-                break;
-            }
+
+            pairFloat_t centerPos = getCenterPosition(mapCompB, genCollComp, visionComp->m_vectVisibleEntities[j]);
+            float angle = leftAngleVision - getTrigoAngle(mapCompA->m_absoluteMapPositionPX, centerPos);
+            float distance = getDistance(mapCompA->m_absoluteMapPositionPX, centerPos);
+            confVertex(visionComp->m_vectVisibleEntities[j], genCollComp, visionComp, angle, distance);
+            fillVertexFromEntitie(visionComp->m_vectVisibleEntities[j], j);
         }
+    }
+}
+
+//===================================================================
+void FirstPersonDisplaySystem::fillVertexFromEntitie(uint32_t numEntity, uint32_t numIteration)
+{
+    //use 1 vertex for 1 sprite for beginning
+    if(numIteration < m_vectVerticesData.size())
+    {
+        m_vectVerticesData[numIteration].clear();
+    }
+    else
+    {
+        m_vectVerticesData.emplace_back(VerticesData(Shader_e::TEXTURE_S));
+        assert(numIteration < m_vectVerticesData.size());
+    }
+    PositionVertexComponent *posComp = stairwayToComponentManager().
+            searchComponentByType<PositionVertexComponent>(numEntity,
+                                                           Components_e::POSITION_VERTEX_COMPONENT);
+    SpriteTextureComponent *spriteComp = stairwayToComponentManager().
+            searchComponentByType<SpriteTextureComponent>(numEntity,
+                                                          Components_e::SPRITE_TEXTURE_COMPONENT);
+    assert(posComp);
+    assert(spriteComp);
+    //WARNING ONLY ONE TEXTURE USED HERE
+    //WARNING NO DISTANCE TREATMENT
+    m_vectVerticesData[numIteration].loadVertexTextureComponent(*posComp, *spriteComp);
+    ++m_numVertexToDraw;
+}
+
+//===================================================================
+void FirstPersonDisplaySystem::setVectTextures(std::vector<Texture> &vectTexture)
+{
+    m_ptrVectTexture = &vectTexture;
+    m_vectVerticesData.reserve(50);
+}
+
+//===================================================================
+void FirstPersonDisplaySystem::confVertex(uint32_t numEntity, GeneralCollisionComponent *genCollComp,
+                                          VisionComponent *visionComp, float angle, float distance)
+{
+    PositionVertexComponent *positionComp = stairwayToComponentManager().
+            searchComponentByType<PositionVertexComponent>(numEntity, Components_e::POSITION_VERTEX_COMPONENT);
+    assert(positionComp);
+    assert(visionComp);
+    assert(genCollComp);
+    //convert to GL context
+    //ISSUE WITH ANGLE ROTATION
+    float lateralPos = (angle / visionComp->m_coneVision * 2.0f) - 1.0f;
+    float depthPos = std::abs((distance / visionComp->m_distanceVisibility) - 1.0f);
+    positionComp->m_vertex[0].first = lateralPos - depthPos;
+    positionComp->m_vertex[0].second = /*lateralPos*/ - depthPos;
+    positionComp->m_vertex[1].first = lateralPos - depthPos;
+    positionComp->m_vertex[1].second = /*lateralPos*/ depthPos;
+    positionComp->m_vertex[2].first = lateralPos + depthPos;
+    positionComp->m_vertex[2].second = /*lateralPos*/ depthPos;
+    positionComp->m_vertex[3].first = lateralPos + depthPos;
+    positionComp->m_vertex[3].second = /*lateralPos*/ - depthPos;
+    switch (genCollComp->m_shape)
+    {
+    case CollisionShape_e::CIRCLE_C:
+        break;
+    case CollisionShape_e::SEGMENT_C://TMP
+        break;
+    case CollisionShape_e::RECTANGLE_C:
+        RectangleCollisionComponent *rectCollComp = stairwayToComponentManager().
+                searchComponentByType<RectangleCollisionComponent>(numEntity, Components_e::RECTANGLE_COLLISION_COMPONENT);
+        assert(rectCollComp);
+        break;
     }
 }
 
 //===================================================================
 void FirstPersonDisplaySystem::drawVertex()
 {
-
+    m_shader->use();
+    for(uint32_t h = 0; h < m_vectVerticesData.size(); ++h)
+    {
+        m_ptrVectTexture->operator[](h).bind();
+        m_vectVerticesData[h].confVertexBuffer();
+        m_vectVerticesData[h].drawElement();
+    }
 }
 
+//===================================================================
+void FirstPersonDisplaySystem::setShader(Shader &shader)
+{
+    m_shader = &shader;
+}
 
+//===================================================================
+pairFloat_t FirstPersonDisplaySystem::getCenterPosition(const MapCoordComponent *mapComp,
+                                                        GeneralCollisionComponent *genCollComp, float numEntity)
+{
+    assert(mapComp);
+    assert(genCollComp);
+    switch (genCollComp->m_shape)
+    {
+    case CollisionShape_e::CIRCLE_C:
+    case CollisionShape_e::SEGMENT_C://TMP
+        break;
+    case CollisionShape_e::RECTANGLE_C:
+        RectangleCollisionComponent *rectCollComp = stairwayToComponentManager().
+                searchComponentByType<RectangleCollisionComponent>(numEntity, Components_e::RECTANGLE_COLLISION_COMPONENT);
+        assert(rectCollComp);
+        return {mapComp->m_absoluteMapPositionPX.first + rectCollComp->m_size.first / 2,
+                    mapComp->m_absoluteMapPositionPX.second + rectCollComp->m_size.second / 2};
+    }
+    return mapComp->m_absoluteMapPositionPX;
+}

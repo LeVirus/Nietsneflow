@@ -20,15 +20,13 @@ struct PlayerComp
 
 class MapDisplaySystem : public ecs::System
 {
-private:
-    Shader *m_shader;
-    std::vector<VerticesData> m_vectVerticesData;
-    uint32_t m_playerNum;
-    float m_levelSizePX, m_localLevelSizePX;
-    float m_tileSizeGL;
-    std::vector<uint32_t> m_entitiesToDisplay;
-    std::vector<Texture> *m_ptrVectTexture = nullptr;
-    PlayerComp m_playerComp;
+public:
+    MapDisplaySystem();
+    void confLevelData();
+    void confPlayerComp(uint32_t playerNum);
+    void setVectTextures(std::vector<Texture> &vectTexture);
+    void execSystem()override;
+    void setShader(Shader &shader);
 private:
     void setUsedComponents();
     void fillVertexFromEntities();
@@ -41,13 +39,14 @@ private:
     bool checkBoundEntityMap(const MapCoordComponent &mapCoordComp, const pairUI_t &minBound, const pairUI_t &maxBound);
     void getMapDisplayLimit(pairFloat_t &playerPos, pairUI_t &min, pairUI_t &max);
     pairFloat_t getUpLeftCorner(const MapCoordComponent *mapCoordComp, uint32_t entityNum);
-public:
-    MapDisplaySystem();
-    void confLevelData();
-    void confPlayerComp(uint32_t playerNum);
-    void setVectTextures(std::vector<Texture> &vectTexture);
-    void execSystem()override;
-    void setShader(Shader &shader);
+private:
+    Shader *m_shader;
+    std::vector<VerticesData> m_vectVerticesData;
+    float m_levelSizePX, m_localLevelSizePX;
+    float m_tileSizeGL;
+    std::vector<uint32_t> m_entitiesToDisplay;
+    std::vector<Texture> *m_ptrVectTexture = nullptr;
+    PlayerComp m_playerComp;
 };
 
 //Adapt to GL context

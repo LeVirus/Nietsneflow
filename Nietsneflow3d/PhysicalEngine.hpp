@@ -22,7 +22,7 @@ public:
                      CollisionSystem * collisionSystem);
 };
 
-void movePlayer(MoveableComponent &moveComp,
+void moveElement(MoveableComponent &moveComp,
                 MapCoordComponent &mapComp, MoveOrientation_e moveDirection);
 void updatePlayerOrientation(const MoveableComponent &moveComp,
                              PositionVertexComponent &posComp, VisionComponent &visionComp);
@@ -31,3 +31,4 @@ void updatePlayerArrow(const MoveableComponent &moveComp,
 void updatePlayerConeVision(const MoveableComponent &moveComp,
                              VisionComponent &visionComp);
 float getRadiantAngle(float angle);
+float getDegreeAngle(float angle);

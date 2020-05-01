@@ -39,6 +39,7 @@ void VisionSystem::execSystem()
         assert(collComp);
         std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComp;
         bitsetComp[Components_e::MAP_COORD_COMPONENT] = true;
+        bitsetComp[Components_e::SPRITE_TEXTURE_COMPONENT] = true;
         std::vector<uint32_t> vectEntities = m_memECSManager->getEntityContainingComponents(bitsetComp);
 
         VisionComponent *visionCompA = stairwayToComponentManager().

@@ -57,9 +57,7 @@ private:
     pairUI_t m_playerDeparture;
     static pairUI_t m_size;
     Direction_e m_playerDepartureDirection;
-    std::vector<StaticLevelElementData> m_groundElement,
-                                    m_ceilingElement,
-                                    m_objectElement;
+    std::vector<StaticLevelElementData> m_groundElement, m_ceilingElement, m_objectElement;
     std::vector<WallData> m_wallData;
     std::vector<DoorData> m_doorData;
     std::vector<EnemyData> m_enemyData;
@@ -144,13 +142,15 @@ public:
         return Level::m_rangeViewPX;
     }
 
-    static pairFloat_t getAbsolutePosition(const pairUI_t &coord);
 
-    static pairUI_t getLevelCoord(pairFloat_t &position);
 
     /**
      * @brief updateVisualOrientation Modify vertex position relative to orientation.
      */
     static void updatePlayerOrientation(const MoveableComponent &moveComp,
-                                  PositionVertexComponent &posComp);
+                                        PositionVertexComponent &posComp);
 };
+
+pairFloat_t getAbsolutePosition(const pairUI_t &coord);
+
+pairUI_t getLevelCoord(pairFloat_t &position);

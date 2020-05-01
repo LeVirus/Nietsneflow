@@ -49,35 +49,35 @@ void InputSystem::treatPlayerInput()
         //STRAFE
         if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS)
         {
-            movePlayer(*moveComp, *mapComp, MoveOrientation_e::RIGHT);
+            moveElement(*moveComp, *mapComp, MoveOrientation_e::RIGHT);
         }
         else if (glfwGetKey(m_window, GLFW_KEY_Q) == GLFW_PRESS)
         {
-            movePlayer(*moveComp, *mapComp, MoveOrientation_e::LEFT);
+            moveElement(*moveComp, *mapComp, MoveOrientation_e::LEFT);
         }
         if (glfwGetKey(m_window, GLFW_KEY_UP) == GLFW_PRESS)
         {
-            movePlayer(*moveComp, *mapComp, MoveOrientation_e::FORWARD);
+            moveElement(*moveComp, *mapComp, MoveOrientation_e::FORWARD);
         }
         else if (glfwGetKey(m_window, GLFW_KEY_DOWN) == GLFW_PRESS)
         {
-            movePlayer(*moveComp, *mapComp, MoveOrientation_e::BACKWARD);
+            moveElement(*moveComp, *mapComp, MoveOrientation_e::BACKWARD);
         }
         if (glfwGetKey(m_window, GLFW_KEY_RIGHT) == GLFW_PRESS)
         {
             moveComp->m_degreeOrientation -= moveComp->m_rotationAngle;
-            if(moveComp->m_degreeOrientation < 0)
+            if(moveComp->m_rotationAngle < 0.0f)
             {
-                moveComp->m_degreeOrientation += 360;
+                moveComp->m_rotationAngle += 360.0f;
             }
             updatePlayerOrientation(*moveComp, *posComp, *visionComp);
         }
         else if (glfwGetKey(m_window, GLFW_KEY_LEFT) == GLFW_PRESS)
         {
             moveComp->m_degreeOrientation += moveComp->m_rotationAngle;
-            if(moveComp->m_degreeOrientation > 360)
+            if(moveComp->m_rotationAngle > 360.0f)
             {
-                moveComp->m_degreeOrientation -= 360;
+                moveComp->m_rotationAngle -= 360.0f;
             }
             updatePlayerOrientation(*moveComp, *posComp, *visionComp);
         }

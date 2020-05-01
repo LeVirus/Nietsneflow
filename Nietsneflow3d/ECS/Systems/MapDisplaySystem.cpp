@@ -1,6 +1,7 @@
 #include "MapDisplaySystem.hpp"
 #include "Level.hpp"
 #include "PictureData.hpp"
+#include "CollisionUtils.hpp"
 #include <ECS/Components/PositionVertexComponent.hpp>
 #include <ECS/Components/MapCoordComponent.hpp>
 #include <ECS/Components/SpriteTextureComponent.hpp>
@@ -68,9 +69,9 @@ void MapDisplaySystem::confPositionVertexEntities()
                                                          Components_e::MAP_COORD_COMPONENT);
         assert(mapComp);
         //get absolute position corner
-        pairFloat_t corner = getUpLeftCorner(mapComp, mVectNumEntity[i]);
         if(checkBoundEntityMap(*mapComp, min, max))
         {
+            pairFloat_t corner = getUpLeftCorner(mapComp, mVectNumEntity[i]);
             m_entitiesToDisplay.emplace_back(mVectNumEntity[i]);
             pairFloat_t diffPosPX = corner - m_playerComp.m_mapCoordComp->m_absoluteMapPositionPX;
             //convert absolute position to relative
@@ -116,8 +117,7 @@ pairFloat_t MapDisplaySystem::getUpLeftCorner(const MapCoordComponent *mapCoordC
         CircleCollisionComponent *circleCollComp = stairwayToComponentManager().
                 searchComponentByType<CircleCollisionComponent>(entityNum, Components_e::CIRCLE_COLLISION_COMPONENT);
         assert(circleCollComp);
-        return {mapCoordComp->m_absoluteMapPositionPX.first - circleCollComp->m_ray,
-                    mapCoordComp->m_absoluteMapPositionPX.second - circleCollComp->m_ray};
+        return getCircleUpLeftCorner(mapCoordComp->m_absoluteMapPositionPX, circleCollComp->m_ray);
     }
     else
     {
@@ -133,10 +133,10 @@ void MapDisplaySystem::getMapDisplayLimit(pairFloat_t &playerPos,
     float rangeView = Level::getRangeView();
     playerPos.first += rangeView;
     playerPos.second += rangeView;
-    max = Level::getLevelCoord(playerPos);
+    max = getLevelCoord(playerPos);
     playerPos.first -= rangeView * 2;
     playerPos.second -= rangeView * 2;
-    min = Level::getLevelCoord(playerPos);
+    min = getLevelCoord(playerPos);
 }
 
 

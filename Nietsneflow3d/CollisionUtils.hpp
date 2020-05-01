@@ -67,9 +67,12 @@ bool checkPointPosition(const pairFloat_t &firstPoint,
                         const pairFloat_t &secondPoint,
                         const pairFloat_t &currentPoint);
 
+//get angle from 2 points from trigo sense
+float getTrigoAngle(const pairFloat_t &pointA, const pairFloat_t &pointB);
 float getDistance(const pairFloat_t &pointA, const pairFloat_t &pointB);
 float getRectTriangleSide(float adj, float hyp);
 
+pairFloat_t getCircleUpLeftCorner(const pairFloat_t &point, float ray);
 
 bool checkFloatEquals(float a, float b);
 

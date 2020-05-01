@@ -137,14 +137,14 @@ void Level::display()
 }
 
 //===================================================================
-pairFloat_t Level::getAbsolutePosition(const pairUI_t &coord)
+pairFloat_t getAbsolutePosition(const pairUI_t &coord)
 {
-    return {float(coord.first) * LEVEL_TILE_SIZE_PX,
-                float(coord.second) * LEVEL_TILE_SIZE_PX};
+    return {static_cast<float>(coord.first) * LEVEL_TILE_SIZE_PX,
+                static_cast<float>(coord.second) * LEVEL_TILE_SIZE_PX};
 }
 
 //===================================================================
-pairUI_t Level::getLevelCoord(pairFloat_t &position)
+pairUI_t getLevelCoord(pairFloat_t &position)
 {
     if(position.first < 0.0f)
     {
@@ -154,6 +154,6 @@ pairUI_t Level::getLevelCoord(pairFloat_t &position)
     {
         position.second = 0.0f;
     }
-    return {uint32_t(position.first / LEVEL_TILE_SIZE_PX),
-                uint32_t(position.second / LEVEL_TILE_SIZE_PX)};
+    return {static_cast<uint32_t>(position.first / LEVEL_TILE_SIZE_PX),
+                static_cast<uint32_t>(position.second / LEVEL_TILE_SIZE_PX)};
 }
