@@ -7,6 +7,7 @@
 #include <ECS/Components/RectangleCollisionComponent.hpp>
 #include <ECS/Components/MoveableComponent.hpp>
 #include <ECS/Components/SpriteTextureComponent.hpp>
+#include <ECS/Components/CircleCollisionComponent.hpp>
 #include <PictureData.hpp>
 #include <cmath>
 
@@ -46,9 +47,11 @@ void FirstPersonDisplaySystem::confCompVertexMemEntities()
         assert(visionComp);
         assert(mapCompA);
         assert(moveComp);
-        float leftAngleVision = moveComp->m_degreeOrientation - (visionComp->m_coneVision / 2);
+        float leftAngleVision = moveComp->m_degreeOrientation + (visionComp->m_coneVision / 2);
         for(uint32_t j = 0; j < visionComp->m_vectVisibleEntities.size(); ++j)
         {
+                std::cerr << "leftAngleVision :: " << leftAngleVision << "\n";
+
             GeneralCollisionComponent *genCollComp = stairwayToComponentManager().
                     searchComponentByType<GeneralCollisionComponent>(visionComp->m_vectVisibleEntities[j], Components_e::GENERAL_COLLISION_COMPONENT);
             MapCoordComponent *mapCompB = stairwayToComponentManager().
@@ -113,36 +116,19 @@ void FirstPersonDisplaySystem::confVertex(uint32_t numEntity, GeneralCollisionCo
     assert(genCollComp);
     //convert to GL context
     //ISSUE WITH ANGLE ROTATION
+    std::cerr << "angle :: " << angle << "\n";
     float lateralPos = (angle / visionComp->m_coneVision * 2.0f) - 1.0f;
     float depthPos = std::abs((distance / visionComp->m_distanceVisibility) - 1.0f);
-//    positionComp->m_vertex[0].first = lateralPos - depthPos;
-//    positionComp->m_vertex[0].second = /*lateralPos*/ - depthPos;
-//    positionComp->m_vertex[1].first = lateralPos - depthPos;
-//    positionComp->m_vertex[1].second = /*lateralPos*/ depthPos;
-//    positionComp->m_vertex[2].first = lateralPos + depthPos;
-//    positionComp->m_vertex[2].second = /*lateralPos*/ depthPos;
-//    positionComp->m_vertex[3].first = lateralPos + depthPos;
-//    positionComp->m_vertex[3].second = /*lateralPos*/ - depthPos;
-    positionComp->m_vertex[0].first = lateralPos - spriteComp->m_glFpsSize.first / 2;
-    positionComp->m_vertex[0].second = depthPos + spriteComp->m_glFpsSize.second / 2;
-    positionComp->m_vertex[1].first = lateralPos + spriteComp->m_glFpsSize.first / 2;
-    positionComp->m_vertex[1].second = depthPos + spriteComp->m_glFpsSize.second / 2;
-    positionComp->m_vertex[2].first = lateralPos + spriteComp->m_glFpsSize.first / 2;
-    positionComp->m_vertex[2].second = depthPos - spriteComp->m_glFpsSize.second / 2;
-    positionComp->m_vertex[3].first = lateralPos - spriteComp->m_glFpsSize.first / 2;
-    positionComp->m_vertex[3].second = depthPos - spriteComp->m_glFpsSize.second / 2;
-    switch (genCollComp->m_shape)
-    {
-    case CollisionShape_e::CIRCLE_C:
-        break;
-    case CollisionShape_e::SEGMENT_C://TMP
-        break;
-    case CollisionShape_e::RECTANGLE_C:
-        RectangleCollisionComponent *rectCollComp = stairwayToComponentManager().
-                searchComponentByType<RectangleCollisionComponent>(numEntity, Components_e::RECTANGLE_COLLISION_COMPONENT);
-        assert(rectCollComp);
-        break;
-    }
+    float halfLateralSize = depthPos / spriteComp->m_glFpsSize.first / 2;
+    float halfVerticalSize = depthPos / spriteComp->m_glFpsSize.second / 2;
+    positionComp->m_vertex[0].first = lateralPos - halfLateralSize;
+    positionComp->m_vertex[0].second = halfVerticalSize;
+    positionComp->m_vertex[1].first = lateralPos + halfLateralSize;
+    positionComp->m_vertex[1].second = halfVerticalSize;
+    positionComp->m_vertex[2].first = lateralPos + halfLateralSize;
+    positionComp->m_vertex[2].second = -halfVerticalSize;
+    positionComp->m_vertex[3].first = lateralPos - halfLateralSize;
+    positionComp->m_vertex[3].second = -halfVerticalSize;
 }
 
 //===================================================================
@@ -172,6 +158,13 @@ pairFloat_t FirstPersonDisplaySystem::getCenterPosition(const MapCoordComponent 
     switch (genCollComp->m_shape)
     {
     case CollisionShape_e::CIRCLE_C:
+    {
+        CircleCollisionComponent *circleCollComp = stairwayToComponentManager().
+                searchComponentByType<CircleCollisionComponent>(numEntity, Components_e::CIRCLE_COLLISION_COMPONENT);
+        assert(circleCollComp);
+        return {mapComp->m_absoluteMapPositionPX.first + circleCollComp->m_ray,
+                    mapComp->m_absoluteMapPositionPX.second + circleCollComp->m_ray};
+    }
     case CollisionShape_e::SEGMENT_C://TMP
         break;
     case CollisionShape_e::RECTANGLE_C:

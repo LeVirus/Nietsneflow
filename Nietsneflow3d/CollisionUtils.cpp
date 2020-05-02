@@ -238,8 +238,8 @@ float getDistance(const pairFloat_t &pointA, const pairFloat_t &pointB)
 //===================================================================
 float getTrigoAngle(const pairFloat_t &pointA, const pairFloat_t &pointB)
 {
-    float X = std::abs(pointA.first - pointB.first);
-    float Y = std::abs(pointA.second - pointB.second);
+    float X = std::abs(pointB.first - pointA.first);
+    float Y = std::abs(pointB.second - pointA.second);
     if((pointA.first < pointB.first && pointA.second < pointB.second) &&
             (pointB.first < pointA.first && pointB.second < pointA.second))
     {
