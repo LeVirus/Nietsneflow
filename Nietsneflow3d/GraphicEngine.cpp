@@ -43,9 +43,9 @@ void GraphicEngine::runIteration()
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     m_colorSystem->execSystem();
-    m_mapSystem->execSystem();
     m_visionSystem->execSystem();
     m_firstPersonSystem->execSystem();
+    m_mapSystem->execSystem();
     // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
     // -------------------------------------------------------------------------------
     glfwSwapBuffers(m_window);

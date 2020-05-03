@@ -44,15 +44,10 @@ void FirstPersonDisplaySystem::confCompVertexMemEntities()
                 searchComponentByType<MoveableComponent>(mVectNumEntity[i], Components_e::MOVEABLE_COMPONENT);
         MapCoordComponent *mapCompA = stairwayToComponentManager().
                 searchComponentByType<MapCoordComponent>(mVectNumEntity[i], Components_e::MAP_COORD_COMPONENT);
-//        GeneralCollisionComponent *genCollCompA = stairwayToComponentManager().
-//                searchComponentByType<GeneralCollisionComponent>(mVectNumEntity[i],
-//                                                                 Components_e::GENERAL_COLLISION_COMPONENT);
-//        assert(genCollCompA);
         assert(visionComp);
         assert(mapCompA);
         assert(moveComp);
         float leftAngleVision = moveComp->m_degreeOrientation + (visionComp->m_coneVision / 2);
-//        pairFloat_t centerPosA = getCenterPosition(mapCompA, genCollCompA, mVectNumEntity[i]);
         if(leftAngleVision > 360.0f)
         {
             leftAngleVision -= 360.0f;
@@ -77,7 +72,6 @@ void FirstPersonDisplaySystem::confCompVertexMemEntities()
             {
                 //Quiq fix
                 lateralPos = (leftAngleVision + 360.0f) - getTrigoAngle(mapCompA->m_absoluteMapPositionPX, centerPosB);
-//                lateralPos += 360.0f;
             }
             std::cerr << "lateralPos  :: leftAngleVisionPLAYER - getTrigoAngle .. " << lateralPos<< "\n";
             float distance = getDistance(mapCompA->m_absoluteMapPositionPX, centerPosB);
@@ -153,7 +147,7 @@ void FirstPersonDisplaySystem::confVertex(uint32_t numEntity, GeneralCollisionCo
 void FirstPersonDisplaySystem::drawVertex()
 {
     m_shader->use();
-    for(uint32_t h = 0; h < m_vectVerticesData.size(); ++h)
+    for(uint32_t h = 0; h < m_numVertexToDraw; ++h)
     {
         m_ptrVectTexture->operator[](h).bind();
         m_vectVerticesData[h].confVertexBuffer();

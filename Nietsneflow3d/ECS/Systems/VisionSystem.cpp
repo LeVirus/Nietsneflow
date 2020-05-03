@@ -124,7 +124,7 @@ void updateTriangleVisionFromPosition(VisionComponent *visionComp, const MapCoor
     {
         radiantAngle = getRadiantAngle(angleDegree);
         visionComp->m_triangleVision[i].first += cos(radiantAngle) * visionComp->m_distanceVisibility;
-        visionComp->m_triangleVision[i].second += sin(radiantAngle) * visionComp->m_distanceVisibility;
+        visionComp->m_triangleVision[i].second -= sin(radiantAngle) * visionComp->m_distanceVisibility;
         if(i == 2)
         {
             break;
