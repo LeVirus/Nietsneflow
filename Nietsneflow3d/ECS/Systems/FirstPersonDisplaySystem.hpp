@@ -21,7 +21,7 @@ private:
     void setUsedComponents();
     void confCompVertexMemEntities();
     void confVertex(uint32_t numEntity, GeneralCollisionComponent *genCollComp,
-                    VisionComponent *visionComp, float angle, float distance);
+                    VisionComponent *visionComp, float lateralPosDegree, float distance);
     void drawVertex();
     pairFloat_t getCenterPosition(MapCoordComponent const *mapComp, GeneralCollisionComponent *genCollComp, float numEntity);
     void fillVertexFromEntitie(uint32_t numEntity, uint32_t numIteration);

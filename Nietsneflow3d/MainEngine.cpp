@@ -261,7 +261,6 @@ void MainEngine::confPlayerEntity(uint32_t entityNum, const Level &level)
             searchComponentByType<VisionComponent>(entityNum,
                                                      Components_e::VISION_COMPONENT);
     assert(pos);
-    assert(pos);
     assert(map);
     assert(move);
     assert(color);
@@ -291,9 +290,9 @@ void MainEngine::confPlayerEntity(uint32_t entityNum, const Level &level)
     updatePlayerOrientation(*move, *pos, *vision);
 
     color->m_vertex.reserve(3);
-    color->m_vertex.emplace_back(0.9f,0.00f, 0.00f);
-    color->m_vertex.emplace_back(0.9f,0.00f, 0.00f);
-    color->m_vertex.emplace_back(0.9f,0.00f, 0.00f);
+    color->m_vertex.emplace_back(0.9f, 0.00f, 0.00f);
+    color->m_vertex.emplace_back(0.9f, 0.00f, 0.00f);
+    color->m_vertex.emplace_back(0.9f, 0.00f, 0.00f);
     circleColl->m_ray = 25.0f;
     tagColl->m_tag = CollisionTag_e::PLAYER_CT;
     tagColl->m_shape = CollisionShape_e::CIRCLE_C;

@@ -44,13 +44,23 @@ void FirstPersonDisplaySystem::confCompVertexMemEntities()
                 searchComponentByType<MoveableComponent>(mVectNumEntity[i], Components_e::MOVEABLE_COMPONENT);
         MapCoordComponent *mapCompA = stairwayToComponentManager().
                 searchComponentByType<MapCoordComponent>(mVectNumEntity[i], Components_e::MAP_COORD_COMPONENT);
+//        GeneralCollisionComponent *genCollCompA = stairwayToComponentManager().
+//                searchComponentByType<GeneralCollisionComponent>(mVectNumEntity[i],
+//                                                                 Components_e::GENERAL_COLLISION_COMPONENT);
+//        assert(genCollCompA);
         assert(visionComp);
         assert(mapCompA);
         assert(moveComp);
         float leftAngleVision = moveComp->m_degreeOrientation + (visionComp->m_coneVision / 2);
+//        pairFloat_t centerPosA = getCenterPosition(mapCompA, genCollCompA, mVectNumEntity[i]);
+        if(leftAngleVision > 360.0f)
+        {
+            leftAngleVision -= 360.0f;
+        }
         for(uint32_t j = 0; j < visionComp->m_vectVisibleEntities.size(); ++j)
         {
-                std::cerr << "leftAngleVision :: " << leftAngleVision << "\n";
+            std::cerr << "PLAYER ORIENTATION :: " << moveComp->m_degreeOrientation << "\n";
+            std::cerr << "leftAngleVisionPLAYER :: " << leftAngleVision << "\n";
 
             GeneralCollisionComponent *genCollComp = stairwayToComponentManager().
                     searchComponentByType<GeneralCollisionComponent>(visionComp->m_vectVisibleEntities[j], Components_e::GENERAL_COLLISION_COMPONENT);
@@ -59,10 +69,19 @@ void FirstPersonDisplaySystem::confCompVertexMemEntities()
             assert(mapCompB);
             assert(genCollComp);
 
-            pairFloat_t centerPos = getCenterPosition(mapCompB, genCollComp, visionComp->m_vectVisibleEntities[j]);
-            float angle = leftAngleVision - getTrigoAngle(mapCompA->m_absoluteMapPositionPX, centerPos);
-            float distance = getDistance(mapCompA->m_absoluteMapPositionPX, centerPos);
-            confVertex(visionComp->m_vectVisibleEntities[j], genCollComp, visionComp, angle, distance);
+            pairFloat_t centerPosB = getCenterPosition(mapCompB, genCollComp, visionComp->m_vectVisibleEntities[j]);
+            std::cerr << "=========================ANGLE PLAYER ELEMENT :: " << getTrigoAngle(mapCompA->m_absoluteMapPositionPX, centerPosB) << "FF\n";
+
+            float lateralPos = leftAngleVision - getTrigoAngle(mapCompA->m_absoluteMapPositionPX, centerPosB);
+            if(lateralPos < 0.0f /*&& moveComp->m_degreeOrientation > 270.0f*/)
+            {
+                //Quiq fix
+                lateralPos = (leftAngleVision + 360.0f) - getTrigoAngle(mapCompA->m_absoluteMapPositionPX, centerPosB);
+//                lateralPos += 360.0f;
+            }
+            std::cerr << "lateralPos  :: leftAngleVisionPLAYER - getTrigoAngle .. " << lateralPos<< "\n";
+            float distance = getDistance(mapCompA->m_absoluteMapPositionPX, centerPosB);
+            confVertex(visionComp->m_vectVisibleEntities[j], genCollComp, visionComp, lateralPos, distance);
             fillVertexFromEntitie(visionComp->m_vectVisibleEntities[j], j);
         }
     }
@@ -104,7 +123,7 @@ void FirstPersonDisplaySystem::setVectTextures(std::vector<Texture> &vectTexture
 
 //===================================================================
 void FirstPersonDisplaySystem::confVertex(uint32_t numEntity, GeneralCollisionComponent *genCollComp,
-                                          VisionComponent *visionComp, float angle, float distance)
+                                          VisionComponent *visionComp, float lateralPosDegree, float distance)
 {
     PositionVertexComponent *positionComp = stairwayToComponentManager().
             searchComponentByType<PositionVertexComponent>(numEntity, Components_e::POSITION_VERTEX_COMPONENT);
@@ -116,18 +135,17 @@ void FirstPersonDisplaySystem::confVertex(uint32_t numEntity, GeneralCollisionCo
     assert(genCollComp);
     //convert to GL context
     //ISSUE WITH ANGLE ROTATION
-    std::cerr << "angle :: " << angle << "\n";
-    float lateralPos = (angle / visionComp->m_coneVision * 2.0f) - 1.0f;
+    float lateralPosGL = (lateralPosDegree / visionComp->m_coneVision * 2.0f) - 1.0f;
     float depthPos = std::abs((distance / visionComp->m_distanceVisibility) - 1.0f);
     float halfLateralSize = depthPos / spriteComp->m_glFpsSize.first / 2;
     float halfVerticalSize = depthPos / spriteComp->m_glFpsSize.second / 2;
-    positionComp->m_vertex[0].first = lateralPos - halfLateralSize;
+    positionComp->m_vertex[0].first = lateralPosGL - halfLateralSize;
     positionComp->m_vertex[0].second = halfVerticalSize;
-    positionComp->m_vertex[1].first = lateralPos + halfLateralSize;
+    positionComp->m_vertex[1].first = lateralPosGL + halfLateralSize;
     positionComp->m_vertex[1].second = halfVerticalSize;
-    positionComp->m_vertex[2].first = lateralPos + halfLateralSize;
+    positionComp->m_vertex[2].first = lateralPosGL + halfLateralSize;
     positionComp->m_vertex[2].second = -halfVerticalSize;
-    positionComp->m_vertex[3].first = lateralPos - halfLateralSize;
+    positionComp->m_vertex[3].first = lateralPosGL - halfLateralSize;
     positionComp->m_vertex[3].second = -halfVerticalSize;
 }
 
