@@ -52,10 +52,13 @@ void FirstPersonDisplaySystem::confCompVertexMemEntities()
         {
             leftAngleVision -= 360.0f;
         }
-        for(uint32_t j = 0; j < visionComp->m_vectVisibleEntities.size(); ++j)
+
+        m_numVertexToDraw = visionComp->m_vectVisibleEntities.size();
+        m_textureNumMem.resize(m_numVertexToDraw);
+        for(uint32_t j = 0; j < m_numVertexToDraw; ++j)
         {
-            std::cerr << "PLAYER ORIENTATION :: " << moveComp->m_degreeOrientation << "\n";
-            std::cerr << "leftAngleVisionPLAYER :: " << leftAngleVision << "\n";
+//            std::cerr << "PLAYER ORIENTATION :: " << moveComp->m_degreeOrientation << "\n";
+//            std::cerr << "leftAngleVisionPLAYER :: " << leftAngleVision << "\n";
 
             GeneralCollisionComponent *genCollComp = stairwayToComponentManager().
                     searchComponentByType<GeneralCollisionComponent>(visionComp->m_vectVisibleEntities[j], Components_e::GENERAL_COLLISION_COMPONENT);
@@ -65,15 +68,16 @@ void FirstPersonDisplaySystem::confCompVertexMemEntities()
             assert(genCollComp);
 
             pairFloat_t centerPosB = getCenterPosition(mapCompB, genCollComp, visionComp->m_vectVisibleEntities[j]);
-            std::cerr << "=========================ANGLE PLAYER ELEMENT :: " << getTrigoAngle(mapCompA->m_absoluteMapPositionPX, centerPosB) << "FF\n";
+//            std::cerr << "=========================ANGLE PLAYER ELEMENT :: " << getTrigoAngle(mapCompA->m_absoluteMapPositionPX, centerPosB) << "FF\n";
 
             float lateralPos = leftAngleVision - getTrigoAngle(mapCompA->m_absoluteMapPositionPX, centerPosB);
-            if(lateralPos < 0.0f /*&& moveComp->m_degreeOrientation > 270.0f*/)
+            //tmp -30.0f
+            if(lateralPos < -30.0f /*&& moveComp->m_degreeOrientation > 270.0f*/)
             {
                 //Quiq fix
                 lateralPos = (leftAngleVision + 360.0f) - getTrigoAngle(mapCompA->m_absoluteMapPositionPX, centerPosB);
             }
-            std::cerr << "lateralPos  :: leftAngleVisionPLAYER - getTrigoAngle .. " << lateralPos<< "\n";
+//            std::cerr << "lateralPos  :: leftAngleVisionPLAYER - getTrigoAngle .. " << lateralPos << "\n";
             float distance = getDistance(mapCompA->m_absoluteMapPositionPX, centerPosB);
             confVertex(visionComp->m_vectVisibleEntities[j], genCollComp, visionComp, lateralPos, distance);
             fillVertexFromEntitie(visionComp->m_vectVisibleEntities[j], j);
@@ -104,8 +108,8 @@ void FirstPersonDisplaySystem::fillVertexFromEntitie(uint32_t numEntity, uint32_
     assert(spriteComp);
     //WARNING ONLY ONE TEXTURE USED HERE
     //WARNING NO DISTANCE TREATMENT
+    m_textureNumMem[numIteration] = static_cast<Texture_t>(spriteComp->m_spriteData->m_textureNum);
     m_vectVerticesData[numIteration].loadVertexTextureComponent(*posComp, *spriteComp);
-    ++m_numVertexToDraw;
 }
 
 //===================================================================
@@ -149,7 +153,7 @@ void FirstPersonDisplaySystem::drawVertex()
     m_shader->use();
     for(uint32_t h = 0; h < m_numVertexToDraw; ++h)
     {
-        m_ptrVectTexture->operator[](h).bind();
+        m_ptrVectTexture->operator[](/*h*/m_textureNumMem[h]).bind();
         m_vectVerticesData[h].confVertexBuffer();
         m_vectVerticesData[h].drawElement();
     }

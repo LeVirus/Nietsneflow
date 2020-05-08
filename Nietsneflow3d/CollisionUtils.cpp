@@ -240,21 +240,21 @@ float getTrigoAngle(const pairFloat_t &pointA, const pairFloat_t &pointB)
 {
     float X = std::abs(pointB.first - pointA.first);
     float Y = std::abs(pointB.second - pointA.second);
+    float result;
     //HAUT DROITE
     if(pointA.first >= pointB.first && pointA.second <= pointB.second)
     {
-       return getDegreeAngle(std::atan(Y / X)) + 180.0f;//OK
+       return getDegreeAngle(std::atan(Y / X)) + 180.0f;
     }
     //HAUT GAUCHE
     else if(pointA.first <= pointB.first && pointA.second <= pointB.second)
     {
-//        std::cerr << "==========TRIGO    " << getDegreeAngle(std::atan(X / Y)) << "\n";
         return getDegreeAngle(std::atan(X / Y)) + 270.0f;
     }
     //BAS GAUCHE
     else if(pointA.first <= pointB.first && pointA.second >= pointB.second)
     {
-        return getDegreeAngle(std::atan(Y / X));//OK
+        return getDegreeAngle(std::atan(Y / X));
     }
     //BAS DROITE
     return getDegreeAngle(std::atan(X / Y)) + 90.0f;

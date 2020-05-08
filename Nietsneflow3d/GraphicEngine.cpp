@@ -36,8 +36,6 @@ void GraphicEngine::loadPictureData(const PictureData &pictureData)
 //===================================================================
 void GraphicEngine::runIteration()
 {
-    assert(m_colorSystem && "colorSystem is null");
-
     // render
     // ------
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);

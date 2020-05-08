@@ -27,6 +27,7 @@ private:
     void fillVertexFromEntitie(uint32_t numEntity, uint32_t numIteration);
 private:
     Shader *m_shader;
+    std::vector<Texture_t> m_textureNumMem;
     std::vector<VerticesData> m_vectVerticesData;
     std::vector<Texture> *m_ptrVectTexture = nullptr;
     uint32_t m_numVertexToDraw;
