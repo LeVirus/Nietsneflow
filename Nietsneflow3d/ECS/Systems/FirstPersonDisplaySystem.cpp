@@ -34,9 +34,11 @@ void FirstPersonDisplaySystem::execSystem()
 //===================================================================
 void FirstPersonDisplaySystem::confCompVertexMemEntities()
 {
-    m_numVertexToDraw = 0;
+    uint32_t numEntity = mVectNumEntity.size();
+    m_numVertexToDraw.resize(numEntity);
     //treat one player
-    for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
+    uint32_t toRemove = 0;
+    for(uint32_t i = 0; i < numEntity; ++i)
     {
         VisionComponent *visionComp = stairwayToComponentManager().
                 searchComponentByType<VisionComponent>(mVectNumEntity[i], Components_e::VISION_COMPONENT);
@@ -52,14 +54,11 @@ void FirstPersonDisplaySystem::confCompVertexMemEntities()
         {
             leftAngleVision -= 360.0f;
         }
-
-        m_numVertexToDraw = visionComp->m_vectVisibleEntities.size();
-        m_textureNumMem.resize(m_numVertexToDraw);
-        for(uint32_t j = 0; j < m_numVertexToDraw; ++j)
+        toRemove = 0;
+        m_numVertexToDraw[i] = visionComp->m_vectVisibleEntities.size();
+        m_textureNumMem.resize(m_numVertexToDraw[i]);
+        for(uint32_t j = 0; j < m_numVertexToDraw[i]; ++j)
         {
-//            std::cerr << "PLAYER ORIENTATION :: " << moveComp->m_degreeOrientation << "\n";
-//            std::cerr << "leftAngleVisionPLAYER :: " << leftAngleVision << "\n";
-
             GeneralCollisionComponent *genCollComp = stairwayToComponentManager().
                     searchComponentByType<GeneralCollisionComponent>(visionComp->m_vectVisibleEntities[j], Components_e::GENERAL_COLLISION_COMPONENT);
             MapCoordComponent *mapCompB = stairwayToComponentManager().
@@ -68,20 +67,24 @@ void FirstPersonDisplaySystem::confCompVertexMemEntities()
             assert(genCollComp);
 
             pairFloat_t centerPosB = getCenterPosition(mapCompB, genCollComp, visionComp->m_vectVisibleEntities[j]);
-//            std::cerr << "=========================ANGLE PLAYER ELEMENT :: " << getTrigoAngle(mapCompA->m_absoluteMapPositionPX, centerPosB) << "FF\n";
+            float distance = getDistance(mapCompA->m_absoluteMapPositionPX, centerPosB);
+            if(distance > visionComp->m_distanceVisibility)
+            {
+                ++toRemove;
+                continue;
+            }
 
             float lateralPos = leftAngleVision - getTrigoAngle(mapCompA->m_absoluteMapPositionPX, centerPosB);
             //tmp -30.0f
-            if(lateralPos < -30.0f /*&& moveComp->m_degreeOrientation > 270.0f*/)
+            if(lateralPos < -30.0f)
             {
                 //Quiq fix
                 lateralPos = (leftAngleVision + 360.0f) - getTrigoAngle(mapCompA->m_absoluteMapPositionPX, centerPosB);
             }
-//            std::cerr << "lateralPos  :: leftAngleVisionPLAYER - getTrigoAngle .. " << lateralPos << "\n";
-            float distance = getDistance(mapCompA->m_absoluteMapPositionPX, centerPosB);
             confVertex(visionComp->m_vectVisibleEntities[j], genCollComp, visionComp, lateralPos, distance);
             fillVertexFromEntitie(visionComp->m_vectVisibleEntities[j], j);
         }
+        m_numVertexToDraw[i] -= toRemove;
     }
 }
 
@@ -132,7 +135,6 @@ void FirstPersonDisplaySystem::confVertex(uint32_t numEntity, GeneralCollisionCo
     assert(visionComp);
     assert(genCollComp);
     //convert to GL context
-    //ISSUE WITH ANGLE ROTATION
     float lateralPosGL = (lateralPosDegree / visionComp->m_coneVision * 2.0f) - 1.0f;
     float depthPos = std::abs((distance / visionComp->m_distanceVisibility) - 1.0f);
     float halfLateralSize = depthPos / spriteComp->m_glFpsSize.first / 2;
@@ -151,11 +153,15 @@ void FirstPersonDisplaySystem::confVertex(uint32_t numEntity, GeneralCollisionCo
 void FirstPersonDisplaySystem::drawVertex()
 {
     m_shader->use();
-    for(uint32_t h = 0; h < m_numVertexToDraw; ++h)
+
+    for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
     {
-        m_ptrVectTexture->operator[](/*h*/m_textureNumMem[h]).bind();
-        m_vectVerticesData[h].confVertexBuffer();
-        m_vectVerticesData[h].drawElement();
+        for(uint32_t h = 0; h < m_numVertexToDraw[i]; ++h)
+        {
+            m_ptrVectTexture->operator[](m_textureNumMem[h]).bind();
+            m_vectVerticesData[h].confVertexBuffer();
+            m_vectVerticesData[h].drawElement();
+        }
     }
 }
 
@@ -174,13 +180,6 @@ pairFloat_t FirstPersonDisplaySystem::getCenterPosition(const MapCoordComponent 
     switch (genCollComp->m_shape)
     {
     case CollisionShape_e::CIRCLE_C:
-    {
-        CircleCollisionComponent *circleCollComp = stairwayToComponentManager().
-                searchComponentByType<CircleCollisionComponent>(numEntity, Components_e::CIRCLE_COLLISION_COMPONENT);
-        assert(circleCollComp);
-        return {mapComp->m_absoluteMapPositionPX.first + circleCollComp->m_ray,
-                    mapComp->m_absoluteMapPositionPX.second + circleCollComp->m_ray};
-    }
     case CollisionShape_e::SEGMENT_C://TMP
         break;
     case CollisionShape_e::RECTANGLE_C:

@@ -167,9 +167,9 @@ bool checkPointPosition(const pairFloat_t &firstPoint,
 
 //===================================================================
 bool checkCircleSegmentCollision(const pairFloat_t &circleCenter,
-        const float circleRay,
-        const pairFloat_t &lineFirstPoint,
-        const pairFloat_t &lineSecondPoint)
+                                 const float circleRay,
+                                 const pairFloat_t &lineFirstPoint,
+                                 const pairFloat_t &lineSecondPoint)
 {
     float minX = std::min(lineFirstPoint.first, lineSecondPoint.first);
     float maxX = std::max(lineFirstPoint.first, lineSecondPoint.first);
@@ -181,13 +181,14 @@ bool checkCircleSegmentCollision(const pairFloat_t &circleCenter,
     }
     float distanceX = maxX - minX;
     float distanceY = maxY - minY;
-    float A = distanceX * distanceX + distanceY * distanceY;
-    float B = 2 * (distanceX * (lineFirstPoint.first - circleCenter.first) + distanceY * (lineFirstPoint.second - circleCenter.second));
-    float C = (lineFirstPoint.first - circleCenter.first) * (lineFirstPoint.first - circleCenter.first)
-        + (lineFirstPoint.second - circleCenter.second) * (lineFirstPoint.second - circleCenter.second) - circleRay * circleRay;
+    float lenght = std::sqrt(distanceX * distanceX + distanceY * distanceY);
+    float dot = (((circleCenter.first - lineFirstPoint.first) * (lineSecondPoint.first - lineFirstPoint.first)) +
+                 ((circleCenter.second - lineFirstPoint.second)*(lineSecondPoint.second - lineFirstPoint.second))) /
+            (lenght * lenght);
 
-    float det = B * B - 4 * A * C;
-    return det >= std::numeric_limits<float>::epsilon();
+    float closestX = lineFirstPoint.first + (dot * (lineSecondPoint.first - lineFirstPoint.first));
+    float closestY = lineFirstPoint.second + (dot * (lineSecondPoint.second - lineFirstPoint.second));
+    return !(closestX < minX || closestX > maxX || closestY < minY || closestY > maxY);
 }
 
 //===================================================================

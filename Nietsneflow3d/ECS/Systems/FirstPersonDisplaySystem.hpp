@@ -9,7 +9,7 @@
 #include <ECS/Systems/MapDisplaySystem.hpp>
 
 struct GeneralCollisionComponent;
-
+using vectUI_t = std::vector<uint32_t>;
 class FirstPersonDisplaySystem : public ecs::System
 {
 public:
@@ -30,5 +30,6 @@ private:
     std::vector<Texture_t> m_textureNumMem;
     std::vector<VerticesData> m_vectVerticesData;
     std::vector<Texture> *m_ptrVectTexture = nullptr;
-    uint32_t m_numVertexToDraw;
+    //number of entity to draw per player
+    vectUI_t m_numVertexToDraw;
 };
