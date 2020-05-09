@@ -1,7 +1,8 @@
 #pragma once
 
-#include <BaseECS/system.hpp>
 #include <vector>
+#include <set>
+#include <BaseECS/system.hpp>
 #include <OpenGLUtils/Shader.hpp>
 #include <OpenGLUtils/glheaders.hpp>
 #include <OpenGLUtils/VerticesData.hpp>
@@ -9,7 +10,24 @@
 #include <ECS/Systems/MapDisplaySystem.hpp>
 
 struct GeneralCollisionComponent;
+
 using vectUI_t = std::vector<uint32_t>;
+
+struct EntityData
+{
+    float m_distance;
+    Texture_t m_textureNum;
+    uint32_t m_entityNum;
+    EntityData(float distance, Texture_t textureNum, uint32_t entityNum) : m_distance(distance),
+        m_textureNum(textureNum), m_entityNum(entityNum)
+    {}
+
+    bool operator<(const EntityData& rhs)const
+    {
+        return m_distance > rhs.m_distance;
+    }
+};
+
 class FirstPersonDisplaySystem : public ecs::System
 {
 public:
@@ -24,10 +42,10 @@ private:
                     VisionComponent *visionComp, float lateralPosDegree, float distance);
     void drawVertex();
     pairFloat_t getCenterPosition(MapCoordComponent const *mapComp, GeneralCollisionComponent *genCollComp, float numEntity);
-    void fillVertexFromEntitie(uint32_t numEntity, uint32_t numIteration);
+    void fillVertexFromEntitie(uint32_t numEntity, uint32_t numIteration, float distance);
 private:
     Shader *m_shader;
-    std::vector<Texture_t> m_textureNumMem;
+    std::set<EntityData> m_entitiesNumMem;
     std::vector<VerticesData> m_vectVerticesData;
     std::vector<Texture> *m_ptrVectTexture = nullptr;
     //number of entity to draw per player

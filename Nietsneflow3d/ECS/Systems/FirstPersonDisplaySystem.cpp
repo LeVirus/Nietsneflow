@@ -56,7 +56,7 @@ void FirstPersonDisplaySystem::confCompVertexMemEntities()
         }
         toRemove = 0;
         m_numVertexToDraw[i] = visionComp->m_vectVisibleEntities.size();
-        m_textureNumMem.resize(m_numVertexToDraw[i]);
+        m_entitiesNumMem.clear();
         for(uint32_t j = 0; j < m_numVertexToDraw[i]; ++j)
         {
             GeneralCollisionComponent *genCollComp = stairwayToComponentManager().
@@ -82,14 +82,14 @@ void FirstPersonDisplaySystem::confCompVertexMemEntities()
                 lateralPos = (leftAngleVision + 360.0f) - getTrigoAngle(mapCompA->m_absoluteMapPositionPX, centerPosB);
             }
             confVertex(visionComp->m_vectVisibleEntities[j], genCollComp, visionComp, lateralPos, distance);
-            fillVertexFromEntitie(visionComp->m_vectVisibleEntities[j], j);
+            fillVertexFromEntitie(visionComp->m_vectVisibleEntities[j], j, distance);
         }
         m_numVertexToDraw[i] -= toRemove;
     }
 }
 
 //===================================================================
-void FirstPersonDisplaySystem::fillVertexFromEntitie(uint32_t numEntity, uint32_t numIteration)
+void FirstPersonDisplaySystem::fillVertexFromEntitie(uint32_t numEntity, uint32_t numIteration, float distance)
 {
     //use 1 vertex for 1 sprite for beginning
     if(numIteration < m_vectVerticesData.size())
@@ -109,9 +109,8 @@ void FirstPersonDisplaySystem::fillVertexFromEntitie(uint32_t numEntity, uint32_
                                                           Components_e::SPRITE_TEXTURE_COMPONENT);
     assert(posComp);
     assert(spriteComp);
-    //WARNING ONLY ONE TEXTURE USED HERE
-    //WARNING NO DISTANCE TREATMENT
-    m_textureNumMem[numIteration] = static_cast<Texture_t>(spriteComp->m_spriteData->m_textureNum);
+    m_entitiesNumMem.insert(EntityData(distance, static_cast<Texture_t>(spriteComp->m_spriteData->m_textureNum), numIteration));
+
     m_vectVerticesData[numIteration].loadVertexTextureComponent(*posComp, *spriteComp);
 }
 
@@ -157,11 +156,15 @@ void FirstPersonDisplaySystem::drawVertex()
     //DONT WORK for multiple player
     for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
     {
-        for(uint32_t h = 0; h < m_numVertexToDraw[i]; ++h)
+        std::set<EntityData>::const_iterator it = m_entitiesNumMem.begin();
+        uint32_t numEntity;
+        for(;it != m_entitiesNumMem.end(); ++it)
         {
-            m_ptrVectTexture->operator[](m_textureNumMem[h]).bind();
-            m_vectVerticesData[h].confVertexBuffer();
-            m_vectVerticesData[h].drawElement();
+            numEntity = it->m_entityNum;
+            assert(numEntity < m_vectVerticesData.size());
+            m_ptrVectTexture->operator[](it->m_textureNum).bind();
+            m_vectVerticesData[numEntity].confVertexBuffer();
+            m_vectVerticesData[numEntity].drawElement();
         }
     }
 }
