@@ -154,6 +154,7 @@ void FirstPersonDisplaySystem::drawVertex()
 {
     m_shader->use();
 
+    //DONT WORK for multiple player
     for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
     {
         for(uint32_t h = 0; h < m_numVertexToDraw[i]; ++h)
