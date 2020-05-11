@@ -79,16 +79,53 @@ void VerticesData::loadVertexTextureComponent(const PositionVertexComponent &pos
         return;
     }
     size_t sizeVertex = posComp.m_vertex.size();
-    for(uint32_t j = 0; j < sizeVertex; ++j)
+    for(uint32_t j = 0; j < 4; ++j)
     {
         m_vertexBuffer.emplace_back(posComp.m_vertex[j].first);
         m_vertexBuffer.emplace_back(posComp.m_vertex[j].second);
         m_vertexBuffer.emplace_back(spriteComp.m_spriteData->m_texturePosVertex[j].first);
         m_vertexBuffer.emplace_back(spriteComp.m_spriteData->m_texturePosVertex[j].second);
     }
-    BaseShapeTypeGL_e shapeType = (sizeVertex == 3 ? BaseShapeTypeGL_e::TRIANGLE :
-                                             BaseShapeTypeGL_e::RECTANGLE);
-    addIndices(shapeType);
+    if(sizeVertex > 4)
+    {
+        uint32_t k;
+        for(uint32_t j = 0; j < 4; ++j)
+        {
+            if(j == 0)
+            {
+                k = 1;
+            }
+            else if(j == 1)
+            {
+                k = 5;
+            }
+            else if(j == 2)
+            {
+                k = 4;
+            }
+            else
+            {
+                k = 2;
+            }
+
+            m_vertexBuffer.emplace_back(posComp.m_vertex[k].first);
+            m_vertexBuffer.emplace_back(posComp.m_vertex[k].second);
+            m_vertexBuffer.emplace_back(spriteComp.m_spriteData->m_texturePosVertex[j].first);
+            m_vertexBuffer.emplace_back(spriteComp.m_spriteData->m_texturePosVertex[j].second);
+        }
+    }
+    if(sizeVertex == 3)
+    {
+        addIndices(BaseShapeTypeGL_e::TRIANGLE);
+    }
+    if(sizeVertex == 4)
+    {
+        addIndices(BaseShapeTypeGL_e::RECTANGLE);
+    }
+    else
+    {
+        addIndices(BaseShapeTypeGL_e::DOUBLE_RECT);
+    }
 }
 
 //===================================================================
@@ -101,15 +138,24 @@ void VerticesData::addIndices(BaseShapeTypeGL_e shapeType)
     }
     uint32_t curent = m_cursor;
     //first triangle
-    m_indices.emplace_back(curent);
-    m_indices.emplace_back(++curent);
-    m_indices.emplace_back(++curent);
+    m_indices.emplace_back(curent);//0
+    m_indices.emplace_back(++curent);//1
+    m_indices.emplace_back(++curent);//2
     //if Triangle stop here
-    if(shapeType == BaseShapeTypeGL_e::RECTANGLE)
+    if(shapeType != BaseShapeTypeGL_e::TRIANGLE)
     {
-        m_indices.emplace_back(curent);
-        m_indices.emplace_back(++curent);
-        m_indices.emplace_back(curent - 3);
+        m_indices.emplace_back(curent);//2
+        m_indices.emplace_back(++curent);//3
+        m_indices.emplace_back(curent - 3);//0
+    }
+    if(shapeType == BaseShapeTypeGL_e::DOUBLE_RECT)
+    {
+        m_indices.emplace_back(curent - 2);//1
+        m_indices.emplace_back(++curent);//4
+        m_indices.emplace_back(++curent);//5
+        m_indices.emplace_back(curent);//5
+        m_indices.emplace_back(curent - 3);//2
+        m_indices.emplace_back(curent - 4);//1
     }
     m_cursor = ++curent;
 }

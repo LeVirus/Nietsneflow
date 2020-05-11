@@ -91,6 +91,7 @@ enum BaseShapeTypeGL_e
 {
     TRIANGLE,
     RECTANGLE,
+    DOUBLE_RECT,
     NONE
 };
 

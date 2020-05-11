@@ -38,8 +38,14 @@ public:
 private:
     void setUsedComponents();
     void confCompVertexMemEntities();
-    void confVertex(uint32_t numEntity, GeneralCollisionComponent *genCollComp,
-                    VisionComponent *visionComp, float lateralPosDegree, float distance);
+    void treatDisplayEntity(GeneralCollisionComponent *genCollComp, MapCoordComponent *mapCompA, MapCoordComponent *mapCompB,
+                            VisionComponent *visionComp, uint32_t &toRemove,
+                            float leftAngleVision, uint32_t numIteration);
+    void fillWallEntitiesData(uint32_t numEntity, pairFloat_t absolPos[], float distance[], MapCoordComponent *mapCompA,
+                              MapCoordComponent *mapCompB);
+    void confNormalEntityVertex(uint32_t numEntity,
+                                VisionComponent *visionComp, float lateralPosDegree, float distance);
+    void confWallEntityVertex(uint32_t numEntity, VisionComponent *visionComp, float lateralPosDegree[], float distance[]);
     void drawVertex();
     pairFloat_t getCenterPosition(MapCoordComponent const *mapComp, GeneralCollisionComponent *genCollComp, float numEntity);
     void fillVertexFromEntitie(uint32_t numEntity, uint32_t numIteration, float distance);
@@ -51,3 +57,5 @@ private:
     //number of entity to draw per player
     vectUI_t m_numVertexToDraw;
 };
+
+uint32_t getMinOrMaxValueFromEntries(const float distance[4], bool min);

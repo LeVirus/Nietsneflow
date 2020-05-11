@@ -60,31 +60,147 @@ void FirstPersonDisplaySystem::confCompVertexMemEntities()
         for(uint32_t j = 0; j < m_numVertexToDraw[i]; ++j)
         {
             GeneralCollisionComponent *genCollComp = stairwayToComponentManager().
-                    searchComponentByType<GeneralCollisionComponent>(visionComp->m_vectVisibleEntities[j], Components_e::GENERAL_COLLISION_COMPONENT);
+                    searchComponentByType<GeneralCollisionComponent>(visionComp->m_vectVisibleEntities[j],
+                                                                     Components_e::GENERAL_COLLISION_COMPONENT);
             MapCoordComponent *mapCompB = stairwayToComponentManager().
-                    searchComponentByType<MapCoordComponent>(visionComp->m_vectVisibleEntities[j], Components_e::MAP_COORD_COMPONENT);
+                    searchComponentByType<MapCoordComponent>(visionComp->m_vectVisibleEntities[j],
+                                                             Components_e::MAP_COORD_COMPONENT);
             assert(mapCompB);
             assert(genCollComp);
-
-            pairFloat_t centerPosB = getCenterPosition(mapCompB, genCollComp, visionComp->m_vectVisibleEntities[j]);
-            float distance = getDistance(mapCompA->m_absoluteMapPositionPX, centerPosB);
-            if(distance > visionComp->m_distanceVisibility)
-            {
-                ++toRemove;
-                continue;
-            }
-
-            float lateralPos = leftAngleVision - getTrigoAngle(mapCompA->m_absoluteMapPositionPX, centerPosB);
-            //tmp -30.0f
-            if(lateralPos < -30.0f)
-            {
-                //Quiq fix
-                lateralPos = (leftAngleVision + 360.0f) - getTrigoAngle(mapCompA->m_absoluteMapPositionPX, centerPosB);
-            }
-            confVertex(visionComp->m_vectVisibleEntities[j], genCollComp, visionComp, lateralPos, distance);
-            fillVertexFromEntitie(visionComp->m_vectVisibleEntities[j], j, distance);
+            treatDisplayEntity(genCollComp, mapCompA, mapCompB, visionComp, toRemove, leftAngleVision, j);
         }
         m_numVertexToDraw[i] -= toRemove;
+    }
+}
+
+//===================================================================
+void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *genCollComp, MapCoordComponent *mapCompA,
+                                                  MapCoordComponent *mapCompB, VisionComponent *visionComp,
+                                                  uint32_t &toRemove, float leftAngleVision, uint32_t numIteration)
+{
+    if(genCollComp->m_tag == CollisionTag_e::WALL_CT)
+    {
+
+        float distance[4];
+        pairFloat_t absolPos[4];
+        float lateralPos[3];
+        fillWallEntitiesData(visionComp->m_vectVisibleEntities[numIteration], absolPos, distance,
+                             mapCompA, mapCompB);
+        for(uint32_t i = 0; i < 3; ++i)
+        {
+            lateralPos[i] = leftAngleVision - getTrigoAngle(mapCompA->m_absoluteMapPositionPX, absolPos[i]);
+            //tmp -30.0f
+            if(lateralPos[i] < -30.0f)
+            {
+                //Quick fix
+                lateralPos[i] = (leftAngleVision + 360.0f) - getTrigoAngle(mapCompA->m_absoluteMapPositionPX, absolPos[i]);
+            }
+        }
+        //VOIR SHADER!!!
+        confWallEntityVertex(visionComp->m_vectVisibleEntities[numIteration], visionComp, lateralPos, distance);
+        fillVertexFromEntitie(visionComp->m_vectVisibleEntities[numIteration], numIteration, distance[2]);
+    }
+    else
+    {
+        pairFloat_t centerPosB = getCenterPosition(mapCompB, genCollComp, visionComp->m_vectVisibleEntities[numIteration]);
+        float distance = getDistance(mapCompA->m_absoluteMapPositionPX, centerPosB);
+        if(distance > visionComp->m_distanceVisibility)
+        {
+            ++toRemove;
+            return;
+        }
+
+        float lateralPos = leftAngleVision - getTrigoAngle(mapCompA->m_absoluteMapPositionPX, centerPosB);
+        //tmp -30.0f
+        if(lateralPos < -30.0f)
+        {
+            //Quick fix
+            lateralPos = (leftAngleVision + 360.0f) - getTrigoAngle(mapCompA->m_absoluteMapPositionPX, centerPosB);
+        }
+        confNormalEntityVertex(visionComp->m_vectVisibleEntities[numIteration], visionComp, lateralPos, distance);
+        fillVertexFromEntitie(visionComp->m_vectVisibleEntities[numIteration], numIteration, distance);
+    }
+}
+
+//===================================================================
+void FirstPersonDisplaySystem::confWallEntityVertex(uint32_t numEntity, VisionComponent *visionComp,
+                                                    float lateralPosDegree[], float distance[])
+{
+    PositionVertexComponent *positionComp = stairwayToComponentManager().
+            searchComponentByType<PositionVertexComponent>(numEntity, Components_e::POSITION_VERTEX_COMPONENT);
+    SpriteTextureComponent *spriteComp = stairwayToComponentManager().
+                searchComponentByType<SpriteTextureComponent>(numEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
+    assert(spriteComp);
+    assert(positionComp);
+    assert(visionComp);
+
+    positionComp->m_vertex.resize(6);
+    uint32_t first = 0, second = 1;
+    if(lateralPosDegree[0] > lateralPosDegree[1])
+    {
+        first = 1;
+        second = 0;
+    }
+    float lateralPosMaxGL = (lateralPosDegree[2] / visionComp->m_coneVision * 2.0f) - 1.0f;
+    float depthPosMax = std::abs((distance[2] / visionComp->m_distanceVisibility) - 1.0f);
+    float halfVerticalSizeMax = depthPosMax / spriteComp->m_glFpsSize.second / 2;
+    //convert to GL context
+    float lateralPosGL = (lateralPosDegree[first] / visionComp->m_coneVision * 2.0f) - 1.0f;
+    float depthPos = std::abs((distance[first] / visionComp->m_distanceVisibility) - 1.0f);
+    float halfVerticalSize = depthPos / spriteComp->m_glFpsSize.second / 2;
+    positionComp->m_vertex[0].first = lateralPosGL;
+    positionComp->m_vertex[0].second = halfVerticalSize;
+    positionComp->m_vertex[1].first = lateralPosMaxGL;
+    positionComp->m_vertex[1].second = halfVerticalSizeMax;
+    positionComp->m_vertex[2].first = lateralPosMaxGL;
+    positionComp->m_vertex[2].second = -halfVerticalSizeMax;
+    positionComp->m_vertex[3].first = lateralPosGL;
+    positionComp->m_vertex[3].second = -halfVerticalSize;
+
+    lateralPosGL = (lateralPosDegree[second] / visionComp->m_coneVision * 2.0f) - 1.0f;
+    depthPos = std::abs((distance[second] / visionComp->m_distanceVisibility) - 1.0f);
+    halfVerticalSize = depthPos / spriteComp->m_glFpsSize.second / 2;
+    positionComp->m_vertex[4].first = lateralPosGL;
+    positionComp->m_vertex[4].second = halfVerticalSize;
+    positionComp->m_vertex[5].first = lateralPosGL;
+    positionComp->m_vertex[5].second = -halfVerticalSize;
+}
+
+//===================================================================
+void FirstPersonDisplaySystem::fillWallEntitiesData(uint32_t numEntity, pairFloat_t absolPos[], float distance[],
+                                                    MapCoordComponent *mapCompA, MapCoordComponent *mapCompB)
+{
+    RectangleCollisionComponent *rectComp = stairwayToComponentManager().
+            searchComponentByType<RectangleCollisionComponent>(numEntity, Components_e::RECTANGLE_COLLISION_COMPONENT);
+    assert(rectComp);
+    //get all points WALL rect position
+    //up left
+    absolPos[0] = mapCompB->m_absoluteMapPositionPX;
+    absolPos[1] = {mapCompB->m_absoluteMapPositionPX.first + rectComp->m_size.first,
+                   mapCompB->m_absoluteMapPositionPX.second};
+    absolPos[2] = {mapCompB->m_absoluteMapPositionPX.first + rectComp->m_size.first,
+                   mapCompB->m_absoluteMapPositionPX.second + rectComp->m_size.second};
+    absolPos[3] = {mapCompB->m_absoluteMapPositionPX.first,
+                   mapCompB->m_absoluteMapPositionPX.second + rectComp->m_size.second};
+    distance[0] = getDistance(mapCompA->m_absoluteMapPositionPX, absolPos[0]);
+    //up right
+    distance[1] = getDistance(mapCompA->m_absoluteMapPositionPX, absolPos[1]);
+    //down left
+    distance[2] = getDistance(mapCompA->m_absoluteMapPositionPX, absolPos[2]);
+    //down left
+    distance[3] = getDistance(mapCompA->m_absoluteMapPositionPX, absolPos[3]);
+    uint32_t minVal = getMinOrMaxValueFromEntries(distance, true);
+    if(minVal != 3)
+    {
+        std::swap(distance[minVal], distance[3]);
+        std::swap(absolPos[minVal], absolPos[3]);
+    }
+    uint32_t maxVal = getMinOrMaxValueFromEntries(distance, false);
+    //place max value at the second
+    if(maxVal != 2)
+    {
+        std::swap(distance[2], distance[maxVal]);
+        std::swap(absolPos[2], absolPos[maxVal]);
     }
 }
 
@@ -122,8 +238,8 @@ void FirstPersonDisplaySystem::setVectTextures(std::vector<Texture> &vectTexture
 }
 
 //===================================================================
-void FirstPersonDisplaySystem::confVertex(uint32_t numEntity, GeneralCollisionComponent *genCollComp,
-                                          VisionComponent *visionComp, float lateralPosDegree, float distance)
+void FirstPersonDisplaySystem::confNormalEntityVertex(uint32_t numEntity, VisionComponent *visionComp,
+                                                      float lateralPosDegree, float distance)
 {
     PositionVertexComponent *positionComp = stairwayToComponentManager().
             searchComponentByType<PositionVertexComponent>(numEntity, Components_e::POSITION_VERTEX_COMPONENT);
@@ -132,7 +248,6 @@ void FirstPersonDisplaySystem::confVertex(uint32_t numEntity, GeneralCollisionCo
     assert(spriteComp);
     assert(positionComp);
     assert(visionComp);
-    assert(genCollComp);
     //convert to GL context
     float lateralPosGL = (lateralPosDegree / visionComp->m_coneVision * 2.0f) - 1.0f;
     float depthPos = std::abs((distance / visionComp->m_distanceVisibility) - 1.0f);
@@ -194,4 +309,22 @@ pairFloat_t FirstPersonDisplaySystem::getCenterPosition(const MapCoordComponent 
                     mapComp->m_absoluteMapPositionPX.second + rectCollComp->m_size.second / 2};
     }
     return mapComp->m_absoluteMapPositionPX;
+}
+
+uint32_t getMinOrMaxValueFromEntries(const float distance[], bool min)
+{
+    uint32_t val = 0;
+    if(min)
+    {
+        val = (distance[0] < distance[1]) ? 0 : 1;
+        val = (distance[val] < distance[2]) ? val : 2;
+        val = (distance[val] < distance[3]) ? val : 3;
+    }
+    else
+    {
+        val = (distance[0] > distance[1]) ? 0 : 1;
+        val = (distance[val] > distance[2]) ? val : 2;
+//        val = (distance[val] > distance[3]) ? val : 3;
+    }
+    return val;
 }

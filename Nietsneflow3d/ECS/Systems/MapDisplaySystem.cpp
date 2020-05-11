@@ -148,6 +148,7 @@ void MapDisplaySystem::confVertexElement(const pairFloat_t &glPosition,
             searchComponentByType<PositionVertexComponent>(entityNum,
                                                            Components_e::POSITION_VERTEX_COMPONENT);
     assert(posComp);
+    posComp->m_vertex.resize(4);
     //CONSIDER THAT MAP X AND Y ARE THE SAME
     if(posComp->m_vertex.empty())
     {
