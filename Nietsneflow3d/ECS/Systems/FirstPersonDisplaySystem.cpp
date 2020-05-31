@@ -89,16 +89,24 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
         //calculate all 3 display position
         for(uint32_t i = 0; i < 3; ++i)
         {
-            lateralPos[i] = leftAngleVision - getTrigoAngle(mapCompA->m_absoluteMapPositionPX, absolPos[i]);
-            //tmp -30.0f
-            if(lateralPos[i] < -30.0f)
+            float currentTrigoAngle =  getTrigoAngle(mapCompA->m_absoluteMapPositionPX, absolPos[i]);
+            if(std::abs(currentTrigoAngle - leftAngleVision) > 150.0f)
             {
+                currentTrigoAngle += 360.0f;
+            }
+            lateralPos[i] = leftAngleVision - currentTrigoAngle;
+            //tmp -30.0f
+            if(lateralPos[i] < -60.0f)
+            {
+
                 //Quick fix
                 lateralPos[i] = (leftAngleVision + 360.0f) - getTrigoAngle(mapCompA->m_absoluteMapPositionPX, absolPos[i]);
             }
         }
-        confWallEntityVertex(visionComp->m_vectVisibleEntities[numIteration], visionComp, lateralPos, distance);
-        fillVertexFromEntitie(visionComp->m_vectVisibleEntities[numIteration], numIteration, distance[2]);
+        confWallEntityVertex(visionComp->m_vectVisibleEntities[numIteration],
+                             visionComp, lateralPos, distance);
+        fillVertexFromEntitie(visionComp->m_vectVisibleEntities[numIteration],
+                              numIteration, distance[2]);
     }
     else
     {
@@ -112,11 +120,11 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
 
         float lateralPos = leftAngleVision - getTrigoAngle(mapCompA->m_absoluteMapPositionPX, centerPosB);
         //tmp -30.0f
-        if(lateralPos < -30.0f)
-        {
-            //Quick fix
-            lateralPos = (leftAngleVision + 360.0f) - getTrigoAngle(mapCompA->m_absoluteMapPositionPX, centerPosB);
-        }
+//        if(lateralPos < -30.0f)
+//        {
+//            //Quick fix
+//            lateralPos = (leftAngleVision + 360.0f) - getTrigoAngle(mapCompA->m_absoluteMapPositionPX, centerPosB);
+//        }
         confNormalEntityVertex(visionComp->m_vectVisibleEntities[numIteration], visionComp, lateralPos, distance);
         fillVertexFromEntitie(visionComp->m_vectVisibleEntities[numIteration], numIteration, distance);
     }
@@ -140,7 +148,6 @@ void FirstPersonDisplaySystem::confWallEntityVertex(uint32_t numEntity, VisionCo
     {
         first = 2;
         last = 0;
-        std::cerr << "DDDDDDDDDDDD\n";
     }
     //convert to GL context
     float lateralPosGL = (lateralPosDegree[first] / visionComp->m_coneVision * 2.0f) - 1.0f;
@@ -151,18 +158,10 @@ void FirstPersonDisplaySystem::confWallEntityVertex(uint32_t numEntity, VisionCo
     float depthPosMid = std::abs((distance[1] / visionComp->m_distanceVisibility) - 1.0f);
     float halfVerticalSizeMid = depthPosMid / spriteComp->m_glFpsSize.second / 2;
 
+
     float lateralPosMaxGL = (lateralPosDegree[last] / visionComp->m_coneVision * 2.0f) - 1.0f;
     float depthPosMax = std::abs((distance[last] / visionComp->m_distanceVisibility) - 1.0f);
     float halfVerticalSizeMax = depthPosMax / spriteComp->m_glFpsSize.second / 2;
-
-    std::cerr << "lateralPosGL " << lateralPosGL
-                  << " lateralPosGLMid " << lateralPosGLMid
-                      << " lateralPosMaxGL " << lateralPosMaxGL << "\n\n";
-    std::cerr << "distance1 " << distance[first]
-                  << " distanceMid " << distance[1]
-                      << " distance3 " << distance[last]
-                         << " distance4 " << distance[3] << "\n\n";
-//    visionComp-> <<
 
     positionComp->m_vertex[0].first = lateralPosGL;
     positionComp->m_vertex[0].second = halfVerticalSize;
