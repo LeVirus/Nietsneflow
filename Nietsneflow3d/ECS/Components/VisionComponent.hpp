@@ -13,7 +13,7 @@ struct VisionComponent : public ecs::Component
         muiTypeComponent = Components_e::VISION_COMPONENT;
     }
     //first point angle ref
-    float m_distanceVisibility = 100.0f,
+    float m_distanceVisibility = 200.0f,
     //total cone vision
     m_coneVision = 90.0f;
     std::vector<uint32_t> m_vectVisibleEntities;
