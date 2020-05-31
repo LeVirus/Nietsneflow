@@ -232,6 +232,10 @@ float getDistance(const pairFloat_t &pointA, const pairFloat_t &pointB)
 {
     float distanceX = std::abs(pointA.first - pointB.first),
           distanceY = std::abs(pointA.second - pointB.second);
+    if(distanceY <= 0.0f)
+    {
+        return distanceX;
+    }
     float radAngle = std::atan(distanceX / distanceY);
     return distanceY / std::cos(radAngle);
 }

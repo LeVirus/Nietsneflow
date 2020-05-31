@@ -98,7 +98,6 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
             //tmp -30.0f
             if(lateralPos[i] < -60.0f)
             {
-
                 //Quick fix
                 lateralPos[i] = (leftAngleVision + 360.0f) - getTrigoAngle(mapCompA->m_absoluteMapPositionPX, absolPos[i]);
             }
@@ -119,12 +118,6 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
         }
 
         float lateralPos = leftAngleVision - getTrigoAngle(mapCompA->m_absoluteMapPositionPX, centerPosB);
-        //tmp -30.0f
-//        if(lateralPos < -30.0f)
-//        {
-//            //Quick fix
-//            lateralPos = (leftAngleVision + 360.0f) - getTrigoAngle(mapCompA->m_absoluteMapPositionPX, centerPosB);
-//        }
         confNormalEntityVertex(visionComp->m_vectVisibleEntities[numIteration], visionComp, lateralPos, distance);
         fillVertexFromEntitie(visionComp->m_vectVisibleEntities[numIteration], numIteration, distance);
     }
@@ -157,8 +150,11 @@ void FirstPersonDisplaySystem::confWallEntityVertex(uint32_t numEntity, VisionCo
     float lateralPosGLMid = (lateralPosDegree[1] / visionComp->m_coneVision * 2.0f) - 1.0f;
     float depthPosMid = std::abs((distance[1] / visionComp->m_distanceVisibility) - 1.0f);
     float halfVerticalSizeMid = depthPosMid / spriteComp->m_glFpsSize.second / 2;
-
-
+       std::cerr << "distance[1]  " << distance[1] << "\n";
+       std::cerr << "visionComp->m_distanceVisibility  " << visionComp->m_distanceVisibility << "\n";
+       std::cerr << "depthPosMid  " << depthPosMid << "\n";
+       std::cerr << "spriteComp->m_glFpsSize.second  " << spriteComp->m_glFpsSize.second << "\n";
+       std::cerr << "halfVerticalSizeMid  " << halfVerticalSizeMid << "\n";
     float lateralPosMaxGL = (lateralPosDegree[last] / visionComp->m_coneVision * 2.0f) - 1.0f;
     float depthPosMax = std::abs((distance[last] / visionComp->m_distanceVisibility) - 1.0f);
     float halfVerticalSizeMax = depthPosMax / spriteComp->m_glFpsSize.second / 2;
@@ -216,6 +212,11 @@ void FirstPersonDisplaySystem::fillWallEntitiesData(uint32_t numEntity, pairFloa
         std::swap(distance[3], distance[maxVal]);
         std::swap(absolPos[3], absolPos[maxVal]);
     }
+    //display most far first
+//    if(distance[0] > distance[2])
+//    {
+//        std::swap(distance[0], distance[2]);
+//    }
 }
 
 //===================================================================
