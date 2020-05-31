@@ -97,11 +97,11 @@ void VerticesData::loadVertexTextureComponent(const PositionVertexComponent &pos
             }
             else if(j == 1)
             {
-                k = 5;
+                k = 4;
             }
             else if(j == 2)
             {
-                k = 4;
+                k = 5;
             }
             else
             {
@@ -150,12 +150,12 @@ void VerticesData::addIndices(BaseShapeTypeGL_e shapeType)
     }
     if(shapeType == BaseShapeTypeGL_e::DOUBLE_RECT)
     {
-        m_indices.emplace_back(curent - 2);//1
+        m_indices.emplace_back(++curent);//1
         m_indices.emplace_back(++curent);//4
         m_indices.emplace_back(++curent);//5
         m_indices.emplace_back(curent);//5
-        m_indices.emplace_back(curent - 3);//2
-        m_indices.emplace_back(curent - 4);//1
+        m_indices.emplace_back(++curent);//2
+        m_indices.emplace_back(curent - 3);//1
     }
     m_cursor = ++curent;
 }

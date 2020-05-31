@@ -86,6 +86,7 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
         float lateralPos[3];
         fillWallEntitiesData(visionComp->m_vectVisibleEntities[numIteration], absolPos, distance,
                              mapCompA, mapCompB);
+        //calculate all 3 display position
         for(uint32_t i = 0; i < 3; ++i)
         {
             lateralPos[i] = leftAngleVision - getTrigoAngle(mapCompA->m_absoluteMapPositionPX, absolPos[i]);
@@ -96,7 +97,6 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
                 lateralPos[i] = (leftAngleVision + 360.0f) - getTrigoAngle(mapCompA->m_absoluteMapPositionPX, absolPos[i]);
             }
         }
-        //VOIR SHADER!!!
         confWallEntityVertex(visionComp->m_vectVisibleEntities[numIteration], visionComp, lateralPos, distance);
         fillVertexFromEntitie(visionComp->m_vectVisibleEntities[numIteration], numIteration, distance[2]);
     }
@@ -135,35 +135,48 @@ void FirstPersonDisplaySystem::confWallEntityVertex(uint32_t numEntity, VisionCo
     assert(visionComp);
 
     positionComp->m_vertex.resize(6);
-    uint32_t first = 0, second = 1;
-    if(lateralPosDegree[0] > lateralPosDegree[1])
+    uint32_t first = 0, last = 2;
+    if(lateralPosDegree[0] < lateralPosDegree[2])
     {
-        first = 1;
-        second = 0;
+        first = 2;
+        last = 0;
+        std::cerr << "DDDDDDDDDDDD\n";
     }
-    float lateralPosMaxGL = (lateralPosDegree[2] / visionComp->m_coneVision * 2.0f) - 1.0f;
-    float depthPosMax = std::abs((distance[2] / visionComp->m_distanceVisibility) - 1.0f);
-    float halfVerticalSizeMax = depthPosMax / spriteComp->m_glFpsSize.second / 2;
     //convert to GL context
     float lateralPosGL = (lateralPosDegree[first] / visionComp->m_coneVision * 2.0f) - 1.0f;
     float depthPos = std::abs((distance[first] / visionComp->m_distanceVisibility) - 1.0f);
     float halfVerticalSize = depthPos / spriteComp->m_glFpsSize.second / 2;
+    //convert to GL context
+    float lateralPosGLMid = (lateralPosDegree[1] / visionComp->m_coneVision * 2.0f) - 1.0f;
+    float depthPosMid = std::abs((distance[1] / visionComp->m_distanceVisibility) - 1.0f);
+    float halfVerticalSizeMid = depthPosMid / spriteComp->m_glFpsSize.second / 2;
+
+    float lateralPosMaxGL = (lateralPosDegree[last] / visionComp->m_coneVision * 2.0f) - 1.0f;
+    float depthPosMax = std::abs((distance[last] / visionComp->m_distanceVisibility) - 1.0f);
+    float halfVerticalSizeMax = depthPosMax / spriteComp->m_glFpsSize.second / 2;
+
+    std::cerr << "lateralPosGL " << lateralPosGL
+                  << " lateralPosGLMid " << lateralPosGLMid
+                      << " lateralPosMaxGL " << lateralPosMaxGL << "\n\n";
+    std::cerr << "distance1 " << distance[first]
+                  << " distanceMid " << distance[1]
+                      << " distance3 " << distance[last]
+                         << " distance4 " << distance[3] << "\n\n";
+//    visionComp-> <<
+
     positionComp->m_vertex[0].first = lateralPosGL;
     positionComp->m_vertex[0].second = halfVerticalSize;
-    positionComp->m_vertex[1].first = lateralPosMaxGL;
-    positionComp->m_vertex[1].second = halfVerticalSizeMax;
-    positionComp->m_vertex[2].first = lateralPosMaxGL;
-    positionComp->m_vertex[2].second = -halfVerticalSizeMax;
+    positionComp->m_vertex[1].first = lateralPosGLMid;
+    positionComp->m_vertex[1].second = halfVerticalSizeMid;
+    positionComp->m_vertex[2].first = lateralPosGLMid;
+    positionComp->m_vertex[2].second = -halfVerticalSizeMid;
     positionComp->m_vertex[3].first = lateralPosGL;
     positionComp->m_vertex[3].second = -halfVerticalSize;
 
-    lateralPosGL = (lateralPosDegree[second] / visionComp->m_coneVision * 2.0f) - 1.0f;
-    depthPos = std::abs((distance[second] / visionComp->m_distanceVisibility) - 1.0f);
-    halfVerticalSize = depthPos / spriteComp->m_glFpsSize.second / 2;
-    positionComp->m_vertex[4].first = lateralPosGL;
-    positionComp->m_vertex[4].second = halfVerticalSize;
-    positionComp->m_vertex[5].first = lateralPosGL;
-    positionComp->m_vertex[5].second = -halfVerticalSize;
+    positionComp->m_vertex[4].first = lateralPosMaxGL;
+    positionComp->m_vertex[4].second = halfVerticalSizeMax;
+    positionComp->m_vertex[5].first = lateralPosMaxGL;
+    positionComp->m_vertex[5].second = -halfVerticalSizeMax;
 }
 
 //===================================================================
@@ -182,25 +195,27 @@ void FirstPersonDisplaySystem::fillWallEntitiesData(uint32_t numEntity, pairFloa
                    mapCompB->m_absoluteMapPositionPX.second + rectComp->m_size.second};
     absolPos[3] = {mapCompB->m_absoluteMapPositionPX.first,
                    mapCompB->m_absoluteMapPositionPX.second + rectComp->m_size.second};
+    //up left
     distance[0] = getDistance(mapCompA->m_absoluteMapPositionPX, absolPos[0]);
     //up right
     distance[1] = getDistance(mapCompA->m_absoluteMapPositionPX, absolPos[1]);
-    //down left
+    //down right
     distance[2] = getDistance(mapCompA->m_absoluteMapPositionPX, absolPos[2]);
     //down left
     distance[3] = getDistance(mapCompA->m_absoluteMapPositionPX, absolPos[3]);
     uint32_t minVal = getMinOrMaxValueFromEntries(distance, true);
-    if(minVal != 3)
+    //second display
+    if(minVal != 1)
     {
-        std::swap(distance[minVal], distance[3]);
-        std::swap(absolPos[minVal], absolPos[3]);
+        std::swap(distance[minVal], distance[1]);
+        std::swap(absolPos[minVal], absolPos[1]);
     }
     uint32_t maxVal = getMinOrMaxValueFromEntries(distance, false);
-    //place max value at the second
-    if(maxVal != 2)
+    //do not display
+    if(maxVal != 3)
     {
-        std::swap(distance[2], distance[maxVal]);
-        std::swap(absolPos[2], absolPos[maxVal]);
+        std::swap(distance[3], distance[maxVal]);
+        std::swap(absolPos[3], absolPos[maxVal]);
     }
 }
 
@@ -324,7 +339,7 @@ uint32_t getMinOrMaxValueFromEntries(const float distance[], bool min)
     {
         val = (distance[0] > distance[1]) ? 0 : 1;
         val = (distance[val] > distance[2]) ? val : 2;
-//        val = (distance[val] > distance[3]) ? val : 3;
+        val = (distance[val] > distance[3]) ? val : 3;
     }
     return val;
 }
