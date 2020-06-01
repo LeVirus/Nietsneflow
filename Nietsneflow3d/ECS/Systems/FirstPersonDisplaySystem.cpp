@@ -143,16 +143,19 @@ void FirstPersonDisplaySystem::confWallEntityVertex(uint32_t numEntity, VisionCo
         last = 0;
     }
     //convert to GL context
+    float unitDepth = (distance[first] / LEVEL_TILE_SIZE_PX) ;
+    float depthPos = (spriteComp->m_glFpsSize.second) / unitDepth;
+    float halfVerticalSize = depthPos / 2.0f;
     float lateralPosGL = (lateralPosDegree[first] / visionComp->m_coneVision * 2.0f) - 1.0f;
-    float depthPos = std::abs((distance[first] / visionComp->m_distanceVisibility) - 1.0f);
-    float halfVerticalSize = depthPos / spriteComp->m_glFpsSize.second / 2;
     //convert to GL context
+    float unitDepthMid = (distance[1] / LEVEL_TILE_SIZE_PX);
+    float depthPosMid = (spriteComp->m_glFpsSize.second) / unitDepthMid;
+    float halfVerticalSizeMid = depthPosMid / 2.0f;
     float lateralPosGLMid = (lateralPosDegree[1] / visionComp->m_coneVision * 2.0f) - 1.0f;
-    float depthPosMid = std::abs((distance[1] / visionComp->m_distanceVisibility) - 1.0f);
-    float halfVerticalSizeMid = depthPosMid / spriteComp->m_glFpsSize.second / 2;
+    float unitDepthMax = (distance[last] / LEVEL_TILE_SIZE_PX) ;
+    float depthPosMax = (spriteComp->m_glFpsSize.second) / unitDepthMax;
+    float halfVerticalSizeMax = depthPosMax / 2.0f;
     float lateralPosMaxGL = (lateralPosDegree[last] / visionComp->m_coneVision * 2.0f) - 1.0f;
-    float depthPosMax = std::abs((distance[last] / visionComp->m_distanceVisibility) - 1.0f);
-    float halfVerticalSizeMax = depthPosMax / spriteComp->m_glFpsSize.second / 2;
 
     positionComp->m_vertex[0].first = lateralPosGL;
     positionComp->m_vertex[0].second = halfVerticalSize;
