@@ -17,7 +17,7 @@ PhysicalEngine::PhysicalEngine()
 void PhysicalEngine::runIteration()
 {
     m_inputSystem->execSystem();
-    m_collisionSystem->execSystem();
+//    m_collisionSystem->execSystem();
 }
 
 //===================================================================

@@ -85,7 +85,7 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
         pairFloat_t absolPos[4];
         float lateralPos[3];
         fillWallEntitiesData(visionComp->m_vectVisibleEntities[numIteration], absolPos, distance,
-                             mapCompA, mapCompB);
+                             mapCompA, mapCompB, leftAngleVision + visionComp->m_coneVision / 2.0f);
         //calculate all 3 display position
         for(uint32_t i = 0; i < 3; ++i)
         {
@@ -174,7 +174,8 @@ void FirstPersonDisplaySystem::confWallEntityVertex(uint32_t numEntity, VisionCo
 
 //===================================================================
 void FirstPersonDisplaySystem::fillWallEntitiesData(uint32_t numEntity, pairFloat_t absolPos[], float distance[],
-                                                    MapCoordComponent *mapCompA, MapCoordComponent *mapCompB)
+                                                    MapCoordComponent *mapCompA, MapCoordComponent *mapCompB,
+                                                    float observerAngle)
 {
     RectangleCollisionComponent *rectComp = stairwayToComponentManager().
             searchComponentByType<RectangleCollisionComponent>(numEntity, Components_e::RECTANGLE_COLLISION_COMPONENT);
@@ -189,13 +190,13 @@ void FirstPersonDisplaySystem::fillWallEntitiesData(uint32_t numEntity, pairFloa
     absolPos[3] = {mapCompB->m_absoluteMapPositionPX.first,
                    mapCompB->m_absoluteMapPositionPX.second + rectComp->m_size.second};
     //up left
-    distance[0] = getDistance(mapCompA->m_absoluteMapPositionPX, absolPos[0]);
+    distance[0] = getCameraDistance(mapCompA->m_absoluteMapPositionPX, absolPos[0], observerAngle);
     //up right
-    distance[1] = getDistance(mapCompA->m_absoluteMapPositionPX, absolPos[1]);
+    distance[1] = getCameraDistance(mapCompA->m_absoluteMapPositionPX, absolPos[1], observerAngle);
     //down right
-    distance[2] = getDistance(mapCompA->m_absoluteMapPositionPX, absolPos[2]);
+    distance[2] = getCameraDistance(mapCompA->m_absoluteMapPositionPX, absolPos[2], observerAngle);
     //down left
-    distance[3] = getDistance(mapCompA->m_absoluteMapPositionPX, absolPos[3]);
+    distance[3] = getCameraDistance(mapCompA->m_absoluteMapPositionPX, absolPos[3], observerAngle);
     uint32_t minVal = getMinOrMaxValueFromEntries(distance, true);
     //second display
     if(minVal != 1)
@@ -210,11 +211,6 @@ void FirstPersonDisplaySystem::fillWallEntitiesData(uint32_t numEntity, pairFloa
         std::swap(distance[3], distance[maxVal]);
         std::swap(absolPos[3], absolPos[maxVal]);
     }
-    //display most far first
-//    if(distance[0] > distance[2])
-//    {
-//        std::swap(distance[0], distance[2]);
-//    }
 }
 
 //===================================================================

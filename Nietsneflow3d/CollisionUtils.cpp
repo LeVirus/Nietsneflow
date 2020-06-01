@@ -241,6 +241,41 @@ float getDistance(const pairFloat_t &pointA, const pairFloat_t &pointB)
 }
 
 //===================================================================
+float getCameraDistance(const pairFloat_t &pointA, const pairFloat_t &pointB, float observerAngle)
+{
+    float angleCalc;
+    float hyp = getDistance(pointA, pointB);//get hyp
+//    float radAngle = getRadiantAngle(observerAngle);
+
+    float distanceX = std::abs(pointA.first - pointB.first),
+          distanceY = std::abs(pointA.second - pointB.second);
+    if(distanceY <= 0.0f)
+    {
+        angleCalc =  distanceX;
+    }
+    else
+    {
+        angleCalc = std::atan(distanceX / distanceY);
+    }
+    if(observerAngle > 315.0f || observerAngle < 45.0f || observerAngle > 135.0f && observerAngle < 225.0f)
+    {
+        angleCalc = std::cos(getRadiantAngle(observerAngle));
+//        angleCalc = std::sin(getRadiantAngle(observerAngle));
+    }
+    else
+    {
+//        angleCalc = std::cos(getRadiantAngle(observerAngle));
+        angleCalc = std::sin(getRadiantAngle(observerAngle));
+    }
+    if(angleCalc <= 0.0f)
+    {
+//        return hyp;
+    }
+    return std::abs(hyp / angleCalc);
+
+}
+
+//===================================================================
 float getTrigoAngle(const pairFloat_t &pointA, const pairFloat_t &pointB)
 {
     float X = std::abs(pointB.first - pointA.first);
