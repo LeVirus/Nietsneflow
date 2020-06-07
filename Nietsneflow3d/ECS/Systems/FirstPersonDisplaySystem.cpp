@@ -80,7 +80,6 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
 {
     if(genCollComp->m_tag == CollisionTag_e::WALL_CT)
     {
-
         float distance[4];
         pairFloat_t absolPos[4];
         float lateralPos[3];
@@ -189,6 +188,8 @@ void FirstPersonDisplaySystem::fillWallEntitiesData(uint32_t numEntity, pairFloa
                    mapCompB->m_absoluteMapPositionPX.second + rectComp->m_size.second};
     absolPos[3] = {mapCompB->m_absoluteMapPositionPX.first,
                    mapCompB->m_absoluteMapPositionPX.second + rectComp->m_size.second};
+    std::cerr << " \n\n\n DEB\n";
+
     //up left
     distance[0] = getCameraDistance(mapCompA->m_absoluteMapPositionPX, absolPos[0], observerAngle);
     //up right
@@ -197,6 +198,7 @@ void FirstPersonDisplaySystem::fillWallEntitiesData(uint32_t numEntity, pairFloa
     distance[2] = getCameraDistance(mapCompA->m_absoluteMapPositionPX, absolPos[2], observerAngle);
     //down left
     distance[3] = getCameraDistance(mapCompA->m_absoluteMapPositionPX, absolPos[3], observerAngle);
+
     uint32_t minVal = getMinOrMaxValueFromEntries(distance, true);
     //second display
     if(minVal != 1)

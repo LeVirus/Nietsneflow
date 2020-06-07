@@ -1,4 +1,4 @@
-#include "CollisionUtils.hpp"
+﻿#include "CollisionUtils.hpp"
 #include "PhysicalEngine.hpp"
 #include <cmath>
 #include <limits>
@@ -243,36 +243,51 @@ float getDistance(const pairFloat_t &pointA, const pairFloat_t &pointB)
 //===================================================================
 float getCameraDistance(const pairFloat_t &pointA, const pairFloat_t &pointB, float observerAngle)
 {
+    observerAngle += 270.0f;
+    if(observerAngle > 360.0f)observerAngle -= 360.0f;
     float angleCalc;
-    float hyp = getDistance(pointA, pointB);//get hyp
-//    float radAngle = getRadiantAngle(observerAngle);
-
+    float hyp = getDistance(pointA, pointB);
     float distanceX = std::abs(pointA.first - pointB.first),
-          distanceY = std::abs(pointA.second - pointB.second);
-    if(distanceY <= 0.0f)
+            distanceY = std::abs(pointA.second - pointB.second);
+    bool bxInf = (pointB.first < pointA.first);
+    bool byInf = (pointB.second < pointA.second);
+    float first, second;
+    if(bxInf == byInf)
     {
-        angleCalc =  distanceX;
+        first = distanceX;
+        second = distanceY;
     }
     else
     {
-        angleCalc = std::atan(distanceX / distanceY);
+        first = distanceY;
+        second = distanceX;
     }
-    if(observerAngle > 315.0f || observerAngle < 45.0f || observerAngle > 135.0f && observerAngle < 225.0f)
+    if(second <= 0.0f)
     {
-        angleCalc = std::cos(getRadiantAngle(observerAngle));
-//        angleCalc = std::sin(getRadiantAngle(observerAngle));
+        angleCalc =  0.0f;
     }
     else
     {
-//        angleCalc = std::cos(getRadiantAngle(observerAngle));
-        angleCalc = std::sin(getRadiantAngle(observerAngle));
+        angleCalc = std::atan(first / second);
+        if(bxInf && byInf)
+        {
+            angleCalc += PI / 2.0f;
+        }
+        else if(bxInf && !byInf)
+        {
+            angleCalc += PI;
+        }
+        else if(!bxInf && !byInf)
+        {
+            angleCalc += PI * 1.5f;
+        }
     }
-    if(angleCalc <= 0.0f)
-    {
-//        return hyp;
-    }
-    return std::abs(hyp / angleCalc);
 
+    angleCalc = std::abs(angleCalc - getRadiantAngle(observerAngle));
+    std::cerr << getDegreeAngle(angleCalc) << "  angleCalc\n";
+    std::cerr << hyp << " * " << std::cos(angleCalc) << "  hyp * cos(angle)\n";
+    std::cerr << std::abs(hyp * std::cos(angleCalc)) << "  RES============\n";
+    return std::abs(hyp * std::cos(angleCalc));
 }
 
 //===================================================================
