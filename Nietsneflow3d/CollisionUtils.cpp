@@ -241,16 +241,23 @@ float getDistance(const pairFloat_t &pointA, const pairFloat_t &pointB)
 }
 
 //===================================================================
-float getCameraDistance(const pairFloat_t &pointA, const pairFloat_t &pointB, float observerAngle)
+float getCameraDistance(const pairFloat_t &observerPoint, const pairFloat_t &targetPoint, float observerAngle)
 {
-    observerAngle += 270.0f;
-    if(observerAngle > 360.0f)observerAngle -= 360.0f;
+    float angleCalc = getAngle(observerPoint, targetPoint) - observerAngle;
+//    std::cerr << getDegreeAngle(angleCalc) << "  angleCalc\n";
+//    std::cerr << hyp << " * " << std::cos(angleCalc) << "  hyp * cos(angle)\n";
+    float hyp = getDistance(observerPoint, targetPoint);
+//    std::cerr << std::abs(hyp * std::cos(angleCalc)) << "  RES============\n";
+    return std::abs(hyp * std::cos(angleCalc));
+}
+
+float getAngle(const pairFloat_t &observerPoint, const pairFloat_t &targetPoint)
+{
     float angleCalc;
-    float hyp = getDistance(pointA, pointB);
-    float distanceX = std::abs(pointA.first - pointB.first),
-            distanceY = std::abs(pointA.second - pointB.second);
-    bool bxInf = (pointB.first < pointA.first);
-    bool byInf = (pointB.second < pointA.second);
+    float distanceX = std::abs(observerPoint.first - targetPoint.first),
+            distanceY = std::abs(observerPoint.second - targetPoint.second);
+    bool bxInf = (targetPoint.first < observerPoint.first);
+    bool byInf = (targetPoint.second < observerPoint.second);
     float first, second;
     if(bxInf == byInf)
     {
@@ -282,12 +289,11 @@ float getCameraDistance(const pairFloat_t &pointA, const pairFloat_t &pointB, fl
             angleCalc += PI * 1.5f;
         }
     }
-
-    angleCalc = std::abs(angleCalc - getRadiantAngle(observerAngle));
-    std::cerr << getDegreeAngle(angleCalc) << "  angleCalc\n";
-    std::cerr << hyp << " * " << std::cos(angleCalc) << "  hyp * cos(angle)\n";
-    std::cerr << std::abs(hyp * std::cos(angleCalc)) << "  RES============\n";
-    return std::abs(hyp * std::cos(angleCalc));
+    if(angleCalc > PI)
+    {
+        angleCalc -= PI;
+    }
+    return angleCalc;
 }
 
 //===================================================================
@@ -295,7 +301,6 @@ float getTrigoAngle(const pairFloat_t &pointA, const pairFloat_t &pointB)
 {
     float X = std::abs(pointB.first - pointA.first);
     float Y = std::abs(pointB.second - pointA.second);
-    float result;
     //HAUT DROITE
     if(pointA.first >= pointB.first && pointA.second <= pointB.second)
     {

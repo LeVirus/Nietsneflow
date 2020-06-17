@@ -58,4 +58,6 @@ private:
     vectUI_t m_numVertexToDraw;
 };
 
-uint32_t getMinOrMaxValueFromEntries(const float distance[4], bool min);
+float treatSquareWallDisplay(const pairFloat_t pointObserver, float observerAngle, const pairFloat_t pointRef, float angleRef, float cameraDistanceRef, const pairFloat_t currentPoint, float currentAngle);
+uint32_t getMaxValueFromEntries(const float distance[4]);
+uint32_t getMinValueFromEntries(const float distance[4]);

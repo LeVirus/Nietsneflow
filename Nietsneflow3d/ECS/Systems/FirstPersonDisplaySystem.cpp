@@ -1,5 +1,6 @@
 #include "FirstPersonDisplaySystem.hpp"
 #include <CollisionUtils.hpp>
+#include <PhysicalEngine.hpp>
 #include <ECS/Components/VisionComponent.hpp>
 #include <ECS/Components/GeneralCollisionComponent.hpp>
 #include <ECS/Components/MapCoordComponent.hpp>
@@ -83,8 +84,12 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
         float distance[4];
         pairFloat_t absolPos[4];
         float lateralPos[3];
+        float observerAngle = leftAngleVision + visionComp->m_coneVision / 2.0f;
+        observerAngle += 270.0f;
+        if(observerAngle > 360.0f)observerAngle -= 360.0f;
+        //calculate distance
         fillWallEntitiesData(visionComp->m_vectVisibleEntities[numIteration], absolPos, distance,
-                             mapCompA, mapCompB, leftAngleVision + visionComp->m_coneVision / 2.0f);
+                             mapCompA, mapCompB, getRadiantAngle(observerAngle));
         //calculate all 3 display position
         for(uint32_t i = 0; i < 3; ++i)
         {
@@ -191,27 +196,110 @@ void FirstPersonDisplaySystem::fillWallEntitiesData(uint32_t numEntity, pairFloa
     std::cerr << " \n\n\n DEB\n";
 
     //up left
-    distance[0] = getCameraDistance(mapCompA->m_absoluteMapPositionPX, absolPos[0], observerAngle);
+    distance[0] = getDistance(mapCompA->m_absoluteMapPositionPX, absolPos[0]);
     //up right
-    distance[1] = getCameraDistance(mapCompA->m_absoluteMapPositionPX, absolPos[1], observerAngle);
+    distance[1] = getDistance(mapCompA->m_absoluteMapPositionPX, absolPos[1]);
     //down right
-    distance[2] = getCameraDistance(mapCompA->m_absoluteMapPositionPX, absolPos[2], observerAngle);
+    distance[2] = getDistance(mapCompA->m_absoluteMapPositionPX, absolPos[2]);
     //down left
-    distance[3] = getCameraDistance(mapCompA->m_absoluteMapPositionPX, absolPos[3], observerAngle);
+    distance[3] = getDistance(mapCompA->m_absoluteMapPositionPX, absolPos[3]);
 
-    uint32_t minVal = getMinOrMaxValueFromEntries(distance, true);
+    uint32_t minVal = getMinValueFromEntries(distance);
     //second display
     if(minVal != 1)
     {
         std::swap(distance[minVal], distance[1]);
         std::swap(absolPos[minVal], absolPos[1]);
     }
-    uint32_t maxVal = getMinOrMaxValueFromEntries(distance, false);
+    uint32_t maxVal = getMaxValueFromEntries(distance);
     //do not display
     if(maxVal != 3)
     {
         std::swap(distance[3], distance[maxVal]);
         std::swap(absolPos[3], absolPos[maxVal]);
+    }
+    distance[1] = getCameraDistance(mapCompA->m_absoluteMapPositionPX, absolPos[1], observerAngle);
+
+//    distance[0] = getCameraDistance(mapCompA->m_absoluteMapPositionPX, absolPos[0], observerAngle);
+//    distance[2] = getCameraDistance(mapCompA->m_absoluteMapPositionPX, absolPos[2], observerAngle);
+
+//    return;
+    float angleRef;
+
+//    float currentTrigoAngle =  getTrigoAngle(mapCompA->m_absoluteMapPositionPX, absolPos[i]);
+
+//    float angle = std::abs(getAngle(mapCompA->m_absoluteMapPositionPX, absolPos[0]) - observerAngle);
+    float angle = std::abs(getRadiantAngle(getTrigoAngle(mapCompA->m_absoluteMapPositionPX, absolPos[0])) - observerAngle);
+    if(angle > PI)angle -= PI;
+    std::cerr << std::abs(getAngle(mapCompA->m_absoluteMapPositionPX, absolPos[0])) << " - " << observerAngle << "\n";
+    std::cerr << /*getDegreeAngle*/(angle) << " dgdfhdfh\n";
+    if(/*distance[0] > distance[1] ||*/ angle < PI_QUARTER)
+    {
+        distance[0] = getCameraDistance(mapCompA->m_absoluteMapPositionPX, absolPos[0], observerAngle);
+    }
+    else
+    {
+        angleRef = getRadiantAngle(getTrigoAngle(mapCompA->m_absoluteMapPositionPX, absolPos[1])) - observerAngle;
+        distance[0] = treatSquareWallDisplay(mapCompA->m_absoluteMapPositionPX, observerAngle,
+                                             absolPos[1], angleRef, distance[1], absolPos[0], angle);
+        std::cerr  << angle << " > "  << PI_QUARTER << "  " <<distance[0] << "\n";
+
+    }
+    angle = std::abs(getRadiantAngle(getTrigoAngle(mapCompA->m_absoluteMapPositionPX, absolPos[2])) - observerAngle);
+    if(/*distance[2] > distance[1] ||*/ angle < PI_QUARTER)
+    {
+        distance[2] = getCameraDistance(mapCompA->m_absoluteMapPositionPX, absolPos[2], observerAngle);
+    }
+    else
+    {
+        angleRef = getRadiantAngle(getTrigoAngle(mapCompA->m_absoluteMapPositionPX, absolPos[1])) - observerAngle;
+        distance[2] = treatSquareWallDisplay(mapCompA->m_absoluteMapPositionPX, observerAngle,
+                                             absolPos[1], angleRef, distance[1], absolPos[2], angle);
+        std::cerr  << angle << " > "  << PI_QUARTER << "  " <<distance[2] << "\n";
+    }
+}
+
+//===================================================================
+float treatSquareWallDisplay(const pairFloat_t pointObserver, float observerAngle, const pairFloat_t pointRef, float angleRef,
+                             float cameraDistanceRef, const pairFloat_t currentPoint, float currentAngle)
+{
+    pairFloat_t secondRefPoint;
+    float secondRefAngle, secondRefCameraDistance;
+    //X case
+    if(std::abs(pointRef.first - currentPoint.first) > 1.0f)
+    {
+        if(pointRef.first > currentPoint.first)
+        {
+            secondRefPoint = {pointRef.first - 10.0f, pointRef.second};
+        }
+        else
+        {
+            secondRefPoint = {pointRef.first + 10.0f, pointRef.second};
+        }
+        secondRefAngle = getAngle(pointObserver, currentPoint);
+        secondRefCameraDistance = getCameraDistance(pointObserver, currentPoint, observerAngle);
+        float diffAngle = std::abs(secondRefAngle - angleRef);
+        float diffCamDistance = std::abs(secondRefCameraDistance - cameraDistanceRef);
+        float diffCurrentAngle = std::abs(secondRefAngle - currentAngle);
+        return diffCurrentAngle * diffCamDistance / diffAngle;
+    }
+    //Y case
+    else
+    {
+        if(pointRef.second > currentPoint.second)
+        {
+            secondRefPoint = {pointRef.first, pointRef.second - 10.0f};
+        }
+        else
+        {
+            secondRefPoint = {pointRef.first, pointRef.second + 10.0f};
+        }
+        secondRefAngle = getAngle(pointObserver, currentPoint);
+        secondRefCameraDistance = getCameraDistance(pointObserver, currentPoint, observerAngle);
+        float diffAngle = std::abs(secondRefAngle - angleRef);
+        float diffCamDistance = std::abs(secondRefCameraDistance - cameraDistanceRef);
+        float diffCurrentAngle = std::abs(secondRefAngle - currentAngle);
+        return diffCurrentAngle * diffCamDistance / diffAngle;
     }
 }
 
@@ -323,20 +411,22 @@ pairFloat_t FirstPersonDisplaySystem::getCenterPosition(const MapCoordComponent 
     return mapComp->m_absoluteMapPositionPX;
 }
 
-uint32_t getMinOrMaxValueFromEntries(const float distance[], bool min)
+
+
+uint32_t getMinValueFromEntries(const float distance[])
 {
     uint32_t val = 0;
-    if(min)
-    {
-        val = (distance[0] < distance[1]) ? 0 : 1;
-        val = (distance[val] < distance[2]) ? val : 2;
-        val = (distance[val] < distance[3]) ? val : 3;
-    }
-    else
-    {
-        val = (distance[0] > distance[1]) ? 0 : 1;
-        val = (distance[val] > distance[2]) ? val : 2;
-        val = (distance[val] > distance[3]) ? val : 3;
-    }
+    val = (distance[0] < distance[1]) ? 0 : 1;
+    val = (distance[val] < distance[2]) ? val : 2;
+    val = (distance[val] < distance[3]) ? val : 3;
+    return val;
+}
+
+uint32_t getMaxValueFromEntries(const float distance[])
+{
+    uint32_t val = 0;
+    val = (distance[0] > distance[1]) ? 0 : 1;
+    val = (distance[val] > distance[2]) ? val : 2;
+    val = (distance[val] > distance[3]) ? val : 3;
     return val;
 }
