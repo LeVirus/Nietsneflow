@@ -89,7 +89,7 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
         if(observerAngle > 360.0f)observerAngle -= 360.0f;
         //calculate distance
         fillWallEntitiesData(visionComp->m_vectVisibleEntities[numIteration], absolPos, distance,
-                             mapCompA, mapCompB, getRadiantAngle(observerAngle));
+                             mapCompA, mapCompB, getRadiantAngle(observerAngle), visionComp);
         //calculate all 3 display position
         for(uint32_t i = 0; i < 3; ++i)
         {
@@ -120,7 +120,6 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
             ++toRemove;
             return;
         }
-
         float lateralPos = leftAngleVision - getTrigoAngle(mapCompA->m_absoluteMapPositionPX, centerPosB);
         confNormalEntityVertex(visionComp->m_vectVisibleEntities[numIteration], visionComp, lateralPos, distance);
         fillVertexFromEntitie(visionComp->m_vectVisibleEntities[numIteration], numIteration, distance);
@@ -147,17 +146,14 @@ void FirstPersonDisplaySystem::confWallEntityVertex(uint32_t numEntity, VisionCo
         last = 0;
     }
     //convert to GL context
-    float unitDepth = (distance[first] / LEVEL_TILE_SIZE_PX) ;
-    float depthPos = (spriteComp->m_glFpsSize.second) / unitDepth;
+    float depthPos = (spriteComp->m_glFpsSize.second) / distance[first];
     float halfVerticalSize = depthPos / 2.0f;
     float lateralPosGL = (lateralPosDegree[first] / visionComp->m_coneVision * 2.0f) - 1.0f;
     //convert to GL context
-    float unitDepthMid = (distance[1] / LEVEL_TILE_SIZE_PX);
-    float depthPosMid = (spriteComp->m_glFpsSize.second) / unitDepthMid;
+    float depthPosMid = (spriteComp->m_glFpsSize.second) / distance[1];
     float halfVerticalSizeMid = depthPosMid / 2.0f;
     float lateralPosGLMid = (lateralPosDegree[1] / visionComp->m_coneVision * 2.0f) - 1.0f;
-    float unitDepthMax = (distance[last] / LEVEL_TILE_SIZE_PX) ;
-    float depthPosMax = (spriteComp->m_glFpsSize.second) / unitDepthMax;
+    float depthPosMax = (spriteComp->m_glFpsSize.second) / distance[last];
     float halfVerticalSizeMax = depthPosMax / 2.0f;
     float lateralPosMaxGL = (lateralPosDegree[last] / visionComp->m_coneVision * 2.0f) - 1.0f;
 
@@ -177,9 +173,11 @@ void FirstPersonDisplaySystem::confWallEntityVertex(uint32_t numEntity, VisionCo
 }
 
 //===================================================================
-void FirstPersonDisplaySystem::fillWallEntitiesData(uint32_t numEntity, pairFloat_t absolPos[], float distance[],
-                                                    MapCoordComponent *mapCompA, MapCoordComponent *mapCompB,
-                                                    float observerAngle)
+void FirstPersonDisplaySystem::fillAbsolAndDistanceWall(pairFloat_t absolPos[],
+                                                        float distance[],
+                                                        MapCoordComponent *mapCompA,
+                                                        MapCoordComponent *mapCompB,
+                                                        uint32_t numEntity)
 {
     RectangleCollisionComponent *rectComp = stairwayToComponentManager().
             searchComponentByType<RectangleCollisionComponent>(numEntity, Components_e::RECTANGLE_COLLISION_COMPONENT);
@@ -193,7 +191,6 @@ void FirstPersonDisplaySystem::fillWallEntitiesData(uint32_t numEntity, pairFloa
                    mapCompB->m_absoluteMapPositionPX.second + rectComp->m_size.second};
     absolPos[3] = {mapCompB->m_absoluteMapPositionPX.first,
                    mapCompB->m_absoluteMapPositionPX.second + rectComp->m_size.second};
-    std::cerr << " \n\n\n DEB\n";
 
     //up left
     distance[0] = getDistance(mapCompA->m_absoluteMapPositionPX, absolPos[0]);
@@ -218,88 +215,94 @@ void FirstPersonDisplaySystem::fillWallEntitiesData(uint32_t numEntity, pairFloa
         std::swap(distance[3], distance[maxVal]);
         std::swap(absolPos[3], absolPos[maxVal]);
     }
-    distance[1] = getCameraDistance(mapCompA->m_absoluteMapPositionPX, absolPos[1], observerAngle);
-
-//    distance[0] = getCameraDistance(mapCompA->m_absoluteMapPositionPX, absolPos[0], observerAngle);
-//    distance[2] = getCameraDistance(mapCompA->m_absoluteMapPositionPX, absolPos[2], observerAngle);
-
-//    return;
-    float angleRef;
-
-//    float currentTrigoAngle =  getTrigoAngle(mapCompA->m_absoluteMapPositionPX, absolPos[i]);
-
-//    float angle = std::abs(getAngle(mapCompA->m_absoluteMapPositionPX, absolPos[0]) - observerAngle);
-    float angle = std::abs(getRadiantAngle(getTrigoAngle(mapCompA->m_absoluteMapPositionPX, absolPos[0])) - observerAngle);
-    if(angle > PI)angle -= PI;
-    std::cerr << std::abs(getAngle(mapCompA->m_absoluteMapPositionPX, absolPos[0])) << " - " << observerAngle << "\n";
-    std::cerr << /*getDegreeAngle*/(angle) << " dgdfhdfh\n";
-    if(/*distance[0] > distance[1] ||*/ angle < PI_QUARTER)
-    {
-        distance[0] = getCameraDistance(mapCompA->m_absoluteMapPositionPX, absolPos[0], observerAngle);
-    }
-    else
-    {
-        angleRef = getRadiantAngle(getTrigoAngle(mapCompA->m_absoluteMapPositionPX, absolPos[1])) - observerAngle;
-        distance[0] = treatSquareWallDisplay(mapCompA->m_absoluteMapPositionPX, observerAngle,
-                                             absolPos[1], angleRef, distance[1], absolPos[0], angle);
-        std::cerr  << angle << " > "  << PI_QUARTER << "  " <<distance[0] << "\n";
-
-    }
-    angle = std::abs(getRadiantAngle(getTrigoAngle(mapCompA->m_absoluteMapPositionPX, absolPos[2])) - observerAngle);
-    if(/*distance[2] > distance[1] ||*/ angle < PI_QUARTER)
-    {
-        distance[2] = getCameraDistance(mapCompA->m_absoluteMapPositionPX, absolPos[2], observerAngle);
-    }
-    else
-    {
-        angleRef = getRadiantAngle(getTrigoAngle(mapCompA->m_absoluteMapPositionPX, absolPos[1])) - observerAngle;
-        distance[2] = treatSquareWallDisplay(mapCompA->m_absoluteMapPositionPX, observerAngle,
-                                             absolPos[1], angleRef, distance[1], absolPos[2], angle);
-        std::cerr  << angle << " > "  << PI_QUARTER << "  " <<distance[2] << "\n";
-    }
 }
 
 //===================================================================
-float treatSquareWallDisplay(const pairFloat_t pointObserver, float observerAngle, const pairFloat_t pointRef, float angleRef,
-                             float cameraDistanceRef, const pairFloat_t currentPoint, float currentAngle)
+void FirstPersonDisplaySystem::fillWallEntitiesData(uint32_t numEntity, pairFloat_t absolPos[], float distance[],
+                                                    MapCoordComponent *mapCompA, MapCoordComponent *mapCompB,
+                                                    float observerAngle, VisionComponent *visionComp)
 {
-    pairFloat_t secondRefPoint;
-    float secondRefAngle, secondRefCameraDistance;
-    //X case
-    if(std::abs(pointRef.first - currentPoint.first) > 1.0f)
+    fillAbsolAndDistanceWall(absolPos, distance, mapCompA, mapCompB, numEntity);
+    uint32_t j;
+    bool pointIn[3];
+    float pointAngleVision[3];
+    bool leftVisionLimit;
+    for(uint32_t i = 0; i < 3; ++i)
     {
-        if(pointRef.first > currentPoint.first)
+        pointAngleVision[i] = std::abs(getRadiantAngle(getTrigoAngle(mapCompA->m_absoluteMapPositionPX,
+                                                       absolPos[i])) - observerAngle);
+        if(pointAngleVision[i] > PI)
         {
-            secondRefPoint = {pointRef.first - 10.0f, pointRef.second};
+            pointAngleVision[i] -= PI;
+        }
+        pointIn[i] = pointAngleVision[i] < PI_QUARTER;
+    }
+    for(uint32_t i = 0; i < 3; ++i)
+    {
+        //standard case
+        if(pointIn[i])
+        {
+            distance[i] = getCameraDistance(mapCompA->m_absoluteMapPositionPX,
+                                            absolPos[i], observerAngle);
         }
         else
         {
-            secondRefPoint = {pointRef.first + 10.0f, pointRef.second};
+            if(i == 0 || i == 2)
+            {
+                j = 1;
+            }
+            else
+            {
+                if(pointIn[0] && !pointIn[2])
+                {
+                    j = 0;
+                }
+                else if(!pointIn[0] && pointIn[2])
+                {
+                    j = 2;
+                }
+                else if(pointIn[0] && pointIn[2])
+                {
+                    j = (distance[0] < distance[2]) ? 0 : 2;
+                }
+                else
+                {
+                    return;
+                }
+            }
+            leftVisionLimit = pointAngleVision[i] > pointAngleVision[j];
+            setPointCameraLimitWall(mapCompA->m_absoluteMapPositionPX, observerAngle, absolPos[i],
+                                         absolPos[j], leftVisionLimit, visionComp);
+            distance[i] = getCameraDistance(mapCompA->m_absoluteMapPositionPX,
+                                            absolPos[i], observerAngle);
         }
-        secondRefAngle = getAngle(pointObserver, currentPoint);
-        secondRefCameraDistance = getCameraDistance(pointObserver, currentPoint, observerAngle);
-        float diffAngle = std::abs(secondRefAngle - angleRef);
-        float diffCamDistance = std::abs(secondRefCameraDistance - cameraDistanceRef);
-        float diffCurrentAngle = std::abs(secondRefAngle - currentAngle);
-        return diffCurrentAngle * diffCamDistance / diffAngle;
+        distance[i] /= LEVEL_TILE_SIZE_PX;
     }
-    //Y case
+}
+//===================================================================
+void FirstPersonDisplaySystem::setPointCameraLimitWall(const pairFloat_t &pointObserver, float observerAngle,
+                                  pairFloat_t &outPoint, const pairFloat_t &linkPoint,
+                                  bool leftLimit, VisionComponent *visionComp)
+{
+    float limitAngle = leftLimit ? observerAngle + (visionComp->m_coneVision / 2) :
+                                   observerAngle - (visionComp->m_coneVision / 2);
+    limitAngle = getRadiantAngle(std::abs(getTrigoAngle(pointObserver, linkPoint) - limitAngle));
+    //Y same
+    if(std::abs(outPoint.first - linkPoint.first) > 1.0f)
+    {
+        std::cerr << "std::atan(limitAngle) * std::abs(outPoint.second - pointObserver.second)  " << std::atan(limitAngle)
+                  << " * " << std::abs(outPoint.second - pointObserver.second) <<  " \n";
+        std::cerr << " += " << std::atan(limitAngle) * std::abs(outPoint.second - pointObserver.second) << " Xc\n";
+        outPoint.first += std::atan(limitAngle) * std::abs(outPoint.second - pointObserver.second);
+    }
+    //X Same
     else
     {
-        if(pointRef.second > currentPoint.second)
-        {
-            secondRefPoint = {pointRef.first, pointRef.second - 10.0f};
-        }
-        else
-        {
-            secondRefPoint = {pointRef.first, pointRef.second + 10.0f};
-        }
-        secondRefAngle = getAngle(pointObserver, currentPoint);
-        secondRefCameraDistance = getCameraDistance(pointObserver, currentPoint, observerAngle);
-        float diffAngle = std::abs(secondRefAngle - angleRef);
-        float diffCamDistance = std::abs(secondRefCameraDistance - cameraDistanceRef);
-        float diffCurrentAngle = std::abs(secondRefAngle - currentAngle);
-        return diffCurrentAngle * diffCamDistance / diffAngle;
+        std::cerr << "std::atan(limitAngle) * std::abs(outPoint.first - pointObserver.first)  " << std::atan(limitAngle)
+                  << " * " << std::abs(outPoint.first - pointObserver.first) <<  " \n";
+        std::cerr << " += " << std::atan(limitAngle) *  std::abs(outPoint.first - pointObserver.first) << " Yc\n";
+
+        outPoint.second += std::atan(limitAngle) * std::abs(outPoint.first - pointObserver.first);
     }
 }
 

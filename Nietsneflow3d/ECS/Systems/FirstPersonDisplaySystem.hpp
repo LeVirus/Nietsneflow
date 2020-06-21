@@ -42,13 +42,17 @@ private:
                             VisionComponent *visionComp, uint32_t &toRemove,
                             float leftAngleVision, uint32_t numIteration);
     void fillWallEntitiesData(uint32_t numEntity, pairFloat_t absolPos[], float distance[], MapCoordComponent *mapCompA,
-                              MapCoordComponent *mapCompB, float observerAngle);
+                              MapCoordComponent *mapCompB, float observerAngle, VisionComponent *visionComp);
+    void fillAbsolAndDistanceWall(pairFloat_t absolPos[], float distance[], MapCoordComponent *mapCompA, MapCoordComponent *mapCompB, uint32_t numEntity);
     void confNormalEntityVertex(uint32_t numEntity,
                                 VisionComponent *visionComp, float lateralPosDegree, float distance);
     void confWallEntityVertex(uint32_t numEntity, VisionComponent *visionComp, float lateralPosDegree[], float distance[]);
     void drawVertex();
     pairFloat_t getCenterPosition(MapCoordComponent const *mapComp, GeneralCollisionComponent *genCollComp, float numEntity);
     void fillVertexFromEntitie(uint32_t numEntity, uint32_t numIteration, float distance);
+    void setPointCameraLimitWall(const pairFloat_t &pointObserver, float observerAngle,
+                                             pairFloat_t &outPoint, const pairFloat_t &linkPoint,
+                                             bool leftLimit, VisionComponent *visionComp);
 private:
     Shader *m_shader;
     std::set<EntityData> m_entitiesNumMem;
@@ -58,6 +62,6 @@ private:
     vectUI_t m_numVertexToDraw;
 };
 
-float treatSquareWallDisplay(const pairFloat_t pointObserver, float observerAngle, const pairFloat_t pointRef, float angleRef, float cameraDistanceRef, const pairFloat_t currentPoint, float currentAngle);
+
 uint32_t getMaxValueFromEntries(const float distance[4]);
 uint32_t getMinValueFromEntries(const float distance[4]);

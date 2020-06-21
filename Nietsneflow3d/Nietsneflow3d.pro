@@ -2,7 +2,7 @@ TEMPLATE = app
 CONFIG += console c++17
 CONFIG -= app_bundle
 CONFIG -= qt
-QMAKE_CXXFLAGS += -std=c++2a
+QMAKE_CXXFLAGS += -std=c++17
 QMAKE_CXXFLAGS_DEBUG += -Wall -Wextra -Wpedantic -Og
 INCLUDEPATH += includesLib
 LIBS += -L../Nietsneflow3d/lib  -lECS -lglad -ldl -lglfw3 -lX11 -lXxf86vm -lXrandr -pthread -lXi
