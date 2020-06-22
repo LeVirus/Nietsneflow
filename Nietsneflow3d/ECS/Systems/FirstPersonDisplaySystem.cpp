@@ -139,8 +139,6 @@ void FirstPersonDisplaySystem::confWallEntityVertex(uint32_t numEntity, VisionCo
     assert(positionComp);
     assert(visionComp);
 
-    for(uint32_t i = 0; i< 4; ++i)std::cerr << lateralPosDegree[i] << "laaaat\n";
-    std::cerr << "\n\n";
     bool excludeZero = (lateralPosDegree[0] > lateralPosDegree[1]) &&
             (lateralPosDegree[0] < lateralPosDegree[2]) ||
             (lateralPosDegree[0] < lateralPosDegree[1]) &&
@@ -264,42 +262,42 @@ void FirstPersonDisplaySystem::fillWallEntitiesData(uint32_t numEntity, pairFloa
     for(uint32_t i = 0; i < 3; ++i)
     {
         //standard case
-        if(pointIn[i])
+//        if(pointIn[i])
         {
             distance[i] = getCameraDistance(mapCompA->m_absoluteMapPositionPX,
                                             absolPos[i], observerAngle);
         }
-        else
-        {
-            if(i == 0 || i == 2)
-            {
-                j = 1;
-            }
-            else
-            {
-                if(pointIn[0] && !pointIn[2])
-                {
-                    j = 0;
-                }
-                else if(!pointIn[0] && pointIn[2])
-                {
-                    j = 2;
-                }
-                else if(pointIn[0] && pointIn[2])
-                {
-                    j = (distance[0] < distance[2]) ? 0 : 2;
-                }
-                else
-                {
-                    return;
-                }
-            }
-            leftVisionLimit = pointAngleVision[i] > pointAngleVision[j];
-            setPointCameraLimitWall(mapCompA->m_absoluteMapPositionPX, observerAngle, absolPos[i],
-                                         absolPos[j], leftVisionLimit, visionComp);
-            distance[i] = getCameraDistance(mapCompA->m_absoluteMapPositionPX,
-                                            absolPos[i], observerAngle);
-        }
+//        else
+//        {
+//            if(i == 0 || i == 2)
+//            {
+//                j = 1;
+//            }
+//            else
+//            {
+//                if(pointIn[0] && !pointIn[2])
+//                {
+//                    j = 0;
+//                }
+//                else if(!pointIn[0] && pointIn[2])
+//                {
+//                    j = 2;
+//                }
+//                else if(pointIn[0] && pointIn[2])
+//                {
+//                    j = (distance[0] < distance[2]) ? 0 : 2;
+//                }
+//                else
+//                {
+//                    return;
+//                }
+//            }
+//            leftVisionLimit = pointAngleVision[i] > pointAngleVision[j];
+//            setPointCameraLimitWall(mapCompA->m_absoluteMapPositionPX, observerAngle, absolPos[i],
+//                                         absolPos[j], leftVisionLimit, visionComp);
+//            distance[i] = getCameraDistance(mapCompA->m_absoluteMapPositionPX,
+//                                            absolPos[i], observerAngle);
+//        }
         distance[i] /= LEVEL_TILE_SIZE_PX;
     }
 }

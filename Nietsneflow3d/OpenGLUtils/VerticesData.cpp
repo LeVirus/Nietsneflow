@@ -72,19 +72,40 @@ bool VerticesData::loadVertexColorComponent(const PositionVertexComponent *posCo
 
 //===================================================================
 void VerticesData::loadVertexTextureComponent(const PositionVertexComponent &posComp,
-                                              const SpriteTextureComponent &spriteComp)
+                                              SpriteTextureComponent &spriteComp)
 {
     if(m_shaderNum != Shader_e::TEXTURE_S)
     {
         return;
     }
     size_t sizeVertex = posComp.m_vertex.size();
+    bool reverseTexture = false;
+    if(posComp.m_vertex[1].first < posComp.m_vertex[0].first)
+    {
+        reverseTexture = true;
+    }
+    uint32_t k;
     for(uint32_t j = 0; j < 4; ++j)
     {
+        if(reverseTexture)
+        {
+            if(j % 2 == 0)
+            {
+                k = j + 1;
+            }
+            else
+            {
+                k = j - 1;
+            }
+        }
+        else
+        {
+            k = j;
+        }
         m_vertexBuffer.emplace_back(posComp.m_vertex[j].first);
         m_vertexBuffer.emplace_back(posComp.m_vertex[j].second);
-        m_vertexBuffer.emplace_back(spriteComp.m_spriteData->m_texturePosVertex[j].first);
-        m_vertexBuffer.emplace_back(spriteComp.m_spriteData->m_texturePosVertex[j].second);
+        m_vertexBuffer.emplace_back(spriteComp.m_spriteData->m_texturePosVertex[k].first);
+        m_vertexBuffer.emplace_back(spriteComp.m_spriteData->m_texturePosVertex[k].second);
     }
     if(sizeVertex > 4)
     {
