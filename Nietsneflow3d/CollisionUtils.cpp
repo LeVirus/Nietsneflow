@@ -244,10 +244,7 @@ float getDistance(const pairFloat_t &pointA, const pairFloat_t &pointB)
 float getCameraDistance(const pairFloat_t &observerPoint, const pairFloat_t &targetPoint, float observerAngle)
 {
     float angleCalc = getAngle(observerPoint, targetPoint) - observerAngle;
-//    std::cerr << getDegreeAngle(angleCalc) << "  angleCalc\n";
-//    std::cerr << hyp << " * " << std::cos(angleCalc) << "  hyp * cos(angle)\n";
     float hyp = getDistance(observerPoint, targetPoint);
-//    std::cerr << std::abs(hyp * std::cos(angleCalc)) << "  RES============\n";
     return std::abs(hyp * std::cos(angleCalc));
 }
 
@@ -304,19 +301,35 @@ float getTrigoAngle(const pairFloat_t &pointA, const pairFloat_t &pointB)
     //HAUT DROITE
     if(pointA.first >= pointB.first && pointA.second <= pointB.second)
     {
-       return getDegreeAngle(std::atan(Y / X)) + 180.0f;
+        if(X < 0.5f)
+        {
+            return 180.0f;
+        }
+        return getDegreeAngle(std::atan(Y / X)) + 180.0f;
     }
     //HAUT GAUCHE
     else if(pointA.first <= pointB.first && pointA.second <= pointB.second)
     {
+        if(Y < 0.5f)
+        {
+            return 270.0f;
+        }
         return getDegreeAngle(std::atan(X / Y)) + 270.0f;
     }
     //BAS GAUCHE
     else if(pointA.first <= pointB.first && pointA.second >= pointB.second)
     {
+        if(X < 0.5f)
+        {
+            return 0.0f;
+        }
         return getDegreeAngle(std::atan(Y / X));
     }
     //BAS DROITE
+    if(Y < 0.5f)
+    {
+        return 90.0f;
+    }
     return getDegreeAngle(std::atan(X / Y)) + 90.0f;
 }
 
