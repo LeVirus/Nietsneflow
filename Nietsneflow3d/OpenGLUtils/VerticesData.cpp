@@ -109,7 +109,7 @@ void VerticesData::loadVertexTextureComponent(const PositionVertexComponent &pos
     }
     if(sizeVertex > 4)
     {
-        uint32_t k;
+        uint32_t k, l;
         for(uint32_t j = 0; j < 4; ++j)
         {
             if(j == 0)
@@ -129,10 +129,25 @@ void VerticesData::loadVertexTextureComponent(const PositionVertexComponent &pos
                 k = 2;
             }
 
+            if(reverseTexture)
+            {
+                if(j % 2 == 0)
+                {
+                    l = j + 1;
+                }
+                else
+                {
+                    l = j - 1;
+                }
+            }
+            else
+            {
+                l = j;
+            }
             m_vertexBuffer.emplace_back(posComp.m_vertex[k].first);
             m_vertexBuffer.emplace_back(posComp.m_vertex[k].second);
-            m_vertexBuffer.emplace_back(spriteComp.m_spriteData->m_texturePosVertex[j].first);
-            m_vertexBuffer.emplace_back(spriteComp.m_spriteData->m_texturePosVertex[j].second);
+            m_vertexBuffer.emplace_back(spriteComp.m_spriteData->m_texturePosVertex[l].first);
+            m_vertexBuffer.emplace_back(spriteComp.m_spriteData->m_texturePosVertex[l].second);
         }
     }
     if(sizeVertex == 3)
