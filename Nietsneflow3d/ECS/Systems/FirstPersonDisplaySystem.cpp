@@ -90,10 +90,11 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
         //calculate distance
         fillWallEntitiesData(visionComp->m_vectVisibleEntities[numIteration], absolPos, distance,
                              mapCompA, mapCompB, getRadiantAngle(observerAngle), visionComp);
+        float currentTrigoAngle;
         //calculate all 3 display position
         for(uint32_t i = 0; i < 3; ++i)
         {
-            float currentTrigoAngle =  getTrigoAngle(mapCompA->m_absoluteMapPositionPX, absolPos[i]);
+            currentTrigoAngle =  getTrigoAngle(mapCompA->m_absoluteMapPositionPX, absolPos[i]);
             if(std::abs(currentTrigoAngle - leftAngleVision) > 150.0f)
             {
                 currentTrigoAngle += 360.0f;
@@ -138,13 +139,29 @@ void FirstPersonDisplaySystem::confWallEntityVertex(uint32_t numEntity, VisionCo
     assert(positionComp);
     assert(visionComp);
 
+    for(uint32_t i = 0; i< 4; ++i)std::cerr << lateralPosDegree[i] << "laaaat\n";
+    std::cerr << "\n\n";
+    bool excludeZero = (lateralPosDegree[0] > lateralPosDegree[1]) &&
+            (lateralPosDegree[0] < lateralPosDegree[2]) ||
+            (lateralPosDegree[0] < lateralPosDegree[1]) &&
+            (lateralPosDegree[0] > lateralPosDegree[2]);
+    bool excludeTwo = (lateralPosDegree[2] > lateralPosDegree[0]) &&
+            (lateralPosDegree[2] < lateralPosDegree[1]) ||
+            (lateralPosDegree[2] < lateralPosDegree[0]) &&
+            (lateralPosDegree[2] > lateralPosDegree[1]);
     positionComp->m_vertex.resize(6);
     uint32_t first = 0, last = 2;
-    if(lateralPosDegree[0] < lateralPosDegree[2])
+    if(!excludeZero && !excludeTwo && lateralPosDegree[0] < lateralPosDegree[2])
     {
         first = 2;
         last = 0;
     }
+
+    if(excludeZero)
+    {
+        first = 2;
+    }
+
     //convert to GL context
     float depthPos = (spriteComp->m_glFpsSize.second) / distance[first];
     float halfVerticalSize = depthPos / 2.0f;
@@ -153,19 +170,26 @@ void FirstPersonDisplaySystem::confWallEntityVertex(uint32_t numEntity, VisionCo
     float depthPosMid = (spriteComp->m_glFpsSize.second) / distance[1];
     float halfVerticalSizeMid = depthPosMid / 2.0f;
     float lateralPosGLMid = (lateralPosDegree[1] / visionComp->m_coneVision * 2.0f) - 1.0f;
-    float depthPosMax = (spriteComp->m_glFpsSize.second) / distance[last];
-    float halfVerticalSizeMax = depthPosMax / 2.0f;
-    float lateralPosMaxGL = (lateralPosDegree[last] / visionComp->m_coneVision * 2.0f) - 1.0f;
+
 
     positionComp->m_vertex[0].first = lateralPosGL;
     positionComp->m_vertex[0].second = halfVerticalSize;
     positionComp->m_vertex[1].first = lateralPosGLMid;
     positionComp->m_vertex[1].second = halfVerticalSizeMid;
+
     positionComp->m_vertex[2].first = lateralPosGLMid;
     positionComp->m_vertex[2].second = -halfVerticalSizeMid;
     positionComp->m_vertex[3].first = lateralPosGL;
     positionComp->m_vertex[3].second = -halfVerticalSize;
 
+    if(excludeZero || excludeTwo)
+    {
+        positionComp->m_vertex.resize(4);
+        return;
+    }
+    float depthPosMax = (spriteComp->m_glFpsSize.second) / distance[last];
+    float halfVerticalSizeMax = depthPosMax / 2.0f;
+    float lateralPosMaxGL = (lateralPosDegree[last] / visionComp->m_coneVision * 2.0f) - 1.0f;
     positionComp->m_vertex[4].first = lateralPosMaxGL;
     positionComp->m_vertex[4].second = halfVerticalSizeMax;
     positionComp->m_vertex[5].first = lateralPosMaxGL;

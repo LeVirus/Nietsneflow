@@ -13,6 +13,13 @@ struct GeneralCollisionComponent;
 
 using vectUI_t = std::vector<uint32_t>;
 
+enum WallTreatment_e
+{
+    NORMAL,
+    REMOVE_ZERO,
+    REMOVE_TWO
+};
+
 struct EntityData
 {
     float m_distance;
@@ -46,7 +53,8 @@ private:
     void fillAbsolAndDistanceWall(pairFloat_t absolPos[], float distance[], MapCoordComponent *mapCompA, MapCoordComponent *mapCompB, uint32_t numEntity);
     void confNormalEntityVertex(uint32_t numEntity,
                                 VisionComponent *visionComp, float lateralPosDegree, float distance);
-    void confWallEntityVertex(uint32_t numEntity, VisionComponent *visionComp, float lateralPosDegree[], float distance[]);
+    void confWallEntityVertex(uint32_t numEntity, VisionComponent *visionComp,
+                              float lateralPosDegree[], float distance[]);
     void drawVertex();
     pairFloat_t getCenterPosition(MapCoordComponent const *mapComp, GeneralCollisionComponent *genCollComp, float numEntity);
     void fillVertexFromEntitie(uint32_t numEntity, uint32_t numIteration, float distance);
