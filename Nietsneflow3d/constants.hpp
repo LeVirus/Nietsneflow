@@ -114,6 +114,7 @@ enum CollisionShape_e
 
 inline const float PI = 3.14159265359f;
 inline const float PI_QUARTER = PI / 4.0f;
+inline const float PI_HALF = PI / 2.0f;
 inline const float PLAYER_RAY_DISPLAY = 0.03f;
 inline const float LEVEL_TILE_SIZE_PX = 30.0f;
 inline const float LEVEL_HALF_TILE_SIZE_PX = LEVEL_TILE_SIZE_PX / 2;

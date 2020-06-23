@@ -334,53 +334,73 @@ void FirstPersonDisplaySystem::setPointCameraLimitWall(const pairFloat_t &pointO
     {
         limitAngle -= 360.0f;
     }
-    limitAngle = getQuarterAngle(limitAngle, leftLimit);
     std::cerr << "Degree Angle " << limitAngle << "\n";
+    bool angleCase = (limitAngle < PI_QUARTER) ||
+            (limitAngle > PI && limitAngle < PI_QUARTER * 3.0f);
+    limitAngle = getQuarterAngle(limitAngle, leftLimit);
+    std::cerr << "GETQUARt Angle " << limitAngle << "\n";
     limitAngle = getRadiantAngle(limitAngle);
-    std::cerr << "Radian Angle " << limitAngle << "\n";
-    if(leftLimit)std::cerr << "LEFT\n";
-    else std::cerr << "RIGHT\n";
+//    std::cerr << "Radian Angle " << limitAngle << "\n";
+//    if(leftLimit)std::cerr << "LEFT\n";
+//    else std::cerr << "RIGHT\n";
     float correction;
     //Y same
     if(std::abs(outPoint.first - linkPoint.first) > 1.0f)
     {
-        std::cerr << "tan " << std::abs(std::tan(limitAngle)) << "adj  " <<
+        std::cerr << "XMOD tan " << std::abs(std::tan(limitAngle)) << "adj  " <<
                                         std::abs(outPoint.second - pointObserver.second) << "\n";
-        correction = std::abs(std::tan(limitAngle) * std::abs(outPoint.second - pointObserver.second));
-        std::cerr << "before final" << outPoint.first << "\n";
-        std::cerr << "after final  " << pointObserver.first + correction << "\n";
-        std::cerr << "correction " << correction << "\n\n\n";
+        if(angleCase)
+        {
+            std::cerr << "OP \n";
+            correction = std::abs(std::tan(limitAngle) *
+                                  std::abs(outPoint.second - pointObserver.second));
+        }
+        else
+        {
+            std::cerr << "ADJ \n";
+            correction = std::abs(std::abs(outPoint.first - pointObserver.first) /
+                                  std::tan(limitAngle));
+        }
+//        std::cerr << "correction " << correction << "\n\n\n";
         if(outPoint.first > pointObserver.first)
         {
-            std::cerr << "+++ " << "\n";
+//            std::cerr << "+++ " << "\n";
             outPoint.first = pointObserver.first + correction;
         }
         else
         {
-            std::cerr << "--- " << "\n";
+//            std::cerr << "--- " << "\n";
             outPoint.first = pointObserver.first - correction;
         }
     }
     //X Same
     else
     {
-        std::cerr << "tan " << std::abs(std::tan(limitAngle)) << "adj  "
-                  << std::abs(outPoint.first - pointObserver.first) << "\n";
+//        std::cerr << "YMOD tan " << std::abs(std::tan(limitAngle)) << "adj  "
+//                  << std::abs(outPoint.first - pointObserver.first) << "\n";
 
-        correction = std::abs(std::tan(limitAngle) *
-                              std::abs(outPoint.first - pointObserver.first));
-        std::cerr << "before final" << outPoint.second << "\n";
-        std::cerr << "after final  " << pointObserver.second + correction << "\n";
-        std::cerr << "correction " << correction << "\n\n\n";
+        if(!angleCase)
+        {
+//            std::cerr << "OP \n";
+            correction = std::abs(std::tan(limitAngle) *
+                                  std::abs(outPoint.second - pointObserver.second));
+        }
+        else
+        {
+//            std::cerr << "ADJ \n";
+            correction = std::abs(std::abs(outPoint.first - pointObserver.first) /
+                                  std::tan(limitAngle));
+        }
+//        std::cerr << "correction " << correction << "\n\n\n";
 
         if(outPoint.second > pointObserver.second)
         {
-            std::cerr << "+++ " << "\n";
+//            std::cerr << "+++ " << "\n";
             outPoint.second = pointObserver.second + correction;
         }
         else
         {
-            std::cerr << "--- " << "\n";
+//            std::cerr << "--- " << "\n";
             outPoint.second = pointObserver.second - correction;
         }
     }
@@ -391,23 +411,23 @@ float getQuarterAngle(float angle, bool leftSense)
 {
     if(angle <= 90.0f)
     {
-        if(leftSense)
+//        if(leftSense)
         {
             return angle;
         }
-        else
+//        else
         {
             return std::abs(angle - 90.0f);
         }
     }
     else if(angle <= 180.0f)
     {
-        if(leftSense)
+//        if(leftSense)
         {
             return std::abs(angle - 180.0f);
 
         }
-        else
+//        else
         {
             return std::abs(angle - 90.0f);
 
@@ -415,22 +435,22 @@ float getQuarterAngle(float angle, bool leftSense)
     }
     else if(angle <= 270.0f)
     {
-        if(leftSense)
+//        if(leftSense)
         {
             return std::abs(angle - 270.0f);
         }
-        else
+//        else
         {
             return std::abs(angle - 180.0f);
         }
     }
     else
     {
-        if(leftSense)
+//        if(leftSense)
         {
             return std::abs(angle - 360.0f);
         }
-        else
+//        else
         {
             return std::abs(angle - 270.0f);
         }

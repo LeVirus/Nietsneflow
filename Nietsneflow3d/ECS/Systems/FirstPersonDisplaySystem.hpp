@@ -70,6 +70,7 @@ private:
     vectUI_t m_numVertexToDraw;
 };
 
+//FOR 90 degree ONLY !!!!!!!!
 float getQuarterAngle(float angle, bool leftSense);
 uint32_t getMaxValueFromEntries(const float distance[4]);
 uint32_t getMinValueFromEntries(const float distance[4]);
