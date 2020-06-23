@@ -87,13 +87,27 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
         float observerAngle = leftAngleVision + visionComp->m_coneVision / 2.0f;
         observerAngle += 270.0f;
         if(observerAngle > 360.0f)observerAngle -= 360.0f;
+        bool pointIn[3];
+        bool leftLimit[3];
         //calculate distance
         fillWallEntitiesData(visionComp->m_vectVisibleEntities[numIteration], absolPos, distance,
-                             mapCompA, mapCompB, getRadiantAngle(observerAngle), visionComp);
+                             mapCompA, mapCompB, getRadiantAngle(observerAngle), visionComp, pointIn, leftLimit);
         float currentTrigoAngle;
         //calculate all 3 display position
         for(uint32_t i = 0; i < 3; ++i)
         {
+            if(!pointIn[i])
+            {
+                if(leftLimit[i])
+                {
+                    lateralPos[i] = 0.0f;
+                }
+                else
+                {
+                    lateralPos[i] = visionComp->m_coneVision;
+                }
+                continue;
+            }
             currentTrigoAngle =  getTrigoAngle(mapCompA->m_absoluteMapPositionPX, absolPos[i]);
             if(std::abs(currentTrigoAngle - leftAngleVision) > 150.0f)
             {
@@ -242,62 +256,64 @@ void FirstPersonDisplaySystem::fillAbsolAndDistanceWall(pairFloat_t absolPos[],
 //===================================================================
 void FirstPersonDisplaySystem::fillWallEntitiesData(uint32_t numEntity, pairFloat_t absolPos[], float distance[],
                                                     MapCoordComponent *mapCompA, MapCoordComponent *mapCompB,
-                                                    float observerAngle, VisionComponent *visionComp)
+                                                    float observerAngle, VisionComponent *visionComp,
+                                                    bool pointIn[], bool outLeft[])
 {
     fillAbsolAndDistanceWall(absolPos, distance, mapCompA, mapCompB, numEntity);
     uint32_t j;
-    bool pointIn[3];
     float pointAngleVision[3];
-    bool leftVisionLimit;
     for(uint32_t i = 0; i < 3; ++i)
     {
-        pointAngleVision[i] = std::abs(getRadiantAngle(getTrigoAngle(mapCompA->m_absoluteMapPositionPX,
-                                                       absolPos[i])) - observerAngle);
-        if(pointAngleVision[i] > PI)
+        float anglePoint = getRadiantAngle(getTrigoAngle(mapCompA->m_absoluteMapPositionPX, absolPos[i]));
+        pointAngleVision[i] = anglePoint - observerAngle;
+        pointIn[i] = std::abs(pointAngleVision[i]) < PI_QUARTER;
+        if(!pointIn[i])
         {
-            pointAngleVision[i] -= PI;
+            std::cerr << anglePoint << "  CCCC  " <<
+                         observerAngle << "\n";
+            outLeft[i] = anglePoint > observerAngle;
         }
-        pointIn[i] = pointAngleVision[i] < PI_QUARTER;
     }
     for(uint32_t i = 0; i < 3; ++i)
     {
         //standard case
-//        if(pointIn[i])
+        if(pointIn[i])
         {
             distance[i] = getCameraDistance(mapCompA->m_absoluteMapPositionPX,
                                             absolPos[i], observerAngle);
         }
-//        else
-//        {
-//            if(i == 0 || i == 2)
-//            {
-//                j = 1;
-//            }
-//            else
-//            {
-//                if(pointIn[0] && !pointIn[2])
-//                {
-//                    j = 0;
-//                }
-//                else if(!pointIn[0] && pointIn[2])
-//                {
-//                    j = 2;
-//                }
-//                else if(pointIn[0] && pointIn[2])
-//                {
-//                    j = (distance[0] < distance[2]) ? 0 : 2;
-//                }
-//                else
-//                {
-//                    return;
-//                }
-//            }
-//            leftVisionLimit = pointAngleVision[i] > pointAngleVision[j];
-//            setPointCameraLimitWall(mapCompA->m_absoluteMapPositionPX, observerAngle, absolPos[i],
-//                                         absolPos[j], leftVisionLimit, visionComp);
-//            distance[i] = getCameraDistance(mapCompA->m_absoluteMapPositionPX,
-//                                            absolPos[i], observerAngle);
-//        }
+        //out of screen limit case
+        else
+        {
+            if(i == 0 || i == 2)
+            {
+                j = 1;
+            }
+            else
+            {
+                if(pointIn[0] && !pointIn[2])
+                {
+                    j = 0;
+                }
+                else if(!pointIn[0] && pointIn[2])
+                {
+                    j = 2;
+                }
+                else if(pointIn[0] && pointIn[2])
+                {
+                    j = (distance[0] < distance[2]) ? 0 : 2;
+                }
+                else
+                {
+                    return;
+                }
+            }
+
+            setPointCameraLimitWall(mapCompA->m_absoluteMapPositionPX, observerAngle, absolPos[i],
+                                         absolPos[j], outLeft[i], visionComp);
+            distance[i] = getCameraDistance(mapCompA->m_absoluteMapPositionPX,
+                                            absolPos[i], observerAngle);
+        }
         distance[i] /= LEVEL_TILE_SIZE_PX;
     }
 }

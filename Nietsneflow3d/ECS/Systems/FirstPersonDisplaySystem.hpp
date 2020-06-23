@@ -49,7 +49,7 @@ private:
                             VisionComponent *visionComp, uint32_t &toRemove,
                             float leftAngleVision, uint32_t numIteration);
     void fillWallEntitiesData(uint32_t numEntity, pairFloat_t absolPos[], float distance[], MapCoordComponent *mapCompA,
-                              MapCoordComponent *mapCompB, float observerAngle, VisionComponent *visionComp);
+                              MapCoordComponent *mapCompB, float observerAngle, VisionComponent *visionComp, bool pointIn[], bool outLeft[]);
     void fillAbsolAndDistanceWall(pairFloat_t absolPos[], float distance[], MapCoordComponent *mapCompA, MapCoordComponent *mapCompB, uint32_t numEntity);
     void confNormalEntityVertex(uint32_t numEntity,
                                 VisionComponent *visionComp, float lateralPosDegree, float distance);
