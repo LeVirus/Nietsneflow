@@ -68,10 +68,11 @@ bool checkPointPosition(const pairFloat_t &firstPoint,
                         const pairFloat_t &currentPoint);
 
 //get angle from 2 points from trigo sense
-float getTrigoAngle(const pairFloat_t &pointA, const pairFloat_t &pointB);
+float getTrigoAngle(const pairFloat_t &pointA, const pairFloat_t &pointB, bool degree = true);
 float getDistance(const pairFloat_t &pointA, const pairFloat_t &pointB);
 float getAngle(const pairFloat_t &observerPoint, const pairFloat_t &targetPoint);
-float getCameraDistance(const pairFloat_t &observerPoint, const pairFloat_t &targetPoint, float observerAngle);
+float getCameraDistance(const pairFloat_t &observerPoint, const pairFloat_t &targetPoint,
+                        float observerAngle, bool limit = false);
 float getRectTriangleSide(float adj, float hyp);
 
 pairFloat_t getCircleUpLeftCorner(const pairFloat_t &point, float ray);

@@ -71,6 +71,6 @@ private:
 };
 
 //FOR 90 degree ONLY !!!!!!!!
-float getQuarterAngle(float angle, bool leftSense);
+float getQuarterAngle(float angle);
 uint32_t getMaxValueFromEntries(const float distance[4]);
 uint32_t getMinValueFromEntries(const float distance[4]);
