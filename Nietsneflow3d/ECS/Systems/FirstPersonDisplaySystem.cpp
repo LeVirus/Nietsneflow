@@ -267,6 +267,7 @@ void FirstPersonDisplaySystem::fillWallEntitiesData(uint32_t numEntity, pairFloa
         float anglePoint = getRadiantAngle(getTrigoAngle(mapCompA->m_absoluteMapPositionPX, absolPos[i]));
         pointAngleVision[i] = anglePoint - observerAngle;
         pointIn[i] = std::abs(pointAngleVision[i]) < PI_QUARTER;
+        //mem limit left or right
         if(!pointIn[i])
         {
             std::cerr << anglePoint << "  CCCC  " <<
@@ -309,20 +310,22 @@ void FirstPersonDisplaySystem::fillWallEntitiesData(uint32_t numEntity, pairFloa
                 }
             }
 
-            setPointCameraLimitWall(mapCompA->m_absoluteMapPositionPX, observerAngle, absolPos[i],
+            pairFloat_t limitPoint = getPointCameraLimitWall(mapCompA->m_absoluteMapPositionPX, observerAngle, absolPos[i],
                                          absolPos[j], outLeft[i], visionComp);
             distance[i] = getCameraDistance(mapCompA->m_absoluteMapPositionPX,
-                                            absolPos[i], observerAngle);
+                                            limitPoint, observerAngle);
+            std::cerr << "distance " << distance[i] << "\n\n\n";
         }
         distance[i] /= LEVEL_TILE_SIZE_PX;
     }
 }
 
 //===================================================================
-void FirstPersonDisplaySystem::setPointCameraLimitWall(const pairFloat_t &pointObserver, float observerAngle,
-                                  pairFloat_t &outPoint, const pairFloat_t &linkPoint,
-                                  bool leftLimit, VisionComponent *visionComp)
+pairFloat_t FirstPersonDisplaySystem::getPointCameraLimitWall(const pairFloat_t &pointObserver, float observerAngle,
+                                                       const pairFloat_t &outPoint, const pairFloat_t &linkPoint,
+                                                       bool leftLimit, VisionComponent *visionComp)
 {
+    pairFloat_t pointReturn = outPoint;
     observerAngle = getDegreeAngle(observerAngle);
     float limitAngle = leftLimit ? observerAngle + (visionComp->m_coneVision / 2) :
                                    observerAngle - (visionComp->m_coneVision / 2);
@@ -365,13 +368,14 @@ void FirstPersonDisplaySystem::setPointCameraLimitWall(const pairFloat_t &pointO
         if(outPoint.first > pointObserver.first)
         {
 //            std::cerr << "+++ " << "\n";
-            outPoint.first = pointObserver.first + correction;
+            pointReturn.first = pointObserver.first + correction;
         }
         else
         {
 //            std::cerr << "--- " << "\n";
-            outPoint.first = pointObserver.first - correction;
+            pointReturn.first = pointObserver.first - correction;
         }
+        std::cerr << "pointReturn.first " << pointReturn.first << "\n";
     }
     //X Same
     else
@@ -393,17 +397,18 @@ void FirstPersonDisplaySystem::setPointCameraLimitWall(const pairFloat_t &pointO
         }
 //        std::cerr << "correction " << correction << "\n\n\n";
 
-        if(outPoint.second > pointObserver.second)
+        if(pointReturn.second > pointObserver.second)
         {
 //            std::cerr << "+++ " << "\n";
-            outPoint.second = pointObserver.second + correction;
+            pointReturn.second = pointObserver.second + correction;
         }
         else
         {
 //            std::cerr << "--- " << "\n";
-            outPoint.second = pointObserver.second - correction;
+            pointReturn.second = pointObserver.second - correction;
         }
     }
+    return pointReturn;
 }
 
 //===================================================================

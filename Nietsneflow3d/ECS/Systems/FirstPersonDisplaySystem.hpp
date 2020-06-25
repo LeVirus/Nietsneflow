@@ -58,9 +58,9 @@ private:
     void drawVertex();
     pairFloat_t getCenterPosition(MapCoordComponent const *mapComp, GeneralCollisionComponent *genCollComp, float numEntity);
     void fillVertexFromEntitie(uint32_t numEntity, uint32_t numIteration, float distance);
-    void setPointCameraLimitWall(const pairFloat_t &pointObserver, float observerAngle,
-                                             pairFloat_t &outPoint, const pairFloat_t &linkPoint,
-                                             bool leftLimit, VisionComponent *visionComp);
+    pairFloat_t getPointCameraLimitWall(const pairFloat_t &pointObserver, float observerAngle,
+                                 const pairFloat_t &outPoint, const pairFloat_t &linkPoint,
+                                 bool leftLimit, VisionComponent *visionComp);
 private:
     Shader *m_shader;
     std::set<EntityData> m_entitiesNumMem;
