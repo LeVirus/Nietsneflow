@@ -259,13 +259,15 @@ void FirstPersonDisplaySystem::fillWallEntitiesData(uint32_t numEntity, pairFloa
                                                     float observerAngle, VisionComponent *visionComp,
                                                     bool pointIn[], bool outLeft[])
 {
-    fillAbsolAndDistanceWall(absolPos, distance, mapCompA, mapCompB, numEntity);
+    float distanceReal[4];
+    fillAbsolAndDistanceWall(absolPos, distanceReal, mapCompA, mapCompB, numEntity);
     uint32_t j;
     float pointAngleVision[3];
     std::cerr << "\n\n";
+    float anglePoint;
     for(uint32_t i = 0; i < 3; ++i)
     {
-        float anglePoint = getRadiantAngle(getTrigoAngle(mapCompA->m_absoluteMapPositionPX, absolPos[i]));
+        anglePoint = getRadiantAngle(getTrigoAngle(mapCompA->m_absoluteMapPositionPX, absolPos[i]));
         pointAngleVision[i] = anglePoint - observerAngle;
         pointIn[i] = std::abs(pointAngleVision[i]) < PI_QUARTER;
         //mem limit left or right
@@ -303,32 +305,30 @@ void FirstPersonDisplaySystem::fillWallEntitiesData(uint32_t numEntity, pairFloa
                 }
                 else if(pointIn[0] && pointIn[2])
                 {
-                    j = (distance[0] < distance[2]) ? 0 : 2;
+                    std::cerr << "distance[0] " << distance[0] << "distance[1] " << distance[1] << "\n";
+                    j = (distanceReal[0] < distanceReal[2]) ? 0 : 2;
                 }
                 else
                 {
                     return;
                 }
             }
-            pairFloat_t limitPoint = getPointCameraLimitWall(mapCompA->m_absoluteMapPositionPX, observerAngle, absolPos[i],
-                                         absolPos[j], outLeft[i], visionComp);
+            pairFloat_t limitPoint = getPointCameraLimitWall(mapCompA->m_absoluteMapPositionPX,
+                                                             observerAngle, absolPos[i],
+                                                             absolPos[j], outLeft[i], visionComp);
             distance[i] = getCameraDistance(mapCompA->m_absoluteMapPositionPX,
                                             limitPoint, observerAngle, true);
-            if(i == 0 || i == 1)
-            {
-                std::cerr << "OUT distance " << distance[i] << "\n\n\n";
-            }
+            std::cerr <<" distance[i]  " << distance[i] << "\n";
         }
 
         distance[i] /= LEVEL_TILE_SIZE_PX;
     }
-    std::cerr << "\n\n\n\n\n\n";
 }
 
 //===================================================================
 pairFloat_t FirstPersonDisplaySystem::getPointCameraLimitWall(const pairFloat_t &pointObserver, float observerAngle,
-                                                       const pairFloat_t &outPoint, const pairFloat_t &linkPoint,
-                                                       bool leftLimit, VisionComponent *visionComp)
+                                                              const pairFloat_t &outPoint, const pairFloat_t &linkPoint,
+                                                              bool leftLimit, VisionComponent *visionComp)
 {
     pairFloat_t pointReturn = outPoint;
     observerAngle = getDegreeAngle(observerAngle);
