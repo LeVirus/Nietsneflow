@@ -263,11 +263,21 @@ void FirstPersonDisplaySystem::fillWallEntitiesData(uint32_t numEntity, pairFloa
     fillAbsolAndDistanceWall(absolPos, distanceReal, mapCompA, mapCompB, numEntity);
     uint32_t j;
     float pointAngleVision[3];
-    std::cerr << "\n\n";
     float anglePoint;
     for(uint32_t i = 0; i < 3; ++i)
     {
         anglePoint = getRadiantAngle(getTrigoAngle(mapCompA->m_absoluteMapPositionPX, absolPos[i]));
+        if(std::abs(anglePoint - observerAngle) > PI)
+        {
+            if(anglePoint < observerAngle)
+            {
+                observerAngle -= PI_DOUBLE;
+            }
+            else
+            {
+                observerAngle += PI_DOUBLE;
+            }
+        }
         pointAngleVision[i] = anglePoint - observerAngle;
         pointIn[i] = std::abs(pointAngleVision[i]) < PI_QUARTER;
         //mem limit left or right
@@ -283,7 +293,6 @@ void FirstPersonDisplaySystem::fillWallEntitiesData(uint32_t numEntity, pairFloa
         {
             distance[i] = getCameraDistance(mapCompA->m_absoluteMapPositionPX,
                                             absolPos[i], observerAngle);
-            std::cerr << "OUUUUT i " << i <<" distance[i]  " << distance[i] << "\n";
 
         }
         //out of screen limit case
@@ -305,7 +314,6 @@ void FirstPersonDisplaySystem::fillWallEntitiesData(uint32_t numEntity, pairFloa
                 }
                 else if(pointIn[0] && pointIn[2])
                 {
-                    std::cerr << "distance[0] " << distance[0] << "distance[1] " << distance[1] << "\n";
                     j = (distanceReal[0] < distanceReal[2]) ? 0 : 2;
                 }
                 else
@@ -318,7 +326,6 @@ void FirstPersonDisplaySystem::fillWallEntitiesData(uint32_t numEntity, pairFloa
                                                              absolPos[j], outLeft[i], visionComp);
             distance[i] = getCameraDistance(mapCompA->m_absoluteMapPositionPX,
                                             limitPoint, observerAngle, true);
-            std::cerr << "IIIIN i " << i <<" distance[i]  " << distance[i] << "\n";
         }
 
         distance[i] /= LEVEL_TILE_SIZE_PX;
@@ -344,56 +351,27 @@ pairFloat_t FirstPersonDisplaySystem::getPointCameraLimitWall(const pairFloat_t 
     }
     limitAngle = getQuarterAngle(limitAngle);
     limitAngle = getRadiantAngle(limitAngle);
-//    bool angleCase = (limitAngle < PI_QUARTER) ||
-//           (limitAngle > PI && limitAngle < PI + PI_HALF) ;
-    bool angleCase = false;//(limitAngle > PI && limitAngle < PI + PI_HALF);
     float correction;
     //X mod
     if(std::abs(outPoint.first - linkPoint.first) > 0.3f)
-    {
-        std::cerr << "XMOD tan " << std::abs(std::tan(limitAngle)) << "adj  " <<
-                     std::abs(outPoint.second - pointObserver.second) << "\n";
-        if(angleCase)
+    {        
+        if(limitAngle <= 0.01f)
         {
-            correction = std::abs(std::tan(limitAngle) *
-                                  std::abs(outPoint.second - pointObserver.second));
+            correction = std::abs(std::abs(outPoint.second - pointObserver.second));
         }
         else
         {
-            if(limitAngle <= 0.01f)
-            {
-                correction = std::abs(std::abs(outPoint.second - pointObserver.second));
-            }
-            else
-            {
-                correction = std::abs(std::abs(outPoint.second - pointObserver.second) /
-                                      std::tan(limitAngle));
-            }
+            correction = std::abs(std::abs(outPoint.second - pointObserver.second) /
+                                  std::tan(limitAngle));
         }
         //need only distance so no need to add sense
         pointReturn.first = pointObserver.first + correction;
-        std::cerr << "outPoint.first " << outPoint.first << "\n";
-        std::cerr << "pointReturn.first " << pointReturn.first << "\n";
-        std::cerr << "pointReturn.second " << pointReturn.second << "\n";
-        std::cerr << "correction " << correction << "\n";
     }
     //Y Mod
     else
     {
-        std::cerr << "YMOD tan " << std::abs(std::tan(limitAngle)) << "adj  "
-                  << std::abs(outPoint.first - pointObserver.first) << "\n";
-
-        if(!angleCase)
-        {
-            correction = std::abs(std::tan(limitAngle) *
-                                  std::abs(outPoint.first - pointObserver.first));
-        }
-        else
-        {
-            correction = std::abs(std::abs(outPoint.first - pointObserver.first) /
-                                  std::tan(limitAngle));
-        }
-        //need only distance so no need to add sense
+        correction = std::abs(std::tan(limitAngle) *
+                              std::abs(outPoint.first - pointObserver.first));
         pointReturn.second = pointObserver.second + correction;
     }
     return pointReturn;
@@ -406,6 +384,7 @@ float getQuarterAngle(float angle)
     {
         return angle;
     }
+    //investigate why
 //    else if(angle < 179.0f)
 //    {
 //        return std::abs(angle - 180.0f);
