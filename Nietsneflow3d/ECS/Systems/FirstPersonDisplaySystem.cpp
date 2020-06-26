@@ -273,8 +273,6 @@ void FirstPersonDisplaySystem::fillWallEntitiesData(uint32_t numEntity, pairFloa
         //mem limit left or right
         if(!pointIn[i])
         {
-            std::cerr << anglePoint << "  CCCC  " <<
-                         observerAngle << "\n";
             outLeft[i] = anglePoint > observerAngle;
         }
     }
@@ -344,16 +342,17 @@ pairFloat_t FirstPersonDisplaySystem::getPointCameraLimitWall(const pairFloat_t 
     {
         limitAngle -= 360.0f;
     }
-    bool angleCase = (limitAngle < PI_QUARTER) ||
-            (limitAngle > PI && limitAngle < PI_QUARTER * 3.0f);
     limitAngle = getQuarterAngle(limitAngle);
     limitAngle = getRadiantAngle(limitAngle);
+//    bool angleCase = (limitAngle < PI_QUARTER) ||
+//           (limitAngle > PI && limitAngle < PI + PI_HALF) ;
+    bool angleCase = false;//(limitAngle > PI && limitAngle < PI + PI_HALF);
     float correction;
     //X mod
     if(std::abs(outPoint.first - linkPoint.first) > 0.3f)
     {
         std::cerr << "XMOD tan " << std::abs(std::tan(limitAngle)) << "adj  " <<
-                                        std::abs(outPoint.second - pointObserver.second) << "\n";
+                     std::abs(outPoint.second - pointObserver.second) << "\n";
         if(angleCase)
         {
             correction = std::abs(std::tan(limitAngle) *
@@ -371,14 +370,8 @@ pairFloat_t FirstPersonDisplaySystem::getPointCameraLimitWall(const pairFloat_t 
                                       std::tan(limitAngle));
             }
         }
-        if(outPoint.first > pointObserver.first)
-        {
-            pointReturn.first = pointObserver.first + correction;
-        }
-        else
-        {
-            pointReturn.first = pointObserver.first - correction;
-        }
+        //need only distance so no need to add sense
+        pointReturn.first = pointObserver.first + correction;
         std::cerr << "outPoint.first " << outPoint.first << "\n";
         std::cerr << "pointReturn.first " << pointReturn.first << "\n";
         std::cerr << "pointReturn.second " << pointReturn.second << "\n";
@@ -400,15 +393,8 @@ pairFloat_t FirstPersonDisplaySystem::getPointCameraLimitWall(const pairFloat_t 
             correction = std::abs(std::abs(outPoint.first - pointObserver.first) /
                                   std::tan(limitAngle));
         }
-
-        if(pointReturn.second > pointObserver.second)
-        {
-            pointReturn.second = pointObserver.second + correction;
-        }
-        else
-        {
-            pointReturn.second = pointObserver.second - correction;
-        }
+        //need only distance so no need to add sense
+        pointReturn.second = pointObserver.second + correction;
     }
     return pointReturn;
 }
@@ -420,17 +406,17 @@ float getQuarterAngle(float angle)
     {
         return angle;
     }
-    else if(angle < 179.0f)
+//    else if(angle < 179.0f)
+//    {
+//        return std::abs(angle - 180.0f);
+//    }
+    else if(angle < 269.0f)
     {
         return std::abs(angle - 180.0f);
     }
-    else if(angle < 269.0f)
-    {
-        return std::abs(angle - 270.0f);
-    }
     else
     {
-        return std::abs(angle - 359.0f);
+        return std::abs(angle - 360.0f);
     }
 }
 
