@@ -285,6 +285,8 @@ void FirstPersonDisplaySystem::fillWallEntitiesData(uint32_t numEntity, pairFloa
         {
             distance[i] = getCameraDistance(mapCompA->m_absoluteMapPositionPX,
                                             absolPos[i], observerAngle);
+            std::cerr << "OUUUUT i " << i <<" distance[i]  " << distance[i] << "\n";
+
         }
         //out of screen limit case
         else
@@ -318,7 +320,7 @@ void FirstPersonDisplaySystem::fillWallEntitiesData(uint32_t numEntity, pairFloa
                                                              absolPos[j], outLeft[i], visionComp);
             distance[i] = getCameraDistance(mapCompA->m_absoluteMapPositionPX,
                                             limitPoint, observerAngle, true);
-            std::cerr <<" distance[i]  " << distance[i] << "\n";
+            std::cerr << "IIIIN i " << i <<" distance[i]  " << distance[i] << "\n";
         }
 
         distance[i] /= LEVEL_TILE_SIZE_PX;
@@ -361,11 +363,11 @@ pairFloat_t FirstPersonDisplaySystem::getPointCameraLimitWall(const pairFloat_t 
         {
             if(limitAngle <= 0.01f)
             {
-                correction = std::abs(std::abs(outPoint.first - pointObserver.first));
+                correction = std::abs(std::abs(outPoint.second - pointObserver.second));
             }
             else
             {
-                correction = std::abs(std::abs(outPoint.first - pointObserver.first) /
+                correction = std::abs(std::abs(outPoint.second - pointObserver.second) /
                                       std::tan(limitAngle));
             }
         }
@@ -377,9 +379,10 @@ pairFloat_t FirstPersonDisplaySystem::getPointCameraLimitWall(const pairFloat_t 
         {
             pointReturn.first = pointObserver.first - correction;
         }
+        std::cerr << "outPoint.first " << outPoint.first << "\n";
         std::cerr << "pointReturn.first " << pointReturn.first << "\n";
-        std::cerr << "limitAngle " << limitAngle << "\n";
-        std::cerr << "std::tan(limitAngle) " << std::tan(limitAngle) << "\n";
+        std::cerr << "pointReturn.second " << pointReturn.second << "\n";
+        std::cerr << "correction " << correction << "\n";
     }
     //Y Mod
     else
@@ -390,7 +393,7 @@ pairFloat_t FirstPersonDisplaySystem::getPointCameraLimitWall(const pairFloat_t 
         if(!angleCase)
         {
             correction = std::abs(std::tan(limitAngle) *
-                                  std::abs(outPoint.second - pointObserver.second));
+                                  std::abs(outPoint.first - pointObserver.first));
         }
         else
         {
