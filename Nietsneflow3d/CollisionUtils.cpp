@@ -255,51 +255,6 @@ float getCameraDistance(const pairFloat_t &observerPoint, const pairFloat_t &tar
     return std::abs(hyp * std::cos(angleCalc));
 }
 
-float getAngle(const pairFloat_t &observerPoint, const pairFloat_t &targetPoint)
-{
-    float angleCalc;
-    float distanceX = std::abs(observerPoint.first - targetPoint.first),
-            distanceY = std::abs(observerPoint.second - targetPoint.second);
-    bool bxInf = (targetPoint.first < observerPoint.first);
-    bool byInf = (targetPoint.second < observerPoint.second);
-    float first, second;
-    if(bxInf == byInf)
-    {
-        first = distanceX;
-        second = distanceY;
-    }
-    else
-    {
-        first = distanceY;
-        second = distanceX;
-    }
-    if(second <= 0.0f)
-    {
-        angleCalc =  0.0f;
-    }
-    else
-    {
-        angleCalc = std::atan(first / second);
-        if(bxInf && byInf)
-        {
-            angleCalc += PI / 2.0f;
-        }
-        else if(bxInf && !byInf)
-        {
-            angleCalc += PI;
-        }
-        else if(!bxInf && !byInf)
-        {
-            angleCalc += PI * 1.5f;
-        }
-    }
-    if(angleCalc > PI)
-    {
-        angleCalc -= PI;
-    }
-    return angleCalc;
-}
-
 //===================================================================
 float getTrigoAngle(const pairFloat_t &pointA, const pairFloat_t &pointB, bool degree)
 {
