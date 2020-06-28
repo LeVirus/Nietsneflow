@@ -96,18 +96,18 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
         //calculate all 3 display position
         for(uint32_t i = 0; i < 3; ++i)
         {
-            if(!pointIn[i])
-            {
-                if(leftLimit[i])
-                {
-                    lateralPos[i] = 0.0f;
-                }
-                else
-                {
-                    lateralPos[i] = visionComp->m_coneVision;
-                }
-                continue;
-            }
+//            if(!pointIn[i])
+//            {
+//                if(leftLimit[i])
+//                {
+//                    lateralPos[i] = -1.0f;
+//                }
+//                else
+//                {
+//                    lateralPos[i] = visionComp->m_coneVision + 1.0f;
+//                }
+//                continue;
+//            }
             currentTrigoAngle =  getTrigoAngle(mapCompA->m_absoluteMapPositionPX, absolPos[i]);
             if(std::abs(currentTrigoAngle - leftAngleVision) > 150.0f)
             {
@@ -254,9 +254,12 @@ void FirstPersonDisplaySystem::fillAbsolAndDistanceWall(pairFloat_t absolPos[],
 }
 
 //===================================================================
-void FirstPersonDisplaySystem::fillWallEntitiesData(uint32_t numEntity, pairFloat_t absolPos[], float distance[],
-                                                    MapCoordComponent *mapCompA, MapCoordComponent *mapCompB,
-                                                    float observerAngle, VisionComponent *visionComp,
+void FirstPersonDisplaySystem::fillWallEntitiesData(uint32_t numEntity, pairFloat_t absolPos[],
+                                                    float distance[],
+                                                    MapCoordComponent *mapCompA,
+                                                    MapCoordComponent *mapCompB,
+                                                    float observerAngle,
+                                                    VisionComponent *visionComp,
                                                     bool pointIn[], bool outLeft[])
 {
     float distanceReal[4];
@@ -292,7 +295,7 @@ void FirstPersonDisplaySystem::fillWallEntitiesData(uint32_t numEntity, pairFloa
         if(pointIn[i])
         {
             distance[i] = getCameraDistance(mapCompA->m_absoluteMapPositionPX,
-                                            absolPos[i], observerAngle);
+                                            absolPos[i], observerAngle) / LEVEL_TILE_SIZE_PX;;
 
         }
         //out of screen limit case
@@ -321,14 +324,46 @@ void FirstPersonDisplaySystem::fillWallEntitiesData(uint32_t numEntity, pairFloa
                     return;
                 }
             }
+            float memDiff, diffDistance;
             pairFloat_t limitPoint = getPointCameraLimitWall(mapCompA->m_absoluteMapPositionPX,
                                                              observerAngle, absolPos[i],
                                                              absolPos[j], outLeft[i], visionComp);
             distance[i] = getCameraDistance(mapCompA->m_absoluteMapPositionPX,
-                                            limitPoint, observerAngle, true);
-        }
+                                            limitPoint, observerAngle, true) / LEVEL_TILE_SIZE_PX;
+//            continue;
+            //Correction
+            if(std::abs(limitPoint.first - absolPos[j].first) > 0.3f)
+            {
+                memDiff = limitPoint.first - absolPos[j].first;
+            }
+            else
+            {
+                memDiff = limitPoint.second - absolPos[j].second;
+            }
+            std::cerr << "limitPoint  " <<  limitPoint.first << " "
+                      <<  limitPoint.second << "\n";
+            std::cerr << "absolPos  " <<  absolPos[j].first << " "
+                      <<  absolPos[j].second << "\n";
+            memDiff = std::abs(memDiff);
+            if(memDiff > 30.0f)
+            {
+                continue;
+            }
+            if(j > i)
+            {
+                distance[j] = getCameraDistance(mapCompA->m_absoluteMapPositionPX,
+                                                absolPos[j], observerAngle) / LEVEL_TILE_SIZE_PX;
+            }
+            diffDistance = distance[i] - distance[j];
+            std::cerr << "distance[j]  " << distance[j] << "\n";
+            std::cerr << "distance[i]  " << distance[i] << "\n";
 
-        distance[i] /= LEVEL_TILE_SIZE_PX;
+            std::cerr << LEVEL_TILE_SIZE_PX << " * " << diffDistance
+                      << " / " << memDiff << "\n";
+
+            distance[i] = distance[j] + (LEVEL_TILE_SIZE_PX * diffDistance) / memDiff;
+            std::cerr << "res  " << distance[j] + (LEVEL_TILE_SIZE_PX * diffDistance) / memDiff << "\n";
+        }
     }
 }
 
@@ -351,28 +386,42 @@ pairFloat_t FirstPersonDisplaySystem::getPointCameraLimitWall(const pairFloat_t 
     }
     limitAngle = getQuarterAngle(limitAngle);
     limitAngle = getRadiantAngle(limitAngle);
-    float correction;
+    float correction, memDiff;
     //X mod
     if(std::abs(outPoint.first - linkPoint.first) > 0.3f)
-    {        
+    {
+        memDiff = std::abs(outPoint.second - pointObserver.second);
         if(limitAngle <= 0.01f)
         {
-            correction = std::abs(std::abs(outPoint.second - pointObserver.second));
+            correction = memDiff;
         }
         else
         {
-            correction = std::abs(std::abs(outPoint.second - pointObserver.second) /
-                                  std::tan(limitAngle));
+            correction = memDiff / std::tan(limitAngle);
         }
         //need only distance so no need to add sense
-        pointReturn.first = pointObserver.first + correction;
+        if(outPoint.first < pointObserver.first)
+        {
+            pointReturn.first = pointObserver.first + correction;
+        }
+        else
+        {
+            pointReturn.first = pointObserver.first - correction;
+        }
     }
     //Y Mod
     else
     {
-        correction = std::abs(std::tan(limitAngle) *
-                              std::abs(outPoint.first - pointObserver.first));
-        pointReturn.second = pointObserver.second + correction;
+        memDiff = std::abs(outPoint.first - pointObserver.first);
+        correction = std::abs(std::tan(limitAngle) * memDiff);
+        if(outPoint.second < pointObserver.second)
+        {
+            pointReturn.second = pointObserver.second + correction;
+        }
+        else
+        {
+            pointReturn.second = pointObserver.second - correction;
+        }
     }
     return pointReturn;
 }
