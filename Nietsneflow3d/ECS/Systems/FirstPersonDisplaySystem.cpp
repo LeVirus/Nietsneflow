@@ -96,18 +96,21 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
         //calculate all 3 display position
         for(uint32_t i = 0; i < 3; ++i)
         {
-//            if(!pointIn[i])
-//            {
-//                if(leftLimit[i])
-//                {
-//                    lateralPos[i] = -1.0f;
-//                }
-//                else
-//                {
-//                    lateralPos[i] = visionComp->m_coneVision + 1.0f;
-//                }
-//                continue;
-//            }
+            //A virer pour le calcul distance
+            if(!pointIn[i])
+            {
+                if(leftLimit[i])
+                {
+                    lateralPos[i] = -1.0f;
+                }
+                else
+                {
+                    lateralPos[i] = visionComp->m_coneVision + 1.0f;
+                }
+                continue;
+            }
+            //A virer pour le calcul distance
+
             currentTrigoAngle =  getTrigoAngle(mapCompA->m_absoluteMapPositionPX, absolPos[i]);
             if(std::abs(currentTrigoAngle - leftAngleVision) > 150.0f)
             {
@@ -324,47 +327,36 @@ void FirstPersonDisplaySystem::fillWallEntitiesData(uint32_t numEntity, pairFloa
                     return;
                 }
             }
-            float memDiff, diffDistance;
             pairFloat_t limitPoint = getPointCameraLimitWall(mapCompA->m_absoluteMapPositionPX,
                                                              observerAngle, absolPos[i],
                                                              absolPos[j], outLeft[i], visionComp);
             distance[i] = getCameraDistance(mapCompA->m_absoluteMapPositionPX,
                                             limitPoint, observerAngle, true) / LEVEL_TILE_SIZE_PX;
-//            continue;
-            //Correction
-            if(std::abs(limitPoint.first - absolPos[j].first) > 0.3f)
-            {
-                memDiff = limitPoint.first - absolPos[j].first;
-            }
-            else
-            {
-                memDiff = limitPoint.second - absolPos[j].second;
-            }
-            std::cerr << "limitPoint  " <<  limitPoint.first << " "
-                      <<  limitPoint.second << "\n";
-            std::cerr << "absolPos  " <<  absolPos[j].first << " "
-                      <<  absolPos[j].second << "\n";
-            memDiff = std::abs(memDiff);
-            if(memDiff > 30.0f)
-            {
-                continue;
-            }
-            if(j > i)
-            {
-                distance[j] = getCameraDistance(mapCompA->m_absoluteMapPositionPX,
-                                                absolPos[j], observerAngle) / LEVEL_TILE_SIZE_PX;
-            }
-            diffDistance = distance[i] - distance[j];
-            std::cerr << "distance[j]  " << distance[j] << "\n";
-            std::cerr << "distance[i]  " << distance[i] << "\n";
 
-            std::cerr << LEVEL_TILE_SIZE_PX << " * " << diffDistance
-                      << " / " << memDiff << "\n";
-
-            distance[i] = distance[j] + (LEVEL_TILE_SIZE_PX * diffDistance) / memDiff;
-            std::cerr << "res  " << distance[j] + (LEVEL_TILE_SIZE_PX * diffDistance) / memDiff << "\n";
+            modifTempTextureBound(numEntity, absolPos[i], limitPoint);
         }
     }
+}
+
+//===================================================================
+void FirstPersonDisplaySystem::modifTempTextureBound(uint32_t numEntity,
+                                                     const pairFloat_t &outPoint,
+                                                     const pairFloat_t &limitPoint)
+{
+    SpriteTextureComponent *spriteComp = stairwayToComponentManager().
+            searchComponentByType<SpriteTextureComponent>(numEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
+    assert(spriteComp);
+    //Y case
+    if(std::abs(outPoint.first - limitPoint.first) < 0.1f)
+    {
+
+    }
+    //X case
+    else
+    {
+
+    }
+
 }
 
 //===================================================================
@@ -397,6 +389,7 @@ pairFloat_t FirstPersonDisplaySystem::getPointCameraLimitWall(const pairFloat_t 
         }
         else
         {
+            //TRIGO CALC
             correction = memDiff / std::tan(limitAngle);
         }
         //need only distance so no need to add sense
