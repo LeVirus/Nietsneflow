@@ -110,7 +110,6 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
                 continue;
             }
             //A virer pour le calcul distance
-
             currentTrigoAngle =  getTrigoAngle(mapCompA->m_absoluteMapPositionPX, absolPos[i]);
             if(std::abs(currentTrigoAngle - leftAngleVision) > 150.0f)
             {
@@ -332,31 +331,77 @@ void FirstPersonDisplaySystem::fillWallEntitiesData(uint32_t numEntity, pairFloa
                                                              absolPos[j], outLeft[i], visionComp);
             distance[i] = getCameraDistance(mapCompA->m_absoluteMapPositionPX,
                                             limitPoint, observerAngle, true) / LEVEL_TILE_SIZE_PX;
-
-            modifTempTextureBound(numEntity, absolPos[i], limitPoint);
+            modifTempTextureBound(numEntity, outLeft[i], absolPos[i], limitPoint, absolPos[j], {i, j});
         }
     }
 }
 
 //===================================================================
 void FirstPersonDisplaySystem::modifTempTextureBound(uint32_t numEntity,
+                                                     bool outLeft,
                                                      const pairFloat_t &outPoint,
-                                                     const pairFloat_t &limitPoint)
+                                                     const pairFloat_t &limitPoint,
+                                                     const pairFloat_t &linkPoint,
+                                                     const pairUI_t &coordPoints)
 {
     SpriteTextureComponent *spriteComp = stairwayToComponentManager().
             searchComponentByType<SpriteTextureComponent>(numEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
     assert(spriteComp);
+    float total, diff, result;
     //Y case
     if(std::abs(outPoint.first - limitPoint.first) < 0.1f)
     {
-
+        diff = std::abs(outPoint.second - limitPoint.second);
+        total = std::abs(outPoint.second - linkPoint.second);
     }
     //X case
     else
     {
-
+        diff = std::abs(outPoint.first - limitPoint.first);
+        total = std::abs(outPoint.first - linkPoint.first);
     }
+    result = diff / total;
+    //!!!IMPORTANT COPY BASE SPRITE DATA
+    if(!spriteComp->m_limitSpriteData)
+    {
+        spriteComp->m_limitSpriteData = std::make_unique<SpriteData>();
+    }
+    spriteComp->m_limitPointActive = true;
+    *spriteComp->m_limitSpriteData = *spriteComp->m_spriteData;
+    if(outLeft)
+    {
+        if(coordPoints.first == 0)
+        {
+            spriteComp->m_limitSpriteData->m_texturePosVertex[0].first = result;
+            spriteComp->m_limitSpriteData->m_texturePosVertex[3].first = result;
+        }
+        else if(coordPoints.first == 1)
+        {
+            if(coordPoints.second == 0)
+            {
+                spriteComp->m_limitSpriteData->m_texturePosVertex[3].first = result;
+                spriteComp->m_limitSpriteData->m_texturePosVertex[0].first = result;
+            }
+            else
+            {
+                spriteComp->m_limitSpriteData->m_texturePosVertex[4].first = result;
+                spriteComp->m_limitSpriteData->m_texturePosVertex[5].first = result;
+            }
+        }
+        //outPoint == 3
+        else
+        {
 
+        }
+    }
+    else
+    {
+        if(coordPoints.first == 2)
+        {
+            spriteComp->m_limitSpriteData->m_texturePosVertex[1].first = result;
+            spriteComp->m_limitSpriteData->m_texturePosVertex[2].first = result;
+        }
+    }
 }
 
 //===================================================================

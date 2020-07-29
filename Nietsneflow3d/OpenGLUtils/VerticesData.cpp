@@ -104,8 +104,18 @@ void VerticesData::loadVertexTextureComponent(const PositionVertexComponent &pos
         }
         m_vertexBuffer.emplace_back(posComp.m_vertex[j].first);
         m_vertexBuffer.emplace_back(posComp.m_vertex[j].second);
-        m_vertexBuffer.emplace_back(spriteComp.m_spriteData->m_texturePosVertex[k].first);
-        m_vertexBuffer.emplace_back(spriteComp.m_spriteData->m_texturePosVertex[k].second);
+        //CrASH!!!!!!!!!!!!!!!!
+        if(spriteComp.m_limitPointActive)
+        {
+            assert(spriteComp.m_limitSpriteData);
+            m_vertexBuffer.emplace_back(spriteComp.m_limitSpriteData->m_texturePosVertex[k].first);
+            m_vertexBuffer.emplace_back(spriteComp.m_limitSpriteData->m_texturePosVertex[k].second);
+        }
+        else
+        {
+            m_vertexBuffer.emplace_back(spriteComp.m_spriteData->m_texturePosVertex[k].first);
+            m_vertexBuffer.emplace_back(spriteComp.m_spriteData->m_texturePosVertex[k].second);
+        }
     }
     if(sizeVertex > 4)
     {
@@ -146,8 +156,19 @@ void VerticesData::loadVertexTextureComponent(const PositionVertexComponent &pos
             }
             m_vertexBuffer.emplace_back(posComp.m_vertex[k].first);
             m_vertexBuffer.emplace_back(posComp.m_vertex[k].second);
-            m_vertexBuffer.emplace_back(spriteComp.m_spriteData->m_texturePosVertex[l].first);
-            m_vertexBuffer.emplace_back(spriteComp.m_spriteData->m_texturePosVertex[l].second);
+            //CrASH!!!!!!!!!!!!!!!!OOOOOOOOOOOOOOOK
+            if(spriteComp.m_limitPointActive)
+            {
+                m_vertexBuffer.emplace_back(spriteComp.m_limitSpriteData->m_texturePosVertex[l].first);
+                m_vertexBuffer.emplace_back(spriteComp.m_limitSpriteData->m_texturePosVertex[l].second);
+                //reset behaviour
+                spriteComp.m_limitPointActive = false;
+            }
+            else
+            {
+                m_vertexBuffer.emplace_back(spriteComp.m_spriteData->m_texturePosVertex[l].first);
+                m_vertexBuffer.emplace_back(spriteComp.m_spriteData->m_texturePosVertex[l].second);
+            }
         }
     }
     if(sizeVertex == 3)

@@ -17,5 +17,6 @@ struct SpriteTextureComponent : public ecs::Component
     SpriteData const *m_spriteData;
     pairFloat_t m_glFpsSize = {1.4f, 1.4f};
     std::unique_ptr<SpriteData> m_limitSpriteData;
+    bool m_limitPointActive = false;
     virtual ~SpriteTextureComponent() = default;
 };
