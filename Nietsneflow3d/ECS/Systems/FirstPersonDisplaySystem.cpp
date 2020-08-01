@@ -360,32 +360,34 @@ void FirstPersonDisplaySystem::modifTempTextureBound(uint32_t numEntity,
         diff = std::abs(outPoint.first - limitPoint.first);
         total = std::abs(outPoint.first - linkPoint.first);
     }
-    result = diff / total;
-    //!!!IMPORTANT COPY BASE SPRITE DATA
-    if(!spriteComp->m_limitSpriteData)
+    if(total < 0.01f)
     {
-        spriteComp->m_limitSpriteData = std::make_unique<SpriteData>();
+        result = diff;
     }
-    spriteComp->m_limitPointActive = true;
-    *spriteComp->m_limitSpriteData = *spriteComp->m_spriteData;
+    else
+    {
+        result = diff / total;
+    }
+    spriteComp->fillWallContainer();
+    spriteComp->m_limitWallPointActive = true;
     if(outLeft)
     {
         if(coordPoints.first == 0)
         {
-            spriteComp->m_limitSpriteData->m_texturePosVertex[0].first = result;
-            spriteComp->m_limitSpriteData->m_texturePosVertex[3].first = result;
+            spriteComp->m_limitWallSpriteData->at(0).first = result;
+            spriteComp->m_limitWallSpriteData->at(3).first = result;
         }
         else if(coordPoints.first == 1)
         {
             if(coordPoints.second == 0)
             {
-                spriteComp->m_limitSpriteData->m_texturePosVertex[3].first = result;
-                spriteComp->m_limitSpriteData->m_texturePosVertex[0].first = result;
+                spriteComp->m_limitWallSpriteData->at(3).first = result;
+                spriteComp->m_limitWallSpriteData->at(0).first = result;
             }
             else
             {
-                spriteComp->m_limitSpriteData->m_texturePosVertex[4].first = result;
-                spriteComp->m_limitSpriteData->m_texturePosVertex[5].first = result;
+                spriteComp->m_limitWallSpriteData->at(4).first = result;
+                spriteComp->m_limitWallSpriteData->at(5).first = result;
             }
         }
         //outPoint == 3
@@ -398,8 +400,8 @@ void FirstPersonDisplaySystem::modifTempTextureBound(uint32_t numEntity,
     {
         if(coordPoints.first == 2)
         {
-            spriteComp->m_limitSpriteData->m_texturePosVertex[1].first = result;
-            spriteComp->m_limitSpriteData->m_texturePosVertex[2].first = result;
+            spriteComp->m_limitWallSpriteData->at(1).first = result;
+            spriteComp->m_limitWallSpriteData->at(2).first = result;
         }
     }
 }
@@ -451,7 +453,14 @@ pairFloat_t FirstPersonDisplaySystem::getPointCameraLimitWall(const pairFloat_t 
     else
     {
         memDiff = std::abs(outPoint.first - pointObserver.first);
-        correction = std::abs(std::tan(limitAngle) * memDiff);
+        if(limitAngle <= 0.01f)
+        {
+            correction = memDiff;
+        }
+        else
+        {
+            correction = std::abs(std::tan(limitAngle) * memDiff);
+        }
         if(outPoint.second < pointObserver.second)
         {
             pointReturn.second = pointObserver.second + correction;

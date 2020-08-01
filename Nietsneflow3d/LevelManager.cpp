@@ -31,10 +31,10 @@ void LevelManager::loadSpriteData(const INIReader &reader)
         long textureNum = reader.GetInteger(sections[i], "texture",
                                                std::numeric_limits<uint8_t>::max());
         assert(textureNum != std::numeric_limits<uint8_t>::max() && "Bad textureNumber");
-        double texturePosX = reader.GetReal(sections[i], "texturePosX", 1.0);
-        double texturePosY = reader.GetReal(sections[i], "texturePosY", 1.0);
-        double textureWeight = reader.GetReal(sections[i], "textureWeight", 1.0);
-        double textureHeight = reader.GetReal(sections[i], "textureHeight", 1.0);
+        double texturePosX = reader.GetReal(sections[i], "texturePosX", 10.0);
+        double texturePosY = reader.GetReal(sections[i], "texturePosY", 10.0);
+        double textureWeight = reader.GetReal(sections[i], "textureWeight", 10.0);
+        double textureHeight = reader.GetReal(sections[i], "textureHeight", 10.0);
         SpriteData spriteData
         {
             textureNum,

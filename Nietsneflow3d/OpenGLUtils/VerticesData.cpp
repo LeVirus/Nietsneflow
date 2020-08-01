@@ -104,12 +104,11 @@ void VerticesData::loadVertexTextureComponent(const PositionVertexComponent &pos
         }
         m_vertexBuffer.emplace_back(posComp.m_vertex[j].first);
         m_vertexBuffer.emplace_back(posComp.m_vertex[j].second);
-        //CrASH!!!!!!!!!!!!!!!!
-        if(spriteComp.m_limitPointActive)
+        if(spriteComp.m_limitWallPointActive)
         {
-            assert(spriteComp.m_limitSpriteData);
-            m_vertexBuffer.emplace_back(spriteComp.m_limitSpriteData->m_texturePosVertex[k].first);
-            m_vertexBuffer.emplace_back(spriteComp.m_limitSpriteData->m_texturePosVertex[k].second);
+            assert(spriteComp.m_limitWallSpriteData);
+            m_vertexBuffer.emplace_back(spriteComp.m_limitWallSpriteData->at(j).first);
+            m_vertexBuffer.emplace_back(spriteComp.m_limitWallSpriteData->at(j).second);
         }
         else
         {
@@ -156,13 +155,12 @@ void VerticesData::loadVertexTextureComponent(const PositionVertexComponent &pos
             }
             m_vertexBuffer.emplace_back(posComp.m_vertex[k].first);
             m_vertexBuffer.emplace_back(posComp.m_vertex[k].second);
-            //CrASH!!!!!!!!!!!!!!!!OOOOOOOOOOOOOOOK
-            if(spriteComp.m_limitPointActive)
+            if(spriteComp.m_limitWallPointActive)
             {
-                m_vertexBuffer.emplace_back(spriteComp.m_limitSpriteData->m_texturePosVertex[l].first);
-                m_vertexBuffer.emplace_back(spriteComp.m_limitSpriteData->m_texturePosVertex[l].second);
+
+                m_vertexBuffer.emplace_back(spriteComp.m_limitWallSpriteData->at(4 + j).first);
+                m_vertexBuffer.emplace_back(spriteComp.m_limitWallSpriteData->at(4 + j).second);
                 //reset behaviour
-                spriteComp.m_limitPointActive = false;
             }
             else
             {
@@ -171,6 +169,7 @@ void VerticesData::loadVertexTextureComponent(const PositionVertexComponent &pos
             }
         }
     }
+    spriteComp.m_limitWallPointActive = false;
     if(sizeVertex == 3)
     {
         addIndices(BaseShapeTypeGL_e::TRIANGLE);
