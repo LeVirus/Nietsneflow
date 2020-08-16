@@ -107,8 +107,10 @@ void VerticesData::loadVertexTextureComponent(const PositionVertexComponent &pos
         if(spriteComp.m_limitWallPointActive)
         {
             assert(spriteComp.m_limitWallSpriteData);
-            m_vertexBuffer.emplace_back(spriteComp.m_limitWallSpriteData->at(j).first);
-            m_vertexBuffer.emplace_back(spriteComp.m_limitWallSpriteData->at(j).second);
+            std::cerr << spriteComp.m_limitWallSpriteData->at(k).first << " DHAHAHAHAD " <<
+                         spriteComp.m_spriteData->m_texturePosVertex[k].first << "\n\n";
+            m_vertexBuffer.emplace_back(spriteComp.m_limitWallSpriteData->at(k).first);
+            m_vertexBuffer.emplace_back(spriteComp.m_limitWallSpriteData->at(k).second);
         }
         else
         {
@@ -116,6 +118,7 @@ void VerticesData::loadVertexTextureComponent(const PositionVertexComponent &pos
             m_vertexBuffer.emplace_back(spriteComp.m_spriteData->m_texturePosVertex[k].second);
         }
     }
+    //treat second rect >> 1    4   5   2
     if(sizeVertex > 4)
     {
         uint32_t k, l;

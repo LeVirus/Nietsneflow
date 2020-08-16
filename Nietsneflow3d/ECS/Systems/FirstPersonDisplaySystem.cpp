@@ -39,13 +39,18 @@ void FirstPersonDisplaySystem::confCompVertexMemEntities()
     m_numVertexToDraw.resize(numEntity);
     //treat one player
     uint32_t toRemove = 0;
+    VisionComponent *visionComp;
+    MoveableComponent *moveComp;
+    MapCoordComponent *mapCompA;
+    GeneralCollisionComponent *genCollComp;
+    MapCoordComponent *mapCompB;
     for(uint32_t i = 0; i < numEntity; ++i)
     {
-        VisionComponent *visionComp = stairwayToComponentManager().
+        visionComp = stairwayToComponentManager().
                 searchComponentByType<VisionComponent>(mVectNumEntity[i], Components_e::VISION_COMPONENT);
-        MoveableComponent *moveComp = stairwayToComponentManager().
+        moveComp = stairwayToComponentManager().
                 searchComponentByType<MoveableComponent>(mVectNumEntity[i], Components_e::MOVEABLE_COMPONENT);
-        MapCoordComponent *mapCompA = stairwayToComponentManager().
+        mapCompA = stairwayToComponentManager().
                 searchComponentByType<MapCoordComponent>(mVectNumEntity[i], Components_e::MAP_COORD_COMPONENT);
         assert(visionComp);
         assert(mapCompA);
@@ -60,10 +65,10 @@ void FirstPersonDisplaySystem::confCompVertexMemEntities()
         m_entitiesNumMem.clear();
         for(uint32_t j = 0; j < m_numVertexToDraw[i]; ++j)
         {
-            GeneralCollisionComponent *genCollComp = stairwayToComponentManager().
+            genCollComp = stairwayToComponentManager().
                     searchComponentByType<GeneralCollisionComponent>(visionComp->m_vectVisibleEntities[j],
                                                                      Components_e::GENERAL_COLLISION_COMPONENT);
-            MapCoordComponent *mapCompB = stairwayToComponentManager().
+            mapCompB = stairwayToComponentManager().
                     searchComponentByType<MapCoordComponent>(visionComp->m_vectVisibleEntities[j],
                                                              Components_e::MAP_COORD_COMPONENT);
             assert(mapCompB);
@@ -123,6 +128,7 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
                 lateralPos[i] = (leftAngleVision + 360.0f) - getTrigoAngle(mapCompA->m_absoluteMapPositionPX, absolPos[i]);
             }
         }
+        //conf screen position
         confWallEntityVertex(visionComp->m_vectVisibleEntities[numIteration],
                              visionComp, lateralPos, distance);
         fillVertexFromEntitie(visionComp->m_vectVisibleEntities[numIteration],
@@ -156,12 +162,10 @@ void FirstPersonDisplaySystem::confWallEntityVertex(uint32_t numEntity, VisionCo
     assert(visionComp);
 
     bool excludeZero = (lateralPosDegree[0] > lateralPosDegree[1]) &&
-            (lateralPosDegree[0] < lateralPosDegree[2]) ||
-            (lateralPosDegree[0] < lateralPosDegree[1]) &&
+            ((lateralPosDegree[0] < lateralPosDegree[2]) || (lateralPosDegree[0] < lateralPosDegree[1])) &&
             (lateralPosDegree[0] > lateralPosDegree[2]);
     bool excludeTwo = (lateralPosDegree[2] > lateralPosDegree[0]) &&
-            (lateralPosDegree[2] < lateralPosDegree[1]) ||
-            (lateralPosDegree[2] < lateralPosDegree[0]) &&
+            ((lateralPosDegree[2] < lateralPosDegree[1]) || (lateralPosDegree[2] < lateralPosDegree[0])) &&
             (lateralPosDegree[2] > lateralPosDegree[1]);
     positionComp->m_vertex.resize(6);
     uint32_t first = 0, last = 2;
@@ -337,17 +341,19 @@ void FirstPersonDisplaySystem::fillWallEntitiesData(uint32_t numEntity, pairFloa
 }
 
 //===================================================================
-void FirstPersonDisplaySystem::modifTempTextureBound(uint32_t numEntity,
-                                                     bool outLeft,
-                                                     const pairFloat_t &outPoint,
-                                                     const pairFloat_t &limitPoint,
-                                                     const pairFloat_t &linkPoint,
+void FirstPersonDisplaySystem::modifTempTextureBound(uint32_t numEntity, bool outLeft, const pairFloat_t &outPoint,
+                                                     const pairFloat_t &limitPoint, const pairFloat_t &linkPoint,
                                                      const pairUI_t &coordPoints)
 {
     SpriteTextureComponent *spriteComp = stairwayToComponentManager().
             searchComponentByType<SpriteTextureComponent>(numEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
     assert(spriteComp);
     float total, diff, result;
+    std::cerr << outPoint.first << " outPoint " << outPoint.second << "\n";
+    std::cerr << limitPoint.first << " limitPoint " << limitPoint.second << "\n";
+    std::cerr << linkPoint.first << " linkPoint " << linkPoint.second << "\n";
+
+    //!ATTENTION les textures ne sont pas toujours affichées de gauche a droite!!!
     //Y case
     if(std::abs(outPoint.first - limitPoint.first) < 0.1f)
     {
@@ -368,12 +374,16 @@ void FirstPersonDisplaySystem::modifTempTextureBound(uint32_t numEntity,
     {
         result = diff / total;
     }
+    std::cerr << diff << " FDIFF\n";
+
     spriteComp->fillWallContainer();
     spriteComp->m_limitWallPointActive = true;
     if(outLeft)
     {
         if(coordPoints.first == 0)
         {
+            std::cerr << spriteComp->m_limitWallSpriteData->at(0).first << " F=======IRST SECCC " << result << " RES "
+                      << spriteComp->m_limitWallSpriteData->at(1).first<< "\n";
             spriteComp->m_limitWallSpriteData->at(0).first = result;
             spriteComp->m_limitWallSpriteData->at(3).first = result;
         }
@@ -440,7 +450,7 @@ pairFloat_t FirstPersonDisplaySystem::getPointCameraLimitWall(const pairFloat_t 
             correction = memDiff / std::tan(limitAngle);
         }
         //need only distance so no need to add sense
-        if(outPoint.first < pointObserver.first)
+        if(outPoint.first > pointObserver.first)
         {
             pointReturn.first = pointObserver.first + correction;
         }
@@ -461,7 +471,7 @@ pairFloat_t FirstPersonDisplaySystem::getPointCameraLimitWall(const pairFloat_t 
         {
             correction = std::abs(std::tan(limitAngle) * memDiff);
         }
-        if(outPoint.second < pointObserver.second)
+        if(outPoint.second > pointObserver.second)
         {
             pointReturn.second = pointObserver.second + correction;
         }
