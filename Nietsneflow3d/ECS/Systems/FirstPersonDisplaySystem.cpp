@@ -156,12 +156,12 @@ void FirstPersonDisplaySystem::confWallEntityVertex(uint32_t numEntity, VisionCo
     assert(visionComp);
 
     bool excludeZero = (lateralPosDegree[0] > lateralPosDegree[1]) &&
-            (lateralPosDegree[0] < lateralPosDegree[2]) ||
-            (lateralPosDegree[0] < lateralPosDegree[1]) &&
+            ((lateralPosDegree[0] < lateralPosDegree[2]) ||
+            (lateralPosDegree[0] < lateralPosDegree[1])) &&
             (lateralPosDegree[0] > lateralPosDegree[2]);
     bool excludeTwo = (lateralPosDegree[2] > lateralPosDegree[0]) &&
-            (lateralPosDegree[2] < lateralPosDegree[1]) ||
-            (lateralPosDegree[2] < lateralPosDegree[0]) &&
+            ((lateralPosDegree[2] < lateralPosDegree[1]) ||
+            (lateralPosDegree[2] < lateralPosDegree[0])) &&
             (lateralPosDegree[2] > lateralPosDegree[1]);
     positionComp->m_vertex.resize(6);
     uint32_t first = 0, last = 2;
@@ -266,7 +266,6 @@ void FirstPersonDisplaySystem::fillWallEntitiesData(uint32_t numEntity, pairFloa
 {
     float distanceReal[4];
     fillAbsolAndDistanceWall(absolPos, distanceReal, mapCompA, mapCompB, numEntity);
-    uint32_t j;
     float pointAngleVision[3];
     float anglePoint;
     for(uint32_t i = 0; i < 3; ++i)
@@ -291,6 +290,7 @@ void FirstPersonDisplaySystem::fillWallEntitiesData(uint32_t numEntity, pairFloa
             outLeft[i] = anglePoint > observerAngle;
         }
     }
+    std::optional<uint32_t> j;
     for(uint32_t i = 0; i < 3; ++i)
     {
         //standard case
@@ -298,40 +298,48 @@ void FirstPersonDisplaySystem::fillWallEntitiesData(uint32_t numEntity, pairFloa
         {
             distance[i] = getCameraDistance(mapCompA->m_absoluteMapPositionPX,
                                             absolPos[i], observerAngle) / LEVEL_TILE_SIZE_PX;;
-
         }
         //out of screen limit case
         else
         {
-            if(i == 0 || i == 2)
+            j = getLimitIndex(pointIn, distanceReal, i);
+            if(!j)
             {
-                j = 1;
-            }
-            else
-            {
-                if(pointIn[0] && !pointIn[2])
-                {
-                    j = 0;
-                }
-                else if(!pointIn[0] && pointIn[2])
-                {
-                    j = 2;
-                }
-                else if(pointIn[0] && pointIn[2])
-                {
-                    j = (distanceReal[0] < distanceReal[2]) ? 0 : 2;
-                }
-                else
-                {
-                    return;
-                }
+                return;
             }
             pairFloat_t limitPoint = getPointCameraLimitWall(mapCompA->m_absoluteMapPositionPX,
                                                              observerAngle, absolPos[i],
-                                                             absolPos[j], outLeft[i], visionComp);
+                                                             absolPos[*j], outLeft[i], visionComp);
             distance[i] = getCameraDistance(mapCompA->m_absoluteMapPositionPX,
                                             limitPoint, observerAngle, true) / LEVEL_TILE_SIZE_PX;
-            modifTempTextureBound(numEntity, outLeft[i], absolPos[i], limitPoint, absolPos[j], {i, j});
+            modifTempTextureBound(numEntity, outLeft[i], absolPos[i], limitPoint, absolPos[*j], {i, *j});
+        }
+    }
+}
+
+std::optional<uint32_t> getLimitIndex(const bool pointIn[], const float distanceReal[], uint32_t i)
+{
+    if(i == 0 || i == 2)
+    {
+        return 1;
+    }
+    else
+    {
+        if(pointIn[0] && !pointIn[2])
+        {
+            return 0;
+        }
+        else if(!pointIn[0] && pointIn[2])
+        {
+            return 2;
+        }
+        else if(pointIn[0] && pointIn[2])
+        {
+            return (distanceReal[0] < distanceReal[2]) ? 0 : 2;
+        }
+        else
+        {
+            return {};
         }
     }
 }
@@ -622,3 +630,5 @@ uint32_t getMaxValueFromEntries(const float distance[])
     val = (distance[val] > distance[3]) ? val : 3;
     return val;
 }
+
+
