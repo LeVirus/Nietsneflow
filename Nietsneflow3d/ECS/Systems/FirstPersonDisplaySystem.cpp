@@ -169,16 +169,6 @@ void FirstPersonDisplaySystem::confWallEntityVertex(uint32_t numEntity, VisionCo
             (lateralPosDegree[2] > lateralPosDegree[1]);
     positionComp->m_vertex.resize(6);
     uint32_t first = 0, last = 2;
-    if(!excludeZero && !excludeTwo && lateralPosDegree[0] < lateralPosDegree[2])
-    {
-        first = 2;
-        last = 0;
-    }
-
-    if(excludeZero)
-    {
-        first = 2;
-    }
 
     //convert to GL context
     float depthPos = (spriteComp->m_glFpsSize.second) / distance[first];

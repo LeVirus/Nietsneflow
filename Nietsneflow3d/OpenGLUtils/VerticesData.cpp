@@ -83,11 +83,12 @@ void VerticesData::loadVertexTextureComponent(const PositionVertexComponent &pos
     {
         m_vertexBuffer.emplace_back(posComp.m_vertex[j].first);
         m_vertexBuffer.emplace_back(posComp.m_vertex[j].second);
+        std::cerr << j << " posECRAN :: " << posComp.m_vertex[j].first << "   " << posComp.m_vertex[j].second << "\n";
         if(spriteComp.m_limitWallPointActive)
         {
             assert(spriteComp.m_limitWallSpriteData);
-//            std::cerr << spriteComp.m_limitWallSpriteData->at(k).first << " DHAHAHAHAD " << k << " kkk " <<
-//                         spriteComp.m_spriteData->m_texturePosVertex[k].first << "\n\n";
+            std::cerr << j << " posTEXT :: " << spriteComp.m_limitWallSpriteData->at(j).first << "   " <<
+                         spriteComp.m_spriteData->m_texturePosVertex[j].second << "\n";
             m_vertexBuffer.emplace_back(spriteComp.m_limitWallSpriteData->at(j).first);
             m_vertexBuffer.emplace_back(spriteComp.m_limitWallSpriteData->at(j).second);
         }
@@ -100,7 +101,7 @@ void VerticesData::loadVertexTextureComponent(const PositionVertexComponent &pos
     //treat second rect >> 1    4   5   2
     if(sizeVertex > 4)
     {
-        uint32_t k, l;
+        uint32_t k;
         for(uint32_t j = 0; j < 4; ++j)
         {
             if(j == 0)
@@ -119,19 +120,21 @@ void VerticesData::loadVertexTextureComponent(const PositionVertexComponent &pos
             {
                 k = 2;
             }
-            l = j;
             m_vertexBuffer.emplace_back(posComp.m_vertex[k].first);
             m_vertexBuffer.emplace_back(posComp.m_vertex[k].second);
+            std::cerr << j << " second posECRAN :: " << posComp.m_vertex[k].first << "   " << posComp.m_vertex[k].second << "\n";
             if(spriteComp.m_limitWallPointActive)
             {
+                std::cerr << j + 4 << " second posTEXT :: " << spriteComp.m_limitWallSpriteData->at(j + 4).first << "   " <<
+                             spriteComp.m_spriteData->m_texturePosVertex[j].second << "\n";
                 m_vertexBuffer.emplace_back(spriteComp.m_limitWallSpriteData->at(4 + j).first);
                 m_vertexBuffer.emplace_back(spriteComp.m_limitWallSpriteData->at(4 + j).second);
                 //reset behaviour
             }
             else
             {
-                m_vertexBuffer.emplace_back(spriteComp.m_spriteData->m_texturePosVertex[l].first);
-                m_vertexBuffer.emplace_back(spriteComp.m_spriteData->m_texturePosVertex[l].second);
+                m_vertexBuffer.emplace_back(spriteComp.m_spriteData->m_texturePosVertex[j].first);
+                m_vertexBuffer.emplace_back(spriteComp.m_spriteData->m_texturePosVertex[j].second);
             }
         }
     }
