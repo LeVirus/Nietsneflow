@@ -79,43 +79,22 @@ void VerticesData::loadVertexTextureComponent(const PositionVertexComponent &pos
         return;
     }
     size_t sizeVertex = posComp.m_vertex.size();
-    bool reverseTexture = false;
-    if(posComp.m_vertex[1].first < posComp.m_vertex[0].first)
-    {
-        reverseTexture = true;
-    }
-    uint32_t k;
     for(uint32_t j = 0; j < 4; ++j)
     {
-        if(reverseTexture)
-        {
-            if(j % 2 == 0)
-            {
-                k = j + 1;
-            }
-            else
-            {
-                k = j - 1;
-            }
-        }
-        else
-        {
-            k = j;
-        }
         m_vertexBuffer.emplace_back(posComp.m_vertex[j].first);
         m_vertexBuffer.emplace_back(posComp.m_vertex[j].second);
         if(spriteComp.m_limitWallPointActive)
         {
             assert(spriteComp.m_limitWallSpriteData);
-            std::cerr << spriteComp.m_limitWallSpriteData->at(k).first << " DHAHAHAHAD " <<
-                         spriteComp.m_spriteData->m_texturePosVertex[k].first << "\n\n";
-            m_vertexBuffer.emplace_back(spriteComp.m_limitWallSpriteData->at(k).first);
-            m_vertexBuffer.emplace_back(spriteComp.m_limitWallSpriteData->at(k).second);
+//            std::cerr << spriteComp.m_limitWallSpriteData->at(k).first << " DHAHAHAHAD " << k << " kkk " <<
+//                         spriteComp.m_spriteData->m_texturePosVertex[k].first << "\n\n";
+            m_vertexBuffer.emplace_back(spriteComp.m_limitWallSpriteData->at(j).first);
+            m_vertexBuffer.emplace_back(spriteComp.m_limitWallSpriteData->at(j).second);
         }
         else
         {
-            m_vertexBuffer.emplace_back(spriteComp.m_spriteData->m_texturePosVertex[k].first);
-            m_vertexBuffer.emplace_back(spriteComp.m_spriteData->m_texturePosVertex[k].second);
+            m_vertexBuffer.emplace_back(spriteComp.m_spriteData->m_texturePosVertex[j].first);
+            m_vertexBuffer.emplace_back(spriteComp.m_spriteData->m_texturePosVertex[j].second);
         }
     }
     //treat second rect >> 1    4   5   2
@@ -140,27 +119,11 @@ void VerticesData::loadVertexTextureComponent(const PositionVertexComponent &pos
             {
                 k = 2;
             }
-
-            if(reverseTexture)
-            {
-                if(j % 2 == 0)
-                {
-                    l = j + 1;
-                }
-                else
-                {
-                    l = j - 1;
-                }
-            }
-            else
-            {
-                l = j;
-            }
+            l = j;
             m_vertexBuffer.emplace_back(posComp.m_vertex[k].first);
             m_vertexBuffer.emplace_back(posComp.m_vertex[k].second);
             if(spriteComp.m_limitWallPointActive)
             {
-
                 m_vertexBuffer.emplace_back(spriteComp.m_limitWallSpriteData->at(4 + j).first);
                 m_vertexBuffer.emplace_back(spriteComp.m_limitWallSpriteData->at(4 + j).second);
                 //reset behaviour
@@ -173,18 +136,20 @@ void VerticesData::loadVertexTextureComponent(const PositionVertexComponent &pos
         }
     }
     spriteComp.m_limitWallPointActive = false;
+    BaseShapeTypeGL_e shape;
     if(sizeVertex == 3)
     {
-        addIndices(BaseShapeTypeGL_e::TRIANGLE);
+        shape = BaseShapeTypeGL_e::TRIANGLE;
     }
-    if(sizeVertex == 4)
+    else if(sizeVertex == 4)
     {
-        addIndices(BaseShapeTypeGL_e::RECTANGLE);
+        shape = BaseShapeTypeGL_e::RECTANGLE;
     }
     else
     {
-        addIndices(BaseShapeTypeGL_e::DOUBLE_RECT);
+        shape = BaseShapeTypeGL_e::DOUBLE_RECT;
     }
+    addIndices(shape);
 }
 
 //===================================================================

@@ -260,7 +260,7 @@ void FirstPersonDisplaySystem::fillAbsolAndDistanceWall(pairFloat_t absolPos[],
 
     float trigoAngleA =  getTrigoAngle(mapCompA->m_absoluteMapPositionPX, absolPos[0]),
     trigoAngleC =  getTrigoAngle(mapCompA->m_absoluteMapPositionPX, absolPos[2]);
-    if(trigoAngleA > trigoAngleC)
+    if(trigoAngleA < trigoAngleC)
     {
         std::swap(distance[0], distance[2]);
         std::swap(absolPos[0], absolPos[2]);
@@ -365,11 +365,9 @@ void FirstPersonDisplaySystem::modifTempTextureBound(uint32_t numEntity, bool ou
             searchComponentByType<SpriteTextureComponent>(numEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
     assert(spriteComp);
     float total, diff, result;
-    std::cerr << outPoint.first << " outPoint " << outPoint.second << "\n";
-    std::cerr << limitPoint.first << " limitPoint " << limitPoint.second << "\n";
-    std::cerr << linkPoint.first << " linkPoint " << linkPoint.second << "\n";
 
     //!ATTENTION les textures ne sont pas toujours affichées de gauche a droite!!!
+    //! MAINTENANT OUI EN PRINCIPE
     //Y case
     if(std::abs(outPoint.first - limitPoint.first) < 0.1f)
     {
@@ -390,7 +388,7 @@ void FirstPersonDisplaySystem::modifTempTextureBound(uint32_t numEntity, bool ou
     {
         result = diff / total;
     }
-    std::cerr << diff << " FDIFF\n";
+    std::cerr << result << " RESSS " << coordPoints.first << "\n\n";
 
     spriteComp->fillWallContainer();
     spriteComp->m_limitWallPointActive = true;
@@ -398,13 +396,14 @@ void FirstPersonDisplaySystem::modifTempTextureBound(uint32_t numEntity, bool ou
     {
         if(coordPoints.first == 0)
         {
-            std::cerr << spriteComp->m_limitWallSpriteData->at(0).first << " F=======IRST SECCC " << result << " RES "
-                      << spriteComp->m_limitWallSpriteData->at(1).first<< "\n";
+            std::cerr << " FIRST SECCC " << "\n";
             spriteComp->m_limitWallSpriteData->at(0).first = result;
             spriteComp->m_limitWallSpriteData->at(3).first = result;
         }
         else if(coordPoints.first == 1)
         {
+            std::cerr << " SECCCCCCCCSECCC " << "\n";
+
             if(coordPoints.second == 0)
             {
                 spriteComp->m_limitWallSpriteData->at(3).first = result;
