@@ -50,7 +50,8 @@ private:
                             float leftAngleVision, uint32_t numIteration);
     void fillWallEntitiesData(uint32_t numEntity, pairFloat_t absolPos[], float distance[], MapCoordComponent *mapCompA,
                               MapCoordComponent *mapCompB, float observerAngle, VisionComponent *visionComp, bool pointIn[], bool outLeft[]);
-    void modifTempTextureBound(uint32_t numEntity, bool outLeft, const pairFloat_t &outPoint, const pairFloat_t &limitPoint, const pairFloat_t &linkPoint, const pairUI_t &coordPoints);
+    void modifTempTextureBound(uint32_t numEntity, bool outLeft, const pairFloat_t &outPoint, const pairFloat_t &limitPoint,
+                               const pairFloat_t &linkPoint, const pairUI_t &coordPoints, bool &breakLoop);
     void fillAbsolAndDistanceWall(pairFloat_t absolPos[], float distance[], MapCoordComponent *mapCompA, MapCoordComponent *mapCompB, uint32_t numEntity);
     void confNormalEntityVertex(uint32_t numEntity,
                                 VisionComponent *visionComp, float lateralPosDegree, float distance);

@@ -97,6 +97,7 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
         //calculate distance
         fillWallEntitiesData(visionComp->m_vectVisibleEntities[numIteration], absolPos, distance,
                              mapCompA, mapCompB, getRadiantAngle(observerAngle), visionComp, pointIn, leftLimit);
+
         float currentTrigoAngle;
         //calculate all 3 display position
         for(uint32_t i = 0; i < 3; ++i)
@@ -168,12 +169,10 @@ void FirstPersonDisplaySystem::confWallEntityVertex(uint32_t numEntity, VisionCo
             ((lateralPosDegree[2] < lateralPosDegree[1]) || (lateralPosDegree[2] < lateralPosDegree[0])) &&
             (lateralPosDegree[2] > lateralPosDegree[1]);
     positionComp->m_vertex.resize(6);
-    uint32_t first = 0, last = 2;
-
     //convert to GL context
-    float depthPos = (spriteComp->m_glFpsSize.second) / distance[first];
+    float depthPos = (spriteComp->m_glFpsSize.second) / distance[0];
     float halfVerticalSize = depthPos / 2.0f;
-    float lateralPosGL = (lateralPosDegree[first] / visionComp->m_coneVision * 2.0f) - 1.0f;
+    float lateralPosGL = (lateralPosDegree[0] / visionComp->m_coneVision * 2.0f) - 1.0f;
     //convert to GL context
     float depthPosMid = (spriteComp->m_glFpsSize.second) / distance[1];
     float halfVerticalSizeMid = depthPosMid / 2.0f;
@@ -195,9 +194,9 @@ void FirstPersonDisplaySystem::confWallEntityVertex(uint32_t numEntity, VisionCo
         positionComp->m_vertex.resize(4);
         return;
     }
-    float depthPosMax = (spriteComp->m_glFpsSize.second) / distance[last];
+    float depthPosMax = (spriteComp->m_glFpsSize.second) / distance[2];
     float halfVerticalSizeMax = depthPosMax / 2.0f;
-    float lateralPosMaxGL = (lateralPosDegree[last] / visionComp->m_coneVision * 2.0f) - 1.0f;
+    float lateralPosMaxGL = (lateralPosDegree[2] / visionComp->m_coneVision * 2.0f) - 1.0f;
     positionComp->m_vertex[4].first = lateralPosMaxGL;
     positionComp->m_vertex[4].second = halfVerticalSizeMax;
     positionComp->m_vertex[5].first = lateralPosMaxGL;
@@ -314,7 +313,12 @@ void FirstPersonDisplaySystem::fillWallEntitiesData(uint32_t numEntity, pairFloa
                                                              absolPos[*j], outLeft[i], visionComp);
             distance[i] = getCameraDistance(mapCompA->m_absoluteMapPositionPX,
                                             limitPoint, observerAngle, true) / LEVEL_TILE_SIZE_PX;
-            modifTempTextureBound(numEntity, outLeft[i], absolPos[i], limitPoint, absolPos[*j], {i, *j});
+            bool breakLoop;
+            modifTempTextureBound(numEntity, outLeft[i], absolPos[i], limitPoint, absolPos[*j], {i, *j}, breakLoop);
+            if(breakLoop)
+            {
+                break;
+            }
         }
     }
 }
@@ -349,8 +353,9 @@ std::optional<uint32_t> getLimitIndex(const bool pointIn[], const float distance
 //===================================================================
 void FirstPersonDisplaySystem::modifTempTextureBound(uint32_t numEntity, bool outLeft, const pairFloat_t &outPoint,
                                                      const pairFloat_t &limitPoint, const pairFloat_t &linkPoint,
-                                                     const pairUI_t &coordPoints)
+                                                     const pairUI_t &coordPoints, bool &breakLoop)
 {
+    breakLoop = false;
     SpriteTextureComponent *spriteComp = stairwayToComponentManager().
             searchComponentByType<SpriteTextureComponent>(numEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
     assert(spriteComp);
@@ -378,45 +383,34 @@ void FirstPersonDisplaySystem::modifTempTextureBound(uint32_t numEntity, bool ou
     {
         result = diff / total;
     }
-    std::cerr << result << " RESSS " << coordPoints.first << "\n\n";
-
     spriteComp->fillWallContainer();
     spriteComp->m_limitWallPointActive = true;
     if(outLeft)
     {
-        if(coordPoints.first == 0)
+        if(coordPoints.first == 0)//OK
         {
-            std::cerr << " FIRST SECCC " << "\n";
             spriteComp->m_limitWallSpriteData->at(0).first = result;
             spriteComp->m_limitWallSpriteData->at(3).first = result;
         }
-        else if(coordPoints.first == 1)
+        else if(coordPoints.first == 1)//OK
         {
-            std::cerr << " SECCCCCCCCSECCC " << "\n";
-
-            if(coordPoints.second == 0)
-            {
-                spriteComp->m_limitWallSpriteData->at(3).first = result;
-                spriteComp->m_limitWallSpriteData->at(0).first = result;
-            }
-            else
-            {
-                spriteComp->m_limitWallSpriteData->at(4).first = result;
-                spriteComp->m_limitWallSpriteData->at(5).first = result;
-            }
-        }
-        //outPoint == 3
-        else
-        {
-
+            spriteComp->m_limitWallSpriteData->at(4).first = result;
+            spriteComp->m_limitWallSpriteData->at(7).first = result;
         }
     }
     else
     {
-        if(coordPoints.first == 2)
+        result = std::abs(1 - result);
+        if(coordPoints.first == 2)//OK
+        {
+            spriteComp->m_limitWallSpriteData->at(5).first = result;
+            spriteComp->m_limitWallSpriteData->at(6).first = result;
+        }
+        else if(coordPoints.first == 1)//KO
         {
             spriteComp->m_limitWallSpriteData->at(1).first = result;
             spriteComp->m_limitWallSpriteData->at(2).first = result;
+            breakLoop = true;
         }
     }
 }
