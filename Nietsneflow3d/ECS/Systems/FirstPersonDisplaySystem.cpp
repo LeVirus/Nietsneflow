@@ -75,6 +75,7 @@ void FirstPersonDisplaySystem::confCompVertexMemEntities()
             assert(genCollComp);
             treatDisplayEntity(genCollComp, mapCompA, mapCompB, visionComp, toRemove, leftAngleVision, j);
         }
+        std::cerr << "EEEEENNNNND  " << m_numVertexToDraw[i] << "\n";
         m_numVertexToDraw[i] -= toRemove;
     }
 }
@@ -97,7 +98,6 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
         //calculate distance
         fillWallEntitiesData(visionComp->m_vectVisibleEntities[numIteration], absolPos, distance,
                              mapCompA, mapCompB, getRadiantAngle(observerAngle), visionComp, pointIn, leftLimit);
-
         float currentTrigoAngle;
         //calculate all 3 display position
         for(uint32_t i = 0; i < 3; ++i)
@@ -188,8 +188,15 @@ void FirstPersonDisplaySystem::confWallEntityVertex(uint32_t numEntity, VisionCo
     positionComp->m_vertex[2].second = -halfVerticalSizeMid;
     positionComp->m_vertex[3].first = lateralPosGL;
     positionComp->m_vertex[3].second = -halfVerticalSize;
+
+    for(int i = 0; i < 4; ++i)
+    {
+        std::cerr << positionComp->m_vertex[i].first << " ss " <<positionComp->m_vertex[i].second << "\n";
+    }
+
     if(excludeZero || excludeTwo)
     {
+        std::cerr << "\n";
         positionComp->m_vertex.resize(4);
         return;
     }
@@ -200,6 +207,12 @@ void FirstPersonDisplaySystem::confWallEntityVertex(uint32_t numEntity, VisionCo
     positionComp->m_vertex[4].second = halfVerticalSizeMax;
     positionComp->m_vertex[5].first = lateralPosMaxGL;
     positionComp->m_vertex[5].second = -halfVerticalSizeMax;
+
+    for(int i = 4; i < 6; ++i)
+    {
+        std::cerr << positionComp->m_vertex[i].first << " ss " <<positionComp->m_vertex[i].second << "\n";
+    }
+    std::cerr << "\n";
 }
 
 //===================================================================
@@ -248,6 +261,17 @@ void FirstPersonDisplaySystem::fillAbsolAndDistanceWall(pairFloat_t absolPos[],
 
     float trigoAngleA =  getTrigoAngle(mapCompA->m_absoluteMapPositionPX, absolPos[0]),
     trigoAngleC =  getTrigoAngle(mapCompA->m_absoluteMapPositionPX, absolPos[2]);
+    if(std::abs(trigoAngleC - trigoAngleA) > 90.0f)
+    {
+        if(trigoAngleA < trigoAngleC)
+        {
+            trigoAngleA += 360.0f;
+        }
+        else
+        {
+            trigoAngleC += 360.0f;
+        }
+    }
     if(trigoAngleA < trigoAngleC)
     {
         std::swap(distance[0], distance[2]);
