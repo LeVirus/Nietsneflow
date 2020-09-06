@@ -25,7 +25,7 @@ enum Components_e
     TOTAL_COMPONENTS
 };
 
-enum Systems_e
+enum class Systems_e
 {
     COLOR_DISPLAY_SYSTEM,
     MAP_DISPLAY_SYSTEM,
@@ -35,14 +35,14 @@ enum Systems_e
     VISION_SYSTEM
 };
 
-enum DisplayType_e
+enum class DisplayType_e
 {
     COLOR,
     TEXTURE,
     BOTH
 };
 
-enum Direction_e
+enum class Direction_e
 {
     NORTH,
     WEST,
@@ -50,7 +50,7 @@ enum Direction_e
     EAST
 };
 
-enum MoveOrientation_e
+enum class MoveOrientation_e
 {
     FORWARD,
     BACKWARD,
@@ -58,7 +58,7 @@ enum MoveOrientation_e
     RIGHT
 };
 
-enum EnemySpriteType_e
+enum class EnemySpriteType_e
 {
     STATIC,
     ATTACK,
@@ -66,28 +66,28 @@ enum EnemySpriteType_e
     DYING
 };
 
-enum LevelStaticElementType_e
+enum class LevelStaticElementType_e
 {
     GROUND,
     CEILING,
     OBJECT
 };
 
-enum Shader_e
+enum class Shader_e
 {
     COLOR_S,
     TEXTURE_S,
     TOTAL_SHADER_S
 };
 
-enum Texture_t
+enum class Texture_e
 {
     WALL_T,
     GLOBAL_T, // TMP
     TOTAL_TEXTURE_T
 };
 
-enum BaseShapeTypeGL_e
+enum class BaseShapeTypeGL_e
 {
     TRIANGLE,
     RECTANGLE,
@@ -95,7 +95,7 @@ enum BaseShapeTypeGL_e
     NONE
 };
 
-enum CollisionTag_e
+enum class CollisionTag_e
 {
     PLAYER_CT,
     WALL_CT,
@@ -105,7 +105,7 @@ enum CollisionTag_e
     OBJECT_CT
 };
 
-enum CollisionShape_e
+enum class CollisionShape_e
 {
     CIRCLE_C,
     RECTANGLE_C,
@@ -133,8 +133,8 @@ inline const std::map<Shader_e, std::string> SHADER_ID_MAP
     {Shader_e::TEXTURE_S, "wall"}
 };
 
-inline const std::map<Texture_t, std::string> TEXTURE_ID_PATH_MAP
+inline const std::map<Texture_e, std::string> TEXTURE_ID_PATH_MAP
 {
-    {Texture_t::GLOBAL_T, "Global.png"},
-    {Texture_t::WALL_T, "walltest.jpg"}
+    {Texture_e::GLOBAL_T, "Global.png"},
+    {Texture_e::WALL_T, "walltest.jpg"}
 };

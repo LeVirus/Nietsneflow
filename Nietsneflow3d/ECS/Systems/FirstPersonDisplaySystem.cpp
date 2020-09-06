@@ -188,7 +188,6 @@ void FirstPersonDisplaySystem::confWallEntityVertex(uint32_t numEntity, VisionCo
     positionComp->m_vertex[2].second = -halfVerticalSizeMid;
     positionComp->m_vertex[3].first = lateralPosGL;
     positionComp->m_vertex[3].second = -halfVerticalSize;
-
     if(excludeZero || excludeTwo)
     {
         positionComp->m_vertex.resize(4);
@@ -387,12 +386,12 @@ void FirstPersonDisplaySystem::modifTempTextureBound(uint32_t numEntity, bool ou
     spriteComp->m_limitWallPointActive = true;
     if(outLeft)
     {
-        if(coordPoints.first == 0)//OK
+        if(coordPoints.first == 0)
         {
             spriteComp->m_limitWallSpriteData->at(0).first = result;
             spriteComp->m_limitWallSpriteData->at(3).first = result;
         }
-        else if(coordPoints.first == 1)//OK
+        else if(coordPoints.first == 1)
         {
             spriteComp->m_limitWallSpriteData->at(4).first = result;
             spriteComp->m_limitWallSpriteData->at(7).first = result;
@@ -401,12 +400,12 @@ void FirstPersonDisplaySystem::modifTempTextureBound(uint32_t numEntity, bool ou
     else
     {
         result = std::abs(1 - result);
-        if(coordPoints.first == 2)//OK
+        if(coordPoints.first == 2)
         {
             spriteComp->m_limitWallSpriteData->at(5).first = result;
             spriteComp->m_limitWallSpriteData->at(6).first = result;
         }
-        else if(coordPoints.first == 1)//KO
+        else if(coordPoints.first == 1)
         {
             spriteComp->m_limitWallSpriteData->at(1).first = result;
             spriteComp->m_limitWallSpriteData->at(2).first = result;
@@ -525,7 +524,7 @@ void FirstPersonDisplaySystem::fillVertexFromEntitie(uint32_t numEntity, uint32_
                                                           Components_e::SPRITE_TEXTURE_COMPONENT);
     assert(posComp);
     assert(spriteComp);
-    m_entitiesNumMem.insert(EntityData(distance, static_cast<Texture_t>(spriteComp->m_spriteData->m_textureNum), numIteration));
+    m_entitiesNumMem.insert(EntityData(distance, static_cast<Texture_e>(spriteComp->m_spriteData->m_textureNum), numIteration));
 
     m_vectVerticesData[numIteration].loadVertexTextureComponent(*posComp, *spriteComp);
 }
@@ -572,13 +571,12 @@ void FirstPersonDisplaySystem::drawVertex()
     //DONT WORK for multiple player
     for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
     {
-        std::set<EntityData>::const_iterator it = m_entitiesNumMem.begin();
         uint32_t numEntity;
-        for(;it != m_entitiesNumMem.end(); ++it)
+        for(std::multiset<EntityData>::const_iterator it = m_entitiesNumMem.begin();it != m_entitiesNumMem.end(); ++it)
         {
             numEntity = it->m_entityNum;
             assert(numEntity < m_vectVerticesData.size());
-            m_ptrVectTexture->operator[](it->m_textureNum).bind();
+            m_ptrVectTexture->operator[](static_cast<uint32_t>(it->m_textureNum)).bind();
             m_vectVerticesData[numEntity].confVertexBuffer();
             m_vectVerticesData[numEntity].drawElement();
         }

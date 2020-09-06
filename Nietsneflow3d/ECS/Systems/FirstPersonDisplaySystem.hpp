@@ -23,9 +23,9 @@ enum WallTreatment_e
 struct EntityData
 {
     float m_distance;
-    Texture_t m_textureNum;
+    Texture_e m_textureNum;
     uint32_t m_entityNum;
-    EntityData(float distance, Texture_t textureNum, uint32_t entityNum) : m_distance(distance),
+    EntityData(float distance, Texture_e textureNum, uint32_t entityNum) : m_distance(distance),
         m_textureNum(textureNum), m_entityNum(entityNum)
     {}
 
@@ -65,7 +65,7 @@ private:
                                  bool leftLimit, VisionComponent *visionComp);
 private:
     Shader *m_shader;
-    std::set<EntityData> m_entitiesNumMem;
+    std::multiset<EntityData> m_entitiesNumMem;
     std::vector<VerticesData> m_vectVerticesData;
     std::vector<Texture> *m_ptrVectTexture = nullptr;
     //number of entity to draw per player

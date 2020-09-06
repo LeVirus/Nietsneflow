@@ -382,13 +382,13 @@ void MainEngine::confCeilingComponents(uint32_t entityNum)
 void MainEngine::linkSystemsToGraphicEngine()
 {
     ColorDisplaySystem *color = m_ecsManager.getSystemManager().
-            searchSystemByType<ColorDisplaySystem>(Systems_e::COLOR_DISPLAY_SYSTEM);
+            searchSystemByType<ColorDisplaySystem>(static_cast<uint32_t>(Systems_e::COLOR_DISPLAY_SYSTEM));
     MapDisplaySystem *map = m_ecsManager.getSystemManager().
-            searchSystemByType<MapDisplaySystem>(Systems_e::MAP_DISPLAY_SYSTEM);
+            searchSystemByType<MapDisplaySystem>(static_cast<uint32_t>(Systems_e::MAP_DISPLAY_SYSTEM));
     FirstPersonDisplaySystem *first = m_ecsManager.getSystemManager().
-            searchSystemByType<FirstPersonDisplaySystem>(Systems_e::FIRST_PERSON_DISPLAY_SYSTEM);
+            searchSystemByType<FirstPersonDisplaySystem>(static_cast<uint32_t>(Systems_e::FIRST_PERSON_DISPLAY_SYSTEM));
     VisionSystem *vision = m_ecsManager.getSystemManager().
-            searchSystemByType<VisionSystem>(Systems_e::VISION_SYSTEM);
+            searchSystemByType<VisionSystem>(static_cast<uint32_t>(Systems_e::VISION_SYSTEM));
     m_graphicEngine.linkSystems(color, map, first, vision);
 }
 
@@ -396,9 +396,9 @@ void MainEngine::linkSystemsToGraphicEngine()
 void MainEngine::linkSystemsToPhysicalEngine()
 {
     InputSystem *input = m_ecsManager.getSystemManager().
-            searchSystemByType<InputSystem>(Systems_e::INPUT_SYSTEM);
+            searchSystemByType<InputSystem>(static_cast<uint32_t>(Systems_e::INPUT_SYSTEM));
     CollisionSystem *coll = m_ecsManager.getSystemManager().
-            searchSystemByType<CollisionSystem>(Systems_e::COLLISION_SYSTEM);
+            searchSystemByType<CollisionSystem>(static_cast<uint32_t>(Systems_e::COLLISION_SYSTEM));
     input->setGLWindow(m_graphicEngine.getGLWindow());
     m_physicalEngine.linkSystems(input, coll);
 }

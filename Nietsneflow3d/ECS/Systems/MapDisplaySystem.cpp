@@ -201,7 +201,7 @@ void MapDisplaySystem::drawPlayerVision()
 {
     assert(m_playerComp.m_visionComp);
     mptrSystemManager->searchSystemByType<ColorDisplaySystem>(
-                Systems_e::COLOR_DISPLAY_SYSTEM)->drawEntity(&m_playerComp.m_visionComp->m_positionVertexComp,
+                static_cast<uint32_t>(Systems_e::COLOR_DISPLAY_SYSTEM))->drawEntity(&m_playerComp.m_visionComp->m_positionVertexComp,
                                                              &m_playerComp.m_visionComp->m_colorVertexComp);
 }
 
@@ -211,7 +211,7 @@ void MapDisplaySystem::drawPlayerOnMap()
     assert(m_playerComp.m_posComp);
     assert(m_playerComp.m_colorComp);
     mptrSystemManager->searchSystemByType<ColorDisplaySystem>(
-                Systems_e::COLOR_DISPLAY_SYSTEM)->drawEntity(m_playerComp.m_posComp,
+                static_cast<uint32_t>(Systems_e::COLOR_DISPLAY_SYSTEM))->drawEntity(m_playerComp.m_posComp,
                                                              m_playerComp.m_colorComp);
 }
 

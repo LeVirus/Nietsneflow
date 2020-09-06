@@ -64,27 +64,27 @@ void CollisionSystem::execSystem()
 //===================================================================
 void CollisionSystem::initArrayTag()
 {
-    m_tagArray.insert({PLAYER_CT, WALL_CT});
-    m_tagArray.insert({PLAYER_CT, ENEMY_CT});
-    m_tagArray.insert({PLAYER_CT, BULLET_ENEMY_CT});
-    m_tagArray.insert({PLAYER_CT, OBJECT_CT});
+    m_tagArray.insert({CollisionTag_e::PLAYER_CT, CollisionTag_e::WALL_CT});
+    m_tagArray.insert({CollisionTag_e::PLAYER_CT, CollisionTag_e::ENEMY_CT});
+    m_tagArray.insert({CollisionTag_e::PLAYER_CT, CollisionTag_e::BULLET_ENEMY_CT});
+    m_tagArray.insert({CollisionTag_e::PLAYER_CT, CollisionTag_e::OBJECT_CT});
 
-    m_tagArray.insert({ENEMY_CT, BULLET_PLAYER_CT});
-    m_tagArray.insert({ENEMY_CT, PLAYER_CT});
-    m_tagArray.insert({ENEMY_CT, WALL_CT});
+    m_tagArray.insert({CollisionTag_e::ENEMY_CT, CollisionTag_e::BULLET_PLAYER_CT});
+    m_tagArray.insert({CollisionTag_e::ENEMY_CT, CollisionTag_e::PLAYER_CT});
+    m_tagArray.insert({CollisionTag_e::ENEMY_CT, CollisionTag_e::WALL_CT});
 
-    m_tagArray.insert({WALL_CT, PLAYER_CT});
-    m_tagArray.insert({WALL_CT, ENEMY_CT});
-    m_tagArray.insert({WALL_CT, BULLET_ENEMY_CT});
-    m_tagArray.insert({WALL_CT, BULLET_PLAYER_CT});
+    m_tagArray.insert({CollisionTag_e::WALL_CT, CollisionTag_e::PLAYER_CT});
+    m_tagArray.insert({CollisionTag_e::WALL_CT, CollisionTag_e::ENEMY_CT});
+    m_tagArray.insert({CollisionTag_e::WALL_CT, CollisionTag_e::BULLET_ENEMY_CT});
+    m_tagArray.insert({CollisionTag_e::WALL_CT, CollisionTag_e::BULLET_PLAYER_CT});
 
-    m_tagArray.insert({BULLET_ENEMY_CT, PLAYER_CT});
-    m_tagArray.insert({BULLET_ENEMY_CT, WALL_CT});
+    m_tagArray.insert({CollisionTag_e::BULLET_ENEMY_CT, CollisionTag_e::PLAYER_CT});
+    m_tagArray.insert({CollisionTag_e::BULLET_ENEMY_CT, CollisionTag_e::WALL_CT});
 
-    m_tagArray.insert({BULLET_PLAYER_CT, ENEMY_CT});
-    m_tagArray.insert({BULLET_PLAYER_CT, WALL_CT});
+    m_tagArray.insert({CollisionTag_e::BULLET_PLAYER_CT, CollisionTag_e::ENEMY_CT});
+    m_tagArray.insert({CollisionTag_e::BULLET_PLAYER_CT, CollisionTag_e::WALL_CT});
 
-    m_tagArray.insert({OBJECT_CT, PLAYER_CT});
+    m_tagArray.insert({CollisionTag_e::OBJECT_CT, CollisionTag_e::PLAYER_CT});
 }
 
 //===================================================================

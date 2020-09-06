@@ -29,9 +29,9 @@ void Level::display()
     std::cout << "X :: " << m_size.first << "Y :: "
               << m_size.second <<  std::endl;
     std::cout << "Player departure ::" << std::endl;
-    std::cout << "X :: " << m_playerDeparture.first <<
-                 "  Y :: " << m_playerDeparture.second <<
-              "  Player Direction " << m_playerDepartureDirection << std::endl;
+//    std::cout << "X :: " << m_playerDeparture.first <<
+//                 "  Y :: " << m_playerDeparture.second <<
+//              "  Player Direction " << m_playerDepartureDirection << std::endl;
     for(uint32_t i = 0; i < m_groundElement.size(); ++i)
     {
         std::cout << "Vect Ground Element   \n"

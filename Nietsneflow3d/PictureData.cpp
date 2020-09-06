@@ -47,20 +47,20 @@ void PictureData::display()
     }
 
     std::cout << "GroundData ::" << std::endl;
-    std::cout << m_groundData.m_apparence << "\n" <<
-                 m_groundData.m_spriteNum << "\n" <<
-                 std::get<0>(m_groundData.m_tupleColor) << "  " <<
-                 std::get<1>(m_groundData.m_tupleColor) << "  " <<
-                 std::get<2>(m_groundData.m_tupleColor) << "  " <<
-                 std::endl;
+//    std::cout << m_groundData.m_apparence << "\n" <<
+//                 m_groundData.m_spriteNum << "\n" <<
+//                 std::get<0>(m_groundData.m_tupleColor) << "  " <<
+//                 std::get<1>(m_groundData.m_tupleColor) << "  " <<
+//                 std::get<2>(m_groundData.m_tupleColor) << "  " <<
+//                 std::endl;
 
-    std::cout << "CeilingData ::" << std::endl;
-    std::cout << m_ceilingData.m_apparence << "\n" <<
-                 m_ceilingData.m_spriteNum << "\n" <<
-                 std::get<0>(m_ceilingData.m_tupleColor) << "  " <<
-                 std::get<1>(m_ceilingData.m_tupleColor) << "  " <<
-                 std::get<2>(m_ceilingData.m_tupleColor) << "  " <<
-                 std::endl;
+//    std::cout << "CeilingData ::" << std::endl;
+//    std::cout << m_ceilingData.m_apparence << "\n" <<
+//                 m_ceilingData.m_spriteNum << "\n" <<
+//                 std::get<0>(m_ceilingData.m_tupleColor) << "  " <<
+//                 std::get<1>(m_ceilingData.m_tupleColor) << "  " <<
+//                 std::get<2>(m_ceilingData.m_tupleColor) << "  " <<
+//                 std::endl;
 
     std::cout << "Vect SpriteData ::" << std::endl;
     for(uint32_t i = 0; i < m_vectSpriteData.size(); ++i)

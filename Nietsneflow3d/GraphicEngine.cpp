@@ -110,8 +110,8 @@ void GraphicEngine::initGlad()
 //===================================================================
 void GraphicEngine::initGLShader()
 {
-    m_vectShader.reserve(Shader_e::TOTAL_SHADER_S);
-    for(uint32_t i = Shader_e::COLOR_S; i < Shader_e::TOTAL_SHADER_S; ++i)
+    m_vectShader.reserve(static_cast<uint32_t>(Shader_e::TOTAL_SHADER_S));
+    for(uint32_t i = 0; i < static_cast<uint32_t>(Shader_e::TOTAL_SHADER_S); ++i)
     {
         std::map<Shader_e, std::string>::const_iterator it =
                 SHADER_ID_MAP.find(static_cast<Shader_e>(i));
@@ -124,11 +124,11 @@ void GraphicEngine::initGLShader()
 //===================================================================
 void GraphicEngine::initGLTexture()
 {
-    m_vectTexture.reserve(Texture_t::TOTAL_TEXTURE_T);
-    for(uint32_t i = Texture_t::WALL_T; i < Texture_t::TOTAL_TEXTURE_T; ++i)
+    m_vectTexture.reserve(static_cast<uint32_t>(Texture_e::TOTAL_TEXTURE_T));
+    for(uint32_t i = 0; i < static_cast<uint32_t>(Texture_e::TOTAL_TEXTURE_T); ++i)
     {
-        std::map<Texture_t, std::string>::const_iterator it =
-                TEXTURE_ID_PATH_MAP.find(static_cast<Texture_t>(i));
+        std::map<Texture_e, std::string>::const_iterator it =
+                TEXTURE_ID_PATH_MAP.find(static_cast<Texture_e>(i));
         std::string path = TEXTURES_DIR_STR + it->second;
                 m_vectTexture.emplace_back(Texture(path));
     }
@@ -139,16 +139,16 @@ void GraphicEngine::setShaderToLocalSystems()
 {
     assert(m_colorSystem && "colorSystem is null");
     assert(m_mapSystem && "mapSystem is null");
-    m_colorSystem->setShader(m_vectShader[Shader_e::COLOR_S]);
-    m_mapSystem->setShader(m_vectShader[Shader_e::TEXTURE_S]);
-    m_firstPersonSystem->setShader(m_vectShader[Shader_e::TEXTURE_S]);
+    m_colorSystem->setShader(m_vectShader[static_cast<uint32_t>(Shader_e::COLOR_S)]);
+    m_mapSystem->setShader(m_vectShader[static_cast<uint32_t>(Shader_e::TEXTURE_S)]);
+    m_firstPersonSystem->setShader(m_vectShader[static_cast<uint32_t>(Shader_e::TEXTURE_S)]);
 }
 
 //===================================================================
 void GraphicEngine::loadTexturesPath(const vectStr_t &vectTextures)
 {
     size_t size = vectTextures.size();
-    assert(size == Texture_t::TOTAL_TEXTURE_T);
+    assert(size == static_cast<uint32_t>(Texture_e::TOTAL_TEXTURE_T));
     m_vectTexture.reserve(size);
     for(uint32_t i = 0; i < size; ++i)
     {
