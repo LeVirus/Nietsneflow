@@ -191,8 +191,10 @@ void FirstPersonDisplaySystem::confWallEntityVertex(uint32_t numEntity, VisionCo
 
     for(int i = 0; i < 4; ++i)
     {
-        std::cerr << positionComp->m_vertex[i].first << " ss " <<positionComp->m_vertex[i].second << "\n";
+        std::cerr << positionComp->m_vertex[i].first << " ss " << positionComp->m_vertex[i].second << "\n";
     }
+    std::cerr << distance[0] << " YYY00 / " <<  "\n";
+    std::cerr << distance[1] <<  " YYY / " << "\n";
 
     if(excludeZero || excludeTwo)
     {
@@ -208,11 +210,11 @@ void FirstPersonDisplaySystem::confWallEntityVertex(uint32_t numEntity, VisionCo
     positionComp->m_vertex[5].first = lateralPosMaxGL;
     positionComp->m_vertex[5].second = -halfVerticalSizeMax;
 
-    for(int i = 4; i < 6; ++i)
-    {
-        std::cerr << positionComp->m_vertex[i].first << " ss " <<positionComp->m_vertex[i].second << "\n";
-    }
-    std::cerr << "\n";
+//    for(int i = 4; i < 6; ++i)
+//    {
+//        std::cerr << positionComp->m_vertex[i].first << " ss " <<positionComp->m_vertex[i].second << "\n";
+//    }
+//    std::cerr << "\n";
 }
 
 //===================================================================
@@ -326,11 +328,16 @@ void FirstPersonDisplaySystem::fillWallEntitiesData(uint32_t numEntity, pairFloa
         //out of screen limit case
         else
         {
+//            if(i != 1 && !pointIn[1])
+//            {
+//                continue;
+//            }
             j = getLimitIndex(pointIn, distanceReal, i);
             if(!j)
             {
                 return;
             }
+            std::cerr << *j << "\n";
             pairFloat_t limitPoint = getPointCameraLimitWall(mapCompA->m_absoluteMapPositionPX,
                                                              observerAngle, absolPos[i],
                                                              absolPos[*j], outLeft[i], visionComp);
@@ -343,7 +350,10 @@ void FirstPersonDisplaySystem::fillWallEntitiesData(uint32_t numEntity, pairFloa
                 break;
             }
         }
+        std::cerr << absolPos[i].first << " " << absolPos[i].second << " absoll\n";
     }
+    std::cerr << distance[0] << " distance0\n";
+    std::cerr << distance[1] << " distance1\n";
 }
 
 std::optional<uint32_t> getLimitIndex(const bool pointIn[], const float distanceReal[], uint32_t i)
@@ -462,7 +472,7 @@ pairFloat_t FirstPersonDisplaySystem::getPointCameraLimitWall(const pairFloat_t 
     if(std::abs(outPoint.first - linkPoint.first) > 0.3f)
     {
         memDiff = std::abs(outPoint.second - pointObserver.second);
-        if(limitAngle <= 0.01f)
+        if(std::abs(limitAngle) <= std::numeric_limits<float>::epsilon())
         {
             correction = memDiff;
         }
@@ -485,7 +495,7 @@ pairFloat_t FirstPersonDisplaySystem::getPointCameraLimitWall(const pairFloat_t 
     else
     {
         memDiff = std::abs(outPoint.first - pointObserver.first);
-        if(limitAngle <= 0.01f)
+        if(std::abs(limitAngle) <= std::numeric_limits<float>::epsilon())
         {
             correction = memDiff;
         }
@@ -493,6 +503,7 @@ pairFloat_t FirstPersonDisplaySystem::getPointCameraLimitWall(const pairFloat_t 
         {
             correction = std::abs(std::tan(limitAngle) * memDiff);
         }
+        std::cerr << memDiff << "   " << correction << "\n";
         if(outPoint.second > pointObserver.second)
         {
             pointReturn.second = pointObserver.second + correction;
