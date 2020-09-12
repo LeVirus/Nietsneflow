@@ -75,7 +75,6 @@ void FirstPersonDisplaySystem::confCompVertexMemEntities()
             assert(genCollComp);
             treatDisplayEntity(genCollComp, mapCompA, mapCompB, visionComp, toRemove, leftAngleVision, j);
         }
-        std::cerr << "EEEEENNNNND  " << m_numVertexToDraw[i] << "\n";
         m_numVertexToDraw[i] -= toRemove;
     }
 }
@@ -187,17 +186,8 @@ void FirstPersonDisplaySystem::confWallEntityVertex(uint32_t numEntity, VisionCo
     positionComp->m_vertex[2].second = -halfVerticalSizeMid;
     positionComp->m_vertex[3].first = lateralPosGL;
     positionComp->m_vertex[3].second = -halfVerticalSize;
-
-    for(int i = 0; i < 4; ++i)
-    {
-        std::cerr << positionComp->m_vertex[i].first << " ss " << positionComp->m_vertex[i].second << "\n";
-    }
-    std::cerr << distance[0] << " YYY00 / " <<  "\n";
-    std::cerr << distance[1] <<  " YYY / " << "\n";
-
     if(excludeZero || excludeTwo || (lateralPosDegree[1] > lateralPosDegree[2]))
     {
-        std::cerr << "\n";
         positionComp->m_vertex.resize(4);
         return;
     }
@@ -208,12 +198,6 @@ void FirstPersonDisplaySystem::confWallEntityVertex(uint32_t numEntity, VisionCo
     positionComp->m_vertex[4].second = halfVerticalSizeMax;
     positionComp->m_vertex[5].first = lateralPosMaxGL;
     positionComp->m_vertex[5].second = -halfVerticalSizeMax;
-
-//    for(int i = 4; i < 6; ++i)
-//    {
-//        std::cerr << positionComp->m_vertex[i].first << " ss " <<positionComp->m_vertex[i].second << "\n";
-//    }
-//    std::cerr << "\n";
 }
 
 //===================================================================
@@ -309,6 +293,7 @@ void FirstPersonDisplaySystem::fillWallEntitiesData(uint32_t numEntity, pairFloa
         }
         pointAngleVision[i] = anglePoint - observerAngle;
         pointIn[i] = std::abs(pointAngleVision[i]) < PI_QUARTER;
+
         //mem limit left or right
         if(!pointIn[i])
         {
@@ -322,7 +307,7 @@ void FirstPersonDisplaySystem::fillWallEntitiesData(uint32_t numEntity, pairFloa
         if(pointIn[i])
         {
             distance[i] = getCameraDistance(mapCompA->m_absoluteMapPositionPX,
-                                            absolPos[i], observerAngle) / LEVEL_TILE_SIZE_PX;;
+                                            absolPos[i], observerAngle) / LEVEL_TILE_SIZE_PX;
         }
         //out of screen limit case
         else
@@ -336,7 +321,6 @@ void FirstPersonDisplaySystem::fillWallEntitiesData(uint32_t numEntity, pairFloa
             {
                 return;
             }
-            std::cerr << *j << "\n";
             pairFloat_t limitPoint = getPointCameraLimitWall(mapCompA->m_absoluteMapPositionPX,
                                                              observerAngle, absolPos[i],
                                                              absolPos[*j], outLeft[i], visionComp);
@@ -349,10 +333,7 @@ void FirstPersonDisplaySystem::fillWallEntitiesData(uint32_t numEntity, pairFloa
                 break;
             }
         }
-        std::cerr << absolPos[i].first << " " << absolPos[i].second << " absoll\n";
     }
-    std::cerr << distance[0] << " distance0\n";
-    std::cerr << distance[1] << " distance1\n";
 }
 
 std::optional<uint32_t> getLimitIndex(const bool pointIn[], const float distanceReal[], uint32_t i)
@@ -392,9 +373,6 @@ void FirstPersonDisplaySystem::modifTempTextureBound(uint32_t numEntity, bool ou
             searchComponentByType<SpriteTextureComponent>(numEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
     assert(spriteComp);
     float total, diff, result;
-
-    //!ATTENTION les textures ne sont pas toujours affichées de gauche a droite!!!
-    //! MAINTENANT OUI EN PRINCIPE
     //Y case
     if(std::abs(outPoint.first - limitPoint.first) < 0.1f)
     {
@@ -494,15 +472,7 @@ pairFloat_t FirstPersonDisplaySystem::getPointCameraLimitWall(const pairFloat_t 
     else
     {
         memDiff = std::abs(outPoint.first - pointObserver.first);
-        if(std::abs(limitAngle) <= std::numeric_limits<float>::epsilon())
-        {
-            correction = memDiff;
-        }
-        else
-        {
-            correction = std::abs(std::tan(limitAngle) * memDiff);
-        }
-        std::cerr << memDiff << "   " << correction << "\n";
+        correction = std::abs(std::tan(limitAngle) * memDiff);
         if(outPoint.second > pointObserver.second)
         {
             pointReturn.second = pointObserver.second + correction;
@@ -522,11 +492,6 @@ float getQuarterAngle(float angle)
     {
         return angle;
     }
-    //investigate why
-//    else if(angle < 179.0f)
-//    {
-//        return std::abs(angle - 180.0f);
-//    }
     else if(angle < 269.0f)
     {
         return std::abs(angle - 180.0f);
