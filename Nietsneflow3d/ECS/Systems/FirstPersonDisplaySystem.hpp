@@ -52,7 +52,10 @@ private:
                               MapCoordComponent *mapCompB, float observerAngle, VisionComponent *visionComp, bool pointIn[], bool outLeft[]);
     void modifTempTextureBound(uint32_t numEntity, bool outLeft, const pairFloat_t &outPoint, const pairFloat_t &limitPoint,
                                const pairFloat_t &linkPoint, const pairUI_t &coordPoints, bool &breakLoop);
-    void fillAbsolAndDistanceWall(pairFloat_t absolPos[], float distance[], MapCoordComponent *mapCompA, MapCoordComponent *mapCompB, uint32_t numEntity);
+    void fillAbsolAndDistanceWall(pairFloat_t absolPos[], float distance[], MapCoordComponent *mapCompA,
+                                  MapCoordComponent *mapCompB, uint32_t numEntity,
+                                  uint32_t &distanceToTreat, VisionComponent *visionComp);
+    bool angleWallVisible(const pairFloat_t &observerPoint, const pairFloat_t &angleWall, const std::vector<uint32_t> &vectEntities);
     void confNormalEntityVertex(uint32_t numEntity,
                                 VisionComponent *visionComp, float lateralPosDegree, float distance);
     void confWallEntityVertex(uint32_t numEntity, VisionComponent *visionComp,

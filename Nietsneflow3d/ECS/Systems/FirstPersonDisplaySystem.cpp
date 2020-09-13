@@ -205,7 +205,7 @@ void FirstPersonDisplaySystem::fillAbsolAndDistanceWall(pairFloat_t absolPos[],
                                                         float distance[],
                                                         MapCoordComponent *mapCompA,
                                                         MapCoordComponent *mapCompB,
-                                                        uint32_t numEntity)
+                                                        uint32_t numEntity, uint32_t &distanceToTreat, VisionComponent *visionComp)
 {
     RectangleCollisionComponent *rectComp = stairwayToComponentManager().
             searchComponentByType<RectangleCollisionComponent>(numEntity, Components_e::RECTANGLE_COLLISION_COMPONENT);
@@ -262,6 +262,58 @@ void FirstPersonDisplaySystem::fillAbsolAndDistanceWall(pairFloat_t absolPos[],
         std::swap(distance[0], distance[2]);
         std::swap(absolPos[0], absolPos[2]);
     }
+    distanceToTreat = 3;
+
+
+//    uint32_t maxDistance = (distance[0] > distance[2]) ? 0 : 2;
+//    if(maxDistance == 2)
+//    {
+//        if(!angleWallVisible(mapCompA->m_absoluteMapPositionPX, absolPos[2], visionComp->m_vectVisibleEntities))
+//        {
+//            distanceToTreat = 2;
+//        }
+//    }
+//    else
+//    {
+//        if(!angleWallVisible(mapCompA->m_absoluteMapPositionPX, absolPos[0], visionComp->m_vectVisibleEntities))
+//        {
+//            std::swap(distance[0], distance[1]);
+//            std::swap(absolPos[0], absolPos[1]);
+//            std::swap(distance[1], distance[2]);
+//            std::swap(absolPos[1], absolPos[2]);
+//            distanceToTreat = 2;
+//        }
+//    }
+
+}
+
+bool FirstPersonDisplaySystem::angleWallVisible(const pairFloat_t &observerPoint, const pairFloat_t &angleWall,
+                                                const std::vector<uint32_t> &vectEntities)
+{
+    RectangleCollisionComponent *rectComp;
+    MapCoordComponent *mapComp;
+    GeneralCollisionComponent *genCollComp;
+    for(uint32_t i = 0; i < vectEntities.size(); ++i)
+    {
+        genCollComp = stairwayToComponentManager().
+                searchComponentByType<GeneralCollisionComponent>(vectEntities[i], Components_e::GENERAL_COLLISION_COMPONENT);
+        assert(genCollComp);
+        if(genCollComp->m_tag != CollisionTag_e::WALL_CT)
+        {
+            continue;
+        }
+        rectComp = stairwayToComponentManager().
+                searchComponentByType<RectangleCollisionComponent>(vectEntities[i], Components_e::RECTANGLE_COLLISION_COMPONENT);
+        mapComp = stairwayToComponentManager().
+                searchComponentByType<MapCoordComponent>(vectEntities[i], Components_e::MAP_COORD_COMPONENT);
+        assert(rectComp);
+        assert(mapComp);
+        if(checkSegmentRectCollision(observerPoint, angleWall, mapComp->m_absoluteMapPositionPX, rectComp->m_size))
+        {
+            return false;
+        }
+    }
+    return true;
 }
 
 //===================================================================
@@ -274,7 +326,8 @@ void FirstPersonDisplaySystem::fillWallEntitiesData(uint32_t numEntity, pairFloa
                                                     bool pointIn[], bool outLeft[])
 {
     float distanceReal[4];
-    fillAbsolAndDistanceWall(absolPos, distanceReal, mapCompA, mapCompB, numEntity);
+    uint32_t distanceToTreat;
+    fillAbsolAndDistanceWall(absolPos, distanceReal, mapCompA, mapCompB, numEntity, distanceToTreat, visionComp);
     float pointAngleVision[3];
     float anglePoint;
     for(uint32_t i = 0; i < 3; ++i)
@@ -301,7 +354,7 @@ void FirstPersonDisplaySystem::fillWallEntitiesData(uint32_t numEntity, pairFloa
         }
     }
     std::optional<uint32_t> j;
-    for(uint32_t i = 0; i < 3; ++i)
+    for(uint32_t i = 0; i < distanceToTreat; ++i)
     {
         //standard case
         if(pointIn[i])
