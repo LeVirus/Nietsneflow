@@ -301,7 +301,6 @@ void FirstPersonDisplaySystem::fillAbsolAndDistanceWall(pairFloat_t absolPos[],
 bool FirstPersonDisplaySystem::angleWallVisible(const pairFloat_t &observerPoint, const pairFloat_t &angleWall,
                                                 const std::vector<uint32_t> &vectEntities)
 {
-//    return true;
     RectangleCollisionComponent *rectComp;
     MapCoordComponent *mapComp;
     GeneralCollisionComponent *genCollComp;
@@ -320,7 +319,7 @@ bool FirstPersonDisplaySystem::angleWallVisible(const pairFloat_t &observerPoint
                 searchComponentByType<RectangleCollisionComponent>(vectEntities[i], Components_e::RECTANGLE_COLLISION_COMPONENT);
         assert(mapComp);
         assert(rectComp);
-        if(getDistance(mapComp->m_absoluteMapPositionPX, angleWall) < LEVEL_TILE_SIZE_PX)
+        if(getDistance(mapComp->m_absoluteMapPositionPX, angleWall) < LEVEL_TILE_MORE_HALF_SIZE_PX)
         {
             if(checkSegmentRectCollision(observerPoint, angleWall, mapComp->m_absoluteMapPositionPX, rectComp->m_size))
             {
