@@ -521,27 +521,13 @@ pairFloat_t FirstPersonDisplaySystem::getPointCameraLimitWall(const pairFloat_t 
             //TRIGO CALC
             correction = memDiff / std::tan(limitAngle);
         }
-        //check if observer is between 2 wall points
-        if((pointObserver.first > outPoint.first && pointObserver.first < linkPoint.first)
-                || (pointObserver.first > linkPoint.first && pointObserver.first < outPoint.first))
+        std::optional<pairFloat_t> optReturn = checkLimitWallCase(pointObserver, memDegreeAngle,
+                                                                  outPoint, linkPoint,
+                                                                  leftLimit, true,
+                                                                  correction, pointReturn);
+        if(optReturn)
         {
-
-            if((leftLimit && memDegreeAngle > 0.0f && memDegreeAngle < 90.0f)
-                    || (!leftLimit && memDegreeAngle > 270.0f && memDegreeAngle < 360.0f))
-
-            {
-                correction += std::abs(outPoint.first - pointObserver.first);
-                pointReturn.first = outPoint.first + correction;
-                return pointReturn;
-            }
-            else if(leftLimit && memDegreeAngle > 180.0f && memDegreeAngle < 270.0f
-                    || (!leftLimit && memDegreeAngle > 90.0f && memDegreeAngle < 180.0f))
-
-            {
-                correction += std::abs(outPoint.first - pointObserver.first);
-                pointReturn.first = outPoint.first - correction;
-                return pointReturn;
-            }
+            return *optReturn;
         }
         //need only distance so no need to add sense
         if(outPoint.first > pointObserver.first)
@@ -558,30 +544,14 @@ pairFloat_t FirstPersonDisplaySystem::getPointCameraLimitWall(const pairFloat_t 
     {
         memDiff = std::abs(outPoint.first - pointObserver.first);
         correction = std::abs(std::tan(limitAngle) * memDiff);
-
-        //check if observer is between 2 wall points
-        if((pointObserver.second > outPoint.second && pointObserver.second < linkPoint.second)
-                || (pointObserver.second > linkPoint.second && pointObserver.second < outPoint.second))
+        std::optional<pairFloat_t> optReturn = checkLimitWallCase(pointObserver, memDegreeAngle,
+                                                                  outPoint, linkPoint,
+                                                                  leftLimit, false,
+                                                                  correction, pointReturn);
+        if(optReturn)
         {
-
-            if((leftLimit && memDegreeAngle > 270.0f && memDegreeAngle < 360.0f)
-                    || (!leftLimit && memDegreeAngle > 180.0f && memDegreeAngle < 270.0f))
-
-            {
-                correction += std::abs(outPoint.second - pointObserver.second);
-                pointReturn.second = outPoint.second + correction;
-                return pointReturn;
-            }
-            else if(leftLimit && memDegreeAngle > 90.0f && memDegreeAngle < 180.0f
-                    || (!leftLimit && memDegreeAngle > 0.0f && memDegreeAngle < 90.0f))
-
-            {
-                correction += std::abs(outPoint.second - pointObserver.second);
-                pointReturn.second = outPoint.second - correction;
-                return pointReturn;
-            }
+            return *optReturn;
         }
-
         if(outPoint.second > pointObserver.second)
         {
             pointReturn.second = pointObserver.second + correction;
@@ -592,6 +562,65 @@ pairFloat_t FirstPersonDisplaySystem::getPointCameraLimitWall(const pairFloat_t 
         }
     }
     return pointReturn;
+}
+
+std::optional<pairFloat_t> FirstPersonDisplaySystem::checkLimitWallCase(const pairFloat_t &pointObserver,
+                                                                        float limitObserverAngle,
+                                                                        const pairFloat_t &outPoint,
+                                                                        const pairFloat_t &linkPoint,
+                                                                        bool leftLimit, bool XCase,
+                                                                        float correction, pairFloat_t &pointReturn)
+{
+    if(XCase)
+    {
+        //check if observer is between 2 wall points
+        if((pointObserver.first > outPoint.first && pointObserver.first < linkPoint.first)
+                || (pointObserver.first > linkPoint.first && pointObserver.first < outPoint.first))
+        {
+
+            if((leftLimit && limitObserverAngle > 0.0f && limitObserverAngle < 90.0f)
+                    || (!leftLimit && limitObserverAngle > 270.0f && limitObserverAngle < 360.0f))
+
+            {
+                correction += std::abs(outPoint.first - pointObserver.first);
+                pointReturn.first = outPoint.first + correction;
+                return pointReturn;
+            }
+            else if((leftLimit && limitObserverAngle > 180.0f && limitObserverAngle < 270.0f)
+                    || (!leftLimit && limitObserverAngle > 90.0f && limitObserverAngle < 180.0f))
+
+            {
+                correction += std::abs(outPoint.first - pointObserver.first);
+                pointReturn.first = outPoint.first - correction;
+                return pointReturn;
+            }
+        }
+    }
+    else
+    {
+        //check if observer is between 2 wall points
+        if((pointObserver.second > outPoint.second && pointObserver.second < linkPoint.second)
+                || (pointObserver.second > linkPoint.second && pointObserver.second < outPoint.second))
+        {
+            if((leftLimit && limitObserverAngle > 270.0f && limitObserverAngle < 360.0f)
+                    || (!leftLimit && limitObserverAngle > 180.0f && limitObserverAngle < 270.0f))
+
+            {
+                correction += std::abs(outPoint.second - pointObserver.second);
+                pointReturn.second = outPoint.second + correction;
+                return pointReturn;
+            }
+            else if((leftLimit && limitObserverAngle > 90.0f && limitObserverAngle < 180.0f)
+                    || (!leftLimit && limitObserverAngle > 0.0f && limitObserverAngle < 90.0f))
+
+            {
+                correction += std::abs(outPoint.second - pointObserver.second);
+                pointReturn.second = outPoint.second - correction;
+                return pointReturn;
+            }
+        }
+    }
+    return {};
 }
 
 //===================================================================
