@@ -320,9 +320,12 @@ bool FirstPersonDisplaySystem::angleWallVisible(const pairFloat_t &observerPoint
                 searchComponentByType<RectangleCollisionComponent>(vectEntities[i], Components_e::RECTANGLE_COLLISION_COMPONENT);
         assert(mapComp);
         assert(rectComp);
-        if(checkSegmentRectCollision(observerPoint, angleWall, mapComp->m_absoluteMapPositionPX, rectComp->m_size))
+        if(getDistance(mapComp->m_absoluteMapPositionPX, angleWall) < LEVEL_TILE_SIZE_PX)
         {
-            return false;
+            if(checkSegmentRectCollision(observerPoint, angleWall, mapComp->m_absoluteMapPositionPX, rectComp->m_size))
+            {
+                return false;
+            }
         }
     }
     return true;
