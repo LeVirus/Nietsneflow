@@ -503,11 +503,13 @@ pairFloat_t FirstPersonDisplaySystem::getPointCameraLimitWall(const pairFloat_t 
     {
         limitAngle -= 360.0f;
     }
+    float memDegreeAngle = limitAngle;
     limitAngle = getQuarterAngle(limitAngle);
     limitAngle = getRadiantAngle(limitAngle);
+
     float correction, memDiff;
     //X mod
-    if(std::abs(outPoint.first - linkPoint.first) > 0.3f)
+    if(std::abs(outPoint.first - linkPoint.first) > std::numeric_limits<float>::epsilon())
     {
         memDiff = std::abs(outPoint.second - pointObserver.second);
         if(std::abs(limitAngle) <= std::numeric_limits<float>::epsilon())
@@ -518,6 +520,28 @@ pairFloat_t FirstPersonDisplaySystem::getPointCameraLimitWall(const pairFloat_t 
         {
             //TRIGO CALC
             correction = memDiff / std::tan(limitAngle);
+        }
+        //check if observer is between 2 wall points
+        if((pointObserver.first > outPoint.first && pointObserver.first < linkPoint.first)
+                || (pointObserver.first > linkPoint.first && pointObserver.first < outPoint.first))
+        {
+
+            if((leftLimit && memDegreeAngle > 0.0f && memDegreeAngle < 90.0f)
+                    || (!leftLimit && memDegreeAngle > 270.0f && memDegreeAngle < 360.0f))
+
+            {
+                correction += std::abs(outPoint.first - pointObserver.first);
+                pointReturn.first = outPoint.first + correction;
+                return pointReturn;
+            }
+            else if(leftLimit && memDegreeAngle > 180.0f && memDegreeAngle < 270.0f
+                    || (!leftLimit && memDegreeAngle > 90.0f && memDegreeAngle < 180.0f))
+
+            {
+                correction += std::abs(outPoint.first - pointObserver.first);
+                pointReturn.first = outPoint.first - correction;
+                return pointReturn;
+            }
         }
         //need only distance so no need to add sense
         if(outPoint.first > pointObserver.first)
@@ -534,6 +558,30 @@ pairFloat_t FirstPersonDisplaySystem::getPointCameraLimitWall(const pairFloat_t 
     {
         memDiff = std::abs(outPoint.first - pointObserver.first);
         correction = std::abs(std::tan(limitAngle) * memDiff);
+
+        //check if observer is between 2 wall points
+        if((pointObserver.second > outPoint.second && pointObserver.second < linkPoint.second)
+                || (pointObserver.second > linkPoint.second && pointObserver.second < outPoint.second))
+        {
+
+            if((leftLimit && memDegreeAngle > 270.0f && memDegreeAngle < 360.0f)
+                    || (!leftLimit && memDegreeAngle > 180.0f && memDegreeAngle < 270.0f))
+
+            {
+                correction += std::abs(outPoint.second - pointObserver.second);
+                pointReturn.second = outPoint.second + correction;
+                return pointReturn;
+            }
+            else if(leftLimit && memDegreeAngle > 90.0f && memDegreeAngle < 180.0f
+                    || (!leftLimit && memDegreeAngle > 0.0f && memDegreeAngle < 90.0f))
+
+            {
+                correction += std::abs(outPoint.second - pointObserver.second);
+                pointReturn.second = outPoint.second - correction;
+                return pointReturn;
+            }
+        }
+
         if(outPoint.second > pointObserver.second)
         {
             pointReturn.second = pointObserver.second + correction;
