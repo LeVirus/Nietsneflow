@@ -67,6 +67,9 @@ private:
     pairFloat_t getPointCameraLimitWall(const pairFloat_t &pointObserver, float observerAngle,
                                  const pairFloat_t &outPoint, const pairFloat_t &linkPoint,
                                  bool leftLimit, VisionComponent *visionComp);
+    std::optional<pairFloat_t> checkLimitWallCase(const pairFloat_t &pointObserver, float limitObserverAngle,
+                                                  const pairFloat_t &outPoint, const pairFloat_t &linkPoint,
+                                                  bool leftLimit, bool XCase, float correction, pairFloat_t &pointReturn);
 private:
     Shader *m_shader;
     std::multiset<EntityData> m_entitiesNumMem;
