@@ -56,7 +56,7 @@ private:
     void fillAbsolAndDistanceWall(pairFloat_t absolPos[], float distance[], MapCoordComponent *mapCompA,
                                   MapCoordComponent *mapCompB, uint32_t numEntity,
                                   uint32_t &distanceToTreat, VisionComponent *visionComp);
-    bool angleWallVisible(const pairFloat_t &observerPoint, const pairFloat_t &angleWall, const std::vector<uint32_t> &vectEntities);
+    bool angleWallVisible(const pairFloat_t &observerPoint, const pairFloat_t &angleWall, const std::vector<uint32_t> &vectEntities, uint32_t numEntity);
     void confNormalEntityVertex(uint32_t numEntity,
                                 VisionComponent *visionComp, float lateralPosDegree, float distance);
     void confWallEntityVertex(uint32_t numEntity, VisionComponent *visionComp,

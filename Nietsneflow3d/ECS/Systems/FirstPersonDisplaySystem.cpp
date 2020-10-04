@@ -97,12 +97,16 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
         uint32_t angleToTreat;
         //calculate distance
         fillWallEntitiesData(visionComp->m_vectVisibleEntities[numIteration], absolPos, distance,
-                             mapCompA, mapCompB, getRadiantAngle(observerAngle), visionComp, pointIn, leftLimit, angleToTreat);
+                             mapCompA, mapCompB, getRadiantAngle(observerAngle), visionComp, pointIn,
+                             leftLimit, angleToTreat);
+        if(angleToTreat < 2)
+        {
+            return;
+        }
         float currentTrigoAngle;
         //calculate all 3 display position
         for(uint32_t i = 0; i < angleToTreat; ++i)
         {
-            //A virer pour le calcul distance
             if(!pointIn[i])
             {
                 if(leftLimit[i])
@@ -115,7 +119,6 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
                 }
                 continue;
             }
-            //A virer pour le calcul distance
             currentTrigoAngle =  getTrigoAngle(mapCompA->m_absoluteMapPositionPX, absolPos[i]);
             if(std::abs(currentTrigoAngle - leftAngleVision) > 150.0f)
             {
@@ -212,11 +215,10 @@ void FirstPersonDisplaySystem::confWallEntityVertex(uint32_t numEntity, VisionCo
 }
 
 //===================================================================
-void FirstPersonDisplaySystem::fillAbsolAndDistanceWall(pairFloat_t absolPos[],
-                                                        float distance[],
-                                                        MapCoordComponent *mapCompA,
-                                                        MapCoordComponent *mapCompB,
-                                                        uint32_t numEntity, uint32_t &distanceToTreat, VisionComponent *visionComp)
+void FirstPersonDisplaySystem::fillAbsolAndDistanceWall(pairFloat_t absolPos[], float distance[],
+                                                        MapCoordComponent *mapCompA, MapCoordComponent *mapCompB,
+                                                        uint32_t numEntity, uint32_t &distanceToTreat,
+                                                        VisionComponent *visionComp)
 {
     RectangleCollisionComponent *rectComp = stairwayToComponentManager().
             searchComponentByType<RectangleCollisionComponent>(numEntity, Components_e::RECTANGLE_COLLISION_COMPONENT);
@@ -274,38 +276,35 @@ void FirstPersonDisplaySystem::fillAbsolAndDistanceWall(pairFloat_t absolPos[],
         std::swap(absolPos[0], absolPos[2]);
     }
     distanceToTreat = 3;
-
-
-    uint32_t maxDistance = (distance[0] > distance[2]) ? 0 : 2;
-    if(maxDistance == 2)
+    if(!angleWallVisible(mapCompA->m_absoluteMapPositionPX, absolPos[2],
+                         visionComp->m_vectVisibleEntities, numEntity))
     {
-        if(!angleWallVisible(mapCompA->m_absoluteMapPositionPX, absolPos[2], visionComp->m_vectVisibleEntities))
-        {
-            distanceToTreat = 2;
-        }
+        --distanceToTreat;
     }
-    else
+    if(!angleWallVisible(mapCompA->m_absoluteMapPositionPX, absolPos[0],
+                         visionComp->m_vectVisibleEntities, numEntity))
     {
-        if(!angleWallVisible(mapCompA->m_absoluteMapPositionPX, absolPos[0], visionComp->m_vectVisibleEntities))
-        {
-            std::swap(distance[0], distance[1]);
-            std::swap(absolPos[0], absolPos[1]);
-            std::swap(distance[1], distance[2]);
-            std::swap(absolPos[1], absolPos[2]);
-            distanceToTreat = 2;
-        }
+        std::swap(distance[0], distance[1]);
+        std::swap(absolPos[0], absolPos[1]);
+        std::swap(distance[1], distance[2]);
+        std::swap(absolPos[1], absolPos[2]);
+        --distanceToTreat;
     }
 }
 
 //===================================================================
 bool FirstPersonDisplaySystem::angleWallVisible(const pairFloat_t &observerPoint, const pairFloat_t &angleWall,
-                                                const std::vector<uint32_t> &vectEntities)
+                                                const std::vector<uint32_t> &vectEntities, uint32_t numEntity)
 {
     RectangleCollisionComponent *rectComp;
-    MapCoordComponent *mapComp;
+    MapCoordComponent *mapCompA, *mapCompB;
     GeneralCollisionComponent *genCollComp;
     for(uint32_t i = 0; i < vectEntities.size(); ++i)
     {
+        if(vectEntities[i] == numEntity)
+        {
+            continue;
+        }
         genCollComp = stairwayToComponentManager().
                 searchComponentByType<GeneralCollisionComponent>(vectEntities[i], Components_e::GENERAL_COLLISION_COMPONENT);
         assert(genCollComp);
@@ -313,15 +312,20 @@ bool FirstPersonDisplaySystem::angleWallVisible(const pairFloat_t &observerPoint
         {
             continue;
         }
-        mapComp = stairwayToComponentManager().
+        mapCompA = stairwayToComponentManager().
                 searchComponentByType<MapCoordComponent>(vectEntities[i], Components_e::MAP_COORD_COMPONENT);
+        mapCompB = stairwayToComponentManager().
+                searchComponentByType<MapCoordComponent>(numEntity, Components_e::MAP_COORD_COMPONENT);
         rectComp = stairwayToComponentManager().
-                searchComponentByType<RectangleCollisionComponent>(vectEntities[i], Components_e::RECTANGLE_COLLISION_COMPONENT);
-        assert(mapComp);
+                searchComponentByType<RectangleCollisionComponent>(vectEntities[i],
+                                                                   Components_e::RECTANGLE_COLLISION_COMPONENT);
+        assert(mapCompA);
+        assert(mapCompB);
         assert(rectComp);
-        if(getDistance(mapComp->m_absoluteMapPositionPX, angleWall) < LEVEL_TILE_MORE_HALF_SIZE_PX)
+        if(getDistance(mapCompA->m_absoluteMapPositionPX, mapCompB->m_absoluteMapPositionPX) <= LEVEL_TILE_SIZE_PX)
         {
-            if(checkSegmentRectCollision(observerPoint, angleWall, mapComp->m_absoluteMapPositionPX, rectComp->m_size))
+            if(checkSegmentRectCollision(observerPoint, angleWall,
+                                         mapCompA->m_absoluteMapPositionPX, rectComp->m_size))
             {
                 return false;
             }
@@ -338,6 +342,10 @@ void FirstPersonDisplaySystem::fillWallEntitiesData(uint32_t numEntity, pairFloa
 {
     float distanceReal[4];
     fillAbsolAndDistanceWall(absolPos, distanceReal, mapCompA, mapCompB, numEntity, angleToTreat, visionComp);
+    if(angleToTreat < 2)
+    {
+        return;
+    }
     float pointAngleVision[3];
     float anglePoint;
     for(uint32_t i = 0; i < 3; ++i)

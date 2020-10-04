@@ -118,7 +118,6 @@ inline const float PI_QUARTER = PI / 4.0f;
 inline const float PI_HALF = PI / 2.0f;
 inline const float PLAYER_RAY_DISPLAY = 0.03f;
 inline const float LEVEL_TILE_SIZE_PX = 30.0f;
-inline const float LEVEL_TILE_MORE_HALF_SIZE_PX = LEVEL_TILE_SIZE_PX + 10.0f;
 inline const float LEVEL_HALF_TILE_SIZE_PX = LEVEL_TILE_SIZE_PX / 2;
 inline const float ENEMY_RAY = LEVEL_HALF_TILE_SIZE_PX;
 inline const float MAP_LOCAL_CENTER_X_GL = 0.75f;
