@@ -660,7 +660,14 @@ void FirstPersonDisplaySystem::fillVertexFromEntitie(uint32_t numEntity, uint32_
     }
     else
     {
-        m_vectVerticesData.emplace_back(VerticesData(Shader_e::TEXTURE_S));
+        for(uint32_t i = 0; i < (numIteration - m_vectVerticesData.size()) + 2; ++i)
+        {
+            m_vectVerticesData.emplace_back(VerticesData(Shader_e::TEXTURE_S));
+        }
+        if(!(numIteration < m_vectVerticesData.size()))
+        {
+            std::cerr << numIteration << " s " << m_vectVerticesData.size() << "\n";
+        }
         assert(numIteration < m_vectVerticesData.size());
     }
     PositionVertexComponent *posComp = stairwayToComponentManager().
