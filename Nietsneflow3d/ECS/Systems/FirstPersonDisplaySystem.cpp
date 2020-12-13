@@ -149,8 +149,7 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
         }
         float lateralPos = leftAngleVision - getTrigoAngle(mapCompA->m_absoluteMapPositionPX, centerPosB);
         confNormalEntityVertex(visionComp->m_vectVisibleEntities[numIteration], visionComp, lateralPos, distance);
-        //OOOOOOOOOK TMP
-        fillVertexFromEntity(visionComp->m_vectVisibleEntities[numIteration], numIteration, distance, true);
+        fillVertexFromEntity(visionComp->m_vectVisibleEntities[numIteration], numIteration, distance);
     }
 }
 
@@ -722,7 +721,6 @@ void FirstPersonDisplaySystem::confNormalEntityVertex(uint32_t numEntity, Vision
 void FirstPersonDisplaySystem::drawVertex()
 {
     m_shader->use();
-
     //DONT WORK for multiple player
     for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
     {

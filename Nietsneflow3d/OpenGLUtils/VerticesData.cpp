@@ -96,8 +96,10 @@ void VerticesData::loadVertexStandartTextureComponent(const PositionVertexCompon
     size_t sizeVertex = posComp.m_vertex.size();
     for(uint32_t j = 0; j < 4; ++j)
     {
+        //add target screen position to buffer
         m_vertexBuffer.emplace_back(posComp.m_vertex[j].first);
         m_vertexBuffer.emplace_back(posComp.m_vertex[j].second);
+        //add texture position to buffer
         if(spriteComp.m_limitWallPointActive)
         {
             assert(spriteComp.m_limitWallSpriteData);
