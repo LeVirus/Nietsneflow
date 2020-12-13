@@ -135,8 +135,8 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
         //conf screen position
         confWallEntityVertex(visionComp->m_vectVisibleEntities[numIteration],
                              visionComp, lateralPos, distance, (angleToTreat == 3));
-        fillVertexFromEntitie(visionComp->m_vectVisibleEntities[numIteration],
-                              numIteration, distance[1]);
+        fillVertexFromEntity(visionComp->m_vectVisibleEntities[numIteration],
+                              numIteration, distance[1], true);
     }
     else
     {
@@ -149,7 +149,8 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
         }
         float lateralPos = leftAngleVision - getTrigoAngle(mapCompA->m_absoluteMapPositionPX, centerPosB);
         confNormalEntityVertex(visionComp->m_vectVisibleEntities[numIteration], visionComp, lateralPos, distance);
-        fillVertexFromEntitie(visionComp->m_vectVisibleEntities[numIteration], numIteration, distance);
+        //OOOOOOOOOK TMP
+        fillVertexFromEntity(visionComp->m_vectVisibleEntities[numIteration], numIteration, distance, true);
     }
 }
 
@@ -651,22 +652,21 @@ float getQuarterAngle(float angle)
 }
 
 //===================================================================
-void FirstPersonDisplaySystem::fillVertexFromEntitie(uint32_t numEntity, uint32_t numIteration, float distance)
+void FirstPersonDisplaySystem::fillVertexFromEntity(uint32_t numEntity, uint32_t numIteration,
+                                                    float distance, bool wallTag)
 {
+    Shader_e shaderType = /*wallTag ? Shader_e::TEXTURED_WALL_S :*/ Shader_e::TEXTURE_S;
     //use 1 vertex for 1 sprite for beginning
     if(numIteration < m_vectVerticesData.size())
     {
         m_vectVerticesData[numIteration].clear();
+        m_vectVerticesData[numIteration].setShaderType(shaderType);
     }
     else
     {
         for(uint32_t i = 0; i < (numIteration - m_vectVerticesData.size()) + 2; ++i)
         {
-            m_vectVerticesData.emplace_back(VerticesData(Shader_e::TEXTURE_S));
-        }
-        if(!(numIteration < m_vectVerticesData.size()))
-        {
-            std::cerr << numIteration << " s " << m_vectVerticesData.size() << "\n";
+            m_vectVerticesData.emplace_back(VerticesData(shaderType));
         }
         assert(numIteration < m_vectVerticesData.size());
     }
@@ -678,7 +678,9 @@ void FirstPersonDisplaySystem::fillVertexFromEntitie(uint32_t numEntity, uint32_
                                                           Components_e::SPRITE_TEXTURE_COMPONENT);
     assert(posComp);
     assert(spriteComp);
-    m_entitiesNumMem.insert(EntityData(distance, static_cast<Texture_e>(spriteComp->m_spriteData->m_textureNum), numIteration));
+    m_entitiesNumMem.insert(EntityData(distance,
+                                       static_cast<Texture_e>(spriteComp->m_spriteData->m_textureNum),
+                                       numIteration));
     m_vectVerticesData[numIteration].loadVertexTextureComponent(*posComp, *spriteComp);
 }
 

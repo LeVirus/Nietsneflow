@@ -36,6 +36,7 @@ void VerticesData::setVectGLPointer()
         m_shaderInterpretData = {2,3};
         break;
     case Shader_e::TEXTURE_S:
+//    case Shader_e::TEXTURED_WALL_S:
         m_shaderInterpretData = {2,2};
         break;
     case Shader_e::TOTAL_SHADER_S:
@@ -65,13 +66,27 @@ bool VerticesData::loadVertexColorComponent(const PositionVertexComponent *posCo
         m_vertexBuffer.emplace_back(std::get<2>(colorComp->m_vertex[j]));
     }
     BaseShapeTypeGL_e shapeType = (sizeVertex == 3 ? BaseShapeTypeGL_e::TRIANGLE :
-                                             BaseShapeTypeGL_e::RECTANGLE);
+                                                     BaseShapeTypeGL_e::RECTANGLE);
     addIndices(shapeType);
     return true;
 }
 
 //===================================================================
 void VerticesData::loadVertexTextureComponent(const PositionVertexComponent &posComp,
+                                              SpriteTextureComponent &spriteComp)
+{
+    if(m_shaderNum == Shader_e::TEXTURE_S)
+    {
+        loadVertexStandartTextureComponent(posComp, spriteComp);
+    }
+//    else if(m_shaderNum == Shader_e::TEXTURED_WALL_S)
+//    {
+//        loadVertexTexturedWallComponent(posComp, spriteComp);
+//    }
+}
+
+//===================================================================
+void VerticesData::loadVertexStandartTextureComponent(const PositionVertexComponent &posComp,
                                               SpriteTextureComponent &spriteComp)
 {
     if(m_shaderNum != Shader_e::TEXTURE_S)
@@ -147,6 +162,13 @@ void VerticesData::loadVertexTextureComponent(const PositionVertexComponent &pos
         shape = BaseShapeTypeGL_e::DOUBLE_RECT;
     }
     addIndices(shape);
+}
+
+//===================================================================
+void VerticesData::loadVertexTexturedWallComponent(const PositionVertexComponent &posComp,
+                                                   SpriteTextureComponent &spriteComp)
+{
+
 }
 
 //===================================================================

@@ -1,12 +1,6 @@
 #include "Game.hpp"
 
 //===================================================================
-Game::Game()
-{
-
-}
-
-//===================================================================
 void Game::loadLevelData(uint32_t levelNum)
 {
     m_levelManager.loadTextureData("pictureData.ini", levelNum);

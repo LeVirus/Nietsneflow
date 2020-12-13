@@ -63,7 +63,7 @@ private:
                               float lateralPosDegree[], float distance[], bool wallAllVisible);
     void drawVertex();
     pairFloat_t getCenterPosition(MapCoordComponent const *mapComp, GeneralCollisionComponent *genCollComp, float numEntity);
-    void fillVertexFromEntitie(uint32_t numEntity, uint32_t numIteration, float distance);
+    void fillVertexFromEntity(uint32_t numEntity, uint32_t numIteration, float distance, bool wallTag);
     pairFloat_t getPointCameraLimitWall(const pairFloat_t &pointObserver, float observerAngle,
                                  const pairFloat_t &outPoint, const pairFloat_t &linkPoint,
                                  bool leftLimit, VisionComponent *visionComp);

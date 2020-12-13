@@ -16,7 +16,7 @@ class VerticesData
 private:
     std::vector<float> m_vertexBuffer;
     std::vector<uint32_t> m_indices, m_shaderInterpretData;
-    const Shader_e m_shaderNum;
+    Shader_e m_shaderNum;
     uint32_t m_cursor = 0, m_sizeOfVertex;
     uint32_t m_ebo, m_vao, m_vbo;
 private:
@@ -26,11 +26,16 @@ private:
     void setVectGLPointer();
     void bindGLBuffers();
     void attribGLVertexPointer();
+    void loadVertexStandartTextureComponent(const PositionVertexComponent &posComp,
+                                            SpriteTextureComponent &spriteComp);
+    void loadVertexTexturedWallComponent(const PositionVertexComponent &posComp,
+                                         SpriteTextureComponent &spriteComp);
 public:
     VerticesData(Shader_e shaderNum);
     void confVertexBuffer();
     void drawElement();
     void clear();
+    inline void setShaderType(Shader_e shaderNum){m_shaderNum = shaderNum;}
     inline const std::vector<float> &getVectVertex()const{return m_vertexBuffer;}
     inline const std::vector<uint32_t> &getVectIndices()const{return m_indices;}
     bool loadVertexColorComponent(const PositionVertexComponent *posComp,

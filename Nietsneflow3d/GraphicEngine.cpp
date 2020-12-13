@@ -86,7 +86,7 @@ void GraphicEngine::initGLWindow()
 
     // glfw window creation
     // --------------------
-    m_window = glfwCreateWindow(/*SCR_WIDTH*/800, /*SCR_HEIGHT*/600, "Nietsneflow", nullptr, nullptr);
+    m_window = glfwCreateWindow(m_screenSize.first, m_screenSize.second, "Nietsneflow", nullptr, nullptr);
     if(!m_window)
     {
         std::cout << "Failed to create GLFW window" << std::endl;

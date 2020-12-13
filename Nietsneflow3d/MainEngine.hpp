@@ -34,7 +34,7 @@ private:
                                 bool traversable,
                                 LevelStaticElementType_e type);
 public:
-    MainEngine();
+    MainEngine() = default;
     void loadGraphicPicture(const PictureData &picData);
     void init();
     void loadLevelEntities(const LevelManager &levelManager);

@@ -9,7 +9,7 @@ private:
     MainEngine m_mainEngine;
     LevelManager m_levelManager;
 public:
-    Game();
+    Game() = default;
     void loadLevelData(uint32_t levelNum);
     void initEngine();
     void launchGame();

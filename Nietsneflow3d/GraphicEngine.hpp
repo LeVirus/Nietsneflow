@@ -8,6 +8,7 @@
 #include <OpenGLUtils/Texture.hpp>
 
 using pairStr_t = std::pair<std::string, std::string>;
+using pairI_t = std::pair<int, int>;
 using vectPairStr_t = std::vector<pairStr_t>;
 using vectStr_t = std::vector<std::string>;
 
@@ -22,6 +23,7 @@ class GraphicEngine
 {
 private:
     GLFWwindow* m_window = nullptr;
+    pairI_t m_screenSize = {800, 600};
     std::vector<Shader> m_vectShader;
     //PictureData
     std::vector<Texture> m_vectTexture;
