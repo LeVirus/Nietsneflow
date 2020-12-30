@@ -42,4 +42,8 @@ public:
     void loadVertexTextureDrawByLineComponent(const PositionVertexComponent &posComp,
                                               const SpriteTextureComponent &spriteComp,
                                               uint32_t lineDrawNumber);
+    void loadVertexTextureDrawByLineRect(const pairFloat_t &firstPos,
+                                         const pairFloat_t &secondPos,
+                                         const SpriteTextureComponent &spriteComp,
+                                         uint32_t lineDrawNumber);
 };
