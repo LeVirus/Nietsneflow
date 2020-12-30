@@ -29,7 +29,7 @@ private:
     void loadVertexStandartTextureComponent(const PositionVertexComponent &posComp,
                                             SpriteTextureComponent &spriteComp);
     void loadVertexTexturedWallComponent(const PositionVertexComponent &posComp,
-                                         SpriteTextureComponent &spriteComp);
+                                         const SpriteTextureComponent &spriteComp);
 public:
     VerticesData(Shader_e shaderNum);
     void confVertexBuffer();
@@ -40,5 +40,6 @@ public:
     inline const std::vector<uint32_t> &getVectIndices()const{return m_indices;}
     bool loadVertexColorComponent(const PositionVertexComponent *posComp,
                                   const ColorVertexComponent *colorComp);
-    void loadVertexTextureComponent(const PositionVertexComponent &posComp, SpriteTextureComponent &spriteComp);
+    void loadVertexTextureComponent(const PositionVertexComponent &posComp,
+                                    SpriteTextureComponent &spriteComp, bool drawByLine = false);
 };

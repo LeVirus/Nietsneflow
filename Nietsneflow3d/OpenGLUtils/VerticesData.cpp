@@ -73,26 +73,26 @@ bool VerticesData::loadVertexColorComponent(const PositionVertexComponent *posCo
 
 //===================================================================
 void VerticesData::loadVertexTextureComponent(const PositionVertexComponent &posComp,
-                                              SpriteTextureComponent &spriteComp)
+                                              SpriteTextureComponent &spriteComp, bool drawByLine)
 {
-    if(m_shaderNum == Shader_e::TEXTURE_S)
+    if(m_shaderNum != Shader_e::TEXTURE_S)
+    {
+        return;
+    }
+    if(!drawByLine)
     {
         loadVertexStandartTextureComponent(posComp, spriteComp);
     }
-//    else if(m_shaderNum == Shader_e::TEXTURED_WALL_S)
-//    {
-//        loadVertexTexturedWallComponent(posComp, spriteComp);
-//    }
+    else
+    {
+        loadVertexTexturedWallComponent(posComp, spriteComp);
+    }
 }
 
 //===================================================================
 void VerticesData::loadVertexStandartTextureComponent(const PositionVertexComponent &posComp,
                                               SpriteTextureComponent &spriteComp)
 {
-    if(m_shaderNum != Shader_e::TEXTURE_S)
-    {
-        return;
-    }
     size_t sizeVertex = posComp.m_vertex.size();
     for(uint32_t j = 0; j < 4; ++j)
     {
@@ -168,9 +168,29 @@ void VerticesData::loadVertexStandartTextureComponent(const PositionVertexCompon
 
 //===================================================================
 void VerticesData::loadVertexTexturedWallComponent(const PositionVertexComponent &posComp,
-                                                   SpriteTextureComponent &spriteComp)
+                                                   const SpriteTextureComponent &spriteComp)
 {
-
+    //TMP
+    assert(posComp.m_vertex.size() == 4);
+    for(uint32_t j = 0; j < 4; ++j)
+    {
+        //add target screen position to buffer
+        m_vertexBuffer.emplace_back(posComp.m_vertex[j].first);
+        m_vertexBuffer.emplace_back(posComp.m_vertex[j].second);
+        //add texture position to buffer
+        if(spriteComp.m_limitWallPointActive)
+        {
+            assert(spriteComp.m_limitWallSpriteData);
+            m_vertexBuffer.emplace_back(spriteComp.m_limitWallSpriteData->at(j).first);
+            m_vertexBuffer.emplace_back(spriteComp.m_limitWallSpriteData->at(j).second);
+        }
+        else
+        {
+            m_vertexBuffer.emplace_back(spriteComp.m_spriteData->m_texturePosVertex[j].first);
+            m_vertexBuffer.emplace_back(spriteComp.m_spriteData->m_texturePosVertex[j].second);
+        }
+    }
+    addIndices(BaseShapeTypeGL_e::RECTANGLE);
 }
 
 //===================================================================

@@ -680,7 +680,7 @@ void FirstPersonDisplaySystem::fillVertexFromEntity(uint32_t numEntity, uint32_t
     m_entitiesNumMem.insert(EntityData(distance,
                                        static_cast<Texture_e>(spriteComp->m_spriteData->m_textureNum),
                                        numIteration));
-    m_vectVerticesData[numIteration].loadVertexTextureComponent(*posComp, *spriteComp);
+    m_vectVerticesData[numIteration].loadVertexTextureComponent(*posComp, *spriteComp/*, wallTag*/);
 }
 
 //===================================================================
