@@ -26,10 +26,7 @@ private:
     void setVectGLPointer();
     void bindGLBuffers();
     void attribGLVertexPointer();
-    void loadVertexStandartTextureComponent(const PositionVertexComponent &posComp,
-                                            SpriteTextureComponent &spriteComp);
-    void loadVertexTexturedWallComponent(const PositionVertexComponent &posComp,
-                                         const SpriteTextureComponent &spriteComp);
+    void addTexturePoint(const pairFloat_t &pos, const pairFloat_t &tex);
 public:
     VerticesData(Shader_e shaderNum);
     void confVertexBuffer();
@@ -40,6 +37,9 @@ public:
     inline const std::vector<uint32_t> &getVectIndices()const{return m_indices;}
     bool loadVertexColorComponent(const PositionVertexComponent *posComp,
                                   const ColorVertexComponent *colorComp);
-    void loadVertexTextureComponent(const PositionVertexComponent &posComp,
-                                    SpriteTextureComponent &spriteComp, bool drawByLine = false);
+    void loadVertexStandartTextureComponent(const PositionVertexComponent &posComp,
+                                            SpriteTextureComponent &spriteComp);
+    void loadVertexTextureDrawByLineComponent(const PositionVertexComponent &posComp,
+                                              const SpriteTextureComponent &spriteComp,
+                                              uint32_t lineDrawNumber);
 };

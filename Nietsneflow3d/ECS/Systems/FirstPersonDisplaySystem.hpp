@@ -77,6 +77,7 @@ private:
     std::vector<Texture> *m_ptrVectTexture = nullptr;
     //number of entity to draw per player
     vectUI_t m_numVertexToDraw;
+    uint32_t m_textureLineDrawNumber = 30;
 };
 
 //FOR 90 degree ONLY !!!!!!!!

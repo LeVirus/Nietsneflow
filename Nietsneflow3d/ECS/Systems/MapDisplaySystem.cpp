@@ -101,7 +101,7 @@ void MapDisplaySystem::fillVertexFromEntities()
         assert(spriteComp);
         assert(static_cast<size_t>(spriteComp->m_spriteData->m_textureNum) < m_vectVerticesData.size());
         m_vectVerticesData[static_cast<size_t>(spriteComp->m_spriteData->m_textureNum)].
-                loadVertexTextureComponent(*posComp, *spriteComp);
+                loadVertexStandartTextureComponent(*posComp, *spriteComp);
     }
 }
 

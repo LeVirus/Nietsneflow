@@ -72,28 +72,11 @@ bool VerticesData::loadVertexColorComponent(const PositionVertexComponent *posCo
 }
 
 //===================================================================
-void VerticesData::loadVertexTextureComponent(const PositionVertexComponent &posComp,
-                                              SpriteTextureComponent &spriteComp, bool drawByLine)
-{
-    if(m_shaderNum != Shader_e::TEXTURE_S)
-    {
-        return;
-    }
-    if(!drawByLine)
-    {
-        loadVertexStandartTextureComponent(posComp, spriteComp);
-    }
-    else
-    {
-        loadVertexTexturedWallComponent(posComp, spriteComp);
-    }
-}
-
-//===================================================================
 void VerticesData::loadVertexStandartTextureComponent(const PositionVertexComponent &posComp,
                                               SpriteTextureComponent &spriteComp)
 {
     size_t sizeVertex = posComp.m_vertex.size();
+    //first rect 0  1   2   3
     for(uint32_t j = 0; j < 4; ++j)
     {
         //add target screen position to buffer
@@ -167,30 +150,68 @@ void VerticesData::loadVertexStandartTextureComponent(const PositionVertexCompon
 }
 
 //===================================================================
-void VerticesData::loadVertexTexturedWallComponent(const PositionVertexComponent &posComp,
-                                                   const SpriteTextureComponent &spriteComp)
+void VerticesData::loadVertexTextureDrawByLineComponent(const PositionVertexComponent &posComp,
+                                                        const SpriteTextureComponent &spriteComp,
+                                                        uint32_t lineDrawNumber)
 {
-    //TMP
-    assert(posComp.m_vertex.size() == 4);
-    for(uint32_t j = 0; j < 4; ++j)
+    assert(posComp.m_vertex.size() == 4 || posComp.m_vertex.size() == 6);
+    if(!spriteComp.m_limitWallPointActive)
     {
-        //add target screen position to buffer
-        m_vertexBuffer.emplace_back(posComp.m_vertex[j].first);
-        m_vertexBuffer.emplace_back(posComp.m_vertex[j].second);
-        //add texture position to buffer
-        if(spriteComp.m_limitWallPointActive)
+        pairFloat_t stepPos;
+        stepPos.first = (posComp.m_vertex[1].first - posComp.m_vertex[0].first) /
+                static_cast<float>(lineDrawNumber);
+        stepPos.second = (posComp.m_vertex[1].second - posComp.m_vertex[0].second) /
+                static_cast<float>(lineDrawNumber);
+        bool spriteIncrease = (posComp.m_vertex[1].second > posComp.m_vertex[0].second);
+        float stepTex = (spriteComp.m_spriteData->m_texturePosVertex[1].first -
+                         spriteComp.m_spriteData->m_texturePosVertex[0].first) /
+                static_cast<float>(lineDrawNumber);
+        float memDownTexture = spriteComp.m_spriteData->m_texturePosVertex[2].second;
+        pairFloat_t currentPos = posComp.m_vertex[0], currentPreviousPos,
+                currentTexPos = spriteComp.m_spriteData->m_texturePosVertex[0],
+                currentPreviousTexPos;
+        for(uint32_t i = 0; i < lineDrawNumber; ++i)
         {
-            assert(spriteComp.m_limitWallSpriteData);
-            m_vertexBuffer.emplace_back(spriteComp.m_limitWallSpriteData->at(j).first);
-            m_vertexBuffer.emplace_back(spriteComp.m_limitWallSpriteData->at(j).second);
-        }
-        else
-        {
-            m_vertexBuffer.emplace_back(spriteComp.m_spriteData->m_texturePosVertex[j].first);
-            m_vertexBuffer.emplace_back(spriteComp.m_spriteData->m_texturePosVertex[j].second);
+            //up left
+            addTexturePoint(currentPos, currentTexPos);
+            currentPreviousPos = currentPos;
+            currentPreviousTexPos = currentTexPos;
+
+            currentPos.first += stepPos.first;
+            if(spriteIncrease)
+            {
+                currentPos.second += stepPos.second;
+            }
+            else
+            {
+                currentPos.second -= stepPos.second;
+            }
+            currentTexPos.first += stepTex;
+            //up right
+            addTexturePoint(currentPos, currentTexPos);
+            //down right
+            addTexturePoint({currentPos.first, -currentPos.second},
+            {currentTexPos.first, memDownTexture});
+
+            //down left
+            addTexturePoint({currentPreviousPos.first, -currentPreviousPos.second},
+            {currentPreviousTexPos.first, memDownTexture});
+            addIndices(BaseShapeTypeGL_e::RECTANGLE);
         }
     }
-    addIndices(BaseShapeTypeGL_e::RECTANGLE);
+    else
+    {
+
+    }
+}
+
+//===================================================================
+void VerticesData::addTexturePoint(const pairFloat_t &pos, const pairFloat_t &tex)
+{
+    m_vertexBuffer.emplace_back(pos.first);
+    m_vertexBuffer.emplace_back(pos.second);
+    m_vertexBuffer.emplace_back(tex.first);
+    m_vertexBuffer.emplace_back(tex.second);
 }
 
 //===================================================================
