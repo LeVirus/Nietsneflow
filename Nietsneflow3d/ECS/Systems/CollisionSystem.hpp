@@ -31,16 +31,16 @@ private:
 
     //Collisions treatment
     void treatCollisionCircleRect(CollisionArgs &args,
-                                const CircleCollisionComponent &circleCollA,
-                                const RectangleCollisionComponent &rectCollB);
+                                  const CircleCollisionComponent &circleCollA,
+                                  const RectangleCollisionComponent &rectCollB);
     float getVerticalCircleRectEject(const EjectYArgs& args);
     float getHorizontalCircleRectEject(const EjectXArgs &args);
     void treatCollisionCircleCircle(CollisionArgs &args,
-                                const CircleCollisionComponent &circleCollA,
-                                const CircleCollisionComponent &circleCollB);
+                                    const CircleCollisionComponent &circleCollA,
+                                    const CircleCollisionComponent &circleCollB);
     void treatCollisionCircleSegment(CollisionArgs &args,
-                                const CircleCollisionComponent &circleCollA,
-                                const SegmentCollisionComponent &segmCollB);
+                                     const CircleCollisionComponent &circleCollA,
+                                     const SegmentCollisionComponent &segmCollB);
     void collisionEject(MapCoordComponent &mapComp,
                                      float diffX, float diffY);
     //Components accessors

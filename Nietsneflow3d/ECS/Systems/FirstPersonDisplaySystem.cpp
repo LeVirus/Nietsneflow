@@ -416,6 +416,7 @@ void FirstPersonDisplaySystem::fillWallEntitiesData(uint32_t numEntity, pairFloa
     }
 }
 
+//===================================================================
 std::optional<uint32_t> getLimitIndex(const bool pointIn[], const float distanceReal[], uint32_t i)
 {
     if(i == 0 || i == 2)
@@ -590,6 +591,7 @@ pairFloat_t FirstPersonDisplaySystem::getPointCameraLimitWall(const pairFloat_t 
     return pointReturn;
 }
 
+//===================================================================
 std::optional<pairFloat_t> FirstPersonDisplaySystem::checkLimitWallCase(const pairFloat_t &pointObserver,
                                                                         float limitObserverAngle,
                                                                         const pairFloat_t &outPoint,
@@ -808,5 +810,3 @@ uint32_t getMaxValueFromEntries(const float distance[])
     val = (distance[val] > distance[3]) ? val : 3;
     return val;
 }
-
-
