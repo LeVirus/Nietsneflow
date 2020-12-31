@@ -5,6 +5,7 @@
 #include <ECS/Components/ColorVertexComponent.hpp>
 #include <ECS/Components/SpriteTextureComponent.hpp>
 #include <PictureData.hpp>
+#include <CollisionUtils.hpp>
 #include <numeric>
 
 //===================================================================
@@ -156,11 +157,11 @@ void VerticesData::loadVertexTextureDrawByLineComponent(const PositionVertexComp
 {
     assert(posComp.m_vertex.size() == 4 || posComp.m_vertex.size() == 6);
     loadVertexTextureDrawByLineRect(posComp.m_vertex[0], posComp.m_vertex[1],
-                                    spriteComp, lineDrawNumber);
+                                    spriteComp, lineDrawNumber, true);
     if(posComp.m_vertex.size() == 6)
     {
         loadVertexTextureDrawByLineRect(posComp.m_vertex[1], posComp.m_vertex[4],
-                                        spriteComp, lineDrawNumber);
+                                        spriteComp, lineDrawNumber, false);
     }
 }
 
@@ -168,41 +169,85 @@ void VerticesData::loadVertexTextureDrawByLineComponent(const PositionVertexComp
 void VerticesData::loadVertexTextureDrawByLineRect(const pairFloat_t &firstPos,
                                                    const pairFloat_t &secondPos,
                                                    const SpriteTextureComponent &spriteComp,
-                                                   uint32_t lineDrawNumber)
+                                                   uint32_t lineDrawNumber, bool firstRect)
 {
-    if(!spriteComp.m_limitWallPointActive)
+    pairFloat_t stepPos;
+    stepPos.first = (secondPos.first - firstPos.first) / static_cast<float>(lineDrawNumber);
+    stepPos.second = (secondPos.second - firstPos.second) / static_cast<float>(lineDrawNumber);
+    float stepTex;
+    float secondLimitPos, firstLimitPos;
+    if(spriteComp.m_limitWallPointActive)
     {
-        pairFloat_t stepPos;
-        stepPos.first = (secondPos.first - firstPos.first) /
-                static_cast<float>(lineDrawNumber);
-        stepPos.second = (secondPos.second - firstPos.second) /
-                static_cast<float>(lineDrawNumber);
-        float stepTex = (spriteComp.m_spriteData->m_texturePosVertex[1].first -
-                         spriteComp.m_spriteData->m_texturePosVertex[0].first) /
-                static_cast<float>(lineDrawNumber);
-        float memDownTexture = spriteComp.m_spriteData->m_texturePosVertex[2].second;
-        pairFloat_t currentPos = firstPos, currentPreviousPos,
-                currentTexPos = spriteComp.m_spriteData->m_texturePosVertex[0],
-                currentPreviousTexPos;
-        for(uint32_t i = 0; i < lineDrawNumber; ++i)
+        uint32_t secondPoint, firstPoint;
+        if(firstRect)
         {
-            //up left
-            addTexturePoint(currentPos, currentTexPos);
-            currentPreviousPos = currentPos;
-            currentPreviousTexPos = currentTexPos;
-            currentPos.first += stepPos.first;
-            currentPos.second += stepPos.second;
-            currentTexPos.first += stepTex;
-            //up right
-            addTexturePoint(currentPos, currentTexPos);
-            //down right
-            addTexturePoint({currentPos.first, -currentPos.second},
-            {currentTexPos.first, memDownTexture});
-            //down left
-            addTexturePoint({currentPreviousPos.first, -currentPreviousPos.second},
-            {currentPreviousTexPos.first, memDownTexture});
-            addIndices(BaseShapeTypeGL_e::RECTANGLE);
+            secondPoint = 1;
+            firstPoint = 0;
         }
+        else
+        {
+            secondPoint = 5;
+            firstPoint = 4;
+        }
+        //Limit right case
+        if(!checkFloatEquals(spriteComp.m_limitWallSpriteData->at(secondPoint).first,
+                            EMPTY_VALUE))
+        {
+            secondLimitPos = spriteComp.m_limitWallSpriteData->at(secondPoint).first;
+        }
+        else
+        {
+            secondLimitPos = spriteComp.m_spriteData->m_texturePosVertex[1].first;
+        }
+        //Limit left case
+        if(!checkFloatEquals(spriteComp.m_limitWallSpriteData->at(firstPoint).first,
+                            EMPTY_VALUE))
+        {
+            lineDrawNumber = lineDrawNumber *
+                    (secondLimitPos - firstLimitPos) /
+                    (spriteComp.m_spriteData->m_texturePosVertex[1].first -
+                    spriteComp.m_spriteData->m_texturePosVertex[0].first);
+            assert(lineDrawNumber <= 30);
+            firstLimitPos = spriteComp.m_limitWallSpriteData->at(firstPoint).first;
+        }
+        else
+        {
+            firstLimitPos = spriteComp.m_spriteData->m_texturePosVertex[0].first;
+        }
+        stepTex = (secondLimitPos - firstLimitPos) / static_cast<float>(lineDrawNumber);
+    }
+    else
+    {
+        stepTex = (spriteComp.m_spriteData->m_texturePosVertex[1].first -
+                spriteComp.m_spriteData->m_texturePosVertex[0].first) /
+                static_cast<float>(lineDrawNumber);
+    }
+    float memDownTexture = spriteComp.m_spriteData->m_texturePosVertex[2].second;
+    pairFloat_t currentPos = firstPos, currentPreviousPos,
+            currentTexPos = spriteComp.m_spriteData->m_texturePosVertex[0],
+            currentPreviousTexPos;
+    if(spriteComp.m_limitWallPointActive)
+    {
+        currentTexPos.first = firstLimitPos;
+    }
+    for(uint32_t i = 0; i < lineDrawNumber; ++i)
+    {
+        //up left
+        addTexturePoint(currentPos, currentTexPos);
+        currentPreviousPos = currentPos;
+        currentPreviousTexPos = currentTexPos;
+        currentPos.first += stepPos.first;
+        currentPos.second += stepPos.second;
+        currentTexPos.first += stepTex;
+        //up right
+        addTexturePoint(currentPos, currentTexPos);
+        //down right
+        addTexturePoint({currentPos.first, -currentPos.second},
+        {currentTexPos.first, memDownTexture});
+        //down left
+        addTexturePoint({currentPreviousPos.first, -currentPreviousPos.second},
+        {currentPreviousTexPos.first, memDownTexture});
+        addIndices(BaseShapeTypeGL_e::RECTANGLE);
     }
 }
 

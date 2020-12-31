@@ -466,6 +466,8 @@ void FirstPersonDisplaySystem::modifTempTextureBound(uint32_t numEntity, bool ou
     }
     spriteComp->fillWallContainer();
     spriteComp->m_limitWallPointActive = true;
+    std::fill(spriteComp->m_limitWallSpriteData->begin(),
+              spriteComp->m_limitWallSpriteData->end(), std::pair<float, float>{EMPTY_VALUE, EMPTY_VALUE});
     if(outLeft)
     {
         if(coordPoints.first == 0)

@@ -45,5 +45,5 @@ public:
     void loadVertexTextureDrawByLineRect(const pairFloat_t &firstPos,
                                          const pairFloat_t &secondPos,
                                          const SpriteTextureComponent &spriteComp,
-                                         uint32_t lineDrawNumber);
+                                         uint32_t lineDrawNumber, bool firstRect);
 };
