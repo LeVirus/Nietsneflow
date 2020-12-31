@@ -26,6 +26,17 @@ struct SpriteTextureComponent : public ecs::Component
             m_limitWallSpriteData->at(i) = m_spriteData->m_texturePosVertex[i % 4];
         }
     }
+
+    void reinitLimit()
+    {
+        if(m_limitWallPointActive)
+        {
+            m_limitWallPointActive = false;
+            std::fill(m_limitWallSpriteData->begin(),
+                      m_limitWallSpriteData->end(), pairFloat_t{EMPTY_VALUE, EMPTY_VALUE});
+        }
+    }
+
     SpriteData const *m_spriteData;
     pairFloat_t m_glFpsSize = {1.4f, 1.4f};
     std::unique_ptr<std::array<std::pair<float, float>, 8>> m_limitWallSpriteData;

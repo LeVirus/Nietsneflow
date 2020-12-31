@@ -656,7 +656,7 @@ float getQuarterAngle(float angle)
 void FirstPersonDisplaySystem::fillVertexFromEntity(uint32_t numEntity, uint32_t numIteration,
                                                     float distance, bool wallTag)
 {
-    Shader_e shaderType = /*wallTag ? Shader_e::TEXTURED_WALL_S :*/ Shader_e::TEXTURE_S;
+    Shader_e shaderType = Shader_e::TEXTURE_S;
     //use 1 vertex for 1 sprite for beginning
     if(numIteration < m_vectVerticesData.size())
     {
