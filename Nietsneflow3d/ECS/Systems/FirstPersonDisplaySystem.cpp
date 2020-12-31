@@ -86,6 +86,12 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
 {
     if(genCollComp->m_tag == CollisionTag_e::WALL_CT)
     {
+        SpriteTextureComponent *spriteComp = stairwayToComponentManager().
+                searchComponentByType<SpriteTextureComponent>(
+                    visionComp->m_vectVisibleEntities[numIteration],
+                    Components_e::SPRITE_TEXTURE_COMPONENT);
+        assert(spriteComp);
+        spriteComp->reinitLimit();
         float distance[4];
         pairFloat_t absolPos[4];
         float lateralPos[3];
