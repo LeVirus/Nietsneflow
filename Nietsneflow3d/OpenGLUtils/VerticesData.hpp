@@ -47,3 +47,6 @@ public:
                                          const SpriteTextureComponent &spriteComp,
                                          uint32_t lineDrawNumber, bool firstRect);
 };
+
+float getLimitTexturePosition(const SpriteTextureComponent &spriteComp,
+                              uint32_t limitTextureIndex, uint32_t limitGlobalTextureIndex);

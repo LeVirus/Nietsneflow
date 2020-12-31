@@ -166,61 +166,53 @@ void VerticesData::loadVertexTextureDrawByLineComponent(const PositionVertexComp
 }
 
 //===================================================================
+float getLimitTexturePosition(const SpriteTextureComponent &spriteComp,
+                              uint32_t limitTextureIndex, uint32_t limitGlobalTextureIndex)
+{
+    if(!checkFloatEquals(spriteComp.m_limitWallSpriteData->at(limitTextureIndex).first,
+                        EMPTY_VALUE))
+    {
+        return spriteComp.m_limitWallSpriteData->at(limitTextureIndex).first;
+    }
+    else
+    {
+        return spriteComp.m_spriteData->m_texturePosVertex[limitGlobalTextureIndex].first;
+    }
+}
+
+//===================================================================
 void VerticesData::loadVertexTextureDrawByLineRect(const pairFloat_t &firstPos,
                                                    const pairFloat_t &secondPos,
                                                    const SpriteTextureComponent &spriteComp,
                                                    uint32_t lineDrawNumber, bool firstRect)
 {
+    float lineDrawNumberFloat = static_cast<float>(lineDrawNumber);
     pairFloat_t stepPos;
-    stepPos.first = (secondPos.first - firstPos.first) / static_cast<float>(lineDrawNumber);
-    stepPos.second = (secondPos.second - firstPos.second) / static_cast<float>(lineDrawNumber);
+    stepPos.first = (secondPos.first - firstPos.first) / lineDrawNumberFloat;
+    stepPos.second = (secondPos.second - firstPos.second) / lineDrawNumberFloat;
     float stepTex;
-    float secondLimitPos, firstLimitPos;
+    float firstLimitPos, secondLimitPos;
     if(spriteComp.m_limitWallPointActive)
     {
-        uint32_t secondPoint, firstPoint;
         if(firstRect)
         {
-            secondPoint = 1;
-            firstPoint = 0;
+            //Limit left case
+            firstLimitPos = getLimitTexturePosition(spriteComp, 0, 0);
+            secondLimitPos = getLimitTexturePosition(spriteComp, 1, 1);
         }
         else
         {
-            secondPoint = 5;
-            firstPoint = 4;
+            //Limit right case
+            firstLimitPos = getLimitTexturePosition(spriteComp, 4, 0);
+            secondLimitPos = getLimitTexturePosition(spriteComp, 5, 1);
         }
-        //Limit right case
-        if(!checkFloatEquals(spriteComp.m_limitWallSpriteData->at(secondPoint).first,
-                            EMPTY_VALUE))
-        {
-            secondLimitPos = spriteComp.m_limitWallSpriteData->at(secondPoint).first;
-        }
-        else
-        {
-            secondLimitPos = spriteComp.m_spriteData->m_texturePosVertex[1].first;
-        }
-        //Limit left case
-        if(!checkFloatEquals(spriteComp.m_limitWallSpriteData->at(firstPoint).first,
-                            EMPTY_VALUE))
-        {
-            lineDrawNumber = lineDrawNumber *
-                    (secondLimitPos - firstLimitPos) /
-                    (spriteComp.m_spriteData->m_texturePosVertex[1].first -
-                    spriteComp.m_spriteData->m_texturePosVertex[0].first);
-            assert(lineDrawNumber <= 30);
-            firstLimitPos = spriteComp.m_limitWallSpriteData->at(firstPoint).first;
-        }
-        else
-        {
-            firstLimitPos = spriteComp.m_spriteData->m_texturePosVertex[0].first;
-        }
-        stepTex = (secondLimitPos - firstLimitPos) / static_cast<float>(lineDrawNumber);
+        stepTex = (secondLimitPos - firstLimitPos) / lineDrawNumberFloat;
     }
     else
     {
         stepTex = (spriteComp.m_spriteData->m_texturePosVertex[1].first -
                 spriteComp.m_spriteData->m_texturePosVertex[0].first) /
-                static_cast<float>(lineDrawNumber);
+                lineDrawNumberFloat;
     }
     float memDownTexture = spriteComp.m_spriteData->m_texturePosVertex[2].second;
     pairFloat_t currentPos = firstPos, currentPreviousPos,
@@ -230,7 +222,8 @@ void VerticesData::loadVertexTextureDrawByLineRect(const pairFloat_t &firstPos,
     {
         currentTexPos.first = firstLimitPos;
     }
-    for(uint32_t i = 0; i < lineDrawNumber; ++i)
+    while(currentTexPos.first < spriteComp.m_spriteData->m_texturePosVertex[1].first &&
+          currentPos.first < 1.0f)
     {
         //up left
         addTexturePoint(currentPos, currentTexPos);

@@ -97,7 +97,10 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
         float lateralPos[3];
         float observerAngle = leftAngleVision + visionComp->m_coneVision / 2.0f;
         observerAngle += 270.0f;
-        if(observerAngle > 360.0f)observerAngle -= 360.0f;
+        if(observerAngle > 360.0f)
+        {
+            observerAngle -= 360.0f;
+        }
         bool pointIn[3];
         bool leftLimit[3];
         uint32_t angleToTreat;
