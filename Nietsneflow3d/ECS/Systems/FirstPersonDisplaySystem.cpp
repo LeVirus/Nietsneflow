@@ -635,9 +635,9 @@ void FirstPersonDisplaySystem::fillVertexFromEntity(uint32_t numEntity, uint32_t
     {
         do
         {
-            m_vectVerticesData.emplace_back(VerticesData(shaderType));
+            m_vectVerticesData.push_back(VerticesData(shaderType));
         }
-        while(numIteration > m_vectVerticesData.size());
+        while(numIteration >= m_vectVerticesData.size());
         assert(numIteration < m_vectVerticesData.size());
     }
     PositionVertexComponent *posComp = stairwayToComponentManager().
