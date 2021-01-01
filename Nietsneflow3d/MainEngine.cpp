@@ -287,7 +287,7 @@ void MainEngine::confPlayerEntity(uint32_t entityNum, const Level &level)
     color->m_vertex.emplace_back(0.9f, 0.00f, 0.00f);
     color->m_vertex.emplace_back(0.9f, 0.00f, 0.00f);
     color->m_vertex.emplace_back(0.9f, 0.00f, 0.00f);
-    circleColl->m_ray = 25.0f;
+    circleColl->m_ray = PLAYER_RAY;
     tagColl->m_tag = CollisionTag_e::PLAYER_CT;
     tagColl->m_shape = CollisionShape_e::CIRCLE_C;
 }
