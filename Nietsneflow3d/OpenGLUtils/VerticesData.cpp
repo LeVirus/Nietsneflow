@@ -74,7 +74,7 @@ bool VerticesData::loadVertexColorComponent(const PositionVertexComponent *posCo
 
 //===================================================================
 void VerticesData::loadVertexStandartTextureComponent(const PositionVertexComponent &posComp,
-                                              SpriteTextureComponent &spriteComp)
+                                                      SpriteTextureComponent &spriteComp)
 {
     size_t sizeVertex = posComp.m_vertex.size();
     //first rect 0  1   2   3
