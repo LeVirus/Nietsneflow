@@ -84,6 +84,13 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
                                                   MapCoordComponent *mapCompB, VisionComponent *visionComp,
                                                   uint32_t &toRemove, float leftAngleVision, uint32_t numIteration)
 {
+    float observerAngle = leftAngleVision + visionComp->m_coneVision / 2.0f;
+    observerAngle += 270.0f;
+    if(observerAngle > 360.0f)
+    {
+        observerAngle -= 360.0f;
+    }
+    observerAngle = getRadiantAngle(observerAngle);
     if(genCollComp->m_tag == CollisionTag_e::WALL_CT)
     {
         SpriteTextureComponent *spriteComp = stairwayToComponentManager().
@@ -95,18 +102,12 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
         float distance[4];
         pairFloat_t absolPos[4];
         float lateralPos[3];
-        float observerAngle = leftAngleVision + visionComp->m_coneVision / 2.0f;
-        observerAngle += 270.0f;
-        if(observerAngle > 360.0f)
-        {
-            observerAngle -= 360.0f;
-        }
         bool pointIn[3];
         bool leftLimit[3];
         uint32_t angleToTreat;
         //calculate distance
         fillWallEntitiesData(visionComp->m_vectVisibleEntities[numIteration], absolPos, distance,
-                             mapCompA, mapCompB, getRadiantAngle(observerAngle), visionComp, pointIn,
+                             mapCompA, mapCompB, observerAngle, visionComp, pointIn,
                              leftLimit, angleToTreat);
         if(angleToTreat < 2)
         {
@@ -150,7 +151,8 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
     else
     {
         pairFloat_t centerPosB = getCenterPosition(mapCompB, genCollComp, visionComp->m_vectVisibleEntities[numIteration]);
-        float distance = getDistance(mapCompA->m_absoluteMapPositionPX, centerPosB);
+        float distance = getCameraDistance(mapCompA->m_absoluteMapPositionPX,
+                                           mapCompB->m_absoluteMapPositionPX, observerAngle) / LEVEL_TILE_SIZE_PX;
         if(distance > visionComp->m_distanceVisibility)
         {
             ++toRemove;
@@ -160,67 +162,6 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
         confNormalEntityVertex(visionComp->m_vectVisibleEntities[numIteration], visionComp, lateralPos, distance);
         fillVertexFromEntity(visionComp->m_vectVisibleEntities[numIteration], numIteration, distance);
     }
-}
-
-//===================================================================
-void FirstPersonDisplaySystem::confWallEntityVertex(uint32_t numEntity, VisionComponent *visionComp,
-                                                    float lateralPosDegree[], float distance[], bool wallAllVisible)
-{
-    PositionVertexComponent *positionComp = stairwayToComponentManager().
-            searchComponentByType<PositionVertexComponent>(numEntity, Components_e::POSITION_VERTEX_COMPONENT);
-    SpriteTextureComponent *spriteComp = stairwayToComponentManager().
-                searchComponentByType<SpriteTextureComponent>(numEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
-    assert(spriteComp);
-    assert(positionComp);
-    assert(visionComp);
-    bool excludeZero, excludeTwo;
-    if(wallAllVisible)
-    {
-        excludeZero = (lateralPosDegree[0] > lateralPosDegree[1]) &&
-                ((lateralPosDegree[0] < lateralPosDegree[2]) || (lateralPosDegree[0] < lateralPosDegree[1])) &&
-                (lateralPosDegree[0] > lateralPosDegree[2]);
-        excludeTwo = (lateralPosDegree[2] > lateralPosDegree[0]) &&
-                ((lateralPosDegree[2] < lateralPosDegree[1]) || (lateralPosDegree[2] < lateralPosDegree[0])) &&
-                (lateralPosDegree[2] > lateralPosDegree[1]);
-        wallAllVisible = !(excludeZero || excludeTwo || (lateralPosDegree[1] > lateralPosDegree[2]));
-    }
-    if(!wallAllVisible)
-    {
-        positionComp->m_vertex.resize(4);
-    }
-    else
-    {
-        positionComp->m_vertex.resize(6);
-    }
-    //convert to GL context
-    float depthPos = (spriteComp->m_glFpsSize.second) / distance[0];
-    float halfVerticalSize = depthPos / 2.0f;
-    float lateralPosGL = (lateralPosDegree[0] / visionComp->m_coneVision * 2.0f) - 1.0f;
-    //convert to GL context
-    float depthPosMid = (spriteComp->m_glFpsSize.second) / distance[1];
-    float halfVerticalSizeMid = depthPosMid / 2.0f;
-    float lateralPosGLMid = (lateralPosDegree[1] / visionComp->m_coneVision * 2.0f) - 1.0f;
-
-    positionComp->m_vertex[0].first = lateralPosGL;
-    positionComp->m_vertex[0].second = halfVerticalSize;
-    positionComp->m_vertex[1].first = lateralPosGLMid;
-    positionComp->m_vertex[1].second = halfVerticalSizeMid;
-
-    positionComp->m_vertex[2].first = lateralPosGLMid;
-    positionComp->m_vertex[2].second = -halfVerticalSizeMid;
-    positionComp->m_vertex[3].first = lateralPosGL;
-    positionComp->m_vertex[3].second = -halfVerticalSize;
-    if(!wallAllVisible)
-    {
-        return;
-    }
-    float depthPosMax = (spriteComp->m_glFpsSize.second) / distance[2];
-    float halfVerticalSizeMax = depthPosMax / 2.0f;
-    float lateralPosMaxGL = (lateralPosDegree[2] / visionComp->m_coneVision * 2.0f) - 1.0f;
-    positionComp->m_vertex[4].first = lateralPosMaxGL;
-    positionComp->m_vertex[4].second = halfVerticalSizeMax;
-    positionComp->m_vertex[5].first = lateralPosMaxGL;
-    positionComp->m_vertex[5].second = -halfVerticalSizeMax;
 }
 
 //===================================================================
@@ -731,10 +672,11 @@ void FirstPersonDisplaySystem::confNormalEntityVertex(uint32_t numEntity, Vision
     assert(visionComp);
     positionComp->m_vertex.resize(4);
     //convert to GL context
+
     float lateralPosGL = (lateralPosDegree / visionComp->m_coneVision * 2.0f) - 1.0f;
-    float depthPos = std::abs((distance / visionComp->m_distanceVisibility) - 1.0f);
-    float halfLateralSize = depthPos / spriteComp->m_glFpsSize.first / 2;
-    float halfVerticalSize = depthPos / spriteComp->m_glFpsSize.second / 2;
+    float depthPos = (spriteComp->m_glFpsSize.second) / distance;
+    float halfLateralSize = depthPos / spriteComp->m_glFpsSize.first / 2.0f;
+    float halfVerticalSize = depthPos / spriteComp->m_glFpsSize.second / 2.0f;
     positionComp->m_vertex[0].first = lateralPosGL - halfLateralSize;
     positionComp->m_vertex[0].second = halfVerticalSize;
     positionComp->m_vertex[1].first = lateralPosGL + halfLateralSize;
@@ -743,6 +685,68 @@ void FirstPersonDisplaySystem::confNormalEntityVertex(uint32_t numEntity, Vision
     positionComp->m_vertex[2].second = -halfVerticalSize;
     positionComp->m_vertex[3].first = lateralPosGL - halfLateralSize;
     positionComp->m_vertex[3].second = -halfVerticalSize;
+}
+
+
+//===================================================================
+void FirstPersonDisplaySystem::confWallEntityVertex(uint32_t numEntity, VisionComponent *visionComp,
+                                                    float lateralPosDegree[], float distance[], bool wallAllVisible)
+{
+    PositionVertexComponent *positionComp = stairwayToComponentManager().
+            searchComponentByType<PositionVertexComponent>(numEntity, Components_e::POSITION_VERTEX_COMPONENT);
+    SpriteTextureComponent *spriteComp = stairwayToComponentManager().
+                searchComponentByType<SpriteTextureComponent>(numEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
+    assert(spriteComp);
+    assert(positionComp);
+    assert(visionComp);
+    bool excludeZero, excludeTwo;
+    if(wallAllVisible)
+    {
+        excludeZero = (lateralPosDegree[0] > lateralPosDegree[1]) &&
+                ((lateralPosDegree[0] < lateralPosDegree[2]) || (lateralPosDegree[0] < lateralPosDegree[1])) &&
+                (lateralPosDegree[0] > lateralPosDegree[2]);
+        excludeTwo = (lateralPosDegree[2] > lateralPosDegree[0]) &&
+                ((lateralPosDegree[2] < lateralPosDegree[1]) || (lateralPosDegree[2] < lateralPosDegree[0])) &&
+                (lateralPosDegree[2] > lateralPosDegree[1]);
+        wallAllVisible = !(excludeZero || excludeTwo || (lateralPosDegree[1] > lateralPosDegree[2]));
+    }
+    if(!wallAllVisible)
+    {
+        positionComp->m_vertex.resize(4);
+    }
+    else
+    {
+        positionComp->m_vertex.resize(6);
+    }
+    //convert to GL context
+    float depthPos = (spriteComp->m_glFpsSize.second) / distance[0];
+    float halfVerticalSize = depthPos / 2.0f;
+    float lateralPosGL = (lateralPosDegree[0] / visionComp->m_coneVision * 2.0f) - 1.0f;
+    //convert to GL context
+    float depthPosMid = (spriteComp->m_glFpsSize.second) / distance[1];
+    float halfVerticalSizeMid = depthPosMid / 2.0f;
+    float lateralPosGLMid = (lateralPosDegree[1] / visionComp->m_coneVision * 2.0f) - 1.0f;
+
+    positionComp->m_vertex[0].first = lateralPosGL;
+    positionComp->m_vertex[0].second = halfVerticalSize;
+    positionComp->m_vertex[1].first = lateralPosGLMid;
+    positionComp->m_vertex[1].second = halfVerticalSizeMid;
+
+    positionComp->m_vertex[2].first = lateralPosGLMid;
+    positionComp->m_vertex[2].second = -halfVerticalSizeMid;
+    positionComp->m_vertex[3].first = lateralPosGL;
+    positionComp->m_vertex[3].second = -halfVerticalSize;
+    if(!wallAllVisible)
+    {
+        return;
+    }
+    float depthPosMax = (spriteComp->m_glFpsSize.second) / distance[2];
+    float halfVerticalSizeMax = depthPosMax / 2.0f;
+    float lateralPosMaxGL = (lateralPosDegree[2] / visionComp->m_coneVision * 2.0f) - 1.0f;
+    positionComp->m_vertex[4].first = lateralPosMaxGL;
+    positionComp->m_vertex[4].second = halfVerticalSizeMax;
+    positionComp->m_vertex[5].first = lateralPosMaxGL;
+    positionComp->m_vertex[5].second = -halfVerticalSizeMax;
 }
 
 //===================================================================
