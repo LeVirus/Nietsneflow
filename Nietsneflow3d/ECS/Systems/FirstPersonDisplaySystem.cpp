@@ -344,7 +344,7 @@ void FirstPersonDisplaySystem::fillWallEntitiesData(uint32_t numEntity, pairFloa
         //out of screen limit case
         else
         {
-            if(i != 1 && !pointIn[1])
+            if((i != 1 && !pointIn[1]) || (i == 2 && outLeft[2]) || (i == 0 && !outLeft[0]))
             {
                 continue;
             }
@@ -682,12 +682,12 @@ void FirstPersonDisplaySystem::confNormalEntityVertex(uint32_t numEntity, Vision
     assert(positionComp);
     assert(visionComp);
     positionComp->m_vertex.resize(4);
-    //convert to GL context
-
+    //limit bug quick fix
     if(lateralPosDegree > 180.0f)
     {
         lateralPosDegree -= 360.0f;
     }
+    //convert to GL context
     float lateralPosGL = (lateralPosDegree / visionComp->m_coneVision * 2.0f) - 1.0f;
     float depthPos = (spriteComp->m_glFpsSize.second) / distance;
     //quickfix
