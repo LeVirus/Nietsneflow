@@ -167,7 +167,7 @@ float getLateralPos(float leftAngleVision, const pairFloat_t &pointA, const pair
     float trigoAngle = getTrigoAngle(pointA, pointB);
     float lateralPos = leftAngleVision - trigoAngle;
     //tmp -60.0f
-    if(lateralPos < -30.0f)
+    if(lateralPos < -60.0f)
     {
         //Quick fix
         lateralPos = (leftAngleVision + 360.0f) - trigoAngle;
@@ -684,6 +684,10 @@ void FirstPersonDisplaySystem::confNormalEntityVertex(uint32_t numEntity, Vision
     positionComp->m_vertex.resize(4);
     //convert to GL context
 
+    if(lateralPosDegree > 180.0f)
+    {
+        lateralPosDegree -= 360.0f;
+    }
     float lateralPosGL = (lateralPosDegree / visionComp->m_coneVision * 2.0f) - 1.0f;
     float depthPos = (spriteComp->m_glFpsSize.second) / distance;
     //quickfix
