@@ -85,3 +85,4 @@ float getQuarterAngle(float angle);
 uint32_t getMaxValueFromEntries(const float distance[4]);
 uint32_t getMinValueFromEntries(const float distance[4]);
 std::optional<uint32_t> getLimitIndex(const bool pointIn[], const float distanceReal[], uint32_t i);
+float getLateralPos(float leftAngleVision, const pairFloat_t &pointA, const pairFloat_t &pointB);

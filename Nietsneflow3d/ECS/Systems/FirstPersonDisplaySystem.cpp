@@ -134,13 +134,8 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
             {
                 currentTrigoAngle += 360.0f;
             }
-            lateralPos[i] = leftAngleVision - currentTrigoAngle;
-            //tmp -30.0f
-            if(lateralPos[i] < -60.0f)
-            {
-                //Quick fix
-                lateralPos[i] = (leftAngleVision + 360.0f) - getTrigoAngle(mapCompA->m_absoluteMapPositionPX, absolPos[i]);
-            }
+            lateralPos[i] = getLateralPos(leftAngleVision,
+                                             mapCompA->m_absoluteMapPositionPX, absolPos[i]);
         }
         //conf screen position
         confWallEntityVertex(visionComp->m_vectVisibleEntities[numIteration],
@@ -158,10 +153,26 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
             ++toRemove;
             return;
         }
-        float lateralPos = leftAngleVision - getTrigoAngle(mapCompA->m_absoluteMapPositionPX, centerPosB);
+        float lateralPos = getLateralPos(leftAngleVision,
+                                         mapCompA->m_absoluteMapPositionPX, centerPosB);
+
         confNormalEntityVertex(visionComp->m_vectVisibleEntities[numIteration], visionComp, lateralPos, distance);
         fillVertexFromEntity(visionComp->m_vectVisibleEntities[numIteration], numIteration, distance);
     }
+}
+
+//===================================================================
+float getLateralPos(float leftAngleVision, const pairFloat_t &pointA, const pairFloat_t &pointB)
+{
+    float trigoAngle = getTrigoAngle(pointA, pointB);
+    float lateralPos = leftAngleVision - trigoAngle;
+    //tmp -60.0f
+    if(lateralPos < -60.0f)
+    {
+        //Quick fix
+        lateralPos = (leftAngleVision + 360.0f) - trigoAngle;
+    }
+    return lateralPos;
 }
 
 //===================================================================
