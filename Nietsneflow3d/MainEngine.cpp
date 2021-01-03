@@ -99,7 +99,7 @@ void MainEngine::loadWallEntities(const LevelManager &levelManager)
         const SpriteData &memSpriteData = levelManager.getPictureData().getSpriteData()[wallData[i].m_numSprite];
         for(uint32_t j = 0; j < wallData[i].m_TileGamePosition.size(); ++j)
         {
-            confBaseMapComponent(createMapWallEntity(),
+            confBaseComponent(createWallEntity(),
                                  memSpriteData,
                                  wallData[i].m_TileGamePosition[j], CollisionShape_e::RECTANGLE_C);
         }
@@ -116,7 +116,7 @@ void MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
                 getSpriteData()[enemiesData[i].m_staticSprites[0]];
         for(uint32_t j = 0; j < enemiesData[i].m_TileGamePosition.size(); ++j)
         {
-            confBaseMapComponent(createMapEnemyEntity(),
+            confBaseComponent(createEnemyEntity(),
                                  memSpriteData,
                                  enemiesData[i].m_TileGamePosition[j], CollisionShape_e::CIRCLE_C);
         }
@@ -124,7 +124,7 @@ void MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
 }
 
 //===================================================================
-uint32_t MainEngine::createMapWallEntity()
+uint32_t MainEngine::createWallEntity()
 {
     std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComponents;
     bitsetComponents[Components_e::POSITION_VERTEX_COMPONENT] = true;
@@ -137,7 +137,7 @@ uint32_t MainEngine::createMapWallEntity()
 }
 
 //===================================================================
-uint32_t MainEngine::createMapEnemyEntity()
+uint32_t MainEngine::createEnemyEntity()
 {
     std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComponents;
     bitsetComponents[Components_e::POSITION_VERTEX_COMPONENT] = true;
@@ -150,7 +150,7 @@ uint32_t MainEngine::createMapEnemyEntity()
 }
 
 //===================================================================
-uint32_t MainEngine::createMapStaticEntity()
+uint32_t MainEngine::createStaticEntity()
 {
     std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComponents;
     bitsetComponents[Components_e::POSITION_VERTEX_COMPONENT] = true;
@@ -163,7 +163,7 @@ uint32_t MainEngine::createMapStaticEntity()
 }
 
 //===================================================================
-void MainEngine::confBaseMapComponent(uint32_t entityNum,
+void MainEngine::confBaseComponent(uint32_t entityNum,
                                       const SpriteData &memSpriteData,
                                       const pairUI_t& coordLevel,
                                       CollisionShape_e collisionShape)
@@ -200,7 +200,7 @@ void MainEngine::confBaseMapComponent(uint32_t entityNum,
 }
 
 //===================================================================
-void MainEngine::confStaticMapComponent(uint32_t entityNum,
+void MainEngine::confStaticComponent(uint32_t entityNum,
                                         const pairFloat_t& elementSize,
                                         bool traversable,
                                         LevelStaticElementType_e type)
@@ -306,12 +306,12 @@ void MainEngine::loadStaticElementEntities(const LevelManager &levelManager)
                     getSpriteData()[staticData->operator[](i).m_numSprite];
             for(uint32_t j = 0; j < staticData->operator[](i).m_TileGamePosition.size(); ++j)
             {
-                uint32_t entityNum = createMapStaticEntity();
-                confBaseMapComponent(entityNum,
+                uint32_t entityNum = createStaticEntity();
+                confBaseComponent(entityNum,
                                      memSpriteData,
                                      staticData->operator[](i).m_TileGamePosition[j],
                         CollisionShape_e::RECTANGLE_C);
-                confStaticMapComponent(entityNum,
+                confStaticComponent(entityNum,
                                        staticData->operator[](i).m_inGameSpriteSize,
                                        staticData->operator[](i).m_traversable,
                                        static_cast<LevelStaticElementType_e>(h));

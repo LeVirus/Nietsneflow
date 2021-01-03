@@ -25,11 +25,11 @@ private:
     void loadWallEntities(const LevelManager &levelManager);
     void loadEnemiesEntities(const LevelManager &levelManager);
     void loadStaticElementEntities(const LevelManager &levelManager);
-    uint32_t createMapWallEntity();
-    uint32_t createMapEnemyEntity();
-    void confBaseMapComponent(uint32_t entityNum, const SpriteData &memSpriteData, const pairUI_t &coordLevel, CollisionShape_e collisionShape);
-    uint32_t createMapStaticEntity();
-    void confStaticMapComponent(uint32_t entityNum,
+    uint32_t createWallEntity();
+    uint32_t createEnemyEntity();
+    void confBaseComponent(uint32_t entityNum, const SpriteData &memSpriteData, const pairUI_t &coordLevel, CollisionShape_e collisionShape);
+    uint32_t createStaticEntity();
+    void confStaticComponent(uint32_t entityNum,
                                 const pairFloat_t &elementSize,
                                 bool traversable,
                                 LevelStaticElementType_e type);

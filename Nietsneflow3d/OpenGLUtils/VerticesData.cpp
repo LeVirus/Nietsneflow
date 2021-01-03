@@ -177,6 +177,7 @@ void VerticesData::loadVertexTextureDrawByLineRect(const pairFloat_t &firstPos,
     stepPos.second = (secondPos.second - firstPos.second) / lineDrawNumberFloat;
     float stepTex;
     float firstLimitPos, secondLimitPos;
+    pairFloat_t currentTexPos = spriteComp.m_spriteData->m_texturePosVertex[0];
     if(spriteWallComp.m_limitWallPointActive)
     {
         if(firstRect)
@@ -192,6 +193,7 @@ void VerticesData::loadVertexTextureDrawByLineRect(const pairFloat_t &firstPos,
             secondLimitPos = getLimitTexturePosition(spriteComp, spriteWallComp, 5, 1);
         }
         stepTex = (secondLimitPos - firstLimitPos) / lineDrawNumberFloat;
+        currentTexPos.first = firstLimitPos;
     }
     else
     {
@@ -200,13 +202,7 @@ void VerticesData::loadVertexTextureDrawByLineRect(const pairFloat_t &firstPos,
                 lineDrawNumberFloat;
     }
     float memDownTexture = spriteComp.m_spriteData->m_texturePosVertex[2].second;
-    pairFloat_t currentPos = firstPos, currentPreviousPos,
-            currentTexPos = spriteComp.m_spriteData->m_texturePosVertex[0],
-            currentPreviousTexPos;
-    if(spriteWallComp.m_limitWallPointActive)
-    {
-        currentTexPos.first = firstLimitPos;
-    }
+    pairFloat_t currentPos = firstPos, currentPreviousPos, currentPreviousTexPos;
     while(currentTexPos.first < spriteComp.m_spriteData->m_texturePosVertex[1].first &&
           currentPos.first < 1.0f)
     {
