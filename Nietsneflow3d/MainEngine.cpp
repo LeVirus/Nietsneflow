@@ -129,6 +129,7 @@ uint32_t MainEngine::createMapWallEntity()
     std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComponents;
     bitsetComponents[Components_e::POSITION_VERTEX_COMPONENT] = true;
     bitsetComponents[Components_e::SPRITE_TEXTURE_COMPONENT] = true;
+    bitsetComponents[Components_e::SPRITE_WALL_DATA_COMPONENT] = true;
     bitsetComponents[Components_e::MAP_COORD_COMPONENT] = true;
     bitsetComponents[Components_e::RECTANGLE_COLLISION_COMPONENT] = true;
     bitsetComponents[Components_e::GENERAL_COLLISION_COMPONENT] = true;

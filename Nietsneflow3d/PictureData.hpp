@@ -35,7 +35,7 @@ struct SpriteData
      * 2 bottom right
      * 3 bottom left
     */
-    std::array<std::pair<float, float>, 4> m_texturePosVertex;
+    std::array<pairFloat_t, 4> m_texturePosVertex;
     SpriteData& operator=(const SpriteData& other)
     {
         m_textureNum = other.m_textureNum;

@@ -4,6 +4,7 @@
 #include <ECS/Components/PositionVertexComponent.hpp>
 #include <ECS/Components/ColorVertexComponent.hpp>
 #include <ECS/Components/SpriteTextureComponent.hpp>
+#include <ECS/Components/SpriteWallDataComponent.hpp>
 #include <PictureData.hpp>
 #include <CollisionUtils.hpp>
 #include <numeric>
@@ -37,7 +38,6 @@ void VerticesData::setVectGLPointer()
         m_shaderInterpretData = {2,3};
         break;
     case Shader_e::TEXTURE_S:
-//    case Shader_e::TEXTURED_WALL_S:
         m_shaderInterpretData = {2,2};
         break;
     case Shader_e::TOTAL_SHADER_S:
@@ -74,7 +74,8 @@ bool VerticesData::loadVertexColorComponent(const PositionVertexComponent *posCo
 
 //===================================================================
 void VerticesData::loadVertexStandartTextureComponent(const PositionVertexComponent &posComp,
-                                                      SpriteTextureComponent &spriteComp)
+                                                      SpriteTextureComponent &spriteComp/*,
+                                                      SpriteWallDataComponent &spriteWallComp*/)
 {
     size_t sizeVertex = posComp.m_vertex.size();
     //first rect 0  1   2   3
@@ -84,17 +85,8 @@ void VerticesData::loadVertexStandartTextureComponent(const PositionVertexCompon
         m_vertexBuffer.emplace_back(posComp.m_vertex[j].first);
         m_vertexBuffer.emplace_back(posComp.m_vertex[j].second);
         //add texture position to buffer
-        if(spriteComp.m_limitWallPointActive)
-        {
-            assert(spriteComp.m_limitWallSpriteData);
-            m_vertexBuffer.emplace_back(spriteComp.m_limitWallSpriteData->at(j).first);
-            m_vertexBuffer.emplace_back(spriteComp.m_limitWallSpriteData->at(j).second);
-        }
-        else
-        {
-            m_vertexBuffer.emplace_back(spriteComp.m_spriteData->m_texturePosVertex[j].first);
-            m_vertexBuffer.emplace_back(spriteComp.m_spriteData->m_texturePosVertex[j].second);
-        }
+        m_vertexBuffer.emplace_back(spriteComp.m_spriteData->m_texturePosVertex[j].first);
+        m_vertexBuffer.emplace_back(spriteComp.m_spriteData->m_texturePosVertex[j].second);
     }
     //treat second rect >> 1    4   5   2
     if(sizeVertex > 4)
@@ -120,20 +112,10 @@ void VerticesData::loadVertexStandartTextureComponent(const PositionVertexCompon
             }
             m_vertexBuffer.emplace_back(posComp.m_vertex[k].first);
             m_vertexBuffer.emplace_back(posComp.m_vertex[k].second);
-            if(spriteComp.m_limitWallPointActive)
-            {
-                m_vertexBuffer.emplace_back(spriteComp.m_limitWallSpriteData->at(4 + j).first);
-                m_vertexBuffer.emplace_back(spriteComp.m_limitWallSpriteData->at(4 + j).second);
-                //reset behaviour
-            }
-            else
-            {
-                m_vertexBuffer.emplace_back(spriteComp.m_spriteData->m_texturePosVertex[j].first);
-                m_vertexBuffer.emplace_back(spriteComp.m_spriteData->m_texturePosVertex[j].second);
-            }
+            m_vertexBuffer.emplace_back(spriteComp.m_spriteData->m_texturePosVertex[j].first);
+            m_vertexBuffer.emplace_back(spriteComp.m_spriteData->m_texturePosVertex[j].second);
         }
     }
-    spriteComp.m_limitWallPointActive = false;
     BaseShapeTypeGL_e shape;
     if(sizeVertex == 3)
     {
@@ -153,26 +135,28 @@ void VerticesData::loadVertexStandartTextureComponent(const PositionVertexCompon
 //===================================================================
 void VerticesData::loadVertexTextureDrawByLineComponent(const PositionVertexComponent &posComp,
                                                         const SpriteTextureComponent &spriteComp,
+                                                        const SpriteWallDataComponent &spriteWallComp,
                                                         uint32_t lineDrawNumber)
 {
     assert(posComp.m_vertex.size() == 4 || posComp.m_vertex.size() == 6);
     loadVertexTextureDrawByLineRect(posComp.m_vertex[0], posComp.m_vertex[1],
-                                    spriteComp, lineDrawNumber, true);
+                                    spriteComp, spriteWallComp, lineDrawNumber, true);
     if(posComp.m_vertex.size() == 6)
     {
         loadVertexTextureDrawByLineRect(posComp.m_vertex[1], posComp.m_vertex[4],
-                                        spriteComp, lineDrawNumber, false);
+                                        spriteComp, spriteWallComp, lineDrawNumber, false);
     }
 }
 
 //===================================================================
 float getLimitTexturePosition(const SpriteTextureComponent &spriteComp,
+                              const SpriteWallDataComponent &spriteWallComp,
                               uint32_t limitTextureIndex, uint32_t limitGlobalTextureIndex)
 {
-    if(!checkFloatEquals(spriteComp.m_limitWallSpriteData->at(limitTextureIndex).first,
+    if(!checkFloatEquals(spriteWallComp.m_limitWallSpriteData->at(limitTextureIndex).first,
                         EMPTY_VALUE))
     {
-        return spriteComp.m_limitWallSpriteData->at(limitTextureIndex).first;
+        return spriteWallComp.m_limitWallSpriteData->at(limitTextureIndex).first;
     }
     else
     {
@@ -184,6 +168,7 @@ float getLimitTexturePosition(const SpriteTextureComponent &spriteComp,
 void VerticesData::loadVertexTextureDrawByLineRect(const pairFloat_t &firstPos,
                                                    const pairFloat_t &secondPos,
                                                    const SpriteTextureComponent &spriteComp,
+                                                   const SpriteWallDataComponent &spriteWallComp,
                                                    uint32_t lineDrawNumber, bool firstRect)
 {
     float lineDrawNumberFloat = static_cast<float>(lineDrawNumber);
@@ -192,19 +177,19 @@ void VerticesData::loadVertexTextureDrawByLineRect(const pairFloat_t &firstPos,
     stepPos.second = (secondPos.second - firstPos.second) / lineDrawNumberFloat;
     float stepTex;
     float firstLimitPos, secondLimitPos;
-    if(spriteComp.m_limitWallPointActive)
+    if(spriteWallComp.m_limitWallPointActive)
     {
         if(firstRect)
         {
             //Limit left case
-            firstLimitPos = getLimitTexturePosition(spriteComp, 0, 0);
-            secondLimitPos = getLimitTexturePosition(spriteComp, 1, 1);
+            firstLimitPos = getLimitTexturePosition(spriteComp, spriteWallComp, 0, 0);
+            secondLimitPos = getLimitTexturePosition(spriteComp, spriteWallComp, 1, 1);
         }
         else
         {
             //Limit right case
-            firstLimitPos = getLimitTexturePosition(spriteComp, 4, 0);
-            secondLimitPos = getLimitTexturePosition(spriteComp, 5, 1);
+            firstLimitPos = getLimitTexturePosition(spriteComp, spriteWallComp, 4, 0);
+            secondLimitPos = getLimitTexturePosition(spriteComp, spriteWallComp, 5, 1);
         }
         stepTex = (secondLimitPos - firstLimitPos) / lineDrawNumberFloat;
     }
@@ -218,7 +203,7 @@ void VerticesData::loadVertexTextureDrawByLineRect(const pairFloat_t &firstPos,
     pairFloat_t currentPos = firstPos, currentPreviousPos,
             currentTexPos = spriteComp.m_spriteData->m_texturePosVertex[0],
             currentPreviousTexPos;
-    if(spriteComp.m_limitWallPointActive)
+    if(spriteWallComp.m_limitWallPointActive)
     {
         currentTexPos.first = firstLimitPos;
     }

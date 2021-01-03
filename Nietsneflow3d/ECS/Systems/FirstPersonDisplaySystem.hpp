@@ -52,7 +52,7 @@ private:
                               MapCoordComponent *mapCompB, float observerAngle, VisionComponent *visionComp, bool pointIn[],
                               bool outLeft[], uint32_t &angleToTreat);
     void modifTempTextureBound(uint32_t numEntity, bool outLeft, const pairFloat_t &outPoint, const pairFloat_t &limitPoint,
-                               const pairFloat_t &linkPoint, const pairUI_t &coordPoints, bool &breakLoop);
+                               const pairFloat_t &linkPoint, const pairUI_t &coordPoints, SpriteWallDataComponent &spriteWallComp, bool &breakLoop);
     void fillAbsolAndDistanceWall(pairFloat_t absolPos[], float distance[], MapCoordComponent *mapCompA,
                                   MapCoordComponent *mapCompB, uint32_t numEntity,
                                   uint32_t &distanceToTreat, VisionComponent *visionComp);

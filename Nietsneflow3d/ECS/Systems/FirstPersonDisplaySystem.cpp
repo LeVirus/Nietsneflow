@@ -9,6 +9,7 @@
 #include <ECS/Components/MoveableComponent.hpp>
 #include <ECS/Components/SpriteTextureComponent.hpp>
 #include <ECS/Components/CircleCollisionComponent.hpp>
+#include <ECS/Components/SpriteWallDataComponent.hpp>
 #include <PictureData.hpp>
 #include <cmath>
 
@@ -98,7 +99,6 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
                     visionComp->m_vectVisibleEntities[numIteration],
                     Components_e::SPRITE_TEXTURE_COMPONENT);
         assert(spriteComp);
-        spriteComp->reinitLimit();
         float distance[4];
         pairFloat_t absolPos[4];
         float lateralPos[3];
@@ -307,6 +307,10 @@ void FirstPersonDisplaySystem::fillWallEntitiesData(uint32_t numEntity, pairFloa
     {
         return;
     }
+    SpriteWallDataComponent *spriteWallComp = stairwayToComponentManager().
+            searchComponentByType<SpriteWallDataComponent>(numEntity, Components_e::SPRITE_WALL_DATA_COMPONENT);
+    assert(spriteWallComp);
+    spriteWallComp->reinitLimit();
     float pointAngleVision[3];
     float anglePoint;
     for(uint32_t i = 0; i < 3; ++i)
@@ -359,7 +363,8 @@ void FirstPersonDisplaySystem::fillWallEntitiesData(uint32_t numEntity, pairFloa
             distance[i] = getCameraDistance(mapCompA->m_absoluteMapPositionPX,
                                             limitPoint, observerAngle, true) / LEVEL_TILE_SIZE_PX;
             bool breakLoop;
-            modifTempTextureBound(numEntity, outLeft[i], absolPos[i], limitPoint, absolPos[*j], {i, *j}, breakLoop);
+            modifTempTextureBound(numEntity, outLeft[i], absolPos[i], limitPoint, absolPos[*j], {i, *j},
+                                  *spriteWallComp, breakLoop);
             if(breakLoop)
             {
                 break;
@@ -399,7 +404,8 @@ std::optional<uint32_t> getLimitIndex(const bool pointIn[], const float distance
 //===================================================================
 void FirstPersonDisplaySystem::modifTempTextureBound(uint32_t numEntity, bool outLeft, const pairFloat_t &outPoint,
                                                      const pairFloat_t &limitPoint, const pairFloat_t &linkPoint,
-                                                     const pairUI_t &coordPoints, bool &breakLoop)
+                                                     const pairUI_t &coordPoints,
+                                                     SpriteWallDataComponent &spriteWallComp, bool &breakLoop)
 {
     breakLoop = false;
     SpriteTextureComponent *spriteComp = stairwayToComponentManager().
@@ -426,8 +432,8 @@ void FirstPersonDisplaySystem::modifTempTextureBound(uint32_t numEntity, bool ou
     {
         result = diff / total;
     }
-    spriteComp->fillWallContainer();
-    spriteComp->m_limitWallPointActive = true;
+    spriteWallComp.fillWallContainer(spriteComp->m_spriteData->m_texturePosVertex);
+    spriteWallComp.m_limitWallPointActive = true;
     float totalTextureWidth = (spriteComp->m_spriteData->m_texturePosVertex[1].first -
                                spriteComp->m_spriteData->m_texturePosVertex[0].first);
     if(outLeft)
@@ -437,13 +443,13 @@ void FirstPersonDisplaySystem::modifTempTextureBound(uint32_t numEntity, bool ou
         assert(result <= 1.0f);
         if(coordPoints.first == 0)
         {
-            spriteComp->m_limitWallSpriteData->at(0).first = result;
-            spriteComp->m_limitWallSpriteData->at(3).first = result;
+            spriteWallComp.m_limitWallSpriteData->at(0).first = result;
+            spriteWallComp.m_limitWallSpriteData->at(3).first = result;
         }
         else if(coordPoints.first == 1)
         {
-            spriteComp->m_limitWallSpriteData->at(4).first = result;
-            spriteComp->m_limitWallSpriteData->at(7).first = result;
+            spriteWallComp.m_limitWallSpriteData->at(4).first = result;
+            spriteWallComp.m_limitWallSpriteData->at(7).first = result;
         }
     }
     else
@@ -453,13 +459,13 @@ void FirstPersonDisplaySystem::modifTempTextureBound(uint32_t numEntity, bool ou
                 (result * totalTextureWidth);
         if(coordPoints.first == 2)
         {
-            spriteComp->m_limitWallSpriteData->at(5).first = result;
-            spriteComp->m_limitWallSpriteData->at(6).first = result;
+            spriteWallComp.m_limitWallSpriteData->at(5).first = result;
+            spriteWallComp.m_limitWallSpriteData->at(6).first = result;
         }
         else if(coordPoints.first == 1)
         {
-            spriteComp->m_limitWallSpriteData->at(1).first = result;
-            spriteComp->m_limitWallSpriteData->at(2).first = result;
+            spriteWallComp.m_limitWallSpriteData->at(1).first = result;
+            spriteWallComp.m_limitWallSpriteData->at(2).first = result;
             breakLoop = true;
         }
     }
@@ -658,8 +664,12 @@ void FirstPersonDisplaySystem::fillVertexFromEntity(uint32_t numEntity, uint32_t
     }
     else
     {
+        SpriteWallDataComponent *spriteWallComp = stairwayToComponentManager().
+                searchComponentByType<SpriteWallDataComponent>(numEntity,
+                                                              Components_e::SPRITE_WALL_DATA_COMPONENT);
+        assert(spriteWallComp);
         m_vectVerticesData[numIteration].
-                loadVertexTextureDrawByLineComponent(*posComp, *spriteComp,
+                loadVertexTextureDrawByLineComponent(*posComp, *spriteComp, *spriteWallComp,
                                                      m_textureLineDrawNumber);
     }
 }

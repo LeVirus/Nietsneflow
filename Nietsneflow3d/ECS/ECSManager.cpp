@@ -11,6 +11,7 @@
 #include <ECS/Components/LineCollisionComponent.hpp>
 #include <ECS/Components/RectangleCollisionComponent.hpp>
 #include <ECS/Components/VisionComponent.hpp>
+#include <ECS/Components/SpriteWallDataComponent.hpp>
 #include <ECS/Systems/ColorDisplaySystem.hpp>
 #include <ECS/Systems/MapDisplaySystem.hpp>
 #include <ECS/Systems/InputSystem.hpp>
@@ -186,6 +187,12 @@ void ECSManager::syncComponentsFromEntities(uint32_t numEntity,
             m_componentManager->instanciateExternComponent(
                         numEntity,
                         std::make_unique<VisionComponent>());
+        }
+            break;
+        case Components_e::SPRITE_WALL_DATA_COMPONENT:
+        {
+            m_componentManager->instanciateExternComponent(numEntity,
+                        std::make_unique<SpriteWallDataComponent>());
         }
             break;
         case Components_e::TOTAL_COMPONENTS:

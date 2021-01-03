@@ -8,6 +8,7 @@
 struct PositionVertexComponent;
 struct ColorVertexComponent;
 struct SpriteTextureComponent;
+struct SpriteWallDataComponent;
 
 class Shader;
 
@@ -41,12 +42,15 @@ public:
                                             SpriteTextureComponent &spriteComp);
     void loadVertexTextureDrawByLineComponent(const PositionVertexComponent &posComp,
                                               const SpriteTextureComponent &spriteComp,
+                                              const SpriteWallDataComponent &spriteWallComp,
                                               uint32_t lineDrawNumber);
     void loadVertexTextureDrawByLineRect(const pairFloat_t &firstPos,
                                          const pairFloat_t &secondPos,
                                          const SpriteTextureComponent &spriteComp,
+                                         const SpriteWallDataComponent &spriteWallComp,
                                          uint32_t lineDrawNumber, bool firstRect);
 };
 
 float getLimitTexturePosition(const SpriteTextureComponent &spriteComp,
+                              const SpriteWallDataComponent &spriteWallComp,
                               uint32_t limitTextureIndex, uint32_t limitGlobalTextureIndex);
