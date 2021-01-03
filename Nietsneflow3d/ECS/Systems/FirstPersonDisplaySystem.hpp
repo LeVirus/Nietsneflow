@@ -48,7 +48,7 @@ private:
     void treatDisplayEntity(GeneralCollisionComponent *genCollComp, MapCoordComponent *mapCompA, MapCoordComponent *mapCompB,
                             VisionComponent *visionComp, uint32_t &toRemove,
                             float leftAngleVision, uint32_t numIteration);
-    void fillWallEntitiesData(uint32_t numEntity, pairFloat_t absolPos[], float distance[], MapCoordComponent *mapCompA,
+    void fillWallEntitiesData(uint32_t numEntity, pairFloat_t absolPos[], float distance[], MapCoordComponent *mapCompCamera,
                               MapCoordComponent *mapCompB, float observerAngle, VisionComponent *visionComp, bool pointIn[],
                               bool outLeft[], uint32_t &angleToTreat);
     void modifTempTextureBound(uint32_t numEntity, bool outLeft, const pairFloat_t &outPoint, const pairFloat_t &limitPoint,

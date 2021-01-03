@@ -177,7 +177,7 @@ float getLateralPos(float leftAngleVision, const pairFloat_t &pointA, const pair
 
 //===================================================================
 void FirstPersonDisplaySystem::fillAbsolAndDistanceWall(pairFloat_t absolPos[], float distance[],
-                                                        MapCoordComponent *mapCompA, MapCoordComponent *mapCompB,
+                                                        MapCoordComponent *mapCompCamera, MapCoordComponent *mapCompWall,
                                                         uint32_t numEntity, uint32_t &distanceToTreat,
                                                         VisionComponent *visionComp)
 {
@@ -186,22 +186,22 @@ void FirstPersonDisplaySystem::fillAbsolAndDistanceWall(pairFloat_t absolPos[], 
     assert(rectComp);
     //get all points WALL rect position
     //up left
-    absolPos[0] = mapCompB->m_absoluteMapPositionPX;
-    absolPos[1] = {mapCompB->m_absoluteMapPositionPX.first + rectComp->m_size.first,
-                   mapCompB->m_absoluteMapPositionPX.second};
-    absolPos[2] = {mapCompB->m_absoluteMapPositionPX.first + rectComp->m_size.first,
-                   mapCompB->m_absoluteMapPositionPX.second + rectComp->m_size.second};
-    absolPos[3] = {mapCompB->m_absoluteMapPositionPX.first,
-                   mapCompB->m_absoluteMapPositionPX.second + rectComp->m_size.second};
+    absolPos[0] = mapCompWall->m_absoluteMapPositionPX;
+    absolPos[1] = {mapCompWall->m_absoluteMapPositionPX.first + rectComp->m_size.first,
+                   mapCompWall->m_absoluteMapPositionPX.second};
+    absolPos[2] = {mapCompWall->m_absoluteMapPositionPX.first + rectComp->m_size.first,
+                   mapCompWall->m_absoluteMapPositionPX.second + rectComp->m_size.second};
+    absolPos[3] = {mapCompWall->m_absoluteMapPositionPX.first,
+                   mapCompWall->m_absoluteMapPositionPX.second + rectComp->m_size.second};
 
     //up left
-    distance[0] = getDistance(mapCompA->m_absoluteMapPositionPX, absolPos[0]);
+    distance[0] = getDistance(mapCompCamera->m_absoluteMapPositionPX, absolPos[0]);
     //up right
-    distance[1] = getDistance(mapCompA->m_absoluteMapPositionPX, absolPos[1]);
+    distance[1] = getDistance(mapCompCamera->m_absoluteMapPositionPX, absolPos[1]);
     //down right
-    distance[2] = getDistance(mapCompA->m_absoluteMapPositionPX, absolPos[2]);
+    distance[2] = getDistance(mapCompCamera->m_absoluteMapPositionPX, absolPos[2]);
     //down left
-    distance[3] = getDistance(mapCompA->m_absoluteMapPositionPX, absolPos[3]);
+    distance[3] = getDistance(mapCompCamera->m_absoluteMapPositionPX, absolPos[3]);
 
     uint32_t minVal = getMinValueFromEntries(distance);
     //second display
@@ -218,8 +218,8 @@ void FirstPersonDisplaySystem::fillAbsolAndDistanceWall(pairFloat_t absolPos[], 
         std::swap(absolPos[3], absolPos[maxVal]);
     }
 
-    float trigoAngleA =  getTrigoAngle(mapCompA->m_absoluteMapPositionPX, absolPos[0]),
-    trigoAngleC =  getTrigoAngle(mapCompA->m_absoluteMapPositionPX, absolPos[2]);
+    float trigoAngleA =  getTrigoAngle(mapCompCamera->m_absoluteMapPositionPX, absolPos[0]),
+    trigoAngleC =  getTrigoAngle(mapCompCamera->m_absoluteMapPositionPX, absolPos[2]);
     if(std::abs(trigoAngleC - trigoAngleA) > 90.0f)
     {
         if(trigoAngleA < trigoAngleC)
@@ -237,12 +237,12 @@ void FirstPersonDisplaySystem::fillAbsolAndDistanceWall(pairFloat_t absolPos[], 
         std::swap(absolPos[0], absolPos[2]);
     }
     distanceToTreat = 3;
-    if(!angleWallVisible(mapCompA->m_absoluteMapPositionPX, absolPos[2],
+    if(!angleWallVisible(mapCompCamera->m_absoluteMapPositionPX, absolPos[2],
                          visionComp->m_vectVisibleEntities, numEntity))
     {
         --distanceToTreat;
     }
-    if(!angleWallVisible(mapCompA->m_absoluteMapPositionPX, absolPos[0],
+    if(!angleWallVisible(mapCompCamera->m_absoluteMapPositionPX, absolPos[0],
                          visionComp->m_vectVisibleEntities, numEntity))
     {
         std::swap(distance[0], distance[1]);
@@ -297,12 +297,12 @@ bool FirstPersonDisplaySystem::angleWallVisible(const pairFloat_t &observerPoint
 
 //===================================================================
 void FirstPersonDisplaySystem::fillWallEntitiesData(uint32_t numEntity, pairFloat_t absolPos[], float distance[],
-                                                    MapCoordComponent *mapCompA, MapCoordComponent *mapCompB,
+                                                    MapCoordComponent *mapCompCamera, MapCoordComponent *mapCompWall,
                                                     float observerAngle, VisionComponent *visionComp,
                                                     bool pointIn[], bool outLeft[], uint32_t &angleToTreat)
 {
     float distanceReal[4];
-    fillAbsolAndDistanceWall(absolPos, distanceReal, mapCompA, mapCompB, numEntity, angleToTreat, visionComp);
+    fillAbsolAndDistanceWall(absolPos, distanceReal, mapCompCamera, mapCompWall, numEntity, angleToTreat, visionComp);
     if(angleToTreat < 2)
     {
         return;
@@ -315,7 +315,7 @@ void FirstPersonDisplaySystem::fillWallEntitiesData(uint32_t numEntity, pairFloa
     float anglePoint;
     for(uint32_t i = 0; i < 3; ++i)
     {
-        anglePoint = getRadiantAngle(getTrigoAngle(mapCompA->m_absoluteMapPositionPX, absolPos[i]));
+        anglePoint = getRadiantAngle(getTrigoAngle(mapCompCamera->m_absoluteMapPositionPX, absolPos[i]));
         if(std::abs(anglePoint - observerAngle) > PI)
         {
             if(anglePoint < observerAngle)
@@ -342,13 +342,13 @@ void FirstPersonDisplaySystem::fillWallEntitiesData(uint32_t numEntity, pairFloa
         //standard case
         if(pointIn[i])
         {
-            distance[i] = getCameraDistance(mapCompA->m_absoluteMapPositionPX,
+            distance[i] = getCameraDistance(mapCompCamera->m_absoluteMapPositionPX,
                                             absolPos[i], observerAngle) / LEVEL_TILE_SIZE_PX;
         }
         //out of screen limit case
         else
         {
-            if((i != 1 && !pointIn[1]) || (i == 2 && outLeft[2]) || (i == 0 && !outLeft[0]))
+            if((angleToTreat != 2 && i != 1 && !pointIn[1]) || (i == 2 && outLeft[2]) || (i == 0 && !outLeft[0]))
             {
                 continue;
             }
@@ -357,10 +357,10 @@ void FirstPersonDisplaySystem::fillWallEntitiesData(uint32_t numEntity, pairFloa
             {
                 return;
             }
-            pairFloat_t limitPoint = getPointCameraLimitWall(mapCompA->m_absoluteMapPositionPX,
+            pairFloat_t limitPoint = getPointCameraLimitWall(mapCompCamera->m_absoluteMapPositionPX,
                                                              observerAngle, absolPos[i],
                                                              absolPos[*j], outLeft[i], visionComp);
-            distance[i] = getCameraDistance(mapCompA->m_absoluteMapPositionPX,
+            distance[i] = getCameraDistance(mapCompCamera->m_absoluteMapPositionPX,
                                             limitPoint, observerAngle, true) / LEVEL_TILE_SIZE_PX;
             bool breakLoop;
             modifTempTextureBound(numEntity, outLeft[i], absolPos[i], limitPoint, absolPos[*j], {i, *j},
@@ -440,7 +440,6 @@ void FirstPersonDisplaySystem::modifTempTextureBound(uint32_t numEntity, bool ou
     {
         result = spriteComp->m_spriteData->m_texturePosVertex[0].first +
                 (result * totalTextureWidth);
-        assert(result <= 1.0f);
         if(coordPoints.first == 0)
         {
             spriteWallComp.m_limitWallSpriteData->at(0).first = result;
