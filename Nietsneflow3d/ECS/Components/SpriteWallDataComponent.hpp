@@ -13,7 +13,6 @@ struct SpriteWallDataComponent : public ecs::Component
     }
     void fillWallContainer(const std::array<pairFloat_t, 4> &texturePosVertex)
     {
-        //!!!IMPORTANT COPY BASE SPRITE DATA
         if(!m_limitWallSpriteData)
         {
             m_limitWallSpriteData = std::make_unique<std::array<pairFloat_t, 8>>();

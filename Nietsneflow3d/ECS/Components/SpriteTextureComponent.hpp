@@ -1,9 +1,7 @@
 #pragma once
 
-
 #include <BaseECS/component.hpp>
 #include <constants.hpp>
-#include <memory>
 #include <PictureData.hpp>
 
 struct SpriteTextureComponent : public ecs::Component

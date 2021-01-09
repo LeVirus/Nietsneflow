@@ -273,6 +273,8 @@ void LevelManager::loadEnemySprites(const INIReader &reader, const std::string &
         spriteType = "DyingSprite";
         vectPtr = &enemyData.m_dyingSprites;
         break;
+    case EnemySpriteType_e::TOTAL_SPRITE:
+        break;
     }
     assert(vectPtr);
     std::string sprites = reader.Get(sectionName, spriteType, "");

@@ -28,7 +28,9 @@ SOURCES += main.cpp \
     ECS/Systems/FirstPersonDisplaySystem.cpp
 
 HEADERS += \
+    ECS/Components/MemSpriteDataComponent.hpp \
     ECS/Components/SpriteWallDataComponent.hpp \
+    ECS/Components/TimerComponent.hpp \
     ECS/Components/VisionComponent.hpp \
     ECS/Systems/VisionSystem.hpp \
     Game.hpp \

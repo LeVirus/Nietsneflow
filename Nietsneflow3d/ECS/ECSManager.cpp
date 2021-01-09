@@ -12,6 +12,8 @@
 #include <ECS/Components/RectangleCollisionComponent.hpp>
 #include <ECS/Components/VisionComponent.hpp>
 #include <ECS/Components/SpriteWallDataComponent.hpp>
+#include <ECS/Components/MemSpriteDataComponent.hpp>
+#include <ECS/Components/TimerComponent.hpp>
 #include <ECS/Systems/ColorDisplaySystem.hpp>
 #include <ECS/Systems/MapDisplaySystem.hpp>
 #include <ECS/Systems/InputSystem.hpp>
@@ -193,6 +195,18 @@ void ECSManager::syncComponentsFromEntities(uint32_t numEntity,
         {
             m_componentManager->instanciateExternComponent(numEntity,
                         std::make_unique<SpriteWallDataComponent>());
+        }
+            break;
+        case Components_e::MEM_SPRITE_DATA_COMPONENT:
+        {
+            m_componentManager->instanciateExternComponent(numEntity,
+                        std::make_unique<MemSpriteDataComponent>());
+        }
+            break;
+        case Components_e::TIMER_COMPONENT:
+        {
+            m_componentManager->instanciateExternComponent(numEntity,
+                        std::make_unique<TimerComponent>());
         }
             break;
         case Components_e::TOTAL_COMPONENTS:

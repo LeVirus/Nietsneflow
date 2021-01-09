@@ -17,6 +17,7 @@ public:
 private:
     void setUsedComponents();
     void treatVisible(VisionComponent *visionComp, uint32_t checkVisibleId, CollisionShape_e shapeElement);
+    void updateSprites(const std::vector<uint32_t> &vectEntities);
 private:
     const ECSManager* m_memECSManager;
 };

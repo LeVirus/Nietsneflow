@@ -9,6 +9,7 @@
 #include <ECS/Components/CircleCollisionComponent.hpp>
 #include <ECS/Components/RectangleCollisionComponent.hpp>
 #include <ECS/Components/GeneralCollisionComponent.hpp>
+#include <ECS/Components/MemSpriteDataComponent.hpp>
 #include <ECS/Components/VisionComponent.hpp>
 #include <ECS/Systems/ColorDisplaySystem.hpp>
 #include <ECS/Systems/MapDisplaySystem.hpp>
@@ -110,18 +111,53 @@ void MainEngine::loadWallEntities(const LevelManager &levelManager)
 void MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
 {
     const std::vector<EnemyData> &enemiesData = levelManager.getLevel().getEnemiesData();
+
     for(uint32_t i = 0; i < enemiesData.size(); ++i)
     {
         const SpriteData &memSpriteData = levelManager.getPictureData().
                 getSpriteData()[enemiesData[i].m_staticSprites[0]];
         for(uint32_t j = 0; j < enemiesData[i].m_TileGamePosition.size(); ++j)
         {
-            confBaseComponent(createEnemyEntity(),
-                                 memSpriteData,
-                                 enemiesData[i].m_TileGamePosition[j], CollisionShape_e::CIRCLE_C);
+            uint32_t numEntity = createEnemyEntity();
+            confBaseComponent(numEntity, memSpriteData,
+                              enemiesData[i].m_TileGamePosition[j], CollisionShape_e::CIRCLE_C);
+            loadEnemySprites(levelManager.getPictureData().getSpriteData(), enemiesData, numEntity);
         }
     }
 }
+
+//===================================================================
+void MainEngine::loadEnemySprites(const std::vector<SpriteData> &vectSprite,
+                                  const std::vector<EnemyData> &enemiesData, uint32_t numEntity)
+{
+    MemSpriteDataComponent *memSpriteComp = m_ecsManager.getComponentManager().
+            searchComponentByType<MemSpriteDataComponent>(numEntity, Components_e::MEM_SPRITE_DATA_COMPONENT);
+    assert(memSpriteComp);
+    for(uint32_t i = 0; i < enemiesData.size(); ++i)
+    {
+        uint32_t vectSize = static_cast<uint32_t>(EnemySpriteType_e::TOTAL_SPRITE);
+        memSpriteComp->m_vectSpriteData.reserve(vectSize);
+        for(uint32_t j = 0; j < enemiesData[i].m_staticSprites.size(); ++j)
+        {
+            memSpriteComp->m_vectSpriteData.emplace_back(&vectSprite[enemiesData[i].m_staticSprites[j]]);
+        }
+        for(uint32_t j = 0; j < enemiesData[i].m_moveSprites.size(); ++j)
+        {
+            memSpriteComp->m_vectSpriteData.emplace_back(&vectSprite[enemiesData[i].m_moveSprites[j]]);
+        }
+        for(uint32_t j = 0; j < enemiesData[i].m_attackSprites.size(); ++j)
+        {
+            memSpriteComp->m_vectSpriteData.emplace_back(&vectSprite[enemiesData[i].m_attackSprites[j]]);
+        }
+        for(uint32_t j = 0; j < enemiesData[i].m_dyingSprites.size(); ++j)
+        {
+            memSpriteComp->m_vectSpriteData.emplace_back(&vectSprite[enemiesData[i].m_dyingSprites[j]]);
+        }
+        //OOOOOK TMP
+        assert(memSpriteComp->m_vectSpriteData.size() > vectSize);
+    }
+}
+
 
 //===================================================================
 uint32_t MainEngine::createWallEntity()
@@ -146,6 +182,8 @@ uint32_t MainEngine::createEnemyEntity()
     bitsetComponents[Components_e::CIRCLE_COLLISION_COMPONENT] = true;
     bitsetComponents[Components_e::GENERAL_COLLISION_COMPONENT] = true;
     bitsetComponents[Components_e::MOVEABLE_COMPONENT] = true;
+    bitsetComponents[Components_e::MEM_SPRITE_DATA_COMPONENT] = true;
+    bitsetComponents[Components_e::TIMER_COMPONENT] = true;
     return m_ecsManager.addEntity(bitsetComponents);
 }
 

@@ -13,6 +13,9 @@
 #include <ECS/Components/RectangleCollisionComponent.hpp>
 #include <ECS/Components/PositionVertexComponent.hpp>
 #include <ECS/Components/MoveableComponent.hpp>
+#include <ECS/Components/MemSpriteDataComponent.hpp>
+#include <ECS/Components/SpriteTextureComponent.hpp>
+#include <ECS/Components/TimerComponent.hpp>
 
 //===========================================================================
 VisionSystem::VisionSystem(const ECSManager *memECSManager) :
@@ -31,9 +34,13 @@ void VisionSystem::setUsedComponents()
 void VisionSystem::execSystem()
 {
     System::execSystem();
+    GeneralCollisionComponent *collComp, *collCompB;
+    VisionComponent *visionCompA;
+    MapCoordComponent *mapCompA;
+    MoveableComponent *movCompA;
     for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
     {
-        GeneralCollisionComponent *collComp = stairwayToComponentManager().
+        collComp = stairwayToComponentManager().
                 searchComponentByType<GeneralCollisionComponent>(mVectNumEntity[i],
                                       Components_e::GENERAL_COLLISION_COMPONENT);
         assert(collComp);
@@ -42,11 +49,11 @@ void VisionSystem::execSystem()
         bitsetComp[Components_e::SPRITE_TEXTURE_COMPONENT] = true;
         std::vector<uint32_t> vectEntities = m_memECSManager->getEntityContainingComponents(bitsetComp);
 
-        VisionComponent *visionCompA = stairwayToComponentManager().
+        visionCompA = stairwayToComponentManager().
                 searchComponentByType<VisionComponent>(mVectNumEntity[i], Components_e::VISION_COMPONENT);
-        MapCoordComponent *mapCompA = stairwayToComponentManager().
+        mapCompA = stairwayToComponentManager().
                 searchComponentByType<MapCoordComponent>(mVectNumEntity[i], Components_e::MAP_COORD_COMPONENT);
-        MoveableComponent *movCompA = stairwayToComponentManager().
+        movCompA = stairwayToComponentManager().
                 searchComponentByType<MoveableComponent>(mVectNumEntity[i], Components_e::MOVEABLE_COMPONENT);
         updateTriangleVisionFromPosition(visionCompA, mapCompA, movCompA);
         visionCompA->m_vectVisibleEntities.clear();
@@ -56,7 +63,7 @@ void VisionSystem::execSystem()
             {
                 continue;
             }
-            GeneralCollisionComponent *collCompB = stairwayToComponentManager().
+            collCompB = stairwayToComponentManager().
                     searchComponentByType<GeneralCollisionComponent>(vectEntities[j],
                                           Components_e::GENERAL_COLLISION_COMPONENT);
             assert(collCompB);
@@ -67,11 +74,53 @@ void VisionSystem::execSystem()
             //FAIRE DES TESTS POUR LES COLLISIONS
             treatVisible(visionCompA, vectEntities[j], collCompB->m_shape);
         }
+        updateSprites(visionCompA->m_vectVisibleEntities);
     }
 }
 
 //===========================================================================
-void VisionSystem::treatVisible(VisionComponent *visionComp, uint32_t checkVisibleId, CollisionShape_e shapeElement)
+void VisionSystem::updateSprites(const std::vector<uint32_t> &vectEntities)
+{
+    MemSpriteDataComponent *memSpriteComp;
+    SpriteTextureComponent *spriteComp;
+    TimerComponent *timerComp;
+    for(uint32_t i = 0; i < vectEntities.size(); ++i)
+    {
+        memSpriteComp = stairwayToComponentManager().
+                searchComponentByType<MemSpriteDataComponent>(vectEntities[i],
+                                                              Components_e::MEM_SPRITE_DATA_COMPONENT);
+        if(!memSpriteComp)
+        {
+            continue;
+        }
+        spriteComp = stairwayToComponentManager().
+                searchComponentByType<SpriteTextureComponent>(vectEntities[i],
+                                                              Components_e::SPRITE_TEXTURE_COMPONENT);
+        assert(spriteComp);
+        timerComp = stairwayToComponentManager().
+                searchComponentByType<TimerComponent>(vectEntities[i], Components_e::TIMER_COMPONENT);
+        assert(timerComp);
+
+        std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() - timerComp->m_clock;
+        if(elapsed_seconds.count() > 2)
+        {
+            timerComp->m_clock = std::chrono::system_clock::now();
+            //TESTTT
+            if(spriteComp->m_spriteData == memSpriteComp->m_vectSpriteData[0])
+            {
+                spriteComp->m_spriteData = memSpriteComp->m_vectSpriteData[1];
+            }
+            else
+            {
+                spriteComp->m_spriteData = memSpriteComp->m_vectSpriteData[0];
+            }
+        }
+    }
+}
+
+//===========================================================================
+void VisionSystem::treatVisible(VisionComponent *visionComp, uint32_t checkVisibleId,
+                                CollisionShape_e shapeElement)
 {
     MapCoordComponent *mapCompB = stairwayToComponentManager().
             searchComponentByType<MapCoordComponent>(checkVisibleId, Components_e::MAP_COORD_COMPONENT);
