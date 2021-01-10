@@ -84,7 +84,7 @@ void Level::display()
     for(uint32_t i = 0; i < m_wallData.size(); ++i)
     {
         std::cout << "Vect Wall Element  \n"
-                  << "Sprite Num :: " << m_wallData.back().m_numSprite
+                  << "Sprite Num :: " << m_wallData.back().m_sprites[0]
                   << std::endl;
         for(uint32_t j = 0; j < m_wallData.back().m_TileGamePosition.size(); ++j)
         {

@@ -21,7 +21,7 @@ struct StaticLevelElementData
 
 struct WallData
 {
-    uint8_t m_numSprite;
+    std::vector<uint8_t> m_sprites;
     vectPairUI_t m_TileGamePosition;
 };
 

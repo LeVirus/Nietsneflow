@@ -95,14 +95,26 @@ void MainEngine::loadLevelEntities(const LevelManager &levelManager)
 void MainEngine::loadWallEntities(const LevelManager &levelManager)
 {
     const std::vector<WallData> &wallData = levelManager.getLevel().getWallData();
+    MemSpriteDataComponent *memSpriteComp;
+    const std::vector<SpriteData> &vectSprite = levelManager.getPictureData().getSpriteData();
     for(uint32_t i = 0; i < wallData.size(); ++i)
     {
-        const SpriteData &memSpriteData = levelManager.getPictureData().getSpriteData()[wallData[i].m_numSprite];
+        const SpriteData &memSpriteData = levelManager.getPictureData().getSpriteData()[wallData[i].m_sprites[0]];
         for(uint32_t j = 0; j < wallData[i].m_TileGamePosition.size(); ++j)
         {
-            confBaseComponent(createWallEntity(),
-                                 memSpriteData,
-                                 wallData[i].m_TileGamePosition[j], CollisionShape_e::RECTANGLE_C);
+            uint32_t numEntity = createWallEntity();
+            confBaseComponent(numEntity, memSpriteData, wallData[i].m_TileGamePosition[j],
+                              CollisionShape_e::RECTANGLE_C);
+            memSpriteComp = m_ecsManager.getComponentManager().
+                    searchComponentByType<MemSpriteDataComponent>(numEntity,
+                                                                  Components_e::MEM_SPRITE_DATA_COMPONENT);
+            assert(memSpriteComp);
+            uint32_t vectSize = wallData[i].m_sprites.size();
+            memSpriteComp->m_vectSpriteData.reserve(static_cast<uint32_t>(WallSpriteType_e::TOTAL_SPRITE));
+            for(uint32_t j = 0; j < vectSize; ++j)
+            {
+                memSpriteComp->m_vectSpriteData.emplace_back(&vectSprite[wallData[i].m_sprites[j]]);
+            }
         }
     }
 }
@@ -169,6 +181,8 @@ uint32_t MainEngine::createWallEntity()
     bitsetComponents[Components_e::MAP_COORD_COMPONENT] = true;
     bitsetComponents[Components_e::RECTANGLE_COLLISION_COMPONENT] = true;
     bitsetComponents[Components_e::GENERAL_COLLISION_COMPONENT] = true;
+    bitsetComponents[Components_e::MEM_SPRITE_DATA_COMPONENT] = true;
+    bitsetComponents[Components_e::TIMER_COMPONENT] = true;
     return m_ecsManager.addEntity(bitsetComponents);
 }
 

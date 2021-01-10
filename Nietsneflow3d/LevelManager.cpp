@@ -196,7 +196,16 @@ void LevelManager::loadWallData(const INIReader &reader)
     for(uint32_t i = 0; i < vectINISections.size(); ++i)
     {
         vectWall.emplace_back(WallData());
-        vectWall.back().m_numSprite = getSpriteId(reader, vectINISections[i]);
+        std::string sprites = reader.Get(vectINISections[i], "Sprite", "");
+        assert(!sprites.empty() && "Wall sprites cannot be loaded.");
+        std::istringstream iss(sprites);
+        vectStr_t results(std::istream_iterator<std::string>{iss},
+                          std::istream_iterator<std::string>());
+        vectWall.back().m_sprites.reserve(results.size());
+        for(uint32_t i = 0; i < results.size(); ++i)
+        {
+            vectWall.back().m_sprites.emplace_back(*m_pictureData.getIdentifier(results[i]));
+        }
         fillPositionVect(reader, vectINISections[i], vectWall.back().m_TileGamePosition);
     }
     m_level.setWallElement(vectWall);
@@ -251,7 +260,7 @@ void LevelManager::loadEnemyData(const INIReader &reader)
 
 //===================================================================
 void LevelManager::loadEnemySprites(const INIReader &reader, const std::string &sectionName,
-                              EnemySpriteType_e spriteTypeEnum, EnemyData &enemyData)
+                                    EnemySpriteType_e spriteTypeEnum, EnemyData &enemyData)
 {
     std::vector<uint8_t> *vectPtr = nullptr;
     std::string spriteType;

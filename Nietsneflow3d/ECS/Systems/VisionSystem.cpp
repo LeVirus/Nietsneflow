@@ -102,7 +102,7 @@ void VisionSystem::updateSprites(const std::vector<uint32_t> &vectEntities)
         assert(timerComp);
 
         std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() - timerComp->m_clock;
-        if(elapsed_seconds.count() > 2)
+        if(elapsed_seconds.count() > 0.5)
         {
             timerComp->m_clock = std::chrono::system_clock::now();
             //TESTTT

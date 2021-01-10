@@ -70,6 +70,13 @@ enum class EnemySpriteType_e
     TOTAL_SPRITE
 };
 
+enum class WallSpriteType_e
+{
+    STATIC_A,
+    STATIC_B,
+    TOTAL_SPRITE
+};
+
 enum class LevelStaticElementType_e
 {
     GROUND,
