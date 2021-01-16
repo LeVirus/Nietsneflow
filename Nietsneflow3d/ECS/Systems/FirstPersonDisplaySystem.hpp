@@ -56,7 +56,7 @@ private:
                                   uint32_t &distanceToTreat, VisionComponent *visionComp);
     bool angleWallVisible(const pairFloat_t &observerPoint, const pairFloat_t &angleWall, const std::vector<uint32_t> &vectEntities, uint32_t numEntity);
     void confNormalEntityVertex(uint32_t numEntity,
-                                VisionComponent *visionComp, float lateralPosDegree, float distance);
+                                VisionComponent *visionComp, float lateralPosDegree, float deptyhGL);
     void confWallEntityVertex(uint32_t numEntity, VisionComponent *visionComp,
                               float lateralPosDegree[], float distance[], bool wallAllVisible);
     void drawVertex();
