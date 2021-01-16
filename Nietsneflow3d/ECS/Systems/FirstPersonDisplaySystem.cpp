@@ -348,7 +348,8 @@ void FirstPersonDisplaySystem::fillWallEntitiesData(uint32_t numEntity, pairFloa
         //out of screen limit case
         else
         {
-            if((angleToTreat != 2 && i != 1 && !pointIn[1]) || (i == 2 && outLeft[2]) || (i == 0 && !outLeft[0]))
+            if((angleToTreat != 2 && i != 1 && !pointIn[1]) ||
+                    (i == 2 && outLeft[2]) || (i == 0 && !outLeft[0]))
             {
                 continue;
             }
@@ -493,10 +494,10 @@ pairFloat_t FirstPersonDisplaySystem::getPointCameraLimitWall(const pairFloat_t 
 
     float correction, memDiff;
     //X mod
-    if(std::abs(outPoint.first - linkPoint.first) > std::numeric_limits<float>::epsilon())
+    if(std::abs(outPoint.first - linkPoint.first) > EPSILON_FLOAT)
     {
         memDiff = std::abs(outPoint.second - pointObserver.second);
-        if(std::abs(limitAngle) <= std::numeric_limits<float>::epsilon())
+        if(std::abs(limitAngle) <= EPSILON_FLOAT)
         {
             correction = memDiff;
         }

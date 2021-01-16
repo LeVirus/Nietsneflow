@@ -108,7 +108,10 @@ void MainEngine::loadWallEntities(const LevelManager &levelManager)
             memSpriteComp = m_ecsManager.getComponentManager().
                     searchComponentByType<MemSpriteDataComponent>(numEntity,
                                                                   Components_e::MEM_SPRITE_DATA_COMPONENT);
-            assert(memSpriteComp);
+            if(!memSpriteComp)
+            {
+                continue;
+            }
             uint32_t vectSize = wallData[i].m_sprites.size();
             memSpriteComp->m_vectSpriteData.reserve(static_cast<uint32_t>(WallSpriteType_e::TOTAL_SPRITE));
             for(uint32_t j = 0; j < vectSize; ++j)
@@ -181,7 +184,7 @@ uint32_t MainEngine::createWallEntity()
     bitsetComponents[Components_e::MAP_COORD_COMPONENT] = true;
     bitsetComponents[Components_e::RECTANGLE_COLLISION_COMPONENT] = true;
     bitsetComponents[Components_e::GENERAL_COLLISION_COMPONENT] = true;
-    bitsetComponents[Components_e::MEM_SPRITE_DATA_COMPONENT] = true;
+//    bitsetComponents[Components_e::MEM_SPRITE_DATA_COMPONENT] = true;
     bitsetComponents[Components_e::TIMER_COMPONENT] = true;
     return m_ecsManager.addEntity(bitsetComponents);
 }

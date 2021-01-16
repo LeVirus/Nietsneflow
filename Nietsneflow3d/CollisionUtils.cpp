@@ -115,8 +115,8 @@ bool checkSegmentSegmentCollision(const pairFloat_t &firstPointSegmentA, const p
     float distXB = secondPointSegmentB.first - firstPointSegmentB.first;
     float distYB = secondPointSegmentB.second - firstPointSegmentB.second;
     float denom = distXA * distYB - distYA * distXB;
-    std::numeric_limits<float>::epsilon();
-    if(std::abs(denom) <= std::numeric_limits<float>::epsilon())
+    EPSILON_FLOAT;
+    if(std::abs(denom) <= EPSILON_FLOAT)
     {
         return false;   // erreur, cas limite
     }
@@ -217,7 +217,7 @@ bool checkPointSegmentCollision(const pairFloat_t &point,
 bool checkFloatEquals(float a, float b)
 {
     float check = std::fabs(a - b);
-    return check <= std::numeric_limits<float>::epsilon();
+    return check <= EPSILON_FLOAT;
 }
 
 //===================================================================
