@@ -45,26 +45,32 @@ public:
 private:
     void setUsedComponents();
     void confCompVertexMemEntities();
-    void treatDisplayEntity(GeneralCollisionComponent *genCollComp, MapCoordComponent *mapCompA, MapCoordComponent *mapCompB,
+    void treatDisplayEntity(GeneralCollisionComponent *genCollComp, MapCoordComponent *mapCompA,
+                            MapCoordComponent *mapCompB,
                             VisionComponent *visionComp, uint32_t &toRemove,
                             float leftAngleVision, uint32_t numIteration);
-    void fillWallEntitiesData(uint32_t numEntity, pairFloat_t absolPos[], float distance[], MapCoordComponent *mapCompCamera,
-                              MapCoordComponent *mapCompB, float observerAngle, VisionComponent *visionComp, bool pointIn[],
+    void fillWallEntitiesData(uint32_t numEntity, pairFloat_t absolPos[], float distance[],
+                              MapCoordComponent *mapCompCamera,
+                              MapCoordComponent *mapCompB, float observerAngle,
+                              VisionComponent *visionComp, bool pointIn[],
                               bool outLeft[], uint32_t &angleToTreat);
     void fillAbsolAndDistanceWall(pairFloat_t absolPos[], float distance[], MapCoordComponent *mapCompA,
                                   MapCoordComponent *mapCompB, uint32_t numEntity,
                                   uint32_t &distanceToTreat, VisionComponent *visionComp);
-    bool angleWallVisible(const pairFloat_t &observerPoint, const pairFloat_t &angleWall, const std::vector<uint32_t> &vectEntities, uint32_t numEntity);
+    bool angleWallVisible(const pairFloat_t &observerPoint, const pairFloat_t &angleWall,
+                          const std::vector<uint32_t> &vectEntities, uint32_t numEntity);
     void confNormalEntityVertex(uint32_t numEntity,
-                                VisionComponent *visionComp, float lateralPosDegree, float deptyhGL);
+                                VisionComponent *visionComp, float lateralPosDegree, float depthGL);
     void confWallEntityVertex(uint32_t numEntity, VisionComponent *visionComp,
                               float lateralPosDegree[], float distance[], bool wallAllVisible);
     void drawVertex();
-    pairFloat_t getCenterPosition(MapCoordComponent const *mapComp, GeneralCollisionComponent *genCollComp, float numEntity);
+    pairFloat_t getCenterPosition(MapCoordComponent const *mapComp,
+                                  GeneralCollisionComponent *genCollComp, float numEntity);
     void fillVertexFromEntity(uint32_t numEntity, uint32_t numIteration, float distance, bool wallTag = false);
     std::optional<pairFloat_t> checkLimitWallCase(const pairFloat_t &pointObserver, float limitObserverAngle,
                                                   const pairFloat_t &outPoint, const pairFloat_t &linkPoint,
-                                                  bool leftLimit, bool XCase, float correction, pairFloat_t &pointReturn);
+                                                  bool leftLimit, bool XCase, float correction,
+                                                  pairFloat_t &pointReturn);
 private:
     Shader *m_shader;
     std::multiset<EntityData> m_entitiesNumMem;
