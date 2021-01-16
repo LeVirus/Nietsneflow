@@ -9,7 +9,6 @@
 #include <ECS/Components/MoveableComponent.hpp>
 #include <ECS/Components/SpriteTextureComponent.hpp>
 #include <ECS/Components/CircleCollisionComponent.hpp>
-#include <ECS/Components/SpriteWallDataComponent.hpp>
 #include <PictureData.hpp>
 #include <cmath>
 
@@ -117,18 +116,6 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
         //calculate all 3 display position
         for(uint32_t i = 0; i < angleToTreat; ++i)
         {
-            if(!pointIn[i])
-            {
-                if(leftLimit[i])
-                {
-                    lateralPos[i] = -1.0f;
-                }
-                else
-                {
-                    lateralPos[i] = visionComp->m_coneVision + 1.0f;
-                }
-                continue;
-            }
             currentTrigoAngle =  getTrigoAngle(mapCompA->m_absoluteMapPositionPX, absolPos[i]);
             if(std::abs(currentTrigoAngle - leftAngleVision) > 150.0f)
             {
@@ -307,10 +294,9 @@ void FirstPersonDisplaySystem::fillWallEntitiesData(uint32_t numEntity, pairFloa
     {
         return;
     }
-    SpriteWallDataComponent *spriteWallComp = stairwayToComponentManager().
-            searchComponentByType<SpriteWallDataComponent>(numEntity, Components_e::SPRITE_WALL_DATA_COMPONENT);
-    assert(spriteWallComp);
-    spriteWallComp->reinitLimit();
+    SpriteTextureComponent *spriteComp = stairwayToComponentManager().
+                searchComponentByType<SpriteTextureComponent>(numEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
+    assert(spriteComp);
     float pointAngleVision[3];
     float anglePoint;
     for(uint32_t i = 0; i < 3; ++i)
@@ -342,8 +328,9 @@ void FirstPersonDisplaySystem::fillWallEntitiesData(uint32_t numEntity, pairFloa
         //standard case
         if(pointIn[i])
         {
-            distance[i] = getCameraDistance(mapCompCamera->m_absoluteMapPositionPX,
-                                            absolPos[i], observerAngle) / LEVEL_TILE_SIZE_PX;
+            distance[i] = spriteComp->m_glFpsSize.second /
+                    (getCameraDistance(mapCompCamera->m_absoluteMapPositionPX,
+                                       absolPos[i], observerAngle) / LEVEL_TILE_SIZE_PX);
         }
         //out of screen limit case
         else
@@ -358,18 +345,37 @@ void FirstPersonDisplaySystem::fillWallEntitiesData(uint32_t numEntity, pairFloa
             {
                 return;
             }
-            pairFloat_t limitPoint = getPointCameraLimitWall(mapCompCamera->m_absoluteMapPositionPX,
-                                                             observerAngle, absolPos[i],
-                                                             absolPos[*j], outLeft[i], visionComp);
-            distance[i] = getCameraDistance(mapCompCamera->m_absoluteMapPositionPX,
-                                            limitPoint, observerAngle, true) / LEVEL_TILE_SIZE_PX;
-            bool breakLoop;
-            modifTempTextureBound(numEntity, outLeft[i], absolPos[i], limitPoint, absolPos[*j], {i, *j},
-                                  *spriteWallComp, breakLoop);
-            if(breakLoop)
+            float distanceLink = spriteComp->m_glFpsSize.second /
+                    (getCameraDistance(mapCompCamera->m_absoluteMapPositionPX,
+                                       absolPos[*j], observerAngle) / LEVEL_TILE_SIZE_PX);
+
+            std::cerr << "\n\ndistanceLink " << distanceLink << "\n";
+            pairFloat_t limitPoint = absolPos[*j];
+            bool xCase;
+            //X case
+            if(std::abs(absolPos[i].first - absolPos[*j].first) > EPSILON_FLOAT)
             {
-                break;
+                xCase = true;
+                //if out > link
+                limitPoint.first = (absolPos[i].first > absolPos[*j].first) ?
+                            limitPoint.first + 1.0f : limitPoint.first - 1.0f;
             }
+            //Y case
+            else
+            {
+                xCase = false;
+                //if out > link
+                limitPoint.second = (absolPos[i].second > absolPos[*j].second) ?
+                            limitPoint.second + 1.0f : limitPoint.second - 1.0f;
+            }
+            //get Link point camera distance
+            float distanceLimit = spriteComp->m_glFpsSize.second /
+                    (getCameraDistance(mapCompCamera->m_absoluteMapPositionPX,
+                                       limitPoint, observerAngle) / LEVEL_TILE_SIZE_PX);
+            float diffDist = std::abs(distanceLink - distanceLimit);
+            std::cerr << distanceLink << " - " << distanceLimit << " = " << diffDist << "\n";
+            distance[i] = distanceLink + LEVEL_TILE_SIZE_PX * diffDist;
+            std::cerr << "dist FINAL " << distance[i] << "\n";
         }
     }
 }
@@ -400,153 +406,6 @@ std::optional<uint32_t> getLimitIndex(const bool pointIn[], const float distance
             return {};
         }
     }
-}
-
-//===================================================================
-void FirstPersonDisplaySystem::modifTempTextureBound(uint32_t numEntity, bool outLeft, const pairFloat_t &outPoint,
-                                                     const pairFloat_t &limitPoint, const pairFloat_t &linkPoint,
-                                                     const pairUI_t &coordPoints,
-                                                     SpriteWallDataComponent &spriteWallComp, bool &breakLoop)
-{
-    breakLoop = false;
-    SpriteTextureComponent *spriteComp = stairwayToComponentManager().
-            searchComponentByType<SpriteTextureComponent>(numEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
-    assert(spriteComp);
-    float total, diff, result;
-    //Y case
-    if(std::abs(outPoint.first - limitPoint.first) < 0.1f)
-    {
-        diff = std::abs(outPoint.second - limitPoint.second);
-        total = std::abs(outPoint.second - linkPoint.second);
-    }
-    //X case
-    else
-    {
-        diff = std::abs(outPoint.first - limitPoint.first);
-        total = std::abs(outPoint.first - linkPoint.first);
-    }
-    if(total < 0.01f)
-    {
-        result = diff;
-    }
-    else
-    {
-        result = diff / total;
-    }
-    spriteWallComp.fillWallContainer(spriteComp->m_spriteData->m_texturePosVertex);
-    spriteWallComp.m_limitWallPointActive = true;
-    float totalTextureWidth = (spriteComp->m_spriteData->m_texturePosVertex[1].first -
-                               spriteComp->m_spriteData->m_texturePosVertex[0].first);
-    if(outLeft)
-    {
-        result = spriteComp->m_spriteData->m_texturePosVertex[0].first +
-                (result * totalTextureWidth);
-        if(coordPoints.first == 0)
-        {
-            spriteWallComp.m_limitWallSpriteData->at(0).first = result;
-            spriteWallComp.m_limitWallSpriteData->at(3).first = result;
-        }
-        else if(coordPoints.first == 1)
-        {
-            spriteWallComp.m_limitWallSpriteData->at(4).first = result;
-            spriteWallComp.m_limitWallSpriteData->at(7).first = result;
-        }
-    }
-    else
-    {
-        result = std::abs(1 - result);
-        result = spriteComp->m_spriteData->m_texturePosVertex[0].first +
-                (result * totalTextureWidth);
-        if(coordPoints.first == 2)
-        {
-            spriteWallComp.m_limitWallSpriteData->at(5).first = result;
-            spriteWallComp.m_limitWallSpriteData->at(6).first = result;
-        }
-        else if(coordPoints.first == 1)
-        {
-            spriteWallComp.m_limitWallSpriteData->at(1).first = result;
-            spriteWallComp.m_limitWallSpriteData->at(2).first = result;
-            breakLoop = true;
-        }
-    }
-}
-
-//===================================================================
-pairFloat_t FirstPersonDisplaySystem::getPointCameraLimitWall(const pairFloat_t &pointObserver, float observerAngle,
-                                                              const pairFloat_t &outPoint, const pairFloat_t &linkPoint,
-                                                              bool leftLimit, VisionComponent *visionComp)
-{
-    pairFloat_t pointReturn = outPoint;
-    observerAngle = getDegreeAngle(observerAngle);
-    float limitAngle = leftLimit ? observerAngle + (visionComp->m_coneVision / 2) :
-                                   observerAngle - (visionComp->m_coneVision / 2);
-    if(limitAngle < 0.0f)
-    {
-        limitAngle += 360.0f;
-    }
-    else if(limitAngle > 360.0f)
-    {
-        limitAngle -= 360.0f;
-    }
-    float memDegreeAngle = limitAngle;
-    limitAngle = getQuarterAngle(limitAngle);
-    limitAngle = getRadiantAngle(limitAngle);
-
-    float correction, memDiff;
-    //X mod
-    if(std::abs(outPoint.first - linkPoint.first) > EPSILON_FLOAT)
-    {
-        memDiff = std::abs(outPoint.second - pointObserver.second);
-        if(std::abs(limitAngle) <= EPSILON_FLOAT)
-        {
-            correction = memDiff;
-        }
-        else
-        {
-            //TRIGO CALC
-            correction = memDiff / std::tan(limitAngle);
-        }
-        std::optional<pairFloat_t> optReturn = checkLimitWallCase(pointObserver, memDegreeAngle,
-                                                                  outPoint, linkPoint,
-                                                                  leftLimit, true,
-                                                                  correction, pointReturn);
-        if(optReturn)
-        {
-            return *optReturn;
-        }
-        //need only distance so no need to add sense
-        if(outPoint.first > pointObserver.first)
-        {
-            pointReturn.first = pointObserver.first + correction;
-        }
-        else
-        {
-            pointReturn.first = pointObserver.first - correction;
-        }
-    }
-    //Y Mod
-    else
-    {
-        memDiff = std::abs(outPoint.first - pointObserver.first);
-        correction = std::abs(std::tan(limitAngle) * memDiff);
-        std::optional<pairFloat_t> optReturn = checkLimitWallCase(pointObserver, memDegreeAngle,
-                                                                  outPoint, linkPoint,
-                                                                  leftLimit, false,
-                                                                  correction, pointReturn);
-        if(optReturn)
-        {
-            return *optReturn;
-        }
-        if(outPoint.second > pointObserver.second)
-        {
-            pointReturn.second = pointObserver.second + correction;
-        }
-        else
-        {
-            pointReturn.second = pointObserver.second - correction;
-        }
-    }
-    return pointReturn;
 }
 
 //===================================================================
@@ -664,12 +523,8 @@ void FirstPersonDisplaySystem::fillVertexFromEntity(uint32_t numEntity, uint32_t
     }
     else
     {
-        SpriteWallDataComponent *spriteWallComp = stairwayToComponentManager().
-                searchComponentByType<SpriteWallDataComponent>(numEntity,
-                                                              Components_e::SPRITE_WALL_DATA_COMPONENT);
-        assert(spriteWallComp);
         m_vectVerticesData[numIteration].
-                loadVertexTextureDrawByLineComponent(*posComp, *spriteComp, *spriteWallComp,
+                loadVertexTextureDrawByLineComponent(*posComp, *spriteComp,
                                                      m_textureLineDrawNumber);
     }
 }
@@ -725,9 +580,6 @@ void FirstPersonDisplaySystem::confWallEntityVertex(uint32_t numEntity, VisionCo
 {
     PositionVertexComponent *positionComp = stairwayToComponentManager().
             searchComponentByType<PositionVertexComponent>(numEntity, Components_e::POSITION_VERTEX_COMPONENT);
-    SpriteTextureComponent *spriteComp = stairwayToComponentManager().
-                searchComponentByType<SpriteTextureComponent>(numEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
-    assert(spriteComp);
     assert(positionComp);
     assert(visionComp);
     bool excludeZero, excludeTwo;
@@ -750,12 +602,10 @@ void FirstPersonDisplaySystem::confWallEntityVertex(uint32_t numEntity, VisionCo
         positionComp->m_vertex.resize(6);
     }
     //convert to GL context
-    float depthPos = (spriteComp->m_glFpsSize.second) / distance[0];
-    float halfVerticalSize = depthPos / 2.0f;
+    float halfVerticalSize = distance[0] / 2.0f;
     float lateralPosGL = (lateralPosDegree[0] / visionComp->m_coneVision * 2.0f) - 1.0f;
     //convert to GL context
-    float depthPosMid = (spriteComp->m_glFpsSize.second) / distance[1];
-    float halfVerticalSizeMid = depthPosMid / 2.0f;
+    float halfVerticalSizeMid = distance[1] / 2.0f;
     float lateralPosGLMid = (lateralPosDegree[1] / visionComp->m_coneVision * 2.0f) - 1.0f;
 
     positionComp->m_vertex[0].first = lateralPosGL;
@@ -771,8 +621,7 @@ void FirstPersonDisplaySystem::confWallEntityVertex(uint32_t numEntity, VisionCo
     {
         return;
     }
-    float depthPosMax = (spriteComp->m_glFpsSize.second) / distance[2];
-    float halfVerticalSizeMax = depthPosMax / 2.0f;
+    float halfVerticalSizeMax = distance[2] / 2.0f;
     float lateralPosMaxGL = (lateralPosDegree[2] / visionComp->m_coneVision * 2.0f) - 1.0f;
     positionComp->m_vertex[4].first = lateralPosMaxGL;
     positionComp->m_vertex[4].second = halfVerticalSizeMax;

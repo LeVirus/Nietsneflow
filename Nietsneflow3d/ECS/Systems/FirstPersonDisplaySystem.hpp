@@ -51,8 +51,6 @@ private:
     void fillWallEntitiesData(uint32_t numEntity, pairFloat_t absolPos[], float distance[], MapCoordComponent *mapCompCamera,
                               MapCoordComponent *mapCompB, float observerAngle, VisionComponent *visionComp, bool pointIn[],
                               bool outLeft[], uint32_t &angleToTreat);
-    void modifTempTextureBound(uint32_t numEntity, bool outLeft, const pairFloat_t &outPoint, const pairFloat_t &limitPoint,
-                               const pairFloat_t &linkPoint, const pairUI_t &coordPoints, SpriteWallDataComponent &spriteWallComp, bool &breakLoop);
     void fillAbsolAndDistanceWall(pairFloat_t absolPos[], float distance[], MapCoordComponent *mapCompA,
                                   MapCoordComponent *mapCompB, uint32_t numEntity,
                                   uint32_t &distanceToTreat, VisionComponent *visionComp);
@@ -64,9 +62,6 @@ private:
     void drawVertex();
     pairFloat_t getCenterPosition(MapCoordComponent const *mapComp, GeneralCollisionComponent *genCollComp, float numEntity);
     void fillVertexFromEntity(uint32_t numEntity, uint32_t numIteration, float distance, bool wallTag = false);
-    pairFloat_t getPointCameraLimitWall(const pairFloat_t &pointObserver, float observerAngle,
-                                 const pairFloat_t &outPoint, const pairFloat_t &linkPoint,
-                                 bool leftLimit, VisionComponent *visionComp);
     std::optional<pairFloat_t> checkLimitWallCase(const pairFloat_t &pointObserver, float limitObserverAngle,
                                                   const pairFloat_t &outPoint, const pairFloat_t &linkPoint,
                                                   bool leftLimit, bool XCase, float correction, pairFloat_t &pointReturn);
