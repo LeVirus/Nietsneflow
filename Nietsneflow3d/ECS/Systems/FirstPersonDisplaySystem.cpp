@@ -363,8 +363,11 @@ void FirstPersonDisplaySystem::fillWallEntitiesData(uint32_t numEntity, pairFloa
                 limitPoint.second = (absolPos[i].second > absolPos[*j].second) ?
                             limitPoint.second + 1.0f : limitPoint.second - 1.0f;
             }
-            float leftAngle = observerAngle - visionComp->m_coneVision;
-            leftAngle /= 2.0f;
+            float leftAngle = getDegreeAngle(observerAngle) + visionComp->m_coneVision / 2.0f;
+            if(leftAngle > 360.0f)
+            {
+                leftAngle -= 360.0f;
+            }
             //
             float lateralPosLink = getLateralPos(leftAngle,
                                                  mapCompCamera->m_absoluteMapPositionPX, absolPos[*j]);
@@ -377,7 +380,6 @@ void FirstPersonDisplaySystem::fillWallEntitiesData(uint32_t numEntity, pairFloa
             float lateralPosOut = getLateralPos(leftAngle,
                                                 mapCompCamera->m_absoluteMapPositionPX, absolPos[i]);
             float lateralPosGLXOut = (lateralPosOut / visionComp->m_coneVision * 2.0f) - 1.0f;
-
 
             float diffLateralPosTotal = std::abs(lateralPosGLXOut - lateralPosGLXLink);
             float diffLateralPosLimit = std::abs(lateralPosGLXLimit - lateralPosGLXLink);
