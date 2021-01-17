@@ -119,10 +119,6 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
         {
             currentTrigoAngle = getTrigoAngle(mapCompA->m_absoluteMapPositionPX, absolPos[i]);
             lateralPos[i] = getLateralPos(leftAngleVision, mapCompA->m_absoluteMapPositionPX, absolPos[i]);
-            if(lateralPos[i] < -60.0f)
-            {
-                lateralPos[i] += 360.0f;
-            }
         }
         //conf screen position
         confWallEntityVertex(numEntity, visionComp, lateralPos, depthGL, (angleToTreat == 3));
@@ -158,6 +154,11 @@ float getLateralPos(float leftAngleVision, const pairFloat_t &pointA, const pair
 {
     float trigoAngle = getTrigoAngle(pointA, pointB);
     float lateralPos = leftAngleVision - trigoAngle;
+    if(std::abs(lateralPos) > 180.0f)
+    {
+        trigoAngle = (trigoAngle > 180.0f) ? trigoAngle - 360.0f : trigoAngle + 360.0f;
+        lateralPos = leftAngleVision - trigoAngle;
+    }
     return lateralPos;
 }
 
@@ -366,15 +367,15 @@ void FirstPersonDisplaySystem::fillWallEntitiesData(uint32_t numEntity, pairFloa
             leftAngle /= 2.0f;
             //
             float lateralPosLink = getLateralPos(leftAngle,
-                                             mapCompCamera->m_absoluteMapPositionPX, absolPos[*j]);
+                                                 mapCompCamera->m_absoluteMapPositionPX, absolPos[*j]);
             float lateralPosGLXLink = (lateralPosLink / visionComp->m_coneVision * 2.0f) - 1.0f;
             //
             float lateralPosLimit = getLateralPos(leftAngle,
-                                             mapCompCamera->m_absoluteMapPositionPX, limitPoint);
+                                                  mapCompCamera->m_absoluteMapPositionPX, limitPoint);
             float lateralPosGLXLimit = (lateralPosLimit / visionComp->m_coneVision * 2.0f) - 1.0f;
             //
             float lateralPosOut = getLateralPos(leftAngle,
-                                             mapCompCamera->m_absoluteMapPositionPX, absolPos[i]);
+                                                mapCompCamera->m_absoluteMapPositionPX, absolPos[i]);
             float lateralPosGLXOut = (lateralPosOut / visionComp->m_coneVision * 2.0f) - 1.0f;
 
 
