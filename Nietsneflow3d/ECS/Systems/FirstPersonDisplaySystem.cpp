@@ -316,7 +316,7 @@ void FirstPersonDisplaySystem::fillWallEntitiesData(uint32_t numEntity, pairFloa
         //mem limit left or right
         if(!pointIn[i])
         {
-            outLeft[i] = anglePoint > observerAngle;
+            outLeft[i] = (anglePoint > observerAngle);
         }
     }
     SpriteTextureComponent *spriteComp = stairwayToComponentManager().
@@ -345,60 +345,64 @@ void FirstPersonDisplaySystem::fillWallEntitiesData(uint32_t numEntity, pairFloa
             {
                 return;
             }
-            pairFloat_t limitPoint = absolPos[*j];
-            bool xCase;
-            //X case
-            if(std::abs(absolPos[i].first - absolPos[*j].first) > EPSILON_FLOAT)
-            {
-                xCase = true;
-                //if out > link
-                limitPoint.first = (absolPos[i].first > absolPos[*j].first) ?
-                            limitPoint.first + 1.0f : limitPoint.first - 1.0f;
-            }
-            //Y case
-            else
-            {
-                xCase = false;
-                //if out > link
-                limitPoint.second = (absolPos[i].second > absolPos[*j].second) ?
-                            limitPoint.second + 1.0f : limitPoint.second - 1.0f;
-            }
-            float leftAngle = getDegreeAngle(observerAngle) + visionComp->m_coneVision / 2.0f;
-            if(leftAngle > 360.0f)
-            {
-                leftAngle -= 360.0f;
-            }
-            //
-            float lateralPosLink = getLateralPos(leftAngle,
-                                                 mapCompCamera->m_absoluteMapPositionPX, absolPos[*j]);
-            float lateralPosGLXLink = (lateralPosLink / visionComp->m_coneVision * 2.0f) - 1.0f;
-            //
-            float lateralPosLimit = getLateralPos(leftAngle,
-                                                  mapCompCamera->m_absoluteMapPositionPX, limitPoint);
-            float lateralPosGLXLimit = (lateralPosLimit / visionComp->m_coneVision * 2.0f) - 1.0f;
-            //
-            float lateralPosOut = getLateralPos(leftAngle,
-                                                mapCompCamera->m_absoluteMapPositionPX, absolPos[i]);
-            float lateralPosGLXOut = (lateralPosOut / visionComp->m_coneVision * 2.0f) - 1.0f;
 
-            float diffLateralPosTotal = std::abs(lateralPosGLXOut - lateralPosGLXLink);
-            float diffLateralPosLimit = std::abs(lateralPosGLXLimit - lateralPosGLXLink);
-            //
-            float distanceLink = spriteComp->m_glFpsSize.second /
-                    (getCameraDistance(mapCompCamera->m_absoluteMapPositionPX,
-                                       absolPos[*j], observerAngle) / LEVEL_TILE_SIZE_PX);
-
-            //get Link point camera distance
-            float distanceLimit = spriteComp->m_glFpsSize.second /
-                    (getCameraDistance(mapCompCamera->m_absoluteMapPositionPX,
-                                       limitPoint, observerAngle) / LEVEL_TILE_SIZE_PX);
-            float diffDist = distanceLimit - distanceLink;
-
-            diffDist = (diffDist * diffLateralPosTotal / diffLateralPosLimit);
-
-            depthGL[i] = distanceLink + diffDist;
+            depthGL[i] = calculateDepthGLAngleWallLimitDisplay(absolPos[i], absolPos[*j],
+                                                    observerAngle, mapCompCamera,
+                                                    visionComp, spriteComp);
         }
     }
+}
+
+//===================================================================
+float calculateDepthGLAngleWallLimitDisplay(const pairFloat_t &outPoint, const pairFloat_t &linkPoint,
+                                float observerAngle, MapCoordComponent *mapCompCamera,
+                                VisionComponent *visionComp, SpriteTextureComponent *spriteComp)
+{
+    pairFloat_t limitPoint = linkPoint;
+    //X case
+    if(std::abs(outPoint.first - linkPoint.first) > EPSILON_FLOAT)
+    {
+        //if out > link
+        limitPoint.first = (outPoint.first > linkPoint.first) ?
+                    limitPoint.first + 1.0f : limitPoint.first - 1.0f;
+    }
+    //Y case
+    else
+    {
+        //if out > link
+        limitPoint.second = (outPoint.second > linkPoint.second) ?
+                    limitPoint.second + 1.0f : limitPoint.second - 1.0f;
+    }
+    float leftAngle = getDegreeAngle(observerAngle) + visionComp->m_coneVision / 2.0f;
+    if(leftAngle > 360.0f)
+    {
+        leftAngle -= 360.0f;
+    }
+    float lateralPosLink = getLateralPos(leftAngle,
+                                         mapCompCamera->m_absoluteMapPositionPX, linkPoint);
+    float lateralPosGLXLink = (lateralPosLink / visionComp->m_coneVision * 2.0f) - 1.0f;
+    float lateralPosLimit = getLateralPos(leftAngle,
+                                          mapCompCamera->m_absoluteMapPositionPX, limitPoint);
+    float lateralPosGLXLimit = (lateralPosLimit / visionComp->m_coneVision * 2.0f) - 1.0f;
+    float lateralPosOut = getLateralPos(leftAngle,
+                                        mapCompCamera->m_absoluteMapPositionPX, outPoint);
+    float lateralPosGLXOut = (lateralPosOut / visionComp->m_coneVision * 2.0f) - 1.0f;
+
+    float diffLateralPosTotal = std::abs(lateralPosGLXOut - lateralPosGLXLink);
+    float diffLateralPosLimit = std::abs(lateralPosGLXLimit - lateralPosGLXLink);
+    float distanceLink = spriteComp->m_glFpsSize.second /
+            (getCameraDistance(mapCompCamera->m_absoluteMapPositionPX,
+                               linkPoint, observerAngle) / LEVEL_TILE_SIZE_PX);
+
+    //get Link point camera distance
+    float distanceLimit = spriteComp->m_glFpsSize.second /
+            (getCameraDistance(mapCompCamera->m_absoluteMapPositionPX,
+                               limitPoint, observerAngle) / LEVEL_TILE_SIZE_PX);
+    float diffDist = distanceLimit - distanceLink;
+
+    diffDist = (diffDist * diffLateralPosTotal / diffLateralPosLimit);
+
+    return (distanceLink + diffDist);
 }
 
 //===================================================================
