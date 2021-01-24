@@ -98,7 +98,7 @@ void updatePlayerArrow(const MoveableComponent &moveComp, PositionVertexComponen
 void updatePlayerConeVision(const MoveableComponent &moveComp, VisionComponent &visionComp)
 {
 
-    float degreeAngle= moveComp.m_degreeOrientation - (visionComp.m_coneVision / 2);
+    float degreeAngle= moveComp.m_degreeOrientation - HALF_CONE_VISION;
     float radiantAngle = getRadiantAngle(degreeAngle);
     if(visionComp.m_positionVertexComp.m_vertex.empty())
     {
@@ -110,7 +110,7 @@ void updatePlayerConeVision(const MoveableComponent &moveComp, VisionComponent &
             cos(radiantAngle) * PLAYER_RAY_DISPLAY * 5;//TEST
     visionComp.m_positionVertexComp.m_vertex[1].second = MAP_LOCAL_CENTER_Y_GL +
             sin(radiantAngle) * PLAYER_RAY_DISPLAY * 5;
-    radiantAngle = getRadiantAngle(degreeAngle + visionComp.m_coneVision);
+    radiantAngle = getRadiantAngle(degreeAngle + CONE_VISION);
     visionComp.m_positionVertexComp.m_vertex[2].first = MAP_LOCAL_CENTER_X_GL +
             cos(radiantAngle) * PLAYER_RAY_DISPLAY * 5;//TEST
     visionComp.m_positionVertexComp.m_vertex[2].second = MAP_LOCAL_CENTER_Y_GL +

@@ -167,7 +167,7 @@ void updateTriangleVisionFromPosition(VisionComponent *visionComp, const MapCoor
     visionComp->m_triangleVision[1] = mapComp->m_absoluteMapPositionPX;
     visionComp->m_triangleVision[2] = mapComp->m_absoluteMapPositionPX;
     //second point of view
-    float angleDegree = movComp->m_degreeOrientation - (visionComp->m_coneVision / 2);
+    float angleDegree = movComp->m_degreeOrientation - HALF_CONE_VISION;
     float radiantAngle;
     for(uint32_t i = 1; i < 3; ++i)
     {
@@ -178,6 +178,6 @@ void updateTriangleVisionFromPosition(VisionComponent *visionComp, const MapCoor
         {
             break;
         }
-        angleDegree += visionComp->m_coneVision;
+        angleDegree += CONE_VISION;
     }
 }

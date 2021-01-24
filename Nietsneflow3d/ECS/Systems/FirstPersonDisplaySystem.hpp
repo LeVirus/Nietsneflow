@@ -86,8 +86,7 @@ float getQuarterAngle(float angle);
 uint32_t getMaxValueFromEntries(const float distance[4]);
 uint32_t getMinValueFromEntries(const float distance[4]);
 std::optional<uint32_t> getLimitIndex(const bool pointIn[], const float distanceReal[], uint32_t i);
-float getFPSLateralGLPosFromAngle(float leftAngleVision, const pairFloat_t &pointA,
-                    const pairFloat_t &pointB);
+float getFPSLateralGLPosFromAngle(float leftAngleVision, const pairFloat_t &observerPoint,
+                                  const pairFloat_t &targetPoint);
 float calculateDepthGLAngleWallLimitDisplay(const pairFloat_t &outPoint, const pairFloat_t &linkPoint,
-                                float observerAngle, MapCoordComponent *mapCompCamera,
-                                VisionComponent *visionComp, SpriteTextureComponent *spriteComp);
+                                float observerAngle, MapCoordComponent *mapCompCamera, SpriteTextureComponent *spriteComp);
