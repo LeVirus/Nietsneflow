@@ -38,9 +38,9 @@ private:
     void treatCollisionCircleCircle(CollisionArgs &args,
                                     const CircleCollisionComponent &circleCollA,
                                     const CircleCollisionComponent &circleCollB);
-    void treatCollisionCircleSegment(CollisionArgs &args,
-                                     const CircleCollisionComponent &circleCollA,
-                                     const SegmentCollisionComponent &segmCollB);
+//    void treatCollisionCircleSegment(CollisionArgs &args,
+//                                     const CircleCollisionComponent &circleCollA,
+//                                     const SegmentCollisionComponent &segmCollB);
     void collisionEject(MapCoordComponent &mapComp,
                                      float diffX, float diffY);
     //Components accessors

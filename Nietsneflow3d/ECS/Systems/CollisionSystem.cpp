@@ -194,7 +194,7 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
                                  args.mapCompB.m_absoluteMapPositionPX, segmentCompB.m_secondPoint);
         if(collision)
         {
-            treatCollisionCircleSegment(args, circleCompA, segmentCompB);
+//            treatCollisionCircleSegment(args, circleCompA, segmentCompB);
         }
     }
         break;
@@ -402,12 +402,12 @@ void CollisionSystem::treatCollisionCircleCircle(CollisionArgs &args,
 }
 
 //===================================================================
-void CollisionSystem::treatCollisionCircleSegment(CollisionArgs &args,
-                                                  const CircleCollisionComponent &circleCollA,
-                                                  const SegmentCollisionComponent &segmCollB)
-{
+//void CollisionSystem::treatCollisionCircleSegment(CollisionArgs &args,
+//                                                  const CircleCollisionComponent &circleCollA,
+//                                                  const SegmentCollisionComponent &segmCollB)
+//{
 
-}
+//}
 
 
 
