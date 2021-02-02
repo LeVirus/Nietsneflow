@@ -107,14 +107,14 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
         for(uint32_t i = 0; i < angleToTreat; ++i)
         {
             lateralPos[i] = getFPSLateralGLPosFromAngle(observerAngle,
-                                                        mapCompA->m_absoluteMapPositionPX, absolPos[i])
-                    / HALF_CONE_VISION;
+                                                        mapCompA->m_absoluteMapPositionPX,
+                                                        absolPos[i]);
         }
         //conf screen position
         confWallEntityVertex(numEntity, visionComp, lateralPos, depthGL, (angleToTreat == 3));
-        uint32_t distance = (getCameraDistance(mapCompA->m_absoluteMapPositionPX,
-                                               absolPos[1], radiantObserverAngle) / LEVEL_TILE_SIZE_PX);
-        fillVertexFromEntity(numEntity, numIteration, distance, true);
+        float cameraDistance = (getCameraDistance(mapCompA->m_absoluteMapPositionPX,
+                                                  absolPos[1], radiantObserverAngle) / LEVEL_TILE_SIZE_PX);
+        fillVertexFromEntity(numEntity, numIteration, cameraDistance, true);
     }
     else
     {
@@ -132,7 +132,7 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
         }
         depthSimpleGL = spriteComp->m_glFpsSize.second / distance;
         float lateralPos = getFPSLateralGLPosFromAngle(observerAngle,
-                                         mapCompA->m_absoluteMapPositionPX, centerPosB) / HALF_CONE_VISION;
+                                                       mapCompA->m_absoluteMapPositionPX, centerPosB);
 
         confNormalEntityVertex(numEntity, visionComp, lateralPos, depthSimpleGL);
         fillVertexFromEntity(numEntity, numIteration, distance);
@@ -144,13 +144,15 @@ float getFPSLateralGLPosFromAngle(float centerAngleVision, const pairFloat_t &ob
                                   const pairFloat_t &targetPoint)
 {
     float trigoAngle = getTrigoAngle(observerPoint, targetPoint);
-    float lateralPos = centerAngleVision - trigoAngle;
-    if(std::abs(lateralPos) > 180.0f)
+    float elementAngle = centerAngleVision - trigoAngle;
+    if(std::abs(elementAngle ) > 180.0f)
     {
         trigoAngle = (trigoAngle > 180.0f) ? trigoAngle - 360.0f : trigoAngle + 360.0f;
-        lateralPos = centerAngleVision - trigoAngle;
+        elementAngle = centerAngleVision - trigoAngle;
     }
-    return lateralPos;
+    // Trigo calculate TOA divide by camera distance ::
+    // Op = (tan(angle) * cameraDist) / cameraDist == tan(angle)
+    return std::tan(getRadiantAngle(elementAngle));
 }
 
 //===================================================================
@@ -289,7 +291,7 @@ void FirstPersonDisplaySystem::fillWallEntitiesData(uint32_t numEntity, pairFloa
     float anglePoint;
     for(uint32_t i = 0; i < 3; ++i)
     {
-        anglePoint = getRadiantAngle(getTrigoAngle(mapCompCamera->m_absoluteMapPositionPX, absolPos[i]));
+        anglePoint = getTrigoAngle(mapCompCamera->m_absoluteMapPositionPX, absolPos[i], false);
         if(std::abs(anglePoint - observerAngle) > PI)
         {
             if(anglePoint < observerAngle)
@@ -572,7 +574,8 @@ void FirstPersonDisplaySystem::confNormalEntityVertex(uint32_t numEntity, Vision
 
 //===================================================================
 void FirstPersonDisplaySystem::confWallEntityVertex(uint32_t numEntity, VisionComponent *visionComp,
-                                                    float lateralPosDegree[], float depthGL[], bool wallAllVisible)
+                                                    float lateralPosDegree[], float depthGL[],
+                                                    bool wallAllVisible)
 {
     PositionVertexComponent *positionComp = stairwayToComponentManager().
             searchComponentByType<PositionVertexComponent>(numEntity, Components_e::POSITION_VERTEX_COMPONENT);
