@@ -133,7 +133,6 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
         depthSimpleGL = spriteComp->m_glFpsSize.second / distance;
         float lateralPos = getFPSLateralGLPosFromAngle(observerAngle,
                                                        mapCompA->m_absoluteMapPositionPX, centerPosB);
-
         confNormalEntityVertex(numEntity, visionComp, lateralPos, depthSimpleGL);
         fillVertexFromEntity(numEntity, numIteration, distance);
     }
@@ -144,12 +143,7 @@ float getFPSLateralGLPosFromAngle(float centerAngleVision, const pairFloat_t &ob
                                   const pairFloat_t &targetPoint)
 {
     float trigoAngle = getTrigoAngle(observerPoint, targetPoint);
-    float elementAngle = centerAngleVision - trigoAngle;
-    if(std::abs(elementAngle ) > 180.0f)
-    {
-        trigoAngle = (trigoAngle > 180.0f) ? trigoAngle - 360.0f : trigoAngle + 360.0f;
-        elementAngle = centerAngleVision - trigoAngle;
-    }
+    float elementAngle = std::fmod(centerAngleVision - trigoAngle, 90.0f);
     // Trigo calculate TOA divide by camera distance ::
     // Op = (tan(angle) * cameraDist) / cameraDist == tan(angle)
     return std::tan(getRadiantAngle(elementAngle));
@@ -319,28 +313,28 @@ void FirstPersonDisplaySystem::fillWallEntitiesData(uint32_t numEntity, pairFloa
     for(uint32_t i = 0; i < angleToTreat; ++i)
     {
         //standard case
-        if(pointIn[i])
+//        if(pointIn[i])
         {
             depthGL[i] = spriteComp->m_glFpsSize.second /
                     (getCameraDistance(mapCompCamera->m_absoluteMapPositionPX,
                                        absolPos[i], observerAngle) / LEVEL_TILE_SIZE_PX);
         }
         //out of screen limit case
-        else
-        {
-            if((angleToTreat != 2 && i != 1 && !pointIn[1]) ||
-                    (i == 2 && outLeft[2]) || (i == 0 && !outLeft[0]))
-            {
-                continue;
-            }
-            j = getLimitIndex(pointIn, distanceReal, i);
-            if(!j)
-            {
-                return;
-            }
-            depthGL[i] = calculateDepthGLAngleWallLimitDisplay(absolPos[i], absolPos[*j],
-                                                    observerAngle, mapCompCamera, spriteComp);
-        }
+//        else
+//        {
+//            if((angleToTreat != 2 && i != 1 && !pointIn[1]) ||
+//                    (i == 2 && outLeft[2]) || (i == 0 && !outLeft[0]))
+//            {
+//                continue;
+//            }
+//            j = getLimitIndex(pointIn, distanceReal, i);
+//            if(!j)
+//            {
+//                return;
+//            }
+//            depthGL[i] = calculateDepthGLAngleWallLimitDisplay(absolPos[i], absolPos[*j],
+//                                                    observerAngle, mapCompCamera, spriteComp);
+//        }
     }
 }
 
