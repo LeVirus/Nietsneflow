@@ -54,6 +54,7 @@ private:
                               MapCoordComponent *mapCompB, float observerAngle,
                               VisionComponent *visionComp, bool pointIn[],
                               bool outLeft[], uint32_t &angleToTreat);
+    //Fill data in sort of displaying wall from left to right
     void fillAbsolAndDistanceWall(pairFloat_t absolPos[], float distance[], MapCoordComponent *mapCompA,
                                   MapCoordComponent *mapCompB, uint32_t numEntity,
                                   uint32_t &distanceToTreat, VisionComponent *visionComp);
@@ -86,7 +87,12 @@ float getQuarterAngle(float angle);
 uint32_t getMaxValueFromEntries(const float distance[4]);
 uint32_t getMinValueFromEntries(const float distance[4]);
 std::optional<uint32_t> getLimitIndex(const bool pointIn[], const float distanceReal[], uint32_t i);
-float getFPSLateralGLPosFromAngle(float leftAngleVision, const pairFloat_t &observerPoint,
+float getFPSLateralGLPosFromAngle(float centerAngleVision, const pairFloat_t &observerPoint,
                                   const pairFloat_t &targetPoint);
+pairFloat_t getPairFPSLateralGLPosFromAngle(float centerAngleVision, const pairFloat_t &observerPoint,
+                                            const pairFloat_t &targetPointA, const pairFloat_t &targetPointB,
+                                            bool pointIn[], bool outLeft[]);
+float getLateralAngle(float centerAngleVision, float trigoAngle);
+float getIntersectCoord(const pairFloat_t &observerPoint, const pairFloat_t &targetPointA, float centerAngleVision, bool outLeft, bool YIntersect);
 float calculateDepthGLAngleWallLimitDisplay(const pairFloat_t &outPoint, const pairFloat_t &linkPoint,
-                                float observerAngle, MapCoordComponent *mapCompCamera, SpriteTextureComponent *spriteComp);
+                                            float observerAngle, MapCoordComponent *mapCompCamera, SpriteTextureComponent *spriteComp);

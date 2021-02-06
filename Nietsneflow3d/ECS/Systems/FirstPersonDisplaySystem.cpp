@@ -103,12 +103,23 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
         {
             return;
         }
+        pairFloat_t result;
         //calculate all 3 display position
-        for(uint32_t i = 0; i < angleToTreat; ++i)
+        for(uint32_t i = 1; i < angleToTreat; ++i)
         {
-            lateralPos[i] = getFPSLateralGLPosFromAngle(observerAngle,
-                                                        mapCompA->m_absoluteMapPositionPX,
-                                                        absolPos[i]);
+            result = getPairFPSLateralGLPosFromAngle(observerAngle,
+                                                     mapCompA->m_absoluteMapPositionPX,
+                                                     absolPos[i - 1], absolPos[i],
+                                                     &pointIn[i - 1], &leftLimit[i - 1]);
+            if(i == 1)
+            {
+                lateralPos[i - 1] = result.first;
+                lateralPos[i] = result.second;
+            }
+            else
+            {
+                lateralPos[i] = result.second;
+            }
         }
         //conf screen position
         confWallEntityVertex(numEntity, visionComp, lateralPos, depthGL, (angleToTreat == 3));
@@ -143,10 +154,161 @@ float getFPSLateralGLPosFromAngle(float centerAngleVision, const pairFloat_t &ob
                                   const pairFloat_t &targetPoint)
 {
     float trigoAngle = getTrigoAngle(observerPoint, targetPoint);
-    float elementAngle = std::fmod(centerAngleVision - trigoAngle, 90.0f);
+    float elementAngle = centerAngleVision - trigoAngle;
     // Trigo calculate TOA divide by camera distance ::
     // Op = (tan(angle) * cameraDist) / cameraDist == tan(angle)
     return std::tan(getRadiantAngle(elementAngle));
+}
+
+//===================================================================
+pairFloat_t getPairFPSLateralGLPosFromAngle(float centerAngleVision, const pairFloat_t &observerPoint,
+                                            const pairFloat_t &targetPointA, const pairFloat_t &targetPointB,
+                                            bool pointIn[], bool outLeft[])
+{
+    float resultA, resultB, intersectA, intersectB, diffIntersect, absLateralPosInside;
+    float trigoAngle;
+    bool YIntersect = (static_cast<int>(targetPointA.first) == static_cast<int>(targetPointB.first));
+    if(pointIn[0])
+    {
+        trigoAngle = getTrigoAngle(observerPoint, targetPointA);
+        //get lateral pos from angle
+        resultA = getLateralAngle(centerAngleVision, trigoAngle);
+    }
+    else
+    {
+        intersectA = getIntersectCoord(observerPoint, targetPointA, centerAngleVision, outLeft[0], YIntersect);
+    }
+    if(pointIn[1])
+    {
+        trigoAngle = getTrigoAngle(observerPoint, targetPointB);
+        //get lateral pos from angle
+        resultB = getLateralAngle(centerAngleVision, trigoAngle);
+    }
+    else
+    {
+        intersectB = getIntersectCoord(observerPoint, targetPointB, centerAngleVision, outLeft[1], YIntersect);
+    }
+    if(!pointIn[0] && pointIn[1])
+    {
+        if(YIntersect)
+        {
+            diffIntersect = std::abs(targetPointB.second - intersectA);
+        }
+        else
+        {
+            diffIntersect = std::abs(targetPointB.first - intersectA);
+        }
+        //calculate absolute diff position from inside position to left limit screen
+        absLateralPosInside = std::abs(resultB + 1.0f);
+        resultA = resultB - (LEVEL_TILE_SIZE_PX * absLateralPosInside) / diffIntersect;
+    }
+    else if(pointIn[0] && !pointIn[1])
+    {
+        if(YIntersect)
+        {
+            diffIntersect = std::abs(targetPointA.second - intersectB);
+        }
+        else
+        {
+            diffIntersect = std::abs(targetPointA.first - intersectB);
+        }
+        //calculate absolute diff position from inside position to left limit screen
+        absLateralPosInside = std::abs(resultA - 1.0f);
+        resultB = resultA + (LEVEL_TILE_SIZE_PX * absLateralPosInside) / diffIntersect;
+    }
+    return {resultA, resultB};
+}
+
+//===================================================================
+float getLateralAngle(float centerAngleVision, float trigoAngle)
+{
+    return std::tan(getRadiantAngle(centerAngleVision - trigoAngle));
+}
+
+//===================================================================
+float getIntersectCoord(const pairFloat_t &observerPoint, const pairFloat_t &targetPointA,
+                        float centerAngleVision, bool outLeft, bool YIntersect)
+{
+    float angle, adj, diffAngle;
+    Direction_e direction;
+    //X case
+    if(!YIntersect)
+    {
+        //look up
+        if(observerPoint.second > targetPointA.second)
+        {
+            std::cerr << centerAngleVision << " up\n";
+            angle = 90.0f;
+            direction = Direction_e::NORTH;
+        }
+        //look down
+        else
+        {
+            angle = 270.0f;
+            direction = Direction_e::SOUTH;
+        }
+        adj = std::abs(observerPoint.second - targetPointA.second);
+    }
+    //Y case
+    else
+    {
+        //look left
+        if(observerPoint.first > targetPointA.first)
+        {
+            angle = 180.0f;
+            direction = Direction_e::WEST;
+        }
+        //look right
+        else
+        {
+            angle = 0.0f;
+            direction = Direction_e::EAST;
+            if(std::abs(angle - centerAngleVision) > 180.0f)
+            {
+                centerAngleVision += 360.0f;
+            }
+        }
+        adj = std::abs(observerPoint.first - targetPointA.first);
+    }
+    bool observerAngleGreater = (centerAngleVision > angle);
+    //test left
+    if(outLeft)
+    {
+        diffAngle = getRadiantAngle(angle - std::fmod(centerAngleVision + 45.0f, 360.0f));
+    }
+    else
+    {
+        diffAngle = getRadiantAngle(angle - std::fmod(centerAngleVision - 45.0f, 360.0f));
+    }
+    float diff;
+    if(YIntersect)
+    {
+        if((observerAngleGreater && direction == Direction_e::WEST) ||
+                (!observerAngleGreater && direction == Direction_e::EAST))
+        {
+            diff = (adj * std::tan(diffAngle));
+        }
+        else
+        {
+            diff = -(adj * std::tan(diffAngle));
+
+        }
+        return (observerPoint.second + diff);
+    }
+    else
+    {
+        if((!observerAngleGreater && direction == Direction_e::NORTH) ||
+                (observerAngleGreater && direction == Direction_e::SOUTH))
+        {
+            diff = (adj * std::tan(diffAngle));
+        }
+        else
+        {
+            diff = -(adj * std::tan(diffAngle));
+
+        }
+        return (observerPoint.first + diff);
+    }
 }
 
 //===================================================================
