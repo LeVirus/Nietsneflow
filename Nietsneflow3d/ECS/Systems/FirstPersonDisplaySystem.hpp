@@ -51,15 +51,12 @@ private:
                             float observerAngle, uint32_t numIteration);
     void fillWallEntitiesData(uint32_t numEntity, pairFloat_t absolPos[], float distance[],
                               MapCoordComponent *mapCompCamera,
-                              MapCoordComponent *mapCompB, float observerAngle,
-                              VisionComponent *visionComp, bool pointIn[],
+                              MapCoordComponent *mapCompB, float observerAngle, bool pointIn[],
                               bool outLeft[], uint32_t &angleToTreat);
     //Fill data in sort of displaying wall from left to right
     void fillAbsolAndDistanceWall(pairFloat_t absolPos[], float distance[], MapCoordComponent *mapCompA,
                                   MapCoordComponent *mapCompB, uint32_t numEntity,
-                                  uint32_t &distanceToTreat, VisionComponent *visionComp);
-    bool angleWallVisible(const pairFloat_t &observerPoint, const pairFloat_t &angleWall,
-                          const std::vector<uint32_t> &vectEntities, uint32_t numEntity);
+                                  uint32_t &distanceToTreat);
     void confNormalEntityVertex(uint32_t numEntity,
                                 VisionComponent *visionComp, float lateralPosDegree, float depthGL);
     void confWallEntityVertex(uint32_t numEntity, VisionComponent *visionComp,
@@ -96,3 +93,4 @@ float getLateralAngle(float centerAngleVision, float trigoAngle);
 float getIntersectCoord(const pairFloat_t &observerPoint, const pairFloat_t &targetPointA, float centerAngleVision, bool outLeft, bool YIntersect);
 float calculateDepthGLAngleWallLimitDisplay(const pairFloat_t &outPoint, const pairFloat_t &linkPoint,
                                             float observerAngle, MapCoordComponent *mapCompCamera, SpriteTextureComponent *spriteComp);
+void treatLimitAngle(float &degreeAngleA, float &degreeAngleB);
