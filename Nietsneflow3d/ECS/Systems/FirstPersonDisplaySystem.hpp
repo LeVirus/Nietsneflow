@@ -49,12 +49,13 @@ private:
                             MapCoordComponent *mapCompB,
                             VisionComponent *visionComp, uint32_t &toRemove,
                             float observerAngle, uint32_t numIteration);
-    void fillWallEntitiesData(uint32_t numEntity, pairFloat_t absolPos[], float distance[],
+    void fillWallEntitiesData(uint32_t numEntity, pairFloat_t absolPos[], float distance[], VisionComponent *visionComp,
                               MapCoordComponent *mapCompCamera,
                               MapCoordComponent *mapCompB, float radiantObserverAngle, bool pointIn[],
                               bool outLeft[], uint32_t &angleToTreat);
     //Fill data in sort of displaying wall from left to right
-    void fillAbsolAndDistanceWall(pairFloat_t absolPos[], float distance[], MapCoordComponent *mapCompA,
+    void fillAbsolAndDistanceWall(pairFloat_t absolPos[], float distance[],
+                                  VisionComponent *visionComp, MapCoordComponent *mapCompA,
                                   MapCoordComponent *mapCompB, uint32_t numEntity,
                                   uint32_t &distanceToTreat, float degreeObserverAngle);
     void confNormalEntityVertex(uint32_t numEntity,
@@ -69,6 +70,9 @@ private:
                                                   const pairFloat_t &outPoint, const pairFloat_t &linkPoint,
                                                   bool leftLimit, bool XCase, float correction,
                                                   pairFloat_t &pointReturn);
+    //check if a wall rect is visible in terms of others wall
+    bool angleWallVisible(const pairFloat_t &observerPoint, const pairFloat_t &angleWall,
+                          const std::vector<uint32_t> &vectEntities, uint32_t numEntity);
 private:
     Shader *m_shader;
     std::multiset<EntityData> m_entitiesNumMem;
