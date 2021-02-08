@@ -51,12 +51,12 @@ private:
                             float observerAngle, uint32_t numIteration);
     void fillWallEntitiesData(uint32_t numEntity, pairFloat_t absolPos[], float distance[],
                               MapCoordComponent *mapCompCamera,
-                              MapCoordComponent *mapCompB, float observerAngle, bool pointIn[],
+                              MapCoordComponent *mapCompB, float radiantObserverAngle, bool pointIn[],
                               bool outLeft[], uint32_t &angleToTreat);
     //Fill data in sort of displaying wall from left to right
     void fillAbsolAndDistanceWall(pairFloat_t absolPos[], float distance[], MapCoordComponent *mapCompA,
                                   MapCoordComponent *mapCompB, uint32_t numEntity,
-                                  uint32_t &distanceToTreat);
+                                  uint32_t &distanceToTreat, float degreeObserverAngle);
     void confNormalEntityVertex(uint32_t numEntity,
                                 VisionComponent *visionComp, float lateralPosDegree, float depthGL);
     void confWallEntityVertex(uint32_t numEntity, VisionComponent *visionComp,
@@ -94,3 +94,4 @@ float getIntersectCoord(const pairFloat_t &observerPoint, const pairFloat_t &tar
 float calculateDepthGLAngleWallLimitDisplay(const pairFloat_t &outPoint, const pairFloat_t &linkPoint,
                                             float observerAngle, MapCoordComponent *mapCompCamera, SpriteTextureComponent *spriteComp);
 void treatLimitAngle(float &degreeAngleA, float &degreeAngleB);
+void removeSecondRect(pairFloat_t absolPos[], float distance[], uint32_t &distanceToTreat);

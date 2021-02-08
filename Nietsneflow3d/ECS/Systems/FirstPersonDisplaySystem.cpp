@@ -293,7 +293,7 @@ float getIntersectCoord(const pairFloat_t &observerPoint, const pairFloat_t &tar
 //===================================================================
 void FirstPersonDisplaySystem::fillAbsolAndDistanceWall(pairFloat_t absolPos[], float distance[],
                                                         MapCoordComponent *mapCompCamera, MapCoordComponent *mapCompWall,
-                                                        uint32_t numEntity, uint32_t &distanceToTreat)
+                                                        uint32_t numEntity, uint32_t &distanceToTreat, float degreeObserverAngle)
 {
     RectangleCollisionComponent *rectComp = stairwayToComponentManager().
             searchComponentByType<RectangleCollisionComponent>(numEntity, Components_e::RECTANGLE_COLLISION_COMPONENT);
@@ -307,7 +307,6 @@ void FirstPersonDisplaySystem::fillAbsolAndDistanceWall(pairFloat_t absolPos[], 
                    mapCompWall->m_absoluteMapPositionPX.second + rectComp->m_size.second};
     absolPos[3] = {mapCompWall->m_absoluteMapPositionPX.first,
                    mapCompWall->m_absoluteMapPositionPX.second + rectComp->m_size.second};
-
     //up left
     distance[0] = getDistance(mapCompCamera->m_absoluteMapPositionPX, absolPos[0]);
     //up right
@@ -331,7 +330,6 @@ void FirstPersonDisplaySystem::fillAbsolAndDistanceWall(pairFloat_t absolPos[], 
         std::swap(distance[3], distance[maxVal]);
         std::swap(absolPos[3], absolPos[maxVal]);
     }
-
     float trigoAngleA =  getTrigoAngle(mapCompCamera->m_absoluteMapPositionPX, absolPos[0]),
             trigoAngleB =  getTrigoAngle(mapCompCamera->m_absoluteMapPositionPX, absolPos[1]),
             trigoAngleC =  getTrigoAngle(mapCompCamera->m_absoluteMapPositionPX, absolPos[2]);
@@ -346,20 +344,36 @@ void FirstPersonDisplaySystem::fillAbsolAndDistanceWall(pairFloat_t absolPos[], 
     if((trigoAngleA < trigoAngleB && trigoAngleB < trigoAngleC) ||
             (trigoAngleA > trigoAngleB && trigoAngleB > trigoAngleC))
     {
+        treatLimitAngle(trigoAngleB, degreeObserverAngle);
+        float currentElementAngle = degreeObserverAngle - trigoAngleB;
+        if(currentElementAngle < -45.0f)
+        {
+            removeSecondRect(absolPos, distance, distanceToTreat);
+        }
+        else if(currentElementAngle > 45.0f)
+        {
+            --distanceToTreat;
+        }
         return;
     }
     if(trigoAngleC >= trigoAngleB)
     {
         --distanceToTreat;
     }
-    if(trigoAngleB >= trigoAngleA)
+    else if(trigoAngleB >= trigoAngleA)
     {
-        std::swap(distance[0], distance[1]);
-        std::swap(absolPos[0], absolPos[1]);
-        std::swap(distance[1], distance[2]);
-        std::swap(absolPos[1], absolPos[2]);
-        --distanceToTreat;
+        removeSecondRect(absolPos, distance, distanceToTreat);
     }
+}
+
+//===================================================================
+void removeSecondRect(pairFloat_t absolPos[], float distance[], uint32_t &distanceToTreat)
+{
+    std::swap(distance[0], distance[1]);
+    std::swap(absolPos[0], absolPos[1]);
+    std::swap(distance[1], distance[2]);
+    std::swap(absolPos[1], absolPos[2]);
+    --distanceToTreat;
 }
 
 //===================================================================
@@ -381,11 +395,12 @@ void treatLimitAngle(float &degreeAngleA, float &degreeAngleB)
 //===================================================================
 void FirstPersonDisplaySystem::fillWallEntitiesData(uint32_t numEntity, pairFloat_t absolPos[], float depthGL[],
                                                     MapCoordComponent *mapCompCamera, MapCoordComponent *mapCompWall,
-                                                    float observerAngle,
+                                                    float radiantObserverAngle,
                                                     bool pointIn[], bool outLeft[], uint32_t &angleToTreat)
 {
     float distanceReal[4];
-    fillAbsolAndDistanceWall(absolPos, distanceReal, mapCompCamera, mapCompWall, numEntity, angleToTreat);
+    fillAbsolAndDistanceWall(absolPos, distanceReal, mapCompCamera, mapCompWall, numEntity,
+                             angleToTreat, getDegreeAngle(radiantObserverAngle));
     if(angleToTreat < 2)
     {
         return;
@@ -395,24 +410,24 @@ void FirstPersonDisplaySystem::fillWallEntitiesData(uint32_t numEntity, pairFloa
     for(uint32_t i = 0; i < 3; ++i)
     {
         anglePoint = getTrigoAngle(mapCompCamera->m_absoluteMapPositionPX, absolPos[i], false);
-        if(std::abs(anglePoint - observerAngle) > PI)
+        if(std::abs(anglePoint - radiantObserverAngle) > PI)
         {
-            if(anglePoint < observerAngle)
+            if(anglePoint < radiantObserverAngle)
             {
-                observerAngle -= PI_DOUBLE;
+                radiantObserverAngle -= PI_DOUBLE;
             }
             else
             {
-                observerAngle += PI_DOUBLE;
+                radiantObserverAngle += PI_DOUBLE;
             }
         }
-        pointAngleVision[i] = anglePoint - observerAngle;
+        pointAngleVision[i] = anglePoint - radiantObserverAngle;
         pointIn[i] = std::abs(pointAngleVision[i]) < PI_QUARTER;
 
         //mem limit left or right
         if(!pointIn[i])
         {
-            outLeft[i] = (anglePoint > observerAngle);
+            outLeft[i] = (anglePoint > radiantObserverAngle);
         }
     }
     SpriteTextureComponent *spriteComp = stairwayToComponentManager().
@@ -434,7 +449,7 @@ void FirstPersonDisplaySystem::fillWallEntitiesData(uint32_t numEntity, pairFloa
         {
             depthGL[i] = spriteComp->m_glFpsSize.second /
                     (getCameraDistance(mapCompCamera->m_absoluteMapPositionPX,
-                                       absolPos[i], observerAngle) / LEVEL_TILE_SIZE_PX);
+                                       absolPos[i], radiantObserverAngle) / LEVEL_TILE_SIZE_PX);
         }
         //out of screen limit case
 //        else
