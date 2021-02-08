@@ -96,9 +96,8 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
         bool leftLimit[3];
         uint32_t angleToTreat;
         //calculate distance
-        fillWallEntitiesData(numEntity, absolPos, depthGL,
-                             mapCompA, mapCompB, radiantObserverAngle, pointIn,
-                             leftLimit, angleToTreat);
+        fillWallEntitiesData(numEntity, absolPos, depthGL, mapCompA, mapCompB,
+                             radiantObserverAngle, pointIn, leftLimit, angleToTreat);
         if(angleToTreat < 2)
         {
             return;
@@ -214,7 +213,7 @@ pairFloat_t getPairFPSLateralGLPosFromAngle(float centerAngleVision, const pairF
         {
             diffIntersect = std::abs(targetPointA.first - intersectB);
         }
-        //calculate absolute diff position from inside position to left limit screen
+        //calculate absolute diff position from inside position to right limit screen
         absLateralPosInside = std::abs(resultA - 1.0f);
         resultB = resultA + (LEVEL_TILE_SIZE_PX * absLateralPosInside) / diffIntersect;
     }
@@ -249,7 +248,7 @@ float getIntersectCoord(const pairFloat_t &observerPoint, const pairFloat_t &tar
         {
             angle = 270.0f;
         }
-        adj = std::abs(observerPoint.second - targetPointA.second);
+        adj = observerPoint.second - targetPointA.second;
     }
     //Y case
     else
@@ -268,7 +267,7 @@ float getIntersectCoord(const pairFloat_t &observerPoint, const pairFloat_t &tar
                 centerAngleVision += 360.0f;
             }
         }
-        adj = std::abs(observerPoint.first - targetPointA.first);
+        adj = observerPoint.first - targetPointA.first;
     }
     if(outLeft)
     {
@@ -282,7 +281,7 @@ float getIntersectCoord(const pairFloat_t &observerPoint, const pairFloat_t &tar
     diff = (adj * std::tan(diffAngle));
     if(YIntersect)
     {
-        return (observerPoint.second + diff);
+        return (observerPoint.second - diff);
     }
     else
     {
