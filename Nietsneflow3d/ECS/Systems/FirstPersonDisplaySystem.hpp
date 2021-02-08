@@ -49,7 +49,7 @@ private:
                             MapCoordComponent *mapCompB,
                             VisionComponent *visionComp, uint32_t &toRemove,
                             float observerAngle, uint32_t numIteration);
-    void fillWallEntitiesData(uint32_t numEntity, pairFloat_t absolPos[], float distance[], VisionComponent *visionComp,
+    void fillWallEntitiesData(uint32_t numEntity, pairFloat_t absolPos[], VisionComponent *visionComp,
                               MapCoordComponent *mapCompCamera,
                               MapCoordComponent *mapCompB, float radiantObserverAngle, bool pointIn[],
                               bool outLeft[], uint32_t &angleToTreat);
@@ -73,6 +73,10 @@ private:
     //check if a wall rect is visible in terms of others wall
     bool angleWallVisible(const pairFloat_t &observerPoint, const pairFloat_t &angleWall,
                           const std::vector<uint32_t> &vectEntities, uint32_t numEntity);
+    void calculateDepthWallEntitiesData(uint32_t numEntity, uint32_t angleToTreat,
+                                        const bool pointIn[], const bool outLeft[], float depthGL[],
+                                        float radiantObserverAngle, const pairFloat_t absolPos[],
+                                        const MapCoordComponent *mapCompCamera);
 private:
     Shader *m_shader;
     std::multiset<EntityData> m_entitiesNumMem;
