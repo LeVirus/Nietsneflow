@@ -343,6 +343,18 @@ void FirstPersonDisplaySystem::fillAbsolAndDistanceWall(pairFloat_t absolPos[], 
     if((trigoAngleA < trigoAngleB && trigoAngleB < trigoAngleC) ||
             (trigoAngleA > trigoAngleB && trigoAngleB > trigoAngleC))
     {
+        if(!angleWallVisible(mapCompCamera->m_absoluteMapPositionPX, absolPos[2],
+                             visionComp->m_vectVisibleEntities, numEntity))
+        {
+            --distanceToTreat;
+            return;
+        }
+        if(!angleWallVisible(mapCompCamera->m_absoluteMapPositionPX, absolPos[0],
+                             visionComp->m_vectVisibleEntities, numEntity))
+        {
+            removeSecondRect(absolPos, distance, distanceToTreat);
+            return;
+        }
         treatLimitAngle(trigoAngleB, degreeObserverAngle);
         float currentElementAngle = degreeObserverAngle - trigoAngleB;
         if(currentElementAngle < -45.0f)
@@ -360,16 +372,6 @@ void FirstPersonDisplaySystem::fillAbsolAndDistanceWall(pairFloat_t absolPos[], 
         --distanceToTreat;
     }
     else if(trigoAngleB >= trigoAngleA)
-    {
-        removeSecondRect(absolPos, distance, distanceToTreat);
-    }
-    if(!angleWallVisible(mapCompCamera->m_absoluteMapPositionPX, absolPos[2],
-                         visionComp->m_vectVisibleEntities, numEntity))
-    {
-        --distanceToTreat;
-    }
-    if(!angleWallVisible(mapCompCamera->m_absoluteMapPositionPX, absolPos[0],
-                         visionComp->m_vectVisibleEntities, numEntity))
     {
         removeSecondRect(absolPos, distance, distanceToTreat);
     }
