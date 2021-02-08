@@ -98,30 +98,32 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
         //calculate distance
         fillWallEntitiesData(numEntity, absolPos, visionComp, mapCompA, mapCompB,
                              radiantObserverAngle, pointIn, outLeft, angleToTreat);
-        calculateDepthWallEntitiesData(numEntity, angleToTreat, pointIn, outLeft, depthGL,
-                                       radiantObserverAngle, absolPos, mapCompA);
         if(angleToTreat < 2)
         {
             return;
         }
         pairFloat_t result;
+        std::optional<float> firstResult;
         //calculate all 3 display position
         for(uint32_t i = 1; i < angleToTreat; ++i)
         {
             result = getPairFPSLateralGLPosFromAngle(observerAngle,
                                                      mapCompA->m_absoluteMapPositionPX,
                                                      absolPos[i - 1], absolPos[i],
-                                                     &pointIn[i - 1], &outLeft[i - 1]);
+                                                     &pointIn[i - 1], &outLeft[i - 1], firstResult);
             if(i == 1)
             {
                 lateralPos[i - 1] = result.first;
                 lateralPos[i] = result.second;
+                firstResult = result.second;
             }
             else
             {
                 lateralPos[i] = result.second;
             }
         }
+        calculateDepthWallEntitiesData(numEntity, angleToTreat, pointIn, outLeft, depthGL,
+                                       radiantObserverAngle, absolPos, mapCompA);
         //conf screen position
         confWallEntityVertex(numEntity, visionComp, lateralPos, depthGL, (angleToTreat == 3));
         float cameraDistance = (getCameraDistance(mapCompA->m_absoluteMapPositionPX,
@@ -210,21 +212,28 @@ float getFPSLateralGLPosFromAngle(float centerAngleVision, const pairFloat_t &ob
 //===================================================================
 pairFloat_t getPairFPSLateralGLPosFromAngle(float centerAngleVision, const pairFloat_t &observerPoint,
                                             const pairFloat_t &targetPointA, const pairFloat_t &targetPointB,
-                                            bool pointIn[], bool outLeft[])
+                                            bool pointIn[], bool outLeft[], std::optional<float> firstResult)
 {
     float resultA = 0.0f, resultB = 0.0f, intersectA = 0.0f, intersectB = 0.0f, diffIntersect, absLateralPosInside;
     float trigoAngle;
     bool YIntersect = (static_cast<int>(targetPointA.first) == static_cast<int>(targetPointB.first));
-    if(pointIn[0])
+    if(firstResult)
     {
-        trigoAngle = getTrigoAngle(observerPoint, targetPointA);
-        //get lateral pos from angle
-        resultA = getLateralAngle(centerAngleVision, trigoAngle);
+        resultA = *firstResult;
     }
     else
     {
-        intersectA = getIntersectCoord(observerPoint, targetPointA,
-                                       centerAngleVision, outLeft[0], YIntersect);
+        if(pointIn[0])
+        {
+            trigoAngle = getTrigoAngle(observerPoint, targetPointA);
+            //get lateral pos from angle
+            resultA = getLateralAngle(centerAngleVision, trigoAngle);
+        }
+        else
+        {
+            intersectA = getIntersectCoord(observerPoint, targetPointA,
+                                           centerAngleVision, outLeft[0], YIntersect);
+        }
     }
     if(pointIn[1])
     {

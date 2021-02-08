@@ -96,7 +96,7 @@ float getFPSLateralGLPosFromAngle(float centerAngleVision, const pairFloat_t &ob
                                   const pairFloat_t &targetPoint);
 pairFloat_t getPairFPSLateralGLPosFromAngle(float centerAngleVision, const pairFloat_t &observerPoint,
                                             const pairFloat_t &targetPointA, const pairFloat_t &targetPointB,
-                                            bool pointIn[], bool outLeft[]);
+                                            bool pointIn[], bool outLeft[], std::optional<float> firstResult);
 float getLateralAngle(float centerAngleVision, float trigoAngle);
 float getIntersectCoord(const pairFloat_t &observerPoint, const pairFloat_t &targetPointA, float centerAngleVision, bool outLeft, bool YIntersect);
 float calculateDepthGLAngleWallLimitDisplay(const pairFloat_t &outPoint, const pairFloat_t &linkPoint,
