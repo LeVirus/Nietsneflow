@@ -96,9 +96,9 @@ float getFPSLateralGLPosFromAngle(float centerAngleVision, const pairFloat_t &ob
                                   const pairFloat_t &targetPoint);
 pairFloat_t getPairFPSLateralGLPosFromAngle(float centerAngleVision, const pairFloat_t &observerPoint,
                                             const pairFloat_t &targetPointA, const pairFloat_t &targetPointB,
-                                            bool pointIn[], bool outLeft[], std::optional<float> firstResult);
+                                            bool pointIn[], bool outLeft[], std::optional<float> &firstResult, std::optional<float> &intersectPoint);
 float getLateralAngle(float centerAngleVision, float trigoAngle);
-float getIntersectCoord(const pairFloat_t &observerPoint, const pairFloat_t &targetPointA, float centerAngleVision, bool outLeft, bool YIntersect);
+pairFloat_t getIntersectCoord(const pairFloat_t &observerPoint, const pairFloat_t &targetPoint, float centerAngleVision, bool outLeft, bool YIntersect);
 float calculateDepthGLAngleWallLimitDisplay(const pairFloat_t &outPoint, const pairFloat_t &linkPoint,
                                             float observerAngle, MapCoordComponent *mapCompCamera, SpriteTextureComponent *spriteComp);
 void treatLimitAngle(float &degreeAngleA, float &degreeAngleB);

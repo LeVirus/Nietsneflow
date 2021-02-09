@@ -103,14 +103,43 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
             return;
         }
         pairFloat_t result;
-        std::optional<float> firstResult;
+        std::optional<float> firstResult, intersectValue;
+        bool YIntersect;
+        uint32_t outPoint;
+        std::optional<pairFloat_t> intersectPoint;
         //calculate all 3 display position
         for(uint32_t i = 1; i < angleToTreat; ++i)
         {
+            outPoint = -1;
+            intersectValue = std::nullopt;
+            YIntersect = (static_cast<int>(absolPos[i - 1].first) ==
+                          static_cast<int>(absolPos[i].first));
+            if(!pointIn[i])
+            {
+                outPoint = i;
+            }
+            else if(!pointIn[i - 1])
+            {
+                outPoint = i - 1;
+            }
+            if(outPoint != -1)
+            {
+                intersectPoint = getIntersectCoord(mapCompA->m_absoluteMapPositionPX, absolPos[outPoint],
+                                                   observerAngle, outLeft[outPoint], YIntersect);
+                if(YIntersect)
+                {
+                    intersectValue = (*intersectPoint).second;
+                }
+                else
+                {
+                    intersectValue = (*intersectPoint).first;
+                }
+            }
             result = getPairFPSLateralGLPosFromAngle(observerAngle,
                                                      mapCompA->m_absoluteMapPositionPX,
                                                      absolPos[i - 1], absolPos[i],
-                                                     &pointIn[i - 1], &outLeft[i - 1], firstResult);
+                                                     &pointIn[i - 1], &outLeft[i - 1],
+                                                     firstResult, intersectValue);
             if(i == 1)
             {
                 lateralPos[i - 1] = result.first;
@@ -212,7 +241,8 @@ float getFPSLateralGLPosFromAngle(float centerAngleVision, const pairFloat_t &ob
 //===================================================================
 pairFloat_t getPairFPSLateralGLPosFromAngle(float centerAngleVision, const pairFloat_t &observerPoint,
                                             const pairFloat_t &targetPointA, const pairFloat_t &targetPointB,
-                                            bool pointIn[], bool outLeft[], std::optional<float> firstResult)
+                                            bool pointIn[], bool outLeft[], std::optional<float> &firstResult,
+                                            std::optional<float> &intersectPoint)
 {
     float resultA = 0.0f, resultB = 0.0f, intersectA = 0.0f, intersectB = 0.0f, diffIntersect, absLateralPosInside;
     float trigoAngle;
@@ -231,8 +261,8 @@ pairFloat_t getPairFPSLateralGLPosFromAngle(float centerAngleVision, const pairF
         }
         else
         {
-            intersectA = getIntersectCoord(observerPoint, targetPointA,
-                                           centerAngleVision, outLeft[0], YIntersect);
+            assert(intersectPoint);
+            intersectA = *intersectPoint;
         }
     }
     if(pointIn[1])
@@ -243,8 +273,8 @@ pairFloat_t getPairFPSLateralGLPosFromAngle(float centerAngleVision, const pairF
     }
     else
     {
-        intersectB = getIntersectCoord(observerPoint, targetPointB,
-                                       centerAngleVision, outLeft[1], YIntersect);
+        assert(intersectPoint);
+        intersectB = *intersectPoint;
     }
     if(!pointIn[0] && pointIn[1])
     {
@@ -285,15 +315,15 @@ float getLateralAngle(float centerAngleVision, float trigoAngle)
 }
 
 //===================================================================
-float getIntersectCoord(const pairFloat_t &observerPoint, const pairFloat_t &targetPointA,
-                        float centerAngleVision, bool outLeft, bool YIntersect)
+pairFloat_t getIntersectCoord(const pairFloat_t &observerPoint, const pairFloat_t &targetPoint,
+                              float centerAngleVision, bool outLeft, bool YIntersect)
 {
     float angle, adj, diffAngle;
     //X case
     if(!YIntersect)
     {
         //look up
-        if(observerPoint.second > targetPointA.second)
+        if(observerPoint.second > targetPoint.second)
         {
             angle = 90.0f;
         }
@@ -302,13 +332,13 @@ float getIntersectCoord(const pairFloat_t &observerPoint, const pairFloat_t &tar
         {
             angle = 270.0f;
         }
-        adj = observerPoint.second - targetPointA.second;
+        adj = observerPoint.second - targetPoint.second;
     }
     //Y case
     else
     {
         //look left
-        if(observerPoint.first > targetPointA.first)
+        if(observerPoint.first > targetPoint.first)
         {
             angle = 180.0f;
         }
@@ -321,7 +351,7 @@ float getIntersectCoord(const pairFloat_t &observerPoint, const pairFloat_t &tar
                 centerAngleVision += 360.0f;
             }
         }
-        adj = observerPoint.first - targetPointA.first;
+        adj = observerPoint.first - targetPoint.first;
     }
     if(outLeft)
     {
@@ -335,11 +365,11 @@ float getIntersectCoord(const pairFloat_t &observerPoint, const pairFloat_t &tar
     diff = (adj * std::tan(diffAngle));
     if(YIntersect)
     {
-        return (observerPoint.second - diff);
+        return {targetPoint.first, (observerPoint.second - diff)};
     }
     else
     {
-        return (observerPoint.first + diff);
+        return {(observerPoint.first + diff), targetPoint.second};
     }
 }
 
