@@ -189,7 +189,6 @@ void FirstPersonDisplaySystem::calculateDepthWallEntitiesData(uint32_t numEntity
     SpriteTextureComponent *spriteComp = stairwayToComponentManager().
                 searchComponentByType<SpriteTextureComponent>(numEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
     assert(spriteComp);
-//    std::optional<uint32_t> j;
     for(uint32_t i = 0; i < angleToTreat; ++i)
     {
         if(!pointIn[i])
@@ -239,6 +238,11 @@ void FirstPersonDisplaySystem::calculateDepthWallEntitiesData(uint32_t numEntity
             else
             {
                 diffDist = std::abs((*intersectPoint).first - absolPos[linkPointNum].first);
+            }
+            //quickFix
+            if(diffDist <= 0.1f)
+            {
+                diffDist += 0.1f;
             }
             if(depthGL[linkPointNum] < distCamIntersect)
             {
@@ -462,13 +466,11 @@ void FirstPersonDisplaySystem::fillAbsolAndDistanceWall(pairFloat_t absolPos[], 
                              visionComp->m_vectVisibleEntities, numEntity))
         {
             --distanceToTreat;
-            return;
         }
         if(!angleWallVisible(mapCompCamera->m_absoluteMapPositionPX, absolPos[0],
                              visionComp->m_vectVisibleEntities, numEntity))
         {
             removeSecondRect(absolPos, distance, distanceToTreat);
-            return;
         }
         treatLimitAngle(trigoAngleB, degreeObserverAngle);
         float currentElementAngle = degreeObserverAngle - trigoAngleB;
