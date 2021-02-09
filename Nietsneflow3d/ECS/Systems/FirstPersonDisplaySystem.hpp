@@ -76,7 +76,8 @@ private:
     void calculateDepthWallEntitiesData(uint32_t numEntity, uint32_t angleToTreat,
                                         const bool pointIn[], const bool outLeft[], float depthGL[],
                                         float radiantObserverAngle, const pairFloat_t absolPos[],
-                                        const MapCoordComponent *mapCompCamera);
+                                        const MapCoordComponent *mapCompCamera,
+                                        std::optional<pairFloat_t> intersectPoint);
 private:
     Shader *m_shader;
     std::multiset<EntityData> m_entitiesNumMem;
@@ -96,7 +97,7 @@ float getFPSLateralGLPosFromAngle(float centerAngleVision, const pairFloat_t &ob
                                   const pairFloat_t &targetPoint);
 pairFloat_t getPairFPSLateralGLPosFromAngle(float centerAngleVision, const pairFloat_t &observerPoint,
                                             const pairFloat_t &targetPointA, const pairFloat_t &targetPointB,
-                                            bool pointIn[], bool outLeft[], std::optional<float> &firstResult, std::optional<float> &intersectPoint);
+                                            bool pointIn[], std::optional<float> firstResult, std::optional<float> intersectPoint);
 float getLateralAngle(float centerAngleVision, float trigoAngle);
 pairFloat_t getIntersectCoord(const pairFloat_t &observerPoint, const pairFloat_t &targetPoint, float centerAngleVision, bool outLeft, bool YIntersect);
 float calculateDepthGLAngleWallLimitDisplay(const pairFloat_t &outPoint, const pairFloat_t &linkPoint,

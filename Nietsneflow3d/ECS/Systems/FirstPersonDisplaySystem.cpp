@@ -82,13 +82,13 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
 {
     float radiantObserverAngle = getRadiantAngle(observerAngle);
     uint32_t numEntity = visionComp->m_vectVisibleEntities[numIteration];
+    SpriteTextureComponent *spriteComp = stairwayToComponentManager().
+            searchComponentByType<SpriteTextureComponent>(
+                numEntity,
+                Components_e::SPRITE_TEXTURE_COMPONENT);
+    assert(spriteComp);
     if(genCollComp->m_tag == CollisionTag_e::WALL_CT)
     {
-        SpriteTextureComponent *spriteComp = stairwayToComponentManager().
-                searchComponentByType<SpriteTextureComponent>(
-                    numEntity,
-                    Components_e::SPRITE_TEXTURE_COMPONENT);
-        assert(spriteComp);
         float depthGL[4];
         pairFloat_t absolPos[4];
         float lateralPos[3];
@@ -138,7 +138,7 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
             result = getPairFPSLateralGLPosFromAngle(observerAngle,
                                                      mapCompA->m_absoluteMapPositionPX,
                                                      absolPos[i - 1], absolPos[i],
-                                                     &pointIn[i - 1], &outLeft[i - 1],
+                                                     &pointIn[i - 1],
                                                      firstResult, intersectValue);
             if(i == 1)
             {
@@ -152,7 +152,7 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
             }
         }
         calculateDepthWallEntitiesData(numEntity, angleToTreat, pointIn, outLeft, depthGL,
-                                       radiantObserverAngle, absolPos, mapCompA);
+                                       radiantObserverAngle, absolPos, mapCompA, intersectPoint);
         //conf screen position
         confWallEntityVertex(numEntity, visionComp, lateralPos, depthGL, (angleToTreat == 3));
         float cameraDistance = (getCameraDistance(mapCompA->m_absoluteMapPositionPX,
@@ -162,8 +162,6 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
     else
     {
         pairFloat_t centerPosB = getCenterPosition(mapCompB, genCollComp, numEntity);
-        SpriteTextureComponent *spriteComp = stairwayToComponentManager().
-                    searchComponentByType<SpriteTextureComponent>(numEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
         assert(spriteComp);
         float distance = getCameraDistance(mapCompA->m_absoluteMapPositionPX,
                                            mapCompB->m_absoluteMapPositionPX, radiantObserverAngle) / LEVEL_TILE_SIZE_PX;
@@ -185,7 +183,8 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
 void FirstPersonDisplaySystem::calculateDepthWallEntitiesData(uint32_t numEntity, uint32_t angleToTreat,
                                                               const bool pointIn[], const bool outLeft[], float depthGL[],
                                                               float radiantObserverAngle, const pairFloat_t absolPos[],
-                                                              const MapCoordComponent *mapCompCamera)
+                                                              const MapCoordComponent *mapCompCamera,
+                                                              std::optional<pairFloat_t> intersectPoint)
 {
     SpriteTextureComponent *spriteComp = stairwayToComponentManager().
                 searchComponentByType<SpriteTextureComponent>(numEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
@@ -202,28 +201,60 @@ void FirstPersonDisplaySystem::calculateDepthWallEntitiesData(uint32_t numEntity
             }
         }
         //standard case
-//        if(pointIn[i])
+        if(pointIn[i])
         {
             depthGL[i] = spriteComp->m_glFpsSize.second /
                     (getCameraDistance(mapCompCamera->m_absoluteMapPositionPX,
                                        absolPos[i], radiantObserverAngle) / LEVEL_TILE_SIZE_PX);
         }
         //out of screen limit case
-//        else
-//        {
-//            if((angleToTreat != 2 && i != 1 && !pointIn[1]) ||
-//                    (i == 2 && outLeft[2]) || (i == 0 && !outLeft[0]))
-//            {
-//                continue;
-//            }
-//            j = getLimitIndex(pointIn, distanceReal, i);
-//            if(!j)
-//            {
-//                return;
-//            }
-//            depthGL[i] = calculateDepthGLAngleWallLimitDisplay(absolPos[i], absolPos[*j],
-//                                                    radiantObserverAngle, mapCompCamera, spriteComp);
-//        }
+        else
+        {
+            assert(intersectPoint);
+            bool increment = false;
+            uint32_t linkPointNum;
+            if(outLeft[i])
+            {
+                linkPointNum = i + 1;
+                depthGL[linkPointNum] = spriteComp->m_glFpsSize.second /
+                        (getCameraDistance(mapCompCamera->m_absoluteMapPositionPX,
+                                           absolPos[linkPointNum], radiantObserverAngle) / LEVEL_TILE_SIZE_PX);
+                increment = true;
+            }
+            else
+            {
+                linkPointNum = i - 1;
+            }
+            bool Yintersect = (static_cast<int>(absolPos[linkPointNum].first) ==
+                               static_cast<int>((*intersectPoint).first));
+            float diffDist, diffCamDist,
+            distCamIntersect = spriteComp->m_glFpsSize.second /
+                    (getCameraDistance(mapCompCamera->m_absoluteMapPositionPX,
+                                       *intersectPoint, radiantObserverAngle) / LEVEL_TILE_SIZE_PX);
+            diffCamDist = std::abs(distCamIntersect - depthGL[linkPointNum]);
+            if(Yintersect)
+            {
+                diffDist = std::abs((*intersectPoint).second - absolPos[linkPointNum].second);
+            }
+            else
+            {
+                diffDist = std::abs((*intersectPoint).first - absolPos[linkPointNum].first);
+            }
+            if(depthGL[linkPointNum] < distCamIntersect)
+            {
+                depthGL[i] = depthGL[linkPointNum] +
+                        (LEVEL_TILE_SIZE_PX * diffCamDist) / diffDist;
+            }
+            else
+            {
+                depthGL[i] = depthGL[linkPointNum] -
+                        (LEVEL_TILE_SIZE_PX * diffCamDist) / diffDist;
+            }
+            if(increment)
+            {
+                ++i;
+            }
+        }
     }
 }
 
@@ -241,8 +272,8 @@ float getFPSLateralGLPosFromAngle(float centerAngleVision, const pairFloat_t &ob
 //===================================================================
 pairFloat_t getPairFPSLateralGLPosFromAngle(float centerAngleVision, const pairFloat_t &observerPoint,
                                             const pairFloat_t &targetPointA, const pairFloat_t &targetPointB,
-                                            bool pointIn[], bool outLeft[], std::optional<float> &firstResult,
-                                            std::optional<float> &intersectPoint)
+                                            bool pointIn[], std::optional<float> firstResult,
+                                            std::optional<float> intersectPoint)
 {
     float resultA = 0.0f, resultB = 0.0f, intersectA = 0.0f, intersectB = 0.0f, diffIntersect, absLateralPosInside;
     float trigoAngle;
