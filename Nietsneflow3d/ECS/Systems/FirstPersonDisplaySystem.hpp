@@ -48,7 +48,7 @@ private:
     void treatDisplayEntity(GeneralCollisionComponent *genCollComp, MapCoordComponent *mapCompA,
                             MapCoordComponent *mapCompB,
                             VisionComponent *visionComp, uint32_t &toRemove,
-                            float observerAngle, uint32_t numIteration);
+                            float degreeObserverAngle, uint32_t numIteration);
     void fillWallEntitiesData(uint32_t numEntity, pairFloat_t absolPos[], VisionComponent *visionComp,
                               MapCoordComponent *mapCompCamera,
                               MapCoordComponent *mapCompB, float radiantObserverAngle, bool pointIn[],
@@ -93,14 +93,10 @@ float getQuarterAngle(float angle);
 uint32_t getMaxValueFromEntries(const float distance[4]);
 uint32_t getMinValueFromEntries(const float distance[4]);
 std::optional<uint32_t> getLimitIndex(const bool pointIn[], const float distanceReal[], uint32_t i);
-float getFPSLateralGLPosFromAngle(float centerAngleVision, const pairFloat_t &observerPoint,
-                                  const pairFloat_t &targetPoint);
 pairFloat_t getPairFPSLateralGLPosFromAngle(float centerAngleVision, const pairFloat_t &observerPoint,
                                             const pairFloat_t &targetPointA, const pairFloat_t &targetPointB,
                                             bool pointIn[], std::optional<float> firstResult, std::optional<float> intersectPoint);
 float getLateralAngle(float centerAngleVision, float trigoAngle);
 pairFloat_t getIntersectCoord(const pairFloat_t &observerPoint, const pairFloat_t &targetPoint, float centerAngleVision, bool outLeft, bool YIntersect);
-float calculateDepthGLAngleWallLimitDisplay(const pairFloat_t &outPoint, const pairFloat_t &linkPoint,
-                                            float observerAngle, MapCoordComponent *mapCompCamera, SpriteTextureComponent *spriteComp);
 void treatLimitAngle(float &degreeAngleA, float &degreeAngleB);
 void removeSecondRect(pairFloat_t absolPos[], float distance[], uint32_t &distanceToTreat);

@@ -78,9 +78,9 @@ void FirstPersonDisplaySystem::confCompVertexMemEntities()
 //===================================================================
 void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *genCollComp, MapCoordComponent *mapCompA,
                                                   MapCoordComponent *mapCompB, VisionComponent *visionComp,
-                                                  uint32_t &toRemove, float observerAngle, uint32_t numIteration)
+                                                  uint32_t &toRemove, float degreeObserverAngle, uint32_t numIteration)
 {
-    float radiantObserverAngle = getRadiantAngle(observerAngle);
+    float radiantObserverAngle = getRadiantAngle(degreeObserverAngle);
     uint32_t numEntity = visionComp->m_vectVisibleEntities[numIteration];
     SpriteTextureComponent *spriteComp = stairwayToComponentManager().
             searchComponentByType<SpriteTextureComponent>(
@@ -125,7 +125,7 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
             if(outPoint != -1)
             {
                 intersectPoint = getIntersectCoord(mapCompA->m_absoluteMapPositionPX, absolPos[outPoint],
-                                                   observerAngle, outLeft[outPoint], YIntersect);
+                                                   degreeObserverAngle, outLeft[outPoint], YIntersect);
                 if(YIntersect)
                 {
                     intersectValue = (*intersectPoint).second;
@@ -135,7 +135,7 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
                     intersectValue = (*intersectPoint).first;
                 }
             }
-            result = getPairFPSLateralGLPosFromAngle(observerAngle,
+            result = getPairFPSLateralGLPosFromAngle(degreeObserverAngle,
                                                      mapCompA->m_absoluteMapPositionPX,
                                                      absolPos[i - 1], absolPos[i],
                                                      &pointIn[i - 1],
@@ -172,8 +172,9 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
             return;
         }
         depthSimpleGL = spriteComp->m_glFpsSize.second / distance;
-        float lateralPos = getFPSLateralGLPosFromAngle(observerAngle,
-                                                       mapCompA->m_absoluteMapPositionPX, centerPosB);
+        float trigoAngle = getTrigoAngle(mapCompA->m_absoluteMapPositionPX, centerPosB);
+        //get lateral pos from angle
+        float lateralPos = getLateralAngle(degreeObserverAngle, trigoAngle);
         confNormalEntityVertex(numEntity, visionComp, lateralPos, depthSimpleGL);
         fillVertexFromEntity(numEntity, numIteration, distance);
     }
@@ -260,17 +261,6 @@ void FirstPersonDisplaySystem::calculateDepthWallEntitiesData(uint32_t numEntity
             }
         }
     }
-}
-
-//===================================================================
-float getFPSLateralGLPosFromAngle(float centerAngleVision, const pairFloat_t &observerPoint,
-                                  const pairFloat_t &targetPoint)
-{
-    float trigoAngle = getTrigoAngle(observerPoint, targetPoint);
-    float elementAngle = centerAngleVision - trigoAngle;
-    // Trigo calculate TOA divide by camera distance ::
-    // Op = (tan(angle) * cameraDist) / cameraDist == tan(angle)
-    return std::tan(getRadiantAngle(elementAngle));
 }
 
 //===================================================================
@@ -600,46 +590,6 @@ void FirstPersonDisplaySystem::fillWallEntitiesData(uint32_t numEntity, pairFloa
             outLeft[i] = (anglePoint > radiantObserverAngle);
         }
     }
-}
-
-//===================================================================
-float calculateDepthGLAngleWallLimitDisplay(const pairFloat_t &outPoint, const pairFloat_t &linkPoint,
-                                            float observerAngle, MapCoordComponent *mapCompCamera,
-                                            SpriteTextureComponent *spriteComp)
-{
-    pairFloat_t limitPoint = linkPoint;
-    //X case
-    if(std::abs(outPoint.first - linkPoint.first) > EPSILON_FLOAT)
-    {
-        //if out > link
-        limitPoint.first = (outPoint.first > linkPoint.first) ?
-                    limitPoint.first + 1.0f : limitPoint.first - 1.0f;
-    }
-    //Y case
-    else
-    {
-        //if out > link
-        limitPoint.second = (outPoint.second > linkPoint.second) ?
-                    limitPoint.second + 1.0f : limitPoint.second - 1.0f;
-    }
-    float lateralPosLink = getFPSLateralGLPosFromAngle(observerAngle, mapCompCamera->m_absoluteMapPositionPX, linkPoint);
-    float lateralPosGLXLink = lateralPosLink / DOUBLE_CONE_VISION;
-    float lateralPosLimit = getFPSLateralGLPosFromAngle(observerAngle, mapCompCamera->m_absoluteMapPositionPX, limitPoint);
-    float lateralPosGLXLimit = lateralPosLimit / DOUBLE_CONE_VISION;
-    float lateralPosOut = getFPSLateralGLPosFromAngle(observerAngle, mapCompCamera->m_absoluteMapPositionPX, outPoint);
-    float lateralPosGLXOut = lateralPosOut / DOUBLE_CONE_VISION;
-    float diffLateralPosTotal = std::abs(lateralPosGLXOut - lateralPosGLXLink);
-    float diffLateralPosLimit = std::abs(lateralPosGLXLimit - lateralPosGLXLink);
-    float distanceLink = spriteComp->m_glFpsSize.second /
-            (getCameraDistance(mapCompCamera->m_absoluteMapPositionPX,
-                               linkPoint, observerAngle) / LEVEL_TILE_SIZE_PX);
-    //get Link point camera distance
-    float distanceLimit = spriteComp->m_glFpsSize.second /
-            (getCameraDistance(mapCompCamera->m_absoluteMapPositionPX,
-                               limitPoint, observerAngle) / LEVEL_TILE_SIZE_PX);
-    float diffDist = distanceLimit - distanceLink;
-    diffDist = (diffDist * diffLateralPosTotal / diffLateralPosLimit);
-    return (distanceLink + diffDist);
 }
 
 //===================================================================
