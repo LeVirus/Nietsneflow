@@ -140,7 +140,7 @@ inline const float MAP_LOCAL_SIZE_GL = 0.50f;
 inline const float EMPTY_VALUE = -10000.0f;
 inline const float EPSILON_FLOAT = std::numeric_limits<float>::epsilon();
 inline const float TAN_PI_QUARTER = std::tan(45.0f);
-inline const float CONE_VISION = 90.0f;
+inline const float CONE_VISION = 60.0f;
 inline const float HALF_CONE_VISION = CONE_VISION / 2.0f;
 inline const float DOUBLE_CONE_VISION = CONE_VISION * 2.0f;
 

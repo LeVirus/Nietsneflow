@@ -330,13 +330,15 @@ pairFloat_t getPairFPSLateralGLPosFromAngle(float centerAngleVision, const pairF
         resultB = resultA + (LEVEL_TILE_SIZE_PX * absLateralPosInside) / diffIntersect;
     }
     //CASE NOT POSSIBLE NO NEED TO TREAT !pointIn[0] && !pointIn[1]
-    return {resultA, resultB};
+    return {resultA * 4.0f / 3.0f, resultB * 4.0f / 3.0f};
+    //ADAPT TO 60 degree vision angle
 }
 
 //===================================================================
 float getLateralAngle(float centerAngleVision, float trigoAngle)
 {
     return std::tan(getRadiantAngle(centerAngleVision - trigoAngle));
+//    return (centerAngleVision - trigoAngle) / HALF_CONE_VISION;
 }
 
 //===================================================================
