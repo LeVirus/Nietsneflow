@@ -95,7 +95,7 @@ uint32_t getMinValueFromEntries(const float distance[4]);
 std::optional<uint32_t> getLimitIndex(const bool pointIn[], const float distanceReal[], uint32_t i);
 pairFloat_t getPairFPSLateralGLPosFromAngle(float centerAngleVision, const pairFloat_t &observerPoint,
                                             const pairFloat_t &targetPointA, const pairFloat_t &targetPointB,
-                                            bool pointIn[], std::optional<float> firstResult, std::optional<float> intersectPoint);
+                                            std::optional<float> firstResult);
 float getLateralAngle(float centerAngleVision, float trigoAngle);
 pairFloat_t getIntersectCoord(const pairFloat_t &observerPoint, const pairFloat_t &targetPoint, float centerAngleVision, bool outLeft, bool YIntersect);
 void treatLimitAngle(float &degreeAngleA, float &degreeAngleB);
