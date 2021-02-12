@@ -76,8 +76,7 @@ private:
     void calculateDepthWallEntitiesData(uint32_t numEntity, uint32_t angleToTreat,
                                         const bool pointIn[], const bool outLeft[], float depthGL[],
                                         float radiantObserverAngle, const pairFloat_t absolPos[],
-                                        const MapCoordComponent *mapCompCamera,
-                                        std::optional<pairFloat_t> intersectPoint);
+                                        const MapCoordComponent *mapCompCamera);
 private:
     Shader *m_shader;
     std::multiset<EntityData> m_entitiesNumMem;
@@ -93,10 +92,8 @@ float getQuarterAngle(float angle);
 uint32_t getMaxValueFromEntries(const float distance[4]);
 uint32_t getMinValueFromEntries(const float distance[4]);
 std::optional<uint32_t> getLimitIndex(const bool pointIn[], const float distanceReal[], uint32_t i);
-pairFloat_t getPairFPSLateralGLPosFromAngle(float centerAngleVision, const pairFloat_t &observerPoint,
-                                            const pairFloat_t &targetPointA, const pairFloat_t &targetPointB,
-                                            std::optional<float> firstResult);
 float getLateralAngle(float centerAngleVision, float trigoAngle);
-pairFloat_t getIntersectCoord(const pairFloat_t &observerPoint, const pairFloat_t &targetPoint, float centerAngleVision, bool outLeft, bool YIntersect);
+pairFloat_t getIntersectCoord(const pairFloat_t &observerPoint, const pairFloat_t &targetPoint,
+                              float centerAngleVision, bool outLeft, bool YIntersect);
 void treatLimitAngle(float &degreeAngleA, float &degreeAngleB);
 void removeSecondRect(pairFloat_t absolPos[], float distance[], uint32_t &distanceToTreat);
