@@ -147,7 +147,7 @@ void FirstPersonDisplaySystem::calculateDepthWallEntitiesData(uint32_t numEntity
     SpriteTextureComponent *spriteComp = stairwayToComponentManager().
                 searchComponentByType<SpriteTextureComponent>(numEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
     assert(spriteComp);
-    bool YIntersect;
+    bool YIntersect = false;
     int outPoint;
     float degreeObserverAngle = getDegreeAngle(radiantObserverAngle);
     pairFloat_t intersectPoint;
@@ -168,19 +168,12 @@ void FirstPersonDisplaySystem::calculateDepthWallEntitiesData(uint32_t numEntity
         {
             intersectPoint = getIntersectCoord(mapCompCamera->m_absoluteMapPositionPX, absolPos[outPoint],
                                                degreeObserverAngle, outLeft[outPoint], YIntersect);
+            break;
         }
     }
 
     for(uint32_t i = 0; i < angleToTreat; ++i)
     {
-        if(!pointIn[i])
-        {
-            if((angleToTreat != 2 && i != 1 && !pointIn[1]) ||
-                    (i == 2 && outLeft[2]) || (i == 0 && !outLeft[0]))
-            {
-                continue;
-            }
-        }
         //standard case
         if(pointIn[i])
         {
@@ -191,6 +184,11 @@ void FirstPersonDisplaySystem::calculateDepthWallEntitiesData(uint32_t numEntity
         //out of screen limit case
         else
         {
+            if((angleToTreat != 2 && i != 1 && !pointIn[1]) ||
+                    (i == 2 && outLeft[2]) || (i == 0 && !outLeft[0]))
+            {
+                continue;
+            }
             bool increment = false;
             uint32_t linkPointNum;
             if(outLeft[i])
@@ -205,14 +203,12 @@ void FirstPersonDisplaySystem::calculateDepthWallEntitiesData(uint32_t numEntity
             {
                 linkPointNum = i - 1;
             }
-            bool Yintersect = (static_cast<int>(absolPos[linkPointNum].first) ==
-                               static_cast<int>(intersectPoint.first));
             float diffDist, diffCamDist,
             distCamIntersect = spriteComp->m_glFpsSize.second /
                     (getCameraDistance(mapCompCamera->m_absoluteMapPositionPX,
                                        intersectPoint, radiantObserverAngle) / LEVEL_TILE_SIZE_PX);
             diffCamDist = std::abs(distCamIntersect - depthGL[linkPointNum]);
-            if(Yintersect)
+            if(YIntersect)
             {
                 diffDist = std::abs(intersectPoint.second - absolPos[linkPointNum].second);
             }
