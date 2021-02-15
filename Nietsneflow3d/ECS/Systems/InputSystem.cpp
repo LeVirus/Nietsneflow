@@ -4,6 +4,7 @@
 #include <ECS/Components/MapCoordComponent.hpp>
 #include <ECS/Components/PositionVertexComponent.hpp>
 #include <ECS/Components/VisionComponent.hpp>
+#include <ECS/Components/PlayerConfComponent.hpp>
 #include "PhysicalEngine.hpp"
 #include <cassert>
 
@@ -80,6 +81,18 @@ void InputSystem::treatPlayerInput()
                 moveComp->m_degreeOrientation -= 360.0f;
             }
             updatePlayerOrientation(*moveComp, *posComp, *visionComp);
+        }
+        PlayerConfComponent *playerComp = stairwayToComponentManager().
+                searchComponentByType<PlayerConfComponent>(mVectNumEntity[i],
+                                                         Components_e::PLAYER_CONF_COMPONENT);
+        assert(playerComp);
+        if (glfwGetKey(m_window, GLFW_KEY_SPACE) == GLFW_PRESS)
+        {
+            playerComp->m_playerAction = true;
+        }
+        else
+        {
+            playerComp->m_playerAction = false;
         }
     }
 }

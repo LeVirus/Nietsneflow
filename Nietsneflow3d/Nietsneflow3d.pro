@@ -80,5 +80,6 @@ HEADERS += \
     ECS/Components/GeneralCollisionComponent.hpp \
     ECS/Systems/FirstPersonDisplaySystem.hpp \
     ECS/Components/DoorComponent.hpp \
-    ECS/Systems/DoorSystem.hpp
+    ECS/Systems/DoorSystem.hpp \
+    ECS/Components/PlayerConfComponent.hpp
 

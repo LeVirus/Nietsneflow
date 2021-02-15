@@ -12,6 +12,7 @@
 #include <ECS/Components/RectangleCollisionComponent.hpp>
 #include <ECS/Components/DoorComponent.hpp>
 #include <ECS/Components/VisionComponent.hpp>
+#include <ECS/Components/PlayerConfComponent.hpp>
 #include <ECS/Components/MemSpriteDataComponent.hpp>
 #include <ECS/Components/TimerComponent.hpp>
 #include <ECS/Systems/ColorDisplaySystem.hpp>
@@ -211,6 +212,13 @@ void ECSManager::syncComponentsFromEntities(uint32_t numEntity,
                         std::make_unique<DoorComponent>());
         }
             break;
+        case Components_e::PLAYER_CONF_COMPONENT:
+        {
+            m_componentManager->instanciateExternComponent(numEntity,
+                        std::make_unique<PlayerConfComponent>());
+        }
+            break;
+
         case Components_e::TOTAL_COMPONENTS:
             assert("Bad enum.");
             break;

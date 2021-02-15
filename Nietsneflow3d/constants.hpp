@@ -27,6 +27,7 @@ enum Components_e
     VISION_COMPONENT,
     TIMER_COMPONENT,
     DOOR_COMPONENT,
+    PLAYER_CONF_COMPONENT,
     TOTAL_COMPONENTS
 };
 
@@ -114,6 +115,7 @@ enum class CollisionTag_e
 {
     PLAYER_CT,
     WALL_CT,
+    DOOR_CT,
     ENEMY_CT,
     BULLET_PLAYER_CT,
     BULLET_ENEMY_CT,

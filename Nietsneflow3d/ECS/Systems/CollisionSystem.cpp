@@ -6,6 +6,8 @@
 #include <ECS/Components/RectangleCollisionComponent.hpp>
 #include <ECS/Components/LineCollisionComponent.hpp>
 #include <ECS/Components/MoveableComponent.hpp>
+#include <ECS/Components/DoorComponent.hpp>
+#include <ECS/Components/PlayerConfComponent.hpp>
 #include <CollisionUtils.hpp>
 #include <PhysicalEngine.hpp>
 #include <cassert>
@@ -36,8 +38,8 @@ void CollisionSystem::execSystem()
         GeneralCollisionComponent *tagCompA = stairwayToComponentManager().
                 searchComponentByType<GeneralCollisionComponent>(mVectNumEntity[i],
                                                          Components_e::GENERAL_COLLISION_COMPONENT);
-        if(tagCompA->m_tag == CollisionTag_e::WALL_CT ||
-                tagCompA->m_tag == CollisionTag_e::OBJECT_CT)
+        if(tagCompA->m_tag == CollisionTag_e::WALL_CT || tagCompA->m_tag == CollisionTag_e::OBJECT_CT ||
+                tagCompA->m_tag == CollisionTag_e::DOOR_CT)
         {
             continue;
         }
@@ -65,6 +67,7 @@ void CollisionSystem::execSystem()
 void CollisionSystem::initArrayTag()
 {
     m_tagArray.insert({CollisionTag_e::PLAYER_CT, CollisionTag_e::WALL_CT});
+    m_tagArray.insert({CollisionTag_e::PLAYER_CT, CollisionTag_e::DOOR_CT});
     m_tagArray.insert({CollisionTag_e::PLAYER_CT, CollisionTag_e::ENEMY_CT});
     m_tagArray.insert({CollisionTag_e::PLAYER_CT, CollisionTag_e::BULLET_ENEMY_CT});
     m_tagArray.insert({CollisionTag_e::PLAYER_CT, CollisionTag_e::OBJECT_CT});
@@ -72,17 +75,25 @@ void CollisionSystem::initArrayTag()
     m_tagArray.insert({CollisionTag_e::ENEMY_CT, CollisionTag_e::BULLET_PLAYER_CT});
     m_tagArray.insert({CollisionTag_e::ENEMY_CT, CollisionTag_e::PLAYER_CT});
     m_tagArray.insert({CollisionTag_e::ENEMY_CT, CollisionTag_e::WALL_CT});
+    m_tagArray.insert({CollisionTag_e::ENEMY_CT, CollisionTag_e::DOOR_CT});
 
     m_tagArray.insert({CollisionTag_e::WALL_CT, CollisionTag_e::PLAYER_CT});
     m_tagArray.insert({CollisionTag_e::WALL_CT, CollisionTag_e::ENEMY_CT});
     m_tagArray.insert({CollisionTag_e::WALL_CT, CollisionTag_e::BULLET_ENEMY_CT});
     m_tagArray.insert({CollisionTag_e::WALL_CT, CollisionTag_e::BULLET_PLAYER_CT});
 
+    m_tagArray.insert({CollisionTag_e::DOOR_CT, CollisionTag_e::PLAYER_CT});
+    m_tagArray.insert({CollisionTag_e::DOOR_CT, CollisionTag_e::ENEMY_CT});
+    m_tagArray.insert({CollisionTag_e::DOOR_CT, CollisionTag_e::BULLET_ENEMY_CT});
+    m_tagArray.insert({CollisionTag_e::DOOR_CT, CollisionTag_e::BULLET_PLAYER_CT});
+
     m_tagArray.insert({CollisionTag_e::BULLET_ENEMY_CT, CollisionTag_e::PLAYER_CT});
     m_tagArray.insert({CollisionTag_e::BULLET_ENEMY_CT, CollisionTag_e::WALL_CT});
+    m_tagArray.insert({CollisionTag_e::BULLET_ENEMY_CT, CollisionTag_e::DOOR_CT});
 
     m_tagArray.insert({CollisionTag_e::BULLET_PLAYER_CT, CollisionTag_e::ENEMY_CT});
     m_tagArray.insert({CollisionTag_e::BULLET_PLAYER_CT, CollisionTag_e::WALL_CT});
+    m_tagArray.insert({CollisionTag_e::BULLET_PLAYER_CT, CollisionTag_e::DOOR_CT});
 
     m_tagArray.insert({CollisionTag_e::OBJECT_CT, CollisionTag_e::PLAYER_CT});
 }
@@ -273,6 +284,26 @@ void CollisionSystem::treatCollisionCircleRect(CollisionArgs &args,
                                   circleCollA.m_ray, radDegree,
                                   angleBehavior});
         collisionEject(mapComp, diffX, diffY);
+        PlayerConfComponent *playerComp = stairwayToComponentManager().
+                searchComponentByType<PlayerConfComponent>(args.entityNumA,
+                                                         Components_e::PLAYER_CONF_COMPONENT);
+        assert(playerComp);
+        if(args.tagCompB->m_tag == CollisionTag_e::DOOR_CT)
+        {
+            if(playerComp->m_playerAction)
+            {
+                DoorComponent *doorComp = stairwayToComponentManager().
+                        searchComponentByType<DoorComponent>(args.entityNumB,
+                                                             Components_e::DOOR_COMPONENT);
+                assert(doorComp);
+                if(doorComp->m_currentState == DoorState_e::STATIC_CLOSED ||
+                        doorComp->m_currentState == DoorState_e::MOVE_CLOSE)
+                {
+                    doorComp->m_currentState = DoorState_e::MOVE_OPEN;
+                }
+                playerComp->m_playerAction = false;
+            }
+        }
     }
 }
 

@@ -87,7 +87,7 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
                 numEntity,
                 Components_e::SPRITE_TEXTURE_COMPONENT);
     assert(spriteComp);
-    if(genCollComp->m_tag == CollisionTag_e::WALL_CT)
+    if(genCollComp->m_tag == CollisionTag_e::WALL_CT || genCollComp->m_tag == CollisionTag_e::DOOR_CT)
     {
         float depthGL[4];
         pairFloat_t absolPos[4];

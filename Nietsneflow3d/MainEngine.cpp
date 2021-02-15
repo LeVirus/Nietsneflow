@@ -139,7 +139,10 @@ void MainEngine::loadDoorEntities(const LevelManager &levelManager)
             uint32_t numEntity = createDoorEntity();
             confBaseComponent(numEntity, memSpriteData, doorData[i].m_TileGamePosition[j],
                               CollisionShape_e::RECTANGLE_C);
-
+            GeneralCollisionComponent *tagComp = m_ecsManager.getComponentManager().
+                    searchComponentByType<GeneralCollisionComponent>(numEntity, Components_e::GENERAL_COLLISION_COMPONENT);
+            assert(tagComp);
+            tagComp->m_tag = CollisionTag_e::DOOR_CT;
             MapCoordComponent *mapComp = m_ecsManager.getComponentManager().
                     searchComponentByType<MapCoordComponent>(numEntity, Components_e::MAP_COORD_COMPONENT);
             assert(mapComp);
@@ -345,6 +348,7 @@ void MainEngine::loadPlayerEntity(const Level &level)
     bitsetComponents[Components_e::CIRCLE_COLLISION_COMPONENT] = true;
     bitsetComponents[Components_e::GENERAL_COLLISION_COMPONENT] = true;
     bitsetComponents[Components_e::VISION_COMPONENT] = true;
+    bitsetComponents[Components_e::PLAYER_CONF_COMPONENT] = true;
     uint32_t entityNum = m_ecsManager.addEntity(bitsetComponents);
     confPlayerEntity(entityNum, level);
     //notify player entity number
