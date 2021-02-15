@@ -149,6 +149,7 @@ void FirstPersonDisplaySystem::calculateDepthWallEntitiesData(uint32_t numEntity
     assert(spriteComp);
     bool YIntersect = false;
     int outPoint;
+    int inPoint = -1;
     float degreeObserverAngle = getDegreeAngle(radiantObserverAngle);
     pairFloat_t intersectPoint;
     for(uint32_t i = 1; i < angleToTreat; ++i)
@@ -159,10 +160,12 @@ void FirstPersonDisplaySystem::calculateDepthWallEntitiesData(uint32_t numEntity
         if(!pointIn[i])
         {
             outPoint = i;
+            inPoint = i - 1;
         }
         else if(!pointIn[i - 1])
         {
             outPoint = i - 1;
+            inPoint = i;
         }
         if(outPoint != -1)
         {
@@ -190,40 +193,34 @@ void FirstPersonDisplaySystem::calculateDepthWallEntitiesData(uint32_t numEntity
                 continue;
             }
             bool increment = false;
-            uint32_t linkPointNum;
             if(outLeft[i])
             {
-                linkPointNum = i + 1;
-                depthGL[linkPointNum] = spriteComp->m_glFpsSize.second /
+                depthGL[inPoint] = spriteComp->m_glFpsSize.second /
                         (getCameraDistance(mapCompCamera->m_absoluteMapPositionPX,
-                                           absolPos[linkPointNum], radiantObserverAngle) / LEVEL_TILE_SIZE_PX);
+                                           absolPos[inPoint], radiantObserverAngle) / LEVEL_TILE_SIZE_PX);
                 increment = true;
-            }
-            else
-            {
-                linkPointNum = i - 1;
             }
             float diffDist, diffCamDist,
             distCamIntersect = spriteComp->m_glFpsSize.second /
                     (getCameraDistance(mapCompCamera->m_absoluteMapPositionPX,
                                        intersectPoint, radiantObserverAngle) / LEVEL_TILE_SIZE_PX);
-            diffCamDist = std::abs(distCamIntersect - depthGL[linkPointNum]);
+            diffCamDist = std::abs(distCamIntersect - depthGL[inPoint]);
             if(YIntersect)
             {
-                diffDist = std::abs(intersectPoint.second - absolPos[linkPointNum].second);
+                diffDist = std::abs(intersectPoint.second - absolPos[inPoint].second);
             }
             else
             {
-                diffDist = std::abs(intersectPoint.first - absolPos[linkPointNum].first);
+                diffDist = std::abs(intersectPoint.first - absolPos[inPoint].first);
             }
-            if(depthGL[linkPointNum] < distCamIntersect)
+            if(depthGL[inPoint] < distCamIntersect)
             {
-                depthGL[i] = depthGL[linkPointNum] +
+                depthGL[i] = depthGL[inPoint] +
                         (LEVEL_TILE_SIZE_PX * diffCamDist) / diffDist;
             }
             else
             {
-                depthGL[i] = depthGL[linkPointNum] -
+                depthGL[i] = depthGL[inPoint] -
                         (LEVEL_TILE_SIZE_PX * diffCamDist) / diffDist;
             }
             if(increment)
