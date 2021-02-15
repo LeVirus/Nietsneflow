@@ -26,6 +26,7 @@ enum Components_e
     MOVEABLE_COMPONENT,
     VISION_COMPONENT,
     TIMER_COMPONENT,
+    DOOR_COMPONENT,
     TOTAL_COMPONENTS
 };
 
@@ -36,7 +37,8 @@ enum class Systems_e
     INPUT_SYSTEM,
     COLLISION_SYSTEM,
     FIRST_PERSON_DISPLAY_SYSTEM,
-    VISION_SYSTEM
+    VISION_SYSTEM,
+    DOOR_SYSTEM
 };
 
 enum class DisplayType_e

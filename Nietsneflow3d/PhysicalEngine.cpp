@@ -5,6 +5,7 @@
 #include <ECS/Components/MapCoordComponent.hpp>
 #include <ECS/Components/MoveableComponent.hpp>
 #include <ECS/Components/VisionComponent.hpp>
+#include <ECS/Systems/DoorSystem.hpp>
 
 
 //===================================================================
@@ -18,14 +19,16 @@ void PhysicalEngine::runIteration()
 {
     m_inputSystem->execSystem();
     m_collisionSystem->execSystem();
+    m_doorSystem->execSystem();
 }
 
 //===================================================================
-void PhysicalEngine::linkSystems(InputSystem *inputSystem,
-                                 CollisionSystem *collisionSystem)
+void PhysicalEngine::linkSystems(InputSystem *inputSystem, CollisionSystem *collisionSystem,
+                                 DoorSystem *doorSystem)
 {
     m_inputSystem = inputSystem;
     m_collisionSystem = collisionSystem;
+    m_doorSystem = doorSystem;
 }
 
 //===================================================================

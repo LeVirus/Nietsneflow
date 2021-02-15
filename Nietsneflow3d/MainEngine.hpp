@@ -28,6 +28,7 @@ private:
     void loadEnemiesEntities(const LevelManager &levelManager);
     void loadStaticElementEntities(const LevelManager &levelManager);
     uint32_t createWallEntity();
+    uint32_t createDoorEntity();
     uint32_t createEnemyEntity();
     void confBaseComponent(uint32_t entityNum, const SpriteData &memSpriteData,
                            const pairUI_t &coordLevel, CollisionShape_e collisionShape);

@@ -10,6 +10,7 @@
 #include <ECS/Components/CircleCollisionComponent.hpp>
 #include <ECS/Components/LineCollisionComponent.hpp>
 #include <ECS/Components/RectangleCollisionComponent.hpp>
+#include <ECS/Components/DoorComponent.hpp>
 #include <ECS/Components/VisionComponent.hpp>
 #include <ECS/Components/MemSpriteDataComponent.hpp>
 #include <ECS/Components/TimerComponent.hpp>
@@ -19,6 +20,7 @@
 #include <ECS/Systems/CollisionSystem.hpp>
 #include <ECS/Systems/FirstPersonDisplaySystem.hpp>
 #include <ECS/Systems/VisionSystem.hpp>
+#include <ECS/Systems/DoorSystem.hpp>
 #include <constants.hpp>
 #include <memory>
 #include <cassert>
@@ -46,6 +48,7 @@ void ECSManager::initSystems()
     m_systemManager->bAddExternSystem(std::make_unique<CollisionSystem>());
     m_systemManager->bAddExternSystem(std::make_unique<FirstPersonDisplaySystem>());
     m_systemManager->bAddExternSystem(std::make_unique<VisionSystem>(this));
+    m_systemManager->bAddExternSystem(std::make_unique<DoorSystem>());
 }
 
 
@@ -200,6 +203,12 @@ void ECSManager::syncComponentsFromEntities(uint32_t numEntity,
         {
             m_componentManager->instanciateExternComponent(numEntity,
                         std::make_unique<TimerComponent>());
+        }
+            break;
+        case Components_e::DOOR_COMPONENT:
+        {
+            m_componentManager->instanciateExternComponent(numEntity,
+                        std::make_unique<DoorComponent>());
         }
             break;
         case Components_e::TOTAL_COMPONENTS:

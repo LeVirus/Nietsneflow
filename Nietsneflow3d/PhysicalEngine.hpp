@@ -8,18 +8,20 @@ struct MoveableComponent;
 struct PositionVertexComponent;
 struct MapCoordComponent;
 struct VisionComponent;
+class DoorSystem;
 
 class PhysicalEngine
 {
 private:
     InputSystem *m_inputSystem = nullptr;
     CollisionSystem *m_collisionSystem = nullptr;
+    DoorSystem *m_doorSystem = nullptr;
 private:
 public:
     PhysicalEngine();
     void runIteration();
     void linkSystems(InputSystem *inputSystem,
-                     CollisionSystem * collisionSystem);
+                     CollisionSystem * collisionSystem, DoorSystem *doorSystem);
 };
 
 void moveElement(MoveableComponent &moveComp,

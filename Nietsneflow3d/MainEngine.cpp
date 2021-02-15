@@ -11,11 +11,13 @@
 #include <ECS/Components/GeneralCollisionComponent.hpp>
 #include <ECS/Components/MemSpriteDataComponent.hpp>
 #include <ECS/Components/VisionComponent.hpp>
+#include <ECS/Components/DoorComponent.hpp>
 #include <ECS/Systems/ColorDisplaySystem.hpp>
 #include <ECS/Systems/MapDisplaySystem.hpp>
 #include <ECS/Systems/CollisionSystem.hpp>
 #include <ECS/Systems/FirstPersonDisplaySystem.hpp>
 #include <ECS/Systems/VisionSystem.hpp>
+#include <ECS/Systems/DoorSystem.hpp>
 #include <LevelManager.hpp>
 #include <cassert>
 
@@ -134,7 +136,7 @@ void MainEngine::loadDoorEntities(const LevelManager &levelManager)
         const SpriteData &memSpriteData = levelManager.getPictureData().getSpriteData()[doorData[i].m_numSprite];
         for(uint32_t j = 0; j < doorData[i].m_TileGamePosition.size(); ++j)
         {
-            uint32_t numEntity = createWallEntity();
+            uint32_t numEntity = createDoorEntity();
             confBaseComponent(numEntity, memSpriteData, doorData[i].m_TileGamePosition[j],
                               CollisionShape_e::RECTANGLE_C);
 
@@ -144,6 +146,9 @@ void MainEngine::loadDoorEntities(const LevelManager &levelManager)
             RectangleCollisionComponent *rectComp = m_ecsManager.getComponentManager().
                     searchComponentByType<RectangleCollisionComponent>(numEntity, Components_e::RECTANGLE_COLLISION_COMPONENT);
             assert(rectComp);
+            DoorComponent *doorComp = m_ecsManager.getComponentManager().
+                    searchComponentByType<DoorComponent>(numEntity, Components_e::DOOR_COMPONENT);
+            assert(doorComp);
             if(doorData[i].m_vertical)
             {
                 mapComp->m_absoluteMapPositionPX.first += DOOR_CASE_POS_PX;
@@ -154,6 +159,8 @@ void MainEngine::loadDoorEntities(const LevelManager &levelManager)
                 mapComp->m_absoluteMapPositionPX.second += DOOR_CASE_POS_PX;
                 rectComp->m_size = {LEVEL_TILE_SIZE_PX, WIDTH_DOOR_SIZE_PX};
             }
+            doorComp->m_vertical = doorData[i].m_vertical;
+            doorComp->m_initPosition = mapComp->m_absoluteMapPositionPX;
             memSpriteComp = m_ecsManager.getComponentManager().
                     searchComponentByType<MemSpriteDataComponent>(numEntity,
                                                                   Components_e::MEM_SPRITE_DATA_COMPONENT);
@@ -228,6 +235,20 @@ uint32_t MainEngine::createWallEntity()
     bitsetComponents[Components_e::RECTANGLE_COLLISION_COMPONENT] = true;
     bitsetComponents[Components_e::GENERAL_COLLISION_COMPONENT] = true;
 //    bitsetComponents[Components_e::MEM_SPRITE_DATA_COMPONENT] = true;
+    bitsetComponents[Components_e::TIMER_COMPONENT] = true;
+    return m_ecsManager.addEntity(bitsetComponents);
+}
+
+//===================================================================
+uint32_t MainEngine::createDoorEntity()
+{
+    std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComponents;
+    bitsetComponents[Components_e::POSITION_VERTEX_COMPONENT] = true;
+    bitsetComponents[Components_e::SPRITE_TEXTURE_COMPONENT] = true;
+    bitsetComponents[Components_e::MAP_COORD_COMPONENT] = true;
+    bitsetComponents[Components_e::RECTANGLE_COLLISION_COMPONENT] = true;
+    bitsetComponents[Components_e::GENERAL_COLLISION_COMPONENT] = true;
+    bitsetComponents[Components_e::DOOR_COMPONENT] = true;
     bitsetComponents[Components_e::TIMER_COMPONENT] = true;
     return m_ecsManager.addEntity(bitsetComponents);
 }
@@ -493,6 +514,8 @@ void MainEngine::linkSystemsToPhysicalEngine()
             searchSystemByType<InputSystem>(static_cast<uint32_t>(Systems_e::INPUT_SYSTEM));
     CollisionSystem *coll = m_ecsManager.getSystemManager().
             searchSystemByType<CollisionSystem>(static_cast<uint32_t>(Systems_e::COLLISION_SYSTEM));
+    DoorSystem *door = m_ecsManager.getSystemManager().
+            searchSystemByType<DoorSystem>(static_cast<uint32_t>(Systems_e::DOOR_SYSTEM));
     input->setGLWindow(m_graphicEngine.getGLWindow());
-    m_physicalEngine.linkSystems(input, coll);
+    m_physicalEngine.linkSystems(input, coll, door);
 }
