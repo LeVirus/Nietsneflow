@@ -87,6 +87,7 @@ void MainEngine::loadLevelEntities(const LevelManager &levelManager)
 {
     loadPlayerEntity(levelManager.getLevel());
     loadWallEntities(levelManager);
+    loadDoorEntities(levelManager);
     loadStaticElementEntities(levelManager);
     loadEnemiesEntities(levelManager);
 }
@@ -118,6 +119,49 @@ void MainEngine::loadWallEntities(const LevelManager &levelManager)
             {
                 memSpriteComp->m_vectSpriteData.emplace_back(&vectSprite[wallData[i].m_sprites[j]]);
             }
+        }
+    }
+}
+
+//===================================================================
+void MainEngine::loadDoorEntities(const LevelManager &levelManager)
+{
+    const std::vector<DoorData> &doorData = levelManager.getLevel().getDoorData();
+    MemSpriteDataComponent *memSpriteComp;
+    const std::vector<SpriteData> &vectSprite = levelManager.getPictureData().getSpriteData();
+    for(uint32_t i = 0; i < doorData.size(); ++i)
+    {
+        const SpriteData &memSpriteData = levelManager.getPictureData().getSpriteData()[doorData[i].m_numSprite];
+        for(uint32_t j = 0; j < doorData[i].m_TileGamePosition.size(); ++j)
+        {
+            uint32_t numEntity = createWallEntity();
+            confBaseComponent(numEntity, memSpriteData, doorData[i].m_TileGamePosition[j],
+                              CollisionShape_e::RECTANGLE_C);
+
+            MapCoordComponent *mapComp = m_ecsManager.getComponentManager().
+                    searchComponentByType<MapCoordComponent>(numEntity, Components_e::MAP_COORD_COMPONENT);
+            assert(mapComp);
+            RectangleCollisionComponent *rectComp = m_ecsManager.getComponentManager().
+                    searchComponentByType<RectangleCollisionComponent>(numEntity, Components_e::RECTANGLE_COLLISION_COMPONENT);
+            assert(rectComp);
+            if(doorData[i].m_vertical)
+            {
+                mapComp->m_absoluteMapPositionPX.first += DOOR_CASE_POS_PX;
+                rectComp->m_size = {WIDTH_DOOR_SIZE_PX, LEVEL_TILE_SIZE_PX};
+            }
+            else
+            {
+                mapComp->m_absoluteMapPositionPX.second += DOOR_CASE_POS_PX;
+                rectComp->m_size = {LEVEL_TILE_SIZE_PX, WIDTH_DOOR_SIZE_PX};
+            }
+            memSpriteComp = m_ecsManager.getComponentManager().
+                    searchComponentByType<MemSpriteDataComponent>(numEntity,
+                                                                  Components_e::MEM_SPRITE_DATA_COMPONENT);
+            if(!memSpriteComp)
+            {
+                continue;
+            }
+            memSpriteComp->m_vectSpriteData.emplace_back(&vectSprite[doorData[i].m_numSprite]);
         }
     }
 }

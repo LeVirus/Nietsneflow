@@ -155,8 +155,6 @@ void FirstPersonDisplaySystem::calculateDepthWallEntitiesData(uint32_t numEntity
     for(uint32_t i = 1; i < angleToTreat; ++i)
     {
         outPoint = -1;
-        YIntersect = (static_cast<int>(absolPos[i - 1].first) ==
-                      static_cast<int>(absolPos[i].first));
         if(!pointIn[i])
         {
             outPoint = i;
@@ -169,6 +167,8 @@ void FirstPersonDisplaySystem::calculateDepthWallEntitiesData(uint32_t numEntity
         }
         if(outPoint != -1)
         {
+            YIntersect = (static_cast<int>(absolPos[i - 1].first) ==
+                          static_cast<int>(absolPos[i].first));
             intersectPoint = getIntersectCoord(mapCompCamera->m_absoluteMapPositionPX, absolPos[outPoint],
                                                degreeObserverAngle, outLeft[outPoint], YIntersect);
             break;
@@ -213,15 +213,14 @@ void FirstPersonDisplaySystem::calculateDepthWallEntitiesData(uint32_t numEntity
             {
                 diffDist = std::abs(intersectPoint.first - absolPos[inPoint].first);
             }
+            float correctDepth = (LEVEL_TILE_SIZE_PX * diffCamDist) / diffDist;
             if(depthGL[inPoint] < distCamIntersect)
             {
-                depthGL[i] = depthGL[inPoint] +
-                        (LEVEL_TILE_SIZE_PX * diffCamDist) / diffDist;
+                depthGL[i] = depthGL[inPoint] + correctDepth;
             }
             else
             {
-                depthGL[i] = depthGL[inPoint] -
-                        (LEVEL_TILE_SIZE_PX * diffCamDist) / diffDist;
+                depthGL[i] = depthGL[inPoint] - correctDepth;
             }
             if(increment)
             {

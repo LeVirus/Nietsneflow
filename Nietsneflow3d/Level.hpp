@@ -71,6 +71,11 @@ public:
         return m_wallData;
     }
 
+    inline const std::vector<DoorData> &getDoorData()const
+    {
+        return m_doorData;
+    }
+
     inline const pairUI_t &getPlayerDeparture()const
     {
         return m_playerDeparture;
