@@ -129,12 +129,18 @@ void VerticesData::loadVertexTextureDrawByLineComponent(const PositionVertexComp
                                                         uint32_t lineDrawNumber, DoorComponent *doorComp)
 {
     assert(posComp.m_vertex.size() == 4 || posComp.m_vertex.size() == 6);
+    std::pair<bool, bool> boundDoorTexture;
+    if(doorComp)
+    {
+        boundDoorTexture.first = (doorComp->m_vertical == doorComp->m_verticalPosDisplay.first);
+        boundDoorTexture.second = (doorComp->m_vertical == doorComp->m_verticalPosDisplay.second);
+    }
     loadVertexTextureDrawByLineRect(posComp.m_vertex[0], posComp.m_vertex[1],
-                                    spriteComp, lineDrawNumber, doorComp);
+                                    spriteComp, lineDrawNumber, doorComp, boundDoorTexture.first);
     if(posComp.m_vertex.size() == 6)
     {
         loadVertexTextureDrawByLineRect(posComp.m_vertex[1], posComp.m_vertex[4],
-                                        spriteComp, lineDrawNumber, doorComp);
+                                        spriteComp, lineDrawNumber, doorComp, boundDoorTexture.second);
     }
 }
 
@@ -142,7 +148,8 @@ void VerticesData::loadVertexTextureDrawByLineComponent(const PositionVertexComp
 void VerticesData::loadVertexTextureDrawByLineRect(const pairFloat_t &firstPos,
                                                    const pairFloat_t &secondPos,
                                                    const SpriteTextureComponent &spriteComp,
-                                                   uint32_t lineDrawNumber, DoorComponent *doorComp)
+                                                   uint32_t lineDrawNumber, DoorComponent *doorComp,
+                                                   bool doorPosBound)
 {
     float lineDrawNumberFloat = static_cast<float>(lineDrawNumber);
     pairFloat_t stepPos;
@@ -150,7 +157,7 @@ void VerticesData::loadVertexTextureDrawByLineRect(const pairFloat_t &firstPos,
     stepPos.second = (secondPos.second - firstPos.second) / lineDrawNumberFloat;
     float stepTex;
     pairFloat_t posLateralText;
-    if(doorComp && doorComp->m_boundActive)
+    if(doorComp && doorComp->m_boundActive && doorPosBound)
     {
         assert(doorComp->m_spriteLateralBound.first <= doorComp->m_spriteLateralBound.second);
         float total = spriteComp.m_spriteData->m_texturePosVertex[1].first -

@@ -45,7 +45,7 @@ public:
 private:
     void setUsedComponents();
     void confCompVertexMemEntities();
-    void treatDoor(uint32_t doorEntity, MapCoordComponent *mapCompCamera, MapCoordComponent *mapCompDoor);
+    void treatDoor(uint32_t doorEntity, MapCoordComponent *mapCompCamera, MapCoordComponent *mapCompDoor, pairFloat_t absolPos[]);
     void treatDisplayEntity(GeneralCollisionComponent *genCollComp, MapCoordComponent *mapCompA,
                             MapCoordComponent *mapCompB,
                             VisionComponent *visionComp, uint32_t &toRemove,
@@ -66,7 +66,8 @@ private:
     void drawVertex();
     pairFloat_t getCenterPosition(MapCoordComponent const *mapComp,
                                   GeneralCollisionComponent *genCollComp, float numEntity);
-    void fillVertexFromEntity(uint32_t numEntity, uint32_t numIteration, float distance, DisplayMode_e displayMode);
+    void fillVertexFromEntity(uint32_t numEntity, uint32_t numIteration, float distance,
+                              DisplayMode_e displayMode);
     std::optional<pairFloat_t> checkLimitWallCase(const pairFloat_t &pointObserver, float limitObserverAngle,
                                                   const pairFloat_t &outPoint, const pairFloat_t &linkPoint,
                                                   bool leftLimit, bool XCase, float correction,

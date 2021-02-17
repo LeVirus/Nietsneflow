@@ -107,7 +107,7 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
         }
         if(genCollComp->m_tag == CollisionTag_e::DOOR_CT)
         {
-            treatDoor(numEntity, mapCompA, mapCompB);
+            treatDoor(numEntity, mapCompA, mapCompB, absolPos);
             displayMode = DisplayMode_e::DOOR_DM;
         }
         else
@@ -151,12 +151,18 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
 
 //===================================================================
 void FirstPersonDisplaySystem::treatDoor(uint32_t doorEntity, MapCoordComponent *mapCompCamera,
-                                         MapCoordComponent *mapCompDoor)
+                                         MapCoordComponent *mapCompDoor, pairFloat_t absolPos[])
 {
     DoorComponent *doorComp = stairwayToComponentManager().
             searchComponentByType<DoorComponent>(doorEntity,
                                                  Components_e::DOOR_COMPONENT);
     assert(doorComp);
+
+    //first rect is vertical?
+    doorComp->m_verticalPosDisplay.first = (absolPos[0].first == absolPos[1].first);
+    //second rect is vertical?
+    doorComp->m_verticalPosDisplay.second = (absolPos[1].first == absolPos[2].first);
+
     if(doorComp->m_currentState == DoorState_e::STATIC_CLOSED ||
             doorComp->m_currentState == DoorState_e::STATIC_OPEN)
     {
