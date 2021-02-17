@@ -40,7 +40,7 @@ void DoorSystem::execSystem()
             }
             continue;
         }
-        if(elapsed_seconds.count() > 0.2)
+        if(elapsed_seconds.count() > doorComp->m_speedMove)
         {
             treatDoorMovementSize(doorComp, mVectNumEntity[i]);
             timerComp->m_clock = std::chrono::system_clock::now();
@@ -59,7 +59,7 @@ void DoorSystem::treatDoorMovementSize(DoorComponent *doorComp, uint32_t entityN
     {
         if(doorComp->m_vertical)
         {
-            rectComp->m_size.second += doorComp->m_speedMove;
+            rectComp->m_size.second += 1.0f;
             if(rectComp->m_size.second >= LEVEL_TILE_SIZE_PX)
             {
                 doorComp->m_currentState = DoorState_e::STATIC_CLOSED;
@@ -68,7 +68,7 @@ void DoorSystem::treatDoorMovementSize(DoorComponent *doorComp, uint32_t entityN
         }
         else
         {
-            rectComp->m_size.first += doorComp->m_speedMove;
+            rectComp->m_size.first += 1.0f;
             if(rectComp->m_size.first >= LEVEL_TILE_SIZE_PX)
             {
                 doorComp->m_currentState = DoorState_e::STATIC_CLOSED;
@@ -80,7 +80,7 @@ void DoorSystem::treatDoorMovementSize(DoorComponent *doorComp, uint32_t entityN
     {
         if(doorComp->m_vertical)
         {
-            rectComp->m_size.second -= doorComp->m_speedMove;
+            rectComp->m_size.second -= 1.0f;
             if(rectComp->m_size.second <= 0.0f)
             {
                 doorComp->m_currentState = DoorState_e::STATIC_OPEN;
@@ -89,7 +89,7 @@ void DoorSystem::treatDoorMovementSize(DoorComponent *doorComp, uint32_t entityN
         }
         else
         {
-            rectComp->m_size.first -= doorComp->m_speedMove;
+            rectComp->m_size.first -= 1.0f;
             if(rectComp->m_size.first <= 0.0f)
             {
                 doorComp->m_currentState = DoorState_e::STATIC_OPEN;

@@ -19,7 +19,7 @@ struct DoorComponent : public ecs::Component
     }
     DoorState_e m_currentState = DoorState_e::STATIC_CLOSED;
     bool m_vertical;
-    float m_speedMove = 1.0f;
+    double m_speedMove = 0.01;
     pairFloat_t m_spriteLateralBound = {0.0f, 1.0f};
     bool m_boundActive = false;
     virtual ~DoorComponent() = default;
