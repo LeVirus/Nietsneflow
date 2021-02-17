@@ -111,6 +111,14 @@ enum class BaseShapeTypeGL_e
     NONE
 };
 
+enum class DisplayMode_e
+{
+    WALL_DM,
+    DOOR_DM,
+    STANDART_DM
+};
+
+
 enum class CollisionTag_e
 {
     PLAYER_CT,

@@ -8,6 +8,7 @@
 struct PositionVertexComponent;
 struct ColorVertexComponent;
 struct SpriteTextureComponent;
+struct DoorComponent;
 
 class Shader;
 
@@ -41,9 +42,9 @@ public:
                                             SpriteTextureComponent &spriteComp);
     void loadVertexTextureDrawByLineComponent(const PositionVertexComponent &posComp,
                                               const SpriteTextureComponent &spriteComp,
-                                              uint32_t lineDrawNumber);
+                                              uint32_t lineDrawNumber, DoorComponent *doorComp);
     void loadVertexTextureDrawByLineRect(const pairFloat_t &firstPos,
                                          const pairFloat_t &secondPos,
                                          const SpriteTextureComponent &spriteComp,
-                                         uint32_t lineDrawNumber);
+                                         uint32_t lineDrawNumber, DoorComponent *doorComp);
 };

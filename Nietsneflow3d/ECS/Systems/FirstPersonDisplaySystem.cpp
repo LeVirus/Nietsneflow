@@ -97,6 +97,7 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
         bool outLeft[3];
         float trigoAngle;
         uint32_t angleToTreat;
+        DisplayMode_e displayMode;
         //calculate distance
         fillWallEntitiesData(numEntity, absolPos, visionComp, mapCompA, mapCompB,
                              radiantObserverAngle, pointIn, outLeft, angleToTreat);
@@ -107,6 +108,11 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
         if(genCollComp->m_tag == CollisionTag_e::DOOR_CT)
         {
             treatDoor(numEntity, mapCompA, mapCompB, spriteComp);
+            displayMode = DisplayMode_e::DOOR_DM;
+        }
+        else
+        {
+            displayMode = DisplayMode_e::WALL_DM;
         }
         //calculate all 3 display position
         for(uint32_t i = 0; i < angleToTreat; ++i)
@@ -120,7 +126,7 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
         confWallEntityVertex(numEntity, visionComp, lateralPos, depthGL, (angleToTreat == 3));
         float cameraDistance = (getCameraDistance(mapCompA->m_absoluteMapPositionPX,
                                                   absolPos[1], radiantObserverAngle) / LEVEL_TILE_SIZE_PX);
-        fillVertexFromEntity(numEntity, numIteration, cameraDistance, true);
+        fillVertexFromEntity(numEntity, numIteration, cameraDistance, displayMode);
     }
     else
     {
@@ -139,7 +145,7 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
         //get lateral pos from angle
         float lateralPos = getLateralAngle(degreeObserverAngle, trigoAngle);
         confNormalEntityVertex(numEntity, visionComp, lateralPos, depthSimpleGL);
-        fillVertexFromEntity(numEntity, numIteration, distance);
+        fillVertexFromEntity(numEntity, numIteration, distance, DisplayMode_e::STANDART_DM);
     }
 }
 
@@ -154,7 +160,7 @@ void FirstPersonDisplaySystem::treatDoor(uint32_t doorEntity, MapCoordComponent 
     if(doorComp->m_currentState == DoorState_e::STATIC_CLOSED ||
             doorComp->m_currentState == DoorState_e::STATIC_OPEN)
     {
-        spriteCompDoor->m_boundActive = false;
+        doorComp->m_boundActive = false;
         return;
     }
     RectangleCollisionComponent *rectComp = stairwayToComponentManager().
@@ -163,7 +169,7 @@ void FirstPersonDisplaySystem::treatDoor(uint32_t doorEntity, MapCoordComponent 
     assert(rectComp);
     if(doorComp->m_vertical)
     {
-        spriteCompDoor->m_spriteLateralBound.first = 1.0f - rectComp->m_size.second / LEVEL_TILE_SIZE_PX;
+        doorComp->m_spriteLateralBound.first = 1.0f - rectComp->m_size.second / LEVEL_TILE_SIZE_PX;
         //gauche
         if(mapCompCamera->m_absoluteMapPositionPX.first < mapCompDoor->m_absoluteMapPositionPX.first)
         {
@@ -175,7 +181,7 @@ void FirstPersonDisplaySystem::treatDoor(uint32_t doorEntity, MapCoordComponent 
     }
     else
     {
-        spriteCompDoor->m_spriteLateralBound.second = 1.0f - rectComp->m_size.second / LEVEL_TILE_SIZE_PX;
+        doorComp->m_spriteLateralBound.second = 1.0f - rectComp->m_size.second / LEVEL_TILE_SIZE_PX;
         if(mapCompCamera->m_absoluteMapPositionPX.second < mapCompDoor->m_absoluteMapPositionPX.second)
         {
 
@@ -185,7 +191,7 @@ void FirstPersonDisplaySystem::treatDoor(uint32_t doorEntity, MapCoordComponent 
 
         }
     }
-    spriteCompDoor->m_boundActive = true;
+    doorComp->m_boundActive = true;
 }
 
 //===================================================================
@@ -655,7 +661,7 @@ float getQuarterAngle(float angle)
 
 //===================================================================
 void FirstPersonDisplaySystem::fillVertexFromEntity(uint32_t numEntity, uint32_t numIteration,
-                                                    float distance, bool wallTag)
+                                                    float distance, DisplayMode_e displayMode)
 {
     Shader_e shaderType = Shader_e::TEXTURE_S;
     //use 1 vertex for 1 sprite for beginning
@@ -684,16 +690,19 @@ void FirstPersonDisplaySystem::fillVertexFromEntity(uint32_t numEntity, uint32_t
     m_entitiesNumMem.insert(EntityData(distance,
                                        static_cast<Texture_e>(spriteComp->m_spriteData->m_textureNum),
                                        numIteration));
-    if(!wallTag)
+    if(displayMode == DisplayMode_e::STANDART_DM)
     {
         m_vectVerticesData[numIteration].
                 loadVertexStandartTextureComponent(*posComp, *spriteComp);
     }
     else
     {
+        DoorComponent *doorComp = nullptr;
+        doorComp = stairwayToComponentManager().
+                searchComponentByType<DoorComponent>(numEntity, Components_e::DOOR_COMPONENT);
         m_vectVerticesData[numIteration].
                 loadVertexTextureDrawByLineComponent(*posComp, *spriteComp,
-                                                     m_textureLineDrawNumber);
+                                                     m_textureLineDrawNumber, doorComp);
     }
 }
 

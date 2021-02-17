@@ -4,6 +4,7 @@
 #include <ECS/Components/PositionVertexComponent.hpp>
 #include <ECS/Components/ColorVertexComponent.hpp>
 #include <ECS/Components/SpriteTextureComponent.hpp>
+#include <ECS/Components/DoorComponent.hpp>
 #include <PictureData.hpp>
 #include <CollisionUtils.hpp>
 #include <numeric>
@@ -125,15 +126,15 @@ void VerticesData::loadVertexStandartTextureComponent(const PositionVertexCompon
 //===================================================================
 void VerticesData::loadVertexTextureDrawByLineComponent(const PositionVertexComponent &posComp,
                                                         const SpriteTextureComponent &spriteComp,
-                                                        uint32_t lineDrawNumber)
+                                                        uint32_t lineDrawNumber, DoorComponent *doorComp)
 {
     assert(posComp.m_vertex.size() == 4 || posComp.m_vertex.size() == 6);
     loadVertexTextureDrawByLineRect(posComp.m_vertex[0], posComp.m_vertex[1],
-                                    spriteComp, lineDrawNumber);
+                                    spriteComp, lineDrawNumber, doorComp);
     if(posComp.m_vertex.size() == 6)
     {
         loadVertexTextureDrawByLineRect(posComp.m_vertex[1], posComp.m_vertex[4],
-                                        spriteComp, lineDrawNumber);
+                                        spriteComp, lineDrawNumber, doorComp);
     }
 }
 
@@ -141,7 +142,7 @@ void VerticesData::loadVertexTextureDrawByLineComponent(const PositionVertexComp
 void VerticesData::loadVertexTextureDrawByLineRect(const pairFloat_t &firstPos,
                                                    const pairFloat_t &secondPos,
                                                    const SpriteTextureComponent &spriteComp,
-                                                   uint32_t lineDrawNumber)
+                                                   uint32_t lineDrawNumber, DoorComponent *doorComp)
 {
     float lineDrawNumberFloat = static_cast<float>(lineDrawNumber);
     pairFloat_t stepPos;
@@ -149,15 +150,15 @@ void VerticesData::loadVertexTextureDrawByLineRect(const pairFloat_t &firstPos,
     stepPos.second = (secondPos.second - firstPos.second) / lineDrawNumberFloat;
     float stepTex;
     pairFloat_t posLateralText;
-    if(spriteComp.m_boundActive)
+    if(doorComp && doorComp->m_boundActive)
     {
-        assert(spriteComp.m_spriteLateralBound.first <= spriteComp.m_spriteLateralBound.second);
+        assert(doorComp->m_spriteLateralBound.first <= doorComp->m_spriteLateralBound.second);
         float total = spriteComp.m_spriteData->m_texturePosVertex[1].first -
                 spriteComp.m_spriteData->m_texturePosVertex[0].first;
         posLateralText.first = spriteComp.m_spriteData->m_texturePosVertex[0].first +
-                spriteComp.m_spriteLateralBound.first * total;
+                doorComp->m_spriteLateralBound.first * total;
         posLateralText.second = spriteComp.m_spriteData->m_texturePosVertex[0].first +
-                spriteComp.m_spriteLateralBound.second * total;
+                doorComp->m_spriteLateralBound.second * total;
     }
     else
     {

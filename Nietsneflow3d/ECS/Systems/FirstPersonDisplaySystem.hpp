@@ -67,7 +67,7 @@ private:
     void drawVertex();
     pairFloat_t getCenterPosition(MapCoordComponent const *mapComp,
                                   GeneralCollisionComponent *genCollComp, float numEntity);
-    void fillVertexFromEntity(uint32_t numEntity, uint32_t numIteration, float distance, bool wallTag = false);
+    void fillVertexFromEntity(uint32_t numEntity, uint32_t numIteration, float distance, DisplayMode_e displayMode);
     std::optional<pairFloat_t> checkLimitWallCase(const pairFloat_t &pointObserver, float limitObserverAngle,
                                                   const pairFloat_t &outPoint, const pairFloat_t &linkPoint,
                                                   bool leftLimit, bool XCase, float correction,
