@@ -2,6 +2,8 @@
 
 #include <includesLib/BaseECS/system.hpp>
 
+struct DoorComponent;
+
 class DoorSystem : public ecs::System
 {
 public:
@@ -9,4 +11,5 @@ public:
     void execSystem()override;
 private:
     void setUsedComponents();
+    void treatDoorMovementSize(DoorComponent *doorComp, uint32_t entityNum);
 };

@@ -40,55 +40,61 @@ void DoorSystem::execSystem()
             }
             continue;
         }
-        if(elapsed_seconds.count() > 0.3)
+        if(elapsed_seconds.count() > 0.2)
         {
-            RectangleCollisionComponent *rectComp = stairwayToComponentManager().
-                    searchComponentByType<RectangleCollisionComponent>(mVectNumEntity[i],
-                                                                       Components_e::RECTANGLE_COLLISION_COMPONENT);
-            assert(rectComp);
-            if(doorComp->m_currentState == DoorState_e::MOVE_CLOSE)
-            {
-                if(doorComp->m_vertical)
-                {
-                    rectComp->m_size.second += doorComp->m_speedMove;
-                    if(rectComp->m_size.second >= LEVEL_TILE_SIZE_PX)
-                    {
-                        doorComp->m_currentState = DoorState_e::STATIC_CLOSED;
-                        rectComp->m_size.second = LEVEL_TILE_SIZE_PX;
-                    }
-                }
-                else
-                {
-                    rectComp->m_size.first += doorComp->m_speedMove;
-                    if(rectComp->m_size.first >= LEVEL_TILE_SIZE_PX)
-                    {
-                        doorComp->m_currentState = DoorState_e::STATIC_CLOSED;
-                        rectComp->m_size.first = LEVEL_TILE_SIZE_PX;
-                    }
-                }
-            }
-            else if(doorComp->m_currentState == DoorState_e::MOVE_OPEN)
-            {
-                if(doorComp->m_vertical)
-                {
-                    rectComp->m_size.second -= doorComp->m_speedMove;
-                    if(rectComp->m_size.second <= 0.0f)
-                    {
-                        doorComp->m_currentState = DoorState_e::STATIC_OPEN;
-                        rectComp->m_size.second = 0.0f;
-                    }
-                }
-                else
-                {
-                    rectComp->m_size.first -= doorComp->m_speedMove;
-                    if(rectComp->m_size.first <= 0.0f)
-                    {
-                        doorComp->m_currentState = DoorState_e::STATIC_OPEN;
-                        rectComp->m_size.first = 0.0f;
-                    }
-                }
-            }
+            treatDoorMovementSize(doorComp, mVectNumEntity[i]);
             timerComp->m_clock = std::chrono::system_clock::now();
+        }
+    }
+}
+
+//===================================================================
+void DoorSystem::treatDoorMovementSize(DoorComponent *doorComp, uint32_t entityNum)
+{
+    RectangleCollisionComponent *rectComp = stairwayToComponentManager().
+            searchComponentByType<RectangleCollisionComponent>(entityNum,
+                                                               Components_e::RECTANGLE_COLLISION_COMPONENT);
+    assert(rectComp);
+    if(doorComp->m_currentState == DoorState_e::MOVE_CLOSE)
+    {
+        if(doorComp->m_vertical)
+        {
+            rectComp->m_size.second += doorComp->m_speedMove;
+            if(rectComp->m_size.second >= LEVEL_TILE_SIZE_PX)
+            {
+                doorComp->m_currentState = DoorState_e::STATIC_CLOSED;
+                rectComp->m_size.second = LEVEL_TILE_SIZE_PX;
+            }
+        }
+        else
+        {
+            rectComp->m_size.first += doorComp->m_speedMove;
+            if(rectComp->m_size.first >= LEVEL_TILE_SIZE_PX)
+            {
+                doorComp->m_currentState = DoorState_e::STATIC_CLOSED;
+                rectComp->m_size.first = LEVEL_TILE_SIZE_PX;
+            }
+        }
+    }
+    else if(doorComp->m_currentState == DoorState_e::MOVE_OPEN)
+    {
+        if(doorComp->m_vertical)
+        {
+            rectComp->m_size.second -= doorComp->m_speedMove;
+            if(rectComp->m_size.second <= 0.0f)
+            {
+                doorComp->m_currentState = DoorState_e::STATIC_OPEN;
+                rectComp->m_size.second = 0.0f;
+            }
+        }
+        else
+        {
+            rectComp->m_size.first -= doorComp->m_speedMove;
+            if(rectComp->m_size.first <= 0.0f)
+            {
+                doorComp->m_currentState = DoorState_e::STATIC_OPEN;
+                rectComp->m_size.first = 0.0f;
+            }
         }
     }
 }
