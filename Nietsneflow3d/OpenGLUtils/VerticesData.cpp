@@ -79,12 +79,7 @@ void VerticesData::loadVertexStandartTextureComponent(const PositionVertexCompon
     //first rect 0  1   2   3
     for(uint32_t j = 0; j < 4; ++j)
     {
-        //add target screen position to buffer
-        m_vertexBuffer.emplace_back(posComp.m_vertex[j].first);
-        m_vertexBuffer.emplace_back(posComp.m_vertex[j].second);
-        //add texture position to buffer
-        m_vertexBuffer.emplace_back(spriteComp.m_spriteData->m_texturePosVertex[j].first);
-        m_vertexBuffer.emplace_back(spriteComp.m_spriteData->m_texturePosVertex[j].second);
+        addTexturePoint(posComp.m_vertex[j], spriteComp.m_spriteData->m_texturePosVertex[j]);
     }
     //treat second rect >> 1    4   5   2
     if(sizeVertex > 4)
@@ -108,10 +103,7 @@ void VerticesData::loadVertexStandartTextureComponent(const PositionVertexCompon
             {
                 k = 2;
             }
-            m_vertexBuffer.emplace_back(posComp.m_vertex[k].first);
-            m_vertexBuffer.emplace_back(posComp.m_vertex[k].second);
-            m_vertexBuffer.emplace_back(spriteComp.m_spriteData->m_texturePosVertex[j].first);
-            m_vertexBuffer.emplace_back(spriteComp.m_spriteData->m_texturePosVertex[j].second);
+            addTexturePoint(posComp.m_vertex[k], spriteComp.m_spriteData->m_texturePosVertex[j]);
         }
     }
     BaseShapeTypeGL_e shape;
