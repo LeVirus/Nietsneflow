@@ -107,7 +107,7 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
         }
         if(genCollComp->m_tag == CollisionTag_e::DOOR_CT)
         {
-            treatDoor(numEntity, mapCompA, mapCompB, spriteComp);
+            treatDoor(numEntity, mapCompA, mapCompB);
             displayMode = DisplayMode_e::DOOR_DM;
         }
         else
@@ -151,7 +151,7 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
 
 //===================================================================
 void FirstPersonDisplaySystem::treatDoor(uint32_t doorEntity, MapCoordComponent *mapCompCamera,
-                                         MapCoordComponent *mapCompDoor, SpriteTextureComponent *spriteCompDoor)
+                                         MapCoordComponent *mapCompDoor)
 {
     DoorComponent *doorComp = stairwayToComponentManager().
             searchComponentByType<DoorComponent>(doorEntity,
@@ -169,26 +169,28 @@ void FirstPersonDisplaySystem::treatDoor(uint32_t doorEntity, MapCoordComponent 
     assert(rectComp);
     if(doorComp->m_vertical)
     {
-        doorComp->m_spriteLateralBound.first = 1.0f - rectComp->m_size.second / LEVEL_TILE_SIZE_PX;
-        //gauche
+        //left
         if(mapCompCamera->m_absoluteMapPositionPX.first < mapCompDoor->m_absoluteMapPositionPX.first)
         {
+            doorComp->m_spriteLateralBound.first = 1.0f - rectComp->m_size.second / LEVEL_TILE_SIZE_PX;
         }
+        //right
         else
         {
-
+            doorComp->m_spriteLateralBound.second = rectComp->m_size.second / LEVEL_TILE_SIZE_PX;
         }
     }
     else
     {
-        doorComp->m_spriteLateralBound.second = 1.0f - rectComp->m_size.second / LEVEL_TILE_SIZE_PX;
+        //up
         if(mapCompCamera->m_absoluteMapPositionPX.second < mapCompDoor->m_absoluteMapPositionPX.second)
         {
-
+            doorComp->m_spriteLateralBound.second = rectComp->m_size.first / LEVEL_TILE_SIZE_PX;
         }
+        //down
         else
         {
-
+            doorComp->m_spriteLateralBound.first = 1.0f - rectComp->m_size.first / LEVEL_TILE_SIZE_PX;
         }
     }
     doorComp->m_boundActive = true;
