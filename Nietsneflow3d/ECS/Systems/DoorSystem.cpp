@@ -3,6 +3,7 @@
 #include <ECS/Components/DoorComponent.hpp>
 #include <ECS/Components/TimerComponent.hpp>
 #include <ECS/Components/MapCoordComponent.hpp>
+#include <ECS/Components/RectangleCollisionComponent.hpp>
 #include <cassert>
 
 //===================================================================
@@ -39,61 +40,57 @@ void DoorSystem::execSystem()
             }
             continue;
         }
-        if(elapsed_seconds.count() > 0.01)
+        if(elapsed_seconds.count() > 0.3)
         {
-            MapCoordComponent *mapComp = stairwayToComponentManager().
-                    searchComponentByType<MapCoordComponent>(mVectNumEntity[i],
-                                                             Components_e::MAP_COORD_COMPONENT);
-            assert(mapComp);
+            RectangleCollisionComponent *rectComp = stairwayToComponentManager().
+                    searchComponentByType<RectangleCollisionComponent>(mVectNumEntity[i],
+                                                                       Components_e::RECTANGLE_COLLISION_COMPONENT);
+            assert(rectComp);
             if(doorComp->m_currentState == DoorState_e::MOVE_CLOSE)
             {
                 if(doorComp->m_vertical)
                 {
-                    mapComp->m_absoluteMapPositionPX.second += doorComp->m_speedMove;
-                    if(mapComp->m_absoluteMapPositionPX.second >= doorComp->m_initPosition.second)
+                    rectComp->m_size.second += doorComp->m_speedMove;
+                    if(rectComp->m_size.second >= LEVEL_TILE_SIZE_PX)
                     {
                         doorComp->m_currentState = DoorState_e::STATIC_CLOSED;
-                        mapComp->m_absoluteMapPositionPX.second = doorComp->m_initPosition.second;
+                        rectComp->m_size.second = LEVEL_TILE_SIZE_PX;
                     }
                 }
                 else
                 {
-                    mapComp->m_absoluteMapPositionPX.first += doorComp->m_speedMove;
-                    if(mapComp->m_absoluteMapPositionPX.first >= doorComp->m_initPosition.first)
+                    rectComp->m_size.first += doorComp->m_speedMove;
+                    if(rectComp->m_size.first >= LEVEL_TILE_SIZE_PX)
                     {
                         doorComp->m_currentState = DoorState_e::STATIC_CLOSED;
-                        mapComp->m_absoluteMapPositionPX.first = doorComp->m_initPosition.first;
+                        rectComp->m_size.first = LEVEL_TILE_SIZE_PX;
                     }
                 }
             }
             else if(doorComp->m_currentState == DoorState_e::MOVE_OPEN)
             {
-                float openPosition;
                 if(doorComp->m_vertical)
                 {
-                    openPosition = doorComp->m_initPosition.second - LEVEL_TILE_SIZE_PX;
-                    mapComp->m_absoluteMapPositionPX.second -= doorComp->m_speedMove;
-                    if(mapComp->m_absoluteMapPositionPX.second <= openPosition)
+                    rectComp->m_size.second -= doorComp->m_speedMove;
+                    if(rectComp->m_size.second <= 0.0f)
                     {
                         doorComp->m_currentState = DoorState_e::STATIC_OPEN;
-                        mapComp->m_absoluteMapPositionPX.second = openPosition;
+                        rectComp->m_size.second = 0.0f;
                     }
                 }
                 else
                 {
-                    openPosition = doorComp->m_initPosition.first - LEVEL_TILE_SIZE_PX;
-                    mapComp->m_absoluteMapPositionPX.first -= doorComp->m_speedMove;
-                    if(mapComp->m_absoluteMapPositionPX.first <= openPosition)
+                    rectComp->m_size.first -= doorComp->m_speedMove;
+                    if(rectComp->m_size.first <= 0.0f)
                     {
                         doorComp->m_currentState = DoorState_e::STATIC_OPEN;
-                        mapComp->m_absoluteMapPositionPX.first = openPosition;
+                        rectComp->m_size.first = 0.0f;
                     }
                 }
             }
             timerComp->m_clock = std::chrono::system_clock::now();
         }
     }
-
 }
 
 //===================================================================

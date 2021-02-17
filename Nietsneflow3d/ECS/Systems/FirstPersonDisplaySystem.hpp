@@ -45,6 +45,8 @@ public:
 private:
     void setUsedComponents();
     void confCompVertexMemEntities();
+    void treatDoor(uint32_t doorEntity, MapCoordComponent *mapCompCamera, MapCoordComponent *mapCompDoor,
+                   SpriteTextureComponent *spriteCompDoor);
     void treatDisplayEntity(GeneralCollisionComponent *genCollComp, MapCoordComponent *mapCompA,
                             MapCoordComponent *mapCompB,
                             VisionComponent *visionComp, uint32_t &toRemove,

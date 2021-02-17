@@ -9,6 +9,4 @@ public:
     void execSystem()override;
 private:
     void setUsedComponents();
-private:
-
 };

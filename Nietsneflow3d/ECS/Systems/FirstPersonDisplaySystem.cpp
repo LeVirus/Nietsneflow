@@ -9,6 +9,7 @@
 #include <ECS/Components/MoveableComponent.hpp>
 #include <ECS/Components/SpriteTextureComponent.hpp>
 #include <ECS/Components/CircleCollisionComponent.hpp>
+#include <ECS/Components/DoorComponent.hpp>
 #include <PictureData.hpp>
 #include <cmath>
 
@@ -103,6 +104,10 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
         {
             return;
         }
+        if(genCollComp->m_tag == CollisionTag_e::DOOR_CT)
+        {
+            treatDoor(numEntity, mapCompA, mapCompB, spriteComp);
+        }
         //calculate all 3 display position
         for(uint32_t i = 0; i < angleToTreat; ++i)
         {
@@ -136,6 +141,51 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
         confNormalEntityVertex(numEntity, visionComp, lateralPos, depthSimpleGL);
         fillVertexFromEntity(numEntity, numIteration, distance);
     }
+}
+
+//===================================================================
+void FirstPersonDisplaySystem::treatDoor(uint32_t doorEntity, MapCoordComponent *mapCompCamera,
+                                         MapCoordComponent *mapCompDoor, SpriteTextureComponent *spriteCompDoor)
+{
+    DoorComponent *doorComp = stairwayToComponentManager().
+            searchComponentByType<DoorComponent>(doorEntity,
+                                                 Components_e::DOOR_COMPONENT);
+    assert(doorComp);
+    if(doorComp->m_currentState == DoorState_e::STATIC_CLOSED ||
+            doorComp->m_currentState == DoorState_e::STATIC_OPEN)
+    {
+        spriteCompDoor->m_boundActive = false;
+        return;
+    }
+    RectangleCollisionComponent *rectComp = stairwayToComponentManager().
+            searchComponentByType<RectangleCollisionComponent>(doorEntity,
+                                                               Components_e::RECTANGLE_COLLISION_COMPONENT);
+    assert(rectComp);
+    if(doorComp->m_vertical)
+    {
+        spriteCompDoor->m_spriteLateralBound.first = 1.0f - rectComp->m_size.second / LEVEL_TILE_SIZE_PX;
+        //gauche
+        if(mapCompCamera->m_absoluteMapPositionPX.first < mapCompDoor->m_absoluteMapPositionPX.first)
+        {
+        }
+        else
+        {
+
+        }
+    }
+    else
+    {
+        spriteCompDoor->m_spriteLateralBound.second = 1.0f - rectComp->m_size.second / LEVEL_TILE_SIZE_PX;
+        if(mapCompCamera->m_absoluteMapPositionPX.second < mapCompDoor->m_absoluteMapPositionPX.second)
+        {
+
+        }
+        else
+        {
+
+        }
+    }
+    spriteCompDoor->m_boundActive = true;
 }
 
 //===================================================================

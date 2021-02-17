@@ -156,13 +156,29 @@ void VerticesData::loadVertexTextureDrawByLineRect(const pairFloat_t &firstPos,
     stepPos.first = (secondPos.first - firstPos.first) / lineDrawNumberFloat;
     stepPos.second = (secondPos.second - firstPos.second) / lineDrawNumberFloat;
     float stepTex;
-    pairFloat_t currentTexPos = spriteComp.m_spriteData->m_texturePosVertex[0];
-    stepTex = (spriteComp.m_spriteData->m_texturePosVertex[1].first -
-            spriteComp.m_spriteData->m_texturePosVertex[0].first) /
+    pairFloat_t posLateralText;
+    if(spriteComp.m_boundActive)
+    {
+        assert(spriteComp.m_spriteLateralBound.first <= spriteComp.m_spriteLateralBound.second);
+        float total = spriteComp.m_spriteData->m_texturePosVertex[1].first -
+                spriteComp.m_spriteData->m_texturePosVertex[0].first;
+        posLateralText.first = spriteComp.m_spriteData->m_texturePosVertex[0].first +
+                spriteComp.m_spriteLateralBound.first * total;
+        posLateralText.second = spriteComp.m_spriteData->m_texturePosVertex[0].first +
+                spriteComp.m_spriteLateralBound.second * total;
+    }
+    else
+    {
+        posLateralText = {spriteComp.m_spriteData->m_texturePosVertex[0].first,
+                          spriteComp.m_spriteData->m_texturePosVertex[1].first};
+    }
+
+    pairFloat_t currentTexPos = {posLateralText.first, spriteComp.m_spriteData->m_texturePosVertex[0].second};
+    stepTex = (posLateralText.second - posLateralText.first) /
             lineDrawNumberFloat;
     float memDownTexture = spriteComp.m_spriteData->m_texturePosVertex[2].second;
     pairFloat_t currentPos = firstPos, currentPreviousPos, currentPreviousTexPos;
-    while(currentTexPos.first < spriteComp.m_spriteData->m_texturePosVertex[1].first &&
+    while(currentTexPos.first < posLateralText.second &&
           currentPos.first < 1.0f)
     {
         //up left

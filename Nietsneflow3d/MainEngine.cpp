@@ -163,7 +163,6 @@ void MainEngine::loadDoorEntities(const LevelManager &levelManager)
                 rectComp->m_size = {LEVEL_TILE_SIZE_PX, WIDTH_DOOR_SIZE_PX};
             }
             doorComp->m_vertical = doorData[i].m_vertical;
-            doorComp->m_initPosition = mapComp->m_absoluteMapPositionPX;
             memSpriteComp = m_ecsManager.getComponentManager().
                     searchComponentByType<MemSpriteDataComponent>(numEntity,
                                                                   Components_e::MEM_SPRITE_DATA_COMPONENT);

@@ -20,6 +20,5 @@ struct DoorComponent : public ecs::Component
     DoorState_e m_currentState = DoorState_e::STATIC_CLOSED;
     bool m_vertical;
     float m_speedMove = 1.0f;
-    pairFloat_t m_initPosition;
     virtual ~DoorComponent() = default;
 };
