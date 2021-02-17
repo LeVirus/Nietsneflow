@@ -173,11 +173,13 @@ void FirstPersonDisplaySystem::treatDoor(uint32_t doorEntity, MapCoordComponent 
         if(mapCompCamera->m_absoluteMapPositionPX.first < mapCompDoor->m_absoluteMapPositionPX.first)
         {
             doorComp->m_spriteLateralBound.first = 1.0f - rectComp->m_size.second / LEVEL_TILE_SIZE_PX;
+            doorComp->m_spriteLateralBound.second = 1.0f;
         }
         //right
         else
         {
             doorComp->m_spriteLateralBound.second = rectComp->m_size.second / LEVEL_TILE_SIZE_PX;
+            doorComp->m_spriteLateralBound.first = 0.0f;
         }
     }
     else
@@ -185,12 +187,14 @@ void FirstPersonDisplaySystem::treatDoor(uint32_t doorEntity, MapCoordComponent 
         //up
         if(mapCompCamera->m_absoluteMapPositionPX.second < mapCompDoor->m_absoluteMapPositionPX.second)
         {
+            doorComp->m_spriteLateralBound.first = 0.0f;
             doorComp->m_spriteLateralBound.second = rectComp->m_size.first / LEVEL_TILE_SIZE_PX;
         }
         //down
         else
         {
             doorComp->m_spriteLateralBound.first = 1.0f - rectComp->m_size.first / LEVEL_TILE_SIZE_PX;
+            doorComp->m_spriteLateralBound.second = 1.0f;
         }
     }
     doorComp->m_boundActive = true;
