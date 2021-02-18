@@ -340,6 +340,5 @@ void LevelManager::loadLevel(const std::string &INIFileName, uint32_t levelNum)
     loadWallData(reader);
     loadDoorData(reader);
     loadEnemyData(reader);
-//    m_level.display();
 }
 

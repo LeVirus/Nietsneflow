@@ -1,4 +1,5 @@
 #include "FirstPersonDisplaySystem.hpp"
+#include "Level.hpp"
 #include <CollisionUtils.hpp>
 #include <PhysicalEngine.hpp>
 #include <ECS/Components/VisionComponent.hpp>
@@ -98,6 +99,7 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
         float trigoAngle;
         uint32_t angleToTreat;
         DisplayMode_e displayMode;
+        float distance;
         //calculate distance
         fillWallEntitiesData(numEntity, absolPos, visionComp, mapCompA, mapCompB,
                              radiantObserverAngle, pointIn, outLeft, angleToTreat);
@@ -107,7 +109,15 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
         }
         if(genCollComp->m_tag == CollisionTag_e::DOOR_CT)
         {
-            treatDoor(numEntity, mapCompA, mapCompB, absolPos);
+            DoorComponent *doorComp = stairwayToComponentManager().
+                    searchComponentByType<DoorComponent>(numEntity, Components_e::DOOR_COMPONENT);
+            assert(doorComp);
+            RectangleCollisionComponent *rectComp = stairwayToComponentManager().
+                    searchComponentByType<RectangleCollisionComponent>(numEntity,
+                                                                       Components_e::RECTANGLE_COLLISION_COMPONENT);
+            assert(rectComp);
+            adaptTextureDoorDisplay(doorComp, rectComp, mapCompA, mapCompB, absolPos);
+            distance = getDoorDistance(mapCompA, mapCompB, doorComp);
             displayMode = DisplayMode_e::DOOR_DM;
         }
         else
@@ -124,9 +134,11 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
                                        radiantObserverAngle, absolPos, mapCompA);
         //conf screen position
         confWallEntityVertex(numEntity, visionComp, lateralPos, depthGL, (angleToTreat == 3));
-        float cameraDistance = (getCameraDistance(mapCompA->m_absoluteMapPositionPX,
-                                                  absolPos[1], radiantObserverAngle) / LEVEL_TILE_SIZE_PX);
-        fillVertexFromEntity(numEntity, numIteration, cameraDistance, displayMode);
+        if(displayMode != DisplayMode_e::DOOR_DM)
+        {
+            distance = (getDistance(mapCompA->m_absoluteMapPositionPX, absolPos[1]));
+        }
+        fillVertexFromEntity(numEntity, numIteration, distance, displayMode);
     }
     else
     {
@@ -150,13 +162,42 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
 }
 
 //===================================================================
-void FirstPersonDisplaySystem::treatDoor(uint32_t doorEntity, MapCoordComponent *mapCompCamera,
-                                         MapCoordComponent *mapCompDoor, pairFloat_t absolPos[])
+float getDoorDistance(const MapCoordComponent *mapCompCamera, const MapCoordComponent *mapCompDoor,
+                      const DoorComponent *doorComp)
 {
-    DoorComponent *doorComp = stairwayToComponentManager().
-            searchComponentByType<DoorComponent>(doorEntity,
-                                                 Components_e::DOOR_COMPONENT);
-    assert(doorComp);
+    float latPosDoor = mapCompDoor->m_absoluteMapPositionPX.first,
+            vertPosDoor = mapCompDoor->m_absoluteMapPositionPX.second,
+            latPosCamera = mapCompCamera->m_absoluteMapPositionPX.first,
+            vertPosCamera = mapCompCamera->m_absoluteMapPositionPX.second;
+    pairFloat_t absolPosDoor = getAbsolutePosition(mapCompDoor->m_coord);
+    if(doorComp->m_vertical)
+    {
+        absolPosDoor.second += LEVEL_HALF_TILE_SIZE_PX;
+        //RIGHT
+        if(latPosCamera > latPosDoor)
+        {
+            absolPosDoor.first += LEVEL_TILE_SIZE_PX;
+        }
+    }
+    else
+    {
+        absolPosDoor.first += LEVEL_HALF_TILE_SIZE_PX;
+        //DOWN
+        if(vertPosCamera > vertPosDoor)
+        {
+            absolPosDoor.second += LEVEL_TILE_SIZE_PX;
+        }
+    }
+    return getDistance(mapCompCamera->m_absoluteMapPositionPX, absolPosDoor);
+}
+
+//===================================================================
+void FirstPersonDisplaySystem::adaptTextureDoorDisplay(DoorComponent *doorComp,
+                                                       RectangleCollisionComponent *rectComp,
+                                                       MapCoordComponent *mapCompCamera,
+                                                       MapCoordComponent *mapCompDoor, pairFloat_t absolPos[])
+{
+
 
     //first rect is vertical?
     doorComp->m_verticalPosDisplay.first = (absolPos[0].first == absolPos[1].first);
@@ -169,10 +210,7 @@ void FirstPersonDisplaySystem::treatDoor(uint32_t doorEntity, MapCoordComponent 
         doorComp->m_boundActive = false;
         return;
     }
-    RectangleCollisionComponent *rectComp = stairwayToComponentManager().
-            searchComponentByType<RectangleCollisionComponent>(doorEntity,
-                                                               Components_e::RECTANGLE_COLLISION_COMPONENT);
-    assert(rectComp);
+
     if(doorComp->m_vertical)
     {
         //left

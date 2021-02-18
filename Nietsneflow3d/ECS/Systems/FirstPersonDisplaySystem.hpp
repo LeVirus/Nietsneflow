@@ -10,7 +10,7 @@
 #include <ECS/Systems/MapDisplaySystem.hpp>
 
 struct GeneralCollisionComponent;
-
+struct RectangleCollisionComponent;
 using vectUI_t = std::vector<uint32_t>;
 
 enum WallTreatment_e
@@ -45,7 +45,9 @@ public:
 private:
     void setUsedComponents();
     void confCompVertexMemEntities();
-    void treatDoor(uint32_t doorEntity, MapCoordComponent *mapCompCamera, MapCoordComponent *mapCompDoor, pairFloat_t absolPos[]);
+    void adaptTextureDoorDisplay(DoorComponent *doorComp,
+                                 RectangleCollisionComponent *rectComp, MapCoordComponent *mapCompCamera,
+                                 MapCoordComponent *mapCompDoor, pairFloat_t absolPos[]);
     void treatDisplayEntity(GeneralCollisionComponent *genCollComp, MapCoordComponent *mapCompA,
                             MapCoordComponent *mapCompB,
                             VisionComponent *visionComp, uint32_t &toRemove,
@@ -99,3 +101,5 @@ pairFloat_t getIntersectCoord(const pairFloat_t &observerPoint, const pairFloat_
                               float centerAngleVision, bool outLeft, bool YIntersect);
 void treatLimitAngle(float &degreeAngleA, float &degreeAngleB);
 void removeSecondRect(pairFloat_t absolPos[], float distance[], uint32_t &distanceToTreat);
+float getDoorDistance(const MapCoordComponent *mapCompCamera, const MapCoordComponent *mapCompDoor,
+                      const DoorComponent *doorComp);
