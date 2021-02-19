@@ -165,29 +165,27 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
 float getDoorDistance(const MapCoordComponent *mapCompCamera, const MapCoordComponent *mapCompDoor,
                       const DoorComponent *doorComp)
 {
-    float latPosDoor = mapCompDoor->m_absoluteMapPositionPX.first,
-            vertPosDoor = mapCompDoor->m_absoluteMapPositionPX.second,
+    pairFloat_t refPointA = getAbsolutePosition(mapCompDoor->m_coord);
+    float latPosDoor = refPointA.first,
+            vertPosDoor = refPointA.second,
             latPosCamera = mapCompCamera->m_absoluteMapPositionPX.first,
             vertPosCamera = mapCompCamera->m_absoluteMapPositionPX.second;
-    pairFloat_t refPointA = getAbsolutePosition(mapCompDoor->m_coord);
     float distA, distB;
     if(doorComp->m_vertical)
     {
         //RIGHT
-        if(latPosCamera > latPosDoor)
+        if(latPosCamera > latPosDoor + LEVEL_TILE_SIZE_PX)
         {
             refPointA.first += LEVEL_TILE_SIZE_PX;
             //UP
             if(vertPosCamera < refPointA.second)
             {
                 refPointA.second -= LEVEL_TILE_SIZE_PX;
-                return getDistance(mapCompCamera->m_absoluteMapPositionPX, refPointA) + 0.1f;
             }
             //DOWN
             else if(vertPosCamera > refPointA.second + LEVEL_TILE_SIZE_PX)
             {
                 refPointA.second += LEVEL_TILE_SIZE_PX;
-                return getDistance(mapCompCamera->m_absoluteMapPositionPX, refPointA) + 0.1f;
             }
             //MID
             else
@@ -198,23 +196,18 @@ float getDoorDistance(const MapCoordComponent *mapCompCamera, const MapCoordComp
                 distB = getDistance(mapCompCamera->m_absoluteMapPositionPX, refPointB);
                 return std::min(distA, distB) - 0.1f;
             }
+            return getDistance(mapCompCamera->m_absoluteMapPositionPX, refPointA) + 0.1f;
         }
         //LEFT
-        else
+        else if(latPosCamera < latPosDoor)
         {
-            //UP
-            if(vertPosCamera < refPointA.second)
-            {
-                return getDistance(mapCompCamera->m_absoluteMapPositionPX, refPointA) + 0.1f;
-            }
             //DOWN
-            else if(vertPosCamera > refPointA.second + LEVEL_TILE_SIZE_PX)
+            if(vertPosCamera > refPointA.second + LEVEL_TILE_SIZE_PX)
             {
                 refPointA.second += LEVEL_TILE_SIZE_PX * 2.0f;
-                return getDistance(mapCompCamera->m_absoluteMapPositionPX, refPointA) + 0.1f;
             }
             //MID
-            else
+            else if(!(vertPosCamera < refPointA.second))
             {
                 pairFloat_t refPointB = refPointA;
                 refPointB.second += LEVEL_TILE_SIZE_PX;
@@ -222,6 +215,7 @@ float getDoorDistance(const MapCoordComponent *mapCompCamera, const MapCoordComp
                 distB = getDistance(mapCompCamera->m_absoluteMapPositionPX, refPointB);
                 return std::min(distA, distB) - 0.1f;
             }
+            return getDistance(mapCompCamera->m_absoluteMapPositionPX, refPointA) + 0.1f;
         }
     }
     //LATERAL
@@ -234,13 +228,11 @@ float getDoorDistance(const MapCoordComponent *mapCompCamera, const MapCoordComp
             if(latPosCamera < latPosDoor)
             {
                 refPointA.first -= LEVEL_TILE_SIZE_PX;
-                return getDistance(mapCompCamera->m_absoluteMapPositionPX, refPointA) + 0.1f;
             }
             //RIGHT
             else if(latPosCamera > latPosDoor + LEVEL_TILE_SIZE_PX)
             {
                 refPointA.first += LEVEL_TILE_SIZE_PX;
-                return getDistance(mapCompCamera->m_absoluteMapPositionPX, refPointA) + 0.1f;
             }
             //MID
             else
@@ -251,24 +243,19 @@ float getDoorDistance(const MapCoordComponent *mapCompCamera, const MapCoordComp
                 distB = getDistance(mapCompCamera->m_absoluteMapPositionPX, refPointB);
                 return std::min(distA, distB) - 0.1f;
             }
+            return getDistance(mapCompCamera->m_absoluteMapPositionPX, refPointA) + 0.1f;
         }
         //DOWN
-        else
+        else if(vertPosCamera > vertPosDoor + LEVEL_TILE_SIZE_PX)
         {
             refPointA.second += LEVEL_TILE_SIZE_PX;
-            //LEFT
-            if(latPosCamera < latPosDoor)
-            {
-                return getDistance(mapCompCamera->m_absoluteMapPositionPX, refPointA) + 0.1f;
-            }
             //RIGHT
-            else if(latPosCamera > latPosDoor + LEVEL_TILE_SIZE_PX)
+            if(latPosCamera > latPosDoor + LEVEL_TILE_SIZE_PX)
             {
                 refPointA.first += LEVEL_TILE_SIZE_PX * 2.0f;
-                return getDistance(mapCompCamera->m_absoluteMapPositionPX, refPointA) + 0.1f;
             }
             //MID
-            else
+            else if(!(latPosCamera < latPosDoor))
             {
                 pairFloat_t refPointB = refPointA;
                 refPointB.first += LEVEL_TILE_SIZE_PX;
@@ -276,8 +263,10 @@ float getDoorDistance(const MapCoordComponent *mapCompCamera, const MapCoordComp
                 distB = getDistance(mapCompCamera->m_absoluteMapPositionPX, refPointB);
                 return std::min(distA, distB) - 0.1f;
             }
+            return getDistance(mapCompCamera->m_absoluteMapPositionPX, refPointA) + 0.1f;
         }
     }
+    return getDistance(mapCompCamera->m_absoluteMapPositionPX, refPointA);
 }
 
 //===================================================================
