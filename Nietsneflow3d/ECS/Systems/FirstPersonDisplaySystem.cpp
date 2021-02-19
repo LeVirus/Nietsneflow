@@ -146,6 +146,8 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
         assert(spriteComp);
         float distance = getCameraDistance(mapCompA->m_absoluteMapPositionPX,
                                            mapCompB->m_absoluteMapPositionPX, radiantObserverAngle) / LEVEL_TILE_SIZE_PX;
+        float simpleDistance = getDistance(mapCompA->m_absoluteMapPositionPX,
+                                           mapCompB->m_absoluteMapPositionPX);
         float depthSimpleGL;
         if(distance > visionComp->m_distanceVisibility)
         {
@@ -157,7 +159,7 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
         //get lateral pos from angle
         float lateralPos = getLateralAngle(degreeObserverAngle, trigoAngle);
         confNormalEntityVertex(numEntity, visionComp, lateralPos, depthSimpleGL);
-        fillVertexFromEntity(numEntity, numIteration, distance, DisplayMode_e::STANDART_DM);
+        fillVertexFromEntity(numEntity, numIteration, simpleDistance, DisplayMode_e::STANDART_DM);
     }
 }
 
