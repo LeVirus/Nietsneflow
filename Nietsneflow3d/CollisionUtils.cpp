@@ -231,10 +231,16 @@ bool checkPointCircleCollision(const pairFloat_t &point,
 float getDistance(const pairFloat_t &pointA, const pairFloat_t &pointB)
 {
     float distanceX = std::abs(pointA.first - pointB.first),
-          distanceY = std::abs(pointA.second - pointB.second);
-    distanceX *= distanceX;
-    distanceY *= distanceY;
-    return std::sqrt(distanceX  + distanceY);
+            distanceY = std::abs(pointA.second - pointB.second);
+    if(distanceY < 0.01f)
+    {
+        return distanceX;
+    }
+    if(distanceX < 0.01f)
+    {
+        return distanceY;
+    }
+    return distanceY / std::cos(std::atan(distanceX / distanceY));
 }
 
 //===================================================================
