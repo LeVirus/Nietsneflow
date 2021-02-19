@@ -172,7 +172,6 @@ float getDoorDistance(const MapCoordComponent *mapCompCamera, const MapCoordComp
             vertPosDoor = refPointA.second,
             latPosCamera = mapCompCamera->m_absoluteMapPositionPX.first,
             vertPosCamera = mapCompCamera->m_absoluteMapPositionPX.second;
-    float distA, distB;
     if(doorComp->m_vertical)
     {
         //RIGHT
@@ -192,11 +191,8 @@ float getDoorDistance(const MapCoordComponent *mapCompCamera, const MapCoordComp
             //MID
             else
             {
-                pairFloat_t refPointB = refPointA;
-                refPointB.second += LEVEL_TILE_SIZE_PX;
-                distA = getDistance(mapCompCamera->m_absoluteMapPositionPX, refPointA);
-                distB = getDistance(mapCompCamera->m_absoluteMapPositionPX, refPointB);
-                return std::min(distA, distB) - 0.1f;
+                return getMiddleDoorDistance(mapCompCamera->m_absoluteMapPositionPX,
+                                             refPointA, doorComp->m_vertical);
             }
             return getDistance(mapCompCamera->m_absoluteMapPositionPX, refPointA) + 0.1f;
         }
@@ -211,11 +207,8 @@ float getDoorDistance(const MapCoordComponent *mapCompCamera, const MapCoordComp
             //MID
             else if(!(vertPosCamera < refPointA.second))
             {
-                pairFloat_t refPointB = refPointA;
-                refPointB.second += LEVEL_TILE_SIZE_PX;
-                distA = getDistance(mapCompCamera->m_absoluteMapPositionPX, refPointA);
-                distB = getDistance(mapCompCamera->m_absoluteMapPositionPX, refPointB);
-                return std::min(distA, distB) - 0.1f;
+                return getMiddleDoorDistance(mapCompCamera->m_absoluteMapPositionPX,
+                                             refPointA, doorComp->m_vertical);
             }
             return getDistance(mapCompCamera->m_absoluteMapPositionPX, refPointA) + 0.1f;
         }
@@ -239,11 +232,8 @@ float getDoorDistance(const MapCoordComponent *mapCompCamera, const MapCoordComp
             //MID
             else
             {
-                pairFloat_t refPointB = refPointA;
-                refPointB.first += LEVEL_TILE_SIZE_PX;
-                distA = getDistance(mapCompCamera->m_absoluteMapPositionPX, refPointA);
-                distB = getDistance(mapCompCamera->m_absoluteMapPositionPX, refPointB);
-                return std::min(distA, distB) - 0.1f;
+                return getMiddleDoorDistance(mapCompCamera->m_absoluteMapPositionPX,
+                                             refPointA, doorComp->m_vertical);
             }
             return getDistance(mapCompCamera->m_absoluteMapPositionPX, refPointA) + 0.1f;
         }
@@ -259,16 +249,30 @@ float getDoorDistance(const MapCoordComponent *mapCompCamera, const MapCoordComp
             //MID
             else if(!(latPosCamera < latPosDoor))
             {
-                pairFloat_t refPointB = refPointA;
-                refPointB.first += LEVEL_TILE_SIZE_PX;
-                distA = getDistance(mapCompCamera->m_absoluteMapPositionPX, refPointA);
-                distB = getDistance(mapCompCamera->m_absoluteMapPositionPX, refPointB);
-                return std::min(distA, distB) - 0.1f;
+                return getMiddleDoorDistance(mapCompCamera->m_absoluteMapPositionPX,
+                                             refPointA, doorComp->m_vertical);
             }
             return getDistance(mapCompCamera->m_absoluteMapPositionPX, refPointA) + 0.1f;
         }
     }
     return getDistance(mapCompCamera->m_absoluteMapPositionPX, refPointA);
+}
+
+//===================================================================
+float getMiddleDoorDistance(const pairFloat_t &camera, const pairFloat_t &element, bool vertical)
+{
+    pairFloat_t refPointB = element;
+    if(vertical)
+    {
+        refPointB.second += LEVEL_TILE_SIZE_PX;
+    }
+    else
+    {
+        refPointB.first += LEVEL_TILE_SIZE_PX;
+    }
+    float distA = getDistance(camera, element),
+    distB = getDistance(camera, refPointB);
+    return std::min(distA, distB) - 0.1f;
 }
 
 //===================================================================

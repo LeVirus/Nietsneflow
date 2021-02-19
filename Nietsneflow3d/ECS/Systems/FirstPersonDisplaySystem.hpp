@@ -103,3 +103,4 @@ void treatLimitAngle(float &degreeAngleA, float &degreeAngleB);
 void removeSecondRect(pairFloat_t absolPos[], float distance[], uint32_t &distanceToTreat);
 float getDoorDistance(const MapCoordComponent *mapCompCamera, const MapCoordComponent *mapCompDoor,
                       const DoorComponent *doorComp);
+float getMiddleDoorDistance(const pairFloat_t &camera, const pairFloat_t &element, bool vertical);
