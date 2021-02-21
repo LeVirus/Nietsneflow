@@ -57,6 +57,17 @@ void VisionSystem::execSystem()
                 searchComponentByType<MoveableComponent>(mVectNumEntity[i], Components_e::MOVEABLE_COMPONENT);
         updateTriangleVisionFromPosition(visionCompA, mapCompA, movCompA);
         visionCompA->m_vectVisibleEntities.clear();
+
+        //TEST
+        pairFloat_t memPreviousCameraPos = mapCompA->m_absoluteMapPositionPX;
+        {
+            float radiantAngle = getRadiantAngle(movCompA->m_degreeOrientation + 180.0f);
+            mapCompA->m_absoluteMapPositionPX.first +=
+                    std::cos(radiantAngle) * 19.0f;
+            mapCompA->m_absoluteMapPositionPX.second -=
+                    std::sin(radiantAngle) * 19.0f;
+        }
+
         for(uint32_t j = 0; j < vectEntities.size(); ++j)
         {
             if(mVectNumEntity[i] == vectEntities[j])
@@ -74,6 +85,7 @@ void VisionSystem::execSystem()
             //FAIRE DES TESTS POUR LES COLLISIONS
             treatVisible(visionCompA, vectEntities[j], collCompB->m_shape);
         }
+        mapCompA->m_absoluteMapPositionPX = memPreviousCameraPos;
         updateSprites(visionCompA->m_vectVisibleEntities);
     }
 }

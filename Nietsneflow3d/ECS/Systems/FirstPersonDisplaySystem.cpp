@@ -60,6 +60,16 @@ void FirstPersonDisplaySystem::confCompVertexMemEntities()
         toRemove = 0;
         m_numVertexToDraw[i] = visionComp->m_vectVisibleEntities.size();
         m_entitiesNumMem.clear();
+        //TEST
+        pairFloat_t memPreviousCameraPos = mapCompA->m_absoluteMapPositionPX;
+        {
+            float radiantAngle = getRadiantAngle(moveComp->m_degreeOrientation + 180.0f);
+            mapCompA->m_absoluteMapPositionPX.first +=
+                    std::cos(radiantAngle) * 19.0f;
+            mapCompA->m_absoluteMapPositionPX.second -=
+                    std::sin(radiantAngle) * 19.0f;
+        }
+
         for(uint32_t j = 0; j < m_numVertexToDraw[i]; ++j)
         {
             genCollComp = stairwayToComponentManager().
@@ -73,6 +83,7 @@ void FirstPersonDisplaySystem::confCompVertexMemEntities()
             treatDisplayEntity(genCollComp, mapCompA, mapCompB, visionComp,
                                toRemove, moveComp->m_degreeOrientation, j);
         }
+        mapCompA->m_absoluteMapPositionPX = memPreviousCameraPos;
         m_numVertexToDraw[i] -= toRemove;
     }
 }
