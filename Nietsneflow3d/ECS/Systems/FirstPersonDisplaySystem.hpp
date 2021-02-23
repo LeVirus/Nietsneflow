@@ -43,6 +43,7 @@ public:
     void setVectTextures(std::vector<Texture> &vectTexture);
     void setShader(Shader &shader);
 private:
+    void rayCasting();
     void setUsedComponents();
     void confCompVertexMemEntities();
     void adaptTextureDoorDisplay(DoorComponent *doorComp,
@@ -89,6 +90,7 @@ private:
     //number of entity to draw per player
     vectUI_t m_numVertexToDraw;
     uint32_t m_textureLineDrawNumber = 100;
+    float m_stepAngle = CONE_VISION / static_cast<float>(m_textureLineDrawNumber);
 };
 
 //FOR 90 degree ONLY !!!!!!!!
@@ -104,3 +106,6 @@ void removeSecondRect(pairFloat_t absolPos[], float distance[], uint32_t &distan
 float getDoorDistance(const MapCoordComponent *mapCompCamera, const MapCoordComponent *mapCompDoor,
                       const DoorComponent *doorComp);
 float getMiddleDoorDistance(const pairFloat_t &camera, const pairFloat_t &element, bool vertical);
+float getVerticalLeadCoef(float radiantAngle);
+float getLateralLeadCoef(float radiantAngle);
+pairFloat_t getLimitPointRayCasting(const pairFloat_t &cameraPoint, float radiantAngle);

@@ -30,6 +30,7 @@ void FirstPersonDisplaySystem::setUsedComponents()
 void FirstPersonDisplaySystem::execSystem()
 {
     System::execSystem();
+    rayCasting();
     confCompVertexMemEntities();
     drawVertex();
 }
@@ -969,6 +970,140 @@ void FirstPersonDisplaySystem::drawVertex()
 void FirstPersonDisplaySystem::setShader(Shader &shader)
 {
     m_shader = &shader;
+}
+
+//===================================================================
+void FirstPersonDisplaySystem::rayCasting()
+{
+    MapCoordComponent *mapCompCamera;
+    MoveableComponent *moveComp;
+    float lateralLeadCoef , verticalLeadCoef, memCoef;
+    float radiantAngle;
+    pairFloat_t currentPoint;
+    pairUI_t currentCoord;
+    for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
+    {
+        mapCompCamera = stairwayToComponentManager().
+                searchComponentByType<MapCoordComponent>(mVectNumEntity[i], Components_e::MAP_COORD_COMPONENT);
+        assert(mapCompCamera);
+        moveComp = stairwayToComponentManager().
+                searchComponentByType<MoveableComponent>(mVectNumEntity[i], Components_e::MOVEABLE_COMPONENT);
+        assert(moveComp);
+        float leftAngle = moveComp->m_degreeOrientation + HALF_CONE_VISION;
+        if(leftAngle > 360.0f)
+        {
+            leftAngle -= 360.0f;
+        }
+        float currentAngle = leftAngle;
+        for(uint32_t j = 0; j < m_textureLineDrawNumber; ++j)
+        {
+            radiantAngle = getRadiantAngle(currentAngle);
+            currentPoint = getLimitPointRayCasting(mapCompCamera->m_absoluteMapPositionPX, radiantAngle);
+            verticalLeadCoef = getVerticalLeadCoef(currentAngle);
+            lateralLeadCoef = getLateralLeadCoef(currentAngle);
+            do
+            {
+                currentCoord = getLevelCoord(currentPoint);
+                memCoef = currentPoint.first + lateralLeadCoef;
+                //X
+                if(static_cast<uint32_t>(memCoef / LEVEL_TILE_SIZE_PX) == currentCoord.first)
+                {
+                    if(lateralLeadCoef > 0.0f)
+                    {
+                        currentPoint.second = static_cast<float>(currentCoord.second + 1) * LEVEL_TILE_SIZE_PX;
+                        ++currentCoord.second;
+                    }
+                    else
+                    {
+                        currentPoint.second = static_cast<float>(currentCoord.second - 1) * LEVEL_TILE_SIZE_PX;
+                        --currentCoord.second;
+                    }
+                    currentPoint.first = memCoef;
+                }
+                //Y
+                else
+                {
+                    currentPoint.second += verticalLeadCoef;
+                    if(lateralLeadCoef > 0.0f)
+                    {
+                        currentPoint.first = static_cast<float>(currentCoord.first + 1) * LEVEL_TILE_SIZE_PX;
+                        ++currentCoord.first;
+                    }
+                    else
+                    {
+                        currentPoint.first = static_cast<float>(currentCoord.first - 1) * LEVEL_TILE_SIZE_PX;
+                        --currentCoord.first;
+                    }
+                }
+            }while(true);
+            currentAngle -= m_stepAngle;
+        }
+    }
+}
+
+//===================================================================
+pairFloat_t getLimitPointRayCasting(const pairFloat_t &cameraPoint, float radiantAngle)
+{
+    float currentCos = -std::cos(radiantAngle),
+    currentSin = -std::sin(radiantAngle),
+    currentTan = -std::tan(radiantAngle), diff = 0.0f;
+    pairFloat_t prevLimitPoint = cameraPoint;
+    pairUI_t coord = getLevelCoord(prevLimitPoint);
+    //calc diff vertical
+    if(std::abs(currentCos) > EPSILON_FLOAT)
+    {
+        diff = std::fmod(cameraPoint.first, LEVEL_TILE_SIZE_PX);
+        //left
+        if(currentCos < 0.0f)
+        {
+            prevLimitPoint.second += currentTan * diff;
+            prevLimitPoint.first -= diff;
+        }
+        //right
+        else
+        {
+            diff = std::abs(LEVEL_TILE_SIZE_PX - diff);
+            prevLimitPoint.second += currentTan * diff;
+            prevLimitPoint.first += diff;
+        }
+        //check if vertical diff is in the same tile
+        if(static_cast<uint32_t>(prevLimitPoint.second / LEVEL_TILE_SIZE_PX) == coord.second)
+        {
+            return prevLimitPoint;
+        }
+    }
+    //calc diff lateral
+    if(std::abs(currentSin) > EPSILON_FLOAT)
+    {
+        prevLimitPoint = cameraPoint;
+        diff = std::fmod(cameraPoint.second, LEVEL_TILE_SIZE_PX);
+        //up
+        if(currentSin > 0.0f)
+        {
+            prevLimitPoint.first += currentTan * diff;
+            prevLimitPoint.second -= diff;
+        }
+        //down
+        else
+        {
+            diff = std::abs(LEVEL_TILE_SIZE_PX - diff);
+            prevLimitPoint.first += currentTan * diff;
+            prevLimitPoint.second += diff;
+        }
+    }
+    return prevLimitPoint;
+}
+
+//===================================================================
+float getVerticalLeadCoef(float radiantAngle)
+{
+    return std::sin(radiantAngle) * LEVEL_TILE_SIZE_PX;
+}
+
+//===================================================================
+float getLateralLeadCoef(float radiantAngle)
+{
+    return std::cos(radiantAngle) * LEVEL_TILE_SIZE_PX;
 }
 
 //===================================================================
