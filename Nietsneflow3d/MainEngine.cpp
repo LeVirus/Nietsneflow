@@ -88,6 +88,7 @@ void MainEngine::loadGroundAndCeilingEntities(const GroundCeilingData &groundDat
 void MainEngine::loadLevelEntities(const LevelManager &levelManager)
 {
     loadPlayerEntity(levelManager.getLevel());
+    Level::initLevelElementArray();
     loadWallEntities(levelManager);
     loadDoorEntities(levelManager);
     loadStaticElementEntities(levelManager);
@@ -99,7 +100,9 @@ void MainEngine::loadWallEntities(const LevelManager &levelManager)
 {
     const std::vector<WallData> &wallData = levelManager.getLevel().getWallData();
     MemSpriteDataComponent *memSpriteComp;
+    SpriteTextureComponent *spriteComp;
     const std::vector<SpriteData> &vectSprite = levelManager.getPictureData().getSpriteData();
+    assert(Level::getLevelCaseType().empty());
     for(uint32_t i = 0; i < wallData.size(); ++i)
     {
         const SpriteData &memSpriteData = levelManager.getPictureData().getSpriteData()[wallData[i].m_sprites[0]];
@@ -108,6 +111,10 @@ void MainEngine::loadWallEntities(const LevelManager &levelManager)
             uint32_t numEntity = createWallEntity();
             confBaseComponent(numEntity, memSpriteData, wallData[i].m_TileGamePosition[j],
                               CollisionShape_e::RECTANGLE_C);
+            spriteComp = m_ecsManager.getComponentManager().
+                    searchComponentByType<SpriteTextureComponent>(numEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
+            assert(spriteComp);
+            Level::addElementCase(spriteComp, wallData[i].m_TileGamePosition[j], LevelCaseType_e::WALL_LC);
             memSpriteComp = m_ecsManager.getComponentManager().
                     searchComponentByType<MemSpriteDataComponent>(numEntity,
                                                                   Components_e::MEM_SPRITE_DATA_COMPONENT);
@@ -166,6 +173,12 @@ void MainEngine::loadDoorEntities(const LevelManager &levelManager)
             memSpriteComp = m_ecsManager.getComponentManager().
                     searchComponentByType<MemSpriteDataComponent>(numEntity,
                                                                   Components_e::MEM_SPRITE_DATA_COMPONENT);
+
+            SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().
+                    searchComponentByType<SpriteTextureComponent>(numEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
+            assert(spriteComp);
+            Level::addElementCase(spriteComp, doorData[i].m_TileGamePosition[j], LevelCaseType_e::DOOR_LC);
+
             if(!memSpriteComp)
             {
                 continue;
@@ -285,9 +298,9 @@ uint32_t MainEngine::createStaticEntity()
 
 //===================================================================
 void MainEngine::confBaseComponent(uint32_t entityNum,
-                                      const SpriteData &memSpriteData,
-                                      const pairUI_t& coordLevel,
-                                      CollisionShape_e collisionShape)
+                                   const SpriteData &memSpriteData,
+                                   const pairUI_t& coordLevel,
+                                   CollisionShape_e collisionShape)
 {
     SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().
             searchComponentByType<SpriteTextureComponent>(entityNum, Components_e::SPRITE_TEXTURE_COMPONENT);

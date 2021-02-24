@@ -9,6 +9,7 @@ using vectPairUI_t = std::vector<pairUI_t>;
 
 struct MoveableComponent;
 struct PositionVertexComponent;
+struct SpriteTextureComponent;
 
 struct StaticLevelElementData
 {
@@ -31,6 +32,13 @@ struct DoorData
     vectPairUI_t m_TileGamePosition;
     //Position of axe true = vertical false = horizontal
     bool m_vertical;
+};
+
+struct ElementRaycast
+{
+    LevelCaseType_e m_type;
+    pairUI_t m_tileGamePosition;
+    SpriteTextureComponent const *m_spriteComp;
 };
 
 struct EnemyData
@@ -61,11 +69,22 @@ private:
     std::vector<WallData> m_wallData;
     std::vector<DoorData> m_doorData;
     std::vector<EnemyData> m_enemyData;
+    static std::vector<ElementRaycast> m_levelCaseType;
     static float m_rangeViewPX;
 public:
     Level();
     void setPlayerInitData(const pairFloat_t &pairInitPlayerPos,
                            Direction_e playerDir);
+    static void initLevelElementArray();
+    static const std::vector<ElementRaycast> &getLevelCaseType()
+    {
+        return m_levelCaseType;
+    }
+    static void addElementCase(SpriteTextureComponent *spriteComp, const pairUI_t &tilePosition,
+                               LevelCaseType_e type);
+    static const ElementRaycast &getElementCase(const pairUI_t &tilePosition);
+
+    static uint32_t getLevelCaseIndex(const pairUI_t &tilePosition);
     inline const std::vector<WallData> &getWallData()const
     {
         return m_wallData;
@@ -140,7 +159,6 @@ public:
     {
         m_enemyData = vectEnemy;
     }
-    void display();//DEBUG
 
     inline static float getRangeView()
     {
@@ -158,4 +176,4 @@ public:
 
 pairFloat_t getAbsolutePosition(const pairUI_t &coord);
 
-pairUI_t getLevelCoord(pairFloat_t &position);
+pairUI_t getLevelCoord(const pairFloat_t &position);

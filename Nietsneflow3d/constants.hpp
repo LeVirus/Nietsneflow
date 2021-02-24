@@ -137,6 +137,13 @@ enum class CollisionShape_e
     SEGMENT_C
 };
 
+enum class LevelCaseType_e
+{
+    WALL_LC,
+    DOOR_LC,
+    EMPTY_LC
+};
+
 inline const float PI = 3.14159265359f;
 inline const float PI_DOUBLE = PI * 2.0f;
 inline const float PI_QUARTER = PI / 4.0f;
