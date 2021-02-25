@@ -90,7 +90,8 @@ private:
     //number of entity to draw per player
     vectUI_t m_numVertexToDraw;
     uint32_t m_textureLineDrawNumber = 100;
-    float m_stepAngle = CONE_VISION / static_cast<float>(m_textureLineDrawNumber);
+    float m_stepAngle = CONE_VISION / static_cast<float>(m_textureLineDrawNumber),
+    m_stepDrawLateralScreen = 2.0f / static_cast<float>(m_textureLineDrawNumber);
 };
 
 //FOR 90 degree ONLY !!!!!!!!

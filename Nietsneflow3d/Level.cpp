@@ -33,18 +33,24 @@ void Level::initLevelElementArray()
     }
 }
 //===================================================================
-void Level::addElementCase(SpriteTextureComponent *spriteComp,
-                           const pairUI_t &tilePosition, LevelCaseType_e type)
+void Level::addElementCase(SpriteTextureComponent *spriteComp, const pairUI_t &tilePosition,
+                           LevelCaseType_e type, uint32_t numEntity)
 {
     uint32_t index = getLevelCaseIndex(tilePosition);
+    m_levelCaseType[index].m_numEntity = numEntity;
     m_levelCaseType[index].m_type = type;
     m_levelCaseType[index].m_tileGamePosition = tilePosition;
     m_levelCaseType[index].m_spriteComp = spriteComp;
 }
 
 //===================================================================
-const ElementRaycast &Level::getElementCase(const pairUI_t &tilePosition)
+std::optional<ElementRaycast> Level::getElementCase(const pairUI_t &tilePosition)
 {
+    if((tilePosition.first >= m_size.first) ||
+            (tilePosition.second >= m_size.second))
+    {
+        return std::nullopt;
+    }
     return m_levelCaseType[getLevelCaseIndex(tilePosition)];
 }
 
@@ -52,7 +58,8 @@ const ElementRaycast &Level::getElementCase(const pairUI_t &tilePosition)
 uint32_t Level::getLevelCaseIndex(const pairUI_t &tilePosition)
 {
     uint32_t index = (tilePosition.second * m_size.first + tilePosition.first);
-    assert(index < m_levelCaseType.size());
+    assert(tilePosition.first < m_size.first);
+    assert(tilePosition.second < m_size.second);
     return index;
 }
 

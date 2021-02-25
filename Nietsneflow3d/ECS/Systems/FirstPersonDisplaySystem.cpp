@@ -955,7 +955,8 @@ void FirstPersonDisplaySystem::drawVertex()
     for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
     {
         uint32_t numEntity;
-        for(std::multiset<EntityData>::const_iterator it = m_entitiesNumMem.begin();it != m_entitiesNumMem.end(); ++it)
+        for(std::multiset<EntityData>::const_iterator it = m_entitiesNumMem.begin();
+            it != m_entitiesNumMem.end(); ++it)
         {
             numEntity = it->m_entityNum;
             assert(numEntity < m_vectVerticesData.size());
@@ -981,6 +982,7 @@ void FirstPersonDisplaySystem::rayCasting()
     float radiantAngle;
     pairFloat_t currentPoint;
     pairUI_t currentCoord;
+    std::optional<ElementRaycast> element;
     for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
     {
         mapCompCamera = stairwayToComponentManager().
@@ -994,14 +996,15 @@ void FirstPersonDisplaySystem::rayCasting()
         {
             leftAngle -= 360.0f;
         }
-        float currentAngle = leftAngle;
+        float currentAngle = leftAngle,
+                currentLateralScreen = -1.0;;
         for(uint32_t j = 0; j < m_textureLineDrawNumber; ++j)
         {
             radiantAngle = getRadiantAngle(currentAngle);
             currentPoint = getLimitPointRayCasting(mapCompCamera->m_absoluteMapPositionPX, radiantAngle);
             verticalLeadCoef = getVerticalLeadCoef(currentAngle);
             lateralLeadCoef = getLateralLeadCoef(currentAngle);
-            do
+            for(uint32_t k = 0; k < 20; ++k)//limit distance
             {
                 currentCoord = getLevelCoord(currentPoint);
                 memCoef = currentPoint.first + lateralLeadCoef;
@@ -1035,7 +1038,18 @@ void FirstPersonDisplaySystem::rayCasting()
                         --currentCoord.first;
                     }
                 }
-            }while(true);
+                element = Level::getElementCase(currentCoord);
+                if(!element)
+                {
+                    break;
+                }
+                if(element->m_type == LevelCaseType_e::WALL_LC)
+                {
+                    //                        element->m_spriteComp->m_glFpsSize;
+                    break;
+                }
+            }
+            currentLateralScreen += m_stepDrawLateralScreen;
             currentAngle -= m_stepAngle;
         }
     }

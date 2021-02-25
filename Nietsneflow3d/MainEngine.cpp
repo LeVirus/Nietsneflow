@@ -102,7 +102,7 @@ void MainEngine::loadWallEntities(const LevelManager &levelManager)
     MemSpriteDataComponent *memSpriteComp;
     SpriteTextureComponent *spriteComp;
     const std::vector<SpriteData> &vectSprite = levelManager.getPictureData().getSpriteData();
-    assert(Level::getLevelCaseType().empty());
+    assert(!Level::getLevelCaseType().empty());
     for(uint32_t i = 0; i < wallData.size(); ++i)
     {
         const SpriteData &memSpriteData = levelManager.getPictureData().getSpriteData()[wallData[i].m_sprites[0]];
@@ -114,7 +114,7 @@ void MainEngine::loadWallEntities(const LevelManager &levelManager)
             spriteComp = m_ecsManager.getComponentManager().
                     searchComponentByType<SpriteTextureComponent>(numEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
             assert(spriteComp);
-            Level::addElementCase(spriteComp, wallData[i].m_TileGamePosition[j], LevelCaseType_e::WALL_LC);
+            Level::addElementCase(spriteComp, wallData[i].m_TileGamePosition[j], LevelCaseType_e::WALL_LC, numEntity);
             memSpriteComp = m_ecsManager.getComponentManager().
                     searchComponentByType<MemSpriteDataComponent>(numEntity,
                                                                   Components_e::MEM_SPRITE_DATA_COMPONENT);
@@ -177,7 +177,7 @@ void MainEngine::loadDoorEntities(const LevelManager &levelManager)
             SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().
                     searchComponentByType<SpriteTextureComponent>(numEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
             assert(spriteComp);
-            Level::addElementCase(spriteComp, doorData[i].m_TileGamePosition[j], LevelCaseType_e::DOOR_LC);
+            Level::addElementCase(spriteComp, doorData[i].m_TileGamePosition[j], LevelCaseType_e::DOOR_LC, numEntity);
 
             if(!memSpriteComp)
             {

@@ -36,6 +36,7 @@ struct DoorData
 
 struct ElementRaycast
 {
+    uint32_t m_numEntity;
     LevelCaseType_e m_type;
     pairUI_t m_tileGamePosition;
     SpriteTextureComponent const *m_spriteComp;
@@ -81,8 +82,8 @@ public:
         return m_levelCaseType;
     }
     static void addElementCase(SpriteTextureComponent *spriteComp, const pairUI_t &tilePosition,
-                               LevelCaseType_e type);
-    static const ElementRaycast &getElementCase(const pairUI_t &tilePosition);
+                               LevelCaseType_e type, uint32_t numEntity);
+    static std::optional<ElementRaycast> getElementCase(const pairUI_t &tilePosition);
 
     static uint32_t getLevelCaseIndex(const pairUI_t &tilePosition);
     inline const std::vector<WallData> &getWallData()const
