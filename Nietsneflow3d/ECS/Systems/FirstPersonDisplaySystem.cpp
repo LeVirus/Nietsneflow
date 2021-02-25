@@ -954,15 +954,15 @@ void FirstPersonDisplaySystem::drawVertex()
     //DONT WORK for multiple player
     for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
     {
-        uint32_t numEntity;
+        uint32_t numIteration;
         for(std::multiset<EntityData>::const_iterator it = m_entitiesNumMem.begin();
             it != m_entitiesNumMem.end(); ++it)
         {
-            numEntity = it->m_entityNum;
-            assert(numEntity < m_vectVerticesData.size());
+            numIteration = it->m_iterationNum;
+            assert(numIteration < m_vectVerticesData.size());
             m_ptrVectTexture->operator[](static_cast<uint32_t>(it->m_textureNum)).bind();
-            m_vectVerticesData[numEntity].confVertexBuffer();
-            m_vectVerticesData[numEntity].drawElement();
+            m_vectVerticesData[numIteration].confVertexBuffer();
+            m_vectVerticesData[numIteration].drawElement();
         }
     }
 }

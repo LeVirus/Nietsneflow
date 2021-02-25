@@ -24,9 +24,9 @@ struct EntityData
 {
     float m_distance;
     Texture_e m_textureNum;
-    uint32_t m_entityNum;
-    EntityData(float distance, Texture_e textureNum, uint32_t entityNum) : m_distance(distance),
-        m_textureNum(textureNum), m_entityNum(entityNum)
+    uint32_t m_iterationNum;
+    EntityData(float distance, Texture_e textureNum, uint32_t iterationNum) : m_distance(distance),
+        m_textureNum(textureNum), m_iterationNum(iterationNum)
     {}
 
     bool operator<(const EntityData& rhs)const
