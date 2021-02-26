@@ -5,6 +5,7 @@
 #include <ECS/Components/ColorVertexComponent.hpp>
 #include <ECS/Components/SpriteTextureComponent.hpp>
 #include <ECS/Components/DoorComponent.hpp>
+#include <ECS/Systems/FirstPersonDisplaySystem.hpp>
 #include <PictureData.hpp>
 #include <CollisionUtils.hpp>
 #include <numeric>
@@ -121,6 +122,38 @@ void VerticesData::loadVertexStandartTextureComponent(const PositionVertexCompon
         shape = BaseShapeTypeGL_e::DOUBLE_RECT;
     }
     addIndices(shape);
+}
+
+//===================================================================
+float VerticesData::loadRaycastingEntity(const SpriteTextureComponent &spriteComp,
+                                        const std::vector<RayCastingIntersect> &raycastingData,
+                                        uint32_t totalLateralLine)
+{
+    float lateralPosA, lateralPosB, verticalPos, lateralText, closerDist = raycastingData[0].m_distance;
+    float diffTotalTexturePos = (spriteComp.m_spriteData->m_texturePosVertex[0].first -
+                                 spriteComp.m_spriteData->m_texturePosVertex[1].first);
+    for(uint32_t i = 0; i < raycastingData.size(); ++i)
+    {
+        lateralPosA = static_cast<float>(raycastingData[i].m_lateral / totalLateralLine);
+        lateralPosB = static_cast<float>((raycastingData[i].m_lateral + 1) / totalLateralLine);
+        verticalPos = spriteComp.m_glFpsSize.second / raycastingData[i].m_distance;
+
+        lateralText = spriteComp.m_spriteData->m_texturePosVertex[0].first +
+                (raycastingData[i].m_texturePos / LEVEL_TILE_SIZE_PX) * diffTotalTexturePos;
+        addTexturePoint({lateralPosA, verticalPos}, {lateralText,
+                                                     spriteComp.m_spriteData->m_texturePosVertex[0].second});
+        addTexturePoint({lateralPosB, verticalPos}, {lateralText,
+                                                     spriteComp.m_spriteData->m_texturePosVertex[1].second});
+        addTexturePoint({lateralPosB, -verticalPos}, {lateralText,
+                                                      spriteComp.m_spriteData->m_texturePosVertex[2].second});
+        addTexturePoint({lateralPosA, -verticalPos}, {lateralText,
+                                                      spriteComp.m_spriteData->m_texturePosVertex[3].second});
+        if(raycastingData[i].m_distance < closerDist)
+        {
+            closerDist = raycastingData[i].m_distance;
+        }
+    }
+    return closerDist;
 }
 
 //===================================================================

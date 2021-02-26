@@ -58,7 +58,7 @@ void VisionSystem::execSystem()
         updateTriangleVisionFromPosition(visionCompA, mapCompA, movCompA);
         visionCompA->m_vectVisibleEntities.clear();
 
-        //TEST
+        //TEST back camera
         pairFloat_t memPreviousCameraPos = mapCompA->m_absoluteMapPositionPX;
         {
             float radiantAngle = getRadiantAngle(movCompA->m_degreeOrientation + 180.0f);
@@ -78,7 +78,8 @@ void VisionSystem::execSystem()
                     searchComponentByType<GeneralCollisionComponent>(vectEntities[j],
                                           Components_e::GENERAL_COLLISION_COMPONENT);
             assert(collCompB);
-            if(collComp->m_tag == CollisionTag_e::ENEMY_CT && collCompB->m_tag != CollisionTag_e::PLAYER_CT)
+            if((collComp->m_tag == CollisionTag_e::ENEMY_CT && collCompB->m_tag != CollisionTag_e::PLAYER_CT) ||
+                    (collCompB->m_tag == CollisionTag_e::DOOR_CT) || (collCompB->m_tag == CollisionTag_e::WALL_CT))
             {
                 continue;
             }

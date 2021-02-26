@@ -30,7 +30,6 @@ void FirstPersonDisplaySystem::setUsedComponents()
 void FirstPersonDisplaySystem::execSystem()
 {
     System::execSystem();
-    rayCasting();
     confCompVertexMemEntities();
     drawVertex();
 }
@@ -61,7 +60,7 @@ void FirstPersonDisplaySystem::confCompVertexMemEntities()
         toRemove = 0;
         m_numVertexToDraw[i] = visionComp->m_vectVisibleEntities.size();
         m_entitiesNumMem.clear();
-        //TEST
+        //TEST back camera
         pairFloat_t memPreviousCameraPos = mapCompA->m_absoluteMapPositionPX;
         {
             float radiantAngle = getRadiantAngle(moveComp->m_degreeOrientation + 180.0f);
@@ -70,24 +69,49 @@ void FirstPersonDisplaySystem::confCompVertexMemEntities()
             mapCompA->m_absoluteMapPositionPX.second -=
                     std::sin(radiantAngle) * 19.0f;
         }
-
-        for(uint32_t j = 0; j < m_numVertexToDraw[i]; ++j)
+        uint32_t numIteration;
+        //draw dynamic element
+        for(numIteration = 0; numIteration < m_numVertexToDraw[i]; ++numIteration)
         {
             genCollComp = stairwayToComponentManager().
-                    searchComponentByType<GeneralCollisionComponent>(visionComp->m_vectVisibleEntities[j],
+                    searchComponentByType<GeneralCollisionComponent>(visionComp->m_vectVisibleEntities[numIteration],
                                                                      Components_e::GENERAL_COLLISION_COMPONENT);
             mapCompB = stairwayToComponentManager().
-                    searchComponentByType<MapCoordComponent>(visionComp->m_vectVisibleEntities[j],
+                    searchComponentByType<MapCoordComponent>(visionComp->m_vectVisibleEntities[numIteration],
                                                              Components_e::MAP_COORD_COMPONENT);
             assert(mapCompB);
             assert(genCollComp);
             treatDisplayEntity(genCollComp, mapCompA, mapCompB, visionComp,
-                               toRemove, moveComp->m_degreeOrientation, j);
+                               toRemove, moveComp->m_degreeOrientation, numIteration);
         }
         mapCompA->m_absoluteMapPositionPX = memPreviousCameraPos;
         m_numVertexToDraw[i] -= toRemove;
+        ++numIteration;
+        rayCasting();
+        //draw wall and door
+        for(mapRayCastingData_t::const_iterator it = m_raycastingData.begin();
+            it != m_raycastingData.end(); ++it, ++numIteration)
+        {
+            writeVertexRaycasting(*it, numIteration);
+        }
     }
 }
+
+//===================================================================
+void FirstPersonDisplaySystem::writeVertexRaycasting(const pairRaycastingData_t &entityData,
+                                                     uint32_t numIteration)
+{
+    VerticesData &vertex = getClearedVertice(numIteration);
+    SpriteTextureComponent *spriteComp = stairwayToComponentManager().
+            searchComponentByType<SpriteTextureComponent>(entityData.first,
+                                                          Components_e::SPRITE_TEXTURE_COMPONENT);
+    assert(spriteComp);
+    float distance = vertex.loadRaycastingEntity(*spriteComp, entityData.second, m_textureLineDrawNumber);
+    m_entitiesNumMem.insert(EntityData(distance,
+                                       static_cast<Texture_e>(spriteComp->m_spriteData->m_textureNum),
+                                       numIteration));
+}
+
 
 //===================================================================
 void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *genCollComp, MapCoordComponent *mapCompA,
@@ -101,78 +125,24 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
                 numEntity,
                 Components_e::SPRITE_TEXTURE_COMPONENT);
     assert(spriteComp);
-    if(genCollComp->m_tag == CollisionTag_e::WALL_CT || genCollComp->m_tag == CollisionTag_e::DOOR_CT)
+    pairFloat_t centerPosB = getCenterPosition(mapCompB, genCollComp, numEntity);
+    assert(spriteComp);
+    float distance = getCameraDistance(mapCompA->m_absoluteMapPositionPX,
+                                       mapCompB->m_absoluteMapPositionPX, radiantObserverAngle) / LEVEL_TILE_SIZE_PX;
+    float simpleDistance = getDistance(mapCompA->m_absoluteMapPositionPX,
+                                       mapCompB->m_absoluteMapPositionPX);
+    float depthSimpleGL;
+    if(distance > visionComp->m_distanceVisibility)
     {
-        float depthGL[4];
-        pairFloat_t absolPos[4];
-        float lateralPos[3];
-        bool pointIn[3];
-        bool outLeft[3];
-        float trigoAngle;
-        uint32_t angleToTreat;
-        DisplayMode_e displayMode;
-        float distance;
-        //calculate distance
-        fillWallEntitiesData(numEntity, absolPos, visionComp, mapCompA, mapCompB,
-                             radiantObserverAngle, pointIn, outLeft, angleToTreat);
-        if(angleToTreat < 2)
-        {
-            return;
-        }
-        if(genCollComp->m_tag == CollisionTag_e::DOOR_CT)
-        {
-            DoorComponent *doorComp = stairwayToComponentManager().
-                    searchComponentByType<DoorComponent>(numEntity, Components_e::DOOR_COMPONENT);
-            assert(doorComp);
-            RectangleCollisionComponent *rectComp = stairwayToComponentManager().
-                    searchComponentByType<RectangleCollisionComponent>(numEntity,
-                                                                       Components_e::RECTANGLE_COLLISION_COMPONENT);
-            assert(rectComp);
-            adaptTextureDoorDisplay(doorComp, rectComp, mapCompA, mapCompB, absolPos);
-            distance = getDoorDistance(mapCompA, mapCompB, doorComp);
-            displayMode = DisplayMode_e::DOOR_DM;
-        }
-        else
-        {
-            displayMode = DisplayMode_e::WALL_DM;
-        }
-        //calculate all 3 display position
-        for(uint32_t i = 0; i < angleToTreat; ++i)
-        {
-            trigoAngle = getTrigoAngle(mapCompA->m_absoluteMapPositionPX, absolPos[i]);
-            lateralPos[i] = getLateralAngle(degreeObserverAngle, trigoAngle);
-        }
-        calculateDepthWallEntitiesData(numEntity, angleToTreat, pointIn, outLeft, depthGL,
-                                       radiantObserverAngle, absolPos, mapCompA);
-        //conf screen position
-        confWallEntityVertex(numEntity, visionComp, lateralPos, depthGL, (angleToTreat == 3));
-        if(displayMode != DisplayMode_e::DOOR_DM)
-        {
-            distance = getDistance(mapCompA->m_absoluteMapPositionPX, absolPos[1]);
-        }
-        fillVertexFromEntity(numEntity, numIteration, distance, displayMode);
+        ++toRemove;
+        return;
     }
-    else
-    {
-        pairFloat_t centerPosB = getCenterPosition(mapCompB, genCollComp, numEntity);
-        assert(spriteComp);
-        float distance = getCameraDistance(mapCompA->m_absoluteMapPositionPX,
-                                           mapCompB->m_absoluteMapPositionPX, radiantObserverAngle) / LEVEL_TILE_SIZE_PX;
-        float simpleDistance = getDistance(mapCompA->m_absoluteMapPositionPX,
-                                           mapCompB->m_absoluteMapPositionPX);
-        float depthSimpleGL;
-        if(distance > visionComp->m_distanceVisibility)
-        {
-            ++toRemove;
-            return;
-        }
-        depthSimpleGL = spriteComp->m_glFpsSize.second / distance;
-        float trigoAngle = getTrigoAngle(mapCompA->m_absoluteMapPositionPX, centerPosB);
-        //get lateral pos from angle
-        float lateralPos = getLateralAngle(degreeObserverAngle, trigoAngle);
-        confNormalEntityVertex(numEntity, visionComp, lateralPos, depthSimpleGL);
-        fillVertexFromEntity(numEntity, numIteration, simpleDistance, DisplayMode_e::STANDART_DM);
-    }
+    depthSimpleGL = spriteComp->m_glFpsSize.second / distance;
+    float trigoAngle = getTrigoAngle(mapCompA->m_absoluteMapPositionPX, centerPosB);
+    //get lateral pos from angle
+    float lateralPos = getLateralAngle(degreeObserverAngle, trigoAngle);
+    confNormalEntityVertex(numEntity, visionComp, lateralPos, depthSimpleGL);
+    fillVertexFromEntity(numEntity, numIteration, simpleDistance, DisplayMode_e::STANDART_DM);
 }
 
 //===================================================================
@@ -809,22 +779,7 @@ float getQuarterAngle(float angle)
 void FirstPersonDisplaySystem::fillVertexFromEntity(uint32_t numEntity, uint32_t numIteration,
                                                     float distance, DisplayMode_e displayMode)
 {
-    Shader_e shaderType = Shader_e::TEXTURE_S;
-    //use 1 vertex for 1 sprite for beginning
-    if(numIteration < m_vectVerticesData.size())
-    {
-        m_vectVerticesData[numIteration].clear();
-        m_vectVerticesData[numIteration].setShaderType(shaderType);
-    }
-    else
-    {
-        do
-        {
-            m_vectVerticesData.push_back(VerticesData(shaderType));
-        }
-        while(numIteration >= m_vectVerticesData.size());
-        assert(numIteration < m_vectVerticesData.size());
-    }
+    VerticesData &vertex = getClearedVertice(numIteration);
     PositionVertexComponent *posComp = stairwayToComponentManager().
             searchComponentByType<PositionVertexComponent>(numEntity,
                                                            Components_e::POSITION_VERTEX_COMPONENT);
@@ -833,23 +788,40 @@ void FirstPersonDisplaySystem::fillVertexFromEntity(uint32_t numEntity, uint32_t
                                                           Components_e::SPRITE_TEXTURE_COMPONENT);
     assert(posComp);
     assert(spriteComp);
-    m_entitiesNumMem.insert(EntityData(distance,
-                                       static_cast<Texture_e>(spriteComp->m_spriteData->m_textureNum),
+    m_entitiesNumMem.insert(EntityData(distance, static_cast<Texture_e>(spriteComp->m_spriteData->m_textureNum),
                                        numIteration));
     if(displayMode == DisplayMode_e::STANDART_DM)
     {
-        m_vectVerticesData[numIteration].
-                loadVertexStandartTextureComponent(*posComp, *spriteComp);
+        vertex.loadVertexStandartTextureComponent(*posComp, *spriteComp);
     }
     else
     {
         DoorComponent *doorComp = nullptr;
         doorComp = stairwayToComponentManager().
                 searchComponentByType<DoorComponent>(numEntity, Components_e::DOOR_COMPONENT);
-        m_vectVerticesData[numIteration].
-                loadVertexTextureDrawByLineComponent(*posComp, *spriteComp,
-                                                     m_textureLineDrawNumber, doorComp);
+        vertex.loadVertexTextureDrawByLineComponent(*posComp, *spriteComp, m_textureLineDrawNumber, doorComp);
     }
+}
+
+//===================================================================
+VerticesData &FirstPersonDisplaySystem::getClearedVertice(uint32_t index)
+{
+    //use 1 vertex for 1 sprite for beginning
+    if(index < m_vectVerticesData.size())
+    {
+        m_vectVerticesData[index].clear();
+        m_vectVerticesData[index].setShaderType(Shader_e::TEXTURE_S);
+    }
+    else
+    {
+        do
+        {
+            m_vectVerticesData.push_back(VerticesData(Shader_e::TEXTURE_S));
+        }
+        while(index >= m_vectVerticesData.size());
+        assert(index < m_vectVerticesData.size());
+    }
+    return m_vectVerticesData[index];
 }
 
 //===================================================================
@@ -985,19 +957,23 @@ void FirstPersonDisplaySystem::rayCasting()
     std::optional<ElementRaycast> element;
     for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
     {
+        //WORK FOR ONE PLAYER ONLY
+        m_raycastingData.clear();
         mapCompCamera = stairwayToComponentManager().
                 searchComponentByType<MapCoordComponent>(mVectNumEntity[i], Components_e::MAP_COORD_COMPONENT);
         assert(mapCompCamera);
         moveComp = stairwayToComponentManager().
                 searchComponentByType<MoveableComponent>(mVectNumEntity[i], Components_e::MOVEABLE_COMPONENT);
         assert(moveComp);
+        radiantAngle = getRadiantAngle(moveComp->m_degreeOrientation);
         float leftAngle = moveComp->m_degreeOrientation + HALF_CONE_VISION;
         if(leftAngle > 360.0f)
         {
             leftAngle -= 360.0f;
         }
-        float currentAngle = leftAngle,
-                currentLateralScreen = -1.0;;
+        float currentAngle = leftAngle, memTexturePos,
+                currentLateralScreen = -1.0;
+        //mem entity num & distances
         for(uint32_t j = 0; j < m_textureLineDrawNumber; ++j)
         {
             radiantAngle = getRadiantAngle(currentAngle);
@@ -1022,6 +998,7 @@ void FirstPersonDisplaySystem::rayCasting()
                         --currentCoord.second;
                     }
                     currentPoint.first = memCoef;
+                    memTexturePos = currentPoint.first;
                 }
                 //Y
                 else
@@ -1037,21 +1014,39 @@ void FirstPersonDisplaySystem::rayCasting()
                         currentPoint.first = static_cast<float>(currentCoord.first - 1) * LEVEL_TILE_SIZE_PX;
                         --currentCoord.first;
                     }
+                    memTexturePos = currentPoint.second;
                 }
                 element = Level::getElementCase(currentCoord);
+                //if out of level
                 if(!element)
                 {
                     break;
                 }
                 if(element->m_type == LevelCaseType_e::WALL_LC)
                 {
-                    //                        element->m_spriteComp->m_glFpsSize;
+                    memDistance(element->m_numEntity, j, getCameraDistance(mapCompCamera->m_absoluteMapPositionPX,
+                                                                           currentPoint, radiantAngle), memTexturePos);
                     break;
                 }
             }
             currentLateralScreen += m_stepDrawLateralScreen;
             currentAngle -= m_stepAngle;
         }
+    }
+}
+
+//===================================================================
+void FirstPersonDisplaySystem::memDistance(uint32_t numEntity, uint32_t lateralScreenPos,
+                                           float distance, float texturePos)
+{
+    mapRayCastingData_t::iterator it = m_raycastingData.find(numEntity);
+    if(it == m_raycastingData.end())
+    {
+        m_raycastingData.insert({numEntity, {{texturePos, distance, lateralScreenPos}}});
+    }
+    else
+    {
+        it->second.push_back({texturePos, distance, lateralScreenPos});
     }
 }
 

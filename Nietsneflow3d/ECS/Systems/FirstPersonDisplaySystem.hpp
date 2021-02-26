@@ -11,7 +11,17 @@
 
 struct GeneralCollisionComponent;
 struct RectangleCollisionComponent;
+struct RayCastingIntersect;
+
 using vectUI_t = std::vector<uint32_t>;
+using mapRayCastingData_t = std::map<uint32_t, std::vector<RayCastingIntersect>>;
+using pairRaycastingData_t = std::pair<uint32_t, std::vector<RayCastingIntersect>>;
+
+struct RayCastingIntersect
+{
+    float m_distance, m_texturePos;
+    uint32_t m_lateral;
+};
 
 enum WallTreatment_e
 {
@@ -44,8 +54,10 @@ public:
     void setShader(Shader &shader);
 private:
     void rayCasting();
+    void memDistance(uint32_t numEntity, uint32_t lateralScreenPos, float distance, float texturePos);
     void setUsedComponents();
     void confCompVertexMemEntities();
+    void writeVertexRaycasting(const pairRaycastingData_t &entityData, uint32_t numIteration);
     void adaptTextureDoorDisplay(DoorComponent *doorComp,
                                  RectangleCollisionComponent *rectComp, MapCoordComponent *mapCompCamera,
                                  MapCoordComponent *mapCompDoor, pairFloat_t absolPos[]);
@@ -71,6 +83,8 @@ private:
                                   GeneralCollisionComponent *genCollComp, float numEntity);
     void fillVertexFromEntity(uint32_t numEntity, uint32_t numIteration, float distance,
                               DisplayMode_e displayMode);
+    VerticesData &getClearedVertice(uint32_t index);
+
     std::optional<pairFloat_t> checkLimitWallCase(const pairFloat_t &pointObserver, float limitObserverAngle,
                                                   const pairFloat_t &outPoint, const pairFloat_t &linkPoint,
                                                   bool leftLimit, bool XCase, float correction,
@@ -87,6 +101,7 @@ private:
     std::multiset<EntityData> m_entitiesNumMem;
     std::vector<VerticesData> m_vectVerticesData;
     std::vector<Texture> *m_ptrVectTexture = nullptr;
+    mapRayCastingData_t m_raycastingData;
     //number of entity to draw per player
     vectUI_t m_numVertexToDraw;
     uint32_t m_textureLineDrawNumber = 100;

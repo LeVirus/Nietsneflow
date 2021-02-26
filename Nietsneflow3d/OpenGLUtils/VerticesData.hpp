@@ -9,6 +9,10 @@ struct PositionVertexComponent;
 struct ColorVertexComponent;
 struct SpriteTextureComponent;
 struct DoorComponent;
+struct RayCastingIntersect;
+
+using mapRayCastingData_t = std::map<uint32_t, std::vector<RayCastingIntersect>>;
+using pairRaycastingData_t = std::pair<uint32_t, std::vector<RayCastingIntersect>>;
 
 class Shader;
 
@@ -40,9 +44,10 @@ public:
                                   const ColorVertexComponent *colorComp);
     void loadVertexStandartTextureComponent(const PositionVertexComponent &posComp,
                                             SpriteTextureComponent &spriteComp);
+    float loadRaycastingEntity(const SpriteTextureComponent &spriteComp, const std::vector<RayCastingIntersect> &raycastingData, uint32_t totalLateralLine);
     void loadVertexTextureDrawByLineComponent(const PositionVertexComponent &posComp,
                                               const SpriteTextureComponent &spriteComp,
-                                              uint32_t lineDrawNumber, DoorComponent *doorComp);
+                                              uint32_t lineDrawNumber, DoorComponent *doorComp = nullptr);
     void loadVertexTextureDrawByLineRect(const pairFloat_t &firstPos,
                                          const pairFloat_t &secondPos,
                                          const SpriteTextureComponent &spriteComp,
