@@ -134,10 +134,9 @@ float VerticesData::loadRaycastingEntity(const SpriteTextureComponent &spriteCom
                                  spriteComp.m_spriteData->m_texturePosVertex[1].first);
     for(uint32_t i = 0; i < raycastingData.size(); ++i)
     {
-        lateralPosA = static_cast<float>(raycastingData[i].m_lateral / totalLateralLine);
-        lateralPosB = static_cast<float>((raycastingData[i].m_lateral + 1) / totalLateralLine);
+        lateralPosA = 2.0f * static_cast<float>(raycastingData[i].m_lateral) / static_cast<float>(totalLateralLine) - 1.0f;
+        lateralPosB = 2.0f * static_cast<float>(raycastingData[i].m_lateral + 1) / static_cast<float>(totalLateralLine) - 1.0f;
         verticalPos = spriteComp.m_glFpsSize.second / raycastingData[i].m_distance;
-
         lateralText = spriteComp.m_spriteData->m_texturePosVertex[0].first +
                 (raycastingData[i].m_texturePos / LEVEL_TILE_SIZE_PX) * diffTotalTexturePos;
         addTexturePoint({lateralPosA, verticalPos}, {lateralText,
@@ -148,6 +147,7 @@ float VerticesData::loadRaycastingEntity(const SpriteTextureComponent &spriteCom
                                                       spriteComp.m_spriteData->m_texturePosVertex[2].second});
         addTexturePoint({lateralPosA, -verticalPos}, {lateralText,
                                                       spriteComp.m_spriteData->m_texturePosVertex[3].second});
+        addIndices(BaseShapeTypeGL_e::RECTANGLE);
         if(raycastingData[i].m_distance < closerDist)
         {
             closerDist = raycastingData[i].m_distance;
