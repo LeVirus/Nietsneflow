@@ -139,6 +139,7 @@ float VerticesData::loadRaycastingEntity(const SpriteTextureComponent &spriteCom
         verticalPos = spriteComp.m_glFpsSize.second / raycastingData[i].m_distance;
         lateralText = spriteComp.m_spriteData->m_texturePosVertex[0].first +
                 (raycastingData[i].m_texturePos / LEVEL_TILE_SIZE_PX) * diffTotalTexturePos;
+//        assert(raycastingData[i].m_distance > 1.0f);
         addTexturePoint({lateralPosA, verticalPos}, {lateralText,
                                                      spriteComp.m_spriteData->m_texturePosVertex[0].second});
         addTexturePoint({lateralPosB, verticalPos}, {lateralText,
