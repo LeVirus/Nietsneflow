@@ -968,6 +968,7 @@ void FirstPersonDisplaySystem::rayCasting()
         float leftAngle = moveComp->m_degreeOrientation + HALF_CONE_VISION;
         float currentAngle = leftAngle, memTexturePos,
                 currentLateralScreen = -1.0;
+        float cameraRadiantAngle = getRadiantAngle(moveComp->m_degreeOrientation);
         //mem entity num & distances
         for(uint32_t j = 0; j < m_textureLineDrawNumber; ++j)
         {
@@ -979,7 +980,14 @@ void FirstPersonDisplaySystem::rayCasting()
             lateralLeadCoef = getLateralLeadCoef(radiantAngle);
             for(uint32_t k = 0; k < 20; ++k)//limit distance
             {
-                currentCoord = getLevelCoord({currentPoint.first - 1.0f, currentPoint.second - 1.0f});
+                if(std::sin(radiantAngle) > 0.0f)
+                {
+                    currentCoord = getLevelCoord({currentPoint.first, currentPoint.second - 1.0f});
+                }
+                else
+                {
+                    currentCoord = getLevelCoord({currentPoint.first, currentPoint.second});
+                }
                 element = Level::getElementCase(currentCoord);
                 //if out of level
                 if(!element)
@@ -991,7 +999,7 @@ void FirstPersonDisplaySystem::rayCasting()
                     float textPos = (std::fmod(currentPoint.second, LEVEL_TILE_SIZE_PX) <= EPSILON_FLOAT) ?
                            currentPoint.first : currentPoint.second;
                     memDistance(element->m_numEntity, j, getCameraDistance(mapCompCamera->m_absoluteMapPositionPX,
-                                                                           currentPoint, radiantAngle), textPos);
+                                                                           currentPoint, cameraRadiantAngle), textPos);
                     break;
                 }
                 break;//TEST
@@ -1088,10 +1096,11 @@ pairFloat_t getLimitPointRayCasting(const pairFloat_t &cameraPoint, float radian
             return {cameraPoint.first + (LEVEL_TILE_SIZE_PX - modulo), cameraPoint.second};
         }
     }
+    bool visionDown = (currentSin < 0.0f);
     float diffVert, diffLat, currentTan = std::tan(std::fmod(radiantAngle, PI_HALF));
     //check if lateral diff is out of case=================================
     float modulo = std::fmod(cameraPoint.second, LEVEL_TILE_SIZE_PX);
-    if(currentSin < 0.0f)
+    if(visionDown)
     {
         diffVert = LEVEL_TILE_SIZE_PX - modulo;
         modulo = diffVert;
@@ -1129,8 +1138,6 @@ pairFloat_t getLimitPointRayCasting(const pairFloat_t &cameraPoint, float radian
     {
         diffVert = diffLat / currentTan;
     }
-
-
     prevLimitPoint.first += diffLat;
     prevLimitPoint.second += diffVert;
     return prevLimitPoint;

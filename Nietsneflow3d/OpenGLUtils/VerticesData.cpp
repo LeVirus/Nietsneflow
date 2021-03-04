@@ -136,7 +136,7 @@ float VerticesData::loadRaycastingEntity(const SpriteTextureComponent &spriteCom
     {
         lateralPosA = 2.0f * static_cast<float>(raycastingData[i].m_lateral) / static_cast<float>(totalLateralLine) - 1.0f;
         lateralPosB = 2.0f * static_cast<float>(raycastingData[i].m_lateral + 1) / static_cast<float>(totalLateralLine) - 1.0f;
-        verticalPos = spriteComp.m_glFpsSize.second / raycastingData[i].m_distance;
+        verticalPos = spriteComp.m_glFpsSize.second / (raycastingData[i].m_distance / LEVEL_TILE_SIZE_PX);
         lateralText = spriteComp.m_spriteData->m_texturePosVertex[0].first +
                 (raycastingData[i].m_texturePos / LEVEL_TILE_SIZE_PX) * diffTotalTexturePos;
 //        assert(raycastingData[i].m_distance > 1.0f);
