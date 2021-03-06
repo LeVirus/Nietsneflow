@@ -973,11 +973,11 @@ void FirstPersonDisplaySystem::rayCasting()
         for(uint32_t j = 0; j < m_textureLineDrawNumber; ++j)
         {
             radiantAngle = getRadiantAngle(currentAngle);
-            currentPoint = getLimitPointRayCasting(mapCompCamera->m_absoluteMapPositionPX, radiantAngle);
-            assert(std::abs(mapCompCamera->m_absoluteMapPositionPX.first - currentPoint.first) < 35.0f);
-            assert(std::abs(mapCompCamera->m_absoluteMapPositionPX.second - currentPoint.second) < 35.0f);
             verticalLeadCoef = getVerticalLeadCoef(radiantAngle);
             lateralLeadCoef = getLateralLeadCoef(radiantAngle);
+            currentPoint = getLimitPointRayCasting(mapCompCamera->m_absoluteMapPositionPX, radiantAngle, lateralLeadCoef, verticalLeadCoef);
+            assert(std::abs(mapCompCamera->m_absoluteMapPositionPX.first - currentPoint.first) < 35.0f);
+            assert(std::abs(mapCompCamera->m_absoluteMapPositionPX.second - currentPoint.second) < 35.0f);
             for(uint32_t k = 0; k < 20; ++k)//limit distance
             {
                 if(std::sin(radiantAngle) > 0.0f)
@@ -1060,7 +1060,8 @@ void FirstPersonDisplaySystem::memDistance(uint32_t numEntity, uint32_t lateralS
 }
 
 //===================================================================
-pairFloat_t getLimitPointRayCasting(const pairFloat_t &cameraPoint, float radiantAngle)
+pairFloat_t getLimitPointRayCasting(const pairFloat_t &cameraPoint, float radiantAngle,
+                                    float lateralLeadCoef, float verticalLeadCoef)
 {
     float currentCos = std::cos(radiantAngle),
     currentSin = std::sin(radiantAngle);
@@ -1097,7 +1098,7 @@ pairFloat_t getLimitPointRayCasting(const pairFloat_t &cameraPoint, float radian
         }
     }
     bool visionDown = (currentSin < 0.0f);
-    float diffVert, diffLat, currentTan = std::tan(std::fmod(radiantAngle, PI_HALF));
+    float diffVert, diffLat;
     //check if lateral diff is out of case=================================
     float modulo = std::fmod(cameraPoint.second, LEVEL_TILE_SIZE_PX);
     if(visionDown)
@@ -1110,14 +1111,7 @@ pairFloat_t getLimitPointRayCasting(const pairFloat_t &cameraPoint, float radian
         diffVert = modulo;
         modulo = -modulo;
     }
-    if(currentTan < 1.0f)
-    {
-        diffLat = -diffVert * currentTan;
-    }
-    else
-    {
-        diffLat = diffVert / currentTan;
-    }
+    diffLat = lateralLeadCoef * diffVert / LEVEL_TILE_SIZE_PX;
     //if lateral diff is in the same case
     prevLimitPoint.first += diffLat;
     if(static_cast<uint32_t>(prevLimitPoint.first / LEVEL_TILE_SIZE_PX) == coord.first)
@@ -1129,15 +1123,7 @@ pairFloat_t getLimitPointRayCasting(const pairFloat_t &cameraPoint, float radian
     //check if vertical diff is out of case=================================
     modulo = std::fmod(cameraPoint.first, LEVEL_TILE_SIZE_PX);
     diffLat = (currentCos < 0.0f) ? -modulo : (LEVEL_TILE_SIZE_PX - modulo);
-
-    if(currentTan < 1.0f)
-    {
-        diffVert = diffLat * currentTan;
-    }
-    else
-    {
-        diffVert = diffLat / currentTan;
-    }
+    diffVert = verticalLeadCoef * diffLat / LEVEL_TILE_SIZE_PX;
     prevLimitPoint.first += diffLat;
     prevLimitPoint.second += diffVert;
     return prevLimitPoint;

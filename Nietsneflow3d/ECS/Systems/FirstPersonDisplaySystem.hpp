@@ -124,4 +124,4 @@ float getDoorDistance(const MapCoordComponent *mapCompCamera, const MapCoordComp
 float getMiddleDoorDistance(const pairFloat_t &camera, const pairFloat_t &element, bool vertical);
 float getVerticalLeadCoef(float radiantAngle);
 float getLateralLeadCoef(float radiantAngle);
-pairFloat_t getLimitPointRayCasting(const pairFloat_t &cameraPoint, float radiantAngle);
+pairFloat_t getLimitPointRayCasting(const pairFloat_t &cameraPoint, float radiantAngle, float lateralLeadCoef, float verticalLeadCoef);
