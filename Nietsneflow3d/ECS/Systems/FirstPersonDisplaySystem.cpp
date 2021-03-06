@@ -1041,6 +1041,10 @@ void FirstPersonDisplaySystem::rayCasting()
             }
             currentLateralScreen += m_stepDrawLateralScreen;
             currentAngle -= m_stepAngle;
+            if(currentAngle < 0.0f)
+            {
+                currentAngle += 360.0f;
+            }
         }
     }
 }
@@ -1134,7 +1138,7 @@ pairFloat_t getLimitPointRayCasting(const pairFloat_t &cameraPoint, float radian
 //===================================================================
 std::optional<float> getLeadCoef(float radiantAngle, bool lateral)
 {
-    float radiantAngleQuarter = std::fmod(radiantAngle, PI_HALF),
+    float tanRadiantAngleQuarter = std::tan(std::fmod(radiantAngle, PI_HALF)),
             sinus = std::sin(radiantAngle),
             cosinus = std::cos(radiantAngle), result;
     if((lateral && std::abs(sinus) < 0.0001f) || (!lateral && std::abs(cosinus) < 0.0001f))
@@ -1145,11 +1149,13 @@ std::optional<float> getLeadCoef(float radiantAngle, bool lateral)
     cosinusPos = (cosinus > 0.0f);
     if((lateral && sinusPos == cosinusPos) || (!lateral && cosinusPos != sinusPos))
     {
-        result = LEVEL_TILE_SIZE_PX / std::tan(radiantAngleQuarter);
+        if(!lateral)std::cerr << tanRadiantAngleQuarter << " LEADDD " <<
+                                 getDegreeAngle(radiantAngle) << "\n";
+        result = LEVEL_TILE_SIZE_PX / tanRadiantAngleQuarter;
     }
     else
     {
-        result = std::tan(radiantAngleQuarter) * LEVEL_TILE_SIZE_PX;
+        result = tanRadiantAngleQuarter * LEVEL_TILE_SIZE_PX;
     }
     if((lateral && cosinus < 0.0f) || (!lateral && sinus > 0.0f))
     {
