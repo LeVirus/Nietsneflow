@@ -122,6 +122,6 @@ void removeSecondRect(pairFloat_t absolPos[], float distance[], uint32_t &distan
 float getDoorDistance(const MapCoordComponent *mapCompCamera, const MapCoordComponent *mapCompDoor,
                       const DoorComponent *doorComp);
 float getMiddleDoorDistance(const pairFloat_t &camera, const pairFloat_t &element, bool vertical);
-float getVerticalLeadCoef(float radiantAngle);
-float getLateralLeadCoef(float radiantAngle);
-pairFloat_t getLimitPointRayCasting(const pairFloat_t &cameraPoint, float radiantAngle, float lateralLeadCoef, float verticalLeadCoef);
+//lateral == false vertical
+std::optional<float> getLeadCoef(float radiantAngle, bool lateral);
+pairFloat_t getLimitPointRayCasting(const pairFloat_t &cameraPoint, float radiantAngle, std::optional<float> lateralLeadCoef, std::optional<float> verticalLeadCoef);

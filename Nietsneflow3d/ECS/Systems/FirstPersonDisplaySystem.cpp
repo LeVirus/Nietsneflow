@@ -950,8 +950,8 @@ void FirstPersonDisplaySystem::rayCasting()
 {
     MapCoordComponent *mapCompCamera;
     MoveableComponent *moveComp;
-    float lateralLeadCoef , verticalLeadCoef, memCoef;
-    float radiantAngle;
+    std::optional<float> lateralLeadCoef, verticalLeadCoef;
+    float radiantAngle, memCoef;
     pairFloat_t currentPoint;
     pairUI_t currentCoord;
     std::optional<ElementRaycast> element;
@@ -973,9 +973,10 @@ void FirstPersonDisplaySystem::rayCasting()
         for(uint32_t j = 0; j < m_textureLineDrawNumber; ++j)
         {
             radiantAngle = getRadiantAngle(currentAngle);
-            verticalLeadCoef = getVerticalLeadCoef(radiantAngle);
-            lateralLeadCoef = getLateralLeadCoef(radiantAngle);
-            currentPoint = getLimitPointRayCasting(mapCompCamera->m_absoluteMapPositionPX, radiantAngle, lateralLeadCoef, verticalLeadCoef);
+            verticalLeadCoef = getLeadCoef(radiantAngle, false);
+            lateralLeadCoef = getLeadCoef(radiantAngle, true);
+            currentPoint = getLimitPointRayCasting(mapCompCamera->m_absoluteMapPositionPX,
+                                                   radiantAngle, lateralLeadCoef, verticalLeadCoef);
             assert(std::abs(mapCompCamera->m_absoluteMapPositionPX.first - currentPoint.first) < 35.0f);
             assert(std::abs(mapCompCamera->m_absoluteMapPositionPX.second - currentPoint.second) < 35.0f);
             for(uint32_t k = 0; k < 20; ++k)//limit distance
@@ -1003,11 +1004,11 @@ void FirstPersonDisplaySystem::rayCasting()
                     break;
                 }
                 break;//TEST
-                memCoef = currentPoint.first + lateralLeadCoef;
+                memCoef = currentPoint.first + *lateralLeadCoef;
                 //X
                 if(static_cast<uint32_t>(memCoef / LEVEL_TILE_SIZE_PX) == currentCoord.first)
                 {
-                    if(lateralLeadCoef > 0.0f)
+                    if(*lateralLeadCoef > 0.0f)
                     {
                         currentPoint.second = static_cast<float>(currentCoord.second + 1) * LEVEL_TILE_SIZE_PX;
                         ++currentCoord.second;
@@ -1023,8 +1024,8 @@ void FirstPersonDisplaySystem::rayCasting()
                 //Y
                 else
                 {
-                    currentPoint.second += verticalLeadCoef;
-                    if(lateralLeadCoef > 0.0f)
+                    currentPoint.second += *verticalLeadCoef;
+                    if(*lateralLeadCoef > 0.0f)
                     {
                         currentPoint.first = static_cast<float>(currentCoord.first + 1) * LEVEL_TILE_SIZE_PX;
                         ++currentCoord.first;
@@ -1061,14 +1062,15 @@ void FirstPersonDisplaySystem::memDistance(uint32_t numEntity, uint32_t lateralS
 
 //===================================================================
 pairFloat_t getLimitPointRayCasting(const pairFloat_t &cameraPoint, float radiantAngle,
-                                    float lateralLeadCoef, float verticalLeadCoef)
+                                    std::optional<float> lateralLeadCoef,
+                                    std::optional<float> verticalLeadCoef)
 {
     float currentCos = std::cos(radiantAngle),
     currentSin = std::sin(radiantAngle);
     pairFloat_t prevLimitPoint = cameraPoint;
     pairUI_t coord = getLevelCoord(prevLimitPoint);
     //limit case
-    if(std::abs(currentCos) <= EPSILON_FLOAT)
+    if(!verticalLeadCoef)
     {
         float modulo = std::fmod(cameraPoint.second, LEVEL_TILE_SIZE_PX);
         //down
@@ -1083,7 +1085,7 @@ pairFloat_t getLimitPointRayCasting(const pairFloat_t &cameraPoint, float radian
         }
     }
     //second limit case
-    else if(std::abs(currentSin) <= EPSILON_FLOAT)
+    else if(!lateralLeadCoef)
     {
         float modulo = std::fmod(cameraPoint.first, LEVEL_TILE_SIZE_PX);
         //left
@@ -1111,7 +1113,7 @@ pairFloat_t getLimitPointRayCasting(const pairFloat_t &cameraPoint, float radian
         diffVert = modulo;
         modulo = -modulo;
     }
-    diffLat = lateralLeadCoef * diffVert / LEVEL_TILE_SIZE_PX;
+    diffLat = *lateralLeadCoef * diffVert / LEVEL_TILE_SIZE_PX;
     //if lateral diff is in the same case
     prevLimitPoint.first += diffLat;
     if(static_cast<uint32_t>(prevLimitPoint.first / LEVEL_TILE_SIZE_PX) == coord.first)
@@ -1123,22 +1125,37 @@ pairFloat_t getLimitPointRayCasting(const pairFloat_t &cameraPoint, float radian
     //check if vertical diff is out of case=================================
     modulo = std::fmod(cameraPoint.first, LEVEL_TILE_SIZE_PX);
     diffLat = (currentCos < 0.0f) ? -modulo : (LEVEL_TILE_SIZE_PX - modulo);
-    diffVert = verticalLeadCoef * diffLat / LEVEL_TILE_SIZE_PX;
+    diffVert = *verticalLeadCoef * diffLat / LEVEL_TILE_SIZE_PX;
     prevLimitPoint.first += diffLat;
     prevLimitPoint.second += diffVert;
     return prevLimitPoint;
 }
 
 //===================================================================
-float getVerticalLeadCoef(float radiantAngle)
+std::optional<float> getLeadCoef(float radiantAngle, bool lateral)
 {
-    return std::sin(radiantAngle) * LEVEL_TILE_SIZE_PX;
-}
-
-//===================================================================
-float getLateralLeadCoef(float radiantAngle)
-{
-    return std::cos(radiantAngle) * LEVEL_TILE_SIZE_PX;
+    float radiantAngleQuarter = std::fmod(radiantAngle, PI_HALF),
+            sinus = std::sin(radiantAngle),
+            cosinus = std::cos(radiantAngle), result;
+    if((lateral && std::abs(sinus) < 0.0001f) || (!lateral && std::abs(cosinus) < 0.0001f))
+    {
+        return {};
+    }
+    bool sinusPos = (sinus > 0.0f),
+    cosinusPos = (cosinus > 0.0f);
+    if((lateral && sinusPos == cosinusPos) || (!lateral && cosinusPos != sinusPos))
+    {
+        result = LEVEL_TILE_SIZE_PX / std::tan(radiantAngleQuarter);
+    }
+    else
+    {
+        result = std::tan(radiantAngleQuarter) * LEVEL_TILE_SIZE_PX;
+    }
+    if((lateral && cosinus < 0.0f) || (!lateral && sinus > 0.0f))
+    {
+        result *= -1.0f;
+    }
+    return result;
 }
 
 //===================================================================
