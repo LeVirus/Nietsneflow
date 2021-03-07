@@ -969,6 +969,7 @@ void FirstPersonDisplaySystem::rayCasting()
         float currentAngle = leftAngle, memTexturePos,
                 currentLateralScreen = -1.0;
         float cameraRadiantAngle = getRadiantAngle(moveComp->m_degreeOrientation);
+        pairFloat_t point;
         //mem entity num & distances
         for(uint32_t j = 0; j < m_textureLineDrawNumber; ++j)
         {
@@ -981,14 +982,16 @@ void FirstPersonDisplaySystem::rayCasting()
             assert(std::abs(mapCompCamera->m_absoluteMapPositionPX.second - currentPoint.second) < 35.0f);
             for(uint32_t k = 0; k < 20; ++k)//limit distance
             {
+                point = currentPoint;
                 if(std::sin(radiantAngle) > 0.0f)
                 {
-                    currentCoord = getLevelCoord({currentPoint.first, currentPoint.second - 1.0f});
+                    --point.second;
                 }
-                else
+                if(std::cos(radiantAngle) < 0.0f)
                 {
-                    currentCoord = getLevelCoord({currentPoint.first, currentPoint.second});
+                    --point.first;
                 }
+                currentCoord = getLevelCoord(point);
                 element = Level::getElementCase(currentCoord);
                 //if out of level
                 if(!element)
@@ -1149,8 +1152,6 @@ std::optional<float> getLeadCoef(float radiantAngle, bool lateral)
     cosinusPos = (cosinus > 0.0f);
     if((lateral && sinusPos == cosinusPos) || (!lateral && cosinusPos != sinusPos))
     {
-        if(!lateral)std::cerr << tanRadiantAngleQuarter << " LEADDD " <<
-                                 getDegreeAngle(radiantAngle) << "\n";
         result = LEVEL_TILE_SIZE_PX / tanRadiantAngleQuarter;
     }
     else
