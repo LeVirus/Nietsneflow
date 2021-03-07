@@ -1106,33 +1106,23 @@ pairFloat_t getLimitPointRayCasting(const pairFloat_t &cameraPoint, float radian
             return {cameraPoint.first + (LEVEL_TILE_SIZE_PX - modulo), cameraPoint.second};
         }
     }
-    bool visionDown = (currentSin < 0.0f);
     float diffVert, diffLat;
     //check if lateral diff is out of case=================================
     float modulo = std::fmod(cameraPoint.second, LEVEL_TILE_SIZE_PX);
-    if(visionDown)
-    {
-        diffVert = LEVEL_TILE_SIZE_PX - modulo;
-        modulo = diffVert;
-    }
-    else
-    {
-        diffVert = modulo;
-        modulo = -modulo;
-    }
-    diffLat = *lateralLeadCoef * diffVert / LEVEL_TILE_SIZE_PX;
+    diffVert = (currentSin < 0.0f) ? diffVert = LEVEL_TILE_SIZE_PX - modulo : -modulo;
+    diffLat = *lateralLeadCoef * std::abs(diffVert) / LEVEL_TILE_SIZE_PX;
     //if lateral diff is in the same case
     prevLimitPoint.first += diffLat;
     if(static_cast<uint32_t>(prevLimitPoint.first / LEVEL_TILE_SIZE_PX) == coord.first)
     {
-        prevLimitPoint.second += modulo;
+        prevLimitPoint.second += diffVert;
         return prevLimitPoint;
     }
     prevLimitPoint = cameraPoint;
     //check if vertical diff is out of case=================================
     modulo = std::fmod(cameraPoint.first, LEVEL_TILE_SIZE_PX);
     diffLat = (currentCos < 0.0f) ? -modulo : (LEVEL_TILE_SIZE_PX - modulo);
-    diffVert = *verticalLeadCoef * diffLat / LEVEL_TILE_SIZE_PX;
+    diffVert = *verticalLeadCoef * std::abs(diffLat) / LEVEL_TILE_SIZE_PX;
     prevLimitPoint.first += diffLat;
     prevLimitPoint.second += diffVert;
     return prevLimitPoint;
