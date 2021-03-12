@@ -981,10 +981,6 @@ void FirstPersonDisplaySystem::rayCasting()
                 debugg = currentPoint;
                 currentPoint = getLimitPointRayCasting(currentPoint, radiantAngle,
                                                        lateralLeadCoef, verticalLeadCoef);
-                if(currentPoint.first < 0.0f || currentPoint.second < 0.0f)
-                {
-                    break;
-                }
                 point = currentPoint;
                 if(std::sin(radiantAngle) > 0.0f)
                 {
