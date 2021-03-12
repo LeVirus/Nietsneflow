@@ -952,7 +952,7 @@ void FirstPersonDisplaySystem::rayCasting()
     MoveableComponent *moveComp;
     std::optional<float> lateralLeadCoef, verticalLeadCoef;
     float radiantAngle, textPos;
-    pairFloat_t currentPoint;
+    pairFloat_t currentPoint, debugg;
     pairUI_t currentCoord;
     std::optional<ElementRaycast> element;
     for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
@@ -978,8 +978,13 @@ void FirstPersonDisplaySystem::rayCasting()
             currentPoint = mapCompCamera->m_absoluteMapPositionPX;
             for(uint32_t k = 0; k < 20; ++k)//limit distance
             {
+                debugg = currentPoint;
                 currentPoint = getLimitPointRayCasting(currentPoint, radiantAngle,
                                                        lateralLeadCoef, verticalLeadCoef);
+                if(currentPoint.first < 0.0f || currentPoint.second < 0.0f)
+                {
+                    break;
+                }
                 point = currentPoint;
                 if(std::sin(radiantAngle) > 0.0f)
                 {
@@ -1031,15 +1036,15 @@ void FirstPersonDisplaySystem::memDistance(uint32_t numEntity, uint32_t lateralS
 }
 
 //===================================================================
-float getModulo(float sinCosAngle, float position, bool lateral)
+std::optional<float> getModulo(float sinCosAngle, float position, bool lateral)
 {
     float result = std::fmod(position, LEVEL_TILE_SIZE_PX);
-    if(result <= 0.001f)
+    if(result <= 0.01f)
     {
         //first cos second sin
         if((lateral && sinCosAngle < 0.0f) || (!lateral && sinCosAngle > 0.0f))
         {
-            return LEVEL_TILE_SIZE_PX;
+            return {};
         }
     }
     return result;
@@ -1054,7 +1059,15 @@ pairFloat_t getLimitPointRayCasting(const pairFloat_t &cameraPoint, float radian
             currentSin = std::sin(radiantAngle);
     std::optional<float> modulo;
     pairFloat_t prevLimitPoint = cameraPoint;
-    pairUI_t coord = getLevelCoord(prevLimitPoint);
+    uint32_t coordX;
+    if(currentCos < 0.0f)
+    {
+        coordX = getCoord(prevLimitPoint.first, LEVEL_TILE_SIZE_PX);
+    }
+    else
+    {
+        coordX = static_cast<uint32_t>(prevLimitPoint.first / LEVEL_TILE_SIZE_PX);
+    }
     //limit case
     if(!verticalLeadCoef)
     {
@@ -1095,12 +1108,23 @@ pairFloat_t getLimitPointRayCasting(const pairFloat_t &cameraPoint, float radian
     }
     float diffVert, diffLat;
     //check if lateral diff is out of case=================================
-    modulo = getModulo(currentCos, cameraPoint.second, false);
-    diffVert = (currentSin < 0.0f) ? diffVert = LEVEL_TILE_SIZE_PX - *modulo : -(*modulo);
+    modulo = getModulo(currentSin, cameraPoint.second, false);
+    if(!modulo)
+    {
+        diffVert = LEVEL_TILE_SIZE_PX;
+        if(currentSin > 0.0f)
+        {
+            diffVert = -diffVert;
+        }
+    }
+    else
+    {
+        diffVert = (currentSin < 0.0f) ? LEVEL_TILE_SIZE_PX - *modulo : -(*modulo);
+    }
     diffLat = *lateralLeadCoef * std::abs(diffVert) / LEVEL_TILE_SIZE_PX;
     //if lateral diff is in the same case
     prevLimitPoint.first += diffLat;
-    if(static_cast<uint32_t>(prevLimitPoint.first / LEVEL_TILE_SIZE_PX) == coord.first)
+    if(static_cast<uint32_t>(prevLimitPoint.first / LEVEL_TILE_SIZE_PX) == coordX)
     {
         prevLimitPoint.second += diffVert;
         return prevLimitPoint;
@@ -1108,11 +1132,29 @@ pairFloat_t getLimitPointRayCasting(const pairFloat_t &cameraPoint, float radian
     prevLimitPoint = cameraPoint;
     //check if vertical diff is out of case=================================
     modulo = getModulo(currentCos, cameraPoint.first, true);
-    diffLat = (currentCos < 0.0f) ? -(*modulo) : (LEVEL_TILE_SIZE_PX - *modulo);
+    if(!modulo)
+    {
+        diffLat = (currentCos < 0.0f) ? -LEVEL_TILE_SIZE_PX : LEVEL_TILE_SIZE_PX;
+    }
+    else
+    {
+        diffLat = (currentCos < 0.0f) ? -(*modulo) : (LEVEL_TILE_SIZE_PX - *modulo);
+    }
     diffVert = *verticalLeadCoef * std::abs(diffLat) / LEVEL_TILE_SIZE_PX;
     prevLimitPoint.first += diffLat;
     prevLimitPoint.second += diffVert;
     return prevLimitPoint;
+}
+
+//===================================================================
+uint32_t getCoord(float value, float tileSize)
+{
+    uint32_t coord = static_cast<uint32_t>(value / tileSize);
+    if(std::fmod(value, tileSize) < 0.01f)
+    {
+        --coord;
+    }
+    return coord;
 }
 
 //===================================================================
