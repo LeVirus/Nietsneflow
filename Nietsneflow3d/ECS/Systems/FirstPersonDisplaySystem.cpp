@@ -955,6 +955,7 @@ void FirstPersonDisplaySystem::rayCasting()
     pairFloat_t currentPoint, debugg;
     std::optional<pairUI_t> currentCoord;
     std::optional<ElementRaycast> element;
+    bool lateral;
     for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
     {
         //WORK FOR ONE PLAYER ONLY
@@ -980,20 +981,20 @@ void FirstPersonDisplaySystem::rayCasting()
             {
                 debugg = currentPoint;
                 currentPoint = getLimitPointRayCasting(currentPoint, radiantAngle,
-                                                       lateralLeadCoef, verticalLeadCoef);
+                                                       lateralLeadCoef, verticalLeadCoef, lateral);
                 point = currentPoint;
-                if(std::sin(radiantAngle) > 0.0f)
+                if(lateral && std::sin(radiantAngle) > 0.0f)
                 {
                     --point.second;
                 }
-                if(std::cos(radiantAngle) < 0.0f)
+                if(!lateral && std::cos(radiantAngle) < 0.0f)
                 {
                     --point.first;
                 }
                 currentCoord = getLevelCoord(point);
                 if(!currentCoord)
                 {
-                    continue;
+                    break;
                 }
                 element = Level::getElementCase(*currentCoord);
                 if(element && element->m_type == LevelCaseType_e::WALL_LC)
@@ -1048,7 +1049,7 @@ std::optional<float> getModulo(float sinCosAngle, float position, bool lateral)
 //===================================================================
 pairFloat_t getLimitPointRayCasting(const pairFloat_t &cameraPoint, float radiantAngle,
                                     std::optional<float> lateralLeadCoef,
-                                    std::optional<float> verticalLeadCoef)
+                                    std::optional<float> verticalLeadCoef, bool &lateral)
 {
     float currentCos = std::cos(radiantAngle),
             currentSin = std::sin(radiantAngle);
@@ -1122,6 +1123,7 @@ pairFloat_t getLimitPointRayCasting(const pairFloat_t &cameraPoint, float radian
     if(static_cast<int32_t>(prevLimitPoint.first / LEVEL_TILE_SIZE_PX) == coordX)
     {
         prevLimitPoint.second += diffVert;
+        lateral = true;
         return prevLimitPoint;
     }
     prevLimitPoint = cameraPoint;
@@ -1138,6 +1140,7 @@ pairFloat_t getLimitPointRayCasting(const pairFloat_t &cameraPoint, float radian
     diffVert = *verticalLeadCoef * std::abs(diffLat) / LEVEL_TILE_SIZE_PX;
     prevLimitPoint.first += diffLat;
     prevLimitPoint.second += diffVert;
+    lateral = false;
     return prevLimitPoint;
 }
 
