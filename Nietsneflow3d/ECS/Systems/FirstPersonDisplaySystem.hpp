@@ -104,7 +104,7 @@ private:
     mapRayCastingData_t m_raycastingData;
     //number of entity to draw per player
     vectUI_t m_numVertexToDraw;
-    uint32_t m_textureLineDrawNumber = 100;
+    uint32_t m_textureLineDrawNumber = 200;
     float m_stepAngle = CONE_VISION / static_cast<float>(m_textureLineDrawNumber),
     m_stepDrawLateralScreen = 2.0f / static_cast<float>(m_textureLineDrawNumber);
 };
@@ -126,4 +126,4 @@ std::optional<float> getModulo(float sinCosAngle, float position, bool lateral);
 //lateral == false vertical
 std::optional<float> getLeadCoef(float radiantAngle, bool lateral);
 pairFloat_t getLimitPointRayCasting(const pairFloat_t &cameraPoint, float radiantAngle, std::optional<float> lateralLeadCoef, std::optional<float> verticalLeadCoef);
-uint32_t getCoord(float value, float tileSize);
+int32_t getCoord(float value, float tileSize);

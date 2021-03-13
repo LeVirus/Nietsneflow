@@ -177,4 +177,4 @@ public:
 
 pairFloat_t getAbsolutePosition(const pairUI_t &coord);
 
-pairUI_t getLevelCoord(const pairFloat_t &position);
+std::optional<pairUI_t> getLevelCoord(const pairFloat_t &position);

@@ -55,9 +55,17 @@ void moveElement(MoveableComponent &moveComp,
     radiantAngle = getRadiantAngle(angle);
     mapComp.m_absoluteMapPositionPX.first +=
             cos(radiantAngle) * moveComp.m_velocity;
+    if(mapComp.m_absoluteMapPositionPX.first < moveComp.m_velocity)
+    {
+        mapComp.m_absoluteMapPositionPX.first = moveComp.m_velocity;
+    }
     mapComp.m_absoluteMapPositionPX.second -=
             sin(radiantAngle) * moveComp.m_velocity;
-    mapComp.m_coord = getLevelCoord(mapComp.m_absoluteMapPositionPX);
+    if(mapComp.m_absoluteMapPositionPX.second < moveComp.m_velocity)
+    {
+        mapComp.m_absoluteMapPositionPX.second = moveComp.m_velocity;
+    }
+    mapComp.m_coord = *getLevelCoord(mapComp.m_absoluteMapPositionPX);
 }
 
 //===================================================================

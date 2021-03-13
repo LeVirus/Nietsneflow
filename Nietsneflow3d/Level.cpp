@@ -71,8 +71,12 @@ pairFloat_t getAbsolutePosition(const pairUI_t &coord)
 }
 
 //===================================================================
-pairUI_t getLevelCoord(const pairFloat_t &position)
+std::optional<pairUI_t> getLevelCoord(const pairFloat_t &position)
 {
-    return {static_cast<uint32_t>(position.first / LEVEL_TILE_SIZE_PX),
-                static_cast<uint32_t>(position.second / LEVEL_TILE_SIZE_PX)};
+    if(position.first < 0.0f || position.second < 0.0f)
+    {
+        return {};
+    }
+    return {{static_cast<uint32_t>(position.first / LEVEL_TILE_SIZE_PX),
+                static_cast<uint32_t>(position.second / LEVEL_TILE_SIZE_PX)}};
 }

@@ -133,10 +133,10 @@ void MapDisplaySystem::getMapDisplayLimit(pairFloat_t &playerPos,
     float rangeView = Level::getRangeView();
     playerPos.first += rangeView;
     playerPos.second += rangeView;
-    max = getLevelCoord(playerPos);
+    max = *getLevelCoord(playerPos);
     playerPos.first -= rangeView * 2;
     playerPos.second -= rangeView * 2;
-    min = getLevelCoord(playerPos);
+    min = *getLevelCoord(playerPos);
 }
 
 

@@ -383,7 +383,7 @@ float CollisionSystem::getHorizontalCircleRectEject(const EjectXArgs &args)
 
 //===================================================================
 void CollisionSystem::collisionEject(MapCoordComponent &mapComp,
-                                               float diffX, float diffY)
+                                     float diffX, float diffY)
 {
     if(std::abs(diffX) < std::abs(diffY))
     {
