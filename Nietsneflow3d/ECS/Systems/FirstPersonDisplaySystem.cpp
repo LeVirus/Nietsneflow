@@ -986,7 +986,8 @@ void FirstPersonDisplaySystem::rayCasting()
                 {
                     --point.second;
                 }
-                else if(!lateral && std::cos(radiantAngle) < 0.0f)
+                else if((!lateral && std::cos(radiantAngle) < 0.0f) ||
+                        (lateral && std::cos(radiantAngle) <= -1.0f))
                 {
                     --point.first;
                 }
@@ -1121,14 +1122,14 @@ pairFloat_t getLimitPointRayCasting(const pairFloat_t &cameraPoint, float radian
     prevLimitPoint.first += diffLat;
     if(static_cast<int32_t>(prevLimitPoint.first / LEVEL_TILE_SIZE_PX) == coordX)
     {
-            prevLimitPoint.second += diffVert;
-            lateral = true;
-            if(currentCos < 0.0f && std::fmod(prevLimitPoint.second, LEVEL_TILE_SIZE_PX) <= 0.01f &&
-                    std::fmod(prevLimitPoint.first, LEVEL_TILE_SIZE_PX) <= 0.01f)
-            {
-                --prevLimitPoint.first;
-            }
-            return prevLimitPoint;
+        prevLimitPoint.second += diffVert;
+        lateral = true;
+        if(currentCos < 0.0f && std::fmod(prevLimitPoint.second, LEVEL_TILE_SIZE_PX) <= 0.01f &&
+                std::fmod(prevLimitPoint.first, LEVEL_TILE_SIZE_PX) <= 0.01f)
+        {
+            --prevLimitPoint.first;
+        }
+        return prevLimitPoint;
     }
     prevLimitPoint = cameraPoint;
     //check if vertical diff is out of case=================================
