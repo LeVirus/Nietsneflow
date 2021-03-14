@@ -952,7 +952,7 @@ void FirstPersonDisplaySystem::rayCasting()
     MoveableComponent *moveComp;
     std::optional<float> lateralLeadCoef, verticalLeadCoef;
     float radiantAngle, textPos;
-    pairFloat_t currentPoint, debugg;
+    pairFloat_t currentPoint;
     std::optional<pairUI_t> currentCoord;
     std::optional<ElementRaycast> element;
     bool lateral;
@@ -979,7 +979,6 @@ void FirstPersonDisplaySystem::rayCasting()
             currentPoint = mapCompCamera->m_absoluteMapPositionPX;
             for(uint32_t k = 0; k < 20; ++k)//limit distance
             {
-                debugg = currentPoint;
                 currentPoint = getLimitPointRayCasting(currentPoint, radiantAngle,
                                                        lateralLeadCoef, verticalLeadCoef, lateral);
                 point = currentPoint;
@@ -987,7 +986,7 @@ void FirstPersonDisplaySystem::rayCasting()
                 {
                     --point.second;
                 }
-                if(!lateral && std::cos(radiantAngle) < 0.0f)
+                else if(!lateral && std::cos(radiantAngle) < 0.0f)
                 {
                     --point.first;
                 }
@@ -1035,7 +1034,7 @@ void FirstPersonDisplaySystem::memDistance(uint32_t numEntity, uint32_t lateralS
 std::optional<float> getModulo(float sinCosAngle, float position, bool lateral)
 {
     float result = std::fmod(position, LEVEL_TILE_SIZE_PX);
-    if(result <= 0.01f)
+    if(result <= EPSILON_FLOAT)
     {
         //first cos second sin
         if((lateral && sinCosAngle < 0.0f) || (!lateral && sinCosAngle > 0.0f))
@@ -1122,9 +1121,14 @@ pairFloat_t getLimitPointRayCasting(const pairFloat_t &cameraPoint, float radian
     prevLimitPoint.first += diffLat;
     if(static_cast<int32_t>(prevLimitPoint.first / LEVEL_TILE_SIZE_PX) == coordX)
     {
-        prevLimitPoint.second += diffVert;
-        lateral = true;
-        return prevLimitPoint;
+            prevLimitPoint.second += diffVert;
+            lateral = true;
+            if(currentCos < 0.0f && std::fmod(prevLimitPoint.second, LEVEL_TILE_SIZE_PX) <= 0.01f &&
+                    std::fmod(prevLimitPoint.first, LEVEL_TILE_SIZE_PX) <= 0.01f)
+            {
+                --prevLimitPoint.first;
+            }
+            return prevLimitPoint;
     }
     prevLimitPoint = cameraPoint;
     //check if vertical diff is out of case=================================
