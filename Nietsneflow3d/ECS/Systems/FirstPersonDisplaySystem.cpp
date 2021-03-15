@@ -970,6 +970,7 @@ void FirstPersonDisplaySystem::rayCasting()
         float currentAngle = leftAngle, currentLateralScreen = -1.0;
         float cameraRadiantAngle = getRadiantAngle(moveComp->m_degreeOrientation);
         pairFloat_t point;
+        bool ok;
         //mem entity num & distances
         for(uint32_t j = 0; j < m_textureLineDrawNumber; ++j)
         {
@@ -982,18 +983,24 @@ void FirstPersonDisplaySystem::rayCasting()
                 currentPoint = getLimitPointRayCasting(currentPoint, radiantAngle,
                                                        lateralLeadCoef, verticalLeadCoef, lateral);
                 point = currentPoint;
+                ok = false;
                 if(lateral && std::cos(radiantAngle) < 0.0f &&
                         std::fmod(point.second, LEVEL_TILE_SIZE_PX) <= 0.01f &&
                         std::fmod(point.first, LEVEL_TILE_SIZE_PX) <= 0.01f)
                 {
-                    --point.first;
+                    currentCoord = getLevelCoord({point.first - 1, point.second});
+                    if(currentCoord && (*Level::getElementCase(*currentCoord)).m_type ==
+                            LevelCaseType_e::WALL_LC)
+                    {
+                        --point.first;
+                        ok = true;
+                    }
                 }
-                if(lateral && std::sin(radiantAngle) > 0.0f)
+                if(!ok && lateral && std::sin(radiantAngle) > 0.0f)
                 {
                     --point.second;
                 }
-                else if((!lateral && std::cos(radiantAngle) < 0.0f) ||
-                        (lateral && std::cos(radiantAngle) <= -1.0f))
+                else if((!lateral && std::cos(radiantAngle) < 0.0f))
                 {
                     --point.first;
                 }
