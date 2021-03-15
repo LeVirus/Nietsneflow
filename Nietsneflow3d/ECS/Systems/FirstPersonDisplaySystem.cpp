@@ -984,12 +984,10 @@ void FirstPersonDisplaySystem::rayCasting()
                                                        lateralLeadCoef, verticalLeadCoef, lateral);
                 point = currentPoint;
                 ok = false;
-
                 if(std::fmod(point.second, LEVEL_TILE_SIZE_PX) <= 0.01f &&
-                        std::fmod(point.first, LEVEL_TILE_SIZE_PX) <= 0.01f &&
-                        (std::cos(radiantAngle) < 0.0f || std::sin(radiantAngle) > 0.0f))
+                        std::fmod(point.first, LEVEL_TILE_SIZE_PX) <= 0.01f)
                 {
-                    if(lateral && std::cos(radiantAngle) < 0.0f)
+                    if(lateral)
                     {
                         currentCoord = getLevelCoord({point.first - 1.0f, point.second});
                         if(currentCoord && (*Level::getElementCase(*currentCoord)).m_type ==
@@ -999,7 +997,7 @@ void FirstPersonDisplaySystem::rayCasting()
                             ok = true;
                         }
                     }
-                    else if(!lateral && std::sin(radiantAngle) > 0.0f)
+                    else if(!lateral)
                     {
                         currentCoord = getLevelCoord({point.first, point.second - 1.0f});
                         if(currentCoord && (*Level::getElementCase(*currentCoord)).m_type ==
