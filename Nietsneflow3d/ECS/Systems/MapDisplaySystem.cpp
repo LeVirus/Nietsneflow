@@ -58,6 +58,7 @@ void MapDisplaySystem::confPositionVertexEntities()
 {
     assert(m_playerComp.m_mapCoordComp);
     pairFloat_t playerPos = m_playerComp.m_mapCoordComp->m_absoluteMapPositionPX;
+    pairFloat_t corner, diffPosPX, relativePosMapGL;
     pairUI_t max, min;
     getMapDisplayLimit(playerPos, min, max);
     m_entitiesToDisplay.clear();
@@ -71,11 +72,11 @@ void MapDisplaySystem::confPositionVertexEntities()
         //get absolute position corner
         if(checkBoundEntityMap(*mapComp, min, max))
         {
-            pairFloat_t corner = getUpLeftCorner(mapComp, mVectNumEntity[i]);
+            corner = getUpLeftCorner(mapComp, mVectNumEntity[i]);
             m_entitiesToDisplay.emplace_back(mVectNumEntity[i]);
-            pairFloat_t diffPosPX = corner - m_playerComp.m_mapCoordComp->m_absoluteMapPositionPX;
+            diffPosPX = corner - m_playerComp.m_mapCoordComp->m_absoluteMapPositionPX;
             //convert absolute position to relative
-            pairFloat_t relativePosMapGL = {diffPosPX.first * MAP_LOCAL_SIZE_GL / m_localLevelSizePX,
+            relativePosMapGL = {diffPosPX.first * MAP_LOCAL_SIZE_GL / m_localLevelSizePX,
                                             diffPosPX.second * MAP_LOCAL_SIZE_GL / m_localLevelSizePX};
             confVertexElement(relativePosMapGL, mVectNumEntity[i]);
         }
@@ -129,14 +130,30 @@ pairFloat_t MapDisplaySystem::getUpLeftCorner(const MapCoordComponent *mapCoordC
 void MapDisplaySystem::getMapDisplayLimit(pairFloat_t &playerPos,
                                           pairUI_t &min, pairUI_t &max)
 {
+    assert(playerPos.first >= 0.0f || playerPos.second >= 0.0f);
     //getBound
     float rangeView = Level::getRangeView();
     playerPos.first += rangeView;
     playerPos.second += rangeView;
     max = *getLevelCoord(playerPos);
     playerPos.first -= rangeView * 2;
+    if(playerPos.first < LEVEL_TILE_SIZE_PX)
+    {
+        min.first = 0;
+    }
+    else
+    {
+        min.first = static_cast<uint32_t>(playerPos.first / LEVEL_TILE_SIZE_PX);
+    }
     playerPos.second -= rangeView * 2;
-    min = *getLevelCoord(playerPos);
+    if(playerPos.second < LEVEL_TILE_SIZE_PX)
+    {
+        min.second = 0;
+    }
+    else
+    {
+        min.second = static_cast<uint32_t>(playerPos.second / LEVEL_TILE_SIZE_PX);
+    }
 }
 
 
