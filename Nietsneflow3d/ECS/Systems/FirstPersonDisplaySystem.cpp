@@ -982,6 +982,12 @@ void FirstPersonDisplaySystem::rayCasting()
                 currentPoint = getLimitPointRayCasting(currentPoint, radiantAngle,
                                                        lateralLeadCoef, verticalLeadCoef, lateral);
                 point = currentPoint;
+                if(lateral && std::cos(radiantAngle) < 0.0f &&
+                        std::fmod(point.second, LEVEL_TILE_SIZE_PX) <= 0.01f &&
+                        std::fmod(point.first, LEVEL_TILE_SIZE_PX) <= 0.01f)
+                {
+                    --point.first;
+                }
                 if(lateral && std::sin(radiantAngle) > 0.0f)
                 {
                     --point.second;
@@ -1124,11 +1130,6 @@ pairFloat_t getLimitPointRayCasting(const pairFloat_t &cameraPoint, float radian
     {
         prevLimitPoint.second += diffVert;
         lateral = true;
-        if(currentCos < 0.0f && std::fmod(prevLimitPoint.second, LEVEL_TILE_SIZE_PX) <= 0.01f &&
-                std::fmod(prevLimitPoint.first, LEVEL_TILE_SIZE_PX) <= 0.01f)
-        {
-            --prevLimitPoint.first;
-        }
         return prevLimitPoint;
     }
     prevLimitPoint = cameraPoint;
