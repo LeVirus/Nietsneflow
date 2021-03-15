@@ -970,7 +970,6 @@ void FirstPersonDisplaySystem::rayCasting()
         float currentAngle = leftAngle, currentLateralScreen = -1.0;
         float cameraRadiantAngle = getRadiantAngle(moveComp->m_degreeOrientation);
         pairFloat_t point;
-        bool ok;
         //mem entity num & distances
         for(uint32_t j = 0; j < m_textureLineDrawNumber; ++j)
         {
@@ -983,49 +982,17 @@ void FirstPersonDisplaySystem::rayCasting()
                 currentPoint = getLimitPointRayCasting(currentPoint, radiantAngle,
                                                        lateralLeadCoef, verticalLeadCoef, lateral);
                 point = currentPoint;
-                ok = false;
-                if(std::fmod(point.second, LEVEL_TILE_SIZE_PX) <= 0.01f &&
-                        std::fmod(point.first, LEVEL_TILE_SIZE_PX) <= 0.01f)
+                //treat limit angle cube case
+                if(!treatLimitIntersect(point, lateral))
                 {
-                    if(lateral)
+                    if(lateral && std::sin(radiantAngle) > 0.0f)
                     {
-                        currentCoord = getLevelCoord({point.first - 1.0f, point.second});
-                        if(currentCoord && (*Level::getElementCase(*currentCoord)).m_type ==
-                                LevelCaseType_e::WALL_LC)
-                        {
-                            --point.first;
-                            ok = true;
-                        }
+                        --point.second;
                     }
-                    else if(!lateral)
+                    else if(!lateral && std::cos(radiantAngle) < 0.0f)
                     {
-                        currentCoord = getLevelCoord({point.first, point.second - 1.0f});
-                        if(currentCoord && (*Level::getElementCase(*currentCoord)).m_type ==
-                                LevelCaseType_e::WALL_LC)
-                        {
-                            --point.second;
-                            ok = true;
-                        }
+                        --point.first;
                     }
-                    if(!ok)
-                    {
-                        currentCoord = getLevelCoord({point.first - 1.0f, point.second - 1.0f});
-                        if(currentCoord && (*Level::getElementCase(*currentCoord)).m_type ==
-                                LevelCaseType_e::WALL_LC)
-                        {
-                            --point.first;
-                            --point.second;
-                            ok = true;
-                        }
-                    }
-                }
-                if(!ok && lateral && std::sin(radiantAngle) > 0.0f)
-                {
-                    --point.second;
-                }
-                else if(!ok && (!lateral && std::cos(radiantAngle) < 0.0f))
-                {
-                    --point.first;
                 }
                 currentCoord = getLevelCoord(point);
                 if(!currentCoord)
@@ -1050,6 +1017,45 @@ void FirstPersonDisplaySystem::rayCasting()
             }
         }
     }
+}
+
+//===================================================================
+bool treatLimitIntersect(pairFloat_t &point, bool lateral)
+{
+    std::optional<pairUI_t> currentCoord;
+    if(std::fmod(point.second, LEVEL_TILE_SIZE_PX) <= 0.01f &&
+            std::fmod(point.first, LEVEL_TILE_SIZE_PX) <= 0.01f)
+    {
+        if(lateral)
+        {
+            currentCoord = getLevelCoord({point.first - 1.0f, point.second});
+            if(currentCoord && (*Level::getElementCase(*currentCoord)).m_type ==
+                    LevelCaseType_e::WALL_LC)
+            {
+                --point.first;
+                return true;
+            }
+        }
+        else if(!lateral)
+        {
+            currentCoord = getLevelCoord({point.first, point.second - 1.0f});
+            if(currentCoord && (*Level::getElementCase(*currentCoord)).m_type ==
+                    LevelCaseType_e::WALL_LC)
+            {
+                --point.second;
+                return true;
+            }
+        }
+        currentCoord = getLevelCoord({point.first - 1.0f, point.second - 1.0f});
+        if(currentCoord && (*Level::getElementCase(*currentCoord)).m_type ==
+                LevelCaseType_e::WALL_LC)
+        {
+            --point.first;
+            --point.second;
+            return true;
+        }
+    }
+    return false;
 }
 
 //===================================================================
