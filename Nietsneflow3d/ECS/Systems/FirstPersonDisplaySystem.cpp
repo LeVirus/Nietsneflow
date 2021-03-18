@@ -1204,12 +1204,11 @@ bool treatLateralDoor(float radiantAngle, bool lateral, pairFloat_t &currentPoin
             currentPoint.second = upCase ? doorPos[0].second : doorPos[2].second;
             return true;
         }
-        diffVert = DOOR_CASE_POS_PX;
-
-        diffLat = diffVert / std::tan(radiantAngle);
+        diffVert = (std::sin(radiantAngle) > 0.0f) ? -DOOR_CASE_POS_PX : DOOR_CASE_POS_PX;
+        diffLat = *lateralLeadCoef * std::abs(diffVert) / LEVEL_TILE_SIZE_PX;
         tmpPos.first += diffLat;
         tmpPos.second += diffVert;
-        if(static_cast<uint32_t>(tmpPos.second / LEVEL_TILE_SIZE_PX) == coord.second)
+        if(static_cast<uint32_t>(tmpPos.first / LEVEL_TILE_SIZE_PX) == coord.first)
         {
             currentPoint = tmpPos;
             return true;
