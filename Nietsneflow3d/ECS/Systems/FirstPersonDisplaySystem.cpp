@@ -967,7 +967,7 @@ void FirstPersonDisplaySystem::rayCasting()
                 searchComponentByType<MoveableComponent>(mVectNumEntity[i], Components_e::MOVEABLE_COMPONENT);
         assert(moveComp);
         float leftAngle = moveComp->m_degreeOrientation + HALF_CONE_VISION;
-        float currentAngle = leftAngle, currentLateralScreen = -1.0;
+        float currentAngle = leftAngle, currentLateralScreen = -1.0f;
         float cameraRadiantAngle = getRadiantAngle(moveComp->m_degreeOrientation);
         pairFloat_t point;
         //mem entity num & distances
@@ -1000,13 +1000,30 @@ void FirstPersonDisplaySystem::rayCasting()
                     break;
                 }
                 element = Level::getElementCase(*currentCoord);
-                if(element && element->m_type == LevelCaseType_e::WALL_LC)
+                if(element)
                 {
-                    textPos = (std::fmod(currentPoint.second, LEVEL_TILE_SIZE_PX) <= EPSILON_FLOAT) ?
-                                currentPoint.first : currentPoint.second;
-                    memDistance(element->m_numEntity, j, getCameraDistance(mapCompCamera->m_absoluteMapPositionPX,
-                                                                           currentPoint, cameraRadiantAngle), textPos);
-                    break;
+                    if(element->m_type == LevelCaseType_e::WALL_LC)
+                    {
+                        textPos = lateral ? currentPoint.first : currentPoint.second;
+                        memDistance(element->m_numEntity, j, getCameraDistance(mapCompCamera->m_absoluteMapPositionPX,
+                                                                               currentPoint, cameraRadiantAngle), textPos);
+                        break;
+                    }
+                    else if(element->m_type == LevelCaseType_e::DOOR_LC)
+                    {
+                        if(treatDoorRaycast(element->m_numEntity, radiantAngle,
+                                            currentPoint, *currentCoord, lateral,
+                                            lateralLeadCoef, verticalLeadCoef))
+                        {
+                            //TMP TEST================
+                            textPos = lateral ? std::fmod(currentPoint.first, LEVEL_TILE_SIZE_PX) :
+                                                std::fmod(currentPoint.second, LEVEL_TILE_SIZE_PX);
+                            memDistance(element->m_numEntity, j,
+                                        getCameraDistance(mapCompCamera->m_absoluteMapPositionPX,
+                                                          currentPoint, cameraRadiantAngle), textPos);
+                            break;
+                        }
+                    }
                 }
             }
             currentLateralScreen += m_stepDrawLateralScreen;
@@ -1017,6 +1034,177 @@ void FirstPersonDisplaySystem::rayCasting()
             }
         }
     }
+}
+
+//===================================================================
+bool FirstPersonDisplaySystem::treatDoorRaycast(uint32_t numEntity, uint32_t radiantAngle,
+                                                pairFloat_t &currentPoint,
+                                                const pairUI_t &coord, bool lateral,
+                                                std::optional<float> lateralLeadCoef,
+                                                std::optional<float> verticalLeadCoef)
+{
+    DoorComponent *doorComp = stairwayToComponentManager().
+            searchComponentByType<DoorComponent>(numEntity, Components_e::DOOR_COMPONENT);
+    assert(doorComp);
+    RectangleCollisionComponent *rectComp = stairwayToComponentManager().
+            searchComponentByType<RectangleCollisionComponent>(numEntity, Components_e::RECTANGLE_COLLISION_COMPONENT);
+    assert(rectComp);
+    MapCoordComponent *mapComp = stairwayToComponentManager().
+            searchComponentByType<MapCoordComponent>(numEntity, Components_e::MAP_COORD_COMPONENT);
+    assert(mapComp);
+    pairFloat_t tmpPos = currentPoint;
+    bool leftCase, upCase;
+    pairFloat_t doorPos[4] = {mapComp->m_absoluteMapPositionPX,
+                              {mapComp->m_absoluteMapPositionPX.first + rectComp->m_size.first,
+                               mapComp->m_absoluteMapPositionPX.second},
+                             {mapComp->m_absoluteMapPositionPX.first + rectComp->m_size.first,
+                              mapComp->m_absoluteMapPositionPX.second + rectComp->m_size.second},
+                             {mapComp->m_absoluteMapPositionPX.first + rectComp->m_size.first,
+                              mapComp->m_absoluteMapPositionPX.second}};
+    float diffLat, diffVert;
+    if(!doorComp->m_boundActive)
+    {
+        if(doorComp->m_vertical)
+        {
+            leftCase = (currentPoint.first < doorPos[0].first);
+            if(lateral)
+            {
+                //exclude case
+                if((std::cos(radiantAngle) < 0.0f && currentPoint.first < doorPos[0].first ) ||
+                        (std::cos(radiantAngle) > 0.0f && currentPoint.first > doorPos[1].first))
+                {
+                    return false;
+                }
+                else if(currentPoint.first >= doorPos[0].first &&
+                        currentPoint.first <= doorPos[1].first)
+                {
+                    return true;
+                }
+                else if(!verticalLeadCoef)
+                {
+                    return false;
+                }
+                else
+                {
+                    if(leftCase)
+                    {
+                        diffLat = currentPoint.first - doorPos[0].first;
+                    }
+                    else
+                    {
+                        diffLat = currentPoint.first - doorPos[1].first;
+                    }
+//                    diffVert = std::tan(radiantAngle) * diffLat;
+                    diffVert = *verticalLeadCoef * std::abs(diffLat) / LEVEL_TILE_SIZE_PX;
+                    if(std::sin(radiantAngle) > 0.0f)
+                    {
+                        diffVert = -diffVert;
+                    }
+
+                    tmpPos.first += diffLat;
+                    tmpPos.second += diffVert;
+
+                    if(static_cast<uint32_t>(tmpPos.first / LEVEL_TILE_SIZE_PX) == coord.first)
+                    {
+                        currentPoint = tmpPos;
+                        return true;
+                    }
+                    return false;
+                }
+            }
+            //vertical
+            else
+            {
+                if(!lateralLeadCoef)
+                {
+                    currentPoint.first = leftCase ? doorPos[0].first : doorPos[1].first;
+                    return true;
+                }
+                if(std::cos(radiantAngle) < 0.0f)
+                {
+                    diffLat = LEVEL_TILE_SIZE_PX - DOOR_CASE_POS_PX;
+                }
+                else
+                {
+                    diffLat = DOOR_CASE_POS_PX;
+                }
+                diffVert = *verticalLeadCoef * std::abs(diffLat) / LEVEL_TILE_SIZE_PX;
+
+                tmpPos.first += diffLat;
+                tmpPos.second += diffVert;
+                if(static_cast<uint32_t>(tmpPos.second / LEVEL_TILE_SIZE_PX) == coord.second)
+                {
+                    currentPoint = tmpPos;
+                    return true;
+                }
+                return false;
+            }
+        }
+        else if(!doorComp->m_vertical)
+        {
+            upCase = (currentPoint.second < doorPos[0].second);
+            if(!lateral)
+            {
+
+                //exclude case
+                if((std::sin(radiantAngle) > 0.0f && currentPoint.second < doorPos[0].second ) ||
+                        (std::sin(radiantAngle) < 0.0f && currentPoint.second > doorPos[2].second))
+                {
+                    return false;
+                }
+                else if(currentPoint.second >= doorPos[0].second &&
+                        currentPoint.second <= doorPos[3].second)
+                {
+                    return true;
+                }
+                else if (!lateralLeadCoef)
+                {
+                    return false;
+                }
+                else
+                {
+                    if(upCase)
+                    {
+                        diffVert = std::abs(currentPoint.second - doorPos[0].first);
+                    }
+                    else
+                    {
+                        diffVert = std::abs(currentPoint.second - doorPos[2].first);
+                    }
+                    diffLat = std::tan(radiantAngle) * diffVert;
+                    tmpPos.first += diffLat;
+                    tmpPos.second += diffVert;
+                    if(static_cast<uint32_t>(tmpPos.second / LEVEL_TILE_SIZE_PX) == coord.second)
+                    {
+                        currentPoint = tmpPos;
+                        return true;
+                    }
+                    return false;
+                }
+            }
+            //lateral
+            else
+            {
+                if(!verticalLeadCoef)
+                {
+                    currentPoint.second = upCase ? doorPos[0].second : doorPos[2].second;
+                    return true;
+                }
+                diffVert = DOOR_CASE_POS_PX;
+
+                diffLat = diffVert / std::tan(radiantAngle);
+                tmpPos.first += diffLat;
+                tmpPos.second += diffVert;
+                if(static_cast<uint32_t>(tmpPos.second / LEVEL_TILE_SIZE_PX) == coord.second)
+                {
+                    currentPoint = tmpPos;
+                    return true;
+                }
+                return false;
+            }
+        }
+    }
+    return false;//TMP
 }
 
 //===================================================================
@@ -1074,9 +1262,9 @@ void FirstPersonDisplaySystem::memDistance(uint32_t numEntity, uint32_t lateralS
 }
 
 //===================================================================
-std::optional<float> getModulo(float sinCosAngle, float position, bool lateral)
+std::optional<float> getModulo(float sinCosAngle, float position, float modulo, bool lateral)
 {
-    float result = std::fmod(position, LEVEL_TILE_SIZE_PX);
+    float result = std::fmod(position, modulo);
     if(result <= EPSILON_FLOAT)
     {
         //first cos second sin
@@ -1109,7 +1297,7 @@ pairFloat_t getLimitPointRayCasting(const pairFloat_t &cameraPoint, float radian
     //limit case
     if(!verticalLeadCoef)
     {
-        modulo = getModulo(currentSin, cameraPoint.second, false);
+        modulo = getModulo(currentSin, cameraPoint.second, LEVEL_TILE_SIZE_PX, false);
         if(!modulo)
         {
             modulo = LEVEL_TILE_SIZE_PX;
@@ -1128,7 +1316,7 @@ pairFloat_t getLimitPointRayCasting(const pairFloat_t &cameraPoint, float radian
     //second limit case
     else if(!lateralLeadCoef)
     {
-        modulo = getModulo(currentCos, cameraPoint.first, true);
+        modulo = getModulo(currentCos, cameraPoint.first, LEVEL_TILE_SIZE_PX, true);
         if(!modulo)
         {
             modulo = LEVEL_TILE_SIZE_PX;
@@ -1146,7 +1334,7 @@ pairFloat_t getLimitPointRayCasting(const pairFloat_t &cameraPoint, float radian
     }
     float diffVert, diffLat;
     //check if lateral diff is out of case=================================
-    modulo = getModulo(currentSin, cameraPoint.second, false);
+    modulo = getModulo(currentSin, cameraPoint.second, LEVEL_TILE_SIZE_PX, false);
     if(!modulo)
     {
         diffVert = LEVEL_TILE_SIZE_PX;
@@ -1170,7 +1358,7 @@ pairFloat_t getLimitPointRayCasting(const pairFloat_t &cameraPoint, float radian
     }
     prevLimitPoint = cameraPoint;
     //check if vertical diff is out of case=================================
-    modulo = getModulo(currentCos, cameraPoint.first, true);
+    modulo = getModulo(currentCos, cameraPoint.first, LEVEL_TILE_SIZE_PX, true);
     if(!modulo)
     {
         diffLat = (currentCos < 0.0f) ? -LEVEL_TILE_SIZE_PX : LEVEL_TILE_SIZE_PX;

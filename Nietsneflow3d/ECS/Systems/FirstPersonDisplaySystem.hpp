@@ -54,6 +54,8 @@ public:
     void setShader(Shader &shader);
 private:
     void rayCasting();
+    float getTexturePos(uint32_t numEntity, const pairFloat_t &position, bool lateral);
+    bool treatDoorRaycast(uint32_t numEntity, uint32_t radiantAngle, pairFloat_t &currentPoint, const pairUI_t &coord, bool lateral, std::optional<float> lateralLeadCoef, std::optional<float> verticalLeadCoef);
     void memDistance(uint32_t numEntity, uint32_t lateralScreenPos, float distance, float texturePos);
     void setUsedComponents();
     void confCompVertexMemEntities();
@@ -122,7 +124,7 @@ void removeSecondRect(pairFloat_t absolPos[], float distance[], uint32_t &distan
 float getDoorDistance(const MapCoordComponent *mapCompCamera, const MapCoordComponent *mapCompDoor,
                       const DoorComponent *doorComp);
 float getMiddleDoorDistance(const pairFloat_t &camera, const pairFloat_t &element, bool vertical);
-std::optional<float> getModulo(float sinCosAngle, float position, bool lateral);
+std::optional<float> getModulo(float sinCosAngle, float position, float modulo, bool lateral);
 //lateral == false vertical
 std::optional<float> getLeadCoef(float radiantAngle, bool lateral);
 pairFloat_t getLimitPointRayCasting(const pairFloat_t &cameraPoint, float radiantAngle, std::optional<float> lateralLeadCoef, std::optional<float> verticalLeadCoef, bool &lateral);
