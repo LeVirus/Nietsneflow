@@ -1064,12 +1064,12 @@ bool FirstPersonDisplaySystem::treatDoorRaycast(uint32_t numEntity, uint32_t rad
         if(doorComp->m_vertical)
         {
             return treatVerticalDoor(radiantAngle, lateral, currentPoint,
-                              doorPos, verticalLeadCoef, lateralLeadCoef, coord);
+                                     doorPos, verticalLeadCoef, lateralLeadCoef, coord);
         }
         else if(!doorComp->m_vertical)
         {
             return treatLateralDoor(radiantAngle, lateral, currentPoint,
-                             doorPos, lateralLeadCoef, verticalLeadCoef, coord);
+                                    doorPos, lateralLeadCoef, verticalLeadCoef, coord);
         }
     }
     return false;//TMP
@@ -1136,16 +1136,8 @@ bool treatVerticalDoor(float radiantAngle, bool lateral, pairFloat_t &currentPoi
             currentPoint.first = leftCase ? doorPos[0].first : doorPos[1].first;
             return true;
         }
-        if(std::cos(radiantAngle) < 0.0f)
-        {
-            diffLat = LEVEL_TILE_SIZE_PX - DOOR_CASE_POS_PX;
-        }
-        else
-        {
-            diffLat = DOOR_CASE_POS_PX;
-        }
+        diffLat = (std::cos(radiantAngle) < 0.0f) ? -DOOR_CASE_POS_PX : DOOR_CASE_POS_PX;
         diffVert = *verticalLeadCoef * std::abs(diffLat) / LEVEL_TILE_SIZE_PX;
-
         tmpPos.first += diffLat;
         tmpPos.second += diffVert;
         if(static_cast<uint32_t>(tmpPos.second / LEVEL_TILE_SIZE_PX) == coord.second)
