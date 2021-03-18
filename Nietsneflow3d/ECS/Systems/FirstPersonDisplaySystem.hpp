@@ -119,6 +119,12 @@ std::optional<uint32_t> getLimitIndex(const bool pointIn[], const float distance
 float getLateralAngle(float centerAngleVision, float trigoAngle);
 pairFloat_t getIntersectCoord(const pairFloat_t &observerPoint, const pairFloat_t &targetPoint,
                               float centerAngleVision, bool outLeft, bool YIntersect);
+bool treatVerticalDoor(float radiantAngle, bool lateral, pairFloat_t &currentPoint,
+                       pairFloat_t doorPos[], std::optional<float> verticalLeadCoef,
+                       std::optional<float> lateralLeadCoef, const pairUI_t &coord);
+bool treatLateralDoor(float radiantAngle, bool lateral, pairFloat_t &currentPoint,
+                      pairFloat_t doorPos[], std::optional<float> lateralLeadCoef,
+                      std::optional<float> verticalLeadCoef, const pairUI_t &coord);
 void treatLimitAngle(float &degreeAngleA, float &degreeAngleB);
 void removeSecondRect(pairFloat_t absolPos[], float distance[], uint32_t &distanceToTreat);
 float getDoorDistance(const MapCoordComponent *mapCompCamera, const MapCoordComponent *mapCompDoor,

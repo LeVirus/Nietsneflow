@@ -1052,8 +1052,6 @@ bool FirstPersonDisplaySystem::treatDoorRaycast(uint32_t numEntity, uint32_t rad
     MapCoordComponent *mapComp = stairwayToComponentManager().
             searchComponentByType<MapCoordComponent>(numEntity, Components_e::MAP_COORD_COMPONENT);
     assert(mapComp);
-    pairFloat_t tmpPos = currentPoint;
-    bool leftCase, upCase;
     pairFloat_t doorPos[4] = {mapComp->m_absoluteMapPositionPX,
                               {mapComp->m_absoluteMapPositionPX.first + rectComp->m_size.first,
                                mapComp->m_absoluteMapPositionPX.second},
@@ -1061,150 +1059,171 @@ bool FirstPersonDisplaySystem::treatDoorRaycast(uint32_t numEntity, uint32_t rad
                               mapComp->m_absoluteMapPositionPX.second + rectComp->m_size.second},
                              {mapComp->m_absoluteMapPositionPX.first + rectComp->m_size.first,
                               mapComp->m_absoluteMapPositionPX.second}};
-    float diffLat, diffVert;
     if(!doorComp->m_boundActive)
     {
         if(doorComp->m_vertical)
         {
-            leftCase = (currentPoint.first < doorPos[0].first);
-            if(lateral)
-            {
-                //exclude case
-                if((std::cos(radiantAngle) < 0.0f && currentPoint.first < doorPos[0].first ) ||
-                        (std::cos(radiantAngle) > 0.0f && currentPoint.first > doorPos[1].first))
-                {
-                    return false;
-                }
-                else if(currentPoint.first >= doorPos[0].first &&
-                        currentPoint.first <= doorPos[1].first)
-                {
-                    return true;
-                }
-                else if(!verticalLeadCoef)
-                {
-                    return false;
-                }
-                else
-                {
-                    if(leftCase)
-                    {
-                        diffLat = currentPoint.first - doorPos[0].first;
-                    }
-                    else
-                    {
-                        diffLat = currentPoint.first - doorPos[1].first;
-                    }
-//                    diffVert = std::tan(radiantAngle) * diffLat;
-                    diffVert = *verticalLeadCoef * std::abs(diffLat) / LEVEL_TILE_SIZE_PX;
-                    if(std::sin(radiantAngle) > 0.0f)
-                    {
-                        diffVert = -diffVert;
-                    }
-
-                    tmpPos.first += diffLat;
-                    tmpPos.second += diffVert;
-
-                    if(static_cast<uint32_t>(tmpPos.first / LEVEL_TILE_SIZE_PX) == coord.first)
-                    {
-                        currentPoint = tmpPos;
-                        return true;
-                    }
-                    return false;
-                }
-            }
-            //vertical
-            else
-            {
-                if(!lateralLeadCoef)
-                {
-                    currentPoint.first = leftCase ? doorPos[0].first : doorPos[1].first;
-                    return true;
-                }
-                if(std::cos(radiantAngle) < 0.0f)
-                {
-                    diffLat = LEVEL_TILE_SIZE_PX - DOOR_CASE_POS_PX;
-                }
-                else
-                {
-                    diffLat = DOOR_CASE_POS_PX;
-                }
-                diffVert = *verticalLeadCoef * std::abs(diffLat) / LEVEL_TILE_SIZE_PX;
-
-                tmpPos.first += diffLat;
-                tmpPos.second += diffVert;
-                if(static_cast<uint32_t>(tmpPos.second / LEVEL_TILE_SIZE_PX) == coord.second)
-                {
-                    currentPoint = tmpPos;
-                    return true;
-                }
-                return false;
-            }
+            return treatVerticalDoor(radiantAngle, lateral, currentPoint,
+                              doorPos, verticalLeadCoef, lateralLeadCoef, coord);
         }
         else if(!doorComp->m_vertical)
         {
-            upCase = (currentPoint.second < doorPos[0].second);
-            if(!lateral)
-            {
-
-                //exclude case
-                if((std::sin(radiantAngle) > 0.0f && currentPoint.second < doorPos[0].second ) ||
-                        (std::sin(radiantAngle) < 0.0f && currentPoint.second > doorPos[2].second))
-                {
-                    return false;
-                }
-                else if(currentPoint.second >= doorPos[0].second &&
-                        currentPoint.second <= doorPos[3].second)
-                {
-                    return true;
-                }
-                else if (!lateralLeadCoef)
-                {
-                    return false;
-                }
-                else
-                {
-                    if(upCase)
-                    {
-                        diffVert = std::abs(currentPoint.second - doorPos[0].first);
-                    }
-                    else
-                    {
-                        diffVert = std::abs(currentPoint.second - doorPos[2].first);
-                    }
-                    diffLat = std::tan(radiantAngle) * diffVert;
-                    tmpPos.first += diffLat;
-                    tmpPos.second += diffVert;
-                    if(static_cast<uint32_t>(tmpPos.second / LEVEL_TILE_SIZE_PX) == coord.second)
-                    {
-                        currentPoint = tmpPos;
-                        return true;
-                    }
-                    return false;
-                }
-            }
-            //lateral
-            else
-            {
-                if(!verticalLeadCoef)
-                {
-                    currentPoint.second = upCase ? doorPos[0].second : doorPos[2].second;
-                    return true;
-                }
-                diffVert = DOOR_CASE_POS_PX;
-
-                diffLat = diffVert / std::tan(radiantAngle);
-                tmpPos.first += diffLat;
-                tmpPos.second += diffVert;
-                if(static_cast<uint32_t>(tmpPos.second / LEVEL_TILE_SIZE_PX) == coord.second)
-                {
-                    currentPoint = tmpPos;
-                    return true;
-                }
-                return false;
-            }
+            return treatLateralDoor(radiantAngle, lateral, currentPoint,
+                             doorPos, lateralLeadCoef, verticalLeadCoef, coord);
         }
     }
     return false;//TMP
+}
+
+//===================================================================
+bool treatVerticalDoor(float radiantAngle, bool lateral, pairFloat_t &currentPoint,
+                       pairFloat_t doorPos[], std::optional<float> verticalLeadCoef,
+                       std::optional<float> lateralLeadCoef, const pairUI_t &coord)
+{
+    float diffLat, diffVert;
+    pairFloat_t tmpPos = currentPoint;
+    bool leftCase = (currentPoint.first < doorPos[0].first);
+    if(lateral)
+    {
+        //exclude case
+        if((std::cos(radiantAngle) < 0.0f && currentPoint.first < doorPos[0].first ) ||
+                (std::cos(radiantAngle) > 0.0f && currentPoint.first > doorPos[1].first))
+        {
+            return false;
+        }
+        else if(currentPoint.first >= doorPos[0].first &&
+                currentPoint.first <= doorPos[1].first)
+        {
+            return true;
+        }
+        else if(!verticalLeadCoef)
+        {
+            return false;
+        }
+        else
+        {
+            if(leftCase)
+            {
+                diffLat = currentPoint.first - doorPos[0].first;
+            }
+            else
+            {
+                diffLat = currentPoint.first - doorPos[1].first;
+            }
+            //                    diffVert = std::tan(radiantAngle) * diffLat;
+            diffVert = *verticalLeadCoef * std::abs(diffLat) / LEVEL_TILE_SIZE_PX;
+            if(std::sin(radiantAngle) > 0.0f)
+            {
+                diffVert = -diffVert;
+            }
+
+            tmpPos.first += diffLat;
+            tmpPos.second += diffVert;
+
+            if(static_cast<uint32_t>(tmpPos.first / LEVEL_TILE_SIZE_PX) == coord.first)
+            {
+                currentPoint = tmpPos;
+                return true;
+            }
+            return false;
+        }
+    }
+    //vertical
+    else
+    {
+        if(!lateralLeadCoef)
+        {
+            currentPoint.first = leftCase ? doorPos[0].first : doorPos[1].first;
+            return true;
+        }
+        if(std::cos(radiantAngle) < 0.0f)
+        {
+            diffLat = LEVEL_TILE_SIZE_PX - DOOR_CASE_POS_PX;
+        }
+        else
+        {
+            diffLat = DOOR_CASE_POS_PX;
+        }
+        diffVert = *verticalLeadCoef * std::abs(diffLat) / LEVEL_TILE_SIZE_PX;
+
+        tmpPos.first += diffLat;
+        tmpPos.second += diffVert;
+        if(static_cast<uint32_t>(tmpPos.second / LEVEL_TILE_SIZE_PX) == coord.second)
+        {
+            currentPoint = tmpPos;
+            return true;
+        }
+        return false;
+    }
+}
+
+//===================================================================
+bool treatLateralDoor(float radiantAngle, bool lateral, pairFloat_t &currentPoint,
+                      pairFloat_t doorPos[], std::optional<float> lateralLeadCoef,
+                      std::optional<float> verticalLeadCoef, const pairUI_t &coord)
+{
+    float diffLat, diffVert;
+    pairFloat_t tmpPos = currentPoint;
+    bool upCase = (currentPoint.second < doorPos[0].second);
+    if(!lateral)
+    {
+
+        //exclude case
+        if((std::sin(radiantAngle) > 0.0f && currentPoint.second < doorPos[0].second ) ||
+                (std::sin(radiantAngle) < 0.0f && currentPoint.second > doorPos[2].second))
+        {
+            return false;
+        }
+        else if(currentPoint.second >= doorPos[0].second &&
+                currentPoint.second <= doorPos[3].second)
+        {
+            return true;
+        }
+        else if (!lateralLeadCoef)
+        {
+            return false;
+        }
+        else
+        {
+            if(upCase)
+            {
+                diffVert = std::abs(currentPoint.second - doorPos[0].first);
+            }
+            else
+            {
+                diffVert = std::abs(currentPoint.second - doorPos[2].first);
+            }
+            diffLat = std::tan(radiantAngle) * diffVert;
+            tmpPos.first += diffLat;
+            tmpPos.second += diffVert;
+            if(static_cast<uint32_t>(tmpPos.second / LEVEL_TILE_SIZE_PX) == coord.second)
+            {
+                currentPoint = tmpPos;
+                return true;
+            }
+            return false;
+        }
+    }
+    //lateral
+    else
+    {
+        if(!verticalLeadCoef)
+        {
+            currentPoint.second = upCase ? doorPos[0].second : doorPos[2].second;
+            return true;
+        }
+        diffVert = DOOR_CASE_POS_PX;
+
+        diffLat = diffVert / std::tan(radiantAngle);
+        tmpPos.first += diffLat;
+        tmpPos.second += diffVert;
+        if(static_cast<uint32_t>(tmpPos.second / LEVEL_TILE_SIZE_PX) == coord.second)
+        {
+            currentPoint = tmpPos;
+            return true;
+        }
+        return false;
+    }
 }
 
 //===================================================================
