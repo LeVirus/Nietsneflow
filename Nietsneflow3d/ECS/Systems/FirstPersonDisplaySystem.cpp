@@ -955,7 +955,7 @@ void FirstPersonDisplaySystem::rayCasting()
     pairFloat_t currentPoint;
     std::optional<pairUI_t> currentCoord;
     std::optional<ElementRaycast> element;
-    bool lateral, textLateral;
+    bool lateral, textLateral, textFace;
     for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
     {
         //WORK FOR ONE PLAYER ONLY
@@ -1013,10 +1013,17 @@ void FirstPersonDisplaySystem::rayCasting()
                     {
                         if(treatDoorRaycast(element->m_numEntity, radiantAngle,
                                             currentPoint, *currentCoord, lateral,
-                                            lateralLeadCoef, verticalLeadCoef, textLateral))
+                                            lateralLeadCoef, verticalLeadCoef, textLateral, textFace))
                         {
-                            textPos = textLateral ? std::fmod(currentPoint.first, LEVEL_TILE_SIZE_PX) :
-                                                    std::fmod(currentPoint.second, LEVEL_TILE_SIZE_PX);
+                            if(!textFace)
+                            {
+                                textPos = 0.5f;
+                            }
+                            else
+                            {
+                                textPos = textLateral ? std::fmod(currentPoint.first, LEVEL_TILE_SIZE_PX) :
+                                                        std::fmod(currentPoint.second, LEVEL_TILE_SIZE_PX);
+                            }
                             memDistance(element->m_numEntity, j,
                                         getCameraDistance(mapCompCamera->m_absoluteMapPositionPX,
                                                           currentPoint, cameraRadiantAngle), textPos);
@@ -1041,7 +1048,7 @@ bool FirstPersonDisplaySystem::treatDoorRaycast(uint32_t numEntity, float radian
                                                 const pairUI_t &coord, bool lateral,
                                                 std::optional<float> lateralLeadCoef,
                                                 std::optional<float> verticalLeadCoef,
-                                                bool &textLateral)
+                                                bool &textLateral, bool &textFace)
 {
     DoorComponent *doorComp = stairwayToComponentManager().
             searchComponentByType<DoorComponent>(numEntity, Components_e::DOOR_COMPONENT);
@@ -1065,13 +1072,13 @@ bool FirstPersonDisplaySystem::treatDoorRaycast(uint32_t numEntity, float radian
         {
             return treatVerticalDoor(radiantAngle, lateral, currentPoint,
                                      doorPos, verticalLeadCoef, lateralLeadCoef,
-                                     coord, textLateral);
+                                     coord, textLateral, textFace);
         }
         else if(!doorComp->m_vertical)
         {
             return treatLateralDoor(radiantAngle, lateral, currentPoint,
                                     doorPos, lateralLeadCoef, verticalLeadCoef,
-                                    coord, textLateral);
+                                    coord, textLateral, textFace);
         }
     }
     return false;//TMP
@@ -1081,11 +1088,12 @@ bool FirstPersonDisplaySystem::treatDoorRaycast(uint32_t numEntity, float radian
 bool treatVerticalDoor(float radiantAngle, bool lateral, pairFloat_t &currentPoint,
                        pairFloat_t doorPos[], std::optional<float> verticalLeadCoef,
                        std::optional<float> lateralLeadCoef, const pairUI_t &coord,
-                       bool &textLateral)
+                       bool &textLateral, bool &textFace)
 {
     float diffLat, diffVert;
     pairFloat_t tmpPos = currentPoint;
     bool leftCase = (currentPoint.first < doorPos[0].first);
+    textFace = true;
     if(lateral)
     {
         //exclude case
@@ -1097,6 +1105,7 @@ bool treatVerticalDoor(float radiantAngle, bool lateral, pairFloat_t &currentPoi
         else if(currentPoint.first >= doorPos[0].first &&
                 currentPoint.first <= doorPos[1].first)
         {
+            textFace = false;
             textLateral = true;
             return true;
         }
@@ -1151,11 +1160,13 @@ bool treatVerticalDoor(float radiantAngle, bool lateral, pairFloat_t &currentPoi
 //===================================================================
 bool treatLateralDoor(float radiantAngle, bool lateral, pairFloat_t &currentPoint,
                       pairFloat_t doorPos[], std::optional<float> lateralLeadCoef,
-                      std::optional<float> verticalLeadCoef, const pairUI_t &coord, bool &textLateral)
+                      std::optional<float> verticalLeadCoef,
+                      const pairUI_t &coord, bool &textLateral, bool &textFace)
 {
     float diffLat, diffVert;
     pairFloat_t tmpPos = currentPoint;
     bool upCase = (currentPoint.second < doorPos[0].second);
+    textFace = true;
     if(!lateral)
     {
         //exclude case
@@ -1167,6 +1178,7 @@ bool treatLateralDoor(float radiantAngle, bool lateral, pairFloat_t &currentPoin
         else if(currentPoint.second >= doorPos[0].second &&
                 currentPoint.second <= doorPos[2].second)
         {
+            textFace = false;
             textLateral = false;
             return true;
         }

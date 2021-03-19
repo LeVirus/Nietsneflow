@@ -58,7 +58,8 @@ private:
     bool treatDoorRaycast(uint32_t numEntity, float radiantAngle,
                           pairFloat_t &currentPoint, const pairUI_t &coord,
                           bool lateral, std::optional<float> lateralLeadCoef,
-                          std::optional<float> verticalLeadCoef, bool &textLateral);
+                          std::optional<float> verticalLeadCoef,
+                          bool &textLateral, bool &textFace);
     void memDistance(uint32_t numEntity, uint32_t lateralScreenPos, float distance, float texturePos);
     void setUsedComponents();
     void confCompVertexMemEntities();
@@ -125,11 +126,11 @@ pairFloat_t getIntersectCoord(const pairFloat_t &observerPoint, const pairFloat_
 bool treatVerticalDoor(float radiantAngle, bool lateral, pairFloat_t &currentPoint,
                        pairFloat_t doorPos[], std::optional<float> verticalLeadCoef,
                        std::optional<float> lateralLeadCoef,
-                       const pairUI_t &coord, bool &textLateral);
+                       const pairUI_t &coord, bool &textLateral, bool &textFace);
 bool treatLateralDoor(float radiantAngle, bool lateral, pairFloat_t &currentPoint,
                       pairFloat_t doorPos[], std::optional<float> lateralLeadCoef,
                       std::optional<float> verticalLeadCoef,
-                      const pairUI_t &coord, bool &textLateral);
+                      const pairUI_t &coord, bool &textLateral, bool &textFace);
 void treatLimitAngle(float &degreeAngleA, float &degreeAngleB);
 void removeSecondRect(pairFloat_t absolPos[], float distance[], uint32_t &distanceToTreat);
 float getDoorDistance(const MapCoordComponent *mapCompCamera, const MapCoordComponent *mapCompDoor,
