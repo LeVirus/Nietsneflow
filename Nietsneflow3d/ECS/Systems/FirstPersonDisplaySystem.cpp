@@ -1015,7 +1015,6 @@ void FirstPersonDisplaySystem::rayCasting()
                                             currentPoint, *currentCoord, lateral,
                                             lateralLeadCoef, verticalLeadCoef, textLateral))
                         {
-                            //TMP TEST================
                             textPos = textLateral ? std::fmod(currentPoint.first, LEVEL_TILE_SIZE_PX) :
                                                     std::fmod(currentPoint.second, LEVEL_TILE_SIZE_PX);
                             memDistance(element->m_numEntity, j,
@@ -1037,7 +1036,7 @@ void FirstPersonDisplaySystem::rayCasting()
 }
 
 //===================================================================
-bool FirstPersonDisplaySystem::treatDoorRaycast(uint32_t numEntity, uint32_t radiantAngle,
+bool FirstPersonDisplaySystem::treatDoorRaycast(uint32_t numEntity, float radiantAngle,
                                                 pairFloat_t &currentPoint,
                                                 const pairUI_t &coord, bool lateral,
                                                 std::optional<float> lateralLeadCoef,
@@ -1081,7 +1080,8 @@ bool FirstPersonDisplaySystem::treatDoorRaycast(uint32_t numEntity, uint32_t rad
 //===================================================================
 bool treatVerticalDoor(float radiantAngle, bool lateral, pairFloat_t &currentPoint,
                        pairFloat_t doorPos[], std::optional<float> verticalLeadCoef,
-                       std::optional<float> lateralLeadCoef, const pairUI_t &coord, bool &textLateral)
+                       std::optional<float> lateralLeadCoef, const pairUI_t &coord,
+                       bool &textLateral)
 {
     float diffLat, diffVert;
     pairFloat_t tmpPos = currentPoint;
@@ -1187,7 +1187,7 @@ bool treatLateralDoor(float radiantAngle, bool lateral, pairFloat_t &currentPoin
             diffLat = *lateralLeadCoef * std::abs(diffVert) / LEVEL_TILE_SIZE_PX;
             tmpPos.first += diffLat;
             tmpPos.second += diffVert;
-            if(static_cast<uint32_t>(tmpPos.second / LEVEL_TILE_SIZE_PX) == coord.second)
+            if(static_cast<uint32_t>(tmpPos.first / LEVEL_TILE_SIZE_PX) == coord.first)
             {
                 textLateral = true;
                 currentPoint = tmpPos;

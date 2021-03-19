@@ -55,7 +55,7 @@ public:
 private:
     void rayCasting();
     float getTexturePos(uint32_t numEntity, const pairFloat_t &position, bool lateral);
-    bool treatDoorRaycast(uint32_t numEntity, uint32_t radiantAngle,
+    bool treatDoorRaycast(uint32_t numEntity, float radiantAngle,
                           pairFloat_t &currentPoint, const pairUI_t &coord,
                           bool lateral, std::optional<float> lateralLeadCoef,
                           std::optional<float> verticalLeadCoef, bool &textLateral);
