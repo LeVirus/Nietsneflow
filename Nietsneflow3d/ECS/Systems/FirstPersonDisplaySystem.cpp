@@ -1111,6 +1111,10 @@ bool treatVerticalDoor(float radiantAngle, bool lateral, pairFloat_t &currentPoi
                 currentPoint = tmpPos;
                 return true;
             }
+            if(!verticalLeadCoef)
+            {
+                return false;
+            }
             tmpPos = currentPoint;
             if(leftCase)
             {
@@ -1186,6 +1190,10 @@ bool treatLateralDoor(float radiantAngle, bool lateral, pairFloat_t &currentPoin
                 textFace = false;
                 currentPoint = tmpPos;
                 return true;
+            }
+            if(!lateralLeadCoef)
+            {
+                return false;
             }
             tmpPos = currentPoint;
             //lateral
