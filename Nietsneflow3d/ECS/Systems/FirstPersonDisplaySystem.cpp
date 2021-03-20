@@ -1058,13 +1058,13 @@ bool FirstPersonDisplaySystem::treatDoorRaycast(uint32_t numEntity, float radian
     MapCoordComponent *mapComp = stairwayToComponentManager().
             searchComponentByType<MapCoordComponent>(numEntity, Components_e::MAP_COORD_COMPONENT);
     assert(mapComp);
-    pairFloat_t doorPos[4] = {mapComp->m_absoluteMapPositionPX,
-                              {mapComp->m_absoluteMapPositionPX.first + rectComp->m_size.first,
-                               mapComp->m_absoluteMapPositionPX.second},
-                             {mapComp->m_absoluteMapPositionPX.first + rectComp->m_size.first,
-                              mapComp->m_absoluteMapPositionPX.second + rectComp->m_size.second},
-                             {mapComp->m_absoluteMapPositionPX.first + rectComp->m_size.first,
-                              mapComp->m_absoluteMapPositionPX.second}};
+    //first case x pos limit second y pos limit
+    pairFloat_t doorPos[2] = {{mapComp->m_absoluteMapPositionPX.first,
+                               mapComp->m_absoluteMapPositionPX.first +
+                               rectComp->m_size.first},
+                              {mapComp->m_absoluteMapPositionPX.second,
+                               mapComp->m_absoluteMapPositionPX.second +
+                               rectComp->m_size.second}};
     if(doorComp->m_vertical)
     {
         return treatVerticalDoor(radiantAngle, lateral, currentPoint,
@@ -1088,23 +1088,23 @@ bool treatVerticalDoor(float radiantAngle, bool lateral, pairFloat_t &currentPoi
     float diffLat, diffVert;
     pairFloat_t tmpPos = currentPoint;
     bool leftCase = (currentPoint.first <= doorPos[0].first),
-            downCase = (currentPoint.second >= doorPos[2].second);
+            downCase = (currentPoint.second >= doorPos[1].second);
     textFace = true;
     if(lateral)
     {
         //exclude case
         if((std::cos(radiantAngle) < 0.0f && currentPoint.first < doorPos[0].first ) ||
-                (std::cos(radiantAngle) > 0.0f && currentPoint.first > doorPos[1].first))
+                (std::cos(radiantAngle) > 0.0f && currentPoint.first > doorPos[0].second))
         {
             return false;
         }
         else
         {
-            tmpPos.second = (downCase) ? doorPos[2].second : doorPos[0].second;
+            tmpPos.second = (downCase) ? doorPos[1].second : doorPos[1].first;
             diffLat = *lateralLeadCoef *
                     std::abs(tmpPos.second - currentPoint.second) / LEVEL_TILE_SIZE_PX;
             tmpPos.first += diffLat;
-            if(tmpPos.first >= doorPos[0].first && tmpPos.first <= doorPos[1].first)
+            if(tmpPos.first >= doorPos[0].first && tmpPos.first <= doorPos[0].second)
             {
                 textLateral = false;
                 textFace = false;
@@ -1116,18 +1116,11 @@ bool treatVerticalDoor(float radiantAngle, bool lateral, pairFloat_t &currentPoi
                 return false;
             }
             tmpPos = currentPoint;
-            if(leftCase)
-            {
-                diffLat = doorPos[0].first - currentPoint.first;
-            }
-            else
-            {
-                diffLat = doorPos[1].first - currentPoint.first;
-            }
-            diffVert = *verticalLeadCoef * std::abs(diffLat) / LEVEL_TILE_SIZE_PX;
-            tmpPos.first += diffLat;
+            tmpPos.first = (leftCase) ? doorPos[0].first : doorPos[0].second;
+            diffVert = *verticalLeadCoef * std::abs(tmpPos.first - currentPoint.first) /
+                    LEVEL_TILE_SIZE_PX;
             tmpPos.second += diffVert;
-            if(tmpPos.second >= doorPos[0].second && tmpPos.second <= doorPos[2].second)
+            if(tmpPos.second >= doorPos[1].first && tmpPos.second <= doorPos[1].second)
             {
                 textLateral = false;
                 currentPoint = tmpPos;
@@ -1142,14 +1135,14 @@ bool treatVerticalDoor(float radiantAngle, bool lateral, pairFloat_t &currentPoi
         textLateral = false;
         if(!lateralLeadCoef)
         {
-            currentPoint.first = leftCase ? doorPos[0].first : doorPos[1].first;
+            currentPoint.first = leftCase ? doorPos[0].first : doorPos[0].second;
             return true;
         }
         diffLat = (std::cos(radiantAngle) < 0.0f) ? -DOOR_CASE_POS_PX : DOOR_CASE_POS_PX;
         diffVert = *verticalLeadCoef * std::abs(diffLat) / LEVEL_TILE_SIZE_PX;
         tmpPos.first += diffLat;
         tmpPos.second += diffVert;
-        if(tmpPos.second >= doorPos[0].second && tmpPos.second <= doorPos[2].second)
+        if(tmpPos.second >= doorPos[1].first && tmpPos.second <= doorPos[1].second)
         {
             currentPoint = tmpPos;
             return true;
@@ -1166,25 +1159,25 @@ bool treatLateralDoor(float radiantAngle, bool lateral, pairFloat_t &currentPoin
 {
     float diffLat, diffVert;
     pairFloat_t tmpPos = currentPoint;
-    bool upCase = (currentPoint.second <= doorPos[0].second),
+    bool upCase = (currentPoint.second <= doorPos[1].first),
             leftCase = (currentPoint.first <= doorPos[0].first);
     textFace = true;
     if(!lateral)
     {
         //exclude case
-        if((std::sin(radiantAngle) > 0.0f && currentPoint.second < doorPos[0].second ) ||
-                (std::sin(radiantAngle) < 0.0f && currentPoint.second > doorPos[2].second))
+        if((std::sin(radiantAngle) > 0.0f && currentPoint.second < doorPos[1].first ) ||
+                (std::sin(radiantAngle) < 0.0f && currentPoint.second > doorPos[1].second))
         {
             return false;
         }
         else
         {
             //vertical
-            tmpPos.first = (leftCase) ? doorPos[0].first : doorPos[1].first;
+            tmpPos.first = (leftCase) ? doorPos[0].first : doorPos[0].second;
             diffVert = *verticalLeadCoef * std::abs(tmpPos.first - currentPoint.first) /
                     LEVEL_TILE_SIZE_PX;
             tmpPos.second += diffVert;
-            if(tmpPos.second >= doorPos[0].second && tmpPos.second <= doorPos[2].second)
+            if(tmpPos.second >= doorPos[1].first && tmpPos.second <= doorPos[1].second)
             {
                 textLateral = false;
                 textFace = false;
@@ -1197,11 +1190,11 @@ bool treatLateralDoor(float radiantAngle, bool lateral, pairFloat_t &currentPoin
             }
             tmpPos = currentPoint;
             //lateral
-            tmpPos.second = (upCase) ? doorPos[0].second : doorPos[2].second;
+            tmpPos.second = (upCase) ? doorPos[1].first : doorPos[1].second;
             diffLat = *lateralLeadCoef * std::abs(tmpPos.second - currentPoint.second) /
                     LEVEL_TILE_SIZE_PX;
             tmpPos.first += diffLat;
-            if(tmpPos.first >= doorPos[0].first && tmpPos.first <= doorPos[1].first)
+            if(tmpPos.first >= doorPos[0].first && tmpPos.first <= doorPos[0].second)
             {
                 textLateral = true;
                 currentPoint = tmpPos;
@@ -1216,14 +1209,14 @@ bool treatLateralDoor(float radiantAngle, bool lateral, pairFloat_t &currentPoin
         textLateral = true;
         if(!verticalLeadCoef)
         {
-            currentPoint.second = upCase ? doorPos[0].second : doorPos[2].second;
+            currentPoint.second = upCase ? doorPos[1].first : doorPos[1].second;
             return true;
         }
         diffVert = (std::sin(radiantAngle) > 0.0f) ? -DOOR_CASE_POS_PX : DOOR_CASE_POS_PX;
         diffLat = *lateralLeadCoef * std::abs(diffVert) / LEVEL_TILE_SIZE_PX;
         tmpPos.first += diffLat;
         tmpPos.second += diffVert;
-        if(tmpPos.first >= doorPos[0].first && tmpPos.first <= doorPos[1].first)
+        if(tmpPos.first >= doorPos[0].first && tmpPos.first <= doorPos[0].second)
         {
             currentPoint = tmpPos;
             return true;
