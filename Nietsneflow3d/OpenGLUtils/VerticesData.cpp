@@ -191,15 +191,10 @@ void VerticesData::loadVertexTextureDrawByLineRect(const pairFloat_t &firstPos,
     stepPos.second = (secondPos.second - firstPos.second) / lineDrawNumberFloat;
     float stepTex;
     pairFloat_t posLateralText;
-    if(doorComp && doorComp->m_boundActive && doorPosBound)
+    if(doorComp && doorPosBound)
     {
-        assert(doorComp->m_spriteLateralBound.first <= doorComp->m_spriteLateralBound.second);
-        float total = spriteComp.m_spriteData->m_texturePosVertex[1].first -
-                spriteComp.m_spriteData->m_texturePosVertex[0].first;
-        posLateralText.first = spriteComp.m_spriteData->m_texturePosVertex[0].first +
-                doorComp->m_spriteLateralBound.first * total;
-        posLateralText.second = spriteComp.m_spriteData->m_texturePosVertex[0].first +
-                doorComp->m_spriteLateralBound.second * total;
+        posLateralText.first = spriteComp.m_spriteData->m_texturePosVertex[0].first;
+        posLateralText.second = spriteComp.m_spriteData->m_texturePosVertex[0].first;
     }
     else
     {

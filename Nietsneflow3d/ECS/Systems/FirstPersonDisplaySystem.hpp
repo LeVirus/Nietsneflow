@@ -23,13 +23,6 @@ struct RayCastingIntersect
     uint32_t m_lateral;
 };
 
-enum WallTreatment_e
-{
-    NORMAL,
-    REMOVE_ZERO,
-    REMOVE_TWO
-};
-
 struct EntityData
 {
     float m_distance;
@@ -54,7 +47,6 @@ public:
     void setShader(Shader &shader);
 private:
     void rayCasting();
-    float getTexturePos(uint32_t numEntity, const pairFloat_t &position, bool lateral);
     std::optional<float> treatDoorRaycast(uint32_t numEntity, float radiantAngle,
                           pairFloat_t &currentPoint,
                           bool lateral, std::optional<float> lateralLeadCoef,
@@ -64,44 +56,18 @@ private:
     void setUsedComponents();
     void confCompVertexMemEntities();
     void writeVertexRaycasting(const pairRaycastingData_t &entityData, uint32_t numIteration);
-    void adaptTextureDoorDisplay(DoorComponent *doorComp,
-                                 RectangleCollisionComponent *rectComp, MapCoordComponent *mapCompCamera,
-                                 MapCoordComponent *mapCompDoor, pairFloat_t absolPos[]);
     void treatDisplayEntity(GeneralCollisionComponent *genCollComp, MapCoordComponent *mapCompA,
                             MapCoordComponent *mapCompB,
                             VisionComponent *visionComp, uint32_t &toRemove,
                             float degreeObserverAngle, uint32_t numIteration);
-    void fillWallEntitiesData(uint32_t numEntity, pairFloat_t absolPos[], VisionComponent *visionComp,
-                              MapCoordComponent *mapCompCamera,
-                              MapCoordComponent *mapCompB, float radiantObserverAngle, bool pointIn[],
-                              bool outLeft[], uint32_t &angleToTreat);
-    //Fill data in sort of displaying wall from left to right
-    void fillAbsolAndDistanceWall(pairFloat_t absolPos[], float distance[],
-                                  VisionComponent *visionComp, MapCoordComponent *mapCompA,
-                                  MapCoordComponent *mapCompB, uint32_t numEntity,
-                                  uint32_t &distanceToTreat, float degreeObserverAngle);
     void confNormalEntityVertex(uint32_t numEntity,
                                 VisionComponent *visionComp, float lateralPosDegree, float depthGL);
-    void confWallEntityVertex(uint32_t numEntity, VisionComponent *visionComp,
-                              float lateralPosDegree[], float distance[], bool wallAllVisible);
     void drawVertex();
     pairFloat_t getCenterPosition(MapCoordComponent const *mapComp,
                                   GeneralCollisionComponent *genCollComp, float numEntity);
     void fillVertexFromEntity(uint32_t numEntity, uint32_t numIteration, float distance,
                               DisplayMode_e displayMode);
     VerticesData &getClearedVertice(uint32_t index);
-
-    std::optional<pairFloat_t> checkLimitWallCase(const pairFloat_t &pointObserver, float limitObserverAngle,
-                                                  const pairFloat_t &outPoint, const pairFloat_t &linkPoint,
-                                                  bool leftLimit, bool XCase, float correction,
-                                                  pairFloat_t &pointReturn);
-    //check if a wall rect is visible in terms of others wall
-    bool angleWallVisible(const pairFloat_t &observerPoint, const pairFloat_t &angleWall,
-                          const std::vector<uint32_t> &vectEntities, uint32_t numEntity);
-    void calculateDepthWallEntitiesData(uint32_t numEntity, uint32_t angleToTreat,
-                                        const bool pointIn[], const bool outLeft[], float depthGL[],
-                                        float radiantObserverAngle, const pairFloat_t absolPos[],
-                                        const MapCoordComponent *mapCompCamera);
 private:
     Shader *m_shader;
     std::multiset<EntityData> m_entitiesNumMem;
@@ -115,7 +81,6 @@ private:
     m_stepDrawLateralScreen = 2.0f / static_cast<float>(m_textureLineDrawNumber);
 };
 
-//FOR 90 degree ONLY !!!!!!!!
 float getQuarterAngle(float angle);
 uint32_t getMaxValueFromEntries(const float distance[4]);
 uint32_t getMinValueFromEntries(const float distance[4]);
