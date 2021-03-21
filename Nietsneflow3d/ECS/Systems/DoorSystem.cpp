@@ -30,7 +30,8 @@ void DoorSystem::execSystem()
                 searchComponentByType<TimerComponent>(mVectNumEntity[i],
                                                      Components_e::TIMER_COMPONENT);
         assert(timerComp);
-        std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() - timerComp->m_clock;
+        std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() -
+                timerComp->m_clock;
         if(doorComp->m_currentState == DoorState_e::STATIC_OPEN)
         {
             if(elapsed_seconds.count() > 3.0)

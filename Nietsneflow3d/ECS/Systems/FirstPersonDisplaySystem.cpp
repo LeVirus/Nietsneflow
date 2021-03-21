@@ -1011,9 +1011,10 @@ void FirstPersonDisplaySystem::rayCasting()
                     }
                     else if(element->m_type == LevelCaseType_e::DOOR_LC)
                     {
-                        if(treatDoorRaycast(element->m_numEntity, radiantAngle,
-                                            currentPoint, lateral,
-                                            lateralLeadCoef, verticalLeadCoef, textLateral, textFace))
+                        std::optional<float> textPos = treatDoorRaycast(element->m_numEntity, radiantAngle,
+                                                                        currentPoint, lateral, lateralLeadCoef,
+                                                                        verticalLeadCoef, textLateral, textFace);
+                        if(textPos)
                         {
                             if(!textFace)
                             {
@@ -1021,12 +1022,12 @@ void FirstPersonDisplaySystem::rayCasting()
                             }
                             else
                             {
-                                textPos = textLateral ? std::fmod(currentPoint.first, LEVEL_TILE_SIZE_PX) :
-                                                        std::fmod(currentPoint.second, LEVEL_TILE_SIZE_PX);
+                                textPos = textLateral ? std::fmod(currentPoint.first, LEVEL_TILE_SIZE_PX) + *textPos :
+                                                        std::fmod(currentPoint.second, LEVEL_TILE_SIZE_PX) + *textPos;
                             }
                             memDistance(element->m_numEntity, j,
                                         getCameraDistance(mapCompCamera->m_absoluteMapPositionPX,
-                                                          currentPoint, cameraRadiantAngle), textPos);
+                                                          currentPoint, cameraRadiantAngle), *textPos);
                             break;
                         }
                     }
@@ -1043,12 +1044,13 @@ void FirstPersonDisplaySystem::rayCasting()
 }
 
 //===================================================================
-bool FirstPersonDisplaySystem::treatDoorRaycast(uint32_t numEntity, float radiantAngle,
+std::optional<float> FirstPersonDisplaySystem::treatDoorRaycast(uint32_t numEntity, float radiantAngle,
                                                 pairFloat_t &currentPoint, bool lateral,
                                                 std::optional<float> lateralLeadCoef,
                                                 std::optional<float> verticalLeadCoef,
                                                 bool &textLateral, bool &textFace)
 {
+    bool ok;
     DoorComponent *doorComp = stairwayToComponentManager().
             searchComponentByType<DoorComponent>(numEntity, Components_e::DOOR_COMPONENT);
     assert(doorComp);
@@ -1067,16 +1069,32 @@ bool FirstPersonDisplaySystem::treatDoorRaycast(uint32_t numEntity, float radian
                                rectComp->m_size.second}};
     if(doorComp->m_vertical)
     {
-        return treatVerticalDoor(radiantAngle, lateral, currentPoint,
-                                 doorPos, verticalLeadCoef, lateralLeadCoef,
-                                 textLateral, textFace);
+        ok = treatVerticalDoor(radiantAngle, lateral, currentPoint,
+                               doorPos, verticalLeadCoef, lateralLeadCoef,
+                               textLateral, textFace);
     }
     else
     {
-        return treatLateralDoor(radiantAngle, lateral, currentPoint,
-                                doorPos, lateralLeadCoef, verticalLeadCoef,
-                                textLateral, textFace);
+        ok = treatLateralDoor(radiantAngle, lateral, currentPoint,
+                              doorPos, lateralLeadCoef, verticalLeadCoef,
+                              textLateral, textFace);
     }
+    if(ok)
+    {
+        if(doorComp->m_currentState == DoorState_e::STATIC_CLOSED)
+        {
+            return 0.0f;
+        }
+        if(textLateral)
+        {
+            return LEVEL_TILE_SIZE_PX - rectComp->m_size.first;
+        }
+        else
+        {
+            return LEVEL_TILE_SIZE_PX - rectComp->m_size.second;
+        }
+    }
+    return {};
 }
 
 //===================================================================
