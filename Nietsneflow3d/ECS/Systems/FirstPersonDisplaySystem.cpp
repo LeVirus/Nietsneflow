@@ -592,7 +592,7 @@ void FirstPersonDisplaySystem::rayCasting()
                             }
                             else
                             {
-                                textPos = textLateral ? std::fmod(currentPoint.first, LEVEL_TILE_SIZE_PX) + *textPos :
+                                textPos = textLateral == textFace ? std::fmod(currentPoint.first, LEVEL_TILE_SIZE_PX) + *textPos :
                                                         std::fmod(currentPoint.second, LEVEL_TILE_SIZE_PX) + *textPos;
                             }
                             memDistance(element->m_numEntity, j,
@@ -639,7 +639,7 @@ std::optional<float> FirstPersonDisplaySystem::treatDoorRaycast(uint32_t numEnti
                                rectComp->m_size.second}};
     if(doorComp->m_vertical)
     {
-        ok = treatVerticalDoor(radiantAngle, lateral, currentPoint,
+        ok = treatVerticalDoor(radiantAngle, /*lateral*/doorComp->m_vertical, currentPoint,
                                doorPos, verticalLeadCoef, lateralLeadCoef,
                                textLateral, textFace);
     }
@@ -678,65 +678,45 @@ bool treatVerticalDoor(float radiantAngle, bool lateral, pairFloat_t &currentPoi
     bool leftCase = (currentPoint.first <= doorPos[0].first),
             downCase = (currentPoint.second >= doorPos[1].second);
     textFace = true;
-    if(lateral)
+    //exclude case
+    if((std::cos(radiantAngle) < 0.0f && currentPoint.first < doorPos[0].first ) ||
+            (std::cos(radiantAngle) > 0.0f && currentPoint.first > doorPos[0].second))
     {
-        //exclude case
-        if((std::cos(radiantAngle) < 0.0f && currentPoint.first < doorPos[0].first ) ||
-                (std::cos(radiantAngle) > 0.0f && currentPoint.first > doorPos[0].second))
-        {
-            return false;
-        }
-        else
-        {
-            tmpPos.second = (downCase) ? doorPos[1].second : doorPos[1].first;
-            diffLat = *lateralLeadCoef *
-                    std::abs(tmpPos.second - currentPoint.second) / LEVEL_TILE_SIZE_PX;
-            tmpPos.first += diffLat;
-            if(tmpPos.first >= doorPos[0].first && tmpPos.first <= doorPos[0].second)
-            {
-                textLateral = false;
-                textFace = false;
-                currentPoint = tmpPos;
-                return true;
-            }
-            if(!verticalLeadCoef)
-            {
-                return false;
-            }
-            tmpPos = currentPoint;
-            tmpPos.first = (leftCase) ? doorPos[0].first : doorPos[0].second;
-            diffVert = *verticalLeadCoef * std::abs(tmpPos.first - currentPoint.first) /
-                    LEVEL_TILE_SIZE_PX;
-            tmpPos.second += diffVert;
-            if(tmpPos.second >= doorPos[1].first && tmpPos.second <= doorPos[1].second)
-            {
-                textLateral = false;
-                currentPoint = tmpPos;
-                return true;
-            }
-            return false;
-        }
-    }
-    //vertical
-    else
-    {
-        textLateral = false;
-        if(!lateralLeadCoef)
-        {
-            currentPoint.first = leftCase ? doorPos[0].first : doorPos[0].second;
-            return true;
-        }
-        diffLat = (std::cos(radiantAngle) < 0.0f) ? -DOOR_CASE_POS_PX : DOOR_CASE_POS_PX;
-        diffVert = *verticalLeadCoef * std::abs(diffLat) / LEVEL_TILE_SIZE_PX;
-        tmpPos.first += diffLat;
-        tmpPos.second += diffVert;
-        if(tmpPos.second >= doorPos[1].first && tmpPos.second <= doorPos[1].second)
-        {
-            currentPoint = tmpPos;
-            return true;
-        }
         return false;
     }
+    if((std::sin(radiantAngle) > 0.0f && currentPoint.second < doorPos[1].first ) ||
+            (std::sin(radiantAngle) < 0.0f && currentPoint.second > doorPos[1].second))
+    {
+        return false;
+    }
+    tmpPos.second = (downCase) ? doorPos[1].second : doorPos[1].first;
+    diffLat = *lateralLeadCoef *
+            std::abs(tmpPos.second - currentPoint.second) / LEVEL_TILE_SIZE_PX;
+    tmpPos.first += diffLat;
+    if(tmpPos.first >= doorPos[0].first && tmpPos.first <= doorPos[0].second)
+    {
+        textLateral = false;
+        textFace = !lateral;
+        currentPoint = tmpPos;
+        return true;
+    }
+    if(!verticalLeadCoef)
+    {
+        return false;
+    }
+    tmpPos = currentPoint;
+    tmpPos.first = (leftCase) ? doorPos[0].first : doorPos[0].second;
+    diffVert = *verticalLeadCoef * std::abs(tmpPos.first - currentPoint.first) /
+            LEVEL_TILE_SIZE_PX;
+    tmpPos.second += diffVert;
+    if(tmpPos.second >= doorPos[1].first && tmpPos.second <= doorPos[1].second)
+    {
+        textFace = lateral;
+        textLateral = false;
+        currentPoint = tmpPos;
+        return true;
+    }
+    return false;
 }
 
 //===================================================================
@@ -750,67 +730,41 @@ bool treatLateralDoor(float radiantAngle, bool lateral, pairFloat_t &currentPoin
     bool upCase = (currentPoint.second <= doorPos[1].first),
             leftCase = (currentPoint.first <= doorPos[0].first);
     textFace = true;
-    if(!lateral)
+    //exclude case
+    if((std::sin(radiantAngle) > 0.0f && currentPoint.second < doorPos[1].first ) ||
+            (std::sin(radiantAngle) < 0.0f && currentPoint.second > doorPos[1].second))
     {
-        //exclude case
-        if((std::sin(radiantAngle) > 0.0f && currentPoint.second < doorPos[1].first ) ||
-                (std::sin(radiantAngle) < 0.0f && currentPoint.second > doorPos[1].second))
-        {
-            return false;
-        }
-        else
-        {
-            //vertical
-            tmpPos.first = (leftCase) ? doorPos[0].first : doorPos[0].second;
-            diffVert = *verticalLeadCoef * std::abs(tmpPos.first - currentPoint.first) /
-                    LEVEL_TILE_SIZE_PX;
-            tmpPos.second += diffVert;
-            if(tmpPos.second >= doorPos[1].first && tmpPos.second <= doorPos[1].second)
-            {
-                textLateral = false;
-                textFace = false;
-                currentPoint = tmpPos;
-                return true;
-            }
-            if(!lateralLeadCoef)
-            {
-                return false;
-            }
-            tmpPos = currentPoint;
-            //lateral
-            tmpPos.second = (upCase) ? doorPos[1].first : doorPos[1].second;
-            diffLat = *lateralLeadCoef * std::abs(tmpPos.second - currentPoint.second) /
-                    LEVEL_TILE_SIZE_PX;
-            tmpPos.first += diffLat;
-            if(tmpPos.first >= doorPos[0].first && tmpPos.first <= doorPos[0].second)
-            {
-                textLateral = true;
-                currentPoint = tmpPos;
-                return true;
-            }
-            return false;
-        }
-    }
-    //lateral
-    else
-    {
-        textLateral = true;
-        if(!verticalLeadCoef)
-        {
-            currentPoint.second = upCase ? doorPos[1].first : doorPos[1].second;
-            return true;
-        }
-        diffVert = (std::sin(radiantAngle) > 0.0f) ? -DOOR_CASE_POS_PX : DOOR_CASE_POS_PX;
-        diffLat = *lateralLeadCoef * std::abs(diffVert) / LEVEL_TILE_SIZE_PX;
-        tmpPos.first += diffLat;
-        tmpPos.second += diffVert;
-        if(tmpPos.first >= doorPos[0].first && tmpPos.first <= doorPos[0].second)
-        {
-            currentPoint = tmpPos;
-            return true;
-        }
         return false;
     }
+    //vertical
+    tmpPos.first = (leftCase) ? doorPos[0].first : doorPos[0].second;
+    diffVert = *verticalLeadCoef * std::abs(tmpPos.first - currentPoint.first) /
+            LEVEL_TILE_SIZE_PX;
+    tmpPos.second += diffVert;
+    if(tmpPos.second >= doorPos[1].first && tmpPos.second <= doorPos[1].second)
+    {
+        textLateral = false;
+        textFace = false;
+        currentPoint = tmpPos;
+        return true;
+    }
+    if(!lateralLeadCoef)
+    {
+        return false;
+    }
+    tmpPos = currentPoint;
+    //lateral
+    tmpPos.second = (upCase) ? doorPos[1].first : doorPos[1].second;
+    diffLat = *lateralLeadCoef * std::abs(tmpPos.second - currentPoint.second) /
+            LEVEL_TILE_SIZE_PX;
+    tmpPos.first += diffLat;
+    if(tmpPos.first >= doorPos[0].first && tmpPos.first <= doorPos[0].second)
+    {
+        textLateral = true;
+        currentPoint = tmpPos;
+        return true;
+    }
+    return false;
 }
 
 //===================================================================
