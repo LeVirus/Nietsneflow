@@ -21,5 +21,6 @@ struct DoorComponent : public ecs::Component
     bool m_vertical;
     double m_speedMove = 0.01;
     std::pair<bool, bool> m_verticalPosDisplay;
+    float m_posBorderDoorText = 3.0f;
     virtual ~DoorComponent() = default;
 };

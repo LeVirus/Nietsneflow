@@ -34,7 +34,7 @@ void DoorSystem::execSystem()
                 timerComp->m_clock;
         if(doorComp->m_currentState == DoorState_e::STATIC_OPEN)
         {
-            if(elapsed_seconds.count() > 3.0)
+            if(elapsed_seconds.count() > m_timeDoorClosed)
             {
                 doorComp->m_currentState = DoorState_e::MOVE_CLOSE;
                 timerComp->m_clock = std::chrono::system_clock::now();

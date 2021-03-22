@@ -12,4 +12,6 @@ public:
 private:
     void setUsedComponents();
     void treatDoorMovementSize(DoorComponent *doorComp, uint32_t entityNum);
+private:
+    double m_timeDoorClosed = 0.3;
 };
