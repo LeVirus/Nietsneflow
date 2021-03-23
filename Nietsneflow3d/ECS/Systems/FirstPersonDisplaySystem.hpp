@@ -91,9 +91,9 @@ bool treatDisplayDoor(float radiantAngle, bool doorVertical, pairFloat_t &curren
                       pairFloat_t doorPos[], std::optional<float> verticalLeadCoef,
                       std::optional<float> lateralLeadCoef, bool &textLateral, bool &textFace);
 bool treatVerticalIntersectDoor(pairFloat_t &currentPoint, pairFloat_t doorPos[],
-                               float verticalLeadCoef);
+                               float verticalLeadCoef, bool doorVertical);
 bool treatLateralIntersectDoor(pairFloat_t &currentPoint, pairFloat_t doorPos[],
-                                float lateralLeadCoef);
+                                float lateralLeadCoef, bool doorVertical);
 void treatLimitAngle(float &degreeAngleA, float &degreeAngleB);
 void removeSecondRect(pairFloat_t absolPos[], float distance[], uint32_t &distanceToTreat);
 float getDoorDistance(const MapCoordComponent *mapCompCamera, const MapCoordComponent *mapCompDoor,

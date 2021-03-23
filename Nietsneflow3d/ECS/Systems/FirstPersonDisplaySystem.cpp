@@ -673,8 +673,7 @@ bool treatDisplayDoor(float radiantAngle, bool doorVertical, pairFloat_t &curren
         {
             return false;
         }
-        textLateral = !doorVertical;
-        if(treatLateralIntersectDoor(currentPoint, doorPos, *lateralLeadCoef))
+        if(treatLateralIntersectDoor(currentPoint, doorPos, *lateralLeadCoef, doorVertical))
         {
             //determine if this is face of the door
             textFace = false;
@@ -684,8 +683,9 @@ bool treatDisplayDoor(float radiantAngle, bool doorVertical, pairFloat_t &curren
         {
             return false;
         }
-        if(treatVerticalIntersectDoor(currentPoint, doorPos, *verticalLeadCoef))
+        if(treatVerticalIntersectDoor(currentPoint, doorPos, *verticalLeadCoef, doorVertical))
         {
+            textLateral = false;
             textFace = true;
             return true;
         }
@@ -698,8 +698,7 @@ bool treatDisplayDoor(float radiantAngle, bool doorVertical, pairFloat_t &curren
         {
             return false;
         }
-        textLateral = !doorVertical;
-        if(treatVerticalIntersectDoor(currentPoint, doorPos, *verticalLeadCoef))
+        if(treatVerticalIntersectDoor(currentPoint, doorPos, *verticalLeadCoef, doorVertical))
         {
             textFace = false;
             return true;
@@ -708,8 +707,9 @@ bool treatDisplayDoor(float radiantAngle, bool doorVertical, pairFloat_t &curren
         {
             return false;
         }
-        if(treatLateralIntersectDoor(currentPoint, doorPos, *lateralLeadCoef))
+        if(treatLateralIntersectDoor(currentPoint, doorPos, *lateralLeadCoef, doorVertical))
         {
+            textLateral = true;
             textFace = true;
             return true;
         }
@@ -719,17 +719,24 @@ bool treatDisplayDoor(float radiantAngle, bool doorVertical, pairFloat_t &curren
 
 //===================================================================
 bool treatLateralIntersectDoor(pairFloat_t &currentPoint, pairFloat_t doorPos[],
-                               float lateralLeadCoef)
+                               float lateralLeadCoef, bool doorVertical)
 {
-    bool upCase = (currentPoint.second <= doorPos[1].first);
-    float diffLat;
-    pairFloat_t tmpPos = currentPoint;
-    tmpPos.second = (upCase) ? doorPos[1].first : doorPos[1].second;
-    if(std::fmod(doorPos[1].first, LEVEL_TILE_SIZE_PX) <= 0.0f &&
-            std::abs(tmpPos.second - currentPoint.second) != 0.0f)
+    bool upCase;
+    if(currentPoint.second <= doorPos[1].first)
+    {
+        upCase = true;
+    }
+    else if(currentPoint.second >= doorPos[1].second)
+    {
+        upCase = false;
+    }
+    else
     {
         return false;
     }
+    float diffLat;
+    pairFloat_t tmpPos = currentPoint;
+    tmpPos.second = (upCase) ? doorPos[1].first : doorPos[1].second;
     diffLat = lateralLeadCoef * std::abs(tmpPos.second - currentPoint.second) /
             LEVEL_TILE_SIZE_PX;
     tmpPos.first += diffLat;
@@ -743,17 +750,24 @@ bool treatLateralIntersectDoor(pairFloat_t &currentPoint, pairFloat_t doorPos[],
 
 //===================================================================
 bool treatVerticalIntersectDoor(pairFloat_t &currentPoint, pairFloat_t doorPos[],
-                                float verticalLeadCoef)
+                                float verticalLeadCoef, bool doorVertical)
 {
-    bool leftCase = (currentPoint.first <= doorPos[0].first);
-    float diffVert;
-    pairFloat_t tmpPos = currentPoint;
-    tmpPos.first = (leftCase) ? doorPos[0].first : doorPos[0].second;
-    if(std::fmod(doorPos[0].first, LEVEL_TILE_SIZE_PX) <= 0.0f &&
-            std::abs(tmpPos.first - currentPoint.first) != 0.0f)
+    bool leftCase;
+    if(currentPoint.first <= doorPos[0].first)
+    {
+        leftCase = true;
+    }
+    else if(currentPoint.first >= doorPos[0].second)
+    {
+        leftCase = false;
+    }
+    else
     {
         return false;
     }
+    float diffVert;
+    pairFloat_t tmpPos = currentPoint;
+    tmpPos.first = (leftCase) ? doorPos[0].first : doorPos[0].second;
     diffVert = verticalLeadCoef * std::abs(tmpPos.first - currentPoint.first) /
             LEVEL_TILE_SIZE_PX;
     tmpPos.second += diffVert;
