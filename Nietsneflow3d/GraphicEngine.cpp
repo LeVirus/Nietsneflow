@@ -7,6 +7,7 @@
 #include <ECS/Systems/MapDisplaySystem.hpp>
 #include <ECS/Systems/VisionSystem.hpp>
 #include <ECS/Systems/FirstPersonDisplaySystem.hpp>
+#include <ECS/Systems/StaticDisplaySystem.hpp>
 
 
 //===================================================================
@@ -60,13 +61,14 @@ bool GraphicEngine::windowShouldClose()
 void GraphicEngine::linkSystems(ColorDisplaySystem *colorSystem,
                                 MapDisplaySystem *mapSystem,
                                 FirstPersonDisplaySystem *firstPersonSystem,
-                                VisionSystem *visionSystem)
+                                VisionSystem *visionSystem, StaticDisplaySystem *staticDisplaySystem)
 
 {
     m_colorSystem = colorSystem;
     m_mapSystem = mapSystem;
     m_firstPersonSystem = firstPersonSystem;
     m_visionSystem = visionSystem;
+    m_staticDisplaySystem = staticDisplaySystem;
 }
 
 
@@ -146,6 +148,7 @@ void GraphicEngine::setShaderToLocalSystems()
     m_colorSystem->setShader(m_vectShader[static_cast<uint32_t>(Shader_e::COLOR_S)]);
     m_mapSystem->setShader(m_vectShader[static_cast<uint32_t>(Shader_e::TEXTURE_S)]);
     m_firstPersonSystem->setShader(m_vectShader[static_cast<uint32_t>(Shader_e::TEXTURE_S)]);
+    m_staticDisplaySystem->setShader(m_vectShader[static_cast<uint32_t>(Shader_e::TEXTURE_S)]);
 }
 
 //===================================================================

@@ -18,6 +18,7 @@
 #include <ECS/Systems/FirstPersonDisplaySystem.hpp>
 #include <ECS/Systems/VisionSystem.hpp>
 #include <ECS/Systems/DoorSystem.hpp>
+#include <ECS/Systems/StaticDisplaySystem.hpp>
 #include <LevelManager.hpp>
 #include <cassert>
 
@@ -520,7 +521,9 @@ void MainEngine::linkSystemsToGraphicEngine()
             searchSystemByType<FirstPersonDisplaySystem>(static_cast<uint32_t>(Systems_e::FIRST_PERSON_DISPLAY_SYSTEM));
     VisionSystem *vision = m_ecsManager.getSystemManager().
             searchSystemByType<VisionSystem>(static_cast<uint32_t>(Systems_e::VISION_SYSTEM));
-    m_graphicEngine.linkSystems(color, map, first, vision);
+    StaticDisplaySystem *staticDisplay = m_ecsManager.getSystemManager().
+            searchSystemByType<StaticDisplaySystem>(static_cast<uint32_t>(Systems_e::STATIC_DISPLAY_SYSTEM));
+    m_graphicEngine.linkSystems(color, map, first, vision, staticDisplay);
 }
 
 //===================================================================

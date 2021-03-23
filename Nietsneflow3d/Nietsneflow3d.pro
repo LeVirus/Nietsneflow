@@ -26,7 +26,8 @@ SOURCES += main.cpp \
     ECS/Systems/CollisionSystem.cpp \
     CollisionUtils.cpp \
     ECS/Systems/FirstPersonDisplaySystem.cpp \
-    ECS/Systems/DoorSystem.cpp
+    ECS/Systems/DoorSystem.cpp \
+    ECS/Systems/StaticDisplaySystem.cpp
 
 HEADERS += \
     ECS/Components/MemSpriteDataComponent.hpp \
@@ -81,5 +82,6 @@ HEADERS += \
     ECS/Systems/FirstPersonDisplaySystem.hpp \
     ECS/Components/DoorComponent.hpp \
     ECS/Systems/DoorSystem.hpp \
-    ECS/Components/PlayerConfComponent.hpp
+    ECS/Components/PlayerConfComponent.hpp \
+    ECS/Systems/StaticDisplaySystem.hpp
 

@@ -39,7 +39,8 @@ enum class Systems_e
     COLLISION_SYSTEM,
     FIRST_PERSON_DISPLAY_SYSTEM,
     VISION_SYSTEM,
-    DOOR_SYSTEM
+    DOOR_SYSTEM,
+    STATIC_DISPLAY_SYSTEM
 };
 
 enum class DisplayType_e
