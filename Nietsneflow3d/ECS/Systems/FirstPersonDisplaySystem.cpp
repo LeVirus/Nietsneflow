@@ -665,15 +665,20 @@ bool treatDisplayDoor(float radiantAngle, bool doorVertical, pairFloat_t &curren
                       std::optional<float> lateralLeadCoef,
                       bool &textLateral, bool &textFace)
 {
+    //exclude case
+    if((std::cos(radiantAngle) < 0.0f && currentPoint.first < doorPos[0].first ) ||
+            (std::cos(radiantAngle) > 0.0f && currentPoint.first > doorPos[0].second))
+    {
+        return false;
+    }
+    if((std::sin(radiantAngle) > 0.0f && currentPoint.second < doorPos[1].first ) ||
+            (std::sin(radiantAngle) < 0.0f && currentPoint.second > doorPos[1].second))
+    {
+        return false;
+    }
     if(doorVertical)
     {
-        //exclude case
-        if((std::cos(radiantAngle) < 0.0f && currentPoint.first < doorPos[0].first ) ||
-                (std::cos(radiantAngle) > 0.0f && currentPoint.first > doorPos[0].second))
-        {
-            return false;
-        }
-        if(treatLateralIntersectDoor(currentPoint, doorPos, *lateralLeadCoef, doorVertical))
+        if(treatLateralIntersectDoor(currentPoint, doorPos, *lateralLeadCoef))
         {
             //determine if this is face of the door
             textFace = false;
@@ -683,7 +688,7 @@ bool treatDisplayDoor(float radiantAngle, bool doorVertical, pairFloat_t &curren
         {
             return false;
         }
-        if(treatVerticalIntersectDoor(currentPoint, doorPos, *verticalLeadCoef, doorVertical))
+        if(treatVerticalIntersectDoor(currentPoint, doorPos, *verticalLeadCoef))
         {
             textLateral = false;
             textFace = true;
@@ -692,13 +697,7 @@ bool treatDisplayDoor(float radiantAngle, bool doorVertical, pairFloat_t &curren
     }
     else
     {
-        //exclude case
-        if((std::sin(radiantAngle) > 0.0f && currentPoint.second < doorPos[1].first ) ||
-                (std::sin(radiantAngle) < 0.0f && currentPoint.second > doorPos[1].second))
-        {
-            return false;
-        }
-        if(treatVerticalIntersectDoor(currentPoint, doorPos, *verticalLeadCoef, doorVertical))
+        if(treatVerticalIntersectDoor(currentPoint, doorPos, *verticalLeadCoef))
         {
             textFace = false;
             return true;
@@ -707,7 +706,7 @@ bool treatDisplayDoor(float radiantAngle, bool doorVertical, pairFloat_t &curren
         {
             return false;
         }
-        if(treatLateralIntersectDoor(currentPoint, doorPos, *lateralLeadCoef, doorVertical))
+        if(treatLateralIntersectDoor(currentPoint, doorPos, *lateralLeadCoef))
         {
             textLateral = true;
             textFace = true;
@@ -719,7 +718,7 @@ bool treatDisplayDoor(float radiantAngle, bool doorVertical, pairFloat_t &curren
 
 //===================================================================
 bool treatLateralIntersectDoor(pairFloat_t &currentPoint, pairFloat_t doorPos[],
-                               float lateralLeadCoef, bool doorVertical)
+                               float lateralLeadCoef)
 {
     bool upCase;
     if(currentPoint.second <= doorPos[1].first)
@@ -750,7 +749,7 @@ bool treatLateralIntersectDoor(pairFloat_t &currentPoint, pairFloat_t doorPos[],
 
 //===================================================================
 bool treatVerticalIntersectDoor(pairFloat_t &currentPoint, pairFloat_t doorPos[],
-                                float verticalLeadCoef, bool doorVertical)
+                                float verticalLeadCoef)
 {
     bool leftCase;
     if(currentPoint.first <= doorPos[0].first)
