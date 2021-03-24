@@ -77,7 +77,7 @@ void MapDisplaySystem::confPositionVertexEntities()
             diffPosPX = corner - m_playerComp.m_mapCoordComp->m_absoluteMapPositionPX;
             //convert absolute position to relative
             relativePosMapGL = {diffPosPX.first * MAP_LOCAL_SIZE_GL / m_localLevelSizePX,
-                                            diffPosPX.second * MAP_LOCAL_SIZE_GL / m_localLevelSizePX};
+                                diffPosPX.second * MAP_LOCAL_SIZE_GL / m_localLevelSizePX};
             confVertexElement(relativePosMapGL, mVectNumEntity[i]);
         }
     }

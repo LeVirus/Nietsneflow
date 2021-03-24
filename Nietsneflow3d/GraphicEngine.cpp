@@ -44,6 +44,7 @@ void GraphicEngine::runIteration()
     m_colorSystem->execSystem();
     m_visionSystem->execSystem();
     m_firstPersonSystem->execSystem();
+    m_staticDisplaySystem->execSystem();
     m_mapSystem->execSystem();
     // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
     // -------------------------------------------------------------------------------

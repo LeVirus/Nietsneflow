@@ -61,18 +61,15 @@ void LevelManager::loadGroundAndCeilingData(const INIReader &reader)
                     DisplayType_e::COLOR : DisplayType_e::TEXTURE;
         if(displayType == DisplayType_e::TEXTURE)
         {
-            std::string sprite = reader.Get("Ground", "sprite", "");
-            std::optional<uint8_t> id = m_pictureData.getIdentifier(sprite);
+            std::optional<uint8_t> id = m_pictureData.getIdentifier(reader.Get("Ground", "sprite", ""));
             assert(id && "Cannot get tegetIdentifierier.");
             arrayGAndCData[i].m_spriteNum = *id;
         }
         else
         {
-            double colorR = reader.GetReal("Ground", "colorR", -1.0);
-            double colorG = reader.GetReal("Ground", "colorG", -1.0);
-            double colorB = reader.GetReal("Ground", "colorB", -1.0);
-            tupleDouble_t tupleDouble = std::make_tuple(colorR, colorG, colorB);
-            arrayGAndCData[i].m_tupleColor = tupleDouble;
+            arrayGAndCData[i].m_tupleColor = {reader.GetReal("Ground", "colorR", -1.0),
+                                              reader.GetReal("Ground", "colorG", -1.0),
+                                              reader.GetReal("Ground", "colorB", -1.0)};
         }
         arrayGAndCData[i].m_apparence = displayType;
     }
@@ -82,22 +79,17 @@ void LevelManager::loadGroundAndCeilingData(const INIReader &reader)
 //===================================================================
 void LevelManager::loadLevelData(const INIReader &reader)
 {
-     pairLong_t levelSize;
-     //ERROR ON LOAD
-     levelSize.first = reader.GetInteger("Level", "weight", 10);
-     levelSize.second = reader.GetInteger("Level", "height", 10);
-     m_level.setLevelSize(levelSize);
+     m_level.setLevelSize({reader.GetInteger("Level", "weight", 10),
+                           reader.GetInteger("Level", "height", 10)});
 }
 
 //===================================================================
 void LevelManager::loadPlayerData(const INIReader &reader)
 {
-    pairLong_t playerOriginPosition;
-    Direction_e playerOriginDirection;
-    playerOriginPosition.first = reader.GetInteger("PlayerInit", "playerDepartureX", 0);
-    playerOriginPosition.second = reader.GetInteger("PlayerInit", "playerDepartureY", 0);
-    playerOriginDirection = static_cast<Direction_e>(reader.GetInteger("PlayerInit", "PlayerOrientation", 0));
-    m_level.setPlayerInitData(playerOriginPosition, playerOriginDirection);
+    m_level.setPlayerInitData({reader.GetInteger("PlayerInit", "playerDepartureX", 0),
+                               reader.GetInteger("PlayerInit", "playerDepartureY", 0)},
+                              static_cast<Direction_e>(reader.GetInteger("PlayerInit",
+                                                                         "PlayerOrientation", 0)));
 }
 
 //===================================================================
@@ -152,8 +144,7 @@ void LevelManager::readStaticElement(const INIReader &reader, StaticLevelElement
     fillPositionVect(reader, sectionName, staticElement.m_TileGamePosition);
     if(elementType == LevelStaticElementType_e::GROUND)
     {
-        staticElement.m_traversable = reader.GetBoolean(sectionName,
-                                                        "traversable", true);
+        staticElement.m_traversable = reader.GetBoolean(sectionName, "traversable", true);
     }
 }
 
@@ -180,8 +171,7 @@ void LevelManager::fillPositionVect(const INIReader &reader,
 uint8_t LevelManager::getSpriteId(const INIReader &reader,
                                   const std::string &sectionName)
 {
-    std::string sprite = reader.Get(sectionName, "Sprite", "");
-    std::optional<uint8_t> id = m_pictureData.getIdentifier(sprite);
+    std::optional<uint8_t> id = m_pictureData.getIdentifier(reader.Get(sectionName, "Sprite", ""));
     assert(id && "picture data does not exists.");
     return *id;
 }
@@ -223,8 +213,7 @@ void LevelManager::loadDoorData(const INIReader &reader)
         vectDoor.emplace_back(DoorData());
         vectDoor.back().m_numSprite = getSpriteId(reader, vectINISections[i]);
         fillPositionVect(reader, vectINISections[i], vectDoor.back().m_TileGamePosition);
-        vectDoor.back().m_vertical = reader.GetBoolean(vectINISections[i],
-                                                       "Vertical", false);
+        vectDoor.back().m_vertical = reader.GetBoolean(vectINISections[i], "Vertical", false);
     }
     m_level.setDoorElement(vectDoor);
 }
@@ -298,7 +287,7 @@ void LevelManager::loadEnemySprites(const INIReader &reader, const std::string &
     }
 }
 
-//=======================================getIdentifier===============
+//======================================================
 std::vector<uint32_t> LevelManager::convertStrToVectUI(
         const std::string &str)
 {
@@ -320,7 +309,6 @@ void LevelManager::loadTextureData(const std::string &INIFileName, uint32_t leve
     loadSpriteData(reader);
     loadGroundAndCeilingData(reader);
     m_pictureData.setUpToDate();
-//    m_pictureData.display();//debug
 }
 
 //===================================================================

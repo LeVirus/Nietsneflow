@@ -4,6 +4,10 @@
 #include <includesLib/BaseECS/system.hpp>
 #include "constants.hpp"
 
+/**
+ * @brief The StaticDisplaySystem class displays the menu
+ * and the weapon in use.
+ */
 class StaticDisplaySystem : public ecs::System
 {
 public:
