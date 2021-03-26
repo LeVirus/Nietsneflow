@@ -29,6 +29,7 @@ public:
     }
 private:
     void drawVertex();
+    void writeVertexFromComponent(uint32_t numObserverEntity);
 private:
     Shader *m_shader;
     VerticesData m_weaponVertice;

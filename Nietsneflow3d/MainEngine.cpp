@@ -126,20 +126,20 @@ uint32_t MainEngine::loadWeaponsEntity(const LevelManager &levelManager)
     assert(memSprite);
     assert(memPosVertex);
     memSprite->m_vectSpriteData.reserve(static_cast<uint32_t>(WeaponsSpriteType_e::TOTAL_SPRITE));
-    float posUp, posDown = 0.0f, posLeft, posRight, diffLateral;
+    float posUp, posDown = -1.0f, posLeft, posRight, diffLateral;
     for(uint32_t i = 0; i < vectWeapons.size(); ++i)
     {
         memSprite->m_vectSpriteData.emplace_back(&vectSprite[vectWeapons[i].first]);
-        posUp = vectWeapons[i].second.second;
-        diffLateral = vectWeapons[i].first / 2.0f;
+        posUp = -1.0f + vectWeapons[i].second.second;
+        diffLateral = vectWeapons[i].second.first / 2.0f;
         posLeft = -diffLateral;
         posRight = diffLateral;
         memPosVertex->m_vectSpriteData.emplace_back(std::array<pairFloat_t, 4>{
                                                         {
-                                                            {posUp, posLeft},
-                                                            {posUp, posRight},
-                                                            {posDown, posLeft},
-                                                            {posDown, posRight}
+                                                            {posLeft, posUp},
+                                                            {posRight, posUp},
+                                                            {posRight, posDown},
+                                                            {posLeft, posDown}
                                                         }
                                                     });
     }

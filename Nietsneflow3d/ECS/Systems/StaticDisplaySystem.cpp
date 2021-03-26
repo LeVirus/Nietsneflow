@@ -16,28 +16,40 @@ StaticDisplaySystem::StaticDisplaySystem() : m_weaponVertice(Shader_e::TEXTURE_S
 void StaticDisplaySystem::execSystem()
 {
     System::execSystem();
-    PlayerConfComponent *playerComp;
-    PositionVertexComponent *posComp;
-    SpriteTextureComponent *spriteComp;
     for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
     {
-        playerComp = stairwayToComponentManager().
-                    searchComponentByType<PlayerConfComponent>(mVectNumEntity[i],
-                                                               Components_e::PLAYER_CONF_COMPONENT);
-        assert(playerComp);
-        posComp = stairwayToComponentManager().
-                searchComponentByType<PositionVertexComponent>(playerComp->m_weaponEntity,
-                                                               Components_e::POSITION_VERTEX_COMPONENT);
-        spriteComp = stairwayToComponentManager().
-                searchComponentByType<SpriteTextureComponent>(playerComp->m_weaponEntity,
-                                                              Components_e::SPRITE_TEXTURE_COMPONENT);
-        assert(posComp);
-        assert(spriteComp);
-        assert(!posComp->m_vertex.empty());
-        m_weaponVertice.clear();
-        m_weaponVertice.loadVertexStandartTextureComponent(*posComp, *spriteComp);
+        writeVertexFromComponent(mVectNumEntity[i]);
         drawVertex();
     }
+}
+
+//===================================================================
+void StaticDisplaySystem::writeVertexFromComponent(uint32_t numObserverEntity)
+{
+    PlayerConfComponent *playerComp = stairwayToComponentManager().
+                searchComponentByType<PlayerConfComponent>(numObserverEntity,
+                                                           Components_e::PLAYER_CONF_COMPONENT);
+    assert(playerComp);
+    PositionVertexComponent *posComp = stairwayToComponentManager().
+            searchComponentByType<PositionVertexComponent>(playerComp->m_weaponEntity,
+                                                           Components_e::POSITION_VERTEX_COMPONENT);
+    SpriteTextureComponent *spriteComp = stairwayToComponentManager().
+            searchComponentByType<SpriteTextureComponent>(playerComp->m_weaponEntity,
+                                                          Components_e::SPRITE_TEXTURE_COMPONENT);
+    assert(posComp);
+    assert(spriteComp);
+    assert(!posComp->m_vertex.empty());
+    m_weaponVertice.clear();
+    m_weaponVertice.loadVertexStandartTextureComponent(*posComp, *spriteComp);
+}
+
+//===================================================================
+void StaticDisplaySystem::drawVertex()
+{
+    m_shader->use();
+    m_ptrVectTexture->operator[](static_cast<uint8_t>(m_numTextureWeapon)).bind();
+    m_weaponVertice.confVertexBuffer();
+    m_weaponVertice.drawElement();
 }
 
 //===================================================================
@@ -78,13 +90,5 @@ void StaticDisplaySystem::setWeaponPlayer(uint32_t weaponEntity, WeaponsSpriteTy
     {
         pos->m_vertex[i] = memPosVertex->m_vectSpriteData[index][i];
     }
-}
 
-//===================================================================
-void StaticDisplaySystem::drawVertex()
-{
-    m_shader->use();
-    m_ptrVectTexture->operator[](static_cast<uint8_t>(m_numTextureWeapon)).bind();
-    m_weaponVertice.confVertexBuffer();
-    m_weaponVertice.drawElement();
 }
