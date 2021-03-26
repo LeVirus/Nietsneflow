@@ -30,13 +30,13 @@ private:
     void fillPositionVect(const INIReader &reader, const std::string &sectionName,
                           vectPairUI_t &vectPos);
     uint8_t getSpriteId(const INIReader &reader, const std::string &sectionName);
+    void loadWeaponsDisplayData(const INIReader &reader);
     void loadWallData(const INIReader &reader);
     void loadDoorData(const INIReader &reader);
     void loadEnemyData(const INIReader &reader);
 
     void loadEnemySprites(const INIReader &reader, const std::string &sectionName,
                           EnemySpriteType_e spriteType, EnemyData &enemyData);
-    std::vector<uint32_t> convertStrToVectUI(const std::string &str);
 public:
     LevelManager();
     void loadTextureData(const std::string &INIFileName, uint32_t levelNum);
@@ -44,3 +44,5 @@ public:
     inline const PictureData &getPictureData()const {return m_pictureData;}
     inline const Level &getLevel()const {return m_level;}
 };
+std::vector<uint32_t> convertStrToVectUI(const std::string &str);
+std::vector<float> convertStrToVectFloat(const std::string &str);

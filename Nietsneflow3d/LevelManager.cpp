@@ -177,6 +177,36 @@ uint8_t LevelManager::getSpriteId(const INIReader &reader,
 }
 
 //===================================================================
+void LevelManager::loadWeaponsDisplayData(const INIReader &reader)
+{
+    std::vector<pairUIPairFloat_t> vectWeaponsDisplayData;
+    std::vector<std::string> vectINISections;
+    vectINISections = reader.getSectionNamesContaining("Weapons");
+    assert(!vectINISections.empty());
+    std::string sprites = reader.Get(vectINISections[0], "Sprite", "");
+    assert(!sprites.empty() && "Wall sprites cannot be loaded.");
+    std::istringstream iss(sprites);
+    vectStr_t results(std::istream_iterator<std::string>{iss},
+                      std::istream_iterator<std::string>());
+
+    std::string resultWeight = reader.Get(vectINISections[0], "SpriteWeightGame", ""),
+            resultHeight = reader.Get(vectINISections[0], "SpriteHeightGame", "");
+    std::vector<float> vectWeight = convertStrToVectFloat(resultWeight),
+            vectHeight = convertStrToVectFloat(resultHeight);
+    assert(vectHeight.size() == vectWeight.size());
+    assert(results.size() == vectWeight.size());
+    vectWeaponsDisplayData.reserve(results.size());
+    for(uint32_t i = 0; i < results.size(); ++i)
+    {
+        vectWeaponsDisplayData.emplace_back(pairUIPairFloat_t{
+                                                *(m_pictureData.getIdentifier(results[i])),
+                                                {vectWeight[i], vectHeight[i]}
+                                            });
+    }
+    m_level.setWeaponsElement(vectWeaponsDisplayData);
+}
+
+//===================================================================
 void LevelManager::loadWallData(const INIReader &reader)
 {
     std::vector<WallData> vectWall;
@@ -288,12 +318,19 @@ void LevelManager::loadEnemySprites(const INIReader &reader, const std::string &
 }
 
 //======================================================
-std::vector<uint32_t> LevelManager::convertStrToVectUI(
-        const std::string &str)
+std::vector<uint32_t> convertStrToVectUI(const std::string &str)
 {
     std::istringstream iss(str);
     return std::vector<uint32_t>(std::istream_iterator<uint32_t>{iss},
                       std::istream_iterator<uint32_t>());
+}
+
+//======================================================
+std::vector<float> convertStrToVectFloat(const std::string &str)
+{
+    std::istringstream iss(str);
+    return std::vector<float>(std::istream_iterator<float>{iss},
+                      std::istream_iterator<float>());
 }
 
 //===================================================================
@@ -325,6 +362,7 @@ void LevelManager::loadLevel(const std::string &INIFileName, uint32_t levelNum)
     loadGeneralStaticElements(reader, LevelStaticElementType_e::GROUND);
     loadGeneralStaticElements(reader, LevelStaticElementType_e::CEILING);
     loadGeneralStaticElements(reader, LevelStaticElementType_e::OBJECT);
+    loadWeaponsDisplayData(reader);
     loadWallData(reader);
     loadDoorData(reader);
     loadEnemyData(reader);

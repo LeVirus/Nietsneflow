@@ -6,6 +6,7 @@
 #include <constants.hpp>
 
 using vectPairUI_t = std::vector<pairUI_t>;
+using pairUIPairFloat_t = std::pair<uint8_t, pairFloat_t>;
 
 struct MoveableComponent;
 struct PositionVertexComponent;
@@ -68,6 +69,8 @@ private:
     Direction_e m_playerDepartureDirection;
     std::vector<StaticLevelElementData> m_groundElement, m_ceilingElement, m_objectElement;
     std::vector<WallData> m_wallData;
+    //store the sprite number and the screen display size
+    std::vector<pairUIPairFloat_t> m_weaponsDisplayData;
     std::vector<DoorData> m_doorData;
     std::vector<EnemyData> m_enemyData;
     static std::vector<ElementRaycast> m_levelCaseType;
@@ -89,6 +92,10 @@ public:
     inline const std::vector<WallData> &getWallData()const
     {
         return m_wallData;
+    }
+    inline const std::vector<pairUIPairFloat_t> &getWeaponsData()const
+    {
+        return m_weaponsDisplayData;
     }
 
     inline const std::vector<DoorData> &getDoorData()const
@@ -151,6 +158,10 @@ public:
     inline void setWallElement(const std::vector<WallData> &vectWall)
     {
         m_wallData = vectWall;
+    }
+    inline void setWeaponsElement(const std::vector<pairUIPairFloat_t> &vectWeapons)
+    {
+        m_weaponsDisplayData = vectWeapons;
     }
     inline void setDoorElement(const std::vector<DoorData> &vectDoor)
     {

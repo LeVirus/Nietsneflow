@@ -5,6 +5,10 @@
 #include <PictureData.hpp>
 #include <vector>
 
+/**
+ * @brief The MemSpriteDataComponent struct stores all used sprite
+ * in the case of animated entities.
+ */
 struct MemSpriteDataComponent : public ecs::Component
 {
     MemSpriteDataComponent()

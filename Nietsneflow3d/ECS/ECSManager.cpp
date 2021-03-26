@@ -13,6 +13,7 @@
 #include <ECS/Components/DoorComponent.hpp>
 #include <ECS/Components/VisionComponent.hpp>
 #include <ECS/Components/PlayerConfComponent.hpp>
+#include <ECS/Components/MemPositionsVertexComponents.hpp>
 #include <ECS/Components/MemSpriteDataComponent.hpp>
 #include <ECS/Components/TimerComponent.hpp>
 #include <ECS/Systems/ColorDisplaySystem.hpp>
@@ -218,6 +219,12 @@ void ECSManager::syncComponentsFromEntities(uint32_t numEntity,
         {
             m_componentManager->instanciateExternComponent(numEntity,
                         std::make_unique<PlayerConfComponent>());
+        }
+            break;
+        case Components_e::MEM_POSITIONS_VERTEX_COMPONENT:
+        {
+            m_componentManager->instanciateExternComponent(numEntity,
+                        std::make_unique<MemPositionsVertexComponents>());
         }
             break;
 

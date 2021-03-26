@@ -25,6 +25,8 @@ void GraphicEngine::confSystems()
     setShaderToLocalSystems();
     m_mapSystem->setVectTextures(m_vectTexture);
     m_firstPersonSystem->setVectTextures(m_vectTexture);
+    m_staticDisplaySystem->setVectTextures(m_vectTexture);
+    m_staticDisplaySystem->setTextureWeaponNum(Texture_e::GLOBAL_T);
 }
 
 //===================================================================
@@ -62,7 +64,8 @@ bool GraphicEngine::windowShouldClose()
 void GraphicEngine::linkSystems(ColorDisplaySystem *colorSystem,
                                 MapDisplaySystem *mapSystem,
                                 FirstPersonDisplaySystem *firstPersonSystem,
-                                VisionSystem *visionSystem, StaticDisplaySystem *staticDisplaySystem)
+                                VisionSystem *visionSystem,
+                                StaticDisplaySystem *staticDisplaySystem)
 
 {
     m_colorSystem = colorSystem;

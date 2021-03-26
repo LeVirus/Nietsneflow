@@ -12,6 +12,8 @@
 #include <ECS/Components/MemSpriteDataComponent.hpp>
 #include <ECS/Components/VisionComponent.hpp>
 #include <ECS/Components/DoorComponent.hpp>
+#include <ECS/Components/PlayerConfComponent.hpp>
+#include <ECS/Components/MemPositionsVertexComponents.hpp>
 #include <ECS/Systems/ColorDisplaySystem.hpp>
 #include <ECS/Systems/MapDisplaySystem.hpp>
 #include <ECS/Systems/CollisionSystem.hpp>
@@ -46,9 +48,19 @@ void MainEngine::mainLoop()
 void MainEngine::loadGraphicPicture(const PictureData &picData)
 {
     m_graphicEngine.loadPictureData(picData);
-    loadGroundAndCeilingEntities(picData.getGroundData(), picData.getCeilingData());
 }
 
+
+//===================================================================
+uint32_t MainEngine::loadWeaponEntity()
+{
+    std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComponents;
+    bitsetComponents[Components_e::POSITION_VERTEX_COMPONENT] = true;
+    bitsetComponents[Components_e::SPRITE_TEXTURE_COMPONENT] = true;
+    bitsetComponents[Components_e::MEM_SPRITE_DATA_COMPONENT] = true;
+    bitsetComponents[Components_e::MEM_POSITIONS_VERTEX_COMPONENT] = true;
+    return m_ecsManager.addEntity(bitsetComponents);
+}
 
 //===================================================================
 void MainEngine::loadGroundAndCeilingEntities(const GroundCeilingData &groundData,
@@ -88,12 +100,50 @@ void MainEngine::loadGroundAndCeilingEntities(const GroundCeilingData &groundDat
 //===================================================================
 void MainEngine::loadLevelEntities(const LevelManager &levelManager)
 {
-    loadPlayerEntity(levelManager.getLevel());
+    loadGroundAndCeilingEntities(levelManager.getPictureData().getGroundData(),
+                                 levelManager.getPictureData().getCeilingData());
+    loadPlayerEntity(levelManager.getLevel(), loadWeaponsEntity(levelManager));
     Level::initLevelElementArray();
     loadWallEntities(levelManager);
     loadDoorEntities(levelManager);
     loadStaticElementEntities(levelManager);
     loadEnemiesEntities(levelManager);
+}
+
+//===================================================================
+uint32_t MainEngine::loadWeaponsEntity(const LevelManager &levelManager)
+{
+    uint32_t weaponEntity = loadWeaponEntity();
+    const std::vector<SpriteData> &vectSprite = levelManager.getPictureData().getSpriteData();
+    const std::vector<pairUIPairFloat_t> &vectWeapons = levelManager.
+            getLevel().getWeaponsData();
+    MemSpriteDataComponent *memSprite = m_ecsManager.getComponentManager().
+            searchComponentByType<MemSpriteDataComponent>(weaponEntity,
+                                                          Components_e::MEM_SPRITE_DATA_COMPONENT);
+    MemPositionsVertexComponents *memPosVertex = m_ecsManager.getComponentManager().
+            searchComponentByType<MemPositionsVertexComponents>(weaponEntity,
+                                                                Components_e::MEM_POSITIONS_VERTEX_COMPONENT);
+    assert(memSprite);
+    assert(memPosVertex);
+    memSprite->m_vectSpriteData.reserve(static_cast<uint32_t>(WeaponsSpriteType_e::TOTAL_SPRITE));
+    float posUp, posDown = 0.0f, posLeft, posRight, diffLateral;
+    for(uint32_t i = 0; i < vectWeapons.size(); ++i)
+    {
+        memSprite->m_vectSpriteData.emplace_back(&vectSprite[vectWeapons[i].first]);
+        posUp = vectWeapons[i].second.second;
+        diffLateral = vectWeapons[i].first / 2.0f;
+        posLeft = -diffLateral;
+        posRight = diffLateral;
+        memPosVertex->m_vectSpriteData.emplace_back(std::array<pairFloat_t, 4>{
+                                                        {
+                                                            {posUp, posLeft},
+                                                            {posUp, posRight},
+                                                            {posDown, posLeft},
+                                                            {posDown, posRight}
+                                                        }
+                                                    });
+    }
+    return weaponEntity;
 }
 
 //===================================================================
@@ -350,7 +400,7 @@ void MainEngine::confStaticComponent(uint32_t entityNum,
 }
 
 //===================================================================
-void MainEngine::loadPlayerEntity(const Level &level)
+void MainEngine::loadPlayerEntity(const Level &level, uint32_t numWeaponEntity)
 {
     std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComponents;
     bitsetComponents[Components_e::POSITION_VERTEX_COMPONENT] = true;
@@ -363,13 +413,13 @@ void MainEngine::loadPlayerEntity(const Level &level)
     bitsetComponents[Components_e::VISION_COMPONENT] = true;
     bitsetComponents[Components_e::PLAYER_CONF_COMPONENT] = true;
     uint32_t entityNum = m_ecsManager.addEntity(bitsetComponents);
-    confPlayerEntity(entityNum, level);
+    confPlayerEntity(entityNum, level, numWeaponEntity);
     //notify player entity number
     m_graphicEngine.getMapDisplaySystem().confPlayerComp(entityNum);
 }
 
 //===================================================================
-void MainEngine::confPlayerEntity(uint32_t entityNum, const Level &level)
+void MainEngine::confPlayerEntity(uint32_t entityNum, const Level &level, uint32_t numWeaponEntity)
 {
     PositionVertexComponent *pos = m_ecsManager.getComponentManager().
             searchComponentByType<PositionVertexComponent>(entityNum,
@@ -392,6 +442,9 @@ void MainEngine::confPlayerEntity(uint32_t entityNum, const Level &level)
     VisionComponent *vision = m_ecsManager.getComponentManager().
             searchComponentByType<VisionComponent>(entityNum,
                                                      Components_e::VISION_COMPONENT);
+    PlayerConfComponent *playerConf = m_ecsManager.getComponentManager().
+            searchComponentByType<PlayerConfComponent>(entityNum,
+                                                     Components_e::PLAYER_CONF_COMPONENT);
     assert(pos);
     assert(map);
     assert(move);
@@ -399,8 +452,7 @@ void MainEngine::confPlayerEntity(uint32_t entityNum, const Level &level)
     assert(circleColl);
     assert(tagColl);
     assert(vision);
-//    vision->m_coneVision = 90.0f;
-
+    assert(playerConf);
     map->m_coord = level.getPlayerDeparture();
     Direction_e playerDir = level.getPlayerDepartureDirection();
     switch(playerDir)
@@ -428,6 +480,12 @@ void MainEngine::confPlayerEntity(uint32_t entityNum, const Level &level)
     circleColl->m_ray = PLAYER_RAY;
     tagColl->m_tag = CollisionTag_e::PLAYER_CT;
     tagColl->m_shape = CollisionShape_e::CIRCLE_C;
+    playerConf->m_weaponEntity = numWeaponEntity;
+    //set standart weapon sprite
+    StaticDisplaySystem *staticDisplay = m_ecsManager.getSystemManager().
+            searchSystemByType<StaticDisplaySystem>(static_cast<uint32_t>(Systems_e::STATIC_DISPLAY_SYSTEM));
+    assert(staticDisplay);
+    staticDisplay->setWeaponPlayer(numWeaponEntity, WeaponsSpriteType_e::GUN_STATIC);
 }
 
 //===================================================================

@@ -28,6 +28,7 @@ enum Components_e
     TIMER_COMPONENT,
     DOOR_COMPONENT,
     PLAYER_CONF_COMPONENT,
+    MEM_POSITIONS_VERTEX_COMPONENT,
     TOTAL_COMPONENTS
 };
 
@@ -72,6 +73,13 @@ enum class EnemySpriteType_e
     ATTACK,
     MOVE,
     DYING,
+    TOTAL_SPRITE
+};
+
+enum class WeaponsSpriteType_e
+{
+    GUN_STATIC,
+    GUN_SHOOT,
     TOTAL_SPRITE
 };
 

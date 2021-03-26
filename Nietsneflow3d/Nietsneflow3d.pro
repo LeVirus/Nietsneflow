@@ -83,5 +83,6 @@ HEADERS += \
     ECS/Components/DoorComponent.hpp \
     ECS/Systems/DoorSystem.hpp \
     ECS/Components/PlayerConfComponent.hpp \
-    ECS/Systems/StaticDisplaySystem.hpp
+    ECS/Systems/StaticDisplaySystem.hpp \
+    ECS/Components/MemPositionsVertexComponents.hpp
 

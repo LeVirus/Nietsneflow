@@ -21,12 +21,14 @@ private:
     void confGroundComponents(uint32_t entityNum);
     void linkSystemsToGraphicEngine();
     void linkSystemsToPhysicalEngine();
-    void loadPlayerEntity(const Level &level);
-    void confPlayerEntity(uint32_t entityNum, const Level &level);
+    void loadPlayerEntity(const Level &level, uint32_t numWeaponEntity);
+    void confPlayerEntity(uint32_t entityNum, const Level &level, uint32_t numWeaponEntity);
+    uint32_t loadWeaponsEntity(const LevelManager &levelManager);
     void loadWallEntities(const LevelManager &levelManager);
     void loadDoorEntities(const LevelManager &levelManager);
     void loadEnemiesEntities(const LevelManager &levelManager);
     void loadStaticElementEntities(const LevelManager &levelManager);
+    uint32_t loadWeaponEntity();
     uint32_t createWallEntity();
     uint32_t createDoorEntity();
     uint32_t createEnemyEntity();
@@ -44,3 +46,5 @@ public:
     void loadLevelEntities(const LevelManager &levelManager);
     void mainLoop();
 };
+
+void setWeaponPlayer();
