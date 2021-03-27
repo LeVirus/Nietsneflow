@@ -86,13 +86,15 @@ void InputSystem::treatPlayerInput()
                 searchComponentByType<PlayerConfComponent>(mVectNumEntity[i],
                                                          Components_e::PLAYER_CONF_COMPONENT);
         assert(playerComp);
-        if (glfwGetKey(m_window, GLFW_KEY_SPACE) == GLFW_PRESS)
+        playerComp->m_playerAction = (glfwGetKey(m_window, GLFW_KEY_SPACE) ==
+                                      GLFW_PRESS) ?
+                    true : false;
+        if(!playerComp->m_timerShootActive)
         {
-            playerComp->m_playerAction = true;
-        }
-        else
-        {
-            playerComp->m_playerAction = false;
+            playerComp->m_playerShoot = (glfwGetKey(m_window, GLFW_KEY_LEFT_SHIFT) ==
+                                         GLFW_PRESS) ?
+                        true : false;
+            playerComp->m_timerShootActive = playerComp->m_playerShoot;
         }
     }
 }
@@ -103,4 +105,3 @@ void InputSystem::execSystem()
     System::execSystem();
     treatPlayerInput();
 }
-

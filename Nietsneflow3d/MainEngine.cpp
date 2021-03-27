@@ -59,6 +59,7 @@ uint32_t MainEngine::loadWeaponEntity()
     bitsetComponents[Components_e::SPRITE_TEXTURE_COMPONENT] = true;
     bitsetComponents[Components_e::MEM_SPRITE_DATA_COMPONENT] = true;
     bitsetComponents[Components_e::MEM_POSITIONS_VERTEX_COMPONENT] = true;
+    bitsetComponents[Components_e::TIMER_COMPONENT] = true;
     return m_ecsManager.addEntity(bitsetComponents);
 }
 

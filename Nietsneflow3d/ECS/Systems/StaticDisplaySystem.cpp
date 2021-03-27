@@ -4,6 +4,7 @@
 #include <ECS/Components/SpriteTextureComponent.hpp>
 #include <ECS/Components/PositionVertexComponent.hpp>
 #include <ECS/Components/PlayerConfComponent.hpp>
+#include <ECS/Components/TimerComponent.hpp>
 #include <cassert>
 
 //===================================================================
@@ -36,9 +37,28 @@ void StaticDisplaySystem::writeVertexFromComponent(uint32_t numObserverEntity)
     SpriteTextureComponent *spriteComp = stairwayToComponentManager().
             searchComponentByType<SpriteTextureComponent>(playerComp->m_weaponEntity,
                                                           Components_e::SPRITE_TEXTURE_COMPONENT);
+    TimerComponent *timerComp = stairwayToComponentManager().
+            searchComponentByType<TimerComponent>(playerComp->m_weaponEntity,
+                                                  Components_e::TIMER_COMPONENT);
+    assert(timerComp);
     assert(posComp);
     assert(spriteComp);
     assert(!posComp->m_vertex.empty());
+    std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() -
+            timerComp->m_clock;
+    //TMP
+    if(m_currentWeaponSprite == WeaponsSpriteType_e::GUN_SHOOT &&
+            elapsed_seconds.count() > 0.2)
+    {
+        setWeaponPlayer(playerComp->m_weaponEntity, WeaponsSpriteType_e::GUN_STATIC);
+        playerComp->m_timerShootActive = false;
+    }
+    else if(playerComp->m_playerShoot)
+    {
+        timerComp->m_clock = std::chrono::system_clock::now();
+        setWeaponPlayer(playerComp->m_weaponEntity, WeaponsSpriteType_e::GUN_SHOOT);
+    }
+    playerComp->m_playerShoot = false;
     m_weaponVertice.clear();
     m_weaponVertice.loadVertexStandartTextureComponent(*posComp, *spriteComp);
 }
@@ -61,6 +81,7 @@ void StaticDisplaySystem::setShader(Shader &shader)
 //===================================================================
 void StaticDisplaySystem::setWeaponPlayer(uint32_t weaponEntity, WeaponsSpriteType_e weaponSprite)
 {
+    m_currentWeaponSprite = weaponSprite;
     PositionVertexComponent *pos = stairwayToComponentManager().
             searchComponentByType<PositionVertexComponent>(weaponEntity,
                                                            Components_e::POSITION_VERTEX_COMPONENT);

@@ -301,7 +301,6 @@ void CollisionSystem::treatCollisionCircleRect(CollisionArgs &args,
                 {
                     doorComp->m_currentState = DoorState_e::MOVE_OPEN;
                 }
-                playerComp->m_playerAction = false;
             }
         }
     }

@@ -35,4 +35,5 @@ private:
     VerticesData m_weaponVertice;
     std::vector<Texture> *m_ptrVectTexture = nullptr;
     Texture_e m_numTextureWeapon;
+    WeaponsSpriteType_e m_currentWeaponSprite;
 };
