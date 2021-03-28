@@ -80,7 +80,16 @@ enum class WeaponsSpriteType_e
 {
     GUN_STATIC,
     GUN_SHOOT,
+    SHOTGUN_STATIC,
+    SHOTGUN_SHOOT,
     TOTAL_SPRITE
+};
+
+enum class WeaponsType_e
+{
+    GUN,
+    SHOTGUN,
+    TOTAL
 };
 
 enum class WallSpriteType_e

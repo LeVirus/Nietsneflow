@@ -3,13 +3,10 @@
 #include <includesLib/BaseECS/system.hpp>
 #include <OpenGLUtils/glheaders.hpp>
 
+struct PlayerConfComponent;
+
 class InputSystem : public ecs::System
 {
-private:
-    GLFWwindow *m_window = nullptr;
-private:
-    void setUsedComponents();
-    void treatPlayerInput();
 public:
     InputSystem();
     void execSystem()override;
@@ -17,4 +14,10 @@ public:
     {
         m_window = &window;
     }
+private:
+    void setUsedComponents();
+    void treatPlayerInput();
+    void changePlayerWeapon(PlayerConfComponent &playerComp, bool next);
+private:
+    GLFWwindow *m_window = nullptr;
 };

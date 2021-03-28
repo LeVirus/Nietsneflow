@@ -482,6 +482,7 @@ void MainEngine::confPlayerEntity(uint32_t entityNum, const Level &level, uint32
     tagColl->m_tag = CollisionTag_e::PLAYER_CT;
     tagColl->m_shape = CollisionShape_e::CIRCLE_C;
     playerConf->m_weaponEntity = numWeaponEntity;
+    playerConf->m_currentWeapon = WeaponsType_e::GUN;
     //set standart weapon sprite
     StaticDisplaySystem *staticDisplay = m_ecsManager.getSystemManager().
             searchSystemByType<StaticDisplaySystem>(static_cast<uint32_t>(Systems_e::STATIC_DISPLAY_SYSTEM));

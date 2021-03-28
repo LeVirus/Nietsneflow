@@ -96,6 +96,47 @@ void InputSystem::treatPlayerInput()
                         true : false;
             playerComp->m_timerShootActive = playerComp->m_playerShoot;
         }
+        //Change weapon
+        if (glfwGetKey(m_window, GLFW_KEY_KP_1) == GLFW_PRESS)
+        {
+            changePlayerWeapon(*playerComp, false);
+        }
+        else if (glfwGetKey(m_window, GLFW_KEY_KP_2) == GLFW_PRESS)
+        {
+            changePlayerWeapon(*playerComp, true);
+        }
+    }
+}
+
+//===================================================================
+void InputSystem::changePlayerWeapon(PlayerConfComponent &playerComp, bool next)
+{
+    m_weaponChange = true;
+    if(!next)
+    {
+        //first weapon
+        if(playerComp.m_currentWeapon == WeaponsType_e::GUN)
+        {
+            playerComp.m_currentWeapon = WeaponsType_e::SHOTGUN;
+        }
+        else
+        {
+            playerComp.m_currentWeapon = static_cast<WeaponsType_e>(
+                        static_cast<uint8_t>(playerComp.m_currentWeapon) - 1);
+        }
+    }
+    else if(next)
+    {
+        //last weapon
+        if(playerComp.m_currentWeapon == WeaponsType_e::SHOTGUN)
+        {
+            playerComp.m_currentWeapon = WeaponsType_e::GUN;
+        }
+        else
+        {
+            playerComp.m_currentWeapon = static_cast<WeaponsType_e>(
+                        static_cast<uint8_t>(playerComp.m_currentWeapon) + 1);
+        }
     }
 }
 
