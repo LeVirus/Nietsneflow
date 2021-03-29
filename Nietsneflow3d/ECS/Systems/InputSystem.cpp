@@ -96,22 +96,25 @@ void InputSystem::treatPlayerInput()
                         true : false;
             playerComp->m_timerShootActive = playerComp->m_playerShoot;
         }
-        //Change weapon
-        if (glfwGetKey(m_window, GLFW_KEY_KP_1) == GLFW_PRESS)
+        if(!playerComp->m_weaponChange)
         {
-            changePlayerWeapon(*playerComp, false);
-        }
-        else if (glfwGetKey(m_window, GLFW_KEY_KP_2) == GLFW_PRESS)
-        {
-            changePlayerWeapon(*playerComp, true);
+            //Change weapon
+            if (glfwGetKey(m_window, GLFW_KEY_E) == GLFW_PRESS)
+            {
+                changePlayerWeapon(*playerComp, false);
+            }
+            else if (glfwGetKey(m_window, GLFW_KEY_R) == GLFW_PRESS)
+            {
+                changePlayerWeapon(*playerComp, true);
+            }
         }
     }
 }
 
 //===================================================================
-void InputSystem::changePlayerWeapon(PlayerConfComponent &playerComp, bool next)
+void changePlayerWeapon(PlayerConfComponent &playerComp, bool next)
 {
-    m_weaponChange = true;
+    playerComp.m_weaponChange = true;
     if(!next)
     {
         //first weapon

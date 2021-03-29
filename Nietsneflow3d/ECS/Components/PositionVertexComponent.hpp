@@ -17,7 +17,6 @@ struct PositionVertexComponent : public ecs::Component
     {
         muiTypeComponent = Components_e::POSITION_VERTEX_COMPONENT;
     }
-
     std::vector<pairFloat_t> m_vertex;
     virtual ~PositionVertexComponent() = default;
 };

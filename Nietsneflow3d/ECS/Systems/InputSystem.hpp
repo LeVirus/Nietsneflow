@@ -17,7 +17,7 @@ public:
 private:
     void setUsedComponents();
     void treatPlayerInput();
-    void changePlayerWeapon(PlayerConfComponent &playerComp, bool next);
 private:
     GLFWwindow *m_window = nullptr;
 };
+void changePlayerWeapon(PlayerConfComponent &playerComp, bool next);
