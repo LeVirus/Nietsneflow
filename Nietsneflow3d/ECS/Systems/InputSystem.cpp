@@ -94,7 +94,6 @@ void InputSystem::treatPlayerInput()
             playerComp->m_playerShoot = (glfwGetKey(m_window, GLFW_KEY_LEFT_SHIFT) ==
                                          GLFW_PRESS) ?
                         true : false;
-            playerComp->m_timerShootActive = playerComp->m_playerShoot;
         }
         if(!playerComp->m_weaponChange)
         {

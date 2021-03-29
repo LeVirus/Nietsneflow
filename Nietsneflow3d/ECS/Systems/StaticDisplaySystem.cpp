@@ -60,21 +60,21 @@ void StaticDisplaySystem::writeVertexFromComponent(uint32_t numObserverEntity)
     }
     std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() -
             timerComp->m_clock;
-    if(playerComp->m_timerShootActive && elapsed_seconds.count() > 0.2)
-    {
-        setWeaponSprite(playerComp->m_weaponEntity,
-                        m_weaponSpriteAssociated[playerComp->m_currentWeapon]);
-        playerComp->m_timerShootActive = false;
-        playerComp->m_playerShoot = false;
-    }
-    else if(playerComp->m_playerShoot)
+    if(playerComp->m_playerShoot)
     {
         timerComp->m_clock = std::chrono::system_clock::now();
         WeaponsSpriteType_e spriteNum = static_cast<WeaponsSpriteType_e>(
                     static_cast<uint32_t>(m_weaponSpriteAssociated
                                           [playerComp->m_currentWeapon]) + 1);
-
         setWeaponSprite(playerComp->m_weaponEntity, spriteNum);
+        playerComp->m_playerShoot = false;
+        playerComp->m_timerShootActive = true;
+    }
+    else if(playerComp->m_timerShootActive && elapsed_seconds.count() > 0.2)
+    {
+        setWeaponSprite(playerComp->m_weaponEntity,
+                        m_weaponSpriteAssociated[playerComp->m_currentWeapon]);
+        playerComp->m_timerShootActive = false;
     }
     m_weaponVertice.clear();
     m_weaponVertice.loadVertexStandartTextureComponent(*posComp, *spriteComp);
