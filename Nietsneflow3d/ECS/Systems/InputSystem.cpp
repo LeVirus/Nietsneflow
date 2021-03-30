@@ -89,12 +89,6 @@ void InputSystem::treatPlayerInput()
         playerComp->m_playerAction = (glfwGetKey(m_window, GLFW_KEY_SPACE) ==
                                       GLFW_PRESS) ?
                     true : false;
-        if(!playerComp->m_timerShootActive)
-        {
-            playerComp->m_playerShoot = (glfwGetKey(m_window, GLFW_KEY_LEFT_SHIFT) ==
-                                         GLFW_PRESS) ?
-                        true : false;
-        }
         if(!playerComp->m_weaponChange)
         {
             //Change weapon
@@ -105,6 +99,12 @@ void InputSystem::treatPlayerInput()
             else if (glfwGetKey(m_window, GLFW_KEY_R) == GLFW_PRESS)
             {
                 changePlayerWeapon(*playerComp, true);
+            }
+            if(!playerComp->m_timerShootActive)
+            {
+                playerComp->m_playerShoot = (glfwGetKey(m_window, GLFW_KEY_LEFT_SHIFT) ==
+                                             GLFW_PRESS) ?
+                            true : false;
             }
         }
     }
