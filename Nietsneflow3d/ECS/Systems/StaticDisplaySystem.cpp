@@ -96,6 +96,7 @@ void StaticDisplaySystem::setWeaponMovement(PlayerConfComponent *playerComp,
                                             PositionVertexComponent *posComp,
                                             MemPositionsVertexComponents *memPosComp)
 {
+    uint32_t index = static_cast<uint32_t>(m_weaponSpriteAssociated[playerComp->m_currentWeapon]);
     if(playerComp->m_inMovement)
     {
         modVertexPos(posComp, playerComp->m_currentMove);
@@ -111,21 +112,24 @@ void StaticDisplaySystem::setWeaponMovement(PlayerConfComponent *playerComp,
             playerComp->m_currentMove.first *= -1.0f;
         }
         //check Y var
-        if(playerComp->m_currentMove.second < EPSILON_FLOAT &&
-                posComp->m_vertex[0].second <= m_forkWeaponMovementY.first)
+        if((posComp->m_vertex[0].second < memPosComp->m_vectSpriteData[index][0].second) &&
+                ((posComp->m_vertex[0].first < m_middleWeaponMovementX &&
+            playerComp->m_currentMove.first < EPSILON_FLOAT) ||
+                (posComp->m_vertex[0].first > m_middleWeaponMovementX &&
+                 playerComp->m_currentMove.first > EPSILON_FLOAT)))
         {
-            playerComp->m_currentMove.second *= -1.0f;
+            playerComp->m_currentMove.second = std::abs(playerComp->m_currentMove.second);
         }
-        else if(playerComp->m_currentMove.second > EPSILON_FLOAT &&
-                posComp->m_vertex[0].second >= m_forkWeaponMovementY.second)
+        else
         {
-            playerComp->m_currentMove.second *= -1.0f;
+            playerComp->m_currentMove.second =
+                    std::abs(playerComp->m_currentMove.second) * (-1.0f);
         }
         playerComp->m_spritePositionCorrected = false;
     }
+    //put weapon to standart position
     else if(!playerComp->m_spritePositionCorrected)
     {
-        uint32_t index = static_cast<uint32_t>(m_weaponSpriteAssociated[playerComp->m_currentWeapon]);
         float modX;
         bool change = false;
         if(posComp->m_vertex[0].first < memPosComp->m_vectSpriteData[index][0].first)

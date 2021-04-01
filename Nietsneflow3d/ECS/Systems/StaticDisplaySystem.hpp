@@ -50,6 +50,8 @@ private:
     static std::map<WeaponsType_e, WeaponsSpriteType_e> m_weaponSpriteAssociated;
     float m_speedMoveWeaponChange = 0.05f;
     pairFloat_t m_forkWeaponMovementX = {-0.4f, 0.1f}, m_forkWeaponMovementY = {-0.8f, -0.6f};
+    float m_diffTotalDistanceMoveWeaponX = std::abs(m_forkWeaponMovementX.first -
+                                                    m_forkWeaponMovementX.second);
     float m_middleWeaponMovementX = m_forkWeaponMovementX.first + (m_forkWeaponMovementX.second -
                                                                    m_forkWeaponMovementX.first) / 2.0f;
 };
