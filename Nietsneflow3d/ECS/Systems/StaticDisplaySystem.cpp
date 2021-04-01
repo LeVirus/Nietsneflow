@@ -29,13 +29,13 @@ void StaticDisplaySystem::execSystem()
     System::execSystem();
     for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
     {
-        writeVertexFromComponent(mVectNumEntity[i]);
+        writeWeaponsVertexFromComponent(mVectNumEntity[i]);
         drawVertex();
     }
 }
 
 //===================================================================
-void StaticDisplaySystem::writeVertexFromComponent(uint32_t numObserverEntity)
+void StaticDisplaySystem::writeWeaponsVertexFromComponent(uint32_t numObserverEntity)
 {
     PlayerConfComponent *playerComp = stairwayToComponentManager().
                 searchComponentByType<PlayerConfComponent>(numObserverEntity,
@@ -50,67 +50,131 @@ void StaticDisplaySystem::writeVertexFromComponent(uint32_t numObserverEntity)
     TimerComponent *timerComp = stairwayToComponentManager().
             searchComponentByType<TimerComponent>(playerComp->m_weaponEntity,
                                                   Components_e::TIMER_COMPONENT);
+    MemPositionsVertexComponents *memPosComp = stairwayToComponentManager().
+            searchComponentByType<MemPositionsVertexComponents>(playerComp->m_weaponEntity,
+                                                                Components_e::MEM_POSITIONS_VERTEX_COMPONENT);
+    assert(memPosComp);
     assert(timerComp);
     assert(posComp);
     assert(spriteComp);
     assert(!posComp->m_vertex.empty());
     if(playerComp->m_weaponChange)
     {
-        setDisplayWeaponChange(posComp, spriteComp, timerComp, playerComp);
+        setDisplayWeaponChange(posComp, playerComp, memPosComp);
     }
-    std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() -
-            timerComp->m_clock;
-    if(playerComp->m_playerShoot)
+    else
     {
-        timerComp->m_clock = std::chrono::system_clock::now();
-        WeaponsSpriteType_e spriteNum = static_cast<WeaponsSpriteType_e>(
-                    static_cast<uint32_t>(m_weaponSpriteAssociated
-                                          [playerComp->m_currentWeapon]) + 1);
-        setWeaponSprite(playerComp->m_weaponEntity, spriteNum);
-        playerComp->m_playerShoot = false;
-        playerComp->m_timerShootActive = true;
-    }
-    else if(playerComp->m_timerShootActive && elapsed_seconds.count() > 0.2)
-    {
-        setWeaponSprite(playerComp->m_weaponEntity,
-                        m_weaponSpriteAssociated[playerComp->m_currentWeapon]);
-        playerComp->m_timerShootActive = false;
+        std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() -
+                timerComp->m_clock;
+        if(playerComp->m_playerShoot)
+        {
+            timerComp->m_clock = std::chrono::system_clock::now();
+            WeaponsSpriteType_e spriteNum = static_cast<WeaponsSpriteType_e>(
+                        static_cast<uint32_t>(m_weaponSpriteAssociated
+                                              [playerComp->m_currentWeapon]) + 1);
+            setWeaponSprite(playerComp->m_weaponEntity, spriteNum);
+            playerComp->m_playerShoot = false;
+            playerComp->m_timerShootActive = true;
+        }
+        else if(playerComp->m_timerShootActive && elapsed_seconds.count() > 0.2)
+        {
+            setWeaponSprite(playerComp->m_weaponEntity,
+                            m_weaponSpriteAssociated[playerComp->m_currentWeapon]);
+            playerComp->m_timerShootActive = false;
+        }
+        else
+        {
+            setWeaponMovement(playerComp, posComp, memPosComp);
+        }
     }
     m_weaponVertice.clear();
     m_weaponVertice.loadVertexStandartTextureComponent(*posComp, *spriteComp);
 }
 
 //===================================================================
-void StaticDisplaySystem::setDisplayWeaponChange(PositionVertexComponent *posComp,
-                                                 SpriteTextureComponent *spriteComp,
-                                                 TimerComponent *timerComp,
-                                                 PlayerConfComponent *playerComp)
+void StaticDisplaySystem::setWeaponMovement(PlayerConfComponent *playerComp,
+                                            PositionVertexComponent *posComp,
+                                            MemPositionsVertexComponents *memPosComp)
 {
-    assert(playerComp);
-    assert(timerComp);
-    assert(posComp);
-    assert(spriteComp);
+    if(playerComp->m_inMovement)
+    {
+        modVertexPos(posComp, playerComp->m_currentMove);
+        //check X var
+        if(playerComp->m_currentMove.first < EPSILON_FLOAT &&
+                posComp->m_vertex[0].first <= m_forkWeaponMovementX.first)
+        {
+            playerComp->m_currentMove.first *= -1.0f;
+        }
+        else if(playerComp->m_currentMove.first > EPSILON_FLOAT &&
+                posComp->m_vertex[0].first >= m_forkWeaponMovementX.second)
+        {
+            playerComp->m_currentMove.first *= -1.0f;
+        }
+        //check Y var
+        if(playerComp->m_currentMove.second < EPSILON_FLOAT &&
+                posComp->m_vertex[0].second <= m_forkWeaponMovementY.first)
+        {
+            playerComp->m_currentMove.second *= -1.0f;
+        }
+        else if(playerComp->m_currentMove.second > EPSILON_FLOAT &&
+                posComp->m_vertex[0].second >= m_forkWeaponMovementY.second)
+        {
+            playerComp->m_currentMove.second *= -1.0f;
+        }
+        playerComp->m_spritePositionCorrected = true;
+    }
+    else if(playerComp->m_spritePositionCorrected)
+    {
+        uint32_t index = static_cast<uint32_t>(m_weaponSpriteAssociated[playerComp->m_currentWeapon]);
+        float modX;
+        bool change = false;
+        if(posComp->m_vertex[0].first < memPosComp->m_vectSpriteData[index][0].first)
+        {
+            change = true;
+            modX = m_speedMoveWeaponChange;
+        }
+        else if(posComp->m_vertex[0].first > memPosComp->m_vectSpriteData[index][0].first)
+        {
+            change = true;
+            modX = -m_speedMoveWeaponChange;
+        }
+        if(change)
+        {
+            modVertexPos(posComp, {modX, m_speedMoveWeaponChange});
+            if(posComp->m_vertex[0].second > memPosComp->m_vectSpriteData[index][0].second)
+            {
+                for(uint32_t i = 0; i < 4; ++i)
+                {
+                    posComp->m_vertex[i] = memPosComp->m_vectSpriteData[index][i];
+                    playerComp->m_spritePositionCorrected = false;
+                }
+            }
+        }
+    }
+}
+
+//===================================================================
+void StaticDisplaySystem::setDisplayWeaponChange(PositionVertexComponent *posComp,
+                                                 PlayerConfComponent *playerComp,
+                                                 MemPositionsVertexComponents *memPosComp)
+{
     //move down
     if(playerComp->m_previousWeapon != playerComp->m_currentWeapon)
     {
-        modVertexPosVertical(posComp, -m_speedMoveWeaponChange);
+        modVertexPos(posComp, {EPSILON_FLOAT, -m_speedMoveWeaponChange});
         if(posComp->m_vertex[0].second <= -1.0f)
         {
             playerComp->m_previousWeapon = playerComp->m_currentWeapon;
             setWeaponSprite(playerComp->m_weaponEntity,
                             m_weaponSpriteAssociated[playerComp->m_currentWeapon]);
             float diffVert = posComp->m_vertex[3].second - posComp->m_vertex[0].second;
-            modVertexPosVertical(posComp, diffVert);
+            modVertexPos(posComp, {EPSILON_FLOAT, diffVert});
         }
     }
     //move up
     else
     {
-        MemPositionsVertexComponents *memPosComp = stairwayToComponentManager().
-                searchComponentByType<MemPositionsVertexComponents>(playerComp->m_weaponEntity,
-                                                                    Components_e::MEM_POSITIONS_VERTEX_COMPONENT);
-        assert(memPosComp);
-        modVertexPosVertical(posComp, m_speedMoveWeaponChange);
+        modVertexPos(posComp, {EPSILON_FLOAT, m_speedMoveWeaponChange});
         uint32_t index = static_cast<uint32_t>(playerComp->m_currentWeapon);
         if(posComp->m_vertex[0].second >= memPosComp->m_vectSpriteData[index][0].second)
         {
@@ -121,11 +185,12 @@ void StaticDisplaySystem::setDisplayWeaponChange(PositionVertexComponent *posCom
 }
 
 //===================================================================
-void modVertexPosVertical(PositionVertexComponent *posComp, float mod)
+void modVertexPos(PositionVertexComponent *posComp, const pairFloat_t &mod)
 {
     for(uint32_t i = 0; i < posComp->m_vertex.size(); ++i)
     {
-        posComp->m_vertex[i].second += mod;
+        posComp->m_vertex[i].first += mod.first;
+        posComp->m_vertex[i].second += mod.second;
     }
 }
 

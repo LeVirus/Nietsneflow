@@ -12,6 +12,7 @@
 
 struct TimerComponent;
 struct PlayerConfComponent;
+struct MemPositionsVertexComponents;
 
 /**
  * @brief The StaticDisplaySystem class displays the menu
@@ -35,9 +36,11 @@ public:
 private:
     void fillWeaponMapEnum();
     void drawVertex();
-    void writeVertexFromComponent(uint32_t numObserverEntity);
-    void setDisplayWeaponChange(PositionVertexComponent *posComp, SpriteTextureComponent *spriteComp,
-                                TimerComponent *timerComp, PlayerConfComponent *playerComp);
+    void writeWeaponsVertexFromComponent(uint32_t numObserverEntity);
+    void setDisplayWeaponChange(PositionVertexComponent *posComp, PlayerConfComponent *playerComp,
+                                MemPositionsVertexComponents *memPosComp);
+    void setWeaponMovement(PlayerConfComponent *playerComp, PositionVertexComponent *posComp,
+                           MemPositionsVertexComponents *memPosComp);
 private:
     Shader *m_shader;
     VerticesData m_weaponVertice;
@@ -46,6 +49,9 @@ private:
     WeaponsSpriteType_e m_currentWeaponSprite;
     static std::map<WeaponsType_e, WeaponsSpriteType_e> m_weaponSpriteAssociated;
     float m_speedMoveWeaponChange = 0.05f;
+    pairFloat_t m_forkWeaponMovementX = {-0.4f, 0.1f}, m_forkWeaponMovementY = {-0.8f, -0.6f};
+    float m_middleWeaponMovementX = m_forkWeaponMovementX.first + (m_forkWeaponMovementX.second -
+                                                                   m_forkWeaponMovementX.first) / 2.0f;
 };
 
-void modVertexPosVertical(PositionVertexComponent *posComp, float mod);
+void modVertexPos(PositionVertexComponent *posComp, const pairFloat_t &mod);

@@ -47,22 +47,31 @@ void InputSystem::treatPlayerInput()
                 searchComponentByType<VisionComponent>(mVectNumEntity[i],
                                                          Components_e::VISION_COMPONENT);
         assert(visionComp);
+        PlayerConfComponent *playerComp = stairwayToComponentManager().
+                searchComponentByType<PlayerConfComponent>(mVectNumEntity[i],
+                                                         Components_e::PLAYER_CONF_COMPONENT);
+        assert(playerComp);
+        playerComp->m_inMovement = false;
         //STRAFE
         if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS)
         {
             moveElement(*moveComp, *mapComp, MoveOrientation_e::RIGHT);
+            playerComp->m_inMovement = true;
         }
         else if (glfwGetKey(m_window, GLFW_KEY_Q) == GLFW_PRESS)
         {
             moveElement(*moveComp, *mapComp, MoveOrientation_e::LEFT);
+            playerComp->m_inMovement = true;
         }
         if (glfwGetKey(m_window, GLFW_KEY_UP) == GLFW_PRESS)
         {
             moveElement(*moveComp, *mapComp, MoveOrientation_e::FORWARD);
+            playerComp->m_inMovement = true;
         }
         else if (glfwGetKey(m_window, GLFW_KEY_DOWN) == GLFW_PRESS)
         {
             moveElement(*moveComp, *mapComp, MoveOrientation_e::BACKWARD);
+            playerComp->m_inMovement = true;
         }
         if (glfwGetKey(m_window, GLFW_KEY_RIGHT) == GLFW_PRESS)
         {
@@ -82,10 +91,6 @@ void InputSystem::treatPlayerInput()
             }
             updatePlayerOrientation(*moveComp, *posComp, *visionComp);
         }
-        PlayerConfComponent *playerComp = stairwayToComponentManager().
-                searchComponentByType<PlayerConfComponent>(mVectNumEntity[i],
-                                                         Components_e::PLAYER_CONF_COMPONENT);
-        assert(playerComp);
         playerComp->m_playerAction = (glfwGetKey(m_window, GLFW_KEY_SPACE) ==
                                       GLFW_PRESS) ?
                     true : false;
