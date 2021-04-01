@@ -82,7 +82,7 @@ void StaticDisplaySystem::writeWeaponsVertexFromComponent(uint32_t numObserverEn
                             m_weaponSpriteAssociated[playerComp->m_currentWeapon]);
             playerComp->m_timerShootActive = false;
         }
-        else
+        else if(!playerComp->m_timerShootActive)
         {
             setWeaponMovement(playerComp, posComp, memPosComp);
         }
@@ -121,9 +121,9 @@ void StaticDisplaySystem::setWeaponMovement(PlayerConfComponent *playerComp,
         {
             playerComp->m_currentMove.second *= -1.0f;
         }
-        playerComp->m_spritePositionCorrected = true;
+        playerComp->m_spritePositionCorrected = false;
     }
-    else if(playerComp->m_spritePositionCorrected)
+    else if(!playerComp->m_spritePositionCorrected)
     {
         uint32_t index = static_cast<uint32_t>(m_weaponSpriteAssociated[playerComp->m_currentWeapon]);
         float modX;
@@ -146,7 +146,7 @@ void StaticDisplaySystem::setWeaponMovement(PlayerConfComponent *playerComp,
                 for(uint32_t i = 0; i < 4; ++i)
                 {
                     posComp->m_vertex[i] = memPosComp->m_vectSpriteData[index][i];
-                    playerComp->m_spritePositionCorrected = false;
+                    playerComp->m_spritePositionCorrected = true;
                 }
             }
         }
