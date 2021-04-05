@@ -15,8 +15,12 @@ struct EjectXArgs;
 
 class CollisionSystem : public ecs::System
 {
+public:
+    CollisionSystem();
+    void execSystem()override;
 private:
     std::multimap<CollisionTag_e, CollisionTag_e> m_tagArray;
+    std::pair<uint32_t, float> m_memDistCurrentBulletColl;
 private:
     void setUsedComponents();
     void initArrayTag();
@@ -48,9 +52,10 @@ private:
     RectangleCollisionComponent &getRectangleComponent(uint32_t entityNum);
     SegmentCollisionComponent &getSegmentComponent(uint32_t entityNum);
     MapCoordComponent &getMapComponent(uint32_t entityNum);
-public:
-    CollisionSystem();
-    void execSystem()override;
+    void checkCollisionFirstSegment(uint32_t numEntityA, uint32_t numEntityB,
+                                    GeneralCollisionComponent *tagCompB,
+                                    MapCoordComponent &mapCompB);
+    void calcBulletSegment(SegmentCollisionComponent &segmentCompA);
 };
 
 struct CollisionArgs

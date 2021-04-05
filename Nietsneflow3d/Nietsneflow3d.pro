@@ -31,6 +31,7 @@ SOURCES += main.cpp \
 
 HEADERS += \
     ECS/Components/MemSpriteDataComponent.hpp \
+    ECS/Components/SegmentCollisionComponent.hpp \
     ECS/Components/TimerComponent.hpp \
     ECS/Components/VisionComponent.hpp \
     ECS/Systems/VisionSystem.hpp \
@@ -76,7 +77,6 @@ HEADERS += \
     ECS/Systems/CollisionSystem.hpp \
     ECS/Components/CircleCollisionComponent.hpp \
     ECS/Components/RectangleCollisionComponent.hpp \
-    ECS/Components/LineCollisionComponent.hpp \
     CollisionUtils.hpp \
     ECS/Components/GeneralCollisionComponent.hpp \
     ECS/Systems/FirstPersonDisplaySystem.hpp \

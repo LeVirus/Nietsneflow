@@ -57,7 +57,6 @@ void VisionSystem::execSystem()
                 searchComponentByType<MoveableComponent>(mVectNumEntity[i], Components_e::MOVEABLE_COMPONENT);
         updateTriangleVisionFromPosition(visionCompA, mapCompA, movCompA);
         visionCompA->m_vectVisibleEntities.clear();
-
         //TEST back camera
         pairFloat_t memPreviousCameraPos = mapCompA->m_absoluteMapPositionPX;
         {

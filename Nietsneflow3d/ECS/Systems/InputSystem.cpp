@@ -6,6 +6,7 @@
 #include <ECS/Components/VisionComponent.hpp>
 #include <ECS/Components/PlayerConfComponent.hpp>
 #include "PhysicalEngine.hpp"
+#include <MainEngine.hpp>
 #include <cassert>
 
 
@@ -107,9 +108,13 @@ void InputSystem::treatPlayerInput()
             }
             else if(!playerComp->m_timerShootActive)
             {
-                playerComp->m_playerShoot = (glfwGetKey(m_window, GLFW_KEY_LEFT_SHIFT) ==
-                                             GLFW_PRESS) ?
-                            true : false;
+                if(glfwGetKey(m_window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+                {
+                    playerComp->m_playerShoot = true;
+                    m_mainEngine->createShotFromPosition(mapComp->m_absoluteMapPositionPX,
+                                                         moveComp->m_degreeOrientation,
+                                                         CollisionTag_e::BULLET_PLAYER_CT);
+                }
             }
         }
     }

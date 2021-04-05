@@ -67,9 +67,9 @@ bool checkRectRectCollision(const pairFloat_t &rectOriginA,
 
 //===================================================================
 bool checkSegmentRectCollision(const pairFloat_t &lineFirstPoint,
-        const pairFloat_t &lineSecondPoint,
-        const pairFloat_t &rectOrigin,
-        const pairFloat_t &rectSize)
+                               const pairFloat_t &lineSecondPoint,
+                               const pairFloat_t &rectOrigin,
+                               const pairFloat_t &rectSize)
 {
     float minX = std::min(lineFirstPoint.first, lineSecondPoint.first);
     float maxX = std::max(lineFirstPoint.first, lineSecondPoint.first);

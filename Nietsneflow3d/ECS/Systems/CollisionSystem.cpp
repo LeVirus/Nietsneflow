@@ -4,16 +4,18 @@
 #include <ECS/Components/GeneralCollisionComponent.hpp>
 #include <ECS/Components/CircleCollisionComponent.hpp>
 #include <ECS/Components/RectangleCollisionComponent.hpp>
-#include <ECS/Components/LineCollisionComponent.hpp>
+#include <ECS/Components/SegmentCollisionComponent.hpp>
 #include <ECS/Components/MoveableComponent.hpp>
 #include <ECS/Components/DoorComponent.hpp>
 #include <ECS/Components/PlayerConfComponent.hpp>
+#include <ECS/Systems/FirstPersonDisplaySystem.hpp>
 #include <CollisionUtils.hpp>
 #include <PhysicalEngine.hpp>
 #include <cassert>
+#include <Level.hpp>
 #include <math.h>
 
-using multiMapTagIt = std::multimap<CollisionTag_e, CollisionTag_e>::const_iterator;
+using multiMapTagIt_t = std::multimap<CollisionTag_e, CollisionTag_e>::const_iterator;
 
 //===================================================================
 CollisionSystem::CollisionSystem()
@@ -26,22 +28,37 @@ CollisionSystem::CollisionSystem()
 void CollisionSystem::setUsedComponents()
 {
     bAddComponentToSystem(Components_e::GENERAL_COLLISION_COMPONENT);
-    bAddComponentToSystem(Components_e::MAP_COORD_COMPONENT);
 }
 
 //===================================================================
 void CollisionSystem::execSystem()
 {
+    SegmentCollisionComponent *segmentCompA;
     System::execSystem();
     for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
     {
         GeneralCollisionComponent *tagCompA = stairwayToComponentManager().
                 searchComponentByType<GeneralCollisionComponent>(mVectNumEntity[i],
-                                                         Components_e::GENERAL_COLLISION_COMPONENT);
+                                                                 Components_e::GENERAL_COLLISION_COMPONENT);
         if(tagCompA->m_tag == CollisionTag_e::WALL_CT || tagCompA->m_tag == CollisionTag_e::OBJECT_CT ||
                 tagCompA->m_tag == CollisionTag_e::DOOR_CT)
         {
             continue;
+        }
+        if(tagCompA->m_shape == CollisionShape_e::SEGMENT_C &&
+                (tagCompA->m_tag == CollisionTag_e::BULLET_PLAYER_CT ||
+                 tagCompA->m_tag == CollisionTag_e::BULLET_ENEMY_CT))
+        {
+            segmentCompA = stairwayToComponentManager().
+                    searchComponentByType<SegmentCollisionComponent>(mVectNumEntity[i],
+                                                                     Components_e::SEGMENT_COLLISION_COMPONENT);
+            assert(segmentCompA);
+            m_memDistCurrentBulletColl.second = EPSILON_FLOAT;
+            calcBulletSegment(*segmentCompA);
+        }
+        else
+        {
+            segmentCompA = nullptr;
         }
         assert(tagCompA);
         for(uint32_t j = 0; j < mVectNumEntity.size(); ++j)
@@ -60,6 +77,13 @@ void CollisionSystem::execSystem()
                                tagCompA, tagCompB);
             }
         }
+        if(segmentCompA)
+        {
+            if(m_memDistCurrentBulletColl.second > EPSILON_FLOAT)
+            {
+
+            }
+        }
     }
 }
 
@@ -72,38 +96,30 @@ void CollisionSystem::initArrayTag()
     m_tagArray.insert({CollisionTag_e::PLAYER_CT, CollisionTag_e::BULLET_ENEMY_CT});
     m_tagArray.insert({CollisionTag_e::PLAYER_CT, CollisionTag_e::OBJECT_CT});
 
-    m_tagArray.insert({CollisionTag_e::ENEMY_CT, CollisionTag_e::BULLET_PLAYER_CT});
     m_tagArray.insert({CollisionTag_e::ENEMY_CT, CollisionTag_e::PLAYER_CT});
     m_tagArray.insert({CollisionTag_e::ENEMY_CT, CollisionTag_e::WALL_CT});
     m_tagArray.insert({CollisionTag_e::ENEMY_CT, CollisionTag_e::DOOR_CT});
 
     m_tagArray.insert({CollisionTag_e::WALL_CT, CollisionTag_e::PLAYER_CT});
     m_tagArray.insert({CollisionTag_e::WALL_CT, CollisionTag_e::ENEMY_CT});
-    m_tagArray.insert({CollisionTag_e::WALL_CT, CollisionTag_e::BULLET_ENEMY_CT});
-    m_tagArray.insert({CollisionTag_e::WALL_CT, CollisionTag_e::BULLET_PLAYER_CT});
 
     m_tagArray.insert({CollisionTag_e::DOOR_CT, CollisionTag_e::PLAYER_CT});
     m_tagArray.insert({CollisionTag_e::DOOR_CT, CollisionTag_e::ENEMY_CT});
-    m_tagArray.insert({CollisionTag_e::DOOR_CT, CollisionTag_e::BULLET_ENEMY_CT});
-    m_tagArray.insert({CollisionTag_e::DOOR_CT, CollisionTag_e::BULLET_PLAYER_CT});
 
+    //bullets collision with walls and doors are treated by raycasting
     m_tagArray.insert({CollisionTag_e::BULLET_ENEMY_CT, CollisionTag_e::PLAYER_CT});
-    m_tagArray.insert({CollisionTag_e::BULLET_ENEMY_CT, CollisionTag_e::WALL_CT});
-    m_tagArray.insert({CollisionTag_e::BULLET_ENEMY_CT, CollisionTag_e::DOOR_CT});
+    m_tagArray.insert({CollisionTag_e::BULLET_ENEMY_CT, CollisionTag_e::ENEMY_CT});
 
     m_tagArray.insert({CollisionTag_e::BULLET_PLAYER_CT, CollisionTag_e::ENEMY_CT});
-    m_tagArray.insert({CollisionTag_e::BULLET_PLAYER_CT, CollisionTag_e::WALL_CT});
-    m_tagArray.insert({CollisionTag_e::BULLET_PLAYER_CT, CollisionTag_e::DOOR_CT});
 
     m_tagArray.insert({CollisionTag_e::OBJECT_CT, CollisionTag_e::PLAYER_CT});
 }
 
 //===================================================================
-bool CollisionSystem::checkTag(CollisionTag_e entityTagA,
-                               CollisionTag_e entityTagB)
+bool CollisionSystem::checkTag(CollisionTag_e entityTagA, CollisionTag_e entityTagB)
 {
-    for(multiMapTagIt it = m_tagArray.find(entityTagA);
-        it != m_tagArray.end() || it->first != entityTagA; ++it)
+    for(multiMapTagIt_t it = m_tagArray.find(entityTagA);
+        it != m_tagArray.end() /*|| it->first != entityTagA*/; ++it)
     {
         if(it->second == entityTagB)
         {
@@ -118,22 +134,22 @@ void CollisionSystem::treatCollision(uint32_t entityNumA, uint32_t entityNumB,
                                      GeneralCollisionComponent *tagCompA,
                                      GeneralCollisionComponent *tagCompB)
 {
-    MapCoordComponent &mapCompA = getMapComponent(entityNumA),
-            &mapCompB = getMapComponent(entityNumB);
-    CollisionArgs args = {entityNumA, entityNumB,
-                          tagCompA, tagCompB,
-                          mapCompA, mapCompB};
-    if(tagCompA->m_shape == CollisionShape_e::RECTANGLE_C)
-    {
+//    if(tagCompA->m_shape == CollisionShape_e::RECTANGLE_C)
+//    {
 //        checkCollisionFirstRect(args);
-    }
-    else if(tagCompA->m_shape == CollisionShape_e::CIRCLE_C)
+//    }
+    if(tagCompA->m_shape == CollisionShape_e::CIRCLE_C)
     {
+        CollisionArgs args = {entityNumA, entityNumB,
+                              tagCompA, tagCompB,
+                              getMapComponent(entityNumA), getMapComponent(entityNumB)};
         treatCollisionFirstCircle(args);
     }
     else if(tagCompA->m_shape == CollisionShape_e::SEGMENT_C)
     {
-//        checkCollisionFirstSegment(args);
+        assert(tagCompA->m_tag == CollisionTag_e::BULLET_PLAYER_CT ||
+               tagCompA->m_tag == CollisionTag_e::BULLET_ENEMY_CT);
+        checkCollisionFirstSegment(entityNumA, entityNumB, tagCompB, getMapComponent(entityNumB));
     }
 }
 
@@ -200,12 +216,49 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
         break;
     case CollisionShape_e::SEGMENT_C:
     {
-        SegmentCollisionComponent &segmentCompB = getSegmentComponent(args.entityNumB);
-        collision = checkCircleSegmentCollision(args.mapCompA.m_absoluteMapPositionPX, circleCompA.m_ray,
-                                 args.mapCompB.m_absoluteMapPositionPX, segmentCompB.m_secondPoint);
-        if(collision)
+//        SegmentCollisionComponent &segmentCompB = getSegmentComponent(args.entityNumB);
+//        collision = checkCircleSegmentCollision(args.mapCompA.m_absoluteMapPositionPX, circleCompA.m_ray,
+//                                                segmentCompB.m_points.first, segmentCompB.m_points.second);
+//        if(collision)
+//        {
+////            treatCollisionCircleSegment(args, circleCompA, segmentCompB);
+//        }
+    }
+        break;
+    }
+}
+
+//===================================================================
+void CollisionSystem::checkCollisionFirstSegment(uint32_t numEntityA, uint32_t numEntityB,
+                                                 GeneralCollisionComponent *tagCompB,
+                                                 MapCoordComponent &mapCompB)
+{
+    SegmentCollisionComponent &segmentCompA = getSegmentComponent(numEntityA);
+    switch(tagCompB->m_shape)
+    {
+    case CollisionShape_e::RECTANGLE_C:
+    case CollisionShape_e::SEGMENT_C:
+    {
+        //        RectangleCollisionComponent &rectCompB = getRectangleComponent(numEntityB);
+        //        collision = checkSegmentRectCollision(segmentCompA.m_points.first ,
+        //                                              segmentCompA.m_points.second,
+        //                                              mapCompB.m_absoluteMapPositionPX, rectCompB.m_size);
+    }
+        break;
+    case CollisionShape_e::CIRCLE_C:
+    {
+        CircleCollisionComponent &circleCompB = getCircleComponent(numEntityB);
+        if(checkCircleSegmentCollision(mapCompB.m_absoluteMapPositionPX, circleCompB.m_ray,
+                                       segmentCompA.m_points.first,
+                                       segmentCompA.m_points.second))
         {
-//            treatCollisionCircleSegment(args, circleCompA, segmentCompB);
+            float distance = getDistance(segmentCompA.m_points.first,
+                                         mapCompB.m_absoluteMapPositionPX);
+            if(distance > m_memDistCurrentBulletColl.second)
+            {
+                m_memDistCurrentBulletColl = {numEntityB, getDistance(segmentCompA.m_points.first,
+                                              mapCompB.m_absoluteMapPositionPX)};
+            }
         }
     }
         break;
@@ -213,31 +266,61 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
 }
 
 //===================================================================
-//void CollisionSystem::checkCollisionFirstSegment(CollisionArgs &args)
-//{
-//    bool collision = false;
-//    SegmentCollisionComponent &lineCompA = getSegmentComponent(args.entityNumA);
-//    switch(args.tagCompB->m_shape)
-//    {
-//    case CollisionShape_e::RECTANGLE_C:
-//    {
-//        RectangleCollisionComponent &rectCompB = getRectangleComponent(args.entityNumB);
-//        collision = checkSegmentRectCollision(args.mapCompA.m_absoluteMapPositionPX, lineCompA.m_secondPoint,
-//                               args.mapCompB.m_absoluteMapPositionPX, rectCompB.m_size);
-//    }
-//        break;
-//    case CollisionShape_e::CIRCLE:
-//    {
-//        CircleCollisionComponent &circleCompB = getCircleComponent(args.entityNumB);
-//        collision = checkCircleSegmentCollision(args.mapCompB.m_absoluteMapPositionPX, circleCompB.m_ray,
-//                                 args.mapCompA.m_absoluteMapPositionPX, lineCompA.m_secondPoint);
-//    }
-//        break;
-//    case CollisionShape_e::SEGMENT:
-//    {}
-//        break;
-//    }
-//}
+void CollisionSystem::calcBulletSegment(SegmentCollisionComponent &segmentCompA)
+{
+    float radiantAngle = getRadiantAngle(segmentCompA.m_degreeOrientation);
+    std::optional<float> verticalLeadCoef = getLeadCoef(radiantAngle, false);
+    std::optional<float> lateralLeadCoef = getLeadCoef(radiantAngle, true);
+    bool lateral, textLateral, textFace;
+    std::optional<pairUI_t> currentCoord;
+    std::optional<ElementRaycast> element;
+    segmentCompA.m_points.second = segmentCompA.m_points.first;
+    for(uint32_t k = 0; k < 20; ++k)//limit distance
+    {
+        segmentCompA.m_points.second = getLimitPointRayCasting(segmentCompA.m_points.second,
+                                                               radiantAngle, lateralLeadCoef,
+                                                               verticalLeadCoef, lateral);
+        currentCoord = getCorrectedCoord(segmentCompA.m_points.second, lateral, radiantAngle);
+        if(!currentCoord)
+        {
+            break;
+        }
+        element = Level::getElementCase(*currentCoord);
+        if(element)
+        {
+            if(element->m_type == LevelCaseType_e::WALL_LC)
+            {
+                break;
+            }
+            else if(element->m_type == LevelCaseType_e::DOOR_LC)
+            {
+                DoorComponent *doorComp = stairwayToComponentManager().
+                        searchComponentByType<DoorComponent>(element->m_numEntity, Components_e::DOOR_COMPONENT);
+                assert(doorComp);
+                RectangleCollisionComponent *rectComp = stairwayToComponentManager().
+                        searchComponentByType<RectangleCollisionComponent>(element->m_numEntity, Components_e::RECTANGLE_COLLISION_COMPONENT);
+                assert(rectComp);
+                MapCoordComponent *mapComp = stairwayToComponentManager().
+                        searchComponentByType<MapCoordComponent>(element->m_numEntity, Components_e::MAP_COORD_COMPONENT);
+                assert(mapComp);
+                //first case x pos limit second y pos limit
+                pairFloat_t doorPos[2] = {{mapComp->m_absoluteMapPositionPX.first,
+                                           mapComp->m_absoluteMapPositionPX.first +
+                                           rectComp->m_size.first},
+                                          {mapComp->m_absoluteMapPositionPX.second,
+                                           mapComp->m_absoluteMapPositionPX.second +
+                                           rectComp->m_size.second}};
+                if(treatDisplayDoor(radiantAngle, doorComp->m_vertical,
+                                      segmentCompA.m_points.second,
+                                      doorPos, verticalLeadCoef, lateralLeadCoef,
+                                      textLateral, textFace))
+                {
+                    break;
+                }
+            }
+        }
+    }
+}
 
 //===================================================================
 void CollisionSystem::treatCollisionCircleRect(CollisionArgs &args,
@@ -466,7 +549,7 @@ SegmentCollisionComponent &CollisionSystem::getSegmentComponent(uint32_t entityN
 {
     SegmentCollisionComponent *collComp = stairwayToComponentManager().
             searchComponentByType<SegmentCollisionComponent>(entityNum,
-                                  Components_e::LINE_COLLISION_COMPONENT);
+                                  Components_e::SEGMENT_COLLISION_COMPONENT);
     assert(collComp);
     return *collComp;
 }

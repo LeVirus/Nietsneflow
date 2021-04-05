@@ -8,7 +8,7 @@
 #include <ECS/Components/InputComponent.hpp>
 #include <ECS/Components/GeneralCollisionComponent.hpp>
 #include <ECS/Components/CircleCollisionComponent.hpp>
-#include <ECS/Components/LineCollisionComponent.hpp>
+#include <ECS/Components/SegmentCollisionComponent.hpp>
 #include <ECS/Components/RectangleCollisionComponent.hpp>
 #include <ECS/Components/DoorComponent.hpp>
 #include <ECS/Components/VisionComponent.hpp>
@@ -176,7 +176,7 @@ void ECSManager::syncComponentsFromEntities(uint32_t numEntity,
                         std::make_unique<CircleCollisionComponent>());
         }
             break;
-        case Components_e::LINE_COLLISION_COMPONENT:
+        case Components_e::SEGMENT_COLLISION_COMPONENT:
         {
             m_componentManager->instanciateExternComponent(
                         numEntity,
@@ -227,7 +227,6 @@ void ECSManager::syncComponentsFromEntities(uint32_t numEntity,
                         std::make_unique<MemPositionsVertexComponents>());
         }
             break;
-
         case Components_e::TOTAL_COMPONENTS:
             assert("Bad enum.");
             break;

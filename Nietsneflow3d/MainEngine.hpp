@@ -10,10 +10,14 @@ class EnemyData;
 
 class MainEngine
 {
-private:
-    GraphicEngine m_graphicEngine;
-    PhysicalEngine m_physicalEngine;
-    ECSManager m_ecsManager;
+public:
+    MainEngine() = default;
+    void loadGraphicPicture(const PictureData &picData);
+    void init();
+    void loadLevelEntities(const LevelManager &levelManager);
+    void mainLoop();
+    void createShotFromPosition(const pairFloat_t &point, float degreeAngle,
+                                CollisionTag_e collTag);
 private:
     void loadGroundAndCeilingEntities(const GroundCeilingData &groundData,
                                       const GroundCeilingData &ceilingData);
@@ -32,6 +36,7 @@ private:
     uint32_t createWallEntity();
     uint32_t createDoorEntity();
     uint32_t createEnemyEntity();
+    uint32_t createShotEntity();
     void confBaseComponent(uint32_t entityNum, const SpriteData &memSpriteData,
                            const pairUI_t &coordLevel, CollisionShape_e collisionShape);
     uint32_t createStaticEntity();
@@ -39,12 +44,12 @@ private:
                              bool traversable, LevelStaticElementType_e type);
     void loadEnemySprites(const std::vector<SpriteData> &vectSprite,
                          const std::vector<EnemyData> &enemiesData, uint32_t numEntity);
-public:
-    MainEngine() = default;
-    void loadGraphicPicture(const PictureData &picData);
-    void init();
-    void loadLevelEntities(const LevelManager &levelManager);
-    void mainLoop();
+    void deleteEntities();
+private:
+    GraphicEngine m_graphicEngine;
+    PhysicalEngine m_physicalEngine;
+    ECSManager m_ecsManager;
+    std::vector<uint32_t> m_vectEntitiesToDelete;
 };
 
 void setWeaponPlayer();

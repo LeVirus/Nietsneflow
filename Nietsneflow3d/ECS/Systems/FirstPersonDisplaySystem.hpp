@@ -90,9 +90,10 @@ pairFloat_t getIntersectCoord(const pairFloat_t &observerPoint, const pairFloat_
 bool treatDisplayDoor(float radiantAngle, bool doorVertical, pairFloat_t &currentPoint,
                       pairFloat_t doorPos[], std::optional<float> verticalLeadCoef,
                       std::optional<float> lateralLeadCoef, bool &textLateral, bool &textFace);
-bool treatVerticalIntersectDoor(pairFloat_t &currentPoint, pairFloat_t doorPos[],
+bool treatVerticalIntersectDoor(pairFloat_t &currentPoint, const pairFloat_t doorPos[],
                                float verticalLeadCoef);
-bool treatLateralIntersectDoor(pairFloat_t &currentPoint, pairFloat_t doorPos[],
+//return true if door collision
+bool treatLateralIntersectDoor(pairFloat_t &currentPoint, const pairFloat_t doorPos[],
                                 float lateralLeadCoef);
 void treatLimitAngle(float &degreeAngleA, float &degreeAngleB);
 void removeSecondRect(pairFloat_t absolPos[], float distance[], uint32_t &distanceToTreat);
@@ -105,3 +106,5 @@ std::optional<float> getLeadCoef(float radiantAngle, bool lateral);
 pairFloat_t getLimitPointRayCasting(const pairFloat_t &cameraPoint, float radiantAngle, std::optional<float> lateralLeadCoef, std::optional<float> verticalLeadCoef, bool &lateral);
 int32_t getCoord(float value, float tileSize);
 bool treatLimitIntersect(pairFloat_t &point, bool lateral);
+std::optional<pairUI_t> getCorrectedCoord(const pairFloat_t &currentPoint, bool lateral,
+                                          float radiantAngle);

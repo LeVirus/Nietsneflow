@@ -14,6 +14,7 @@
 #include <ECS/Components/DoorComponent.hpp>
 #include <ECS/Components/PlayerConfComponent.hpp>
 #include <ECS/Components/MemPositionsVertexComponents.hpp>
+#include <ECS/Components/SegmentCollisionComponent.hpp>
 #include <ECS/Systems/ColorDisplaySystem.hpp>
 #include <ECS/Systems/MapDisplaySystem.hpp>
 #include <ECS/Systems/CollisionSystem.hpp>
@@ -40,8 +41,30 @@ void MainEngine::mainLoop()
     do
     {
         m_graphicEngine.runIteration();
+        //rm tmp entities
+        deleteEntities();
         m_physicalEngine.runIteration();
     }while(!m_graphicEngine.windowShouldClose());
+}
+
+//===================================================================
+void MainEngine::createShotFromPosition(const pairFloat_t &point, float degreeAngle,
+                                        CollisionTag_e collTag)
+{
+    uint32_t entityNum = createShotEntity();
+    GeneralCollisionComponent *genColl = m_ecsManager.getComponentManager().
+            searchComponentByType<GeneralCollisionComponent>(entityNum,
+                                                             Components_e::GENERAL_COLLISION_COMPONENT);
+    SegmentCollisionComponent *segmentColl = m_ecsManager.getComponentManager().
+            searchComponentByType<SegmentCollisionComponent>(entityNum,
+                                                             Components_e::SEGMENT_COLLISION_COMPONENT);
+    assert(genColl);
+    assert(segmentColl);
+    genColl->m_tag = collTag;
+    genColl->m_shape = CollisionShape_e::SEGMENT_C;
+    segmentColl->m_degreeOrientation = degreeAngle;
+    segmentColl->m_points.first = point;
+    m_vectEntitiesToDelete.push_back(entityNum);
 }
 
 //===================================================================
@@ -244,7 +267,6 @@ void MainEngine::loadDoorEntities(const LevelManager &levelManager)
 void MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
 {
     const std::vector<EnemyData> &enemiesData = levelManager.getLevel().getEnemiesData();
-
     for(uint32_t i = 0; i < enemiesData.size(); ++i)
     {
         const SpriteData &memSpriteData = levelManager.getPictureData().
@@ -291,6 +313,16 @@ void MainEngine::loadEnemySprites(const std::vector<SpriteData> &vectSprite,
     }
 }
 
+//===================================================================
+void MainEngine::deleteEntities()
+{
+   for(uint32_t i = 0; i < m_vectEntitiesToDelete.size(); ++i)
+   {
+       m_ecsManager.getEngine().bRmEntity(m_vectEntitiesToDelete[i]);
+   }
+   m_vectEntitiesToDelete.clear();
+}
+
 
 //===================================================================
 uint32_t MainEngine::createWallEntity()
@@ -332,6 +364,15 @@ uint32_t MainEngine::createEnemyEntity()
     bitsetComponents[Components_e::MOVEABLE_COMPONENT] = true;
     bitsetComponents[Components_e::MEM_SPRITE_DATA_COMPONENT] = true;
     bitsetComponents[Components_e::TIMER_COMPONENT] = true;
+    return m_ecsManager.addEntity(bitsetComponents);
+}
+
+//===================================================================
+uint32_t MainEngine::createShotEntity()
+{
+    std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComponents;
+    bitsetComponents[Components_e::SEGMENT_COLLISION_COMPONENT] = true;
+    bitsetComponents[Components_e::GENERAL_COLLISION_COMPONENT] = true;
     return m_ecsManager.addEntity(bitsetComponents);
 }
 
@@ -597,5 +638,6 @@ void MainEngine::linkSystemsToPhysicalEngine()
     DoorSystem *door = m_ecsManager.getSystemManager().
             searchSystemByType<DoorSystem>(static_cast<uint32_t>(Systems_e::DOOR_SYSTEM));
     input->setGLWindow(m_graphicEngine.getGLWindow());
+    input->linkMainEngine(this);
     m_physicalEngine.linkSystems(input, coll, door);
 }
