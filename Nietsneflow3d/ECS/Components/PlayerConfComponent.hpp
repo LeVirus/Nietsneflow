@@ -11,7 +11,7 @@ struct PlayerConfComponent : public ecs::Component
     }
     bool m_playerAction = false, m_playerShoot = false, m_timerShootActive = false,
     m_weaponChange = false, m_inMovement, m_spritePositionCorrected = true;
-    pairFloat_t m_currentMove = {-0.02f, -0.01f};
+    pairFloat_t m_currentWeaponMove = {-0.02f, -0.01f};
     uint32_t m_weaponEntity;
     WeaponsType_e m_currentWeapon, m_previousWeapon;
     virtual ~PlayerConfComponent() = default;

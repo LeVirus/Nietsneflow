@@ -16,6 +16,7 @@
 #include <ECS/Components/MemPositionsVertexComponents.hpp>
 #include <ECS/Components/MemSpriteDataComponent.hpp>
 #include <ECS/Components/TimerComponent.hpp>
+#include <ECS/Components/EnemyConfComponent.hpp>
 #include <ECS/Systems/ColorDisplaySystem.hpp>
 #include <ECS/Systems/MapDisplaySystem.hpp>
 #include <ECS/Systems/InputSystem.hpp>
@@ -225,6 +226,12 @@ void ECSManager::syncComponentsFromEntities(uint32_t numEntity,
         {
             m_componentManager->instanciateExternComponent(numEntity,
                         std::make_unique<MemPositionsVertexComponents>());
+        }
+            break;
+        case Components_e::ENEMY_CONF_COMPONENT:
+        {
+            m_componentManager->instanciateExternComponent(numEntity,
+                        std::make_unique<EnemyConfComponent>());
         }
             break;
         case Components_e::TOTAL_COMPONENTS:

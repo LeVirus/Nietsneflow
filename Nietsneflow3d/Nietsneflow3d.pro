@@ -30,6 +30,7 @@ SOURCES += main.cpp \
     ECS/Systems/StaticDisplaySystem.cpp
 
 HEADERS += \
+    ECS/Components/EnemyConfComponent.hpp \
     ECS/Components/MemSpriteDataComponent.hpp \
     ECS/Components/SegmentCollisionComponent.hpp \
     ECS/Components/TimerComponent.hpp \

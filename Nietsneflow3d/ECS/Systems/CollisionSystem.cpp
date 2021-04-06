@@ -8,6 +8,7 @@
 #include <ECS/Components/MoveableComponent.hpp>
 #include <ECS/Components/DoorComponent.hpp>
 #include <ECS/Components/PlayerConfComponent.hpp>
+#include <ECS/Components/EnemyConfComponent.hpp>
 #include <ECS/Systems/FirstPersonDisplaySystem.hpp>
 #include <CollisionUtils.hpp>
 #include <PhysicalEngine.hpp>
@@ -81,7 +82,11 @@ void CollisionSystem::execSystem()
         {
             if(m_memDistCurrentBulletColl.second > EPSILON_FLOAT)
             {
-
+                EnemyConfComponent *tagCompB = stairwayToComponentManager().
+                        searchComponentByType<EnemyConfComponent>(m_memDistCurrentBulletColl.first,
+                                                                  Components_e::ENEMY_CONF_COMPONENT);
+                assert(tagCompB);
+                tagCompB->takeDamage(1);
             }
         }
     }

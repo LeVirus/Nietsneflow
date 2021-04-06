@@ -99,31 +99,31 @@ void StaticDisplaySystem::setWeaponMovement(PlayerConfComponent *playerComp,
     uint32_t index = static_cast<uint32_t>(m_weaponSpriteAssociated[playerComp->m_currentWeapon]);
     if(playerComp->m_inMovement)
     {
-        modVertexPos(posComp, playerComp->m_currentMove);
+        modVertexPos(posComp, playerComp->m_currentWeaponMove);
         //check X var
-        if(playerComp->m_currentMove.first < EPSILON_FLOAT &&
+        if(playerComp->m_currentWeaponMove.first < EPSILON_FLOAT &&
                 posComp->m_vertex[0].first <= m_forkWeaponMovementX.first)
         {
-            playerComp->m_currentMove.first *= -1.0f;
+            playerComp->m_currentWeaponMove.first *= -1.0f;
         }
-        else if(playerComp->m_currentMove.first > EPSILON_FLOAT &&
+        else if(playerComp->m_currentWeaponMove.first > EPSILON_FLOAT &&
                 posComp->m_vertex[0].first >= m_forkWeaponMovementX.second)
         {
-            playerComp->m_currentMove.first *= -1.0f;
+            playerComp->m_currentWeaponMove.first *= -1.0f;
         }
         //check Y var
         if((posComp->m_vertex[0].second < memPosComp->m_vectSpriteData[index][0].second) &&
                 ((posComp->m_vertex[0].first < m_middleWeaponMovementX &&
-            playerComp->m_currentMove.first < EPSILON_FLOAT) ||
+            playerComp->m_currentWeaponMove.first < EPSILON_FLOAT) ||
                 (posComp->m_vertex[0].first > m_middleWeaponMovementX &&
-                 playerComp->m_currentMove.first > EPSILON_FLOAT)))
+                 playerComp->m_currentWeaponMove.first > EPSILON_FLOAT)))
         {
-            playerComp->m_currentMove.second = std::abs(playerComp->m_currentMove.second);
+            playerComp->m_currentWeaponMove.second = std::abs(playerComp->m_currentWeaponMove.second);
         }
         else
         {
-            playerComp->m_currentMove.second =
-                    std::abs(playerComp->m_currentMove.second) * (-1.0f);
+            playerComp->m_currentWeaponMove.second =
+                    std::abs(playerComp->m_currentWeaponMove.second) * (-1.0f);
         }
         playerComp->m_spritePositionCorrected = false;
     }

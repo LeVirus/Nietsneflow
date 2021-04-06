@@ -15,6 +15,7 @@
 #include <ECS/Components/MoveableComponent.hpp>
 #include <ECS/Components/MemSpriteDataComponent.hpp>
 #include <ECS/Components/SpriteTextureComponent.hpp>
+#include <ECS/Components/EnemyConfComponent.hpp>
 #include <ECS/Components/TimerComponent.hpp>
 
 //===========================================================================
@@ -96,6 +97,7 @@ void VisionSystem::updateSprites(const std::vector<uint32_t> &vectEntities)
     MemSpriteDataComponent *memSpriteComp;
     SpriteTextureComponent *spriteComp;
     TimerComponent *timerComp;
+    EnemyConfComponent *enemyConfComp;
     for(uint32_t i = 0; i < vectEntities.size(); ++i)
     {
         memSpriteComp = stairwayToComponentManager().
@@ -105,26 +107,55 @@ void VisionSystem::updateSprites(const std::vector<uint32_t> &vectEntities)
         {
             continue;
         }
+        enemyConfComp = stairwayToComponentManager().
+                searchComponentByType<EnemyConfComponent>(vectEntities[i],
+                                                          Components_e::ENEMY_CONF_COMPONENT);
         spriteComp = stairwayToComponentManager().
                 searchComponentByType<SpriteTextureComponent>(vectEntities[i],
                                                               Components_e::SPRITE_TEXTURE_COMPONENT);
-        assert(spriteComp);
         timerComp = stairwayToComponentManager().
                 searchComponentByType<TimerComponent>(vectEntities[i], Components_e::TIMER_COMPONENT);
+        assert(spriteComp);
         assert(timerComp);
-
-        std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() - timerComp->m_clock;
-        if(elapsed_seconds.count() > 0.5)
+        if(enemyConfComp)
         {
-            timerComp->m_clock = std::chrono::system_clock::now();
-            //TESTTT
-            if(spriteComp->m_spriteData == memSpriteComp->m_vectSpriteData[0])
+            if(enemyConfComp->m_mode == EnemyMode_e::NORMAL)
             {
-                spriteComp->m_spriteData = memSpriteComp->m_vectSpriteData[1];
+                if(!enemyConfComp->m_life)
+                {
+                    enemyConfComp->m_mode = EnemyMode_e::DYING;
+                    spriteComp->m_spriteData = memSpriteComp->
+                            m_vectSpriteData[static_cast<uint32_t>(EnemyMode_e::DYING)];
+                    timerComp->m_clock = std::chrono::system_clock::now();
+                }
+                else
+                {
+                    std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() - timerComp->m_clock;
+                    if(elapsed_seconds.count() > 0.5)
+                    {
+                        timerComp->m_clock = std::chrono::system_clock::now();
+                        //TESTTT
+                        if(spriteComp->m_spriteData == memSpriteComp->m_vectSpriteData[0])
+                        {
+                            spriteComp->m_spriteData = memSpriteComp->m_vectSpriteData[1];
+                        }
+                        else
+                        {
+                            spriteComp->m_spriteData = memSpriteComp->m_vectSpriteData[0];
+                        }
+                    }
+                }
             }
-            else
+            else if(enemyConfComp->m_mode == EnemyMode_e::DYING)
             {
-                spriteComp->m_spriteData = memSpriteComp->m_vectSpriteData[0];
+                std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() -
+                        timerComp->m_clock;
+                if(elapsed_seconds.count() > 0.5)
+                {
+                    enemyConfComp->m_mode = EnemyMode_e::DEAD;
+                    spriteComp->m_spriteData = memSpriteComp->
+                            m_vectSpriteData[static_cast<uint32_t>(EnemyMode_e::DEAD)];
+                }
             }
         }
     }

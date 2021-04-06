@@ -363,6 +363,7 @@ uint32_t MainEngine::createEnemyEntity()
     bitsetComponents[Components_e::GENERAL_COLLISION_COMPONENT] = true;
     bitsetComponents[Components_e::MOVEABLE_COMPONENT] = true;
     bitsetComponents[Components_e::MEM_SPRITE_DATA_COMPONENT] = true;
+    bitsetComponents[Components_e::ENEMY_CONF_COMPONENT] = true;
     bitsetComponents[Components_e::TIMER_COMPONENT] = true;
     return m_ecsManager.addEntity(bitsetComponents);
 }
