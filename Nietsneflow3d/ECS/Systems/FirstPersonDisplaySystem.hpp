@@ -56,9 +56,8 @@ private:
     void confCompVertexMemEntities();
     void writeVertexRaycasting(const pairRaycastingData_t &entityData, uint32_t numIteration);
     void treatDisplayEntity(GeneralCollisionComponent *genCollComp, MapCoordComponent *mapCompA,
-                            MapCoordComponent *mapCompB,
-                            VisionComponent *visionComp, uint32_t &toRemove,
-                            float degreeObserverAngle, uint32_t numIteration);
+                            MapCoordComponent *mapCompB, VisionComponent *visionComp,
+                            uint32_t &toRemove, float degreeObserverAngle, uint32_t numIteration);
     void confNormalEntityVertex(uint32_t numEntity,
                                 VisionComponent *visionComp, float lateralPosDegree, float depthGL);
     void drawVertex();

@@ -169,7 +169,6 @@ void VisionSystem::treatVisible(VisionComponent *visionComp, uint32_t checkVisib
             searchComponentByType<MapCoordComponent>(checkVisibleId, Components_e::MAP_COORD_COMPONENT);
     assert(visionComp);
     assert(mapCompB);
-
     switch(shapeElement)
     {
     case CollisionShape_e::CIRCLE_C:

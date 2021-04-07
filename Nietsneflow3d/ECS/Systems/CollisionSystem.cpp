@@ -100,12 +100,11 @@ void CollisionSystem::execSystem()
 //===================================================================
 void CollisionSystem::rmCollisionMaskEntity(uint32_t numEntity)
 {
-    if(!mptrSystemManager->getptrEngine()->
-            bRmComponentToEntity(numEntity,
-                                 Components_e::GENERAL_COLLISION_COMPONENT))
-    {
-        assert(false);
-    }
+    GeneralCollisionComponent *tagComp = stairwayToComponentManager().
+            searchComponentByType<GeneralCollisionComponent>(numEntity,
+                                                             Components_e::GENERAL_COLLISION_COMPONENT);
+    assert(tagComp);
+    tagComp->m_tag = CollisionTag_e::GHOST_CT;
 }
 
 //===================================================================
