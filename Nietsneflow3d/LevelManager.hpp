@@ -39,7 +39,7 @@ private:
                           EnemySpriteType_e spriteType, EnemyData &enemyData);
 public:
     LevelManager();
-    void loadTextureData(const std::string &INIFileName, uint32_t levelNum);
+    void loadTextureData(const std::string &INIFileName);
     void loadLevel(const std::string &INIFileName, uint32_t levelNum);
     inline const PictureData &getPictureData()const {return m_pictureData;}
     inline const Level &getLevel()const {return m_level;}
