@@ -39,9 +39,6 @@ void CollisionSystem::execSystem()
     System::execSystem();
     for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
     {
-        EnemyConfComponent *tagCompZEQZRQF = stairwayToComponentManager().
-                searchComponentByType<EnemyConfComponent>(m_memDistCurrentBulletColl.first,
-                                                          Components_e::ENEMY_CONF_COMPONENT);
         GeneralCollisionComponent *tagCompA = stairwayToComponentManager().
                 searchComponentByType<GeneralCollisionComponent>(mVectNumEntity[i],
                                                                  Components_e::GENERAL_COLLISION_COMPONENT);

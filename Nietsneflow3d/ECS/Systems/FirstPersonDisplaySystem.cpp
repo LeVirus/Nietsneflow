@@ -64,10 +64,8 @@ void FirstPersonDisplaySystem::confCompVertexMemEntities()
         pairFloat_t memPreviousCameraPos = mapCompA->m_absoluteMapPositionPX;
         {
             float radiantAngle = getRadiantAngle(moveComp->m_degreeOrientation + 180.0f);
-            mapCompA->m_absoluteMapPositionPX.first +=
-                    std::cos(radiantAngle) * 19.0f;
-            mapCompA->m_absoluteMapPositionPX.second -=
-                    std::sin(radiantAngle) * 19.0f;
+            mapCompA->m_absoluteMapPositionPX.first += std::cos(radiantAngle) * 19.0f;
+            mapCompA->m_absoluteMapPositionPX.second -= std::sin(radiantAngle) * 19.0f;
         }
         uint32_t numIteration;
         //draw dynamic element
@@ -121,18 +119,18 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
     float radiantObserverAngle = getRadiantAngle(degreeObserverAngle);
     uint32_t numEntity = visionComp->m_vectVisibleEntities[numIteration];
     SpriteTextureComponent *spriteComp = stairwayToComponentManager().
-            searchComponentByType<SpriteTextureComponent>(
-                numEntity,
+            searchComponentByType<SpriteTextureComponent>(numEntity,
                 Components_e::SPRITE_TEXTURE_COMPONENT);
     assert(spriteComp);
     pairFloat_t centerPosB = getCenterPosition(mapCompB, genCollComp, numEntity);
     assert(spriteComp);
     float distance = getCameraDistance(mapCompA->m_absoluteMapPositionPX,
-                                       mapCompB->m_absoluteMapPositionPX, radiantObserverAngle) / LEVEL_TILE_SIZE_PX;
+                                       mapCompB->m_absoluteMapPositionPX, radiantObserverAngle) /
+            LEVEL_TILE_SIZE_PX;
     float simpleDistance = getDistance(mapCompA->m_absoluteMapPositionPX,
                                        mapCompB->m_absoluteMapPositionPX);
     float depthSimpleGL;
-    if(distance > visionComp->m_distanceVisibility)
+    if(distance > visionComp->m_distanceVisibility || distance < 1.0f)
     {
         ++toRemove;
         return;
