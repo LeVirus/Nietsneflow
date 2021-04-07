@@ -336,8 +336,7 @@ std::vector<float> convertStrToVectFloat(const std::string &str)
 //===================================================================
 void LevelManager::loadTextureData(const std::string &INIFileName, uint32_t levelNum)
 {
-    INIReader reader(LEVEL_RESSOURCES_DIR_STR + std::string("Level") +
-                     std::to_string(levelNum) + std::string ("/") + INIFileName);
+    INIReader reader(LEVEL_RESSOURCES_DIR_STR + INIFileName);
     if (reader.ParseError() < 0)
     {
         assert("Error while reading INI file.");
