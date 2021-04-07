@@ -10,6 +10,7 @@
 #include <ECS/Components/PlayerConfComponent.hpp>
 #include <ECS/Components/EnemyConfComponent.hpp>
 #include <ECS/Systems/FirstPersonDisplaySystem.hpp>
+#include <BaseECS/engine.hpp>
 #include <CollisionUtils.hpp>
 #include <PhysicalEngine.hpp>
 #include <cassert>
@@ -38,6 +39,9 @@ void CollisionSystem::execSystem()
     System::execSystem();
     for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
     {
+        EnemyConfComponent *tagCompZEQZRQF = stairwayToComponentManager().
+                searchComponentByType<EnemyConfComponent>(m_memDistCurrentBulletColl.first,
+                                                          Components_e::ENEMY_CONF_COMPONENT);
         GeneralCollisionComponent *tagCompA = stairwayToComponentManager().
                 searchComponentByType<GeneralCollisionComponent>(mVectNumEntity[i],
                                                                  Components_e::GENERAL_COLLISION_COMPONENT);
@@ -82,13 +86,28 @@ void CollisionSystem::execSystem()
         {
             if(m_memDistCurrentBulletColl.second > EPSILON_FLOAT)
             {
-                EnemyConfComponent *tagCompB = stairwayToComponentManager().
+                EnemyConfComponent *enemyConfCompB = stairwayToComponentManager().
                         searchComponentByType<EnemyConfComponent>(m_memDistCurrentBulletColl.first,
                                                                   Components_e::ENEMY_CONF_COMPONENT);
-                assert(tagCompB);
-                tagCompB->takeDamage(1);
+                assert(enemyConfCompB);
+                //if enemy dead
+                if(!enemyConfCompB->takeDamage(1))
+                {
+                    rmCollisionMaskEntity(m_memDistCurrentBulletColl.first);
+                }
             }
         }
+    }
+}
+
+//===================================================================
+void CollisionSystem::rmCollisionMaskEntity(uint32_t numEntity)
+{
+    if(!mptrSystemManager->getptrEngine()->
+            bRmComponentToEntity(numEntity,
+                                 Components_e::GENERAL_COLLISION_COMPONENT))
+    {
+        assert(false);
     }
 }
 

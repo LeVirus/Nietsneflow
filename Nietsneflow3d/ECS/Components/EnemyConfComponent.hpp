@@ -17,15 +17,18 @@ struct EnemyConfComponent : public ecs::Component
     {
         muiTypeComponent = Components_e::ENEMY_CONF_COMPONENT;
     }
-    void takeDamage(uint32_t damage)
+    //return false if dead
+    bool takeDamage(uint32_t damage)
     {
         if(m_life <= damage)
         {
             m_life = 0;
+            return false;
         }
         else
         {
             --m_life;
+            return true;
         }
     }
     bool m_enemyShoot = false;

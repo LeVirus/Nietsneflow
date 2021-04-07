@@ -22,6 +22,7 @@ private:
     std::multimap<CollisionTag_e, CollisionTag_e> m_tagArray;
     std::pair<uint32_t, float> m_memDistCurrentBulletColl;
 private:
+    void rmCollisionMaskEntity(uint32_t numEntity);
     void setUsedComponents();
     void initArrayTag();
     bool checkTag(CollisionTag_e entityTagA, CollisionTag_e entityTagB);
