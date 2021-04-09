@@ -118,7 +118,8 @@ enum class Shader_e
 enum class Texture_e
 {
     WALL_T,
-    GLOBAL_T, // TMP
+    GLOBAL_T,
+    FONT_T,
     TOTAL_TEXTURE_T
 };
 
@@ -197,5 +198,6 @@ inline const std::map<Shader_e, std::string> SHADER_ID_MAP
 inline const std::map<Texture_e, std::string> TEXTURE_ID_PATH_MAP
 {
     {Texture_e::GLOBAL_T, "Global.png"},
-    {Texture_e::WALL_T, "walltest.jpg"}
+    {Texture_e::WALL_T, "walltest.jpg"},
+    {Texture_e::FONT_T, "fontTexture.png"}
 };
