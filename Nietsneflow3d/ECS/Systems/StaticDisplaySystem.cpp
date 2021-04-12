@@ -267,8 +267,8 @@ void StaticDisplaySystem::drawLineWriteVertex(PositionVertexComponent *posComp,
         diffX = ((*memArray)[1].first - (*memArray)[0].first) / cohef;
         posComp->m_vertex.emplace_back(pairFloat_t{currentX, currentY});
         posComp->m_vertex.emplace_back(pairFloat_t{currentX + diffX, currentY});
-        posComp->m_vertex.emplace_back(pairFloat_t{currentX + diffX, currentY + diffY});
-        posComp->m_vertex.emplace_back(pairFloat_t{currentX, currentY + diffY});
+        posComp->m_vertex.emplace_back(pairFloat_t{currentX + diffX, currentY - diffY});
+        posComp->m_vertex.emplace_back(pairFloat_t{currentX, currentY - diffY});
         currentX += diffX;
     }
 }
