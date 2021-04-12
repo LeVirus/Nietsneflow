@@ -58,7 +58,6 @@ private:
     void initGLShader();
     void initGLTexture();
     void setShaderToLocalSystems();
-    void loadTexturesPath(const vectStr_t &vectTextures);
     void loadGroundAndCeiling(const GroundCeilingData &groundData,
                               const GroundCeilingData &ceilingData);
     void loadSprites(const std::vector<SpriteData> &vectSprites,

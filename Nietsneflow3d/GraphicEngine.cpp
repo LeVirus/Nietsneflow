@@ -34,7 +34,6 @@ void GraphicEngine::confSystems()
 //===================================================================
 void GraphicEngine::loadPictureData(const PictureData &pictureData, const FontData &fontData)
 {
-    loadTexturesPath(pictureData.getTexturePath());
     loadSprites(pictureData.getSpriteData(), fontData);
 }
 
@@ -165,18 +164,6 @@ void GraphicEngine::setShaderToLocalSystems()
     m_mapSystem->setShader(m_vectShader[static_cast<uint32_t>(Shader_e::TEXTURE_S)]);
     m_firstPersonSystem->setShader(m_vectShader[static_cast<uint32_t>(Shader_e::TEXTURE_S)]);
     m_staticDisplaySystem->setShader(m_vectShader[static_cast<uint32_t>(Shader_e::TEXTURE_S)]);
-}
-
-//===================================================================
-void GraphicEngine::loadTexturesPath(const vectStr_t &vectTextures)
-{
-    size_t size = vectTextures.size();
-    assert(size == static_cast<uint32_t>(Texture_e::TOTAL_TEXTURE_T));
-    m_vectTexture.reserve(size);
-    for(uint32_t i = 0; i < size; ++i)
-    {
-        m_vectTexture.emplace_back(TEXTURES_DIR_STR + vectTextures[i]);
-    }
 }
 
 //===================================================================
