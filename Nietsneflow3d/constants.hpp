@@ -198,7 +198,7 @@ inline const std::map<Shader_e, std::string> SHADER_ID_MAP
 
 inline const std::map<Texture_e, std::string> TEXTURE_ID_PATH_MAP
 {
-    {Texture_e::GLOBAL_T, "Global.png"},
     {Texture_e::WALL_T, "walltest.jpg"},
-    {Texture_e::FONT_T, "fontTexture.png"}
+    {Texture_e::GLOBAL_T, "Global.png"},
+    {Texture_e::FONT_T, "FontTexture.png"}
 };

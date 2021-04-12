@@ -222,7 +222,7 @@ void StaticDisplaySystem::drawVertex(uint32_t observerEntity)
             searchComponentByType<WriteComponent>(playerComp->m_ammoWriteEntity,
                                                   Components_e::WRITE_COMPONENT);
     assert(writeComp);
-    m_ptrVectTexture->operator[](writeComp->m_numTexture).bind();
+    m_ptrVectTexture->operator[](static_cast<uint32_t>(writeComp->m_numTexture)).bind();
     index = static_cast<uint32_t>(VertexID_e::AMMO_WRITE);
     m_vertices[index].confVertexBuffer();
     m_vertices[index].drawElement();
