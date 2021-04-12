@@ -9,6 +9,7 @@ LIBS += -L../Nietsneflow3d/lib  -lECS -lglad -ldl -lglfw3 -lX11 -lXxf86vm -lXran
 
 SOURCES += main.cpp \
     ECS/Systems/VisionSystem.cpp \
+    FontData.cpp \
     Game.cpp \
     MainEngine.cpp \
     LevelManager.cpp \
@@ -35,7 +36,9 @@ HEADERS += \
     ECS/Components/SegmentCollisionComponent.hpp \
     ECS/Components/TimerComponent.hpp \
     ECS/Components/VisionComponent.hpp \
+    ECS/Components/WriteComponent.hpp \
     ECS/Systems/VisionSystem.hpp \
+    FontData.hpp \
     Game.hpp \
     MainEngine.hpp \
     LevelManager.hpp \

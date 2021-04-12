@@ -5,6 +5,7 @@
 #include <ECS/Components/ColorVertexComponent.hpp>
 #include <ECS/Components/SpriteTextureComponent.hpp>
 #include <ECS/Components/DoorComponent.hpp>
+#include <ECS/Components/WriteComponent.hpp>
 #include <ECS/Systems/FirstPersonDisplaySystem.hpp>
 #include <PictureData.hpp>
 #include <CollisionUtils.hpp>
@@ -125,9 +126,24 @@ void VerticesData::loadVertexStandartTextureComponent(const PositionVertexCompon
 }
 
 //===================================================================
+void VerticesData::loadVertexWriteTextureComponent(const PositionVertexComponent &posComp,
+                                                   const WriteComponent &writeComp)
+{
+    for(uint32_t i = 0; i < writeComp.m_fontSpriteData.size(); ++i)
+    {
+        for(uint32_t j = 0; j < 4; ++j)
+        {
+            addTexturePoint(posComp.m_vertex[i * 4 + j],
+                    writeComp.m_fontSpriteData[i].get().m_texturePosVertex[j]);
+        }
+        addIndices(BaseShapeTypeGL_e::RECTANGLE);
+    }
+}
+
+//===================================================================
 float VerticesData::loadRaycastingEntity(const SpriteTextureComponent &spriteComp,
-                                        const std::vector<RayCastingIntersect> &raycastingData,
-                                        uint32_t totalLateralLine)
+                                         const std::vector<RayCastingIntersect> &raycastingData,
+                                         uint32_t totalLateralLine)
 {
     float lateralPosA, lateralPosB, verticalPos, lateralText, closerDist = raycastingData[0].m_distance;
     float diffTotalTexturePos = (spriteComp.m_spriteData->m_texturePosVertex[1].first -

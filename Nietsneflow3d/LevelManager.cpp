@@ -23,9 +23,10 @@ void LevelManager::loadTexturePath(const INIReader &reader)
 }
 
 //===================================================================
-void LevelManager::loadSpriteData(const INIReader &reader)
+void LevelManager::loadSpriteData(const INIReader &reader, const std::string &sectionName,
+                                  bool font)
 {
-    std::vector<std::string> sections = reader.getSectionNamesContaining("Sprite");
+    std::vector<std::string> sections = reader.getSectionNamesContaining(sectionName);
     for(uint32_t i = 0; i < sections.size(); ++i)
     {
         long textureNum = reader.GetInteger(sections[i], "texture",
@@ -47,7 +48,14 @@ void LevelManager::loadSpriteData(const INIReader &reader)
                 }
             }
         };
-        m_pictureData.setSpriteData(spriteData, sections[i]);
+        if(font)
+        {
+            m_fontData.addCharSpriteData(spriteData, sections[i]);
+        }
+        else
+        {
+            m_pictureData.setSpriteData(spriteData, sections[i]);
+        }
     }
 }
 
@@ -345,6 +353,17 @@ void LevelManager::loadTextureData(const std::string &INIFileName)
     loadSpriteData(reader);
     loadGroundAndCeilingData(reader);
     m_pictureData.setUpToDate();
+}
+
+//===================================================================
+void LevelManager::loadFontData(const std::string &INIFileName)
+{
+    INIReader reader(LEVEL_RESSOURCES_DIR_STR + INIFileName);
+    if (reader.ParseError() < 0)
+    {
+        assert("Error while reading INI file.");
+    }
+    loadSpriteData(reader, "", true);
 }
 
 //===================================================================

@@ -5,12 +5,13 @@
 #include <ECS/Components/PositionVertexComponent.hpp>
 #include <ECS/Components/PlayerConfComponent.hpp>
 #include <ECS/Components/TimerComponent.hpp>
+#include <ECS/Components/WriteComponent.hpp>
 #include <cassert>
 
 std::map<WeaponsType_e, WeaponsSpriteType_e> StaticDisplaySystem::m_weaponSpriteAssociated;
 
 //===================================================================
-StaticDisplaySystem::StaticDisplaySystem() : m_weaponVertice(Shader_e::TEXTURE_S)
+StaticDisplaySystem::StaticDisplaySystem()
 {
     fillWeaponMapEnum();
     bAddComponentToSystem(Components_e::VISION_COMPONENT);
@@ -30,7 +31,8 @@ void StaticDisplaySystem::execSystem()
     for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
     {
         writeWeaponsVertexFromComponent(mVectNumEntity[i]);
-        drawVertex();
+        drawWriteVertex(mVectNumEntity[i]);
+        drawVertex(mVectNumEntity[i]);
     }
 }
 
@@ -40,7 +42,6 @@ void StaticDisplaySystem::writeWeaponsVertexFromComponent(uint32_t numObserverEn
     PlayerConfComponent *playerComp = stairwayToComponentManager().
                 searchComponentByType<PlayerConfComponent>(numObserverEntity,
                                                            Components_e::PLAYER_CONF_COMPONENT);
-    assert(playerComp);
     PositionVertexComponent *posComp = stairwayToComponentManager().
             searchComponentByType<PositionVertexComponent>(playerComp->m_weaponEntity,
                                                            Components_e::POSITION_VERTEX_COMPONENT);
@@ -53,6 +54,7 @@ void StaticDisplaySystem::writeWeaponsVertexFromComponent(uint32_t numObserverEn
     MemPositionsVertexComponents *memPosComp = stairwayToComponentManager().
             searchComponentByType<MemPositionsVertexComponents>(playerComp->m_weaponEntity,
                                                                 Components_e::MEM_POSITIONS_VERTEX_COMPONENT);
+    assert(playerComp);
     assert(memPosComp);
     assert(timerComp);
     assert(posComp);
@@ -87,8 +89,9 @@ void StaticDisplaySystem::writeWeaponsVertexFromComponent(uint32_t numObserverEn
             setWeaponMovement(playerComp, posComp, memPosComp);
         }
     }
-    m_weaponVertice.clear();
-    m_weaponVertice.loadVertexStandartTextureComponent(*posComp, *spriteComp);
+    uint32_t index = static_cast<uint32_t>(VertexID_e::WEAPON);
+    m_vertices[index].clear();
+    m_vertices[index].loadVertexStandartTextureComponent(*posComp, *spriteComp);
 }
 
 //===================================================================
@@ -199,12 +202,75 @@ void modVertexPos(PositionVertexComponent *posComp, const pairFloat_t &mod)
 }
 
 //===================================================================
-void StaticDisplaySystem::drawVertex()
+void StaticDisplaySystem::drawVertex(uint32_t observerEntity)
 {
     m_shader->use();
-    m_ptrVectTexture->operator[](static_cast<uint8_t>(m_numTextureWeapon)).bind();
-    m_weaponVertice.confVertexBuffer();
-    m_weaponVertice.drawElement();
+    PlayerConfComponent *playerComp = stairwayToComponentManager().
+                searchComponentByType<PlayerConfComponent>(observerEntity,
+                                                           Components_e::PLAYER_CONF_COMPONENT);
+    assert(playerComp);
+    SpriteTextureComponent *spriteComp = stairwayToComponentManager().
+            searchComponentByType<SpriteTextureComponent>(playerComp->m_weaponEntity,
+                                                          Components_e::SPRITE_TEXTURE_COMPONENT);
+    assert(spriteComp);
+    m_ptrVectTexture->operator[](static_cast<uint8_t>(spriteComp->m_spriteData->
+                                                      m_textureNum)).bind();
+    uint32_t index = static_cast<uint32_t>(VertexID_e::WEAPON);
+    m_vertices[index].confVertexBuffer();
+    m_vertices[index].drawElement();
+    WriteComponent *writeComp = stairwayToComponentManager().
+            searchComponentByType<WriteComponent>(playerComp->m_ammoWriteEntity,
+                                                  Components_e::WRITE_COMPONENT);
+    assert(writeComp);
+    m_ptrVectTexture->operator[](writeComp->m_numTexture).bind();
+    index = static_cast<uint32_t>(VertexID_e::AMMO_WRITE);
+    m_vertices[index].confVertexBuffer();
+    m_vertices[index].drawElement();
+}
+
+//===================================================================
+void StaticDisplaySystem::drawWriteVertex(uint32_t observerEntity)
+{
+    PlayerConfComponent *playerComp = stairwayToComponentManager().
+                searchComponentByType<PlayerConfComponent>(observerEntity,
+                                                           Components_e::PLAYER_CONF_COMPONENT);
+    WriteComponent *writeComp = stairwayToComponentManager().
+                searchComponentByType<WriteComponent>(playerComp->m_ammoWriteEntity,
+                                                      Components_e::WRITE_COMPONENT);
+    PositionVertexComponent *posComp = stairwayToComponentManager().
+                searchComponentByType<PositionVertexComponent>(playerComp->m_ammoWriteEntity,
+                                                               Components_e::POSITION_VERTEX_COMPONENT);
+    assert(playerComp);
+    assert(writeComp);
+    assert(posComp);
+    uint32_t index = static_cast<uint32_t>(VertexID_e::AMMO_WRITE);
+    assert(!writeComp->m_fontSpriteData.empty());
+    m_vertices[index].clear();
+    drawLineWriteVertex(posComp, writeComp);
+    m_vertices[index].loadVertexWriteTextureComponent(*posComp, *writeComp);
+}
+
+//===================================================================
+void StaticDisplaySystem::drawLineWriteVertex(PositionVertexComponent *posComp,
+                                              WriteComponent *writeComp)
+{
+    assert(!writeComp->m_fontSpriteData.empty());
+    posComp->m_vertex.clear();
+    posComp->m_vertex.reserve(writeComp->m_fontSpriteData.size() * 4);
+    float currentX = writeComp->m_upLeftPositionGL.first, diffX,
+            currentY = writeComp->m_upLeftPositionGL.second, diffY = m_fontSize;
+    std::array<pairFloat_t, 4> *memArray = &(writeComp->m_fontSpriteData[0].get().m_texturePosVertex);
+    float cohef = ((*memArray)[2].second - (*memArray)[0].second) / m_fontSize;
+    for(uint32_t i = 0; i < writeComp->m_fontSpriteData.size(); ++i)
+    {
+        memArray = &(writeComp->m_fontSpriteData[i].get().m_texturePosVertex);
+        diffX = ((*memArray)[1].first - (*memArray)[0].first) / cohef;
+        posComp->m_vertex.emplace_back(pairFloat_t{currentX, currentY});
+        posComp->m_vertex.emplace_back(pairFloat_t{currentX + diffX, currentY});
+        posComp->m_vertex.emplace_back(pairFloat_t{currentX + diffX, currentY + diffY});
+        posComp->m_vertex.emplace_back(pairFloat_t{currentX, currentY + diffY});
+        currentX += diffX;
+    }
 }
 
 //===================================================================

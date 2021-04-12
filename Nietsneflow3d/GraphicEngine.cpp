@@ -1,4 +1,5 @@
 #include "GraphicEngine.hpp"
+#include "FontData.hpp"
 #include <iostream>
 #include <cassert>
 #include <constants.hpp>
@@ -8,7 +9,8 @@
 #include <ECS/Systems/VisionSystem.hpp>
 #include <ECS/Systems/FirstPersonDisplaySystem.hpp>
 #include <ECS/Systems/StaticDisplaySystem.hpp>
-
+#include <ECS/Components/PlayerConfComponent.hpp>
+#include <ECS/Components/WriteComponent.hpp>
 
 //===================================================================
 GraphicEngine::GraphicEngine()
@@ -30,10 +32,10 @@ void GraphicEngine::confSystems()
 }
 
 //===================================================================
-void GraphicEngine::loadPictureData(const PictureData &pictureData)
+void GraphicEngine::loadPictureData(const PictureData &pictureData, const FontData &fontData)
 {
     loadTexturesPath(pictureData.getTexturePath());
-    loadSprites(pictureData.getSpriteData());
+    loadSprites(pictureData.getSpriteData(), fontData);
 }
 
 //===================================================================
@@ -76,6 +78,16 @@ void GraphicEngine::linkSystems(ColorDisplaySystem *colorSystem,
 }
 
 
+
+//===================================================================
+void GraphicEngine::updateAmmoCount(WriteComponent *writeComp,
+                                    PlayerConfComponent *playerComp)
+{
+    std::string write = "AMMO" + std::to_string(playerComp->m_ammunations[
+                                                static_cast<uint32_t>(playerComp->m_currentWeapon)]);
+    writeComp->m_fontSpriteData = m_ptrFontData->getWriteData(write);
+    assert(!writeComp->m_fontSpriteData.empty());
+}
 
 //===================================================================
 void GraphicEngine::initGLWindow()
@@ -168,9 +180,11 @@ void GraphicEngine::loadTexturesPath(const vectStr_t &vectTextures)
 }
 
 //===================================================================
-void GraphicEngine::loadSprites(const std::vector<SpriteData> &vectSprites)
+void GraphicEngine::loadSprites(const std::vector<SpriteData> &vectSprites,
+                                const FontData &fontData)
 {
     m_ptrSpriteData = &vectSprites;
+    m_ptrFontData = &fontData;
 }
 
 //===================================================================

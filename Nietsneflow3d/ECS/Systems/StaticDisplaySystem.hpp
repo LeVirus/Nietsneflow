@@ -13,6 +13,14 @@
 struct TimerComponent;
 struct PlayerConfComponent;
 struct MemPositionsVertexComponents;
+struct WriteComponent;
+enum class VertexID_e
+{
+    WEAPON,
+    LIFE_WRITE,
+    AMMO_WRITE,
+    TOTAL
+};
 
 /**
  * @brief The StaticDisplaySystem class displays the menu
@@ -35,7 +43,9 @@ public:
     }
 private:
     void fillWeaponMapEnum();
-    void drawVertex();
+    void drawVertex(uint32_t observerEntity);
+    void drawWriteVertex(uint32_t observerEntity);
+    void drawLineWriteVertex(PositionVertexComponent *posComp, WriteComponent *writeComp);
     void writeWeaponsVertexFromComponent(uint32_t numObserverEntity);
     void setDisplayWeaponChange(PositionVertexComponent *posComp, PlayerConfComponent *playerComp,
                                 MemPositionsVertexComponents *memPosComp);
@@ -43,12 +53,12 @@ private:
                            MemPositionsVertexComponents *memPosComp);
 private:
     Shader *m_shader;
-    VerticesData m_weaponVertice;
+    std::array<VerticesData, static_cast<uint32_t>(VertexID_e::TOTAL)> m_vertices;
     std::vector<Texture> *m_ptrVectTexture = nullptr;
     Texture_e m_numTextureWeapon;
     WeaponsSpriteType_e m_currentWeaponSprite;
     static std::map<WeaponsType_e, WeaponsSpriteType_e> m_weaponSpriteAssociated;
-    float m_speedMoveWeaponChange = 0.05f;
+    float m_speedMoveWeaponChange = 0.05f, m_fontSize = 0.2f;
     pairFloat_t m_forkWeaponMovementX = {-0.4f, 0.1f}, m_forkWeaponMovementY = {-0.8f, -0.6f};
     float m_diffTotalDistanceMoveWeaponX = std::abs(m_forkWeaponMovementX.first -
                                                     m_forkWeaponMovementX.second);

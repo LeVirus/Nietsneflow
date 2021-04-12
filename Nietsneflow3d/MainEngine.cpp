@@ -15,6 +15,7 @@
 #include <ECS/Components/PlayerConfComponent.hpp>
 #include <ECS/Components/MemPositionsVertexComponents.hpp>
 #include <ECS/Components/SegmentCollisionComponent.hpp>
+#include <ECS/Components/WriteComponent.hpp>
 #include <ECS/Systems/ColorDisplaySystem.hpp>
 #include <ECS/Systems/MapDisplaySystem.hpp>
 #include <ECS/Systems/CollisionSystem.hpp>
@@ -40,16 +41,16 @@ void MainEngine::mainLoop()
     m_graphicEngine.getMapDisplaySystem().confLevelData();
     do
     {
+        m_physicalEngine.runIteration();
         m_graphicEngine.runIteration();
         //rm tmp entities
         deleteEntities();
-        m_physicalEngine.runIteration();
     }while(!m_graphicEngine.windowShouldClose());
 }
 
 //===================================================================
-void MainEngine::createShotFromPosition(const pairFloat_t &point, float degreeAngle,
-                                        CollisionTag_e collTag)
+void MainEngine::shoot(PlayerConfComponent *playerComp, const pairFloat_t &point,
+                       float degreeAngle, CollisionTag_e collTag)
 {
     uint32_t entityNum = createShotEntity();
     GeneralCollisionComponent *genColl = m_ecsManager.getComponentManager().
@@ -65,25 +66,27 @@ void MainEngine::createShotFromPosition(const pairFloat_t &point, float degreeAn
     segmentColl->m_degreeOrientation = degreeAngle;
     segmentColl->m_points.first = point;
     m_vectEntitiesToDelete.push_back(entityNum);
+    uint32_t currentWeapon = static_cast<uint32_t>(playerComp->m_currentWeapon);
+    if(playerComp->m_ammunations[currentWeapon] > 0)
+    {
+        --playerComp->m_ammunations[currentWeapon];
+    }
 }
 
 //===================================================================
-void MainEngine::loadGraphicPicture(const PictureData &picData)
+void MainEngine::updateAmmoCount(PlayerConfComponent *playerComp)
 {
-    m_graphicEngine.loadPictureData(picData);
+    WriteComponent *writeConp = m_ecsManager.getComponentManager().
+            searchComponentByType<WriteComponent>(playerComp->m_ammoWriteEntity,
+                                                  Components_e::WRITE_COMPONENT);
+    assert(writeConp);
+    m_graphicEngine.updateAmmoCount(writeConp, playerComp);
 }
 
-
 //===================================================================
-uint32_t MainEngine::loadWeaponEntity()
+void MainEngine::loadGraphicPicture(const PictureData &picData, const FontData &fontData)
 {
-    std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComponents;
-    bitsetComponents[Components_e::POSITION_VERTEX_COMPONENT] = true;
-    bitsetComponents[Components_e::SPRITE_TEXTURE_COMPONENT] = true;
-    bitsetComponents[Components_e::MEM_SPRITE_DATA_COMPONENT] = true;
-    bitsetComponents[Components_e::MEM_POSITIONS_VERTEX_COMPONENT] = true;
-    bitsetComponents[Components_e::TIMER_COMPONENT] = true;
-    return m_ecsManager.addEntity(bitsetComponents);
+    m_graphicEngine.loadPictureData(picData, fontData);
 }
 
 //===================================================================
@@ -323,6 +326,17 @@ void MainEngine::deleteEntities()
    m_vectEntitiesToDelete.clear();
 }
 
+//===================================================================
+uint32_t MainEngine::loadWeaponEntity()
+{
+    std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComponents;
+    bitsetComponents[Components_e::POSITION_VERTEX_COMPONENT] = true;
+    bitsetComponents[Components_e::SPRITE_TEXTURE_COMPONENT] = true;
+    bitsetComponents[Components_e::MEM_SPRITE_DATA_COMPONENT] = true;
+    bitsetComponents[Components_e::MEM_POSITIONS_VERTEX_COMPONENT] = true;
+    bitsetComponents[Components_e::TIMER_COMPONENT] = true;
+    return m_ecsManager.addEntity(bitsetComponents);
+}
 
 //===================================================================
 uint32_t MainEngine::createWallEntity()
@@ -374,6 +388,15 @@ uint32_t MainEngine::createShotEntity()
     std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComponents;
     bitsetComponents[Components_e::SEGMENT_COLLISION_COMPONENT] = true;
     bitsetComponents[Components_e::GENERAL_COLLISION_COMPONENT] = true;
+    return m_ecsManager.addEntity(bitsetComponents);
+}
+
+//===================================================================
+uint32_t MainEngine::createWriteEntity()
+{
+    std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComponents;
+    bitsetComponents[Components_e::POSITION_VERTEX_COMPONENT] = true;
+    bitsetComponents[Components_e::WRITE_COMPONENT] = true;
     return m_ecsManager.addEntity(bitsetComponents);
 }
 
@@ -531,6 +554,21 @@ void MainEngine::confPlayerEntity(uint32_t entityNum, const Level &level, uint32
             searchSystemByType<StaticDisplaySystem>(static_cast<uint32_t>(Systems_e::STATIC_DISPLAY_SYSTEM));
     assert(staticDisplay);
     staticDisplay->setWeaponSprite(numWeaponEntity, WeaponsSpriteType_e::GUN_STATIC);
+    uint32_t numAmmoWrite = createWriteEntity(),
+            numLifeWrite = createWriteEntity();
+    WriteComponent *writeConf = m_ecsManager.getComponentManager().
+            searchComponentByType<WriteComponent>(numAmmoWrite, Components_e::WRITE_COMPONENT);
+    assert(writeConf);
+    //tmp
+    writeConf->m_upLeftPositionGL = {-0.95f, -0.8f};
+    writeConf = m_ecsManager.getComponentManager().
+            searchComponentByType<WriteComponent>(numLifeWrite, Components_e::WRITE_COMPONENT);
+    assert(writeConf);
+    //tmp
+    writeConf->m_upLeftPositionGL = {-0.95f, -0.6f};
+    playerConf->m_ammoWriteEntity = numAmmoWrite;
+    playerConf->m_lifeWriteEntity = numLifeWrite;
+    m_graphicEngine.updateAmmoCount(writeConf, playerConf);
 }
 
 //===================================================================

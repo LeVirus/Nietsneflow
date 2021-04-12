@@ -2,6 +2,7 @@
 
 #include <Level.hpp>
 #include <PictureData.hpp>
+#include <FontData.hpp>
 #include <set>
 
 class INIReader;
@@ -12,11 +13,13 @@ class LevelManager
 {
 private:
     PictureData m_pictureData;
+    FontData m_fontData;
     Level m_level;
 private:
     //texture and sprite loading
     void loadTexturePath(const INIReader &reader);
-    void loadSpriteData(const INIReader &reader);
+    void loadSpriteData(const INIReader &reader, const std::string &sectionName = "Sprite",
+                        bool font = false);
     void loadGroundAndCeilingData(const INIReader &reader);
 
     //Level element datas loading
@@ -40,9 +43,11 @@ private:
 public:
     LevelManager();
     void loadTextureData(const std::string &INIFileName);
+    void loadFontData(const std::string &INIFileName);
     void loadLevel(const std::string &INIFileName, uint32_t levelNum);
     inline const PictureData &getPictureData()const {return m_pictureData;}
     inline const Level &getLevel()const {return m_level;}
+    inline const FontData &getFontData()const {return m_fontData;}
 };
 std::vector<uint32_t> convertStrToVectUI(const std::string &str);
 std::vector<float> convertStrToVectFloat(const std::string &str);

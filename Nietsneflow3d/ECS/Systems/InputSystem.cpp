@@ -5,6 +5,7 @@
 #include <ECS/Components/PositionVertexComponent.hpp>
 #include <ECS/Components/VisionComponent.hpp>
 #include <ECS/Components/PlayerConfComponent.hpp>
+#include <ECS/Components/WriteComponent.hpp>
 #include "PhysicalEngine.hpp"
 #include <MainEngine.hpp>
 #include <cassert>
@@ -25,6 +26,7 @@ void InputSystem::setUsedComponents()
 //===================================================================
 void InputSystem::treatPlayerInput()
 {
+    bool updateWeaponData = false;
     if (glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
     {
         glfwSetWindowShouldClose(m_window, true);
@@ -101,20 +103,31 @@ void InputSystem::treatPlayerInput()
             if (glfwGetKey(m_window, GLFW_KEY_E) == GLFW_PRESS)
             {
                 changePlayerWeapon(*playerComp, false);
+                updateWeaponData = true;
             }
             else if (glfwGetKey(m_window, GLFW_KEY_R) == GLFW_PRESS)
             {
                 changePlayerWeapon(*playerComp, true);
+                updateWeaponData = true;
             }
             else if(!playerComp->m_timerShootActive)
             {
                 if(glfwGetKey(m_window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
                 {
                     playerComp->m_playerShoot = true;
-                    m_mainEngine->createShotFromPosition(mapComp->m_absoluteMapPositionPX,
-                                                         moveComp->m_degreeOrientation,
-                                                         CollisionTag_e::BULLET_PLAYER_CT);
+                    m_mainEngine->shoot(playerComp, mapComp->m_absoluteMapPositionPX,
+                                        moveComp->m_degreeOrientation,
+                                        CollisionTag_e::BULLET_PLAYER_CT);
+                    updateWeaponData = true;
                 }
+            }
+            WriteComponent *write = stairwayToComponentManager().
+                    searchComponentByType<WriteComponent>(playerComp->m_ammoWriteEntity,
+                                                          Components_e::WRITE_COMPONENT);
+            assert(write);
+            if(write->m_fontSpriteData.empty() || updateWeaponData)
+            {
+                m_mainEngine->updateAmmoCount(playerComp);
             }
         }
     }
