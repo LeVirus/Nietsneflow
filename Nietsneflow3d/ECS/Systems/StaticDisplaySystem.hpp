@@ -43,10 +43,11 @@ public:
     }
 private:
     void fillWeaponMapEnum();
-    void drawVertex(uint32_t observerEntity);
-    void drawWriteVertex(uint32_t observerEntity);
+    void drawWeaponVertex(SpriteTextureComponent *weaponSpriteComp);
+    void confWriteVertex(WriteComponent *writeComp, PositionVertexComponent *posComp, VertexID_e type);
+    void drawWriteVertex(Texture_e numTexture, VertexID_e type);
     void drawLineWriteVertex(PositionVertexComponent *posComp, WriteComponent *writeComp);
-    void writeWeaponsVertexFromComponent(uint32_t numObserverEntity);
+    void confWeaponsVertexFromComponent(PlayerConfComponent *playerComp, SpriteTextureComponent *weaponSpriteComp);
     void setDisplayWeaponChange(PositionVertexComponent *posComp, PlayerConfComponent *playerComp,
                                 MemPositionsVertexComponents *memPosComp);
     void setWeaponMovement(PlayerConfComponent *playerComp, PositionVertexComponent *posComp,
@@ -58,7 +59,7 @@ private:
     Texture_e m_numTextureWeapon;
     WeaponsSpriteType_e m_currentWeaponSprite;
     static std::map<WeaponsType_e, WeaponsSpriteType_e> m_weaponSpriteAssociated;
-    float m_speedMoveWeaponChange = 0.05f, m_fontSize = 0.2f;
+    float m_speedMoveWeaponChange = 0.05f, m_fontSize = 0.06f;
     pairFloat_t m_forkWeaponMovementX = {-0.4f, 0.1f}, m_forkWeaponMovementY = {-0.8f, -0.6f};
     float m_diffTotalDistanceMoveWeaponX = std::abs(m_forkWeaponMovementX.first -
                                                     m_forkWeaponMovementX.second);

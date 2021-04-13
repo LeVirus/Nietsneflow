@@ -70,6 +70,7 @@ void MainEngine::shoot(PlayerConfComponent *playerComp, const pairFloat_t &point
     if(playerComp->m_ammunations[currentWeapon] > 0)
     {
         --playerComp->m_ammunations[currentWeapon];
+        updateAmmoCount(playerComp);
     }
 }
 
@@ -560,15 +561,16 @@ void MainEngine::confPlayerEntity(uint32_t entityNum, const Level &level, uint32
             searchComponentByType<WriteComponent>(numAmmoWrite, Components_e::WRITE_COMPONENT);
     assert(writeConf);
     //tmp
-    writeConf->m_upLeftPositionGL = {-0.95f, -0.8f};
+    writeConf->m_upLeftPositionGL = {-0.95f, -0.9f};
+    m_graphicEngine.updateAmmoCount(writeConf, playerConf);
     writeConf = m_ecsManager.getComponentManager().
             searchComponentByType<WriteComponent>(numLifeWrite, Components_e::WRITE_COMPONENT);
     assert(writeConf);
     //tmp
-    writeConf->m_upLeftPositionGL = {-0.95f, -0.6f};
+    writeConf->m_upLeftPositionGL = {-0.95f, -0.8f};
     playerConf->m_ammoWriteEntity = numAmmoWrite;
     playerConf->m_lifeWriteEntity = numLifeWrite;
-    m_graphicEngine.updateAmmoCount(writeConf, playerConf);
+    m_graphicEngine.updatePlayerLife(writeConf, playerConf);
 }
 
 //===================================================================

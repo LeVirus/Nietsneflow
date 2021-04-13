@@ -38,8 +38,8 @@ public:
                      FirstPersonDisplaySystem *firstPersonSystem,
                      VisionSystem *visionSystem,
                      StaticDisplaySystem *staticDisplaySystem);
-    void updateAmmoCount(WriteComponent *writeComp,
-                         PlayerConfComponent *playerComp);
+    void updateAmmoCount(WriteComponent *writeComp, PlayerConfComponent *playerComp);
+    void updatePlayerLife(WriteComponent *writeComp, PlayerConfComponent *playerComp);
     inline MapDisplaySystem &getMapDisplaySystem()
     {
         return *m_mapSystem;

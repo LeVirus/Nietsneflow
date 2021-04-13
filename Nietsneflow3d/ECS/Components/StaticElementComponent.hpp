@@ -9,7 +9,7 @@ struct StaticElementComponent : public ecs::Component
     {
         muiTypeComponent = Components_e::STATIC_ELEMENT_COMPONENT;
     }
-    std::pair<float, float> m_inGameSpriteSize;
+    pairFloat_t m_inGameSpriteSize;
     LevelStaticElementType_e m_type;
     bool m_traversable;
     virtual ~StaticElementComponent() = default;

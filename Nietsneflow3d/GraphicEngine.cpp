@@ -82,10 +82,16 @@ void GraphicEngine::linkSystems(ColorDisplaySystem *colorSystem,
 void GraphicEngine::updateAmmoCount(WriteComponent *writeComp,
                                     PlayerConfComponent *playerComp)
 {
-    std::string write = "AMMO" + std::to_string(playerComp->m_ammunations[
+    std::string write = "AMMO::" + std::to_string(playerComp->m_ammunations[
                                                 static_cast<uint32_t>(playerComp->m_currentWeapon)]);
     writeComp->m_fontSpriteData = m_ptrFontData->getWriteData(write);
-    assert(!writeComp->m_fontSpriteData.empty());
+}
+
+//===================================================================
+void GraphicEngine::updatePlayerLife(WriteComponent *writeComp, PlayerConfComponent *playerComp)
+{
+    std::string write = "LIFE::" + std::to_string(playerComp->m_life);
+    writeComp->m_fontSpriteData = m_ptrFontData->getWriteData(write);
 }
 
 //===================================================================
