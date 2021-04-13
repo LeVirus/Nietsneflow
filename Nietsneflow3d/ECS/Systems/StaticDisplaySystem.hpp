@@ -46,6 +46,7 @@ private:
     void drawWeaponVertex(SpriteTextureComponent *weaponSpriteComp);
     void confWriteVertex(WriteComponent *writeComp, PositionVertexComponent *posComp, VertexID_e type);
     void drawWriteVertex(Texture_e numTexture, VertexID_e type);
+    void treatWriteVertex(uint32_t numEntity, VertexID_e type);
     void drawLineWriteVertex(PositionVertexComponent *posComp, WriteComponent *writeComp);
     void confWeaponsVertexFromComponent(PlayerConfComponent *playerComp, SpriteTextureComponent *weaponSpriteComp);
     void setDisplayWeaponChange(PositionVertexComponent *posComp, PlayerConfComponent *playerComp,

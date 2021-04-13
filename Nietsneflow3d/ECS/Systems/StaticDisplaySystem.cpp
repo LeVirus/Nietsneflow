@@ -41,26 +41,8 @@ void StaticDisplaySystem::execSystem()
         assert(weaponSpriteComp);
         confWeaponsVertexFromComponent(playerComp, weaponSpriteComp);
         drawWeaponVertex(weaponSpriteComp);
-        WriteComponent *writeComp = stairwayToComponentManager().
-                    searchComponentByType<WriteComponent>(playerComp->m_ammoWriteEntity,
-                                                          Components_e::WRITE_COMPONENT);
-        PositionVertexComponent *posComp = stairwayToComponentManager().
-                    searchComponentByType<PositionVertexComponent>(playerComp->m_ammoWriteEntity,
-                                                                   Components_e::POSITION_VERTEX_COMPONENT);
-        assert(writeComp);
-        assert(posComp);
-        confWriteVertex(writeComp, posComp, VertexID_e::AMMO_WRITE);
-        drawWriteVertex(writeComp->m_numTexture, VertexID_e::AMMO_WRITE);
-        writeComp = stairwayToComponentManager().
-                    searchComponentByType<WriteComponent>(playerComp->m_lifeWriteEntity,
-                                                          Components_e::WRITE_COMPONENT);
-        posComp = stairwayToComponentManager().
-                    searchComponentByType<PositionVertexComponent>(playerComp->m_lifeWriteEntity,
-                                                                   Components_e::POSITION_VERTEX_COMPONENT);
-        assert(writeComp);
-        assert(posComp);
-        confWriteVertex(writeComp, posComp, VertexID_e::LIFE_WRITE);
-        drawWriteVertex(writeComp->m_numTexture, VertexID_e::LIFE_WRITE);
+        treatWriteVertex(playerComp->m_ammoWriteEntity, VertexID_e::AMMO_WRITE);
+        treatWriteVertex(playerComp->m_lifeWriteEntity, VertexID_e::LIFE_WRITE);
     }
 }
 
@@ -93,6 +75,21 @@ void StaticDisplaySystem::drawWriteVertex(Texture_e numTexture, VertexID_e type)
     uint32_t index = static_cast<uint32_t>(type);
     m_vertices[index].confVertexBuffer();
     m_vertices[index].drawElement();
+}
+
+//===================================================================
+void StaticDisplaySystem::treatWriteVertex(uint32_t numEntity, VertexID_e type)
+{
+    WriteComponent *writeComp = stairwayToComponentManager().
+                searchComponentByType<WriteComponent>(numEntity,
+                                                      Components_e::WRITE_COMPONENT);
+    PositionVertexComponent *posComp = stairwayToComponentManager().
+                searchComponentByType<PositionVertexComponent>(numEntity,
+                                                               Components_e::POSITION_VERTEX_COMPONENT);
+    assert(writeComp);
+    assert(posComp);
+    confWriteVertex(writeComp, posComp, type);
+    drawWriteVertex(writeComp->m_numTexture, type);
 }
 
 //===================================================================
