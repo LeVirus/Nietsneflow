@@ -274,7 +274,8 @@ void CollisionSystem::checkCollisionFirstSegment(uint32_t numEntityA, uint32_t n
         {
             float distance = getDistance(segmentCompA.m_points.first,
                                          mapCompB.m_absoluteMapPositionPX);
-            if(distance > m_memDistCurrentBulletColl.second)
+            if(m_memDistCurrentBulletColl.second <= EPSILON_FLOAT ||
+                    distance < m_memDistCurrentBulletColl.second)
             {
                 m_memDistCurrentBulletColl = {numEntityB, getDistance(segmentCompA.m_points.first,
                                               mapCompB.m_absoluteMapPositionPX)};
