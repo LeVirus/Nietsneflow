@@ -445,7 +445,8 @@ void MainEngine::confBaseComponent(uint32_t entityNum,
         assert(circleComp);
         circleComp->m_ray = ENEMY_RAY;
         tagComp->m_tag = CollisionTag_e::ENEMY_CT;
-        spriteComp->m_glFpsSize.second = 1.4f;
+        spriteComp->m_glFpsSize.first = 0.5f;
+        spriteComp->m_glFpsSize.second = 0.8f;
     }
     mapComp->m_coord = coordLevel;
     mapComp->m_absoluteMapPositionPX = getAbsolutePosition(coordLevel);
