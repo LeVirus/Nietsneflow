@@ -411,7 +411,7 @@ void FirstPersonDisplaySystem::fillVertexFromEntity(uint32_t numEntity, uint32_t
                                                           Components_e::SPRITE_TEXTURE_COMPONENT);
     assert(posComp);
     assert(spriteComp);
-    m_entitiesNumMem.insert(EntityData(distance, static_cast<Texture_e>(spriteComp->m_spriteData->m_textureNum),
+    m_entitiesNumMem.insert(EntityData(distance - LEVEL_HALF_TILE_SIZE_PX, static_cast<Texture_e>(spriteComp->m_spriteData->m_textureNum),
                                        numIteration));
     if(displayMode == DisplayMode_e::STANDART_DM)
     {
@@ -474,10 +474,8 @@ void FirstPersonDisplaySystem::confNormalEntityVertex(uint32_t numEntity, Vision
         distance = 1.5f;
     }
     float halfLateralSize = spriteComp->m_glFpsSize.first  / (distance / LEVEL_TILE_SIZE_PX);
-    float downPos = -1.0f /
-            (distance / LEVEL_TILE_SIZE_PX),
-            upPos = spriteComp->m_glFpsSize.second /
-                        (distance / LEVEL_TILE_SIZE_PX);
+    float downPos = -1.0f / (distance / LEVEL_TILE_SIZE_PX),
+            upPos = spriteComp->m_glFpsSize.second / (distance / LEVEL_TILE_SIZE_PX);
     positionComp->m_vertex[0].first = lateralPosGL - halfLateralSize;
     positionComp->m_vertex[0].second = upPos;
     positionComp->m_vertex[1].first = lateralPosGL + halfLateralSize;
