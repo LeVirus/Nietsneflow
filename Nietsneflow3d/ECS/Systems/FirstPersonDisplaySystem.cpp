@@ -61,12 +61,12 @@ void FirstPersonDisplaySystem::confCompVertexMemEntities()
         m_numVertexToDraw[i] = visionComp->m_vectVisibleEntities.size();
         m_entitiesNumMem.clear();
         //TEST back camera
-        pairFloat_t memPreviousCameraPos = mapCompA->m_absoluteMapPositionPX;
-        {
-            float radiantAngle = getRadiantAngle(moveComp->m_degreeOrientation + 180.0f);
-            mapCompA->m_absoluteMapPositionPX.first += std::cos(radiantAngle) * 19.0f;
-            mapCompA->m_absoluteMapPositionPX.second -= std::sin(radiantAngle) * 19.0f;
-        }
+//        pairFloat_t memPreviousCameraPos = mapCompA->m_absoluteMapPositionPX;
+//        {
+//            float radiantAngle = getRadiantAngle(moveComp->m_degreeOrientation + 180.0f);
+//            mapCompA->m_absoluteMapPositionPX.first += std::cos(radiantAngle) * 19.0f;
+//            mapCompA->m_absoluteMapPositionPX.second -= std::sin(radiantAngle) * 19.0f;
+//        }
         uint32_t numIteration;
         //draw dynamic element
         for(numIteration = 0; numIteration < m_numVertexToDraw[i]; ++numIteration)
@@ -82,7 +82,7 @@ void FirstPersonDisplaySystem::confCompVertexMemEntities()
             treatDisplayEntity(genCollComp, mapCompA, mapCompB, visionComp,
                                toRemove, moveComp->m_degreeOrientation, numIteration);
         }
-        mapCompA->m_absoluteMapPositionPX = memPreviousCameraPos;
+//        mapCompA->m_absoluteMapPositionPX = memPreviousCameraPos;
         m_numVertexToDraw[i] -= toRemove;
         ++numIteration;
         rayCasting();
@@ -411,7 +411,7 @@ void FirstPersonDisplaySystem::fillVertexFromEntity(uint32_t numEntity, uint32_t
                                                           Components_e::SPRITE_TEXTURE_COMPONENT);
     assert(posComp);
     assert(spriteComp);
-    m_entitiesNumMem.insert(EntityData(distance - LEVEL_HALF_TILE_SIZE_PX, static_cast<Texture_e>(spriteComp->m_spriteData->m_textureNum),
+    m_entitiesNumMem.insert(EntityData(distance - LEVEL_TILE_SIZE_PX, static_cast<Texture_e>(spriteComp->m_spriteData->m_textureNum),
                                        numIteration));
     if(displayMode == DisplayMode_e::STANDART_DM)
     {
