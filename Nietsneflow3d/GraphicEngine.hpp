@@ -31,7 +31,7 @@ public:
     GraphicEngine();
     void confSystems();
     void loadPictureData(const PictureData &pictureData, const FontData &fontData);
-    void runIteration();
+    void runIteration(bool gamePaused);
     bool windowShouldClose();
     void linkSystems(ColorDisplaySystem *colorSystem,
                      MapDisplaySystem *mapSystem,
@@ -40,6 +40,7 @@ public:
                      StaticDisplaySystem *staticDisplaySystem);
     void updateAmmoCount(WriteComponent *writeComp, PlayerConfComponent *playerComp);
     void updatePlayerLife(WriteComponent *writeComp, PlayerConfComponent *playerComp);
+    void fillMenuWrite(WriteComponent *writeComp);
     inline MapDisplaySystem &getMapDisplaySystem()
     {
         return *m_mapSystem;

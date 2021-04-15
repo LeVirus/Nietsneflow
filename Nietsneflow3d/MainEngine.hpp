@@ -20,6 +20,14 @@ public:
     void shoot(PlayerConfComponent *playerComp, const pairFloat_t &point,
                float degreeAngle, CollisionTag_e collTag);
     void updateAmmoCount(PlayerConfComponent *playerComp);
+    inline void setUnsetPaused()
+    {
+        m_gamePaused = !m_gamePaused;
+    }
+    inline bool isGamePaused()
+    {
+        return m_gamePaused;
+    }
 private:
     void loadGroundAndCeilingEntities(const GroundCeilingData &groundData,
                                       const GroundCeilingData &ceilingData);
@@ -53,6 +61,7 @@ private:
     PhysicalEngine m_physicalEngine;
     ECSManager m_ecsManager;
     std::vector<uint32_t> m_vectEntitiesToDelete;
+    bool m_gamePaused = false;
 };
 
 void setWeaponPlayer();

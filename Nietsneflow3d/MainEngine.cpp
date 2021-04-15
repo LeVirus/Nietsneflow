@@ -41,8 +41,8 @@ void MainEngine::mainLoop()
     m_graphicEngine.getMapDisplaySystem().confLevelData();
     do
     {
-        m_physicalEngine.runIteration();
-        m_graphicEngine.runIteration();
+        m_physicalEngine.runIteration(m_gamePaused);
+        m_graphicEngine.runIteration(m_gamePaused);
         //rm tmp entities
         deleteEntities();
     }while(!m_graphicEngine.windowShouldClose());
@@ -557,21 +557,28 @@ void MainEngine::confPlayerEntity(uint32_t entityNum, const Level &level, uint32
     assert(staticDisplay);
     staticDisplay->setWeaponSprite(numWeaponEntity, WeaponsSpriteType_e::GUN_STATIC);
     uint32_t numAmmoWrite = createWriteEntity(),
-            numLifeWrite = createWriteEntity();
+            numLifeWrite = createWriteEntity(), numMenuWrite = createWriteEntity();
+    //AMMO
     WriteComponent *writeConf = m_ecsManager.getComponentManager().
             searchComponentByType<WriteComponent>(numAmmoWrite, Components_e::WRITE_COMPONENT);
     assert(writeConf);
-    //tmp
     writeConf->m_upLeftPositionGL = {-0.95f, -0.9f};
     m_graphicEngine.updateAmmoCount(writeConf, playerConf);
+    //LIFE
     writeConf = m_ecsManager.getComponentManager().
             searchComponentByType<WriteComponent>(numLifeWrite, Components_e::WRITE_COMPONENT);
     assert(writeConf);
-    //tmp
     writeConf->m_upLeftPositionGL = {-0.95f, -0.8f};
+    m_graphicEngine.updatePlayerLife(writeConf, playerConf);
+    //MENU
+    writeConf = m_ecsManager.getComponentManager().
+            searchComponentByType<WriteComponent>(numMenuWrite, Components_e::WRITE_COMPONENT);
+    assert(writeConf);
+    writeConf->m_upLeftPositionGL = {-0.5f, 0.5f};
+    m_graphicEngine.fillMenuWrite(writeConf);
+    playerConf->m_menuEntity = numMenuWrite;
     playerConf->m_ammoWriteEntity = numAmmoWrite;
     playerConf->m_lifeWriteEntity = numLifeWrite;
-    m_graphicEngine.updatePlayerLife(writeConf, playerConf);
 }
 
 //===================================================================

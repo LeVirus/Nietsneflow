@@ -34,10 +34,15 @@ void StaticDisplaySystem::execSystem()
         PlayerConfComponent *playerComp = stairwayToComponentManager().
                     searchComponentByType<PlayerConfComponent>(mVectNumEntity[i],
                                                                Components_e::PLAYER_CONF_COMPONENT);
+        assert(playerComp);
+        if(m_menuActive)
+        {
+            treatWriteVertex(playerComp->m_menuEntity, VertexID_e::MENU_WRITE);
+            continue;
+        }
         SpriteTextureComponent *weaponSpriteComp = stairwayToComponentManager().
                 searchComponentByType<SpriteTextureComponent>(playerComp->m_weaponEntity,
                                                               Components_e::SPRITE_TEXTURE_COMPONENT);
-        assert(playerComp);
         assert(weaponSpriteComp);
         confWeaponsVertexFromComponent(playerComp, weaponSpriteComp);
         drawWeaponVertex(weaponSpriteComp);
@@ -49,12 +54,14 @@ void StaticDisplaySystem::execSystem()
 
 //===================================================================
 void StaticDisplaySystem::confWriteVertex(WriteComponent *writeComp,
-                                          PositionVertexComponent *posComp, VertexID_e type)
+                                          PositionVertexComponent *posComp,
+                                          VertexID_e type)
 {
     uint32_t index = static_cast<uint32_t>(type);
+    float fontSize = (type == VertexID_e::MENU_WRITE) ? m_fontSizeMenu : m_fontSizeStd;
     assert(!writeComp->m_fontSpriteData.empty());
     m_vertices[index].clear();
-    drawLineWriteVertex(posComp, writeComp);
+    drawLineWriteVertex(posComp, writeComp, fontSize);
     m_vertices[index].loadVertexWriteTextureComponent(*posComp, *writeComp);
 }
 
@@ -252,24 +259,38 @@ void modVertexPos(PositionVertexComponent *posComp, const pairFloat_t &mod)
 
 //===================================================================
 void StaticDisplaySystem::drawLineWriteVertex(PositionVertexComponent *posComp,
-                                              WriteComponent *writeComp)
+                                              WriteComponent *writeComp, float fontSize)
 {
     assert(!writeComp->m_fontSpriteData.empty());
     posComp->m_vertex.clear();
     posComp->m_vertex.reserve(writeComp->m_fontSpriteData.size() * 4);
     float currentX = writeComp->m_upLeftPositionGL.first, diffX,
-            currentY = writeComp->m_upLeftPositionGL.second, diffY = m_fontSize;
+            currentY = writeComp->m_upLeftPositionGL.second, diffY = fontSize;
     std::array<pairFloat_t, 4> *memArray = &(writeComp->m_fontSpriteData[0].get().m_texturePosVertex);
-    float cohef = ((*memArray)[2].second - (*memArray)[0].second) / m_fontSize;
-    for(uint32_t i = 0; i < writeComp->m_fontSpriteData.size(); ++i)
+    float cohef = ((*memArray)[2].second - (*memArray)[0].second) / fontSize;
+    uint32_t cmptSpriteData = 0;
+    for(uint32_t i = 0; i < writeComp->m_str.size(); ++i)
     {
-        memArray = &(writeComp->m_fontSpriteData[i].get().m_texturePosVertex);
+        if(writeComp->m_str[i] == ' ')
+        {
+            currentX += fontSize / 4.0f;
+            continue;
+        }
+        else if(writeComp->m_str[i] == '\\')
+        {
+            currentX = writeComp->m_upLeftPositionGL.first;
+            currentY += diffY;
+            continue;
+        }
+        assert(cmptSpriteData < writeComp->m_fontSpriteData.size());
+        memArray = &(writeComp->m_fontSpriteData[cmptSpriteData].get().m_texturePosVertex);
         diffX = ((*memArray)[1].first - (*memArray)[0].first) / cohef;
         posComp->m_vertex.emplace_back(pairFloat_t{currentX, currentY});
         posComp->m_vertex.emplace_back(pairFloat_t{currentX + diffX, currentY});
         posComp->m_vertex.emplace_back(pairFloat_t{currentX + diffX, currentY - diffY});
         posComp->m_vertex.emplace_back(pairFloat_t{currentX, currentY - diffY});
         currentX += diffX;
+        ++cmptSpriteData;
     }
 }
 

@@ -26,13 +26,22 @@ void InputSystem::setUsedComponents()
 //===================================================================
 void InputSystem::treatPlayerInput()
 {
-    if (glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-    {
-        glfwSetWindowShouldClose(m_window, true);
-        return;
-    }
     for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
     {
+        if(m_mainEngine->isGamePaused())
+        {
+            treatMainMenu(mVectNumEntity[i]);
+            continue;
+        }
+        if (!m_keyEspapePressed && glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        {
+            glfwSetWindowShouldClose(m_window, true);
+            return;
+        }
+        else if(glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_RELEASE)
+        {
+            m_keyEspapePressed = false;
+        }
         MapCoordComponent *mapComp = stairwayToComponentManager().
                 searchComponentByType<MapCoordComponent>(mVectNumEntity[i],
                                                          Components_e::MAP_COORD_COMPONENT);
@@ -96,6 +105,10 @@ void InputSystem::treatPlayerInput()
         playerComp->m_playerAction = (glfwGetKey(m_window, GLFW_KEY_SPACE) ==
                                       GLFW_PRESS) ?
                     true : false;
+        if (glfwGetKey(m_window, GLFW_KEY_M) == GLFW_PRESS)
+        {
+            m_mainEngine->setUnsetPaused();
+        }
         if(!playerComp->m_weaponChange && !playerComp->m_timerShootActive)
         {
             //Change weapon
@@ -118,6 +131,16 @@ void InputSystem::treatPlayerInput()
                 }
             }
         }
+    }
+}
+
+//===================================================================
+void InputSystem::treatMainMenu(uint32_t playerEntity)
+{
+    if (glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+    {
+        m_keyEspapePressed = true;
+        m_mainEngine->setUnsetPaused();
     }
 }
 

@@ -19,7 +19,7 @@ private:
 private:
 public:
     PhysicalEngine();
-    void runIteration();
+    void runIteration(bool gamePaused);
     void linkSystems(InputSystem *inputSystem,
                      CollisionSystem * collisionSystem, DoorSystem *doorSystem);
 };

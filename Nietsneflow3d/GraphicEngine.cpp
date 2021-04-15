@@ -38,17 +38,21 @@ void GraphicEngine::loadPictureData(const PictureData &pictureData, const FontDa
 }
 
 //===================================================================
-void GraphicEngine::runIteration()
+void GraphicEngine::runIteration(bool gamePaused)
 {
     // render
     // ------
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
-    m_colorSystem->execSystem();
-    m_visionSystem->execSystem();
-    m_firstPersonSystem->execSystem();
+    if(!gamePaused)
+    {
+        m_colorSystem->execSystem();
+        m_visionSystem->execSystem();
+        m_firstPersonSystem->execSystem();
+        m_mapSystem->execSystem();
+    }
+    m_staticDisplaySystem->setUnsetMenuActive(gamePaused);
     m_staticDisplaySystem->execSystem();
-    m_mapSystem->execSystem();
     // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
     // -------------------------------------------------------------------------------
     glfwSwapBuffers(m_window);
@@ -82,16 +86,23 @@ void GraphicEngine::linkSystems(ColorDisplaySystem *colorSystem,
 void GraphicEngine::updateAmmoCount(WriteComponent *writeComp,
                                     PlayerConfComponent *playerComp)
 {
-    std::string write = "AMMO::" + std::to_string(playerComp->m_ammunations[
+    writeComp->m_str = "AMMO::" + std::to_string(playerComp->m_ammunations[
                                                 static_cast<uint32_t>(playerComp->m_currentWeapon)]);
-    writeComp->m_fontSpriteData = m_ptrFontData->getWriteData(write);
+    writeComp->m_fontSpriteData = m_ptrFontData->getWriteData(writeComp->m_str);
 }
 
 //===================================================================
 void GraphicEngine::updatePlayerLife(WriteComponent *writeComp, PlayerConfComponent *playerComp)
 {
-    std::string write = "LIFE::" + std::to_string(playerComp->m_life);
-    writeComp->m_fontSpriteData = m_ptrFontData->getWriteData(write);
+    writeComp->m_str = "LIFE::" + std::to_string(playerComp->m_life);
+    writeComp->m_fontSpriteData = m_ptrFontData->getWriteData(writeComp->m_str);
+}
+
+//===================================================================
+void GraphicEngine::fillMenuWrite(WriteComponent *writeComp)
+{
+    writeComp->m_str = "RETURN TO GAME\\NEW GAME\\EXIT GAME";
+    writeComp->m_fontSpriteData = m_ptrFontData->getWriteData(writeComp->m_str);
 }
 
 //===================================================================

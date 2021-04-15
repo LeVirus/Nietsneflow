@@ -15,11 +15,14 @@ PhysicalEngine::PhysicalEngine()
 }
 
 //===================================================================
-void PhysicalEngine::runIteration()
+void PhysicalEngine::runIteration(bool gamePaused)
 {
     m_inputSystem->execSystem();
-    m_doorSystem->execSystem();
-    m_collisionSystem->execSystem();
+    if(!gamePaused)
+    {
+        m_doorSystem->execSystem();
+        m_collisionSystem->execSystem();
+    }
 }
 
 //===================================================================

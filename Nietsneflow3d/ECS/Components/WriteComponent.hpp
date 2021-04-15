@@ -14,6 +14,7 @@ struct WriteComponent : public ecs::Component
         muiTypeComponent = Components_e::WRITE_COMPONENT;
     }
     VectSpriteDataRef_t m_fontSpriteData;
+    std::string m_str;
     pairFloat_t m_upLeftPositionGL;
     Texture_e m_numTexture = Texture_e::FONT_T;
     virtual ~WriteComponent() = default;

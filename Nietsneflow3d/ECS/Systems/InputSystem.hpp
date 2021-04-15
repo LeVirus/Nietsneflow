@@ -22,8 +22,10 @@ public:
 private:
     void setUsedComponents();
     void treatPlayerInput();
+    void treatMainMenu(uint32_t playerEntity);
 private:
     GLFWwindow *m_window = nullptr;
     MainEngine *m_mainEngine = nullptr;
+    bool m_keyEspapePressed = false;
 };
 void changePlayerWeapon(PlayerConfComponent &playerComp, bool next);
