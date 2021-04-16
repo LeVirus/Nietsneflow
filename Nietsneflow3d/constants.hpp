@@ -34,6 +34,14 @@ enum Components_e
     TOTAL_COMPONENTS
 };
 
+enum class CurrentMenuCursorPos_e
+{
+    RETURN_TO_GAME,
+    NEW_GAME,
+    QUIT_GAME,
+    TOTAL
+};
+
 enum class Systems_e
 {
     COLOR_DISPLAY_SYSTEM,

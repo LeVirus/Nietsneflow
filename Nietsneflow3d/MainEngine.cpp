@@ -610,8 +610,7 @@ void MainEngine::confMenuCursorEntity(PlayerConfComponent *playerConf)
     assert(posCursor);
     assert(spriteCursor);
     assert(m_memCursorSpriteData);
-    playerConf->m_menuCursor = cursorEntity;
-
+    playerConf->m_menuCursorEntity = cursorEntity;
     spriteCursor->m_spriteData = m_memCursorSpriteData;
     posCursor->m_vertex.reserve(4);
     float leftPos = m_menuCornerUpLeft.first - 0.25f,

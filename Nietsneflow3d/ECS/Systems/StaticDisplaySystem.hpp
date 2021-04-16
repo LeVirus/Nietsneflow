@@ -14,6 +14,7 @@ struct TimerComponent;
 struct PlayerConfComponent;
 struct MemPositionsVertexComponents;
 struct WriteComponent;
+
 enum class VertexID_e
 {
     WEAPON,
@@ -49,11 +50,11 @@ public:
     }
 private:
     void fillWeaponMapEnum();
-    void fillCursorMenuVertex(uint32_t playerEntity);
-    void drawStandartSpriteVertex(SpriteTextureComponent *spriteComp, VertexID_e type);
+    void fillCursorMenuVertex(PlayerConfComponent *playerComp);
+    void updateMenuCursorPosition(PlayerConfComponent *playerComp);
     void confWriteVertex(WriteComponent *writeComp, PositionVertexComponent *posComp,
                          VertexID_e type);
-    void drawWriteVertex(Texture_e numTexture, VertexID_e type);
+    void drawVertex(Texture_e numTexture, VertexID_e type);
     void treatWriteVertex(uint32_t numEntity, VertexID_e type);
     void drawLineWriteVertex(PositionVertexComponent *posComp, WriteComponent *writeComp, float fontSize);
     void confWeaponsVertexFromComponent(PlayerConfComponent *playerComp, SpriteTextureComponent *weaponSpriteComp);
@@ -75,6 +76,8 @@ private:
                                                     m_forkWeaponMovementX.second);
     float m_middleWeaponMovementX = m_forkWeaponMovementX.first + (m_forkWeaponMovementX.second -
                                                                    m_forkWeaponMovementX.first) / 2.0f;
+    //FORCE UPDATE AT LAUNCH
+    CurrentMenuCursorPos_e m_currentCursorPos = CurrentMenuCursorPos_e::TOTAL;
 };
 
 void modVertexPos(PositionVertexComponent *posComp, const pairFloat_t &mod);

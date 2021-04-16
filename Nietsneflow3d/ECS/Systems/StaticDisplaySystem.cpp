@@ -25,22 +25,42 @@ void StaticDisplaySystem::fillWeaponMapEnum()
 }
 
 //===================================================================
-void StaticDisplaySystem::fillCursorMenuVertex(uint32_t playerEntity)
+void StaticDisplaySystem::fillCursorMenuVertex(PlayerConfComponent *playerComp)
 {
-    PlayerConfComponent *playerComp = stairwayToComponentManager().
-                searchComponentByType<PlayerConfComponent>(playerEntity,
-                                                           Components_e::PLAYER_CONF_COMPONENT);
-    assert(playerComp);
     uint32_t index = static_cast<uint32_t>(VertexID_e::MENU_CURSOR);
     SpriteTextureComponent *spriteComp = stairwayToComponentManager().
-            searchComponentByType<SpriteTextureComponent>(playerComp->m_menuCursor,
+            searchComponentByType<SpriteTextureComponent>(playerComp->m_menuCursorEntity,
                                                           Components_e::SPRITE_TEXTURE_COMPONENT);
     PositionVertexComponent *posComp = stairwayToComponentManager().
-            searchComponentByType<PositionVertexComponent>(playerComp->m_menuCursor,
+            searchComponentByType<PositionVertexComponent>(playerComp->m_menuCursorEntity,
                                                           Components_e::POSITION_VERTEX_COMPONENT);
     assert(spriteComp);
     assert(posComp);
+    m_vertices[index].clear();
     m_vertices[index].loadVertexStandartTextureComponent(*posComp, *spriteComp);
+    m_cursorInit = true;
+}
+
+//===================================================================
+void StaticDisplaySystem::updateMenuCursorPosition(PlayerConfComponent *playerComp)
+{
+    PositionVertexComponent *posComp = stairwayToComponentManager().
+                searchComponentByType<PositionVertexComponent>(playerComp->m_menuCursorEntity,
+                                                               Components_e::POSITION_VERTEX_COMPONENT);
+    assert(posComp);
+    WriteComponent *writeMenuComp = stairwayToComponentManager().
+                searchComponentByType<WriteComponent>(playerComp->m_menuEntity,
+                                                               Components_e::WRITE_COMPONENT);
+    assert(writeMenuComp);
+    float upPos = writeMenuComp->m_upLeftPositionGL.second -
+            static_cast<float>(playerComp->m_currentCursorPos) * m_fontSizeMenu,
+            downPos = upPos - m_fontSizeMenu * 2.0f;
+    posComp->m_vertex[0].second = upPos;
+    posComp->m_vertex[1].second = upPos;
+    posComp->m_vertex[2].second = downPos;
+    posComp->m_vertex[3].second = downPos;
+    m_currentCursorPos = playerComp->m_currentCursorPos;
+    m_cursorInit = false;
 }
 
 //===================================================================
@@ -57,16 +77,20 @@ void StaticDisplaySystem::execSystem()
         if(m_menuActive)
         {
             treatWriteVertex(playerComp->m_menuEntity, VertexID_e::MENU_WRITE);
-            if(!m_cursorInit)
-            {
-                fillCursorMenuVertex(mVectNumEntity[i]);
-                m_cursorInit = true;
-            }
             SpriteTextureComponent *spriteComp = stairwayToComponentManager().
-                    searchComponentByType<SpriteTextureComponent>(playerComp->m_menuCursor,
+                    searchComponentByType<SpriteTextureComponent>(playerComp->m_menuCursorEntity,
                                                                   Components_e::SPRITE_TEXTURE_COMPONENT);
             assert(spriteComp);
-            drawStandartSpriteVertex(spriteComp, VertexID_e::MENU_CURSOR);
+            if(m_currentCursorPos != playerComp->m_currentCursorPos)
+            {
+                updateMenuCursorPosition(playerComp);
+            }
+            if(!m_cursorInit)
+            {
+                fillCursorMenuVertex(playerComp);
+            }
+            drawVertex(static_cast<Texture_e>(spriteComp->m_spriteData->m_textureNum),
+                       VertexID_e::MENU_CURSOR);
             continue;
         }
         //DRAW WEAPON
@@ -75,7 +99,7 @@ void StaticDisplaySystem::execSystem()
                                                               Components_e::SPRITE_TEXTURE_COMPONENT);
         assert(spriteComp);
         confWeaponsVertexFromComponent(playerComp, spriteComp);
-        drawStandartSpriteVertex(spriteComp, VertexID_e::WEAPON);
+        drawVertex(static_cast<Texture_e>(spriteComp->m_spriteData->m_textureNum), VertexID_e::WEAPON);
         treatWriteVertex(playerComp->m_ammoWriteEntity, VertexID_e::AMMO_WRITE);
         treatWriteVertex(playerComp->m_lifeWriteEntity, VertexID_e::LIFE_WRITE);
     }
@@ -96,18 +120,7 @@ void StaticDisplaySystem::confWriteVertex(WriteComponent *writeComp,
 }
 
 //===================================================================
-void StaticDisplaySystem::drawStandartSpriteVertex(SpriteTextureComponent *spriteComp,
-                                                   VertexID_e type)
-{
-    m_ptrVectTexture->operator[](static_cast<uint8_t>(spriteComp->m_spriteData->
-                                                      m_textureNum)).bind();
-    uint32_t index = static_cast<uint32_t>(type);
-    m_vertices[index].confVertexBuffer();
-    m_vertices[index].drawElement();
-}
-
-//===================================================================
-void StaticDisplaySystem::drawWriteVertex(Texture_e numTexture, VertexID_e type)
+void StaticDisplaySystem::drawVertex(Texture_e numTexture, VertexID_e type)
 {
     m_ptrVectTexture->operator[](static_cast<uint32_t>(numTexture)).bind();
     uint32_t index = static_cast<uint32_t>(type);
@@ -127,7 +140,7 @@ void StaticDisplaySystem::treatWriteVertex(uint32_t numEntity, VertexID_e type)
     assert(writeComp);
     assert(posComp);
     confWriteVertex(writeComp, posComp, type);
-    drawWriteVertex(writeComp->m_numTexture, type);
+    drawVertex(writeComp->m_numTexture, type);
 }
 
 //===================================================================

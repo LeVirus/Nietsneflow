@@ -137,10 +137,51 @@ void InputSystem::treatPlayerInput()
 //===================================================================
 void InputSystem::treatMainMenu(uint32_t playerEntity)
 {
-    if (glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+    if(glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
     {
         m_keyEspapePressed = true;
         m_mainEngine->setUnsetPaused();
+        return;
+    }
+    if(m_keyUpPressed && glfwGetKey(m_window, GLFW_KEY_UP) == GLFW_RELEASE)
+    {
+        m_keyUpPressed = false;
+        return;
+    }
+    if(m_keyDownPressed && glfwGetKey(m_window, GLFW_KEY_DOWN) == GLFW_RELEASE)
+    {
+        m_keyDownPressed = false;
+        return;
+    }
+    PlayerConfComponent *playerComp = stairwayToComponentManager().
+            searchComponentByType<PlayerConfComponent>(playerEntity,
+                                                       Components_e::PLAYER_CONF_COMPONENT);
+    assert(playerComp);
+    if(!m_keyUpPressed && glfwGetKey(m_window, GLFW_KEY_UP) == GLFW_PRESS)
+    {
+        m_keyUpPressed = true;
+        uint32_t index = static_cast<uint32_t>(playerComp->m_currentCursorPos);
+        if(index == 0)
+        {
+            playerComp->m_currentCursorPos = static_cast<CurrentMenuCursorPos_e>(m_maxMenuCursorIndex);
+        }
+        else
+        {
+            playerComp->m_currentCursorPos = static_cast<CurrentMenuCursorPos_e>(index - 1);
+        }
+    }
+    else if(!m_keyDownPressed && glfwGetKey(m_window, GLFW_KEY_DOWN) == GLFW_PRESS)
+    {
+        m_keyDownPressed = true;
+        uint32_t index = static_cast<uint32_t>(playerComp->m_currentCursorPos);
+        if(index == m_maxMenuCursorIndex)
+        {
+            playerComp->m_currentCursorPos = static_cast<CurrentMenuCursorPos_e>(0);
+        }
+        else
+        {
+            playerComp->m_currentCursorPos = static_cast<CurrentMenuCursorPos_e>(index + 1);
+        }
     }
 }
 
