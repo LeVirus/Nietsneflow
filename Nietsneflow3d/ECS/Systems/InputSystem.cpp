@@ -183,6 +183,22 @@ void InputSystem::treatMainMenu(uint32_t playerEntity)
             playerComp->m_currentCursorPos = static_cast<CurrentMenuCursorPos_e>(index + 1);
         }
     }
+    else if(glfwGetKey(m_window, GLFW_KEY_ENTER) == GLFW_PRESS)
+    {
+        switch(playerComp->m_currentCursorPos)
+        {
+        case CurrentMenuCursorPos_e::NEW_GAME:
+            break;
+        case CurrentMenuCursorPos_e::QUIT_GAME:
+            glfwSetWindowShouldClose(m_window, true);
+            break;
+        case CurrentMenuCursorPos_e::RETURN_TO_GAME:
+            m_mainEngine->setUnsetPaused();
+            break;
+        case CurrentMenuCursorPos_e::TOTAL:
+            break;
+        }
+    }
 }
 
 //===================================================================

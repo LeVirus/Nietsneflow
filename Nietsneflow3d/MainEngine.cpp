@@ -44,7 +44,7 @@ void MainEngine::mainLoop()
         m_physicalEngine.runIteration(m_gamePaused);
         m_graphicEngine.runIteration(m_gamePaused);
         //rm tmp entities
-        deleteEntities();
+        deleteTmpEntities();
     }while(!m_graphicEngine.windowShouldClose());
 }
 
@@ -318,7 +318,7 @@ void MainEngine::loadEnemySprites(const std::vector<SpriteData> &vectSprite,
 }
 
 //===================================================================
-void MainEngine::deleteEntities()
+void MainEngine::deleteTmpEntities()
 {
    for(uint32_t i = 0; i < m_vectEntitiesToDelete.size(); ++i)
    {
