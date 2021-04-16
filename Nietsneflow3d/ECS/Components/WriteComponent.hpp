@@ -15,6 +15,7 @@ struct WriteComponent : public ecs::Component
     }
     VectSpriteDataRef_t m_fontSpriteData;
     std::string m_str;
+    float m_fontSize;
     pairFloat_t m_upLeftPositionGL;
     Texture_e m_numTexture = Texture_e::FONT_T;
     virtual ~WriteComponent() = default;

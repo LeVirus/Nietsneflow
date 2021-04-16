@@ -56,7 +56,7 @@ private:
                          VertexID_e type);
     void drawVertex(Texture_e numTexture, VertexID_e type);
     void treatWriteVertex(uint32_t numEntity, VertexID_e type);
-    void drawLineWriteVertex(PositionVertexComponent *posComp, WriteComponent *writeComp, float fontSize);
+    void drawLineWriteVertex(PositionVertexComponent *posComp, WriteComponent *writeComp);
     void confWeaponsVertexFromComponent(PlayerConfComponent *playerComp, SpriteTextureComponent *weaponSpriteComp);
     void setDisplayWeaponChange(PositionVertexComponent *posComp, PlayerConfComponent *playerComp,
                                 MemPositionsVertexComponents *memPosComp);
@@ -70,7 +70,7 @@ private:
     Texture_e m_numTextureWeapon;
     WeaponsSpriteType_e m_currentWeaponSprite;
     static std::map<WeaponsType_e, WeaponsSpriteType_e> m_weaponSpriteAssociated;
-    float m_speedMoveWeaponChange = 0.05f, m_fontSizeStd = 0.06f, m_fontSizeMenu = 0.15f;
+    float m_speedMoveWeaponChange = 0.05f;
     pairFloat_t m_forkWeaponMovementX = {-0.4f, 0.1f}, m_forkWeaponMovementY = {-0.8f, -0.6f};
     float m_diffTotalDistanceMoveWeaponX = std::abs(m_forkWeaponMovementX.first -
                                                     m_forkWeaponMovementX.second);

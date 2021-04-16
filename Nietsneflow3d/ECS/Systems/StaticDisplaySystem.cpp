@@ -53,8 +53,8 @@ void StaticDisplaySystem::updateMenuCursorPosition(PlayerConfComponent *playerCo
                                                                Components_e::WRITE_COMPONENT);
     assert(writeMenuComp);
     float upPos = writeMenuComp->m_upLeftPositionGL.second -
-            static_cast<float>(playerComp->m_currentCursorPos) * m_fontSizeMenu,
-            downPos = upPos - m_fontSizeMenu * 2.0f;
+            static_cast<float>(playerComp->m_currentCursorPos) * writeMenuComp->m_fontSize,
+            downPos = upPos - writeMenuComp->m_fontSize * 2.0f;
     posComp->m_vertex[0].second = upPos;
     posComp->m_vertex[1].second = upPos;
     posComp->m_vertex[2].second = downPos;
@@ -112,10 +112,9 @@ void StaticDisplaySystem::confWriteVertex(WriteComponent *writeComp,
                                           VertexID_e type)
 {
     uint32_t index = static_cast<uint32_t>(type);
-    float fontSize = (type == VertexID_e::MENU_WRITE) ? m_fontSizeMenu : m_fontSizeStd;
     assert(!writeComp->m_fontSpriteData.empty());
     m_vertices[index].clear();
-    drawLineWriteVertex(posComp, writeComp, fontSize);
+    drawLineWriteVertex(posComp, writeComp);
     m_vertices[index].loadVertexWriteTextureComponent(*posComp, *writeComp);
 }
 
@@ -303,21 +302,21 @@ void modVertexPos(PositionVertexComponent *posComp, const pairFloat_t &mod)
 
 //===================================================================
 void StaticDisplaySystem::drawLineWriteVertex(PositionVertexComponent *posComp,
-                                              WriteComponent *writeComp, float fontSize)
+                                              WriteComponent *writeComp)
 {
     assert(!writeComp->m_fontSpriteData.empty());
     posComp->m_vertex.clear();
     posComp->m_vertex.reserve(writeComp->m_fontSpriteData.size() * 4);
     float currentX = writeComp->m_upLeftPositionGL.first, diffX,
-            currentY = writeComp->m_upLeftPositionGL.second, diffY = fontSize;
+            currentY = writeComp->m_upLeftPositionGL.second, diffY = writeComp->m_fontSize;
     std::array<pairFloat_t, 4> *memArray = &(writeComp->m_fontSpriteData[0].get().m_texturePosVertex);
-    float cohef = ((*memArray)[2].second - (*memArray)[0].second) / fontSize;
+    float cohef = ((*memArray)[2].second - (*memArray)[0].second) / writeComp->m_fontSize;
     uint32_t cmptSpriteData = 0;
     for(uint32_t i = 0; i < writeComp->m_str.size(); ++i)
     {
         if(writeComp->m_str[i] == ' ')
         {
-            currentX += fontSize / 4.0f;
+            currentX += writeComp->m_fontSize / 4.0f;
             continue;
         }
         else if(writeComp->m_str[i] == '\\')

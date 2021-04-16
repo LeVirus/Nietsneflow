@@ -174,6 +174,8 @@ enum class LevelCaseType_e
     EMPTY_LC
 };
 
+inline const float STD_FONT_SIZE = 0.06f;
+inline const float MENU_FONT_SIZE = 0.15f;
 inline const float PI = 3.14159265359f;
 inline const float PI_DOUBLE = PI * 2.0f;
 inline const float PI_QUARTER = PI / 4.0f;

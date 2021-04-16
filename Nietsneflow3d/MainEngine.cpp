@@ -579,18 +579,21 @@ void MainEngine::confWriteEntities(PlayerConfComponent *playerConf)
             searchComponentByType<WriteComponent>(numAmmoWrite, Components_e::WRITE_COMPONENT);
     assert(writeConf);
     writeConf->m_upLeftPositionGL = {-0.95f, -0.9f};
+    writeConf->m_fontSize = STD_FONT_SIZE;
     m_graphicEngine.updateAmmoCount(writeConf, playerConf);
     //LIFE
     writeConf = m_ecsManager.getComponentManager().
             searchComponentByType<WriteComponent>(numLifeWrite, Components_e::WRITE_COMPONENT);
     assert(writeConf);
     writeConf->m_upLeftPositionGL = {-0.95f, -0.8f};
+    writeConf->m_fontSize = STD_FONT_SIZE;
     m_graphicEngine.updatePlayerLife(writeConf, playerConf);
     //MENU
     writeConf = m_ecsManager.getComponentManager().
             searchComponentByType<WriteComponent>(numMenuWrite, Components_e::WRITE_COMPONENT);
     assert(writeConf);
     writeConf->m_upLeftPositionGL = m_menuCornerUpLeft;
+    writeConf->m_fontSize = MENU_FONT_SIZE;
     m_graphicEngine.fillMenuWrite(writeConf);
     playerConf->m_menuEntity = numMenuWrite;
     playerConf->m_ammoWriteEntity = numAmmoWrite;
