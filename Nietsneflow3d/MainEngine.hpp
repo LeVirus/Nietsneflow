@@ -48,6 +48,7 @@ private:
     uint32_t createEnemyEntity();
     uint32_t createShotEntity();
     uint32_t createWriteEntity();
+    uint32_t createSimpleSpriteEntity();
     void confBaseComponent(uint32_t entityNum, const SpriteData &memSpriteData,
                            const pairUI_t &coordLevel, CollisionShape_e collisionShape);
     uint32_t createStaticEntity();
@@ -62,6 +63,7 @@ private:
     ECSManager m_ecsManager;
     std::vector<uint32_t> m_vectEntitiesToDelete;
     bool m_gamePaused = false;
+    SpriteData const *m_memCursorSpriteData = nullptr;
 };
 
 void setWeaponPlayer();

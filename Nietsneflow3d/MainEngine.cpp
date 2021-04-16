@@ -130,12 +130,12 @@ void MainEngine::loadLevelEntities(const LevelManager &levelManager)
 {
     loadGroundAndCeilingEntities(levelManager.getPictureData().getGroundData(),
                                  levelManager.getPictureData().getCeilingData());
-    loadPlayerEntity(levelManager.getLevel(), loadWeaponsEntity(levelManager));
     Level::initLevelElementArray();
     loadWallEntities(levelManager);
     loadDoorEntities(levelManager);
     loadStaticElementEntities(levelManager);
     loadEnemiesEntities(levelManager);
+    loadPlayerEntity(levelManager.getLevel(), loadWeaponsEntity(levelManager));
 }
 
 //===================================================================
@@ -402,6 +402,15 @@ uint32_t MainEngine::createWriteEntity()
 }
 
 //===================================================================
+uint32_t MainEngine::createSimpleSpriteEntity()
+{
+    std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComponents;
+    bitsetComponents[Components_e::POSITION_VERTEX_COMPONENT] = true;
+    bitsetComponents[Components_e::SPRITE_TEXTURE_COMPONENT] = true;
+    return m_ecsManager.addEntity(bitsetComponents);
+}
+
+//===================================================================
 uint32_t MainEngine::createStaticEntity()
 {
     std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComponents;
@@ -455,9 +464,9 @@ void MainEngine::confBaseComponent(uint32_t entityNum,
 
 //===================================================================
 void MainEngine::confStaticComponent(uint32_t entityNum,
-                                        const pairFloat_t& elementSize,
-                                        bool traversable,
-                                        LevelStaticElementType_e type)
+                                     const pairFloat_t& elementSize,
+                                     bool traversable,
+                                     LevelStaticElementType_e type)
 {
     StaticElementComponent *staticComp = m_ecsManager.getComponentManager().
             searchComponentByType<StaticElementComponent>(entityNum, Components_e::STATIC_ELEMENT_COMPONENT);
@@ -579,6 +588,24 @@ void MainEngine::confPlayerEntity(uint32_t entityNum, const Level &level, uint32
     playerConf->m_menuEntity = numMenuWrite;
     playerConf->m_ammoWriteEntity = numAmmoWrite;
     playerConf->m_lifeWriteEntity = numLifeWrite;
+
+    uint32_t cursorEntity = createSimpleSpriteEntity();
+    PositionVertexComponent *posCursor = m_ecsManager.getComponentManager().
+            searchComponentByType<PositionVertexComponent>(cursorEntity,
+                                                           Components_e::POSITION_VERTEX_COMPONENT);
+    SpriteTextureComponent *spriteCursor = m_ecsManager.getComponentManager().
+            searchComponentByType<SpriteTextureComponent>(cursorEntity,
+                                                          Components_e::SPRITE_TEXTURE_COMPONENT);
+    assert(posCursor);
+    assert(spriteCursor);
+    assert(m_memCursorSpriteData);
+    playerConf->m_menuCursor = cursorEntity;
+    spriteCursor->m_spriteData = m_memCursorSpriteData;
+    posCursor->m_vertex.reserve(4);
+    posCursor->m_vertex.emplace_back(pairFloat_t{-0.6f, 0.6f});
+    posCursor->m_vertex.emplace_back(pairFloat_t{-0.49f, 0.6f});
+    posCursor->m_vertex.emplace_back(pairFloat_t{-0.49f, 0.5f});
+    posCursor->m_vertex.emplace_back(pairFloat_t{-0.6f, 0.5f});
 }
 
 //===================================================================
@@ -586,6 +613,9 @@ void MainEngine::loadStaticElementEntities(const LevelManager &levelManager)
 {
     std::vector<StaticLevelElementData> const *staticData =
             &levelManager.getLevel().getGroundElementData();//0
+    uint8_t cursorSpriteId = *levelManager.getPictureData().
+            getIdentifier(levelManager.getCursorSpriteName());
+    m_memCursorSpriteData = &levelManager.getPictureData().getSpriteData()[cursorSpriteId];
     for(uint32_t h = 0; h < 3; ++h)
     {
         for(uint32_t i = 0; i < staticData->size(); ++i)
@@ -596,8 +626,8 @@ void MainEngine::loadStaticElementEntities(const LevelManager &levelManager)
             {
                 uint32_t entityNum = createStaticEntity();
                 confBaseComponent(entityNum,
-                                     memSpriteData,
-                                     staticData->operator[](i).m_TileGamePosition[j],
+                                  memSpriteData,
+                                  staticData->operator[](i).m_TileGamePosition[j],
                         CollisionShape_e::RECTANGLE_C);
                 confStaticComponent(entityNum,
                                        staticData->operator[](i).m_inGameSpriteSize,

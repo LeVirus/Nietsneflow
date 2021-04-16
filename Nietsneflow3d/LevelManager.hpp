@@ -11,10 +11,15 @@ using setStr = std::set<std::string>;
 
 class LevelManager
 {
-private:
-    PictureData m_pictureData;
-    FontData m_fontData;
-    Level m_level;
+public:
+    LevelManager();
+    void loadTextureData(const std::string &INIFileName);
+    void loadFontData(const std::string &INIFileName);
+    void loadLevel(const std::string &INIFileName, uint32_t levelNum);
+    inline const PictureData &getPictureData()const {return m_pictureData;}
+    inline const Level &getLevel()const {return m_level;}
+    inline const FontData &getFontData()const {return m_fontData;}
+    inline std::string getCursorSpriteName()const {return m_spriteCursorName;}
 private:
     //texture and sprite loading
     void loadTexturePath(const INIReader &reader);
@@ -37,17 +42,15 @@ private:
     void loadWallData(const INIReader &reader);
     void loadDoorData(const INIReader &reader);
     void loadEnemyData(const INIReader &reader);
+    void loadUtilsData(const INIReader &reader);
 
     void loadEnemySprites(const INIReader &reader, const std::string &sectionName,
                           EnemySpriteType_e spriteType, EnemyData &enemyData);
-public:
-    LevelManager();
-    void loadTextureData(const std::string &INIFileName);
-    void loadFontData(const std::string &INIFileName);
-    void loadLevel(const std::string &INIFileName, uint32_t levelNum);
-    inline const PictureData &getPictureData()const {return m_pictureData;}
-    inline const Level &getLevel()const {return m_level;}
-    inline const FontData &getFontData()const {return m_fontData;}
+private:
+    PictureData m_pictureData;
+    FontData m_fontData;
+    Level m_level;
+    std::string m_spriteCursorName;
 };
 std::vector<uint32_t> convertStrToVectUI(const std::string &str);
 std::vector<float> convertStrToVectFloat(const std::string &str);

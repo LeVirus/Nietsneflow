@@ -20,6 +20,7 @@ enum class VertexID_e
     LIFE_WRITE,
     AMMO_WRITE,
     MENU_WRITE,
+    MENU_CURSOR,
     TOTAL
 };
 
@@ -48,7 +49,8 @@ public:
     }
 private:
     void fillWeaponMapEnum();
-    void drawWeaponVertex(SpriteTextureComponent *weaponSpriteComp);
+    void fillCursorMenuVertex(uint32_t playerEntity);
+    void drawStandartSpriteVertex(SpriteTextureComponent *spriteComp, VertexID_e type);
     void confWriteVertex(WriteComponent *writeComp, PositionVertexComponent *posComp,
                          VertexID_e type);
     void drawWriteVertex(Texture_e numTexture, VertexID_e type);
@@ -60,7 +62,7 @@ private:
     void setWeaponMovement(PlayerConfComponent *playerComp, PositionVertexComponent *posComp,
                            MemPositionsVertexComponents *memPosComp);
 private:
-    bool m_menuActive = false;
+    bool m_menuActive = false, m_cursorInit = false;
     Shader *m_shader;
     std::array<VerticesData, static_cast<uint32_t>(VertexID_e::TOTAL)> m_vertices;
     std::vector<Texture> *m_ptrVectTexture = nullptr;

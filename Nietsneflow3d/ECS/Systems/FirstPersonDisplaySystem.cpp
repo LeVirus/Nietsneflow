@@ -110,15 +110,9 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
 {
     float radiantObserverAngle = getRadiantAngle(degreeObserverAngle);
     uint32_t numEntity = visionComp->m_vectVisibleEntities[numIteration];
-    SpriteTextureComponent *spriteComp = stairwayToComponentManager().
-            searchComponentByType<SpriteTextureComponent>(numEntity,
-                Components_e::SPRITE_TEXTURE_COMPONENT);
-    assert(spriteComp);
     pairFloat_t centerPosB = getCenterPosition(mapCompB, genCollComp, numEntity);
-    assert(spriteComp);
     float distance = getCameraDistance(mapCompA->m_absoluteMapPositionPX,
-                                       mapCompB->m_absoluteMapPositionPX, radiantObserverAngle) /*/
-            LEVEL_TILE_SIZE_PX*/;
+                                       mapCompB->m_absoluteMapPositionPX, radiantObserverAngle);
     float simpleDistance = getDistance(mapCompA->m_absoluteMapPositionPX,
                                        mapCompB->m_absoluteMapPositionPX);
     if(distance > visionComp->m_distanceVisibility || distance < 1.0f)

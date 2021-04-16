@@ -286,6 +286,15 @@ void LevelManager::loadEnemyData(const INIReader &reader)
 }
 
 //===================================================================
+void LevelManager::loadUtilsData(const INIReader &reader)
+{
+    std::vector<std::string> vectINISections;
+    vectINISections = reader.getSectionNamesContaining("Utils");
+    assert(!vectINISections.empty());
+    m_spriteCursorName = reader.Get(vectINISections[0], "CursorSprite", "");
+}
+
+//===================================================================
 void LevelManager::loadEnemySprites(const INIReader &reader, const std::string &sectionName,
                                     EnemySpriteType_e spriteTypeEnum, EnemyData &enemyData)
 {
@@ -384,5 +393,6 @@ void LevelManager::loadLevel(const std::string &INIFileName, uint32_t levelNum)
     loadWallData(reader);
     loadDoorData(reader);
     loadEnemyData(reader);
+    loadUtilsData(reader);
 }
 
