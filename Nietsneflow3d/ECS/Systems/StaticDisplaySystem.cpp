@@ -310,7 +310,7 @@ void StaticDisplaySystem::drawLineWriteVertex(PositionVertexComponent *posComp,
         else if(writeComp->m_str[i] == '\\')
         {
             currentX = writeComp->m_upLeftPositionGL.first;
-            currentY += diffY;
+            currentY -= diffY;
             continue;
         }
         assert(cmptSpriteData < writeComp->m_fontSpriteData.size());
