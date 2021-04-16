@@ -130,12 +130,12 @@ void MainEngine::loadLevelEntities(const LevelManager &levelManager)
 {
     loadGroundAndCeilingEntities(levelManager.getPictureData().getGroundData(),
                                  levelManager.getPictureData().getCeilingData());
+    loadStaticElementEntities(levelManager);
+    loadPlayerEntity(levelManager.getLevel(), loadWeaponsEntity(levelManager));
     Level::initLevelElementArray();
     loadWallEntities(levelManager);
     loadDoorEntities(levelManager);
-    loadStaticElementEntities(levelManager);
     loadEnemiesEntities(levelManager);
-    loadPlayerEntity(levelManager.getLevel(), loadWeaponsEntity(levelManager));
 }
 
 //===================================================================
@@ -611,6 +611,7 @@ void MainEngine::confMenuCursorEntity(PlayerConfComponent *playerConf)
     assert(spriteCursor);
     assert(m_memCursorSpriteData);
     playerConf->m_menuCursor = cursorEntity;
+
     spriteCursor->m_spriteData = m_memCursorSpriteData;
     posCursor->m_vertex.reserve(4);
     float leftPos = m_menuCornerUpLeft.first - 0.25f,
