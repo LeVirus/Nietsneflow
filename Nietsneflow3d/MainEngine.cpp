@@ -613,10 +613,14 @@ void MainEngine::confMenuCursorEntity(PlayerConfComponent *playerConf)
     playerConf->m_menuCursor = cursorEntity;
     spriteCursor->m_spriteData = m_memCursorSpriteData;
     posCursor->m_vertex.reserve(4);
-    posCursor->m_vertex.emplace_back(pairFloat_t{-0.6f, 0.6f});
-    posCursor->m_vertex.emplace_back(pairFloat_t{-0.49f, 0.6f});
-    posCursor->m_vertex.emplace_back(pairFloat_t{-0.49f, 0.5f});
-    posCursor->m_vertex.emplace_back(pairFloat_t{-0.6f, 0.5f});
+    float leftPos = m_menuCornerUpLeft.first - 0.25f,
+            rightPos = m_menuCornerUpLeft.first - 0.05f,
+            upPos = m_menuCornerUpLeft.second,
+            downPos = m_menuCornerUpLeft.second - 0.25f;
+    posCursor->m_vertex.emplace_back(pairFloat_t{leftPos, upPos});
+    posCursor->m_vertex.emplace_back(pairFloat_t{rightPos, upPos});
+    posCursor->m_vertex.emplace_back(pairFloat_t{rightPos, downPos});
+    posCursor->m_vertex.emplace_back(pairFloat_t{leftPos, downPos});
 }
 
 //===================================================================
