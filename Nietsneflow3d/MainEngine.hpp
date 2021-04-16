@@ -32,6 +32,8 @@ private:
     void loadGroundAndCeilingEntities(const GroundCeilingData &groundData,
                                       const GroundCeilingData &ceilingData);
     void confCeilingComponents(uint32_t entityNum);
+    void confMenuCursorEntity(PlayerConfComponent *playerConf);
+    void confWriteEntities(PlayerConfComponent *playerConf);
     void confGroundComponents(uint32_t entityNum);
     void linkSystemsToGraphicEngine();
     void linkSystemsToPhysicalEngine();
@@ -64,6 +66,7 @@ private:
     std::vector<uint32_t> m_vectEntitiesToDelete;
     bool m_gamePaused = false;
     SpriteData const *m_memCursorSpriteData = nullptr;
+    pairFloat_t m_menuCornerUpLeft = {-0.5f, 0.5f};
 };
 
 void setWeaponPlayer();

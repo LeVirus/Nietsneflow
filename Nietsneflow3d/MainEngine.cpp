@@ -565,6 +565,13 @@ void MainEngine::confPlayerEntity(uint32_t entityNum, const Level &level, uint32
             searchSystemByType<StaticDisplaySystem>(static_cast<uint32_t>(Systems_e::STATIC_DISPLAY_SYSTEM));
     assert(staticDisplay);
     staticDisplay->setWeaponSprite(numWeaponEntity, WeaponsSpriteType_e::GUN_STATIC);
+    confWriteEntities(playerConf);
+    confMenuCursorEntity(playerConf);
+}
+
+//===================================================================
+void MainEngine::confWriteEntities(PlayerConfComponent *playerConf)
+{
     uint32_t numAmmoWrite = createWriteEntity(),
             numLifeWrite = createWriteEntity(), numMenuWrite = createWriteEntity();
     //AMMO
@@ -583,12 +590,16 @@ void MainEngine::confPlayerEntity(uint32_t entityNum, const Level &level, uint32
     writeConf = m_ecsManager.getComponentManager().
             searchComponentByType<WriteComponent>(numMenuWrite, Components_e::WRITE_COMPONENT);
     assert(writeConf);
-    writeConf->m_upLeftPositionGL = {-0.5f, 0.5f};
+    writeConf->m_upLeftPositionGL = m_menuCornerUpLeft;
     m_graphicEngine.fillMenuWrite(writeConf);
     playerConf->m_menuEntity = numMenuWrite;
     playerConf->m_ammoWriteEntity = numAmmoWrite;
     playerConf->m_lifeWriteEntity = numLifeWrite;
+}
 
+//===================================================================
+void MainEngine::confMenuCursorEntity(PlayerConfComponent *playerConf)
+{
     uint32_t cursorEntity = createSimpleSpriteEntity();
     PositionVertexComponent *posCursor = m_ecsManager.getComponentManager().
             searchComponentByType<PositionVertexComponent>(cursorEntity,
