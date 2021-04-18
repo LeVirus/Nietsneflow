@@ -38,11 +38,7 @@ public:
     void setWeaponSprite(uint32_t weaponEntity, WeaponsSpriteType_e weaponSprite);
     inline void setVectTextures(std::vector<Texture> &vectTexture)
     {
-         m_ptrVectTexture = &vectTexture;
-    }
-    inline void setTextureWeaponNum(Texture_e numTexture)
-    {
-        m_numTextureWeapon = numTexture;
+        m_ptrVectTexture = &vectTexture;
     }
     inline void setUnsetMenuActive(bool active)
     {
@@ -54,7 +50,7 @@ private:
     void updateMenuCursorPosition(PlayerConfComponent *playerComp);
     void confWriteVertex(WriteComponent *writeComp, PositionVertexComponent *posComp,
                          VertexID_e type);
-    void drawVertex(Texture_e numTexture, VertexID_e type);
+    void drawVertex(uint32_t numTexture, VertexID_e type);
     void treatWriteVertex(uint32_t numEntity, VertexID_e type);
     void drawLineWriteVertex(PositionVertexComponent *posComp, WriteComponent *writeComp);
     void confWeaponsVertexFromComponent(PlayerConfComponent *playerComp, SpriteTextureComponent *weaponSpriteComp);
@@ -67,7 +63,6 @@ private:
     Shader *m_shader;
     std::array<VerticesData, static_cast<uint32_t>(VertexID_e::TOTAL)> m_vertices;
     std::vector<Texture> *m_ptrVectTexture = nullptr;
-    Texture_e m_numTextureWeapon;
     WeaponsSpriteType_e m_currentWeaponSprite;
     static std::map<WeaponsType_e, WeaponsSpriteType_e> m_weaponSpriteAssociated;
     float m_speedMoveWeaponChange = 0.05f;

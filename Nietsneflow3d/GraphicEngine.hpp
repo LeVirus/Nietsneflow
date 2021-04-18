@@ -57,7 +57,7 @@ private:
     void initGLWindow();
     void initGlad();
     void initGLShader();
-    void initGLTexture();
+    void initGLTexture(const vectStr_t &texturePath);
     void setShaderToLocalSystems();
     void loadGroundAndCeiling(const GroundCeilingData &groundData,
                               const GroundCeilingData &ceilingData);

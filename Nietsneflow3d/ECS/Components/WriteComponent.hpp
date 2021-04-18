@@ -17,6 +17,6 @@ struct WriteComponent : public ecs::Component
     std::string m_str;
     float m_fontSize;
     pairFloat_t m_upLeftPositionGL;
-    Texture_e m_numTexture = Texture_e::FONT_T;
+    uint32_t m_numTexture;
     virtual ~WriteComponent() = default;
 };

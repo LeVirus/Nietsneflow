@@ -29,7 +29,7 @@ void LevelManager::loadSpriteData(const INIReader &reader, const std::string &se
     std::vector<std::string> sections = reader.getSectionNamesContaining(sectionName);
     for(uint32_t i = 0; i < sections.size(); ++i)
     {
-        long textureNum = reader.GetInteger(sections[i], "texture",
+        uint32_t textureNum = reader.GetInteger(sections[i], "texture",
                                                std::numeric_limits<uint8_t>::max());
         assert(textureNum != std::numeric_limits<uint8_t>::max() && "Bad textureNumber");
         double texturePosX = reader.GetReal(sections[i], "texturePosX", 10.0);

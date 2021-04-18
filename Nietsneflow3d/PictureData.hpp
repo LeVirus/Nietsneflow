@@ -28,7 +28,7 @@ struct GroundCeilingData
  */
 struct SpriteData
 {
-    long m_textureNum;
+    uint32_t m_textureNum;
     /*
      * 0 top left
      * 1 top right

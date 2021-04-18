@@ -26,9 +26,9 @@ struct RayCastingIntersect
 struct EntityData
 {
     float m_distance;
-    Texture_e m_textureNum;
+    uint32_t m_textureNum;
     uint32_t m_iterationNum;
-    EntityData(float distance, Texture_e textureNum, uint32_t iterationNum) : m_distance(distance),
+    EntityData(float distance, uint32_t textureNum, uint32_t iterationNum) : m_distance(distance),
         m_textureNum(textureNum), m_iterationNum(iterationNum)
     {}
 

@@ -18,7 +18,6 @@ GraphicEngine::GraphicEngine()
     initGLWindow();
     initGlad();
     initGLShader();
-    initGLTexture();
 }
 
 //===================================================================
@@ -28,13 +27,13 @@ void GraphicEngine::confSystems()
     m_mapSystem->setVectTextures(m_vectTexture);
     m_firstPersonSystem->setVectTextures(m_vectTexture);
     m_staticDisplaySystem->setVectTextures(m_vectTexture);
-    m_staticDisplaySystem->setTextureWeaponNum(Texture_e::GLOBAL_T);
 }
 
 //===================================================================
 void GraphicEngine::loadPictureData(const PictureData &pictureData, const FontData &fontData)
 {
     loadSprites(pictureData.getSpriteData(), fontData);
+    initGLTexture(pictureData.getTexturePath());
 }
 
 //===================================================================
@@ -88,21 +87,21 @@ void GraphicEngine::updateAmmoCount(WriteComponent *writeComp,
 {
     writeComp->m_str = "AMMO::" + std::to_string(playerComp->m_ammunations[
                                                 static_cast<uint32_t>(playerComp->m_currentWeapon)]);
-    writeComp->m_fontSpriteData = m_ptrFontData->getWriteData(writeComp->m_str);
+    writeComp->m_fontSpriteData = m_ptrFontData->getWriteData(writeComp->m_str, writeComp->m_numTexture);
 }
 
 //===================================================================
 void GraphicEngine::updatePlayerLife(WriteComponent *writeComp, PlayerConfComponent *playerComp)
 {
     writeComp->m_str = "LIFE::" + std::to_string(playerComp->m_life);
-    writeComp->m_fontSpriteData = m_ptrFontData->getWriteData(writeComp->m_str);
+    writeComp->m_fontSpriteData = m_ptrFontData->getWriteData(writeComp->m_str, writeComp->m_numTexture);
 }
 
 //===================================================================
 void GraphicEngine::fillMenuWrite(WriteComponent *writeComp)
 {
     writeComp->m_str = "RETURN TO GAME\\NEW GAME\\EXIT GAME";
-    writeComp->m_fontSpriteData = m_ptrFontData->getWriteData(writeComp->m_str);
+    writeComp->m_fontSpriteData = m_ptrFontData->getWriteData(writeComp->m_str, writeComp->m_numTexture);
 }
 
 //===================================================================
@@ -160,15 +159,12 @@ void GraphicEngine::initGLShader()
 }
 
 //===================================================================
-void GraphicEngine::initGLTexture()
+void GraphicEngine::initGLTexture(const vectStr_t &texturePath)
 {
-    m_vectTexture.reserve(static_cast<uint32_t>(Texture_e::TOTAL_TEXTURE_T));
-    for(uint32_t i = 0; i < static_cast<uint32_t>(Texture_e::TOTAL_TEXTURE_T); ++i)
+    m_vectTexture.reserve(texturePath.size());
+    for(uint32_t i = 0; i < texturePath.size(); ++i)
     {
-        std::map<Texture_e, std::string>::const_iterator it =
-                TEXTURE_ID_PATH_MAP.find(static_cast<Texture_e>(i));
-        std::string path = TEXTURES_DIR_STR + it->second;
-                m_vectTexture.emplace_back(Texture(path));
+        m_vectTexture.emplace_back(Texture(TEXTURES_DIR_STR + texturePath[i]));
     }
 }
 

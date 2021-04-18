@@ -97,8 +97,7 @@ void FirstPersonDisplaySystem::writeVertexRaycasting(const pairRaycastingData_t 
                                                           Components_e::SPRITE_TEXTURE_COMPONENT);
     assert(spriteComp);
     float distance = vertex.loadRaycastingEntity(*spriteComp, entityData.second, m_textureLineDrawNumber);
-    m_entitiesNumMem.insert(EntityData(distance,
-                                       static_cast<Texture_e>(spriteComp->m_spriteData->m_textureNum),
+    m_entitiesNumMem.insert(EntityData(distance, spriteComp->m_spriteData->m_textureNum,
                                        numIteration));
 }
 
@@ -397,7 +396,7 @@ void FirstPersonDisplaySystem::fillVertexFromEntity(uint32_t numEntity, uint32_t
                                                           Components_e::SPRITE_TEXTURE_COMPONENT);
     assert(posComp);
     assert(spriteComp);
-    m_entitiesNumMem.insert(EntityData(distance - LEVEL_TILE_SIZE_PX, static_cast<Texture_e>(spriteComp->m_spriteData->m_textureNum),
+    m_entitiesNumMem.insert(EntityData(distance - LEVEL_TILE_SIZE_PX, spriteComp->m_spriteData->m_textureNum,
                                        numIteration));
     if(displayMode == DisplayMode_e::STANDART_DM)
     {

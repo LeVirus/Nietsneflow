@@ -25,6 +25,10 @@ public:
     {
         return m_gamePaused;
     }
+    inline GraphicEngine &getGraphicEngine()
+    {
+        return m_graphicEngine;
+    }
 private:
     void loadGroundAndCeilingEntities(const GroundCeilingData &groundData,
                                       const GroundCeilingData &ceilingData);

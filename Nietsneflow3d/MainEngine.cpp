@@ -33,7 +33,6 @@ void MainEngine::init()
     m_ecsManager.init();
     linkSystemsToGraphicEngine();
     linkSystemsToPhysicalEngine();
-    m_graphicEngine.confSystems();
 }
 
 //===================================================================
@@ -106,6 +105,7 @@ void MainEngine::memTimerPausedValue()
     std::bitset<Components_e::TOTAL_COMPONENTS> bitset;
     bitset[Components_e::TIMER_COMPONENT] = true;
     std::vector<uint32_t> vectEntities = m_ecsManager.getEntityContainingComponents(bitset);
+    assert(m_vectMemPausedTimer.empty());
     m_vectMemPausedTimer.reserve(vectEntities.size());
     for(uint32_t i = 0; i < vectEntities.size(); ++i)
     {

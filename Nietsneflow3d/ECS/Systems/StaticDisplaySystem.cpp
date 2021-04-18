@@ -89,8 +89,7 @@ void StaticDisplaySystem::execSystem()
             {
                 fillCursorMenuVertex(playerComp);
             }
-            drawVertex(static_cast<Texture_e>(spriteComp->m_spriteData->m_textureNum),
-                       VertexID_e::MENU_CURSOR);
+            drawVertex(spriteComp->m_spriteData->m_textureNum, VertexID_e::MENU_CURSOR);
             continue;
         }
         //DRAW WEAPON
@@ -99,7 +98,7 @@ void StaticDisplaySystem::execSystem()
                                                               Components_e::SPRITE_TEXTURE_COMPONENT);
         assert(spriteComp);
         confWeaponsVertexFromComponent(playerComp, spriteComp);
-        drawVertex(static_cast<Texture_e>(spriteComp->m_spriteData->m_textureNum), VertexID_e::WEAPON);
+        drawVertex(spriteComp->m_spriteData->m_textureNum, VertexID_e::WEAPON);
         treatWriteVertex(playerComp->m_ammoWriteEntity, VertexID_e::AMMO_WRITE);
         treatWriteVertex(playerComp->m_lifeWriteEntity, VertexID_e::LIFE_WRITE);
     }
@@ -119,9 +118,10 @@ void StaticDisplaySystem::confWriteVertex(WriteComponent *writeComp,
 }
 
 //===================================================================
-void StaticDisplaySystem::drawVertex(Texture_e numTexture, VertexID_e type)
+void StaticDisplaySystem::drawVertex(uint32_t numTexture, VertexID_e type)
 {
-    m_ptrVectTexture->operator[](static_cast<uint32_t>(numTexture)).bind();
+    assert(static_cast<size_t>(numTexture) < m_ptrVectTexture->size());
+    m_ptrVectTexture->operator[](numTexture).bind();
     uint32_t index = static_cast<uint32_t>(type);
     m_vertices[index].confVertexBuffer();
     m_vertices[index].drawElement();
