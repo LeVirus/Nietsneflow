@@ -16,6 +16,7 @@
 #include <ECS/Components/MemPositionsVertexComponents.hpp>
 #include <ECS/Components/SegmentCollisionComponent.hpp>
 #include <ECS/Components/WriteComponent.hpp>
+#include <ECS/Components/TimerComponent.hpp>
 #include <ECS/Systems/ColorDisplaySystem.hpp>
 #include <ECS/Systems/MapDisplaySystem.hpp>
 #include <ECS/Systems/CollisionSystem.hpp>
@@ -83,6 +84,58 @@ void MainEngine::updateAmmoCount(PlayerConfComponent *playerComp)
     assert(writeConp);
     m_graphicEngine.updateAmmoCount(writeConp, playerComp);
 }
+
+//===================================================================
+void MainEngine::setUnsetPaused()
+{
+    m_gamePaused = !m_gamePaused;
+    if(m_gamePaused)
+    {
+        memTimerPausedValue();
+    }
+    else
+    {
+        applyTimerPausedValue();
+    }
+}
+
+//===================================================================
+void MainEngine::memTimerPausedValue()
+{
+    TimerComponent *timerComp;
+    std::bitset<Components_e::TOTAL_COMPONENTS> bitset;
+    bitset[Components_e::TIMER_COMPONENT] = true;
+    std::vector<uint32_t> vectEntities = m_ecsManager.getEntityContainingComponents(bitset);
+    m_vectMemPausedTimer.reserve(vectEntities.size());
+    for(uint32_t i = 0; i < vectEntities.size(); ++i)
+    {
+        timerComp = m_ecsManager.getComponentManager().
+                searchComponentByType<TimerComponent>(vectEntities[i],
+                                                      Components_e::TIMER_COMPONENT);
+        assert(timerComp);
+        time_t time = (std::chrono::system_clock::to_time_t(
+                           std::chrono::system_clock::now()) -
+                       std::chrono::system_clock::to_time_t(timerComp->m_clock));
+        m_vectMemPausedTimer.emplace_back(vectEntities[i], time);
+    }
+}
+
+//===================================================================
+void MainEngine::applyTimerPausedValue()
+{
+    TimerComponent *timerComp;
+    for(uint32_t i = 0; i < m_vectMemPausedTimer.size(); ++i)
+    {
+        timerComp = m_ecsManager.getComponentManager().
+                searchComponentByType<TimerComponent>(m_vectMemPausedTimer[i].first,
+                                                      Components_e::TIMER_COMPONENT);
+        assert(timerComp);
+        timerComp->m_clock = std::chrono::system_clock::from_time_t( std::chrono::system_clock::to_time_t(
+                    std::chrono::system_clock::now()) - m_vectMemPausedTimer[i].second);
+    }
+    m_vectMemPausedTimer.clear();
+}
+
 
 //===================================================================
 void MainEngine::loadGraphicPicture(const PictureData &picData, const FontData &fontData)
