@@ -8,7 +8,7 @@ void Game::loadLevelData(uint32_t levelNum)
     m_levelManager.loadFontData("fontData.ini");
     m_mainEngine.loadGraphicPicture(m_levelManager.getPictureData(), m_levelManager.getFontData());
     m_mainEngine.loadLevelEntities(m_levelManager);
-    m_mainEngine.getGraphicEngine().confSystems();
+    m_mainEngine.confSystems();
 }
 
 //===================================================================

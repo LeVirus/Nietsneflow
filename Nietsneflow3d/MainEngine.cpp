@@ -99,6 +99,12 @@ void MainEngine::setUnsetPaused()
 }
 
 //===================================================================
+void MainEngine::confSystems()
+{
+    m_graphicEngine.confSystems();
+}
+
+//===================================================================
 void MainEngine::memTimerPausedValue()
 {
     TimerComponent *timerComp;
