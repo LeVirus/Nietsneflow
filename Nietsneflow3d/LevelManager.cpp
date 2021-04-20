@@ -273,13 +273,13 @@ void LevelManager::loadEnemyData(const INIReader &reader)
                 reader.GetReal(vectINISections[i], "SpriteWeightGame", 1.0);
         vectEnemy.back().m_inGameSpriteSize.second =
                 reader.GetReal(vectINISections[i], "SpriteHeightGame", 1.0);
-        loadEnemySprites(reader, vectINISections[i], EnemySpriteType_e::STATIC_FRONT_A,
+        loadEnemySprites(reader, vectINISections[i], SpriteElementType_e::STATIC,
                          vectEnemy.back());
-        loadEnemySprites(reader, vectINISections[i], EnemySpriteType_e::MOVE_A,
+        loadEnemySprites(reader, vectINISections[i], SpriteElementType_e::MOVE,
                          vectEnemy.back());
-        loadEnemySprites(reader, vectINISections[i], EnemySpriteType_e::ATTACK_A,
+        loadEnemySprites(reader, vectINISections[i], SpriteElementType_e::ATTACK,
                          vectEnemy.back());
-        loadEnemySprites(reader, vectINISections[i], EnemySpriteType_e::DYING,
+        loadEnemySprites(reader, vectINISections[i], SpriteElementType_e::DYING,
                          vectEnemy.back());
     }
     m_level.setEnemyElement(vectEnemy);
@@ -296,45 +296,28 @@ void LevelManager::loadUtilsData(const INIReader &reader)
 
 //===================================================================
 void LevelManager::loadEnemySprites(const INIReader &reader, const std::string &sectionName,
-                                    EnemySpriteType_e spriteTypeEnum, EnemyData &enemyData)
+                                    SpriteElementType_e spriteTypeEnum, EnemyData &enemyData)
 {
     std::vector<uint8_t> *vectPtr = nullptr;
     std::string spriteType;
     switch(spriteTypeEnum)
     {
     //DIRTY TO MODIFY
-    case EnemySpriteType_e::STATIC_FRONT_A:
-    case EnemySpriteType_e::STATIC_FRONT_B:
-    case EnemySpriteType_e::STATIC_MID_FRONT_LEFT_A:
-    case EnemySpriteType_e::STATIC_MID_FRONT_LEFT_B:
-    case EnemySpriteType_e::STATIC_MID_FRONT_RIGHT_A:
-    case EnemySpriteType_e::STATIC_MID_FRONT_RIGHT_B:
-    case EnemySpriteType_e::STATIC_LEFT_A:
-    case EnemySpriteType_e::STATIC_LEFT_B:
-    case EnemySpriteType_e::STATIC_RIGHT_A:
-    case EnemySpriteType_e::STATIC_RIGHT_B:
-    case EnemySpriteType_e::STATIC_MID_BACK_LEFT_A:
-    case EnemySpriteType_e::STATIC_MID_BACK_LEFT_B:
-    case EnemySpriteType_e::STATIC_MID_BACK_RIGHT_A:
-    case EnemySpriteType_e::STATIC_MID_BACK_RIGHT_B:
-    case EnemySpriteType_e::STATIC_BACK_A:
-    case EnemySpriteType_e::STATIC_BACK_B:
+    case SpriteElementType_e::STATIC:
         spriteType = "StaticSprite";
         vectPtr = &enemyData.m_staticSprites;
         break;
-    case EnemySpriteType_e::ATTACK_A:
+    case SpriteElementType_e::ATTACK:
         spriteType = "AttackSprite";
         vectPtr = &enemyData.m_attackSprites;
         break;
-    case EnemySpriteType_e::MOVE_A:
+    case SpriteElementType_e::MOVE:
         spriteType = "MoveSprite";
         vectPtr = &enemyData.m_moveSprites;
         break;
-    case EnemySpriteType_e::DYING:
+    case SpriteElementType_e::DYING:
         spriteType = "DyingSprite";
         vectPtr = &enemyData.m_dyingSprites;
-        break;
-    case EnemySpriteType_e::TOTAL_SPRITE:
         break;
     }
     assert(vectPtr);

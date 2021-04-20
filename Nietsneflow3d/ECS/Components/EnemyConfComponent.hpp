@@ -31,9 +31,10 @@ struct EnemyConfComponent : public ecs::Component
             return true;
         }
     }
-    bool m_enemyShoot = false;
+    bool m_enemyShoot = false, m_staticPhase;
     uint32_t m_weaponEntity, m_life = 1;
     EnemyMode_e m_mode = EnemyMode_e::NORMAL;
+    EnemySpriteType_e m_visibleOrientation;
     virtual ~EnemyConfComponent() = default;
 };
 

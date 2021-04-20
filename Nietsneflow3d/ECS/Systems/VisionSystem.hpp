@@ -15,9 +15,11 @@ public:
     void memECSManager(const ECSManager *memECSMan);
     void execSystem()override;
 private:
+    EnemySpriteType_e getOrientationFromAngle(uint32_t observerEntity, uint32_t targetEntity, float targetDegreeAngle);
     void setUsedComponents();
-    void treatVisible(VisionComponent *visionComp, uint32_t checkVisibleId, CollisionShape_e shapeElement);
-    void updateSprites(MoveableComponent *moveComp, const std::vector<uint32_t> &vectEntities);
+    void treatVisible(VisionComponent *visionComp, uint32_t checkVisibleId,
+                      CollisionShape_e shapeElement);
+    void updateSprites(uint32_t observerEntity, const std::vector<uint32_t> &vectEntities);
 private:
     const ECSManager* m_memECSManager;
 };

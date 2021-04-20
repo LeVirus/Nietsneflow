@@ -76,18 +76,19 @@ void VisionSystem::execSystem()
             //FAIRE DES TESTS POUR LES COLLISIONS
             treatVisible(visionCompA, vectEntities[j], collCompB->m_shape);
         }
-        updateSprites(moveCompA, visionCompA->m_vectVisibleEntities);
+        updateSprites(mVectNumEntity[i], visionCompA->m_vectVisibleEntities);
     }
 }
 
 //===========================================================================
-void VisionSystem::updateSprites(MoveableComponent *moveComp,
+void VisionSystem::updateSprites(uint32_t observerEntity,
                                  const std::vector<uint32_t> &vectEntities)
 {
     MemSpriteDataComponent *memSpriteComp;
     SpriteTextureComponent *spriteComp;
     TimerComponent *timerComp;
     EnemyConfComponent *enemyConfComp;
+    MoveableComponent *enemyMoveComp;
     for(uint32_t i = 0; i < vectEntities.size(); ++i)
     {
         memSpriteComp = stairwayToComponentManager().
@@ -120,21 +121,30 @@ void VisionSystem::updateSprites(MoveableComponent *moveComp,
                 }
                 else
                 {
+                    enemyMoveComp = stairwayToComponentManager().
+                            searchComponentByType<MoveableComponent>(vectEntities[i],
+                                                                     Components_e::MOVEABLE_COMPONENT);
+                    assert(enemyMoveComp);
+                    enemyConfComp->m_visibleOrientation =
+                            getOrientationFromAngle(observerEntity, vectEntities[i],
+                                                    enemyMoveComp->m_degreeOrientation);
+                    spriteComp->m_spriteData = memSpriteComp->m_vectSpriteData[
+                            static_cast<uint32_t>(enemyConfComp->m_visibleOrientation)];
                     std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() - timerComp->m_clock;
                     if(elapsed_seconds.count() > 0.5)
                     {
+                        enemyConfComp->m_staticPhase = !enemyConfComp->m_staticPhase;
                         timerComp->m_clock = std::chrono::system_clock::now();
                         //TESTTT
-                        if(spriteComp->m_spriteData == memSpriteComp->m_vectSpriteData[
-                                static_cast<uint32_t>(EnemySpriteType_e::STATIC_FRONT_A)])
+                        if(enemyConfComp->m_staticPhase)
                         {
                             spriteComp->m_spriteData = memSpriteComp->m_vectSpriteData[
-                                    static_cast<uint32_t>(EnemySpriteType_e::STATIC_FRONT_B)];
+                                    static_cast<uint32_t>(enemyConfComp->m_visibleOrientation)];
                         }
                         else
                         {
                             spriteComp->m_spriteData = memSpriteComp->m_vectSpriteData[
-                                    static_cast<uint32_t>(EnemySpriteType_e::STATIC_FRONT_A)];
+                                    static_cast<uint32_t>(enemyConfComp->m_visibleOrientation) + 1];
                         }
                     }
                 }
@@ -151,6 +161,57 @@ void VisionSystem::updateSprites(MoveableComponent *moveComp,
                 }
             }
         }
+    }
+}
+
+//===========================================================================
+EnemySpriteType_e VisionSystem::getOrientationFromAngle(uint32_t observerEntity,
+                                                        uint32_t targetEntity,
+                                                        float targetDegreeAngle)
+{
+    MapCoordComponent *observMapComp = stairwayToComponentManager().
+            searchComponentByType<MapCoordComponent>(observerEntity,
+                                                     Components_e::MAP_COORD_COMPONENT);
+    MapCoordComponent *targetMapComp = stairwayToComponentManager().
+            searchComponentByType<MapCoordComponent>(targetEntity,
+                                                     Components_e::MAP_COORD_COMPONENT);
+    assert(observMapComp);
+    assert(targetMapComp);
+    float observerDegreeAngle = getTrigoAngle(observMapComp->m_absoluteMapPositionPX,
+                                              targetMapComp->m_absoluteMapPositionPX);
+    float radDiff = getRadiantAngle(observerDegreeAngle - targetDegreeAngle),
+            valSin = std::sin(radDiff), valCos = std::cos(radDiff);
+    if(valCos > 0.333f && valSin > 0.333f)
+    {
+        return EnemySpriteType_e::STATIC_MID_FRONT_RIGHT_A;
+    }
+    else if(valCos < -0.333f && valSin > 0.333f)
+    {
+        return EnemySpriteType_e::STATIC_MID_FRONT_LEFT_A;
+    }
+    else if(valCos > 0.333f && valSin < -0.333f)
+    {
+        return EnemySpriteType_e::STATIC_MID_BACK_RIGHT_A;
+    }
+    else if(valCos < -0.333f && valSin < -0.333f)
+    {
+        return EnemySpriteType_e::STATIC_MID_BACK_LEFT_A;
+    }
+    else if(valSin < -0.5f)
+    {
+        return EnemySpriteType_e::STATIC_BACK_A;
+    }
+    else if(valSin > 0.5f)
+    {
+        return EnemySpriteType_e::STATIC_FRONT_A;
+    }
+    else if(valCos < -0.5f)
+    {
+        return EnemySpriteType_e::STATIC_LEFT_A;
+    }
+    else
+    {
+        return EnemySpriteType_e::STATIC_RIGHT_A;
     }
 }
 

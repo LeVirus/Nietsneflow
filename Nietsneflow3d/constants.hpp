@@ -77,6 +77,14 @@ enum class MoveOrientation_e
     RIGHT
 };
 
+enum class SpriteElementType_e
+{
+    STATIC,
+    MOVE,
+    ATTACK,
+    DYING
+};
+
 enum class EnemySpriteType_e
 {
     STATIC_FRONT_A,
