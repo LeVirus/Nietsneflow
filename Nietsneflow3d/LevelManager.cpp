@@ -273,7 +273,7 @@ void LevelManager::loadEnemyData(const INIReader &reader)
                 reader.GetReal(vectINISections[i], "SpriteWeightGame", 1.0);
         vectEnemy.back().m_inGameSpriteSize.second =
                 reader.GetReal(vectINISections[i], "SpriteHeightGame", 1.0);
-        loadEnemySprites(reader, vectINISections[i], EnemySpriteType_e::STATIC,
+        loadEnemySprites(reader, vectINISections[i], EnemySpriteType_e::STATIC_FRONT_A,
                          vectEnemy.back());
         loadEnemySprites(reader, vectINISections[i], EnemySpriteType_e::MOVE,
                          vectEnemy.back());
@@ -302,7 +302,23 @@ void LevelManager::loadEnemySprites(const INIReader &reader, const std::string &
     std::string spriteType;
     switch(spriteTypeEnum)
     {
-    case EnemySpriteType_e::STATIC:
+    //DIRTY TO MODIFY
+    case EnemySpriteType_e::STATIC_FRONT_A:
+    case EnemySpriteType_e::STATIC_FRONT_B:
+    case EnemySpriteType_e::STATIC_MID_FRONT_LEFT_A:
+    case EnemySpriteType_e::STATIC_MID_FRONT_LEFT_B:
+    case EnemySpriteType_e::STATIC_MID_FRONT_RIGHT_A:
+    case EnemySpriteType_e::STATIC_MID_FRONT_RIGHT_B:
+    case EnemySpriteType_e::STATIC_LEFT_A:
+    case EnemySpriteType_e::STATIC_LEFT_B:
+    case EnemySpriteType_e::STATIC_RIGHT_A:
+    case EnemySpriteType_e::STATIC_RIGHT_B:
+    case EnemySpriteType_e::STATIC_MID_BACK_LEFT_A:
+    case EnemySpriteType_e::STATIC_MID_BACK_LEFT_B:
+    case EnemySpriteType_e::STATIC_MID_BACK_RIGHT_A:
+    case EnemySpriteType_e::STATIC_MID_BACK_RIGHT_B:
+    case EnemySpriteType_e::STATIC_BACK_A:
+    case EnemySpriteType_e::STATIC_BACK_B:
         spriteType = "StaticSprite";
         vectPtr = &enemyData.m_staticSprites;
         break;

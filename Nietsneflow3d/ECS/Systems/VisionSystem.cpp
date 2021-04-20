@@ -38,7 +38,7 @@ void VisionSystem::execSystem()
     GeneralCollisionComponent *collComp, *collCompB;
     VisionComponent *visionCompA;
     MapCoordComponent *mapCompA;
-    MoveableComponent *movCompA;
+    MoveableComponent *moveCompA;
     for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
     {
         collComp = stairwayToComponentManager().
@@ -54,9 +54,9 @@ void VisionSystem::execSystem()
                 searchComponentByType<VisionComponent>(mVectNumEntity[i], Components_e::VISION_COMPONENT);
         mapCompA = stairwayToComponentManager().
                 searchComponentByType<MapCoordComponent>(mVectNumEntity[i], Components_e::MAP_COORD_COMPONENT);
-        movCompA = stairwayToComponentManager().
+        moveCompA = stairwayToComponentManager().
                 searchComponentByType<MoveableComponent>(mVectNumEntity[i], Components_e::MOVEABLE_COMPONENT);
-        updateTriangleVisionFromPosition(visionCompA, mapCompA, movCompA);
+        updateTriangleVisionFromPosition(visionCompA, mapCompA, moveCompA);
         visionCompA->m_vectVisibleEntities.clear();
         for(uint32_t j = 0; j < vectEntities.size(); ++j)
         {
@@ -76,12 +76,13 @@ void VisionSystem::execSystem()
             //FAIRE DES TESTS POUR LES COLLISIONS
             treatVisible(visionCompA, vectEntities[j], collCompB->m_shape);
         }
-        updateSprites(visionCompA->m_vectVisibleEntities);
+        updateSprites(moveCompA, visionCompA->m_vectVisibleEntities);
     }
 }
 
 //===========================================================================
-void VisionSystem::updateSprites(const std::vector<uint32_t> &vectEntities)
+void VisionSystem::updateSprites(MoveableComponent *moveComp,
+                                 const std::vector<uint32_t> &vectEntities)
 {
     MemSpriteDataComponent *memSpriteComp;
     SpriteTextureComponent *spriteComp;
@@ -124,13 +125,16 @@ void VisionSystem::updateSprites(const std::vector<uint32_t> &vectEntities)
                     {
                         timerComp->m_clock = std::chrono::system_clock::now();
                         //TESTTT
-                        if(spriteComp->m_spriteData == memSpriteComp->m_vectSpriteData[0])
+                        if(spriteComp->m_spriteData == memSpriteComp->m_vectSpriteData[
+                                static_cast<uint32_t>(EnemySpriteType_e::STATIC_FRONT_A)])
                         {
-                            spriteComp->m_spriteData = memSpriteComp->m_vectSpriteData[1];
+                            spriteComp->m_spriteData = memSpriteComp->m_vectSpriteData[
+                                    static_cast<uint32_t>(EnemySpriteType_e::STATIC_FRONT_B)];
                         }
                         else
                         {
-                            spriteComp->m_spriteData = memSpriteComp->m_vectSpriteData[0];
+                            spriteComp->m_spriteData = memSpriteComp->m_vectSpriteData[
+                                    static_cast<uint32_t>(EnemySpriteType_e::STATIC_FRONT_A)];
                         }
                     }
                 }
@@ -143,7 +147,7 @@ void VisionSystem::updateSprites(const std::vector<uint32_t> &vectEntities)
                 {
                     enemyConfComp->m_mode = EnemyMode_e::DEAD;
                     spriteComp->m_spriteData = memSpriteComp->
-                            m_vectSpriteData[static_cast<uint32_t>(EnemyMode_e::DEAD)];
+                            m_vectSpriteData[static_cast<uint32_t>(EnemySpriteType_e::DYING)];
                 }
             }
         }
