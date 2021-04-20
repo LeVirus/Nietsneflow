@@ -275,9 +275,9 @@ void LevelManager::loadEnemyData(const INIReader &reader)
                 reader.GetReal(vectINISections[i], "SpriteHeightGame", 1.0);
         loadEnemySprites(reader, vectINISections[i], EnemySpriteType_e::STATIC_FRONT_A,
                          vectEnemy.back());
-        loadEnemySprites(reader, vectINISections[i], EnemySpriteType_e::MOVE,
+        loadEnemySprites(reader, vectINISections[i], EnemySpriteType_e::MOVE_A,
                          vectEnemy.back());
-        loadEnemySprites(reader, vectINISections[i], EnemySpriteType_e::ATTACK,
+        loadEnemySprites(reader, vectINISections[i], EnemySpriteType_e::ATTACK_A,
                          vectEnemy.back());
         loadEnemySprites(reader, vectINISections[i], EnemySpriteType_e::DYING,
                          vectEnemy.back());
@@ -322,11 +322,11 @@ void LevelManager::loadEnemySprites(const INIReader &reader, const std::string &
         spriteType = "StaticSprite";
         vectPtr = &enemyData.m_staticSprites;
         break;
-    case EnemySpriteType_e::ATTACK:
+    case EnemySpriteType_e::ATTACK_A:
         spriteType = "AttackSprite";
         vectPtr = &enemyData.m_attackSprites;
         break;
-    case EnemySpriteType_e::MOVE:
+    case EnemySpriteType_e::MOVE_A:
         spriteType = "MoveSprite";
         vectPtr = &enemyData.m_moveSprites;
         break;

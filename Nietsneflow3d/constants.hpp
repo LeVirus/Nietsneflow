@@ -95,9 +95,12 @@ enum class EnemySpriteType_e
     STATIC_MID_BACK_RIGHT_B,
     STATIC_BACK_A,
     STATIC_BACK_B,
-    ATTACK,
-    MOVE,
+    MOVE_A,
+    MOVE_B,
+    ATTACK_A,
+    ATTACK_B,
     DYING,
+    DEAD,
     TOTAL_SPRITE
 };
 

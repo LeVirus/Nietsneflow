@@ -115,7 +115,7 @@ void VisionSystem::updateSprites(MoveableComponent *moveComp,
                 {
                     enemyConfComp->m_mode = EnemyMode_e::DYING;
                     spriteComp->m_spriteData = memSpriteComp->
-                            m_vectSpriteData[static_cast<uint32_t>(EnemyMode_e::DYING)];
+                            m_vectSpriteData[static_cast<uint32_t>(EnemySpriteType_e::DYING)];
                     timerComp->m_clock = std::chrono::system_clock::now();
                 }
                 else
@@ -147,7 +147,7 @@ void VisionSystem::updateSprites(MoveableComponent *moveComp,
                 {
                     enemyConfComp->m_mode = EnemyMode_e::DEAD;
                     spriteComp->m_spriteData = memSpriteComp->
-                            m_vectSpriteData[static_cast<uint32_t>(EnemySpriteType_e::DYING)];
+                            m_vectSpriteData[static_cast<uint32_t>(EnemySpriteType_e::DEAD)];
                 }
             }
         }
