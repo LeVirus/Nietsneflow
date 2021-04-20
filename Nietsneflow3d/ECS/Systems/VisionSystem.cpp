@@ -128,6 +128,12 @@ void VisionSystem::updateSprites(uint32_t observerEntity,
                     enemyConfComp->m_visibleOrientation =
                             getOrientationFromAngle(observerEntity, vectEntities[i],
                                                     enemyMoveComp->m_degreeOrientation);
+                    if(!enemyConfComp->m_staticPhase)
+                    {
+                        enemyConfComp->m_visibleOrientation =
+                                static_cast<EnemySpriteType_e>(static_cast<uint32_t>(
+                                                                   enemyConfComp->m_visibleOrientation) + 1);
+                    }
                     spriteComp->m_spriteData = memSpriteComp->m_vectSpriteData[
                             static_cast<uint32_t>(enemyConfComp->m_visibleOrientation)];
                     std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() - timerComp->m_clock;

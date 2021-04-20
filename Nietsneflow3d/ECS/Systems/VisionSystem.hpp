@@ -15,7 +15,8 @@ public:
     void memECSManager(const ECSManager *memECSMan);
     void execSystem()override;
 private:
-    EnemySpriteType_e getOrientationFromAngle(uint32_t observerEntity, uint32_t targetEntity, float targetDegreeAngle);
+    EnemySpriteType_e getOrientationFromAngle(uint32_t observerEntity, uint32_t targetEntity,
+                                              float targetDegreeAngle);
     void setUsedComponents();
     void treatVisible(VisionComponent *visionComp, uint32_t checkVisibleId,
                       CollisionShape_e shapeElement);
