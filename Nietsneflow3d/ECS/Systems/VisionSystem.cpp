@@ -189,35 +189,35 @@ EnemySpriteType_e VisionSystem::getOrientationFromAngle(uint32_t observerEntity,
             valSin = std::sin(radDiff), valCos = std::cos(radDiff);
     if(valCos > 0.333f && valSin > 0.333f)
     {
-        return EnemySpriteType_e::STATIC_MID_FRONT_RIGHT_A;
+        return EnemySpriteType_e::STATIC_MID_BACK_RIGHT_A;
     }
     else if(valCos < -0.333f && valSin > 0.333f)
     {
-        return EnemySpriteType_e::STATIC_MID_FRONT_LEFT_A;
+        return EnemySpriteType_e::STATIC_MID_FRONT_RIGHT_A;
     }
     else if(valCos > 0.333f && valSin < -0.333f)
     {
-        return EnemySpriteType_e::STATIC_MID_BACK_RIGHT_A;
+        return EnemySpriteType_e::STATIC_MID_BACK_LEFT_A;
     }
     else if(valCos < -0.333f && valSin < -0.333f)
     {
-        return EnemySpriteType_e::STATIC_MID_BACK_LEFT_A;
+        return EnemySpriteType_e::STATIC_MID_FRONT_LEFT_A;
     }
     else if(valSin < -0.5f)
     {
-        return EnemySpriteType_e::STATIC_BACK_A;
+        return EnemySpriteType_e::STATIC_LEFT_A;
     }
     else if(valSin > 0.5f)
     {
-        return EnemySpriteType_e::STATIC_FRONT_A;
+        return EnemySpriteType_e::STATIC_RIGHT_A;
     }
     else if(valCos < -0.5f)
     {
-        return EnemySpriteType_e::STATIC_LEFT_A;
+        return EnemySpriteType_e::STATIC_FRONT_A;
     }
     else
     {
-        return EnemySpriteType_e::STATIC_RIGHT_A;
+        return EnemySpriteType_e::STATIC_BACK_A;
     }
 }
 
