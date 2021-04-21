@@ -9,6 +9,7 @@ struct PositionVertexComponent;
 struct MapCoordComponent;
 struct VisionComponent;
 class DoorSystem;
+class IASystem;
 
 class PhysicalEngine
 {
@@ -16,12 +17,14 @@ private:
     InputSystem *m_inputSystem = nullptr;
     CollisionSystem *m_collisionSystem = nullptr;
     DoorSystem *m_doorSystem = nullptr;
+    IASystem *m_iaSystem = nullptr;
 private:
 public:
     PhysicalEngine();
     void runIteration(bool gamePaused);
-    void linkSystems(InputSystem *inputSystem,
-                     CollisionSystem * collisionSystem, DoorSystem *doorSystem);
+    void linkSystems(InputSystem *inputSystem, CollisionSystem * collisionSystem,
+                     DoorSystem *doorSystem, IASystem *iaSystem);
+    void memPlayerEntity(uint32_t playerEntity);
 };
 
 void moveElement(MoveableComponent &moveComp,

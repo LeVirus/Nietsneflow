@@ -24,6 +24,7 @@
 #include <ECS/Systems/VisionSystem.hpp>
 #include <ECS/Systems/DoorSystem.hpp>
 #include <ECS/Systems/StaticDisplaySystem.hpp>
+#include <ECS/Systems/IASystem.hpp>
 #include <LevelManager.hpp>
 #include <cassert>
 
@@ -38,12 +39,11 @@ void MainEngine::init()
 //===================================================================
 void MainEngine::mainLoop()
 {
-    m_graphicEngine.getMapDisplaySystem().confLevelData();
+    m_graphicEngine.getMapSystem().confLevelData();
     do
     {
         m_physicalEngine.runIteration(m_gamePaused);
         m_graphicEngine.runIteration(m_gamePaused);
-        //rm tmp entities
         deleteTmpEntities();
     }while(!m_graphicEngine.windowShouldClose());
 }
@@ -551,7 +551,8 @@ void MainEngine::loadPlayerEntity(const Level &level, uint32_t numWeaponEntity)
     uint32_t entityNum = m_ecsManager.addEntity(bitsetComponents);
     confPlayerEntity(entityNum, level, numWeaponEntity);
     //notify player entity number
-    m_graphicEngine.getMapDisplaySystem().confPlayerComp(entityNum);
+    m_graphicEngine.getMapSystem().confPlayerComp(entityNum);
+    m_physicalEngine.memPlayerEntity(entityNum);
 }
 
 //===================================================================
@@ -793,7 +794,9 @@ void MainEngine::linkSystemsToPhysicalEngine()
             searchSystemByType<CollisionSystem>(static_cast<uint32_t>(Systems_e::COLLISION_SYSTEM));
     DoorSystem *door = m_ecsManager.getSystemManager().
             searchSystemByType<DoorSystem>(static_cast<uint32_t>(Systems_e::DOOR_SYSTEM));
+    IASystem *iaSystem = m_ecsManager.getSystemManager().
+            searchSystemByType<IASystem>(static_cast<uint32_t>(Systems_e::IA_SYSTEM));
     input->setGLWindow(m_graphicEngine.getGLWindow());
     input->linkMainEngine(this);
-    m_physicalEngine.linkSystems(input, coll, door);
+    m_physicalEngine.linkSystems(input, coll, door, iaSystem);
 }

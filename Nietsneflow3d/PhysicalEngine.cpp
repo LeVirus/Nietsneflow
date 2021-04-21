@@ -6,7 +6,8 @@
 #include <ECS/Components/MoveableComponent.hpp>
 #include <ECS/Components/VisionComponent.hpp>
 #include <ECS/Systems/DoorSystem.hpp>
-
+#include <ECS/Systems/IASystem.hpp>
+#include <cassert>
 
 //===================================================================
 PhysicalEngine::PhysicalEngine()
@@ -22,16 +23,25 @@ void PhysicalEngine::runIteration(bool gamePaused)
     {
         m_doorSystem->execSystem();
         m_collisionSystem->execSystem();
+        m_iaSystem->execSystem();
     }
 }
 
 //===================================================================
 void PhysicalEngine::linkSystems(InputSystem *inputSystem, CollisionSystem *collisionSystem,
-                                 DoorSystem *doorSystem)
+                                 DoorSystem *doorSystem, IASystem *iaSystem)
 {
     m_inputSystem = inputSystem;
     m_collisionSystem = collisionSystem;
     m_doorSystem = doorSystem;
+    m_iaSystem = iaSystem;
+}
+
+//===================================================================
+void PhysicalEngine::memPlayerEntity(uint32_t playerEntity)
+{
+    assert(m_iaSystem);
+    m_iaSystem->loadPlayerDatas(playerEntity);
 }
 
 //===================================================================

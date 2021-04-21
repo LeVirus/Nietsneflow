@@ -110,11 +110,11 @@ void VisionSystem::updateSprites(uint32_t observerEntity,
         assert(timerComp);
         if(enemyConfComp)
         {
-            if(enemyConfComp->m_mode == EnemyMode_e::NORMAL)
+            if(enemyConfComp->m_displayMode == EnemyDisplayMode_e::NORMAL)
             {
                 if(!enemyConfComp->m_life)
                 {
-                    enemyConfComp->m_mode = EnemyMode_e::DYING;
+                    enemyConfComp->m_displayMode = EnemyDisplayMode_e::DYING;
                     spriteComp->m_spriteData = memSpriteComp->
                             m_vectSpriteData[static_cast<uint32_t>(EnemySpriteType_e::DYING)];
                     timerComp->m_clock = std::chrono::system_clock::now();
@@ -155,13 +155,13 @@ void VisionSystem::updateSprites(uint32_t observerEntity,
                     }
                 }
             }
-            else if(enemyConfComp->m_mode == EnemyMode_e::DYING)
+            else if(enemyConfComp->m_displayMode == EnemyDisplayMode_e::DYING)
             {
                 std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() -
                         timerComp->m_clock;
                 if(elapsed_seconds.count() > 0.5)
                 {
-                    enemyConfComp->m_mode = EnemyMode_e::DEAD;
+                    enemyConfComp->m_displayMode = EnemyDisplayMode_e::DEAD;
                     spriteComp->m_spriteData = memSpriteComp->
                             m_vectSpriteData[static_cast<uint32_t>(EnemySpriteType_e::DEAD)];
                 }

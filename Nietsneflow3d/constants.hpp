@@ -51,7 +51,8 @@ enum class Systems_e
     FIRST_PERSON_DISPLAY_SYSTEM,
     VISION_SYSTEM,
     DOOR_SYSTEM,
-    STATIC_DISPLAY_SYSTEM
+    STATIC_DISPLAY_SYSTEM,
+    IA_SYSTEM
 };
 
 enum class DisplayType_e

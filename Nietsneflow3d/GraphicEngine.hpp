@@ -41,7 +41,7 @@ public:
     void updateAmmoCount(WriteComponent *writeComp, PlayerConfComponent *playerComp);
     void updatePlayerLife(WriteComponent *writeComp, PlayerConfComponent *playerComp);
     void fillMenuWrite(WriteComponent *writeComp);
-    inline MapDisplaySystem &getMapDisplaySystem()
+    inline MapDisplaySystem &getMapSystem()
     {
         return *m_mapSystem;
     }

@@ -8,6 +8,7 @@ INCLUDEPATH += includesLib
 LIBS += -L../Nietsneflow3d/lib  -lECS -lglad -ldl -lglfw3 -lX11 -lXxf86vm -lXrandr -pthread -lXi
 
 SOURCES += main.cpp \
+    ECS/Systems/IASystem.cpp \
     ECS/Systems/VisionSystem.cpp \
     FontData.cpp \
     Game.cpp \
@@ -37,6 +38,7 @@ HEADERS += \
     ECS/Components/TimerComponent.hpp \
     ECS/Components/VisionComponent.hpp \
     ECS/Components/WriteComponent.hpp \
+    ECS/Systems/IASystem.hpp \
     ECS/Systems/VisionSystem.hpp \
     FontData.hpp \
     Game.hpp \

@@ -26,6 +26,7 @@
 #include <ECS/Systems/VisionSystem.hpp>
 #include <ECS/Systems/DoorSystem.hpp>
 #include <ECS/Systems/StaticDisplaySystem.hpp>
+#include <ECS/Systems/IASystem.hpp>
 #include <constants.hpp>
 #include <memory>
 #include <cassert>
@@ -55,6 +56,7 @@ void ECSManager::initSystems()
     m_systemManager->bAddExternSystem(std::make_unique<VisionSystem>(this));
     m_systemManager->bAddExternSystem(std::make_unique<DoorSystem>());
     m_systemManager->bAddExternSystem(std::make_unique<StaticDisplaySystem>());
+    m_systemManager->bAddExternSystem(std::make_unique<IASystem>());
 }
 
 

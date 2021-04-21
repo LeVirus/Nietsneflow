@@ -90,6 +90,7 @@ void CollisionSystem::execSystem()
                 //if enemy dead
                 if(!enemyConfCompB->takeDamage(1))
                 {
+                    enemyConfCompB->m_behaviourMode = EnemyBehaviourMode_e::DEAD;
                     rmCollisionMaskEntity(m_memDistCurrentBulletColl.first);
                 }
             }
