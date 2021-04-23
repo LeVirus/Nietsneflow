@@ -17,7 +17,7 @@ public:
     void init();
     void loadLevelEntities(const LevelManager &levelManager);
     void mainLoop();
-    void shoot(PlayerConfComponent *playerComp, const pairFloat_t &point,
+    void playerShoot(PlayerConfComponent *playerComp, const pairFloat_t &point,
                float degreeAngle);
     void updateDisplayAmmoCount(PlayerConfComponent *playerComp);
     void setUnsetPaused();
@@ -58,6 +58,8 @@ private:
                           const std::vector<EnemyData> &enemiesData, uint32_t numEntity);
     void memTimerPausedValue();
     void applyTimerPausedValue();
+    void confBullet(CollisionTag_e collTag, uint32_t bulletEntity, const pairFloat_t &point,
+                    float degreeAngle);
 private:
     GraphicEngine m_graphicEngine;
     PhysicalEngine m_physicalEngine;

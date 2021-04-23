@@ -129,7 +129,7 @@ void InputSystem::treatPlayerInput()
                 if(glfwGetKey(m_window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
                 {
                     playerComp->m_playerShoot = true;
-                    m_mainEngine->shoot(playerComp, mapComp->m_absoluteMapPositionPX,
+                    m_mainEngine->playerShoot(playerComp, mapComp->m_absoluteMapPositionPX,
                                         moveComp->m_degreeOrientation);
                 }
             }

@@ -31,20 +31,20 @@ void DoorSystem::execSystem()
                                                      Components_e::TIMER_COMPONENT);
         assert(timerComp);
         std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() -
-                timerComp->m_clock;
+                timerComp->m_clockA;
         if(doorComp->m_currentState == DoorState_e::STATIC_OPEN)
         {
             if(elapsed_seconds.count() > m_timeDoorClosed)
             {
                 doorComp->m_currentState = DoorState_e::MOVE_CLOSE;
-                timerComp->m_clock = std::chrono::system_clock::now();
+                timerComp->m_clockA = std::chrono::system_clock::now();
             }
             continue;
         }
         if(elapsed_seconds.count() > doorComp->m_speedMove)
         {
             treatDoorMovementSize(doorComp, mVectNumEntity[i]);
-            timerComp->m_clock = std::chrono::system_clock::now();
+            timerComp->m_clockA = std::chrono::system_clock::now();
         }
     }
 }

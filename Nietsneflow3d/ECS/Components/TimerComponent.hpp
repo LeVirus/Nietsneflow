@@ -11,8 +11,7 @@ struct TimerComponent : public ecs::Component
     {
         muiTypeComponent = Components_e::TIMER_COMPONENT;
     }
-    std::chrono::time_point<std::chrono::system_clock> m_clock;
-
+    std::chrono::time_point<std::chrono::system_clock> m_clockA, m_clockB;
     virtual ~TimerComponent() = default;
 };
 

@@ -48,10 +48,9 @@ void MainEngine::mainLoop()
 }
 
 //===================================================================
-void MainEngine::shoot(PlayerConfComponent *playerComp, const pairFloat_t &point,
+void MainEngine::playerShoot(PlayerConfComponent *playerComp, const pairFloat_t &point,
                        float degreeAngle)
 {
-    uint32_t currentWeapon = static_cast<uint32_t>(playerComp->m_currentWeapon);
     if(playerComp->m_currentWeapon == WeaponsType_e::GUN
             || playerComp->m_currentWeapon == WeaponsType_e::SHOTGUN)
     {
@@ -60,21 +59,37 @@ void MainEngine::shoot(PlayerConfComponent *playerComp, const pairFloat_t &point
             playerComp->m_shootEntities[0] = createShotEntity();
         }
     }
+    else
+    {
+        return;
+    }
+    confBullet(CollisionTag_e::BULLET_PLAYER_CT, *playerComp->m_shootEntities[0],
+               point, degreeAngle);
+    uint32_t currentWeapon = static_cast<uint32_t>(playerComp->m_currentWeapon);
+    assert(playerComp->m_ammunationsCount[currentWeapon] > 0);
+    --playerComp->m_ammunationsCount[currentWeapon];
+    updateDisplayAmmoCount(playerComp);
+}
+
+//===================================================================
+void MainEngine::confBullet(CollisionTag_e collTag, uint32_t bulletEntity,
+                            const pairFloat_t &point, float degreeAngle)
+{
+    assert(collTag == CollisionTag_e::BULLET_ENEMY_CT ||
+           collTag == CollisionTag_e::BULLET_PLAYER_CT);
     GeneralCollisionComponent *genColl = m_ecsManager.getComponentManager().
-            searchComponentByType<GeneralCollisionComponent>(*playerComp->m_shootEntities[0],
+            searchComponentByType<GeneralCollisionComponent>(bulletEntity,
             Components_e::GENERAL_COLLISION_COMPONENT);
     SegmentCollisionComponent *segmentColl = m_ecsManager.getComponentManager().
-            searchComponentByType<SegmentCollisionComponent>(*playerComp->m_shootEntities[0],
+            searchComponentByType<SegmentCollisionComponent>(bulletEntity,
             Components_e::SEGMENT_COLLISION_COMPONENT);
     assert(genColl);
     assert(segmentColl);
-    genColl->m_tag = CollisionTag_e::BULLET_PLAYER_CT;
+    genColl->m_tag = collTag;
     genColl->m_shape = CollisionShape_e::SEGMENT_C;
     genColl->m_active = true;
     segmentColl->m_degreeOrientation = degreeAngle;
     segmentColl->m_points.first = point;
-    --playerComp->m_ammunationsCount[currentWeapon];
-    updateDisplayAmmoCount(playerComp);
 }
 
 //===================================================================
@@ -124,7 +139,7 @@ void MainEngine::memTimerPausedValue()
         assert(timerComp);
         time_t time = (std::chrono::system_clock::to_time_t(
                            std::chrono::system_clock::now()) -
-                       std::chrono::system_clock::to_time_t(timerComp->m_clock));
+                       std::chrono::system_clock::to_time_t(timerComp->m_clockA));
         m_vectMemPausedTimer.emplace_back(vectEntities[i], time);
     }
 }
@@ -139,7 +154,7 @@ void MainEngine::applyTimerPausedValue()
                 searchComponentByType<TimerComponent>(m_vectMemPausedTimer[i].first,
                                                       Components_e::TIMER_COMPONENT);
         assert(timerComp);
-        timerComp->m_clock = std::chrono::system_clock::from_time_t( std::chrono::system_clock::to_time_t(
+        timerComp->m_clockA = std::chrono::system_clock::from_time_t( std::chrono::system_clock::to_time_t(
                     std::chrono::system_clock::now()) - m_vectMemPausedTimer[i].second);
     }
     m_vectMemPausedTimer.clear();

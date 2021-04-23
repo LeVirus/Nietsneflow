@@ -166,10 +166,10 @@ void StaticDisplaySystem::confWeaponsVertexFromComponent(PlayerConfComponent *pl
     else
     {
         std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() -
-                timerComp->m_clock;
+                timerComp->m_clockA;
         if(playerComp->m_playerShoot)
         {
-            timerComp->m_clock = std::chrono::system_clock::now();
+            timerComp->m_clockA = std::chrono::system_clock::now();
             WeaponsSpriteType_e spriteNum = static_cast<WeaponsSpriteType_e>(
                         static_cast<uint32_t>(m_weaponSpriteAssociated
                                               [playerComp->m_currentWeapon]) + 1);
