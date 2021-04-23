@@ -18,8 +18,8 @@ public:
     void loadLevelEntities(const LevelManager &levelManager);
     void mainLoop();
     void shoot(PlayerConfComponent *playerComp, const pairFloat_t &point,
-               float degreeAngle, CollisionTag_e collTag);
-    void updateAmmoCount(PlayerConfComponent *playerComp);
+               float degreeAngle);
+    void updateDisplayAmmoCount(PlayerConfComponent *playerComp);
     void setUnsetPaused();
     inline bool isGamePaused()
     {
@@ -56,14 +56,12 @@ private:
                              bool traversable, LevelStaticElementType_e type);
     void loadEnemySprites(const std::vector<SpriteData> &vectSprite,
                           const std::vector<EnemyData> &enemiesData, uint32_t numEntity);
-    void deleteTmpEntities();
     void memTimerPausedValue();
     void applyTimerPausedValue();
 private:
     GraphicEngine m_graphicEngine;
     PhysicalEngine m_physicalEngine;
     ECSManager m_ecsManager;
-    std::vector<uint32_t> m_vectEntitiesToDelete;
     std::vector<std::pair<uint32_t, time_t>> m_vectMemPausedTimer;
     bool m_gamePaused = false;
     SpriteData const *m_memCursorSpriteData = nullptr;

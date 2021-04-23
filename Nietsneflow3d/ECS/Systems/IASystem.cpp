@@ -5,6 +5,7 @@
 #include <cassert>
 #include <iostream>
 #include "IASystem.hpp"
+#include "PhysicalEngine.hpp"
 #include "CollisionUtils.hpp"
 
 //===================================================================
@@ -54,6 +55,7 @@ void IASystem::treatEnemyBehaviourAttack(uint32_t enemyEntity, MapCoordComponent
     assert(moveComp);
     moveComp->m_degreeOrientation = getTrigoAngle(enemyMapComp->m_absoluteMapPositionPX,
                                                   m_playerMapComp->m_absoluteMapPositionPX);
+    moveElement(*moveComp, *enemyMapComp, MoveOrientation_e::FORWARD);
 }
 
 //===================================================================

@@ -120,14 +120,15 @@ void InputSystem::treatPlayerInput()
             {
                 changePlayerWeapon(*playerComp, true);
             }
-            else if(!playerComp->m_timerShootActive)
+            else if(!playerComp->m_timerShootActive &&
+                    playerComp->m_ammunationsCount[static_cast<uint32_t>(
+                        playerComp->m_currentWeapon)] > 0)
             {
                 if(glfwGetKey(m_window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
                 {
                     playerComp->m_playerShoot = true;
                     m_mainEngine->shoot(playerComp, mapComp->m_absoluteMapPositionPX,
-                                        moveComp->m_degreeOrientation,
-                                        CollisionTag_e::BULLET_PLAYER_CT);
+                                        moveComp->m_degreeOrientation);
                 }
             }
         }

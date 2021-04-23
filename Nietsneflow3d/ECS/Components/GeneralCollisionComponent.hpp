@@ -11,5 +11,6 @@ struct GeneralCollisionComponent : public ecs::Component
     }
     CollisionTag_e m_tag;
     CollisionShape_e m_shape;
+    bool m_active = true;
     virtual ~GeneralCollisionComponent() = default;
 };

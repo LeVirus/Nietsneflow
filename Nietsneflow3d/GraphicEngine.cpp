@@ -85,7 +85,7 @@ void GraphicEngine::linkSystems(ColorDisplaySystem *colorSystem,
 void GraphicEngine::updateAmmoCount(WriteComponent *writeComp,
                                     PlayerConfComponent *playerComp)
 {
-    writeComp->m_str = "AMMO::" + std::to_string(playerComp->m_ammunations[
+    writeComp->m_str = "AMMO::" + std::to_string(playerComp->m_ammunationsCount[
                                                 static_cast<uint32_t>(playerComp->m_currentWeapon)]);
     writeComp->m_fontSpriteData = m_ptrFontData->getWriteData(writeComp->m_str, writeComp->m_numTexture);
 }

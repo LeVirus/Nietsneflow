@@ -44,38 +44,41 @@ void MainEngine::mainLoop()
     {
         m_physicalEngine.runIteration(m_gamePaused);
         m_graphicEngine.runIteration(m_gamePaused);
-        deleteTmpEntities();
     }while(!m_graphicEngine.windowShouldClose());
 }
 
 //===================================================================
 void MainEngine::shoot(PlayerConfComponent *playerComp, const pairFloat_t &point,
-                       float degreeAngle, CollisionTag_e collTag)
+                       float degreeAngle)
 {
-    uint32_t entityNum = createShotEntity();
+    uint32_t currentWeapon = static_cast<uint32_t>(playerComp->m_currentWeapon);
+    if(playerComp->m_currentWeapon == WeaponsType_e::GUN
+            || playerComp->m_currentWeapon == WeaponsType_e::SHOTGUN)
+    {
+        if(!playerComp->m_shootEntities[0])
+        {
+            playerComp->m_shootEntities[0] = createShotEntity();
+        }
+    }
     GeneralCollisionComponent *genColl = m_ecsManager.getComponentManager().
-            searchComponentByType<GeneralCollisionComponent>(entityNum,
-                                                             Components_e::GENERAL_COLLISION_COMPONENT);
+            searchComponentByType<GeneralCollisionComponent>(*playerComp->m_shootEntities[0],
+            Components_e::GENERAL_COLLISION_COMPONENT);
     SegmentCollisionComponent *segmentColl = m_ecsManager.getComponentManager().
-            searchComponentByType<SegmentCollisionComponent>(entityNum,
-                                                             Components_e::SEGMENT_COLLISION_COMPONENT);
+            searchComponentByType<SegmentCollisionComponent>(*playerComp->m_shootEntities[0],
+            Components_e::SEGMENT_COLLISION_COMPONENT);
     assert(genColl);
     assert(segmentColl);
-    genColl->m_tag = collTag;
+    genColl->m_tag = CollisionTag_e::BULLET_PLAYER_CT;
     genColl->m_shape = CollisionShape_e::SEGMENT_C;
+    genColl->m_active = true;
     segmentColl->m_degreeOrientation = degreeAngle;
     segmentColl->m_points.first = point;
-    m_vectEntitiesToDelete.push_back(entityNum);
-    uint32_t currentWeapon = static_cast<uint32_t>(playerComp->m_currentWeapon);
-    if(playerComp->m_ammunations[currentWeapon] > 0)
-    {
-        --playerComp->m_ammunations[currentWeapon];
-        updateAmmoCount(playerComp);
-    }
+    --playerComp->m_ammunationsCount[currentWeapon];
+    updateDisplayAmmoCount(playerComp);
 }
 
 //===================================================================
-void MainEngine::updateAmmoCount(PlayerConfComponent *playerComp)
+void MainEngine::updateDisplayAmmoCount(PlayerConfComponent *playerComp)
 {
     WriteComponent *writeConp = m_ecsManager.getComponentManager().
             searchComponentByType<WriteComponent>(playerComp->m_ammoWriteEntity,
@@ -374,16 +377,6 @@ void MainEngine::loadEnemySprites(const std::vector<SpriteData> &vectSprite,
         //OOOOOK TMP
         assert(memSpriteComp->m_vectSpriteData.size() > vectSize);
     }
-}
-
-//===================================================================
-void MainEngine::deleteTmpEntities()
-{
-   for(uint32_t i = 0; i < m_vectEntitiesToDelete.size(); ++i)
-   {
-       m_ecsManager.getEngine().bRmEntity(m_vectEntitiesToDelete[i]);
-   }
-   m_vectEntitiesToDelete.clear();
 }
 
 //===================================================================
