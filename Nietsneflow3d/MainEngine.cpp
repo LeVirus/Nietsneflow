@@ -17,6 +17,7 @@
 #include <ECS/Components/SegmentCollisionComponent.hpp>
 #include <ECS/Components/WriteComponent.hpp>
 #include <ECS/Components/TimerComponent.hpp>
+#include <ECS/Components/EnemyConfComponent.hpp>
 #include <ECS/Systems/ColorDisplaySystem.hpp>
 #include <ECS/Systems/MapDisplaySystem.hpp>
 #include <ECS/Systems/CollisionSystem.hpp>
@@ -49,17 +50,10 @@ void MainEngine::mainLoop()
 
 //===================================================================
 void MainEngine::playerShoot(PlayerConfComponent *playerComp, const pairFloat_t &point,
-                       float degreeAngle)
+                             float degreeAngle)
 {
-    if(playerComp->m_currentWeapon == WeaponsType_e::GUN
-            || playerComp->m_currentWeapon == WeaponsType_e::SHOTGUN)
-    {
-        if(!playerComp->m_shootEntities[0])
-        {
-            playerComp->m_shootEntities[0] = createShotEntity();
-        }
-    }
-    else
+    if(playerComp->m_currentWeapon != WeaponsType_e::GUN
+            && playerComp->m_currentWeapon != WeaponsType_e::SHOTGUN)
     {
         return;
     }
@@ -357,8 +351,28 @@ void MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
             uint32_t numEntity = createEnemyEntity();
             confBaseComponent(numEntity, memSpriteData,
                               enemiesData[i].m_TileGamePosition[j], CollisionShape_e::CIRCLE_C);
-            loadEnemySprites(levelManager.getPictureData().getSpriteData(), enemiesData, numEntity);
+            EnemyConfComponent *enemyComp = m_ecsManager.getComponentManager().
+                    searchComponentByType<EnemyConfComponent>(numEntity,
+                                                              Components_e::ENEMY_CONF_COMPONENT);
+            assert(enemyComp);
+            createAmmosEntities(enemyComp->m_ammo);
+            loadEnemySprites(levelManager.getPictureData().getSpriteData(),
+                             enemiesData, numEntity);
         }
+    }
+}
+
+//===================================================================
+void MainEngine::createAmmosEntities(ammoContainer_t &ammoCount)
+{
+    for(uint32_t i = 0; i < ammoCount.size(); ++i)
+    {
+        ammoCount[i] = createShotEntity();
+        GeneralCollisionComponent *genColl = m_ecsManager.getComponentManager().
+                searchComponentByType<GeneralCollisionComponent>(*ammoCount[i],
+                                                                 Components_e::GENERAL_COLLISION_COMPONENT);
+        assert(genColl);
+        genColl->m_active = false;
     }
 }
 
@@ -598,6 +612,7 @@ void MainEngine::confPlayerEntity(uint32_t entityNum, const Level &level, uint32
     assert(tagColl);
     assert(vision);
     assert(playerConf);
+    createAmmosEntities(playerConf->m_shootEntities);
     map->m_coord = level.getPlayerDeparture();
     Direction_e playerDir = level.getPlayerDepartureDirection();
     switch(playerDir)

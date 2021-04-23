@@ -42,13 +42,14 @@ void IASystem::execSystem()
         }
         if(enemyConfComp->m_behaviourMode == EnemyBehaviourMode_e::ATTACK)
         {
-            treatEnemyBehaviourAttack(mVectNumEntity[i], enemyMapComp);
+            treatEnemyBehaviourAttack(mVectNumEntity[i], enemyMapComp, enemyConfComp);
         }
     }
 }
 
 //===================================================================
-void IASystem::treatEnemyBehaviourAttack(uint32_t enemyEntity, MapCoordComponent *enemyMapComp)
+void IASystem::treatEnemyBehaviourAttack(uint32_t enemyEntity, MapCoordComponent *enemyMapComp,
+                                         EnemyConfComponent *enemyConfComp)
 {
     MoveableComponent *moveComp = stairwayToComponentManager().
             searchComponentByType<MoveableComponent>(enemyEntity, Components_e::MOVEABLE_COMPONENT);

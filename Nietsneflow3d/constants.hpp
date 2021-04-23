@@ -9,7 +9,7 @@ using pairUI_t = std::pair<uint32_t, uint32_t>;
 using pairLong_t = std::pair<long, long>;
 using pairFloat_t = std::pair<float, float>;
 using pairDouble_t = std::pair<double, double>;
-
+using ammoContainer_t = std::array<std::optional<uint32_t>, 4>;
 enum Components_e
 {
     POSITION_VERTEX_COMPONENT,

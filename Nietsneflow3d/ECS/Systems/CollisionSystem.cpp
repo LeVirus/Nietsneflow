@@ -46,7 +46,8 @@ void CollisionSystem::execSystem()
         {
             continue;
         }
-        if(tagCompA->m_tag == CollisionTag_e::WALL_CT || tagCompA->m_tag == CollisionTag_e::OBJECT_CT ||
+        if(tagCompA->m_tag == CollisionTag_e::WALL_CT ||
+                tagCompA->m_tag == CollisionTag_e::OBJECT_CT ||
                 tagCompA->m_tag == CollisionTag_e::DOOR_CT)
         {
             continue;
@@ -69,7 +70,7 @@ void CollisionSystem::execSystem()
         assert(tagCompA);
         for(uint32_t j = 0; j < mVectNumEntity.size(); ++j)
         {
-            if(i == j || !tagCompA->m_active)
+            if(i == j)
             {
                 continue;
             }
@@ -77,6 +78,10 @@ void CollisionSystem::execSystem()
                     searchComponentByType<GeneralCollisionComponent>(mVectNumEntity[j],
                                                         Components_e::GENERAL_COLLISION_COMPONENT);
             assert(tagCompB);
+            if(!tagCompB->m_active)
+            {
+                continue;
+            }
             if(checkTag(tagCompA->m_tag, tagCompB->m_tag))
             {
                 treatCollision(mVectNumEntity[i], mVectNumEntity[j],

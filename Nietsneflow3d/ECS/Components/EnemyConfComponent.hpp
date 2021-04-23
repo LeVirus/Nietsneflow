@@ -40,6 +40,7 @@ struct EnemyConfComponent : public ecs::Component
     }
     bool m_enemyShoot = false, m_staticPhase;
     uint32_t m_weaponEntity, m_life = 1;
+    ammoContainer_t m_ammo;
     EnemyDisplayMode_e m_displayMode = EnemyDisplayMode_e::NORMAL;
     EnemySpriteType_e m_visibleOrientation;
     EnemyBehaviourMode_e m_behaviourMode = EnemyBehaviourMode_e::PASSIVE;

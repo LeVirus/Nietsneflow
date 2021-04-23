@@ -42,6 +42,7 @@ private:
     void loadDoorEntities(const LevelManager &levelManager);
     void loadEnemiesEntities(const LevelManager &levelManager);
     void loadStaticElementEntities(const LevelManager &levelManager);
+    void createAmmosEntities(ammoContainer_t &ammoCont);
     uint32_t loadWeaponEntity();
     uint32_t createWallEntity();
     uint32_t createDoorEntity();
