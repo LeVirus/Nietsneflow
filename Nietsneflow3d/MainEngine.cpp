@@ -57,8 +57,15 @@ void MainEngine::playerShoot(PlayerConfComponent *playerComp, const pairFloat_t 
     {
         return;
     }
-    confBullet(CollisionTag_e::BULLET_PLAYER_CT, *playerComp->m_shootEntities[0],
-               point, degreeAngle);
+    GeneralCollisionComponent *genColl = m_ecsManager.getComponentManager().
+            searchComponentByType<GeneralCollisionComponent>(*playerComp->m_shootEntities[0],
+            Components_e::GENERAL_COLLISION_COMPONENT);
+    SegmentCollisionComponent *segmentColl = m_ecsManager.getComponentManager().
+            searchComponentByType<SegmentCollisionComponent>(*playerComp->m_shootEntities[0],
+            Components_e::SEGMENT_COLLISION_COMPONENT);
+    assert(genColl);
+    assert(segmentColl);
+    confBullet(genColl, segmentColl, CollisionTag_e::BULLET_PLAYER_CT, point, degreeAngle);
     uint32_t currentWeapon = static_cast<uint32_t>(playerComp->m_currentWeapon);
     assert(playerComp->m_ammunationsCount[currentWeapon] > 0);
     --playerComp->m_ammunationsCount[currentWeapon];
@@ -66,19 +73,11 @@ void MainEngine::playerShoot(PlayerConfComponent *playerComp, const pairFloat_t 
 }
 
 //===================================================================
-void MainEngine::confBullet(CollisionTag_e collTag, uint32_t bulletEntity,
-                            const pairFloat_t &point, float degreeAngle)
+void confBullet(GeneralCollisionComponent *genColl, SegmentCollisionComponent *segmentColl,
+                CollisionTag_e collTag, const pairFloat_t &point, float degreeAngle)
 {
     assert(collTag == CollisionTag_e::BULLET_ENEMY_CT ||
            collTag == CollisionTag_e::BULLET_PLAYER_CT);
-    GeneralCollisionComponent *genColl = m_ecsManager.getComponentManager().
-            searchComponentByType<GeneralCollisionComponent>(bulletEntity,
-            Components_e::GENERAL_COLLISION_COMPONENT);
-    SegmentCollisionComponent *segmentColl = m_ecsManager.getComponentManager().
-            searchComponentByType<SegmentCollisionComponent>(bulletEntity,
-            Components_e::SEGMENT_COLLISION_COMPONENT);
-    assert(genColl);
-    assert(segmentColl);
     genColl->m_tag = collTag;
     genColl->m_shape = CollisionShape_e::SEGMENT_C;
     genColl->m_active = true;

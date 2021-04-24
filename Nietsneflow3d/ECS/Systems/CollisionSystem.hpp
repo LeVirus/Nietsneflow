@@ -13,15 +13,16 @@ struct CollisionArgs;
 struct EjectYArgs;
 struct EjectXArgs;
 
+//2 first bullet component, third touched entity
+using tupleShot_t = std::tuple<SegmentCollisionComponent*, GeneralCollisionComponent*, uint32_t>;
+
 class CollisionSystem : public ecs::System
 {
 public:
     CollisionSystem();
     void execSystem()override;
 private:
-    std::multimap<CollisionTag_e, CollisionTag_e> m_tagArray;
-    std::pair<uint32_t, float> m_memDistCurrentBulletColl;
-private:
+    void treatShots();
     void rmCollisionMaskEntity(uint32_t numEntity);
     void setUsedComponents();
     void initArrayTag();
@@ -57,6 +58,10 @@ private:
                                     GeneralCollisionComponent *tagCompB,
                                     MapCoordComponent &mapCompB);
     void calcBulletSegment(SegmentCollisionComponent &segmentCompA);
+private:
+    std::multimap<CollisionTag_e, CollisionTag_e> m_tagArray;
+    std::pair<uint32_t, float> m_memDistCurrentBulletColl;
+    std::vector<tupleShot_t> m_vectMemShots;
 };
 
 struct CollisionArgs

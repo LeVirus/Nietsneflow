@@ -130,7 +130,7 @@ void InputSystem::treatPlayerInput()
                 {
                     playerComp->m_playerShoot = true;
                     m_mainEngine->playerShoot(playerComp, mapComp->m_absoluteMapPositionPX,
-                                        moveComp->m_degreeOrientation);
+                                              moveComp->m_degreeOrientation);
                 }
             }
         }

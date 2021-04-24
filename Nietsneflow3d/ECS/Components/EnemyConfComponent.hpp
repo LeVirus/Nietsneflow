@@ -34,7 +34,7 @@ struct EnemyConfComponent : public ecs::Component
         }
         else
         {
-            --m_life;
+            m_life -= damage;
             return true;
         }
     }

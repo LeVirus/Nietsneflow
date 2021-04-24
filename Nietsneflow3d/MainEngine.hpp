@@ -59,8 +59,6 @@ private:
                           const std::vector<EnemyData> &enemiesData, uint32_t numEntity);
     void memTimerPausedValue();
     void applyTimerPausedValue();
-    void confBullet(CollisionTag_e collTag, uint32_t bulletEntity, const pairFloat_t &point,
-                    float degreeAngle);
 private:
     GraphicEngine m_graphicEngine;
     PhysicalEngine m_physicalEngine;
@@ -71,4 +69,6 @@ private:
     pairFloat_t m_menuCornerUpLeft = {-0.5f, 0.5f};
 };
 
+void confBullet(GeneralCollisionComponent *genColl, SegmentCollisionComponent *segmentColl,
+                CollisionTag_e collTag, const pairFloat_t &point, float degreeAngle);
 void setWeaponPlayer();

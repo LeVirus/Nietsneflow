@@ -37,6 +37,7 @@ void CollisionSystem::execSystem()
 {
     SegmentCollisionComponent *segmentCompA;
     System::execSystem();
+    m_vectMemShots.clear();
     for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
     {
         GeneralCollisionComponent *tagCompA = stairwayToComponentManager().
@@ -56,11 +57,11 @@ void CollisionSystem::execSystem()
                 (tagCompA->m_tag == CollisionTag_e::BULLET_PLAYER_CT ||
                  tagCompA->m_tag == CollisionTag_e::BULLET_ENEMY_CT))
         {
+            m_memDistCurrentBulletColl.second = EPSILON_FLOAT;
             segmentCompA = stairwayToComponentManager().
                     searchComponentByType<SegmentCollisionComponent>(mVectNumEntity[i],
                                                                      Components_e::SEGMENT_COLLISION_COMPONENT);
             assert(segmentCompA);
-            m_memDistCurrentBulletColl.second = EPSILON_FLOAT;
             calcBulletSegment(*segmentCompA);
         }
         else
@@ -82,28 +83,54 @@ void CollisionSystem::execSystem()
             {
                 continue;
             }
-            if(checkTag(tagCompA->m_tag, tagCompB->m_tag))
+            if(!checkTag(tagCompA->m_tag, tagCompB->m_tag))
             {
-                treatCollision(mVectNumEntity[i], mVectNumEntity[j],
-                               tagCompA, tagCompB);
+                continue;
             }
-        }
-        if(segmentCompA)
-        {
+            treatCollision(mVectNumEntity[i], mVectNumEntity[j],
+                           tagCompA, tagCompB);
             if(m_memDistCurrentBulletColl.second > EPSILON_FLOAT)
             {
-                EnemyConfComponent *enemyConfCompB = stairwayToComponentManager().
-                        searchComponentByType<EnemyConfComponent>(m_memDistCurrentBulletColl.first,
-                                                                  Components_e::ENEMY_CONF_COMPONENT);
-                assert(enemyConfCompB);
-                //if enemy dead
-                if(!enemyConfCompB->takeDamage(1))
-                {
-                    enemyConfCompB->m_behaviourMode = EnemyBehaviourMode_e::DEAD;
-                    rmCollisionMaskEntity(m_memDistCurrentBulletColl.first);
-                }
+                m_vectMemShots.emplace_back(tupleShot_t{segmentCompA, tagCompA,
+                                                        m_memDistCurrentBulletColl.first});
             }
-            tagCompA->m_active = false;
+        }
+        treatShots();
+    }
+}
+
+//===================================================================
+void CollisionSystem::treatShots()
+{
+    for(uint32_t i = 0; i < m_vectMemShots.size(); ++i)
+    {
+        if(std::get<1>(m_vectMemShots[i])->m_tag == CollisionTag_e::BULLET_PLAYER_CT)
+        {
+            std::cerr << "damage enemy\n";
+            EnemyConfComponent *enemyConfCompB = stairwayToComponentManager().
+                    searchComponentByType<EnemyConfComponent>(std::get<2>(m_vectMemShots[i]),
+                                                              Components_e::ENEMY_CONF_COMPONENT);
+            assert(enemyConfCompB);
+            //if enemy dead
+            if(!enemyConfCompB->takeDamage(1))
+            {
+                enemyConfCompB->m_behaviourMode = EnemyBehaviourMode_e::DEAD;
+                rmCollisionMaskEntity(std::get<2>(m_vectMemShots[i]));
+            }
+            std::get<1>(m_vectMemShots[i])->m_active = false;
+        }
+        else if(std::get<1>(m_vectMemShots[i])->m_tag == CollisionTag_e::BULLET_ENEMY_CT)
+        {
+            std::cerr << "damage player\n";
+            PlayerConfComponent *playerConfCompB = stairwayToComponentManager().
+                    searchComponentByType<PlayerConfComponent>(std::get<2>(m_vectMemShots[i]),
+                                                               Components_e::PLAYER_CONF_COMPONENT);
+            assert(playerConfCompB);
+            //if player is dead
+            if(!playerConfCompB->takeDamage(5))
+            {
+                //player dead
+            }
         }
     }
 }
@@ -124,7 +151,6 @@ void CollisionSystem::initArrayTag()
     m_tagArray.insert({CollisionTag_e::PLAYER_CT, CollisionTag_e::WALL_CT});
     m_tagArray.insert({CollisionTag_e::PLAYER_CT, CollisionTag_e::DOOR_CT});
     m_tagArray.insert({CollisionTag_e::PLAYER_CT, CollisionTag_e::ENEMY_CT});
-    m_tagArray.insert({CollisionTag_e::PLAYER_CT, CollisionTag_e::BULLET_ENEMY_CT});
     m_tagArray.insert({CollisionTag_e::PLAYER_CT, CollisionTag_e::OBJECT_CT});
 
     m_tagArray.insert({CollisionTag_e::ENEMY_CT, CollisionTag_e::PLAYER_CT});
@@ -139,7 +165,7 @@ void CollisionSystem::initArrayTag()
 
     //bullets collision with walls and doors are treated by raycasting
     m_tagArray.insert({CollisionTag_e::BULLET_ENEMY_CT, CollisionTag_e::PLAYER_CT});
-    m_tagArray.insert({CollisionTag_e::BULLET_ENEMY_CT, CollisionTag_e::ENEMY_CT});
+//    m_tagArray.insert({CollisionTag_e::BULLET_ENEMY_CT, CollisionTag_e::ENEMY_CT});
 
     m_tagArray.insert({CollisionTag_e::BULLET_PLAYER_CT, CollisionTag_e::ENEMY_CT});
 
@@ -149,10 +175,9 @@ void CollisionSystem::initArrayTag()
 //===================================================================
 bool CollisionSystem::checkTag(CollisionTag_e entityTagA, CollisionTag_e entityTagB)
 {
-    for(multiMapTagIt_t it = m_tagArray.find(entityTagA);
-        it != m_tagArray.end() /*|| it->first != entityTagA*/; ++it)
+    for(multiMapTagIt_t it = m_tagArray.find(entityTagA); it != m_tagArray.end() ; ++it)
     {
-        if(it->second == entityTagB)
+        if(it->first == entityTagA && it->second == entityTagB)
         {
             return true;
         }
@@ -288,8 +313,7 @@ void CollisionSystem::checkCollisionFirstSegment(uint32_t numEntityA, uint32_t n
             if(m_memDistCurrentBulletColl.second <= EPSILON_FLOAT ||
                     distance < m_memDistCurrentBulletColl.second)
             {
-                m_memDistCurrentBulletColl = {numEntityB, getDistance(segmentCompA.m_points.first,
-                                              mapCompB.m_absoluteMapPositionPX)};
+                m_memDistCurrentBulletColl = {numEntityB, distance};
             }
         }
     }

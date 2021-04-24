@@ -2,11 +2,14 @@
 #include <ECS/Components/MapCoordComponent.hpp>
 #include <ECS/Components/EnemyConfComponent.hpp>
 #include <ECS/Components/MoveableComponent.hpp>
+#include <ECS/Components/SegmentCollisionComponent.hpp>
+#include <ECS/Components/GeneralCollisionComponent.hpp>
 #include <cassert>
 #include <iostream>
 #include "IASystem.hpp"
 #include "PhysicalEngine.hpp"
 #include "CollisionUtils.hpp"
+#include "MainEngine.hpp"
 
 //===================================================================
 IASystem::IASystem()
@@ -56,6 +59,16 @@ void IASystem::treatEnemyBehaviourAttack(uint32_t enemyEntity, MapCoordComponent
     assert(moveComp);
     moveComp->m_degreeOrientation = getTrigoAngle(enemyMapComp->m_absoluteMapPositionPX,
                                                   m_playerMapComp->m_absoluteMapPositionPX);
+    SegmentCollisionComponent *segmentComp = stairwayToComponentManager().
+            searchComponentByType<SegmentCollisionComponent>(*enemyConfComp->m_ammo[0],
+            Components_e::SEGMENT_COLLISION_COMPONENT);
+    GeneralCollisionComponent *genComp = stairwayToComponentManager().
+            searchComponentByType<GeneralCollisionComponent>(*enemyConfComp->m_ammo[0],
+            Components_e::GENERAL_COLLISION_COMPONENT);
+    assert(segmentComp);
+    assert(genComp);
+    confBullet(genComp, segmentComp, CollisionTag_e::BULLET_ENEMY_CT,
+               enemyMapComp->m_absoluteMapPositionPX, moveComp->m_degreeOrientation);
     moveElement(*moveComp, *enemyMapComp, MoveOrientation_e::FORWARD);
 }
 
