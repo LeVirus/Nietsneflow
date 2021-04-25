@@ -106,7 +106,6 @@ void CollisionSystem::treatShots()
     {
         if(std::get<1>(m_vectMemShots[i])->m_tag == CollisionTag_e::BULLET_PLAYER_CT)
         {
-            std::cerr << "damage enemy\n";
             EnemyConfComponent *enemyConfCompB = stairwayToComponentManager().
                     searchComponentByType<EnemyConfComponent>(std::get<2>(m_vectMemShots[i]),
                                                               Components_e::ENEMY_CONF_COMPONENT);
@@ -121,7 +120,6 @@ void CollisionSystem::treatShots()
         }
         else if(std::get<1>(m_vectMemShots[i])->m_tag == CollisionTag_e::BULLET_ENEMY_CT)
         {
-            std::cerr << "damage player\n";
             PlayerConfComponent *playerConfCompB = stairwayToComponentManager().
                     searchComponentByType<PlayerConfComponent>(std::get<2>(m_vectMemShots[i]),
                                                                Components_e::PLAYER_CONF_COMPONENT);
@@ -423,6 +421,10 @@ void CollisionSystem::treatCollisionCircleRect(CollisionArgs &args,
                                   circleCollA.m_ray, radDegree,
                                   angleBehavior});
         collisionEject(mapComp, diffX, diffY);
+        if(args.tagCompA->m_tag == CollisionTag_e::ENEMY_CT)
+        {
+            return;
+        }
         PlayerConfComponent *playerComp = stairwayToComponentManager().
                 searchComponentByType<PlayerConfComponent>(args.entityNumA,
                                                          Components_e::PLAYER_CONF_COMPONENT);

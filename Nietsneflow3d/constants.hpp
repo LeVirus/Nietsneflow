@@ -216,6 +216,8 @@ inline const float CONE_VISION = 60.0f;
 inline const float HALF_CONE_VISION = CONE_VISION / 2.0f;
 inline const float DOUBLE_CONE_VISION = CONE_VISION * 2.0f;
 
+inline const std::string STR_PLAYER_LIFE = "LIFE::";
+inline const std::string STR_PLAYER_AMMO = "AMMO::";
 inline const std::string SHADER_DIR_STR = "../Nietsneflow3d/Ressources/Shader/";
 inline const std::string LEVEL_RESSOURCES_DIR_STR = "../Nietsneflow3d/Ressources/";
 inline const std::string TEXTURES_DIR_STR = "../Nietsneflow3d/Ressources/Textures/";

@@ -69,7 +69,6 @@ void MainEngine::playerShoot(PlayerConfComponent *playerComp, const pairFloat_t 
     uint32_t currentWeapon = static_cast<uint32_t>(playerComp->m_currentWeapon);
     assert(playerComp->m_ammunationsCount[currentWeapon] > 0);
     --playerComp->m_ammunationsCount[currentWeapon];
-    updateDisplayAmmoCount(playerComp);
 }
 
 //===================================================================
@@ -83,16 +82,6 @@ void confBullet(GeneralCollisionComponent *genColl, SegmentCollisionComponent *s
     genColl->m_active = true;
     segmentColl->m_degreeOrientation = degreeAngle;
     segmentColl->m_points.first = point;
-}
-
-//===================================================================
-void MainEngine::updateDisplayAmmoCount(PlayerConfComponent *playerComp)
-{
-    WriteComponent *writeConp = m_ecsManager.getComponentManager().
-            searchComponentByType<WriteComponent>(playerComp->m_ammoWriteEntity,
-                                                  Components_e::WRITE_COMPONENT);
-    assert(writeConp);
-    m_graphicEngine.updateAmmoCount(writeConp, playerComp);
 }
 
 //===================================================================

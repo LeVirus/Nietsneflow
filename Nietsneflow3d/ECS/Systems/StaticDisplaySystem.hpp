@@ -1,6 +1,7 @@
 #pragma once
 
 #include "constants.hpp"
+#include "FontData.hpp"
 #include <OpenGLUtils/Shader.hpp>
 #include <includesLib/BaseECS/system.hpp>
 #include <OpenGLUtils/Shader.hpp>
@@ -44,6 +45,10 @@ public:
     {
         m_menuActive = active;
     }
+    inline void memFontDataPtr(FontData const *fontData)
+    {
+        m_fontDataPtr = fontData;
+    }
 private:
     void fillWeaponMapEnum();
     void fillCursorMenuVertex(PlayerConfComponent *playerComp);
@@ -51,7 +56,7 @@ private:
     void confWriteVertex(WriteComponent *writeComp, PositionVertexComponent *posComp,
                          VertexID_e type);
     void drawVertex(uint32_t numTexture, VertexID_e type);
-    void treatWriteVertex(uint32_t numEntity, VertexID_e type);
+    void treatWriteVertex(uint32_t numEntity, VertexID_e type, const std::string &value = "");
     void drawLineWriteVertex(PositionVertexComponent *posComp, WriteComponent *writeComp);
     void confWeaponsVertexFromComponent(PlayerConfComponent *playerComp, SpriteTextureComponent *weaponSpriteComp);
     void setDisplayWeaponChange(PositionVertexComponent *posComp, PlayerConfComponent *playerComp,
@@ -59,6 +64,7 @@ private:
     void setWeaponMovement(PlayerConfComponent *playerComp, PositionVertexComponent *posComp,
                            MemPositionsVertexComponents *memPosComp);
 private:
+    FontData const *m_fontDataPtr;
     bool m_menuActive = false, m_cursorInit = false;
     Shader *m_shader;
     std::array<VerticesData, static_cast<uint32_t>(VertexID_e::TOTAL)> m_vertices;

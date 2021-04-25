@@ -19,7 +19,6 @@ public:
     void mainLoop();
     void playerShoot(PlayerConfComponent *playerComp, const pairFloat_t &point,
                float degreeAngle);
-    void updateDisplayAmmoCount(PlayerConfComponent *playerComp);
     void setUnsetPaused();
     inline bool isGamePaused()
     {

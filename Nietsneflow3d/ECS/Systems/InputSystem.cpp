@@ -115,12 +115,10 @@ void InputSystem::treatPlayerInput()
             if (glfwGetKey(m_window, GLFW_KEY_E) == GLFW_PRESS)
             {
                 changePlayerWeapon(*playerComp, false);
-                m_mainEngine->updateDisplayAmmoCount(playerComp);
             }
             else if (glfwGetKey(m_window, GLFW_KEY_R) == GLFW_PRESS)
             {
                 changePlayerWeapon(*playerComp, true);
-                m_mainEngine->updateDisplayAmmoCount(playerComp);
             }
             else if(!playerComp->m_timerShootActive &&
                     playerComp->m_ammunationsCount[static_cast<uint32_t>(

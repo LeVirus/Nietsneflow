@@ -27,6 +27,7 @@ void GraphicEngine::confSystems()
     m_mapSystem->setVectTextures(m_vectTexture);
     m_firstPersonSystem->setVectTextures(m_vectTexture);
     m_staticDisplaySystem->setVectTextures(m_vectTexture);
+    m_staticDisplaySystem->memFontDataPtr(m_ptrFontData);
 }
 
 //===================================================================
@@ -85,7 +86,7 @@ void GraphicEngine::linkSystems(ColorDisplaySystem *colorSystem,
 void GraphicEngine::updateAmmoCount(WriteComponent *writeComp,
                                     PlayerConfComponent *playerComp)
 {
-    writeComp->m_str = "AMMO::" + std::to_string(playerComp->m_ammunationsCount[
+    writeComp->m_str = STR_PLAYER_AMMO + std::to_string(playerComp->m_ammunationsCount[
                                                 static_cast<uint32_t>(playerComp->m_currentWeapon)]);
     writeComp->m_fontSpriteData = m_ptrFontData->getWriteData(writeComp->m_str, writeComp->m_numTexture);
 }
@@ -93,7 +94,7 @@ void GraphicEngine::updateAmmoCount(WriteComponent *writeComp,
 //===================================================================
 void GraphicEngine::updatePlayerLife(WriteComponent *writeComp, PlayerConfComponent *playerComp)
 {
-    writeComp->m_str = "LIFE::" + std::to_string(playerComp->m_life);
+    writeComp->m_str = STR_PLAYER_LIFE + std::to_string(playerComp->m_life);
     writeComp->m_fontSpriteData = m_ptrFontData->getWriteData(writeComp->m_str, writeComp->m_numTexture);
 }
 

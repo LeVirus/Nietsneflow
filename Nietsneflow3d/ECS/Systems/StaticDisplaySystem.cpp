@@ -99,8 +99,10 @@ void StaticDisplaySystem::execSystem()
         assert(spriteComp);
         confWeaponsVertexFromComponent(playerComp, spriteComp);
         drawVertex(spriteComp->m_spriteData->m_textureNum, VertexID_e::WEAPON);
-        treatWriteVertex(playerComp->m_ammoWriteEntity, VertexID_e::AMMO_WRITE);
-        treatWriteVertex(playerComp->m_lifeWriteEntity, VertexID_e::LIFE_WRITE);
+        std::string strAmmoDisplay = STR_PLAYER_AMMO + std::to_string(playerComp->m_ammunationsCount[static_cast<uint32_t>(playerComp->m_currentWeapon)]);
+        treatWriteVertex(playerComp->m_ammoWriteEntity, VertexID_e::AMMO_WRITE, strAmmoDisplay);
+        treatWriteVertex(playerComp->m_lifeWriteEntity, VertexID_e::LIFE_WRITE, STR_PLAYER_LIFE +
+                         std::to_string(playerComp->m_life));
     }
 }
 
@@ -128,7 +130,8 @@ void StaticDisplaySystem::drawVertex(uint32_t numTexture, VertexID_e type)
 }
 
 //===================================================================
-void StaticDisplaySystem::treatWriteVertex(uint32_t numEntity, VertexID_e type)
+void StaticDisplaySystem::treatWriteVertex(uint32_t numEntity, VertexID_e type,
+                                           const std::string &value)
 {
     WriteComponent *writeComp = stairwayToComponentManager().
                 searchComponentByType<WriteComponent>(numEntity,
@@ -138,6 +141,15 @@ void StaticDisplaySystem::treatWriteVertex(uint32_t numEntity, VertexID_e type)
                                                                Components_e::POSITION_VERTEX_COMPONENT);
     assert(writeComp);
     assert(posComp);
+    if(!value.empty())
+    {
+        if(value != writeComp->m_str)
+        {
+            writeComp->m_fontSpriteData = m_fontDataPtr->getWriteData(value,
+                                                                      writeComp->m_numTexture);
+        }
+        writeComp->m_str = value;
+    }
     confWriteVertex(writeComp, posComp, type);
     drawVertex(writeComp->m_numTexture, type);
 }
