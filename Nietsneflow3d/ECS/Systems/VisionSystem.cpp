@@ -89,6 +89,7 @@ void VisionSystem::updateSprites(uint32_t observerEntity,
     TimerComponent *timerComp;
     EnemyConfComponent *enemyConfComp;
     MoveableComponent *enemyMoveComp;
+    uint32_t indexSprite;
     for(uint32_t i = 0; i < vectEntities.size(); ++i)
     {
         memSpriteComp = stairwayToComponentManager().
@@ -128,31 +129,19 @@ void VisionSystem::updateSprites(uint32_t observerEntity,
                     enemyConfComp->m_visibleOrientation =
                             getOrientationFromAngle(observerEntity, vectEntities[i],
                                                     enemyMoveComp->m_degreeOrientation);
-                    if(!enemyConfComp->m_staticPhase)
-                    {
-                        enemyConfComp->m_visibleOrientation =
-                                static_cast<EnemySpriteType_e>(static_cast<uint32_t>(
-                                                                   enemyConfComp->m_visibleOrientation) + 1);
-                    }
-                    spriteComp->m_spriteData = memSpriteComp->m_vectSpriteData[
-                            static_cast<uint32_t>(enemyConfComp->m_visibleOrientation)];
+
+                    indexSprite = static_cast<uint32_t>(enemyConfComp->m_visibleOrientation);
                     std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() - timerComp->m_clockA;
                     if(elapsed_seconds.count() > 0.5)
                     {
-                        enemyConfComp->m_staticPhase = !enemyConfComp->m_staticPhase;
+                        enemyConfComp->m_staticPhase = (enemyConfComp->m_staticPhase) ? false : true;
                         timerComp->m_clockA = std::chrono::system_clock::now();
-                        //TESTTT
-                        if(enemyConfComp->m_staticPhase)
-                        {
-                            spriteComp->m_spriteData = memSpriteComp->m_vectSpriteData[
-                                    static_cast<uint32_t>(enemyConfComp->m_visibleOrientation)];
-                        }
-                        else
-                        {
-                            spriteComp->m_spriteData = memSpriteComp->m_vectSpriteData[
-                                    static_cast<uint32_t>(enemyConfComp->m_visibleOrientation) + 1];
-                        }
                     }
+                    if(!enemyConfComp->m_staticPhase)
+                    {
+                        ++indexSprite;
+                    }
+                    spriteComp->m_spriteData = memSpriteComp->m_vectSpriteData[indexSprite];
                 }
             }
             else if(enemyConfComp->m_displayMode == EnemyDisplayMode_e::DYING)
