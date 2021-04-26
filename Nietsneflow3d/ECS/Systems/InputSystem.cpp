@@ -62,28 +62,7 @@ void InputSystem::treatPlayerInput()
                 searchComponentByType<PlayerConfComponent>(mVectNumEntity[i],
                                                          Components_e::PLAYER_CONF_COMPONENT);
         assert(playerComp);
-        playerComp->m_inMovement = false;
-        //STRAFE
-        if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS)
-        {
-            moveElement(*moveComp, *mapComp, MoveOrientation_e::RIGHT);
-            playerComp->m_inMovement = true;
-        }
-        else if (glfwGetKey(m_window, GLFW_KEY_Q) == GLFW_PRESS)
-        {
-            moveElement(*moveComp, *mapComp, MoveOrientation_e::LEFT);
-            playerComp->m_inMovement = true;
-        }
-        if (glfwGetKey(m_window, GLFW_KEY_UP) == GLFW_PRESS)
-        {
-            moveElement(*moveComp, *mapComp, MoveOrientation_e::FORWARD);
-            playerComp->m_inMovement = true;
-        }
-        else if (glfwGetKey(m_window, GLFW_KEY_DOWN) == GLFW_PRESS)
-        {
-            moveElement(*moveComp, *mapComp, MoveOrientation_e::BACKWARD);
-            playerComp->m_inMovement = true;
-        }
+        treatPlayerMove(playerComp, moveComp, mapComp);
         if (glfwGetKey(m_window, GLFW_KEY_RIGHT) == GLFW_PRESS)
         {
             moveComp->m_degreeOrientation -= moveComp->m_rotationAngle;
@@ -132,6 +111,63 @@ void InputSystem::treatPlayerInput()
                 }
             }
         }
+    }
+}
+
+//===================================================================
+void InputSystem::treatPlayerMove(PlayerConfComponent *playerComp, MoveableComponent *moveComp,
+                                  MapCoordComponent *mapComp)
+{
+    playerComp->m_inMovement = false;
+    //init value
+    MoveOrientation_e currentMoveDirection = MoveOrientation_e::FORWARD;
+    //STRAFE
+    if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS)
+    {
+
+        currentMoveDirection = MoveOrientation_e::RIGHT;
+        playerComp->m_inMovement = true;
+    }
+    else if (glfwGetKey(m_window, GLFW_KEY_Q) == GLFW_PRESS)
+    {
+        currentMoveDirection = MoveOrientation_e::LEFT;
+        playerComp->m_inMovement = true;
+    }
+    if (glfwGetKey(m_window, GLFW_KEY_UP) == GLFW_PRESS)
+    {
+        if(currentMoveDirection == MoveOrientation_e::RIGHT)
+        {
+            currentMoveDirection = MoveOrientation_e::FORWARD_RIGHT;
+        }
+        else if(currentMoveDirection == MoveOrientation_e::LEFT)
+        {
+            currentMoveDirection = MoveOrientation_e::FORWARD_LEFT;
+        }
+        else
+        {
+            currentMoveDirection = MoveOrientation_e::FORWARD;
+        }
+        playerComp->m_inMovement = true;
+    }
+    else if (glfwGetKey(m_window, GLFW_KEY_DOWN) == GLFW_PRESS)
+    {
+        if(currentMoveDirection == MoveOrientation_e::RIGHT)
+        {
+            currentMoveDirection = MoveOrientation_e::BACKWARD_RIGHT;
+        }
+        else if(currentMoveDirection == MoveOrientation_e::LEFT)
+        {
+            currentMoveDirection = MoveOrientation_e::BACKWARD_LEFT;
+        }
+        else
+        {
+            currentMoveDirection = MoveOrientation_e::BACKWARD;
+        }
+        playerComp->m_inMovement = true;
+    }
+    if(playerComp->m_inMovement)
+    {
+        moveElement(*moveComp, *mapComp, currentMoveDirection);
     }
 }
 

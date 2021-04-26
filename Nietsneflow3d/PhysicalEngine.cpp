@@ -54,8 +54,20 @@ void moveElement(MoveableComponent &moveComp,
     {
     case MoveOrientation_e::FORWARD:
         break;
+    case MoveOrientation_e::FORWARD_LEFT:
+        angle += 45;
+        break;
+    case MoveOrientation_e::FORWARD_RIGHT:
+        angle += 315;
+        break;
     case MoveOrientation_e::BACKWARD:
         angle += 180;
+        break;
+    case MoveOrientation_e::BACKWARD_LEFT:
+        angle += 135;
+        break;
+    case MoveOrientation_e::BACKWARD_RIGHT:
+        angle += 225;
         break;
     case MoveOrientation_e::LEFT:
         angle += 90;

@@ -5,6 +5,8 @@
 #include <constants.hpp>
 
 struct PlayerConfComponent;
+struct MoveableComponent;
+struct MapCoordComponent;
 class MainEngine;
 
 class InputSystem : public ecs::System
@@ -24,6 +26,8 @@ private:
     void setUsedComponents();
     void treatPlayerInput();
     void treatMainMenu(uint32_t playerEntity);
+    void treatPlayerMove(PlayerConfComponent *playerComp, MoveableComponent *moveComp,
+                         MapCoordComponent *mapComp);
 private:
     GLFWwindow *m_window = nullptr;
     MainEngine *m_mainEngine = nullptr;

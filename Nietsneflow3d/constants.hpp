@@ -73,7 +73,11 @@ enum class Direction_e
 enum class MoveOrientation_e
 {
     FORWARD,
+    FORWARD_LEFT,
+    FORWARD_RIGHT,
     BACKWARD,
+    BACKWARD_LEFT,
+    BACKWARD_RIGHT,
     LEFT,
     RIGHT
 };
