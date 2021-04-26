@@ -346,6 +346,11 @@ void MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
             createAmmosEntities(enemyComp->m_ammo);
             loadEnemySprites(levelManager.getPictureData().getSpriteData(),
                              enemiesData, numEntity);
+            MoveableComponent *moveComp = m_ecsManager.getComponentManager().
+                    searchComponentByType<MoveableComponent>(numEntity,
+                                                              Components_e::MOVEABLE_COMPONENT);
+            assert(moveComp);
+            moveComp->m_velocity = 1.0f;
         }
     }
 }
