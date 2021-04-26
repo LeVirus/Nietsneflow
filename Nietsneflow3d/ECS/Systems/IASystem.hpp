@@ -14,7 +14,7 @@ public:
     void loadPlayerDatas(uint32_t playerEntity);
 private:
     void treatEnemyBehaviourAttack(uint32_t enemyEntity, MapCoordComponent *enemyMapComp,
-                                   EnemyConfComponent *enemyConfComp);
+                                   EnemyConfComponent *enemyConfComp, float distancePlayer);
 private:
     uint32_t m_playerEntity;
     MapCoordComponent *m_playerMapComp = nullptr;

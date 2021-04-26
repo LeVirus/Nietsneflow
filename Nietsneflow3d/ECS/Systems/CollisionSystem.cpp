@@ -63,6 +63,7 @@ void CollisionSystem::execSystem()
                                                                      Components_e::SEGMENT_COLLISION_COMPONENT);
             assert(segmentCompA);
             calcBulletSegment(*segmentCompA);
+            tagCompA->m_active = false;
         }
         else
         {

@@ -4,6 +4,7 @@
 #include <ECS/Components/MoveableComponent.hpp>
 #include <ECS/Components/SegmentCollisionComponent.hpp>
 #include <ECS/Components/GeneralCollisionComponent.hpp>
+#include <ECS/Components/TimerComponent.hpp>
 #include <cassert>
 #include <iostream>
 #include "IASystem.hpp"
@@ -24,6 +25,8 @@ void IASystem::execSystem()
     System::execSystem();
     MapCoordComponent *enemyMapComp;
     EnemyConfComponent *enemyConfComp;
+    TimerComponent *timerComp;
+    float distancePlayer;
     for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
     {
         enemyConfComp = stairwayToComponentManager().searchComponentByType<EnemyConfComponent>(
@@ -36,23 +39,27 @@ void IASystem::execSystem()
         enemyMapComp = stairwayToComponentManager().searchComponentByType<MapCoordComponent>(
                     mVectNumEntity[i], Components_e::MAP_COORD_COMPONENT);
         assert(enemyMapComp);
+        distancePlayer = getDistance(m_playerMapComp->m_absoluteMapPositionPX,
+                                     enemyMapComp->m_absoluteMapPositionPX);
         if(enemyConfComp->m_behaviourMode != EnemyBehaviourMode_e::ATTACK &&
-                getDistance(m_playerMapComp->m_absoluteMapPositionPX,
-                       enemyMapComp->m_absoluteMapPositionPX) < m_distanceEnemyBehaviour)
+                distancePlayer < m_distanceEnemyBehaviour)
         {
-            //tmp
+            timerComp = stairwayToComponentManager().searchComponentByType<TimerComponent>(
+                        mVectNumEntity[i], Components_e::TIMER_COMPONENT);
+            assert(timerComp);
+            timerComp->m_clockB = std::chrono::system_clock::now();
             enemyConfComp->m_behaviourMode = EnemyBehaviourMode_e::ATTACK;
         }
         if(enemyConfComp->m_behaviourMode == EnemyBehaviourMode_e::ATTACK)
         {
-            treatEnemyBehaviourAttack(mVectNumEntity[i], enemyMapComp, enemyConfComp);
+            treatEnemyBehaviourAttack(mVectNumEntity[i], enemyMapComp, enemyConfComp, distancePlayer);
         }
     }
 }
 
 //===================================================================
 void IASystem::treatEnemyBehaviourAttack(uint32_t enemyEntity, MapCoordComponent *enemyMapComp,
-                                         EnemyConfComponent *enemyConfComp)
+                                         EnemyConfComponent *enemyConfComp, float distancePlayer)
 {
     MoveableComponent *moveComp = stairwayToComponentManager().
             searchComponentByType<MoveableComponent>(enemyEntity, Components_e::MOVEABLE_COMPONENT);
@@ -67,9 +74,21 @@ void IASystem::treatEnemyBehaviourAttack(uint32_t enemyEntity, MapCoordComponent
             Components_e::GENERAL_COLLISION_COMPONENT);
     assert(segmentComp);
     assert(genComp);
-    confBullet(genComp, segmentComp, CollisionTag_e::BULLET_ENEMY_CT,
-               enemyMapComp->m_absoluteMapPositionPX, moveComp->m_degreeOrientation);
-    moveElement(*moveComp, *enemyMapComp, MoveOrientation_e::FORWARD);
+    TimerComponent *timerComp = stairwayToComponentManager().searchComponentByType<TimerComponent>(
+                enemyEntity, Components_e::TIMER_COMPONENT);
+    assert(timerComp);
+    std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() -
+            timerComp->m_clockB;
+    if(elapsed_seconds.count() > 0.5)
+    {
+        timerComp->m_clockB = std::chrono::system_clock::now();
+        confBullet(genComp, segmentComp, CollisionTag_e::BULLET_ENEMY_CT,
+                   enemyMapComp->m_absoluteMapPositionPX, moveComp->m_degreeOrientation);
+    }
+    if(distancePlayer > LEVEL_TILE_SIZE_PX)
+    {
+        moveElement(*moveComp, *enemyMapComp, MoveOrientation_e::FORWARD);
+    }
 }
 
 //===================================================================
