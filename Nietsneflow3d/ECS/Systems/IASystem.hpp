@@ -5,7 +5,7 @@
 
 struct MapCoordComponent;
 struct EnemyConfComponent;
-
+struct MoveableComponent;
 class IASystem : public ecs::System
 {
 public:
@@ -15,8 +15,11 @@ public:
 private:
     void treatEnemyBehaviourAttack(uint32_t enemyEntity, MapCoordComponent *enemyMapComp,
                                    EnemyConfComponent *enemyConfComp, float distancePlayer);
+    void updateEnemyDirection(EnemyConfComponent *enemyConfComp, MoveableComponent *moveComp,
+                              MapCoordComponent *enemyMapComp);
 private:
     uint32_t m_playerEntity;
     MapCoordComponent *m_playerMapComp = nullptr;
     float m_distanceEnemyBehaviour = LEVEL_TILE_SIZE_PX * 4.0f;
 };
+

@@ -111,7 +111,14 @@ void VisionSystem::updateSprites(uint32_t observerEntity,
         assert(timerComp);
         if(enemyConfComp)
         {
-            if(enemyConfComp->m_displayMode == EnemyDisplayMode_e::NORMAL)
+            if(enemyConfComp->m_behaviourMode == EnemyBehaviourMode_e::ATTACK &&
+                    enemyConfComp->m_attackPhase == EnemyAttackPhase_e::SHOOT)
+            {
+                spriteComp->m_spriteData = memSpriteComp->
+                        m_vectSpriteData[static_cast<uint32_t>(EnemySpriteType_e::ATTACK_A)];
+                continue;
+            }
+            else if(enemyConfComp->m_displayMode == EnemyDisplayMode_e::NORMAL)
             {
                 if(!enemyConfComp->m_life)
                 {

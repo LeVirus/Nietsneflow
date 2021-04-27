@@ -18,6 +18,16 @@ enum class EnemyBehaviourMode_e
     DEAD
 };
 
+enum class EnemyAttackPhase_e
+{
+    MOVE_TO_TARGET_FRONT,
+    MOVE_TO_TARGET_RIGHT,
+    MOVE_TO_TARGET_LEFT,
+    SHOOT,
+    GET_AROUND_WALL_LEFT,
+    GET_AROUND_WALL_RIGHT
+};
+
 struct EnemyConfComponent : public ecs::Component
 {
     EnemyConfComponent()
@@ -44,6 +54,7 @@ struct EnemyConfComponent : public ecs::Component
     EnemyDisplayMode_e m_displayMode = EnemyDisplayMode_e::NORMAL;
     EnemySpriteType_e m_visibleOrientation;
     EnemyBehaviourMode_e m_behaviourMode = EnemyBehaviourMode_e::PASSIVE;
+    EnemyAttackPhase_e m_attackPhase;
     virtual ~EnemyConfComponent() = default;
 };
 
