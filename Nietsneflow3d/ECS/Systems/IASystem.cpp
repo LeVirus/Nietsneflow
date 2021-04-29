@@ -100,19 +100,19 @@ void IASystem::treatEnemyBehaviourAttack(uint32_t enemyEntity, MapCoordComponent
                                          EnemyConfComponent *enemyConfComp, float distancePlayer)
 {
     MoveableComponent *moveComp = stairwayToComponentManager().
-            searchComponentByType<MoveableComponent>(enemyEntity, Components_e::MOVEABLE_COMPONENT);
-    assert(moveComp);
-
+            searchComponentByType<MoveableComponent>(enemyEntity,
+                                                     Components_e::MOVEABLE_COMPONENT);
     SegmentCollisionComponent *segmentComp = stairwayToComponentManager().
             searchComponentByType<SegmentCollisionComponent>(*enemyConfComp->m_ammo[0],
             Components_e::SEGMENT_COLLISION_COMPONENT);
     GeneralCollisionComponent *genComp = stairwayToComponentManager().
             searchComponentByType<GeneralCollisionComponent>(*enemyConfComp->m_ammo[0],
             Components_e::GENERAL_COLLISION_COMPONENT);
-    assert(segmentComp);
-    assert(genComp);
     TimerComponent *timerComp = stairwayToComponentManager().searchComponentByType<TimerComponent>(
                 enemyEntity, Components_e::TIMER_COMPONENT);
+    assert(moveComp);
+    assert(segmentComp);
+    assert(genComp);
     assert(timerComp);
     std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() -
             timerComp->m_clockB;
@@ -121,9 +121,42 @@ void IASystem::treatEnemyBehaviourAttack(uint32_t enemyEntity, MapCoordComponent
         timerComp->m_clockB = std::chrono::system_clock::now();
         updateEnemyDirection(enemyConfComp, moveComp, enemyMapComp);
     }
-    else if(enemyConfComp->m_attackPhase != EnemyAttackPhase_e::SHOOT &&
+    if(enemyConfComp->m_attackPhase != EnemyAttackPhase_e::SHOOT &&
             distancePlayer > LEVEL_TILE_SIZE_PX)
     {
+        if(enemyConfComp->m_wallTouch.first)
+        {
+            float directionToTarget = getTrigoAngle(enemyMapComp->m_absoluteMapPositionPX,
+                                            m_playerMapComp->m_absoluteMapPositionPX, false);
+            switch(enemyConfComp->m_wallTouch.second)
+            {
+            case Direction_e::EAST:
+            case Direction_e::WEST:
+                std::cerr << "EASSS\n";
+                if(std::sin(directionToTarget) < EPSILON_FLOAT)
+                {
+                    moveComp->m_degreeOrientation = 270.0f;
+                }
+                else
+                {
+                    moveComp->m_degreeOrientation = 90.0f;
+                }
+                break;
+            case Direction_e::NORTH:
+            case Direction_e::SOUTH:
+                std::cerr << "NOOOOR\n";
+                if(std::cos(directionToTarget) < EPSILON_FLOAT)
+                {
+                    moveComp->m_degreeOrientation = 180.0f;
+                }
+                else
+                {
+                    moveComp->m_degreeOrientation = 0.0f;
+                }
+                break;
+            }
+            enemyConfComp->m_wallTouch.first = false;
+        }
         moveElement(*moveComp, *enemyMapComp, MoveOrientation_e::FORWARD);
     }
 }
