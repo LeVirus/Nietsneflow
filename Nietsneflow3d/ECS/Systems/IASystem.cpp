@@ -132,7 +132,6 @@ void IASystem::treatEnemyBehaviourAttack(uint32_t enemyEntity, MapCoordComponent
             {
             case Direction_e::EAST:
             case Direction_e::WEST:
-                std::cerr << "EASSS\n";
                 if(std::sin(directionToTarget) < EPSILON_FLOAT)
                 {
                     moveComp->m_degreeOrientation = 270.0f;
@@ -144,7 +143,6 @@ void IASystem::treatEnemyBehaviourAttack(uint32_t enemyEntity, MapCoordComponent
                 break;
             case Direction_e::NORTH:
             case Direction_e::SOUTH:
-                std::cerr << "NOOOOR\n";
                 if(std::cos(directionToTarget) < EPSILON_FLOAT)
                 {
                     moveComp->m_degreeOrientation = 180.0f;

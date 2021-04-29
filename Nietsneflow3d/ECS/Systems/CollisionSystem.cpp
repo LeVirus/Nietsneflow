@@ -90,11 +90,11 @@ void CollisionSystem::execSystem()
             }
             treatCollision(mVectNumEntity[i], mVectNumEntity[j],
                            tagCompA, tagCompB);
-            if(m_memDistCurrentBulletColl.second > EPSILON_FLOAT)
-            {
-                m_vectMemShots.emplace_back(tupleShot_t{segmentCompA, tagCompA,
-                                                        m_memDistCurrentBulletColl.first});
-            }
+        }
+        if(m_memDistCurrentBulletColl.second > EPSILON_FLOAT)
+        {
+            m_vectMemShots.emplace_back(tupleShot_t{segmentCompA, tagCompA,
+                                                    m_memDistCurrentBulletColl.first});
         }
         treatShots();
     }
@@ -413,15 +413,15 @@ void CollisionSystem::treatCollisionCircleRect(CollisionArgs &args,
                     elementPosY : elementSecondPosY;
 
         float diffY = getVerticalCircleRectEject({circlePosX, circlePosY, pointElementX,
-                                  elementPosY,
-                                  elementSecondPosY,
-                                  circleCollA.m_ray, radDegree,
-                                  angleBehavior});
+                                                  elementPosY,
+                                                  elementSecondPosY,
+                                                  circleCollA.m_ray, radDegree,
+                                                  angleBehavior});
         float diffX = getHorizontalCircleRectEject({circlePosX, circlePosY, pointElementY,
-                                  elementPosX,
-                                  elementSecondPosX,
-                                  circleCollA.m_ray, radDegree,
-                                  angleBehavior});
+                                                    elementPosX,
+                                                    elementSecondPosX,
+                                                    circleCollA.m_ray, radDegree,
+                                                    angleBehavior});
         collisionEject(mapComp, diffX, diffY);
         if(args.tagCompA->m_tag == CollisionTag_e::ENEMY_CT)
         {
