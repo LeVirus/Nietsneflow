@@ -91,12 +91,13 @@ void CollisionSystem::execSystem()
             treatCollision(mVectNumEntity[i], mVectNumEntity[j],
                            tagCompA, tagCompB);
         }
-        if(m_memDistCurrentBulletColl.second > EPSILON_FLOAT)
+        if(segmentCompA && m_memDistCurrentBulletColl.second > EPSILON_FLOAT)
         {
             m_vectMemShots.emplace_back(tupleShot_t{segmentCompA, tagCompA,
                                                     m_memDistCurrentBulletColl.first});
         }
         treatShots();
+        m_vectMemShots.clear();
     }
 }
 
