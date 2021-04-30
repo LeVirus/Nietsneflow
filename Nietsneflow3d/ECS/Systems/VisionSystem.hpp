@@ -7,6 +7,8 @@ class ECSManager;
 struct VisionComponent;
 struct MapCoordComponent;
 struct MoveableComponent;
+struct EnemyConfComponent;
+struct MemSpriteDataComponent;
 
 class VisionSystem : public ecs::System
 {
@@ -21,6 +23,9 @@ private:
     void treatVisible(VisionComponent *visionComp, uint32_t checkVisibleId,
                       CollisionShape_e shapeElement);
     void updateSprites(uint32_t observerEntity, const std::vector<uint32_t> &vectEntities);
+    void updateEnemySprites(uint32_t enemyEntity, uint32_t observerEntity,
+                            EnemyConfComponent *enemyConfComp,
+                            MemSpriteDataComponent *memSpriteComp);
 private:
     const ECSManager* m_memECSManager;
 };

@@ -112,6 +112,7 @@ void CollisionSystem::treatShots()
                     searchComponentByType<EnemyConfComponent>(std::get<2>(m_vectMemShots[i]),
                                                               Components_e::ENEMY_CONF_COMPONENT);
             assert(enemyConfCompB);
+            enemyConfCompB->m_touched = true;
             //if enemy dead
             if(!enemyConfCompB->takeDamage(1))
             {

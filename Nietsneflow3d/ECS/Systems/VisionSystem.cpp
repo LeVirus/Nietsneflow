@@ -85,11 +85,7 @@ void VisionSystem::updateSprites(uint32_t observerEntity,
                                  const std::vector<uint32_t> &vectEntities)
 {
     MemSpriteDataComponent *memSpriteComp;
-    SpriteTextureComponent *spriteComp;
-    TimerComponent *timerComp;
     EnemyConfComponent *enemyConfComp;
-    MoveableComponent *enemyMoveComp;
-    uint32_t indexSprite;
     for(uint32_t i = 0; i < vectEntities.size(); ++i)
     {
         memSpriteComp = stairwayToComponentManager().
@@ -102,66 +98,81 @@ void VisionSystem::updateSprites(uint32_t observerEntity,
         enemyConfComp = stairwayToComponentManager().
                 searchComponentByType<EnemyConfComponent>(vectEntities[i],
                                                           Components_e::ENEMY_CONF_COMPONENT);
-        spriteComp = stairwayToComponentManager().
-                searchComponentByType<SpriteTextureComponent>(vectEntities[i],
-                                                              Components_e::SPRITE_TEXTURE_COMPONENT);
-        timerComp = stairwayToComponentManager().
-                searchComponentByType<TimerComponent>(vectEntities[i], Components_e::TIMER_COMPONENT);
-        assert(spriteComp);
-        assert(timerComp);
         if(enemyConfComp)
         {
-            if(enemyConfComp->m_behaviourMode == EnemyBehaviourMode_e::ATTACK &&
-                    enemyConfComp->m_attackPhase == EnemyAttackPhase_e::SHOOT)
-            {
-                spriteComp->m_spriteData = memSpriteComp->
-                        m_vectSpriteData[static_cast<uint32_t>(EnemySpriteType_e::ATTACK_A)];
-                continue;
-            }
-            else if(enemyConfComp->m_displayMode == EnemyDisplayMode_e::NORMAL)
-            {
-                if(!enemyConfComp->m_life)
-                {
-                    enemyConfComp->m_displayMode = EnemyDisplayMode_e::DYING;
-                    spriteComp->m_spriteData = memSpriteComp->
-                            m_vectSpriteData[static_cast<uint32_t>(EnemySpriteType_e::DYING)];
-                    timerComp->m_clockA = std::chrono::system_clock::now();
-                }
-                else
-                {
-                    enemyMoveComp = stairwayToComponentManager().
-                            searchComponentByType<MoveableComponent>(vectEntities[i],
-                                                                     Components_e::MOVEABLE_COMPONENT);
-                    assert(enemyMoveComp);
-                    enemyConfComp->m_visibleOrientation =
-                            getOrientationFromAngle(observerEntity, vectEntities[i],
-                                                    enemyMoveComp->m_degreeOrientation);
+            updateEnemySprites(vectEntities[i], observerEntity, enemyConfComp, memSpriteComp);
+        }
+    }
+}
 
-                    indexSprite = static_cast<uint32_t>(enemyConfComp->m_visibleOrientation);
-                    std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() - timerComp->m_clockA;
-                    if(elapsed_seconds.count() > 0.5)
-                    {
-                        enemyConfComp->m_staticPhase = (enemyConfComp->m_staticPhase) ? false : true;
-                        timerComp->m_clockA = std::chrono::system_clock::now();
-                    }
-                    if(!enemyConfComp->m_staticPhase)
-                    {
-                        ++indexSprite;
-                    }
-                    spriteComp->m_spriteData = memSpriteComp->m_vectSpriteData[indexSprite];
-                }
-            }
-            else if(enemyConfComp->m_displayMode == EnemyDisplayMode_e::DYING)
+//===========================================================================
+void VisionSystem::updateEnemySprites(uint32_t enemyEntity, uint32_t observerEntity,
+                                      EnemyConfComponent *enemyConfComp,
+                                      MemSpriteDataComponent *memSpriteComp)
+{
+    uint32_t indexSprite;
+    SpriteTextureComponent *spriteComp = stairwayToComponentManager().
+            searchComponentByType<SpriteTextureComponent>(enemyEntity,
+                                                          Components_e::SPRITE_TEXTURE_COMPONENT);
+    TimerComponent *timerComp = stairwayToComponentManager().
+            searchComponentByType<TimerComponent>(enemyEntity, Components_e::TIMER_COMPONENT);
+    assert(spriteComp);
+    assert(timerComp);
+    if(enemyConfComp->m_touched)
+    {
+        spriteComp->m_spriteData = memSpriteComp->
+                m_vectSpriteData[static_cast<uint32_t>(EnemySpriteType_e::TOUCHED)];
+        enemyConfComp->m_touched = false;
+    }
+    else if(enemyConfComp->m_behaviourMode == EnemyBehaviourMode_e::ATTACK &&
+            enemyConfComp->m_attackPhase == EnemyAttackPhase_e::SHOOT)
+    {
+        spriteComp->m_spriteData = memSpriteComp->
+                m_vectSpriteData[static_cast<uint32_t>(EnemySpriteType_e::ATTACK_A)];
+        return;
+    }
+    else if(enemyConfComp->m_displayMode == EnemyDisplayMode_e::NORMAL)
+    {
+        if(!enemyConfComp->m_life)
+        {
+            enemyConfComp->m_displayMode = EnemyDisplayMode_e::DYING;
+            spriteComp->m_spriteData = memSpriteComp->
+                    m_vectSpriteData[static_cast<uint32_t>(EnemySpriteType_e::DYING)];
+            timerComp->m_clockA = std::chrono::system_clock::now();
+        }
+        else
+        {
+            MoveableComponent *enemyMoveComp = stairwayToComponentManager().
+                    searchComponentByType<MoveableComponent>(enemyEntity,
+                                                             Components_e::MOVEABLE_COMPONENT);
+            assert(enemyMoveComp);
+            enemyConfComp->m_visibleOrientation =
+                    getOrientationFromAngle(observerEntity, enemyEntity,
+                                            enemyMoveComp->m_degreeOrientation);
+
+            indexSprite = static_cast<uint32_t>(enemyConfComp->m_visibleOrientation);
+            std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() - timerComp->m_clockA;
+            if(elapsed_seconds.count() > 0.5)
             {
-                std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() -
-                        timerComp->m_clockA;
-                if(elapsed_seconds.count() > 0.5)
-                {
-                    enemyConfComp->m_displayMode = EnemyDisplayMode_e::DEAD;
-                    spriteComp->m_spriteData = memSpriteComp->
-                            m_vectSpriteData[static_cast<uint32_t>(EnemySpriteType_e::DEAD)];
-                }
+                enemyConfComp->m_staticPhase = (enemyConfComp->m_staticPhase) ? false : true;
+                timerComp->m_clockA = std::chrono::system_clock::now();
             }
+            if(!enemyConfComp->m_staticPhase)
+            {
+                ++indexSprite;
+            }
+            spriteComp->m_spriteData = memSpriteComp->m_vectSpriteData[indexSprite];
+        }
+    }
+    else if(enemyConfComp->m_displayMode == EnemyDisplayMode_e::DYING)
+    {
+        std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() -
+                timerComp->m_clockA;
+        if(elapsed_seconds.count() > 0.5)
+        {
+            enemyConfComp->m_displayMode = EnemyDisplayMode_e::DEAD;
+            spriteComp->m_spriteData = memSpriteComp->
+                    m_vectSpriteData[static_cast<uint32_t>(EnemySpriteType_e::DEAD)];
         }
     }
 }
