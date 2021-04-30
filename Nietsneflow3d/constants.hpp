@@ -114,6 +114,7 @@ enum class EnemySpriteType_e
     ATTACK_B,
     DYING,
     DEAD,
+    TMP,//TMP^^
     TOUCHED,
     TOTAL_SPRITE
 };

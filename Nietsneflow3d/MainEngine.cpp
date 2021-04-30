@@ -396,8 +396,7 @@ void MainEngine::loadEnemySprites(const std::vector<SpriteData> &vectSprite,
         {
             memSpriteComp->m_vectSpriteData.emplace_back(&vectSprite[enemiesData[i].m_dyingSprites[j]]);
         }
-        //OOOOOK TMP
-        assert(memSpriteComp->m_vectSpriteData.size() > vectSize);
+        assert(memSpriteComp->m_vectSpriteData.size() == vectSize);
     }
 }
 

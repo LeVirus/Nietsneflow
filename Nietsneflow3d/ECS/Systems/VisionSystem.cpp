@@ -122,7 +122,12 @@ void VisionSystem::updateEnemySprites(uint32_t enemyEntity, uint32_t observerEnt
     {
         spriteComp->m_spriteData = memSpriteComp->
                 m_vectSpriteData[static_cast<uint32_t>(EnemySpriteType_e::TOUCHED)];
-        enemyConfComp->m_touched = false;
+        std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() -
+                timerComp->m_clockC;
+        if(elapsed_seconds.count() > 0.2)
+        {
+            enemyConfComp->m_touched = false;
+        }
     }
     else if(enemyConfComp->m_behaviourMode == EnemyBehaviourMode_e::ATTACK &&
             enemyConfComp->m_attackPhase == EnemyAttackPhase_e::SHOOT)
