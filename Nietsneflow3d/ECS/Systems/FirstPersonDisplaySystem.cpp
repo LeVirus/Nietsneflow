@@ -72,8 +72,11 @@ void FirstPersonDisplaySystem::confCompVertexMemEntities()
                                                              Components_e::MAP_COORD_COMPONENT);
             assert(mapCompB);
             assert(genCollComp);
-            treatDisplayEntity(genCollComp, mapCompA, mapCompB, visionComp,
-                               toRemove, moveComp->m_degreeOrientation, numIteration);
+            if(genCollComp->m_active)
+            {
+                treatDisplayEntity(genCollComp, mapCompA, mapCompB, visionComp,
+                                   toRemove, moveComp->m_degreeOrientation, numIteration);
+            }
         }
         m_numVertexToDraw[i] -= toRemove;
         ++numIteration;

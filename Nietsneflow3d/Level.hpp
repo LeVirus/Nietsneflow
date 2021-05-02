@@ -53,7 +53,7 @@ struct EnemyData
     //after dying animation the ennemy is represented by the last sprite
     //contained in m_dyingSprites
     std::vector<uint8_t> m_staticSprites, m_moveSprites,
-    m_attackSprites, m_dyingSprites;
+    m_attackSprites, m_dyingSprites, m_visibleShotSprites;
 
     //In Game sprite size in % relative to a tile
     pairDouble_t m_inGameSpriteSize;

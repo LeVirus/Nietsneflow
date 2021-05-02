@@ -45,7 +45,7 @@ private:
     void loadUtilsData(const INIReader &reader);
 
     void loadEnemySprites(const INIReader &reader, const std::string &sectionName,
-                          SpriteElementType_e spriteTypeEnum, EnemyData &enemyData);
+                          EnemySpriteElementType_e spriteTypeEnum, EnemyData &enemyData);
 private:
     PictureData m_pictureData;
     FontData m_fontData;

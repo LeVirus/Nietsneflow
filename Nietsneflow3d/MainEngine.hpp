@@ -8,6 +8,7 @@ class LevelManager;
 class Level;
 class EnemyData;
 class FontData;
+struct EnemyConfComponent;
 
 class MainEngine
 {
@@ -40,13 +41,15 @@ private:
     void loadWallEntities(const LevelManager &levelManager);
     void loadDoorEntities(const LevelManager &levelManager);
     void loadEnemiesEntities(const LevelManager &levelManager);
+    void confVisibleAmmo(const ammoContainer_t &ammoCont);
     void loadStaticElementEntities(const LevelManager &levelManager);
-    void createAmmosEntities(ammoContainer_t &ammoCont);
+    void createAmmosEntities(ammoContainer_t &ammoCont, bool visibleShot = false);
     uint32_t loadWeaponEntity();
     uint32_t createWallEntity();
     uint32_t createDoorEntity();
     uint32_t createEnemyEntity();
     uint32_t createShotEntity();
+    uint32_t createVisibleShotEntity();
     uint32_t createWriteEntity();
     uint32_t createSimpleSpriteEntity();
     void confBaseComponent(uint32_t entityNum, const SpriteData &memSpriteData,
@@ -55,7 +58,7 @@ private:
     void confStaticComponent(uint32_t entityNum, const pairFloat_t &elementSize,
                              bool traversable, LevelStaticElementType_e type);
     void loadEnemySprites(const std::vector<SpriteData> &vectSprite,
-                          const std::vector<EnemyData> &enemiesData, uint32_t numEntity);
+                          const std::vector<EnemyData> &enemiesData, uint32_t numEntity, const ammoContainer_t &visibleAmmo);
     void memTimerPausedValue();
     void applyTimerPausedValue();
 private:

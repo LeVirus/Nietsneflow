@@ -74,10 +74,10 @@ void IASystem::updateEnemyDirection(EnemyConfComponent *enemyConfComp, MoveableC
     {
         GeneralCollisionComponent *genComp = stairwayToComponentManager().
                 searchComponentByType<GeneralCollisionComponent>(
-                    *enemyConfComp->m_ammo[0], Components_e::GENERAL_COLLISION_COMPONENT);
+                    *enemyConfComp->m_stdAmmo[0], Components_e::GENERAL_COLLISION_COMPONENT);
         SegmentCollisionComponent *segmentComp = stairwayToComponentManager().
                 searchComponentByType<SegmentCollisionComponent>(
-                    *enemyConfComp->m_ammo[0], Components_e::SEGMENT_COLLISION_COMPONENT);
+                    *enemyConfComp->m_stdAmmo[0], Components_e::SEGMENT_COLLISION_COMPONENT);
         assert(genComp);
         assert(segmentComp);
         confBullet(genComp, segmentComp, CollisionTag_e::BULLET_ENEMY_CT,
@@ -103,10 +103,10 @@ void IASystem::treatEnemyBehaviourAttack(uint32_t enemyEntity, MapCoordComponent
             searchComponentByType<MoveableComponent>(enemyEntity,
                                                      Components_e::MOVEABLE_COMPONENT);
     SegmentCollisionComponent *segmentComp = stairwayToComponentManager().
-            searchComponentByType<SegmentCollisionComponent>(*enemyConfComp->m_ammo[0],
+            searchComponentByType<SegmentCollisionComponent>(*enemyConfComp->m_stdAmmo[0],
             Components_e::SEGMENT_COLLISION_COMPONENT);
     GeneralCollisionComponent *genComp = stairwayToComponentManager().
-            searchComponentByType<GeneralCollisionComponent>(*enemyConfComp->m_ammo[0],
+            searchComponentByType<GeneralCollisionComponent>(*enemyConfComp->m_stdAmmo[0],
             Components_e::GENERAL_COLLISION_COMPONENT);
     TimerComponent *timerComp = stairwayToComponentManager().searchComponentByType<TimerComponent>(
                 enemyEntity, Components_e::TIMER_COMPONENT);

@@ -343,9 +343,11 @@ void MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
                     searchComponentByType<EnemyConfComponent>(numEntity,
                                                               Components_e::ENEMY_CONF_COMPONENT);
             assert(enemyComp);
-            createAmmosEntities(enemyComp->m_ammo);
+            createAmmosEntities(enemyComp->m_stdAmmo);
+            createAmmosEntities(enemyComp->m_visibleAmmo, true);
             loadEnemySprites(levelManager.getPictureData().getSpriteData(),
-                             enemiesData, numEntity);
+                             enemiesData, numEntity, enemyComp->m_visibleAmmo);
+            confVisibleAmmo(enemyComp->m_visibleAmmo);
             MoveableComponent *moveComp = m_ecsManager.getComponentManager().
                     searchComponentByType<MoveableComponent>(numEntity,
                                                               Components_e::MOVEABLE_COMPONENT);
@@ -356,11 +358,18 @@ void MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
 }
 
 //===================================================================
-void MainEngine::createAmmosEntities(ammoContainer_t &ammoCount)
+void MainEngine::createAmmosEntities(ammoContainer_t &ammoCount, bool visibleShot)
 {
     for(uint32_t i = 0; i < ammoCount.size(); ++i)
     {
-        ammoCount[i] = createShotEntity();
+        if(!visibleShot)
+        {
+            ammoCount[i] = createShotEntity();
+        }
+        else
+        {
+            ammoCount[i] = createVisibleShotEntity();
+        }
         GeneralCollisionComponent *genColl = m_ecsManager.getComponentManager().
                 searchComponentByType<GeneralCollisionComponent>(*ammoCount[i],
                                                                  Components_e::GENERAL_COLLISION_COMPONENT);
@@ -371,7 +380,8 @@ void MainEngine::createAmmosEntities(ammoContainer_t &ammoCount)
 
 //===================================================================
 void MainEngine::loadEnemySprites(const std::vector<SpriteData> &vectSprite,
-                                  const std::vector<EnemyData> &enemiesData, uint32_t numEntity)
+                                  const std::vector<EnemyData> &enemiesData, uint32_t numEntity,
+                                  const ammoContainer_t &visibleAmmo)
 {
     MemSpriteDataComponent *memSpriteComp = m_ecsManager.getComponentManager().
             searchComponentByType<MemSpriteDataComponent>(numEntity, Components_e::MEM_SPRITE_DATA_COMPONENT);
@@ -396,7 +406,31 @@ void MainEngine::loadEnemySprites(const std::vector<SpriteData> &vectSprite,
         {
             memSpriteComp->m_vectSpriteData.emplace_back(&vectSprite[enemiesData[i].m_dyingSprites[j]]);
         }
+        if(!enemiesData[i].m_visibleShotSprites.empty())
+        {
+            for(uint32_t k = 0; k < visibleAmmo.size(); ++k)
+            {
+                SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().
+                        searchComponentByType<SpriteTextureComponent>(*visibleAmmo[k],
+                                                                      Components_e::SPRITE_TEXTURE_COMPONENT);
+                assert(spriteComp);
+                spriteComp->m_spriteData = &vectSprite[enemiesData[i].m_visibleShotSprites[0]];
+            }
+        }
         assert(memSpriteComp->m_vectSpriteData.size() == vectSize);
+    }
+}
+
+//===================================================================
+void MainEngine::confVisibleAmmo(const ammoContainer_t &ammoCont)
+{
+    for(uint32_t i = 0; i < ammoCont.size(); ++i)
+    {
+        CircleCollisionComponent *circleComp = m_ecsManager.getComponentManager().
+                searchComponentByType<CircleCollisionComponent>(*ammoCont[i],
+                                                                Components_e::CIRCLE_COLLISION_COMPONENT);
+        assert(circleComp);
+        circleComp->m_ray = 0.5f;
     }
 }
 
@@ -462,6 +496,19 @@ uint32_t MainEngine::createShotEntity()
     std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComponents;
     bitsetComponents[Components_e::SEGMENT_COLLISION_COMPONENT] = true;
     bitsetComponents[Components_e::GENERAL_COLLISION_COMPONENT] = true;
+    return m_ecsManager.addEntity(bitsetComponents);
+}
+
+//===================================================================
+uint32_t MainEngine::createVisibleShotEntity()
+{
+    std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComponents;
+    bitsetComponents[Components_e::CIRCLE_COLLISION_COMPONENT] = true;
+    bitsetComponents[Components_e::GENERAL_COLLISION_COMPONENT] = true;
+    bitsetComponents[Components_e::SPRITE_TEXTURE_COMPONENT] = true;
+    bitsetComponents[Components_e::MOVEABLE_COMPONENT] = true;
+    bitsetComponents[Components_e::MAP_COORD_COMPONENT] = true;
+    bitsetComponents[Components_e::POSITION_VERTEX_COMPONENT] = true;
     return m_ecsManager.addEntity(bitsetComponents);
 }
 
