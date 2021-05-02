@@ -407,7 +407,6 @@ void CollisionSystem::treatCollisionCircleRect(CollisionArgs &args,
         float elementPosY = args.mapCompB.m_absoluteMapPositionPX.second;
         float elementSecondPosX = elementPosX + rectCollB.m_size.first;
         float elementSecondPosY = elementPosY + rectCollB.m_size.second;
-
         bool angleBehavior = false;
         //collision on angle of rect
         if((circlePosX < elementPosX || circlePosX > elementSecondPosX) &&
@@ -415,7 +414,6 @@ void CollisionSystem::treatCollisionCircleRect(CollisionArgs &args,
         {
             angleBehavior = true;
         }
-
         float pointElementX = circlePosX < elementPosX ?
                     elementPosX : elementSecondPosX;
         float pointElementY = circlePosY < elementPosY ?

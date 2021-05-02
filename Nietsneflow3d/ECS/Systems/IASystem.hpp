@@ -17,6 +17,8 @@ private:
                                    EnemyConfComponent *enemyConfComp, float distancePlayer);
     void updateEnemyDirection(EnemyConfComponent *enemyConfComp, MoveableComponent *moveComp,
                               MapCoordComponent *enemyMapComp);
+    void enemyShoot(EnemyConfComponent *enemyConfComp, MoveableComponent *moveComp,
+                    MapCoordComponent *enemyMapComp, bool visibleShot);
 private:
     uint32_t m_playerEntity;
     MapCoordComponent *m_playerMapComp = nullptr;

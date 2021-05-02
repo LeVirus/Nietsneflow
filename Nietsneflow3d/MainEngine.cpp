@@ -429,8 +429,13 @@ void MainEngine::confVisibleAmmo(const ammoContainer_t &ammoCont)
         CircleCollisionComponent *circleComp = m_ecsManager.getComponentManager().
                 searchComponentByType<CircleCollisionComponent>(*ammoCont[i],
                                                                 Components_e::CIRCLE_COLLISION_COMPONENT);
+        SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().
+                searchComponentByType<SpriteTextureComponent>(*ammoCont[i],
+                                                                Components_e::SPRITE_TEXTURE_COMPONENT);
         assert(circleComp);
+        assert(spriteComp);
         circleComp->m_ray = 0.5f;
+        spriteComp->m_glFpsSize = {0.5f, 0.2f};
     }
 }
 
