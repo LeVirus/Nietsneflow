@@ -35,6 +35,7 @@ void IASystem::execSystem()
         enemyConfComp = stairwayToComponentManager().searchComponentByType<EnemyConfComponent>(
                     mVectNumEntity[i], Components_e::ENEMY_CONF_COMPONENT);
         assert(enemyConfComp);
+        treatEnemyVisibleShot(enemyConfComp->m_visibleAmmo);
         if(enemyConfComp->m_behaviourMode == EnemyBehaviourMode_e::DEAD)
         {
             continue;
@@ -57,6 +58,42 @@ void IASystem::execSystem()
         {
             treatEnemyBehaviourAttack(mVectNumEntity[i], enemyMapComp, enemyConfComp, distancePlayer);
         }
+    }
+}
+
+
+//===================================================================
+void IASystem::treatEnemyVisibleShot(const ammoContainer_t &stdAmmo)
+{
+    for(uint32_t i = 0; i < stdAmmo.size(); ++i)
+    {
+        GeneralCollisionComponent *genColl = stairwayToComponentManager().
+                searchComponentByType<GeneralCollisionComponent>(*stdAmmo[i],
+                                                                 Components_e::GENERAL_COLLISION_COMPONENT);
+        assert(genColl);
+        if(!genColl->m_active)
+        {
+            continue;
+        }
+        TimerComponent *timerComp = stairwayToComponentManager().
+                searchComponentByType<TimerComponent>(*stdAmmo[i], Components_e::TIMER_COMPONENT);
+        assert(timerComp);
+        std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() -
+                timerComp->m_clockA;
+        if(elapsed_seconds.count() > 5.0)
+        {
+            genColl->m_active = false;
+            return;
+        }
+        MapCoordComponent *ammoMapComp = stairwayToComponentManager().
+                searchComponentByType<MapCoordComponent>(*stdAmmo[i],
+                                                         Components_e::MAP_COORD_COMPONENT);
+        MoveableComponent *ammoMoveComp = stairwayToComponentManager().
+                searchComponentByType<MoveableComponent>(*stdAmmo[i],
+                                                         Components_e::MOVEABLE_COMPONENT);
+        assert(ammoMapComp);
+        assert(ammoMoveComp);
+        moveElement(*ammoMoveComp, *ammoMapComp, MoveOrientation_e::FORWARD);
     }
 }
 
@@ -88,11 +125,17 @@ void IASystem::enemyShoot(EnemyConfComponent *enemyConfComp, MoveableComponent *
         {
             genComp = stairwayToComponentManager().
                     searchComponentByType<GeneralCollisionComponent>(
-                        *enemyConfComp->m_visibleAmmo[currentShot], Components_e::GENERAL_COLLISION_COMPONENT);
+                        *enemyConfComp->m_visibleAmmo[i], Components_e::GENERAL_COLLISION_COMPONENT);
             assert(genComp);
             if(!genComp->m_active)
             {
                 genComp->m_active = true;
+                TimerComponent *timerComp = stairwayToComponentManager().
+                        searchComponentByType<TimerComponent>(
+                            *enemyConfComp->m_visibleAmmo[i], Components_e::TIMER_COMPONENT);
+                assert(timerComp);
+                timerComp->m_clockA = std::chrono::system_clock::now();
+                currentShot = i;
                 break;
             }
             //if all shoot active
@@ -104,8 +147,17 @@ void IASystem::enemyShoot(EnemyConfComponent *enemyConfComp, MoveableComponent *
         MapCoordComponent *mapComp = stairwayToComponentManager().
                 searchComponentByType<MapCoordComponent>(
                     *enemyConfComp->m_visibleAmmo[currentShot], Components_e::MAP_COORD_COMPONENT);
+        MoveableComponent *ammoMoveComp = stairwayToComponentManager().
+                searchComponentByType<MoveableComponent>(
+                    *enemyConfComp->m_visibleAmmo[currentShot], Components_e::MOVEABLE_COMPONENT);
+        TimerComponent *ammoTimeComp = stairwayToComponentManager().
+                searchComponentByType<TimerComponent>(
+                    *enemyConfComp->m_visibleAmmo[currentShot], Components_e::TIMER_COMPONENT);
+        assert(ammoTimeComp);
         assert(mapComp);
+        assert(moveComp);
         mapComp->m_absoluteMapPositionPX = enemyMapComp->m_absoluteMapPositionPX;
+        ammoMoveComp->m_degreeOrientation = moveComp->m_degreeOrientation;
     }
     else
     {
@@ -147,12 +199,13 @@ void IASystem::treatEnemyBehaviourAttack(uint32_t enemyEntity, MapCoordComponent
     {
         enemyConfComp->m_attackPhase =
                 static_cast<EnemyAttackPhase_e>(std::rand() / ((RAND_MAX + 1u) / 4));
+
         timerComp->m_clockB = std::chrono::system_clock::now();
         updateEnemyDirection(enemyConfComp, moveComp, enemyMapComp);
-    }
-    if(enemyConfComp->m_attackPhase == EnemyAttackPhase_e::SHOOT)
-    {
-        enemyShoot(enemyConfComp, moveComp, enemyMapComp, true);
+        if(enemyConfComp->m_attackPhase == EnemyAttackPhase_e::SHOOT)
+        {
+            enemyShoot(enemyConfComp, moveComp, enemyMapComp, true);
+        }
     }
     else if(enemyConfComp->m_attackPhase != EnemyAttackPhase_e::SHOOT &&
             distancePlayer > LEVEL_TILE_SIZE_PX)

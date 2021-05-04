@@ -97,13 +97,13 @@ void CollisionSystem::execSystem()
             m_vectMemShots.emplace_back(tupleShot_t{segmentCompA, tagCompA,
                                                     m_memDistCurrentBulletColl.first});
         }
-        treatShots();
+        treatSegmentShots();
         m_vectMemShots.clear();
     }
 }
 
 //===================================================================
-void CollisionSystem::treatShots()
+void CollisionSystem::treatSegmentShots()
 {
     for(uint32_t i = 0; i < m_vectMemShots.size(); ++i)
     {
@@ -174,9 +174,11 @@ void CollisionSystem::initArrayTag()
 
     //bullets collision with walls and doors are treated by raycasting
     m_tagArray.insert({CollisionTag_e::BULLET_ENEMY_CT, CollisionTag_e::PLAYER_CT});
+    m_tagArray.insert({CollisionTag_e::BULLET_ENEMY_CT, CollisionTag_e::WALL_CT});
 //    m_tagArray.insert({CollisionTag_e::BULLET_ENEMY_CT, CollisionTag_e::ENEMY_CT});
 
     m_tagArray.insert({CollisionTag_e::BULLET_PLAYER_CT, CollisionTag_e::ENEMY_CT});
+    m_tagArray.insert({CollisionTag_e::BULLET_PLAYER_CT, CollisionTag_e::WALL_CT});
 
     m_tagArray.insert({CollisionTag_e::OBJECT_CT, CollisionTag_e::PLAYER_CT});
 }
@@ -290,6 +292,20 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
 //        }
     }
         break;
+    }
+    if(collision && ((args.tagCompA->m_tag == CollisionTag_e::BULLET_ENEMY_CT) ||
+            (args.tagCompA->m_tag == CollisionTag_e::BULLET_PLAYER_CT)))
+    {
+        args.tagCompA->m_active = false;
+        if(args.tagCompA->m_tag == CollisionTag_e::BULLET_ENEMY_CT &&
+                args.tagCompB->m_tag == CollisionTag_e::PLAYER_CT)
+        {
+            PlayerConfComponent * playerConf = stairwayToComponentManager().
+                    searchComponentByType<PlayerConfComponent>(args.entityNumB,
+                                          Components_e::PLAYER_CONF_COMPONENT);
+            assert(playerConf);
+            playerConf->takeDamage(5);
+        }
     }
 }
 
@@ -451,7 +467,7 @@ void CollisionSystem::treatCollisionCircleRect(CollisionArgs &args,
         }
         PlayerConfComponent *playerComp = stairwayToComponentManager().
                 searchComponentByType<PlayerConfComponent>(args.entityNumA,
-                                                         Components_e::PLAYER_CONF_COMPONENT);
+                                                           Components_e::PLAYER_CONF_COMPONENT);
         assert(playerComp);
         if(args.tagCompB->m_tag == CollisionTag_e::DOOR_CT)
         {

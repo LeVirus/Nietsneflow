@@ -63,7 +63,7 @@ void InputSystem::treatPlayerInput()
                                                          Components_e::PLAYER_CONF_COMPONENT);
         assert(playerComp);
         treatPlayerMove(playerComp, moveComp, mapComp);
-        if (glfwGetKey(m_window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+        if(glfwGetKey(m_window, GLFW_KEY_RIGHT) == GLFW_PRESS)
         {
             moveComp->m_degreeOrientation -= moveComp->m_rotationAngle;
             if(moveComp->m_degreeOrientation < 0.0f)
@@ -72,7 +72,7 @@ void InputSystem::treatPlayerInput()
             }
             updatePlayerOrientation(*moveComp, *posComp, *visionComp);
         }
-        else if (glfwGetKey(m_window, GLFW_KEY_LEFT) == GLFW_PRESS)
+        else if(glfwGetKey(m_window, GLFW_KEY_LEFT) == GLFW_PRESS)
         {
             moveComp->m_degreeOrientation += moveComp->m_rotationAngle;
             if(moveComp->m_degreeOrientation > 360.0f)
@@ -84,18 +84,18 @@ void InputSystem::treatPlayerInput()
         playerComp->m_playerAction = (glfwGetKey(m_window, GLFW_KEY_SPACE) ==
                                       GLFW_PRESS) ?
                     true : false;
-        if (glfwGetKey(m_window, GLFW_KEY_M) == GLFW_PRESS)
+        if(glfwGetKey(m_window, GLFW_KEY_M) == GLFW_PRESS)
         {
             m_mainEngine->setUnsetPaused();
         }
         if(!playerComp->m_weaponChange && !playerComp->m_timerShootActive)
         {
             //Change weapon
-            if (glfwGetKey(m_window, GLFW_KEY_E) == GLFW_PRESS)
+            if(glfwGetKey(m_window, GLFW_KEY_E) == GLFW_PRESS)
             {
                 changePlayerWeapon(*playerComp, false);
             }
-            else if (glfwGetKey(m_window, GLFW_KEY_R) == GLFW_PRESS)
+            else if(glfwGetKey(m_window, GLFW_KEY_R) == GLFW_PRESS)
             {
                 changePlayerWeapon(*playerComp, true);
             }

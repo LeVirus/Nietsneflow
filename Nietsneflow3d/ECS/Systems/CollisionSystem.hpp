@@ -22,7 +22,7 @@ public:
     CollisionSystem();
     void execSystem()override;
 private:
-    void treatShots();
+    void treatSegmentShots();
     void rmCollisionMaskEntity(uint32_t numEntity);
     void setUsedComponents();
     void initArrayTag();
@@ -62,12 +62,13 @@ private:
     std::multimap<CollisionTag_e, CollisionTag_e> m_tagArray;
     std::pair<uint32_t, float> m_memDistCurrentBulletColl;
     std::vector<tupleShot_t> m_vectMemShots;
+    std::vector<uint32_t> m_vectEntitiesToUnactivate;
 };
 
 struct CollisionArgs
 {
     uint32_t entityNumA, entityNumB;
-    const GeneralCollisionComponent *tagCompA, *tagCompB;
+    GeneralCollisionComponent *tagCompA, *tagCompB;
     MapCoordComponent &mapCompA, &mapCompB;
 };
 

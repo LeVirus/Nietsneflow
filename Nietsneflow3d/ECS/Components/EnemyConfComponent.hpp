@@ -48,7 +48,7 @@ struct EnemyConfComponent : public ecs::Component
             return true;
         }
     }
-    bool m_enemyShoot = false, m_staticPhase, m_touched = false;
+    bool m_staticPhase, m_touched = false;
     std::pair<bool, Direction_e> m_wallTouch = {false, Direction_e::EAST};
     uint32_t m_weaponEntity, m_life = 3;
     ammoContainer_t m_stdAmmo, m_visibleAmmo;

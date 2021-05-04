@@ -343,8 +343,8 @@ void MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
                     searchComponentByType<EnemyConfComponent>(numEntity,
                                                               Components_e::ENEMY_CONF_COMPONENT);
             assert(enemyComp);
-            createAmmosEntities(enemyComp->m_stdAmmo);
-            createAmmosEntities(enemyComp->m_visibleAmmo, true);
+            createAmmosEntities(enemyComp->m_stdAmmo, CollisionTag_e::BULLET_ENEMY_CT);
+            createAmmosEntities(enemyComp->m_visibleAmmo, CollisionTag_e::BULLET_ENEMY_CT, true);
             loadEnemySprites(levelManager.getPictureData().getSpriteData(),
                              enemiesData, numEntity, enemyComp->m_visibleAmmo);
             confVisibleAmmo(enemyComp->m_visibleAmmo);
@@ -358,7 +358,8 @@ void MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
 }
 
 //===================================================================
-void MainEngine::createAmmosEntities(ammoContainer_t &ammoCount, bool visibleShot)
+void MainEngine::createAmmosEntities(ammoContainer_t &ammoCount, CollisionTag_e collTag,
+                                     bool visibleShot)
 {
     for(uint32_t i = 0; i < ammoCount.size(); ++i)
     {
@@ -375,6 +376,7 @@ void MainEngine::createAmmosEntities(ammoContainer_t &ammoCount, bool visibleSho
                                                                  Components_e::GENERAL_COLLISION_COMPONENT);
         assert(genColl);
         genColl->m_active = false;
+        genColl->m_tag = collTag;
     }
 }
 
@@ -434,7 +436,7 @@ void MainEngine::confVisibleAmmo(const ammoContainer_t &ammoCont)
                                                                 Components_e::SPRITE_TEXTURE_COMPONENT);
         assert(circleComp);
         assert(spriteComp);
-        circleComp->m_ray = 0.5f;
+        circleComp->m_ray = 5.0f;
         spriteComp->m_glFpsSize = {0.5f, 0.2f};
     }
 }
@@ -514,6 +516,7 @@ uint32_t MainEngine::createVisibleShotEntity()
     bitsetComponents[Components_e::MOVEABLE_COMPONENT] = true;
     bitsetComponents[Components_e::MAP_COORD_COMPONENT] = true;
     bitsetComponents[Components_e::POSITION_VERTEX_COMPONENT] = true;
+    bitsetComponents[Components_e::TIMER_COMPONENT] = true;
     return m_ecsManager.addEntity(bitsetComponents);
 }
 
@@ -656,7 +659,7 @@ void MainEngine::confPlayerEntity(uint32_t entityNum, const Level &level, uint32
     assert(tagColl);
     assert(vision);
     assert(playerConf);
-    createAmmosEntities(playerConf->m_shootEntities);
+    createAmmosEntities(playerConf->m_shootEntities, CollisionTag_e::BULLET_PLAYER_CT);
     map->m_coord = level.getPlayerDeparture();
     Direction_e playerDir = level.getPlayerDepartureDirection();
     switch(playerDir)

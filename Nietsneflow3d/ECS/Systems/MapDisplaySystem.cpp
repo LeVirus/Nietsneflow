@@ -69,6 +69,15 @@ void MapDisplaySystem::confPositionVertexEntities()
                 searchComponentByType<MapCoordComponent>(mVectNumEntity[i],
                                                          Components_e::MAP_COORD_COMPONENT);
         assert(mapComp);
+        GeneralCollisionComponent *genCollComp = stairwayToComponentManager().
+                searchComponentByType<GeneralCollisionComponent>(mVectNumEntity[i],
+                                                                 Components_e::GENERAL_COLLISION_COMPONENT);
+        if(genCollComp && (genCollComp->m_tag == CollisionTag_e::BULLET_ENEMY_CT ||
+                           genCollComp->m_tag == CollisionTag_e::BULLET_PLAYER_CT) &&
+                !genCollComp->m_active)
+        {
+            continue;
+        }
         //get absolute position corner
         if(checkBoundEntityMap(*mapComp, min, max))
         {

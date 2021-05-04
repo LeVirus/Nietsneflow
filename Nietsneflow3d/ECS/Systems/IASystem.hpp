@@ -19,6 +19,7 @@ private:
                               MapCoordComponent *enemyMapComp);
     void enemyShoot(EnemyConfComponent *enemyConfComp, MoveableComponent *moveComp,
                     MapCoordComponent *enemyMapComp, bool visibleShot);
+    void treatEnemyVisibleShot(const ammoContainer_t &stdAmmo);
 private:
     uint32_t m_playerEntity;
     MapCoordComponent *m_playerMapComp = nullptr;

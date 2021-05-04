@@ -18,7 +18,6 @@ private:
     CollisionSystem *m_collisionSystem = nullptr;
     DoorSystem *m_doorSystem = nullptr;
     IASystem *m_iaSystem = nullptr;
-private:
 public:
     PhysicalEngine();
     void runIteration(bool gamePaused);
