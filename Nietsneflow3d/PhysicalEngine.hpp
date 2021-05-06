@@ -24,6 +24,8 @@ public:
     void linkSystems(InputSystem *inputSystem, CollisionSystem * collisionSystem,
                      DoorSystem *doorSystem, IASystem *iaSystem);
     void memPlayerEntity(uint32_t playerEntity);
+    void confVisibleShoot(const ammoContainer_t &visibleShots,
+                          const pairFloat_t &point, float degreeAngle);
 };
 
 void moveElement(MoveableComponent &moveComp,

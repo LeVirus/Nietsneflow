@@ -71,6 +71,7 @@ private:
     std::vector<WallData> m_wallData;
     //store the sprite number and the screen display size
     std::vector<pairUIPairFloat_t> m_weaponsDisplayData;
+    std::vector<uint8_t> m_vectVisibleShot;
     std::vector<DoorData> m_doorData;
     std::vector<EnemyData> m_enemyData;
     static std::vector<ElementRaycast> m_levelCaseType;
@@ -138,6 +139,11 @@ public:
         return m_enemyData;
     }
 
+    inline const std::vector<uint8_t> &getVisibleShotsData()const
+    {
+        return m_vectVisibleShot;
+    }
+
     static inline void setLevelSize(const pairFloat_t &pairLevelSize)
     {
         m_size = pairLevelSize;
@@ -159,9 +165,11 @@ public:
     {
         m_wallData = vectWall;
     }
-    inline void setWeaponsElement(const std::vector<pairUIPairFloat_t> &vectWeapons)
+    inline void setWeaponsElement(const std::vector<pairUIPairFloat_t> &vectWeapons,
+                                  const std::vector<uint8_t> &visibleShot)
     {
         m_weaponsDisplayData = vectWeapons;
+        m_vectVisibleShot = visibleShot;
     }
     inline void setDoorElement(const std::vector<DoorData> &vectDoor)
     {

@@ -49,23 +49,36 @@ void MainEngine::mainLoop()
 }
 
 //===================================================================
+void MainEngine::confPlayerShoot(const ammoContainer_t &playerVisibleShots,
+                                 const pairFloat_t &point, float degreeAngle)
+{
+    m_physicalEngine.confVisibleShoot(playerVisibleShots, point, degreeAngle);
+}
+
+//===================================================================
 void MainEngine::playerShoot(PlayerConfComponent *playerComp, const pairFloat_t &point,
                              float degreeAngle)
 {
-    if(playerComp->m_currentWeapon != WeaponsType_e::GUN
-            && playerComp->m_currentWeapon != WeaponsType_e::SHOTGUN)
+    if(playerComp->m_currentWeapon == WeaponsType_e::TOTAL)
     {
         return;
     }
     GeneralCollisionComponent *genColl = m_ecsManager.getComponentManager().
             searchComponentByType<GeneralCollisionComponent>(*playerComp->m_shootEntities[0],
             Components_e::GENERAL_COLLISION_COMPONENT);
-    SegmentCollisionComponent *segmentColl = m_ecsManager.getComponentManager().
-            searchComponentByType<SegmentCollisionComponent>(*playerComp->m_shootEntities[0],
-            Components_e::SEGMENT_COLLISION_COMPONENT);
     assert(genColl);
-    assert(segmentColl);
-    confBullet(genColl, segmentColl, CollisionTag_e::BULLET_PLAYER_CT, point, degreeAngle);
+    if(playerComp->m_currentWeapon == WeaponsType_e::GUN)
+    {
+        SegmentCollisionComponent *segmentColl = m_ecsManager.getComponentManager().
+                searchComponentByType<SegmentCollisionComponent>(*playerComp->m_shootEntities[0],
+                Components_e::SEGMENT_COLLISION_COMPONENT);
+        assert(segmentColl);
+        confBullet(genColl, segmentColl, CollisionTag_e::BULLET_PLAYER_CT, point, degreeAngle);
+    }
+    else if(playerComp->m_currentWeapon == WeaponsType_e::SHOTGUN)
+    {
+        confPlayerShoot(playerComp->m_visibleShootEntities, point, degreeAngle);
+    }
     uint32_t currentWeapon = static_cast<uint32_t>(playerComp->m_currentWeapon);
     assert(playerComp->m_ammunationsCount[currentWeapon] > 0);
     --playerComp->m_ammunationsCount[currentWeapon];
@@ -190,7 +203,8 @@ void MainEngine::loadLevelEntities(const LevelManager &levelManager)
     loadGroundAndCeilingEntities(levelManager.getPictureData().getGroundData(),
                                  levelManager.getPictureData().getCeilingData());
     loadStaticElementEntities(levelManager);
-    loadPlayerEntity(levelManager.getLevel(), loadWeaponsEntity(levelManager));
+    loadPlayerEntity(levelManager.getPictureData().getSpriteData(),
+                     levelManager.getLevel(), loadWeaponsEntity(levelManager));
     Level::initLevelElementArray();
     loadWallEntities(levelManager);
     loadDoorEntities(levelManager);
@@ -347,7 +361,6 @@ void MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
             createAmmosEntities(enemyComp->m_visibleAmmo, CollisionTag_e::BULLET_ENEMY_CT, true);
             loadEnemySprites(levelManager.getPictureData().getSpriteData(),
                              enemiesData, numEntity, enemyComp->m_visibleAmmo);
-            confVisibleAmmo(enemyComp->m_visibleAmmo);
             MoveableComponent *moveComp = m_ecsManager.getComponentManager().
                     searchComponentByType<MoveableComponent>(numEntity,
                                                               Components_e::MOVEABLE_COMPONENT);
@@ -378,6 +391,10 @@ void MainEngine::createAmmosEntities(ammoContainer_t &ammoCount, CollisionTag_e 
         genColl->m_active = false;
         genColl->m_tag = collTag;
     }
+    if(visibleShot)
+    {
+        confVisibleAmmo(ammoCount);
+    }
 }
 
 //===================================================================
@@ -386,7 +403,8 @@ void MainEngine::loadEnemySprites(const std::vector<SpriteData> &vectSprite,
                                   const ammoContainer_t &visibleAmmo)
 {
     MemSpriteDataComponent *memSpriteComp = m_ecsManager.getComponentManager().
-            searchComponentByType<MemSpriteDataComponent>(numEntity, Components_e::MEM_SPRITE_DATA_COMPONENT);
+            searchComponentByType<MemSpriteDataComponent>(numEntity,
+                                                          Components_e::MEM_SPRITE_DATA_COMPONENT);
     assert(memSpriteComp);
     for(uint32_t i = 0; i < enemiesData.size(); ++i)
     {
@@ -605,7 +623,8 @@ void MainEngine::confStaticComponent(uint32_t entityNum,
 }
 
 //===================================================================
-void MainEngine::loadPlayerEntity(const Level &level, uint32_t numWeaponEntity)
+void MainEngine::loadPlayerEntity(const std::vector<SpriteData> &vectSpriteData,
+                                  const Level &level, uint32_t numWeaponEntity)
 {
     std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComponents;
     bitsetComponents[Components_e::POSITION_VERTEX_COMPONENT] = true;
@@ -618,14 +637,15 @@ void MainEngine::loadPlayerEntity(const Level &level, uint32_t numWeaponEntity)
     bitsetComponents[Components_e::VISION_COMPONENT] = true;
     bitsetComponents[Components_e::PLAYER_CONF_COMPONENT] = true;
     uint32_t entityNum = m_ecsManager.addEntity(bitsetComponents);
-    confPlayerEntity(entityNum, level, numWeaponEntity);
+    confPlayerEntity(vectSpriteData, entityNum, level, numWeaponEntity);
     //notify player entity number
     m_graphicEngine.getMapSystem().confPlayerComp(entityNum);
     m_physicalEngine.memPlayerEntity(entityNum);
 }
 
 //===================================================================
-void MainEngine::confPlayerEntity(uint32_t entityNum, const Level &level, uint32_t numWeaponEntity)
+void MainEngine::confPlayerEntity(const std::vector<SpriteData> &vectSpriteData,
+                                  uint32_t entityNum, const Level &level, uint32_t numWeaponEntity)
 {
     PositionVertexComponent *pos = m_ecsManager.getComponentManager().
             searchComponentByType<PositionVertexComponent>(entityNum,
@@ -660,6 +680,10 @@ void MainEngine::confPlayerEntity(uint32_t entityNum, const Level &level, uint32
     assert(vision);
     assert(playerConf);
     createAmmosEntities(playerConf->m_shootEntities, CollisionTag_e::BULLET_PLAYER_CT);
+    createAmmosEntities(playerConf->m_visibleShootEntities, CollisionTag_e::BULLET_PLAYER_CT, true);
+    loadPlayerVisibleShotsSprite(vectSpriteData, level.getVisibleShotsData(),
+                                 playerConf->m_visibleShootEntities);
+
     map->m_coord = level.getPlayerDeparture();
     Direction_e playerDir = level.getPlayerDepartureDirection();
     switch(playerDir)
@@ -679,7 +703,6 @@ void MainEngine::confPlayerEntity(uint32_t entityNum, const Level &level, uint32
     }
     map->m_absoluteMapPositionPX = getAbsolutePosition(map->m_coord);
     updatePlayerOrientation(*move, *pos, *vision);
-
     color->m_vertex.reserve(3);
     color->m_vertex.emplace_back(0.9f, 0.00f, 0.00f);
     color->m_vertex.emplace_back(0.9f, 0.00f, 0.00f);
@@ -697,6 +720,21 @@ void MainEngine::confPlayerEntity(uint32_t entityNum, const Level &level, uint32
     staticDisplay->setWeaponSprite(numWeaponEntity, WeaponsSpriteType_e::GUN_STATIC);
     confWriteEntities(playerConf);
     confMenuCursorEntity(playerConf);
+}
+
+//===================================================================
+void MainEngine::loadPlayerVisibleShotsSprite(const std::vector<SpriteData> &vectSpriteData,
+                                              const std::vector<uint8_t> &vectSprite,
+                                              const ammoContainer_t &ammoEntities)
+{
+    for(uint32_t k = 0; k < ammoEntities.size(); ++k)
+    {
+        SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().
+                searchComponentByType<SpriteTextureComponent>(*ammoEntities[k],
+                                                              Components_e::SPRITE_TEXTURE_COMPONENT);
+        assert(spriteComp);
+        spriteComp->m_spriteData = &vectSpriteData[vectSprite[0]];
+    }
 }
 
 //===================================================================

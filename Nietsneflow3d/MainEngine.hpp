@@ -35,8 +35,10 @@ private:
     void confGroundComponents(uint32_t entityNum);
     void linkSystemsToGraphicEngine();
     void linkSystemsToPhysicalEngine();
-    void loadPlayerEntity(const Level &level, uint32_t numWeaponEntity);
-    void confPlayerEntity(uint32_t entityNum, const Level &level, uint32_t numWeaponEntity);
+    void loadPlayerVisibleShotsSprite(const std::vector<SpriteData> &vectSpriteData, const std::vector<uint8_t> &vectSprite,
+                                      const ammoContainer_t &ammoEntities);
+    void loadPlayerEntity(const std::vector<SpriteData> &vectSpriteData, const Level &level, uint32_t numWeaponEntity);
+    void confPlayerEntity(const std::vector<SpriteData> &vectSpriteData, uint32_t entityNum, const Level &level, uint32_t numWeaponEntity);
     uint32_t loadWeaponsEntity(const LevelManager &levelManager);
     void loadWallEntities(const LevelManager &levelManager);
     void loadDoorEntities(const LevelManager &levelManager);
@@ -61,13 +63,14 @@ private:
                           const std::vector<EnemyData> &enemiesData, uint32_t numEntity, const ammoContainer_t &visibleAmmo);
     void memTimerPausedValue();
     void applyTimerPausedValue();
+    void confPlayerShoot(const ammoContainer_t &playerVisibleShots, const pairFloat_t &point, float degreeAngle);
 private:
     GraphicEngine m_graphicEngine;
     PhysicalEngine m_physicalEngine;
     ECSManager m_ecsManager;
     std::vector<std::pair<uint32_t, time_t>> m_vectMemPausedTimer;
     bool m_gamePaused = false;
-    SpriteData const *m_memCursorSpriteData = nullptr;
+    SpriteData const *m_memCursorSpriteData = nullptr, *m_memVisibleShotA = nullptr;
     pairFloat_t m_menuCornerUpLeft = {-0.5f, 0.5f};
 };
 

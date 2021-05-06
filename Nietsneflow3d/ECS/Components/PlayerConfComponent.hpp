@@ -29,7 +29,7 @@ struct PlayerConfComponent : public ecs::Component
     pairFloat_t m_currentWeaponMove = {-0.02f, -0.01f};
     uint32_t m_weaponEntity, m_ammoWriteEntity, m_menuEntity, m_menuCursorEntity,
     m_lifeWriteEntity, m_life = 100;
-    ammoContainer_t m_shootEntities;
+    ammoContainer_t m_shootEntities, m_visibleShootEntities;
     WeaponsType_e m_currentWeapon, m_previousWeapon;
     std::array<uint32_t, static_cast<uint32_t>(WeaponsType_e::TOTAL)> m_ammunationsCount = {20, 20};
     CurrentMenuCursorPos_e m_currentCursorPos = CurrentMenuCursorPos_e::NEW_GAME;

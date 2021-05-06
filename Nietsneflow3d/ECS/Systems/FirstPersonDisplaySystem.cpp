@@ -399,6 +399,11 @@ void FirstPersonDisplaySystem::fillVertexFromEntity(uint32_t numEntity, uint32_t
                                                           Components_e::SPRITE_TEXTURE_COMPONENT);
     assert(posComp);
     assert(spriteComp);
+    if(m_entitiesNumMem.size() == 1)
+    {
+        EntityData(distance - LEVEL_TILE_SIZE_PX, spriteComp->m_spriteData->m_textureNum,
+                                               numIteration);
+    }
     m_entitiesNumMem.insert(EntityData(distance - LEVEL_TILE_SIZE_PX, spriteComp->m_spriteData->m_textureNum,
                                        numIteration));
     if(displayMode == DisplayMode_e::STANDART_DM)
