@@ -58,6 +58,7 @@ private:
                                     GeneralCollisionComponent *tagCompB,
                                     MapCoordComponent &mapCompB);
     void calcBulletSegment(SegmentCollisionComponent &segmentCompA);
+    void treatEnemyShooted(uint32_t enemyEntityNum, uint32_t damage = 1);
 private:
     std::multimap<CollisionTag_e, CollisionTag_e> m_tagArray;
     std::pair<uint32_t, float> m_memDistCurrentBulletColl;

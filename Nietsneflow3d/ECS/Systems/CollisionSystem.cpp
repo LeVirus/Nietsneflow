@@ -103,29 +103,35 @@ void CollisionSystem::execSystem()
 }
 
 //===================================================================
+void CollisionSystem::treatEnemyShooted(uint32_t enemyEntityNum, uint32_t damage)
+{
+    EnemyConfComponent *enemyConfCompB = stairwayToComponentManager().
+            searchComponentByType<EnemyConfComponent>(enemyEntityNum,
+                                                      Components_e::ENEMY_CONF_COMPONENT);
+    TimerComponent *timerComp = stairwayToComponentManager().
+            searchComponentByType<TimerComponent>(enemyEntityNum,
+                                                      Components_e::TIMER_COMPONENT);
+    assert(enemyConfCompB);
+    assert(timerComp);
+    enemyConfCompB->m_touched = true;
+    timerComp->m_clockC = std::chrono::system_clock::now();
+    //if enemy dead
+    if(!enemyConfCompB->takeDamage(damage))
+    {
+        enemyConfCompB->m_behaviourMode = EnemyBehaviourMode_e::DEAD;
+        enemyConfCompB->m_touched = false;
+        rmCollisionMaskEntity(enemyEntityNum);
+    }
+}
+
+//===================================================================
 void CollisionSystem::treatSegmentShots()
 {
     for(uint32_t i = 0; i < m_vectMemShots.size(); ++i)
     {
         if(std::get<1>(m_vectMemShots[i])->m_tag == CollisionTag_e::BULLET_PLAYER_CT)
         {
-            EnemyConfComponent *enemyConfCompB = stairwayToComponentManager().
-                    searchComponentByType<EnemyConfComponent>(std::get<2>(m_vectMemShots[i]),
-                                                              Components_e::ENEMY_CONF_COMPONENT);
-            TimerComponent *timerComp = stairwayToComponentManager().
-                    searchComponentByType<TimerComponent>(std::get<2>(m_vectMemShots[i]),
-                                                              Components_e::TIMER_COMPONENT);
-            assert(enemyConfCompB);
-            assert(timerComp);
-            enemyConfCompB->m_touched = true;
-            timerComp->m_clockC = std::chrono::system_clock::now();
-            //if enemy dead
-            if(!enemyConfCompB->takeDamage(1))
-            {
-                enemyConfCompB->m_behaviourMode = EnemyBehaviourMode_e::DEAD;
-                enemyConfCompB->m_touched = false;
-                rmCollisionMaskEntity(std::get<2>(m_vectMemShots[i]));
-            }
+            treatEnemyShooted(std::get<2>(m_vectMemShots[i]));
             std::get<1>(m_vectMemShots[i])->m_active = false;
         }
         else if(std::get<1>(m_vectMemShots[i])->m_tag == CollisionTag_e::BULLET_ENEMY_CT)
@@ -297,7 +303,13 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
             (args.tagCompA->m_tag == CollisionTag_e::BULLET_PLAYER_CT)))
     {
         args.tagCompA->m_active = false;
-        if(args.tagCompA->m_tag == CollisionTag_e::BULLET_ENEMY_CT &&
+        if(args.tagCompA->m_tag == CollisionTag_e::BULLET_PLAYER_CT &&
+                args.tagCompB->m_tag == CollisionTag_e::ENEMY_CT)
+        {
+            //PUT DAMAGE VALUE
+            treatEnemyShooted(args.entityNumB);
+        }
+        else if(args.tagCompA->m_tag == CollisionTag_e::BULLET_ENEMY_CT &&
                 args.tagCompB->m_tag == CollisionTag_e::PLAYER_CT)
         {
             PlayerConfComponent * playerConf = stairwayToComponentManager().
