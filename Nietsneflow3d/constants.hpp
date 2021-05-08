@@ -31,6 +31,7 @@ enum Components_e
     ENEMY_CONF_COMPONENT,
     MEM_POSITIONS_VERTEX_COMPONENT,
     WRITE_COMPONENT,
+    SHOT_CONF_COMPONENT,
     TOTAL_COMPONENTS
 };
 
@@ -198,6 +199,14 @@ enum class LevelCaseType_e
     WALL_LC,
     DOOR_LC,
     EMPTY_LC
+};
+
+enum class ShotPhase_e
+{
+    NORMAL,
+    SHOT_DESTRUCT_A,
+    SHOT_DESTRUCT_B,
+    SHOT_DESTRUCT_C
 };
 
 inline const float STD_FONT_SIZE = 0.06f;

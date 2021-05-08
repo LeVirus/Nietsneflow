@@ -35,6 +35,7 @@ HEADERS += \
     ECS/Components/EnemyConfComponent.hpp \
     ECS/Components/MemSpriteDataComponent.hpp \
     ECS/Components/SegmentCollisionComponent.hpp \
+    ECS/Components/ShotConfComponent.hpp \
     ECS/Components/TimerComponent.hpp \
     ECS/Components/VisionComponent.hpp \
     ECS/Components/WriteComponent.hpp \

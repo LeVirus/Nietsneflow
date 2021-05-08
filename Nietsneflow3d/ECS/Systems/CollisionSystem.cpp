@@ -10,6 +10,7 @@
 #include <ECS/Components/PlayerConfComponent.hpp>
 #include <ECS/Components/EnemyConfComponent.hpp>
 #include <ECS/Components/TimerComponent.hpp>
+#include <ECS/Components/ShotConfComponent.hpp>
 #include <ECS/Systems/FirstPersonDisplaySystem.hpp>
 #include <BaseECS/engine.hpp>
 #include <CollisionUtils.hpp>
@@ -115,6 +116,7 @@ void CollisionSystem::treatEnemyShooted(uint32_t enemyEntityNum, uint32_t damage
     assert(timerComp);
     enemyConfCompB->m_touched = true;
     timerComp->m_clockC = std::chrono::system_clock::now();
+    std::cerr << "fdjknbvij\n";
     //if enemy dead
     if(!enemyConfCompB->takeDamage(damage))
     {
@@ -302,12 +304,22 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
     if(collision && ((args.tagCompA->m_tag == CollisionTag_e::BULLET_ENEMY_CT) ||
             (args.tagCompA->m_tag == CollisionTag_e::BULLET_PLAYER_CT)))
     {
+        ShotConfComponent *shotConfComp = stairwayToComponentManager().
+                searchComponentByType<ShotConfComponent>(args.entityNumA,
+                                                           Components_e::SHOT_CONF_COMPONENT);
+        assert(shotConfComp);
+        TimerComponent *timerComp = stairwayToComponentManager().
+                searchComponentByType<TimerComponent>(args.entityNumA, Components_e::TIMER_COMPONENT);
+        assert(timerComp);
+        timerComp->m_clockB = std::chrono::system_clock::now();
         args.tagCompA->m_active = false;
+//        args.tagCompA->m_tag = CollisionTag_e::GHOST_CT;
+        shotConfComp->m_destructPhase = true;
+        shotConfComp->m_spritePhaseShot = ShotPhase_e::SHOT_DESTRUCT_A;
         if(args.tagCompA->m_tag == CollisionTag_e::BULLET_PLAYER_CT &&
                 args.tagCompB->m_tag == CollisionTag_e::ENEMY_CT)
         {
-            //PUT DAMAGE VALUE
-            treatEnemyShooted(args.entityNumB);
+            treatEnemyShooted(args.entityNumB, shotConfComp->m_damage);
         }
         else if(args.tagCompA->m_tag == CollisionTag_e::BULLET_ENEMY_CT &&
                 args.tagCompB->m_tag == CollisionTag_e::PLAYER_CT)
@@ -316,7 +328,7 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
                     searchComponentByType<PlayerConfComponent>(args.entityNumB,
                                           Components_e::PLAYER_CONF_COMPONENT);
             assert(playerConf);
-            playerConf->takeDamage(5);
+            playerConf->takeDamage(shotConfComp->m_damage);
         }
     }
 }
