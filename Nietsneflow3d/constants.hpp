@@ -206,7 +206,8 @@ enum class ShotPhase_e
     NORMAL,
     SHOT_DESTRUCT_A,
     SHOT_DESTRUCT_B,
-    SHOT_DESTRUCT_C
+    SHOT_DESTRUCT_C,
+    TOTAL
 };
 
 inline const float STD_FONT_SIZE = 0.06f;

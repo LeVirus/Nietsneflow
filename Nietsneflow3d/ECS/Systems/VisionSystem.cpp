@@ -17,6 +17,7 @@
 #include <ECS/Components/SpriteTextureComponent.hpp>
 #include <ECS/Components/EnemyConfComponent.hpp>
 #include <ECS/Components/TimerComponent.hpp>
+#include <ECS/Components/ShotConfComponent.hpp>
 
 //===========================================================================
 VisionSystem::VisionSystem(const ECSManager *memECSManager) :
@@ -39,16 +40,16 @@ void VisionSystem::execSystem()
     VisionComponent *visionCompA;
     MapCoordComponent *mapCompA;
     MoveableComponent *moveCompA;
+    std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComp;
+    bitsetComp[Components_e::MAP_COORD_COMPONENT] = true;
+    bitsetComp[Components_e::SPRITE_TEXTURE_COMPONENT] = true;
+    std::vector<uint32_t> vectEntities = m_memECSManager->getEntityContainingComponents(bitsetComp);
     for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
     {
         collComp = stairwayToComponentManager().
                 searchComponentByType<GeneralCollisionComponent>(mVectNumEntity[i],
                                       Components_e::GENERAL_COLLISION_COMPONENT);
         assert(collComp);
-        std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComp;
-        bitsetComp[Components_e::MAP_COORD_COMPONENT] = true;
-        bitsetComp[Components_e::SPRITE_TEXTURE_COMPONENT] = true;
-        std::vector<uint32_t> vectEntities = m_memECSManager->getEntityContainingComponents(bitsetComp);
         visionCompA = stairwayToComponentManager().
                 searchComponentByType<VisionComponent>(mVectNumEntity[i], Components_e::VISION_COMPONENT);
         mapCompA = stairwayToComponentManager().
@@ -75,7 +76,7 @@ void VisionSystem::execSystem()
             //FAIRE DES TESTS POUR LES COLLISIONS
             treatVisible(visionCompA, vectEntities[j], collCompB->m_shape);
         }
-        updateSprites(mVectNumEntity[i], visionCompA->m_vectVisibleEntities);
+        updateSprites(mVectNumEntity[i], vectEntities/*visionCompA->m_vectVisibleEntities*/);
     }
 }
 
@@ -84,7 +85,9 @@ void VisionSystem::updateSprites(uint32_t observerEntity,
                                  const std::vector<uint32_t> &vectEntities)
 {
     MemSpriteDataComponent *memSpriteComp;
-    EnemyConfComponent *enemyConfComp;
+    GeneralCollisionComponent *genComp;
+    SpriteTextureComponent *spriteComp;
+    TimerComponent *timerComp;
     for(uint32_t i = 0; i < vectEntities.size(); ++i)
     {
         memSpriteComp = stairwayToComponentManager().
@@ -94,29 +97,89 @@ void VisionSystem::updateSprites(uint32_t observerEntity,
         {
             continue;
         }
-        enemyConfComp = stairwayToComponentManager().
-                searchComponentByType<EnemyConfComponent>(vectEntities[i],
-                                                          Components_e::ENEMY_CONF_COMPONENT);
-        if(enemyConfComp)
+        genComp = stairwayToComponentManager().
+                searchComponentByType<GeneralCollisionComponent>(vectEntities[i],
+                                                                 Components_e::GENERAL_COLLISION_COMPONENT);
+        assert(genComp);
+        if(!genComp->m_active)
         {
-            updateEnemySprites(vectEntities[i], observerEntity, enemyConfComp, memSpriteComp);
+            continue;
+        }
+        spriteComp = stairwayToComponentManager().
+                searchComponentByType<SpriteTextureComponent>(vectEntities[i],
+                                                              Components_e::SPRITE_TEXTURE_COMPONENT);
+        timerComp = stairwayToComponentManager().
+                searchComponentByType<TimerComponent>(vectEntities[i], Components_e::TIMER_COMPONENT);
+        assert(spriteComp);
+        assert(timerComp);
+        if(genComp->m_tag == CollisionTag_e::BULLET_ENEMY_CT ||
+                genComp->m_tag == CollisionTag_e::BULLET_PLAYER_CT)
+        {
+            updateVisibleShotSprite(vectEntities[i], memSpriteComp, spriteComp, timerComp, genComp);
+        }
+        else if(genComp->m_tag == CollisionTag_e::ENEMY_CT ||
+                genComp->m_tag == CollisionTag_e::GHOST_CT)
+        {
+            EnemyConfComponent *enemyConfComp = stairwayToComponentManager().
+                    searchComponentByType<EnemyConfComponent>(vectEntities[i],
+                                                              Components_e::ENEMY_CONF_COMPONENT);
+            if(enemyConfComp)
+            {
+                updateEnemySprites(vectEntities[i], observerEntity,
+                                   memSpriteComp, spriteComp, timerComp, enemyConfComp);
+            }
         }
     }
 }
 
 //===========================================================================
+void VisionSystem::updateVisibleShotSprite(uint32_t shotEntity,
+                                           MemSpriteDataComponent *memSpriteComp,
+                                           SpriteTextureComponent *spriteComp,
+                                           TimerComponent *timerComp,
+                                           GeneralCollisionComponent *genComp)
+{
+    ShotConfComponent *shotComp = stairwayToComponentManager().
+            searchComponentByType<ShotConfComponent>(shotEntity,
+                                                             Components_e::SHOT_CONF_COMPONENT);
+    assert(shotComp);
+    if(!shotComp->m_destructPhase)
+    {
+        return;
+    }
+    std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() -
+            timerComp->m_clockB;
+    uint32_t spriteIndex = static_cast<uint32_t>(shotComp->m_spritePhaseShot);
+    if(elapsed_seconds.count() > 0.12)
+    {
+        if(shotComp->m_spritePhaseShot != ShotPhase_e::SHOT_DESTRUCT_C)
+        {
+            ++spriteIndex;
+            timerComp->m_clockB = std::chrono::system_clock::now();
+        }
+        else
+        {
+            genComp->m_active = false;
+            shotComp->m_destructPhase = false;
+            shotComp->m_spritePhaseShot = ShotPhase_e::NORMAL;
+            spriteComp->m_spriteData = memSpriteComp->
+                    m_vectSpriteData[static_cast<uint32_t>(ShotPhase_e::NORMAL)];
+            return;
+        }
+    }
+    shotComp->m_spritePhaseShot = static_cast<ShotPhase_e>(spriteIndex);
+    assert(static_cast<uint32_t>(ShotPhase_e::TOTAL) ==
+           memSpriteComp->m_vectSpriteData.size());
+    spriteComp->m_spriteData = memSpriteComp->m_vectSpriteData[spriteIndex];
+}
+
+//===========================================================================
 void VisionSystem::updateEnemySprites(uint32_t enemyEntity, uint32_t observerEntity,
-                                      EnemyConfComponent *enemyConfComp,
-                                      MemSpriteDataComponent *memSpriteComp)
+                                      MemSpriteDataComponent *memSpriteComp,
+                                      SpriteTextureComponent *spriteComp,
+                                      TimerComponent *timerComp, EnemyConfComponent *enemyConfComp)
 {
     uint32_t indexSprite;
-    SpriteTextureComponent *spriteComp = stairwayToComponentManager().
-            searchComponentByType<SpriteTextureComponent>(enemyEntity,
-                                                          Components_e::SPRITE_TEXTURE_COMPONENT);
-    TimerComponent *timerComp = stairwayToComponentManager().
-            searchComponentByType<TimerComponent>(enemyEntity, Components_e::TIMER_COMPONENT);
-    assert(spriteComp);
-    assert(timerComp);
     if(enemyConfComp->m_touched)
     {
         spriteComp->m_spriteData = memSpriteComp->
@@ -137,7 +200,7 @@ void VisionSystem::updateEnemySprites(uint32_t enemyEntity, uint32_t observerEnt
     }
     else if(enemyConfComp->m_displayMode == EnemyDisplayMode_e::NORMAL)
     {
-        if(!enemyConfComp->m_life)
+        if(enemyConfComp->m_life == 0)
         {
             enemyConfComp->m_displayMode = EnemyDisplayMode_e::DYING;
             spriteComp->m_spriteData = memSpriteComp->

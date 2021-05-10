@@ -7,6 +7,7 @@
 #include <ECS/Components/TimerComponent.hpp>
 #include <ECS/Components/CircleCollisionComponent.hpp>
 #include <ECS/Components/PlayerConfComponent.hpp>
+#include <ECS/Components/ShotConfComponent.hpp>
 #include <cassert>
 #include <random>
 #include <iostream>
@@ -75,6 +76,14 @@ void IASystem::treatVisibleShot(const ammoContainer_t &stdAmmo)
                                                                  Components_e::GENERAL_COLLISION_COMPONENT);
         assert(genColl);
         if(!genColl->m_active)
+        {
+            continue;
+        }
+        ShotConfComponent *shotComp = stairwayToComponentManager().
+                searchComponentByType<ShotConfComponent>(*stdAmmo[i],
+                                                         Components_e::SHOT_CONF_COMPONENT);
+        assert(shotComp);
+        if(shotComp->m_destructPhase)
         {
             continue;
         }

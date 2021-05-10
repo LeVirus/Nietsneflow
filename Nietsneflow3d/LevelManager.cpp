@@ -215,8 +215,7 @@ void LevelManager::loadWeaponsDisplayData(const INIReader &reader)
     sprites = reader.Get(vectINISections[0], "VisibleShots", "");
     std::istringstream isss(sprites);
     vectStr_t resultss(std::istream_iterator<std::string>{isss},
-                      std::istream_iterator<std::string>());
-
+                       std::istream_iterator<std::string>());
     vectVisibleShotsData.reserve(resultss.size());
     for(uint32_t i = 0; i < resultss.size(); ++i)
     {

@@ -9,6 +9,11 @@ struct MapCoordComponent;
 struct MoveableComponent;
 struct EnemyConfComponent;
 struct MemSpriteDataComponent;
+struct SpriteTextureComponent;
+struct TimerComponent;
+struct GeneralCollisionComponent;
+struct TimerComponent;
+struct TimerComponent;
 
 class VisionSystem : public ecs::System
 {
@@ -23,9 +28,13 @@ private:
     void treatVisible(VisionComponent *visionComp, uint32_t checkVisibleId,
                       CollisionShape_e shapeElement);
     void updateSprites(uint32_t observerEntity, const std::vector<uint32_t> &vectEntities);
+    void updateVisibleShotSprite(uint32_t shotEntity, MemSpriteDataComponent *memSpriteComp,
+                                 SpriteTextureComponent *spriteComp,
+                                 TimerComponent *timerComp, GeneralCollisionComponent *genComp);
     void updateEnemySprites(uint32_t enemyEntity, uint32_t observerEntity,
-                            EnemyConfComponent *enemyConfComp,
-                            MemSpriteDataComponent *memSpriteComp);
+                            MemSpriteDataComponent *memSpriteComp,
+                            SpriteTextureComponent *spriteComp,
+                            TimerComponent *timerComp, EnemyConfComponent *enemyConfComp);
 private:
     const ECSManager* m_memECSManager;
 };

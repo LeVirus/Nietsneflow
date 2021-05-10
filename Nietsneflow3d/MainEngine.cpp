@@ -762,10 +762,19 @@ void MainEngine::loadPlayerVisibleShotsSprite(const std::vector<SpriteData> &vec
 {
     for(uint32_t k = 0; k < ammoEntities.size(); ++k)
     {
+        MemSpriteDataComponent *memComp = m_ecsManager.getComponentManager().
+                searchComponentByType<MemSpriteDataComponent>(*ammoEntities[k],
+                                                              Components_e::MEM_SPRITE_DATA_COMPONENT);
         SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().
                 searchComponentByType<SpriteTextureComponent>(*ammoEntities[k],
                                                               Components_e::SPRITE_TEXTURE_COMPONENT);
+        assert(memComp);
         assert(spriteComp);
+        assert(vectSprite.size() == static_cast<uint32_t>(ShotPhase_e::TOTAL));
+        for(uint32_t l = 0; l < vectSprite.size(); ++l)
+        {
+            memComp->m_vectSpriteData.emplace_back(&vectSpriteData[vectSprite[l]]);
+        }
         spriteComp->m_spriteData = &vectSpriteData[vectSprite[0]];
     }
 }
