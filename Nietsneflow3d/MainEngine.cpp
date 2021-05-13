@@ -588,6 +588,20 @@ uint32_t MainEngine::createStaticEntity()
 }
 
 //===================================================================
+uint32_t MainEngine::createObjectEntity()
+{
+    std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComponents;
+    bitsetComponents[Components_e::POSITION_VERTEX_COMPONENT] = true;
+    bitsetComponents[Components_e::SPRITE_TEXTURE_COMPONENT] = true;
+    bitsetComponents[Components_e::MAP_COORD_COMPONENT] = true;
+    bitsetComponents[Components_e::STATIC_ELEMENT_COMPONENT] = true;
+    bitsetComponents[Components_e::RECTANGLE_COLLISION_COMPONENT] = true;
+    bitsetComponents[Components_e::GENERAL_COLLISION_COMPONENT] = true;
+    bitsetComponents[Components_e::OBJECT_CONF_COMPONENT] = true;
+    return m_ecsManager.addEntity(bitsetComponents);
+}
+
+//===================================================================
 void MainEngine::confBaseComponent(uint32_t entityNum,
                                    const SpriteData &memSpriteData,
                                    const pairUI_t& coordLevel,
@@ -862,7 +876,15 @@ void MainEngine::loadStaticElementGroup(const LevelManager &levelManager,
                 getSpriteData()[staticData->operator[](i).m_numSprite];
         for(uint32_t j = 0; j < staticData->operator[](i).m_TileGamePosition.size(); ++j)
         {
-            uint32_t entityNum = createStaticEntity();
+            uint32_t entityNum;
+            if(elementType == LevelStaticElementType_e::OBJECT)
+            {
+                entityNum = createObjectEntity();
+            }
+            else
+            {
+                entityNum = createStaticEntity();
+            }
             confBaseComponent(entityNum,
                               memSpriteData,
                               staticData->operator[](i).m_TileGamePosition[j],

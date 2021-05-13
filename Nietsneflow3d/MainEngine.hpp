@@ -58,10 +58,12 @@ private:
     uint32_t createVisibleShotEntity();
     uint32_t createWriteEntity();
     uint32_t createSimpleSpriteEntity();
+    uint32_t createStaticEntity();
+    uint32_t createObjectEntity();
+
     void confBaseComponent(uint32_t entityNum, const SpriteData &memSpriteData,
                            const pairUI_t &coordLevel, CollisionShape_e collisionShape,
                            CollisionTag_e tag = CollisionTag_e::WALL_CT);
-    uint32_t createStaticEntity();
     void confStaticComponent(uint32_t entityNum, const pairFloat_t &elementSize,
                              bool traversable, LevelStaticElementType_e type);
     void loadEnemySprites(const std::vector<SpriteData> &vectSprite,
