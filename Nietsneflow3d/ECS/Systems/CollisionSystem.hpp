@@ -21,6 +21,14 @@ class CollisionSystem : public ecs::System
 public:
     CollisionSystem();
     void execSystem()override;
+    inline const std::vector<uint32_t> &getObjectEntityToDelete()const
+    {
+        return m_vectEntitiesToDelete;
+    }
+    inline void clearVectObjectToDelete()
+    {
+        m_vectEntitiesToDelete.clear();
+    }
 private:
     void treatSegmentShots();
     void rmCollisionMaskEntity(uint32_t numEntity);
@@ -64,7 +72,7 @@ private:
     std::multimap<CollisionTag_e, CollisionTag_e> m_tagArray;
     std::pair<uint32_t, float> m_memDistCurrentBulletColl;
     std::vector<tupleShot_t> m_vectMemShots;
-    std::vector<uint32_t> m_vectEntitiesToUnactivate;
+    std::vector<uint32_t> m_vectEntitiesToDelete;
 };
 
 struct CollisionArgs

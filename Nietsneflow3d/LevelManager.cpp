@@ -147,6 +147,13 @@ void LevelManager::readStaticElement(const INIReader &reader, StaticLevelElement
             reader.GetReal(sectionName, "SpriteWeightGame", 1.0);
     staticElement.m_inGameSpriteSize.second =
             reader.GetReal(sectionName, "SpriteHeightGame", 1.0);
+    if(elementType == LevelStaticElementType_e::OBJECT)
+    {
+        staticElement.m_containing = reader.GetInteger(sectionName, "Containing", 1);
+        uint32_t type = reader.GetInteger(sectionName, "Type", 1);
+        assert(type < static_cast<uint32_t>(ObjectType_e::TOTAL));
+        staticElement.m_type = static_cast<ObjectType_e>(type);
+    }
     fillPositionVect(reader, sectionName, staticElement.m_TileGamePosition);
     if(elementType == LevelStaticElementType_e::GROUND)
     {

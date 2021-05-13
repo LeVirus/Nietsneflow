@@ -28,6 +28,7 @@ public:
     }
     void confSystems();
 private:
+    void clearObjectToDelete();
     void loadGroundAndCeilingEntities(const GroundCeilingData &groundData,
                                       const GroundCeilingData &ceilingData);
     void confCeilingComponents(uint32_t entityNum);

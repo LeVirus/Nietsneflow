@@ -13,11 +13,6 @@ class IASystem;
 
 class PhysicalEngine
 {
-private:
-    InputSystem *m_inputSystem = nullptr;
-    CollisionSystem *m_collisionSystem = nullptr;
-    DoorSystem *m_doorSystem = nullptr;
-    IASystem *m_iaSystem = nullptr;
 public:
     PhysicalEngine();
     void runIteration(bool gamePaused);
@@ -26,6 +21,19 @@ public:
     void memPlayerEntity(uint32_t playerEntity);
     void confVisibleShoot(const ammoContainer_t &visibleShots,
                           const pairFloat_t &point, float degreeAngle);
+    inline const std::vector<uint32_t> &getObjectEntityToDelete()const
+    {
+        return m_collisionSystem->getObjectEntityToDelete();
+    }
+    inline void clearVectObjectToDelete()
+    {
+        m_collisionSystem->clearVectObjectToDelete();
+    }
+private:
+    InputSystem *m_inputSystem = nullptr;
+    CollisionSystem *m_collisionSystem = nullptr;
+    DoorSystem *m_doorSystem = nullptr;
+    IASystem *m_iaSystem = nullptr;
 };
 
 void moveElement(MoveableComponent &moveComp,

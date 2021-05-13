@@ -352,7 +352,21 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
 //===================================================================
 void CollisionSystem::treatPlayerPickObject(CollisionArgs &args)
 {
-
+    PlayerConfComponent *playerComp = stairwayToComponentManager().
+            searchComponentByType<PlayerConfComponent>(args.entityNumA, Components_e::PLAYER_CONF_COMPONENT);
+    ObjectConfComponent *objectComp = stairwayToComponentManager().
+            searchComponentByType<ObjectConfComponent>(args.entityNumB, Components_e::OBJECT_CONF_COMPONENT);
+    assert(playerComp);
+    assert(objectComp);
+    m_vectEntitiesToDelete.push_back(args.entityNumB);
+    switch (objectComp->m_type)
+    {
+    case ObjectType_e::GUN_AMMO:
+        playerComp->m_ammunationsCount[static_cast<uint32_t>(WeaponsType_e::GUN)] += objectComp->m_containing;
+        break;
+    default:
+        break;
+    }
 }
 
 //===================================================================

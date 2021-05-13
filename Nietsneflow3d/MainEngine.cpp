@@ -45,6 +45,7 @@ void MainEngine::mainLoop()
     do
     {
         m_physicalEngine.runIteration(m_gamePaused);
+        clearObjectToDelete();
         m_graphicEngine.runIteration(m_gamePaused);
     }while(!m_graphicEngine.windowShouldClose());
 }
@@ -116,6 +117,21 @@ void MainEngine::setUnsetPaused()
 void MainEngine::confSystems()
 {
     m_graphicEngine.confSystems();
+}
+
+//===================================================================
+void MainEngine::clearObjectToDelete()
+{
+    const std::vector<uint32_t> &vect = m_physicalEngine.getObjectEntityToDelete();
+    if(vect.empty())
+    {
+        return;
+    }
+    for(uint32_t i = 0; i < vect.size(); ++i)
+    {
+        m_ecsManager.bRmEntity(vect[i]);
+    }
+    m_physicalEngine.clearVectObjectToDelete();
 }
 
 //===================================================================
@@ -880,6 +896,13 @@ void MainEngine::loadStaticElementGroup(const LevelManager &levelManager,
             if(elementType == LevelStaticElementType_e::OBJECT)
             {
                 entityNum = createObjectEntity();
+                ObjectConfComponent *objComp = m_ecsManager.getComponentManager().
+                        searchComponentByType<ObjectConfComponent>(entityNum,
+                                                                   Components_e::OBJECT_CONF_COMPONENT);
+                assert(objComp);
+                objComp->m_containing = staticData->operator[](i).m_containing;
+                std::cerr << objComp->m_containing << "\n";
+                objComp->m_type = staticData->operator[](i).m_type;
             }
             else
             {

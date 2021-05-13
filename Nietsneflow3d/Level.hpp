@@ -4,6 +4,7 @@
 #include <functional>
 #include <vector>
 #include <constants.hpp>
+#include <ECS/Components/ObjectConfComponent.hpp>
 
 using vectPairUI_t = std::vector<pairUI_t>;
 using pairUIPairFloat_t = std::pair<uint8_t, pairFloat_t>;
@@ -18,6 +19,8 @@ struct StaticLevelElementData
     //In Game sprite size in % relative to a tile
     vectPairUI_t m_TileGamePosition;
     pairDouble_t m_inGameSpriteSize;
+    ObjectType_e m_type;
+    uint32_t m_containing;
     bool m_traversable;
 };
 
