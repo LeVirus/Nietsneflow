@@ -91,5 +91,6 @@ HEADERS += \
     ECS/Systems/DoorSystem.hpp \
     ECS/Components/PlayerConfComponent.hpp \
     ECS/Systems/StaticDisplaySystem.hpp \
-    ECS/Components/MemPositionsVertexComponents.hpp
+    ECS/Components/MemPositionsVertexComponents.hpp \
+    ECS/Components/ObjectConfComponent.hpp
 
