@@ -275,7 +275,19 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
                                  args.mapCompB.m_absoluteMapPositionPX, rectCompB.m_size);
         if(collision)
         {
-            treatCollisionCircleRect(args, circleCompA, rectCompB);
+            if(args.tagCompA->m_tag == CollisionTag_e::PLAYER_CT ||
+                    args.tagCompA->m_tag == CollisionTag_e::ENEMY_CT)
+            {
+                if(args.tagCompA->m_tag == CollisionTag_e::PLAYER_CT &&
+                        args.tagCompB->m_tag == CollisionTag_e::OBJECT_CT)
+                {
+                    treatPlayerPickObject(args);
+                }
+                else
+                {
+                    collisionCircleRectEject(args, circleCompA, rectCompB);
+                }
+            }
         }
     }
         break;
@@ -287,7 +299,7 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
                                                circleCompB.m_ray);
         if(collision)
         {
-            treatCollisionCircleCircle(args, circleCompA, circleCompB);
+            collisionCircleCircleEject(args, circleCompA, circleCompB);
         }
     }
         break;
@@ -335,6 +347,12 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
             playerConf->takeDamage(shotConfComp->m_damage);
         }
     }
+}
+
+//===================================================================
+void CollisionSystem::treatPlayerPickObject(CollisionArgs &args)
+{
+
 }
 
 //===================================================================
@@ -432,84 +450,80 @@ void CollisionSystem::calcBulletSegment(SegmentCollisionComponent &segmentCompA)
 }
 
 //===================================================================
-void CollisionSystem::treatCollisionCircleRect(CollisionArgs &args,
+void CollisionSystem::collisionCircleRectEject(CollisionArgs &args,
                                                const CircleCollisionComponent &circleCollA,
                                                const RectangleCollisionComponent &rectCollB)
 {
-    if(args.tagCompA->m_tag == CollisionTag_e::PLAYER_CT ||
-            args.tagCompA->m_tag == CollisionTag_e::ENEMY_CT)
+    MapCoordComponent &mapComp = getMapComponent(args.entityNumA);
+    MoveableComponent *moveComp = stairwayToComponentManager().
+            searchComponentByType<MoveableComponent>(args.entityNumA,
+                                                     Components_e::MOVEABLE_COMPONENT);
+    assert(moveComp);
+    float radDegree = getRadiantAngle(moveComp->m_currentDegreeMoveDirection);
+    float circlePosX = args.mapCompA.m_absoluteMapPositionPX.first;
+    float circlePosY = args.mapCompA.m_absoluteMapPositionPX.second;
+    float elementPosX = args.mapCompB.m_absoluteMapPositionPX.first;
+    float elementPosY = args.mapCompB.m_absoluteMapPositionPX.second;
+    float elementSecondPosX = elementPosX + rectCollB.m_size.first;
+    float elementSecondPosY = elementPosY + rectCollB.m_size.second;
+    bool angleBehavior = false;
+    //collision on angle of rect
+    if((circlePosX < elementPosX || circlePosX > elementSecondPosX) &&
+            (circlePosY < elementPosY || circlePosY > elementSecondPosY))
     {
-        MapCoordComponent &mapComp = getMapComponent(args.entityNumA);
-        MoveableComponent *moveComp = stairwayToComponentManager().
-                searchComponentByType<MoveableComponent>(args.entityNumA,
-                                      Components_e::MOVEABLE_COMPONENT);
-        assert(moveComp);
-        float radDegree = getRadiantAngle(moveComp->m_currentDegreeMoveDirection);
-        float circlePosX = args.mapCompA.m_absoluteMapPositionPX.first;
-        float circlePosY = args.mapCompA.m_absoluteMapPositionPX.second;
-        float elementPosX = args.mapCompB.m_absoluteMapPositionPX.first;
-        float elementPosY = args.mapCompB.m_absoluteMapPositionPX.second;
-        float elementSecondPosX = elementPosX + rectCollB.m_size.first;
-        float elementSecondPosY = elementPosY + rectCollB.m_size.second;
-        bool angleBehavior = false;
-        //collision on angle of rect
-        if((circlePosX < elementPosX || circlePosX > elementSecondPosX) &&
-                (circlePosY < elementPosY || circlePosY > elementSecondPosY))
-        {
-            angleBehavior = true;
-        }
-        float pointElementX = circlePosX < elementPosX ?
-                    elementPosX : elementSecondPosX;
-        float pointElementY = circlePosY < elementPosY ?
-                    elementPosY : elementSecondPosY;
+        angleBehavior = true;
+    }
+    float pointElementX = circlePosX < elementPosX ?
+                elementPosX : elementSecondPosX;
+    float pointElementY = circlePosY < elementPosY ?
+                elementPosY : elementSecondPosY;
 
-        float diffY = getVerticalCircleRectEject({circlePosX, circlePosY, pointElementX,
-                                                  elementPosY,
-                                                  elementSecondPosY,
-                                                  circleCollA.m_ray, radDegree,
-                                                  angleBehavior});
-        float diffX = getHorizontalCircleRectEject({circlePosX, circlePosY, pointElementY,
-                                                    elementPosX,
-                                                    elementSecondPosX,
-                                                    circleCollA.m_ray, radDegree,
-                                                    angleBehavior});
-        collisionEject(mapComp, diffX, diffY);
-        if(args.tagCompA->m_tag == CollisionTag_e::ENEMY_CT)
+    float diffY = getVerticalCircleRectEject({circlePosX, circlePosY, pointElementX,
+                                              elementPosY,
+                                              elementSecondPosY,
+                                              circleCollA.m_ray, radDegree,
+                                              angleBehavior});
+    float diffX = getHorizontalCircleRectEject({circlePosX, circlePosY, pointElementY,
+                                                elementPosX,
+                                                elementSecondPosX,
+                                                circleCollA.m_ray, radDegree,
+                                                angleBehavior});
+    collisionEject(mapComp, diffX, diffY);
+    if(args.tagCompA->m_tag == CollisionTag_e::ENEMY_CT)
+    {
+        EnemyConfComponent *enemyComp = stairwayToComponentManager().
+                searchComponentByType<EnemyConfComponent>(args.entityNumA,
+                                                          Components_e::ENEMY_CONF_COMPONENT);
+        assert(enemyComp);
+        enemyComp->m_wallTouch.first = true;
+        if(std::abs(diffX) > std::abs(diffY))
         {
-            EnemyConfComponent *enemyComp = stairwayToComponentManager().
-                    searchComponentByType<EnemyConfComponent>(args.entityNumA,
-                                                             Components_e::ENEMY_CONF_COMPONENT);
-            assert(enemyComp);
-            enemyComp->m_wallTouch.first = true;
-            if(std::abs(diffX) > std::abs(diffY))
-            {
-                enemyComp->m_wallTouch.second = (diffY < EPSILON_FLOAT) ?
-                            Direction_e::NORTH : Direction_e::SOUTH;
-            }
-            else
-            {
-                enemyComp->m_wallTouch.second = (diffX < EPSILON_FLOAT) ?
-                            Direction_e::EAST : Direction_e::WEST;
-            }
-            return;
+            enemyComp->m_wallTouch.second = (diffY < EPSILON_FLOAT) ?
+                        Direction_e::NORTH : Direction_e::SOUTH;
         }
-        PlayerConfComponent *playerComp = stairwayToComponentManager().
-                searchComponentByType<PlayerConfComponent>(args.entityNumA,
-                                                           Components_e::PLAYER_CONF_COMPONENT);
-        assert(playerComp);
-        if(args.tagCompB->m_tag == CollisionTag_e::DOOR_CT)
+        else
         {
-            if(playerComp->m_playerAction)
+            enemyComp->m_wallTouch.second = (diffX < EPSILON_FLOAT) ?
+                        Direction_e::EAST : Direction_e::WEST;
+        }
+        return;
+    }
+    PlayerConfComponent *playerComp = stairwayToComponentManager().
+            searchComponentByType<PlayerConfComponent>(args.entityNumA,
+                                                       Components_e::PLAYER_CONF_COMPONENT);
+    assert(playerComp);
+    if(args.tagCompB->m_tag == CollisionTag_e::DOOR_CT)
+    {
+        if(playerComp->m_playerAction)
+        {
+            DoorComponent *doorComp = stairwayToComponentManager().
+                    searchComponentByType<DoorComponent>(args.entityNumB,
+                                                         Components_e::DOOR_COMPONENT);
+            assert(doorComp);
+            if(doorComp->m_currentState == DoorState_e::STATIC_CLOSED ||
+                    doorComp->m_currentState == DoorState_e::MOVE_CLOSE)
             {
-                DoorComponent *doorComp = stairwayToComponentManager().
-                        searchComponentByType<DoorComponent>(args.entityNumB,
-                                                             Components_e::DOOR_COMPONENT);
-                assert(doorComp);
-                if(doorComp->m_currentState == DoorState_e::STATIC_CLOSED ||
-                        doorComp->m_currentState == DoorState_e::MOVE_CLOSE)
-                {
-                    doorComp->m_currentState = DoorState_e::MOVE_OPEN;
-                }
+                doorComp->m_currentState = DoorState_e::MOVE_OPEN;
             }
         }
     }
@@ -604,11 +618,12 @@ void CollisionSystem::collisionEject(MapCoordComponent &mapComp,
 }
 
 //===================================================================
-void CollisionSystem::treatCollisionCircleCircle(CollisionArgs &args,
+void CollisionSystem::collisionCircleCircleEject(CollisionArgs &args,
                                                  const CircleCollisionComponent &circleCollA,
                                                  const CircleCollisionComponent &circleCollB)
 {
-    if(args.tagCompA->m_tag == CollisionTag_e::PLAYER_CT)
+    if(args.tagCompA->m_tag == CollisionTag_e::PLAYER_CT ||
+            args.tagCompA->m_tag == CollisionTag_e::ENEMY_CT)
     {
         MoveableComponent *moveCompA = stairwayToComponentManager().
                 searchComponentByType<MoveableComponent>(args.entityNumA,

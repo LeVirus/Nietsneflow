@@ -33,15 +33,16 @@ private:
     //Collisions detection
     void treatCollisionFirstRect(CollisionArgs &args);
     void treatCollisionFirstCircle(CollisionArgs &args);
+    void treatPlayerPickObject(CollisionArgs &args);
     void treatCollisionFirstSegment(CollisionArgs &args);
 
     //Collisions treatment
-    void treatCollisionCircleRect(CollisionArgs &args,
+    void collisionCircleRectEject(CollisionArgs &args,
                                   const CircleCollisionComponent &circleCollA,
                                   const RectangleCollisionComponent &rectCollB);
     float getVerticalCircleRectEject(const EjectYArgs& args);
     float getHorizontalCircleRectEject(const EjectXArgs &args);
-    void treatCollisionCircleCircle(CollisionArgs &args,
+    void collisionCircleCircleEject(CollisionArgs &args,
                                     const CircleCollisionComponent &circleCollA,
                                     const CircleCollisionComponent &circleCollB);
 //    void treatCollisionCircleSegment(CollisionArgs &args,
