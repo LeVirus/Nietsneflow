@@ -591,7 +591,7 @@ uint32_t MainEngine::createStaticEntity()
 void MainEngine::confBaseComponent(uint32_t entityNum,
                                    const SpriteData &memSpriteData,
                                    const pairUI_t& coordLevel,
-                                   CollisionShape_e collisionShape)
+                                   CollisionShape_e collisionShape, CollisionTag_e tag)
 {
     SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().
             searchComponentByType<SpriteTextureComponent>(entityNum, Components_e::SPRITE_TEXTURE_COMPONENT);
@@ -609,7 +609,7 @@ void MainEngine::confBaseComponent(uint32_t entityNum,
                 searchComponentByType<RectangleCollisionComponent>(entityNum, Components_e::RECTANGLE_COLLISION_COMPONENT);
         assert(rectComp);
         rectComp->m_size = {LEVEL_TILE_SIZE_PX, LEVEL_TILE_SIZE_PX};
-        tagComp->m_tag = CollisionTag_e::WALL_CT;
+        tagComp->m_tag = tag;
     }
     else if(collisionShape == CollisionShape_e::CIRCLE_C)
     {
@@ -866,7 +866,7 @@ void MainEngine::loadStaticElementGroup(const LevelManager &levelManager,
             confBaseComponent(entityNum,
                               memSpriteData,
                               staticData->operator[](i).m_TileGamePosition[j],
-                    CollisionShape_e::RECTANGLE_C);
+                    CollisionShape_e::RECTANGLE_C, CollisionTag_e::OBJECT_CT);
             confStaticComponent(entityNum,
                                 staticData->operator[](i).m_inGameSpriteSize,
                     staticData->operator[](i).m_traversable,
