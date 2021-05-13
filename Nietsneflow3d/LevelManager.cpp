@@ -119,7 +119,6 @@ void LevelManager::loadGeneralStaticElements(const INIReader &reader,
     }
     std::vector<StaticLevelElementData> vectStaticElement;
     vectStaticElement.reserve(vectINISections.size());
-
     for(uint32_t i = 0; i < vectINISections.size(); ++i)
     {
         vectStaticElement.emplace_back(StaticLevelElementData());
@@ -148,7 +147,6 @@ void LevelManager::readStaticElement(const INIReader &reader, StaticLevelElement
             reader.GetReal(sectionName, "SpriteWeightGame", 1.0);
     staticElement.m_inGameSpriteSize.second =
             reader.GetReal(sectionName, "SpriteHeightGame", 1.0);
-
     fillPositionVect(reader, sectionName, staticElement.m_TileGamePosition);
     if(elementType == LevelStaticElementType_e::GROUND)
     {
@@ -167,7 +165,6 @@ void LevelManager::fillPositionVect(const INIReader &reader,
     size_t finalSize = results.size() / 2;
     assert(!results.empty() && "Error inconsistent position datas.");
     assert(!(results.size() % 2) && "Error inconsistent position datas.");
-
     vectPos.reserve(finalSize);
     for(uint32_t j = 0; j < results.size(); j += 2)
     {

@@ -839,37 +839,38 @@ void MainEngine::confMenuCursorEntity(PlayerConfComponent *playerConf)
 //===================================================================
 void MainEngine::loadStaticElementEntities(const LevelManager &levelManager)
 {
-    std::vector<StaticLevelElementData> const *staticData =
-            &levelManager.getLevel().getGroundElementData();//0
+    //LOAD CURSOR MENU
     uint8_t cursorSpriteId = *levelManager.getPictureData().
             getIdentifier(levelManager.getCursorSpriteName());
     m_memCursorSpriteData = &levelManager.getPictureData().getSpriteData()[cursorSpriteId];
-    for(uint32_t h = 0; h < 3; ++h)
+    loadStaticElementGroup(levelManager, &levelManager.getLevel().getGroundElementData(),
+                           LevelStaticElementType_e::GROUND);
+    loadStaticElementGroup(levelManager, &levelManager.getLevel().getCeilingElementData(),
+                           LevelStaticElementType_e::CEILING);
+    loadStaticElementGroup(levelManager, &levelManager.getLevel().getObjectElementData(),
+                           LevelStaticElementType_e::OBJECT);
+}
+
+//===================================================================
+void MainEngine::loadStaticElementGroup(const LevelManager &levelManager,
+                                        const std::vector<StaticLevelElementData> *staticData,
+                                        LevelStaticElementType_e elementType)
+{
+    for(uint32_t i = 0; i < staticData->size(); ++i)
     {
-        for(uint32_t i = 0; i < staticData->size(); ++i)
+        const SpriteData &memSpriteData = levelManager.getPictureData().
+                getSpriteData()[staticData->operator[](i).m_numSprite];
+        for(uint32_t j = 0; j < staticData->operator[](i).m_TileGamePosition.size(); ++j)
         {
-            const SpriteData &memSpriteData = levelManager.getPictureData().
-                    getSpriteData()[staticData->operator[](i).m_numSprite];
-            for(uint32_t j = 0; j < staticData->operator[](i).m_TileGamePosition.size(); ++j)
-            {
-                uint32_t entityNum = createStaticEntity();
-                confBaseComponent(entityNum,
-                                  memSpriteData,
-                                  staticData->operator[](i).m_TileGamePosition[j],
-                        CollisionShape_e::RECTANGLE_C);
-                confStaticComponent(entityNum,
-                                       staticData->operator[](i).m_inGameSpriteSize,
-                                       staticData->operator[](i).m_traversable,
-                                       static_cast<LevelStaticElementType_e>(h));
-            }
-        }
-        if(!h)//h == 1
-        {
-            staticData = &levelManager.getLevel().getCeilingElementData();
-        }
-        else// h == 2
-        {
-            staticData = &levelManager.getLevel().getObjectElementData();
+            uint32_t entityNum = createStaticEntity();
+            confBaseComponent(entityNum,
+                              memSpriteData,
+                              staticData->operator[](i).m_TileGamePosition[j],
+                    CollisionShape_e::RECTANGLE_C);
+            confStaticComponent(entityNum,
+                                staticData->operator[](i).m_inGameSpriteSize,
+                    staticData->operator[](i).m_traversable,
+                    static_cast<LevelStaticElementType_e>(elementType));
         }
     }
 }

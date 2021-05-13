@@ -3,6 +3,7 @@
 #include <GraphicEngine.hpp>
 #include <PhysicalEngine.hpp>
 #include <ECS/ECSManager.hpp>
+#include <Level.hpp>
 
 class LevelManager;
 class Level;
@@ -46,6 +47,8 @@ private:
     void loadEnemiesEntities(const LevelManager &levelManager);
     void confVisibleAmmo(const ammoContainer_t &ammoCont);
     void loadStaticElementEntities(const LevelManager &levelManager);
+    void loadStaticElementGroup(const LevelManager &levelManager,
+                                const std::vector<StaticLevelElementData> *staticData, LevelStaticElementType_e elementType);
     void createAmmosEntities(ammoContainer_t &ammoCont, CollisionTag_e collTag, bool visibleShot = false);
     uint32_t loadWeaponEntity();
     uint32_t createWallEntity();
