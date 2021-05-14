@@ -491,7 +491,7 @@ void MainEngine::confVisibleAmmo(const ammoContainer_t &ammoCont)
         assert(circleComp);
         assert(spriteComp);
         circleComp->m_ray = 5.0f;
-        spriteComp->m_glFpsSize = {0.2f, 0.1f};
+        spriteComp->m_glFpsSize = {0.2f, 0.3f};
     }
 }
 

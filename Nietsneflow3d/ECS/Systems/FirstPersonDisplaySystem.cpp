@@ -471,8 +471,8 @@ void FirstPersonDisplaySystem::confNormalEntityVertex(uint32_t numEntity, Vision
             downPos, upPos;
     if(tag == CollisionTag_e::BULLET_ENEMY_CT || tag == CollisionTag_e::BULLET_PLAYER_CT)
     {
-        upPos = spriteComp->m_glFpsSize.second / (distance / LEVEL_TILE_SIZE_PX);
-        downPos = -upPos;
+        downPos = -0.3f / (distance / LEVEL_TILE_SIZE_PX);
+        upPos = downPos + spriteComp->m_glFpsSize.second / (distance / LEVEL_TILE_SIZE_PX);
     }
     else
     {
