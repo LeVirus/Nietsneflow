@@ -51,7 +51,7 @@ void MainEngine::mainLoop()
 }
 
 //===================================================================
-void MainEngine::confPlayerShoot(const ammoContainer_t &playerVisibleShots,
+void MainEngine::confPlayerShoot(const AmmoContainer_t &playerVisibleShots,
                                  const pairFloat_t &point, float degreeAngle)
 {
     m_physicalEngine.confVisibleShoot(playerVisibleShots, point, degreeAngle);
@@ -393,7 +393,7 @@ void MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
 }
 
 //===================================================================
-void MainEngine::createAmmosEntities(ammoContainer_t &ammoCount, CollisionTag_e collTag,
+void MainEngine::createAmmosEntities(AmmoContainer_t &ammoCount, CollisionTag_e collTag,
                                      bool visibleShot)
 {
     for(uint32_t i = 0; i < ammoCount.size(); ++i)
@@ -422,7 +422,7 @@ void MainEngine::createAmmosEntities(ammoContainer_t &ammoCount, CollisionTag_e 
 //===================================================================
 void MainEngine::loadEnemySprites(const std::vector<SpriteData> &vectSprite,
                                   const std::vector<EnemyData> &enemiesData, uint32_t numEntity,
-                                  const ammoContainer_t &visibleAmmo)
+                                  const AmmoContainer_t &visibleAmmo)
 {
     MemSpriteDataComponent *memSpriteComp = m_ecsManager.getComponentManager().
             searchComponentByType<MemSpriteDataComponent>(numEntity,
@@ -478,7 +478,7 @@ void MainEngine::loadEnemySprites(const std::vector<SpriteData> &vectSprite,
 }
 
 //===================================================================
-void MainEngine::confVisibleAmmo(const ammoContainer_t &ammoCont)
+void MainEngine::confVisibleAmmo(const AmmoContainer_t &ammoCont)
 {
     for(uint32_t i = 0; i < ammoCont.size(); ++i)
     {
@@ -778,7 +778,7 @@ void MainEngine::confPlayerEntity(const std::vector<SpriteData> &vectSpriteData,
 }
 
 //===================================================================
-void MainEngine::confShotsEntities(const ammoContainer_t &ammoEntities, uint32_t damageValue)
+void MainEngine::confShotsEntities(const AmmoContainer_t &ammoEntities, uint32_t damageValue)
 {
     for(uint32_t i = 0; i < ammoEntities.size(); ++i)
     {
@@ -793,7 +793,7 @@ void MainEngine::confShotsEntities(const ammoContainer_t &ammoEntities, uint32_t
 //===================================================================
 void MainEngine::loadPlayerVisibleShotsSprite(const std::vector<SpriteData> &vectSpriteData,
                                               const std::vector<uint8_t> &vectSprite,
-                                              const ammoContainer_t &ammoEntities)
+                                              const AmmoContainer_t &ammoEntities)
 {
     for(uint32_t k = 0; k < ammoEntities.size(); ++k)
     {

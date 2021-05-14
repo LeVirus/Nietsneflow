@@ -14,7 +14,7 @@ public:
     IASystem();
     void execSystem()override;
     void loadPlayerDatas(uint32_t playerEntity);
-    void confVisibleShoot(const ammoContainer_t &visibleShots,
+    void confVisibleShoot(const AmmoContainer_t &visibleShots,
                           const pairFloat_t &point, float degreeAngle);
 private:
     void treatEnemyBehaviourAttack(uint32_t enemyEntity, MapCoordComponent *enemyMapComp,
@@ -23,7 +23,7 @@ private:
                               MapCoordComponent *enemyMapComp);
     void enemyShoot(EnemyConfComponent *enemyConfComp, MoveableComponent *moveComp,
                     MapCoordComponent *enemyMapComp, bool visibleShot);
-    void treatVisibleShot(const ammoContainer_t &stdAmmo);
+    void treatVisibleShot(const AmmoContainer_t &stdAmmo);
 private:
     uint32_t m_playerEntity;
     MapCoordComponent *m_playerMapComp = nullptr;

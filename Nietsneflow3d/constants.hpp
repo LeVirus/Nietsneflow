@@ -4,12 +4,13 @@
 #include <map>
 #include <limits>
 #include <cmath>
+#include <vector>
 
 using pairUI_t = std::pair<uint32_t, uint32_t>;
 using pairLong_t = std::pair<long, long>;
 using pairFloat_t = std::pair<float, float>;
 using pairDouble_t = std::pair<double, double>;
-using ammoContainer_t = std::array<std::optional<uint32_t>, 4>;
+using AmmoContainer_t = std::array<std::optional<uint32_t>, 4>;
 enum Components_e
 {
     POSITION_VERTEX_COMPONENT,
@@ -244,3 +245,6 @@ inline const std::map<Shader_e, std::string> SHADER_ID_MAP
     {Shader_e::COLOR_S, "ceilingFloor"},
     {Shader_e::TEXTURE_S, "wall"}
 };
+
+inline std::array<uint32_t, static_cast<uint32_t>(WeaponsType_e::TOTAL)> MAX_WEAPONS_AMMO =
+{100, 50};

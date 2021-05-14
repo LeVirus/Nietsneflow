@@ -67,7 +67,7 @@ void IASystem::execSystem()
 
 
 //===================================================================
-void IASystem::treatVisibleShot(const ammoContainer_t &stdAmmo)
+void IASystem::treatVisibleShot(const AmmoContainer_t &stdAmmo)
 {
     for(uint32_t i = 0; i < stdAmmo.size(); ++i)
     {
@@ -235,7 +235,7 @@ void IASystem::loadPlayerDatas(uint32_t playerEntity)
 }
 
 //===================================================================
-void IASystem::confVisibleShoot(const ammoContainer_t &visibleShots,
+void IASystem::confVisibleShoot(const AmmoContainer_t &visibleShots,
                                 const pairFloat_t &point, float degreeAngle)
 {
     uint32_t currentShot = 0;

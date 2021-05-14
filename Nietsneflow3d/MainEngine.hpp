@@ -38,19 +38,19 @@ private:
     void linkSystemsToGraphicEngine();
     void linkSystemsToPhysicalEngine();
     void loadPlayerVisibleShotsSprite(const std::vector<SpriteData> &vectSpriteData, const std::vector<uint8_t> &vectSprite,
-                                      const ammoContainer_t &ammoEntities);
+                                      const AmmoContainer_t &ammoEntities);
     void loadPlayerEntity(const std::vector<SpriteData> &vectSpriteData, const Level &level, uint32_t numWeaponEntity);
     void confPlayerEntity(const std::vector<SpriteData> &vectSpriteData, uint32_t entityNum, const Level &level, uint32_t numWeaponEntity);
-    void confShotsEntities(const ammoContainer_t &ammoEntities, uint32_t damageValue);
+    void confShotsEntities(const AmmoContainer_t &ammoEntities, uint32_t damageValue);
     uint32_t loadWeaponsEntity(const LevelManager &levelManager);
     void loadWallEntities(const LevelManager &levelManager);
     void loadDoorEntities(const LevelManager &levelManager);
     void loadEnemiesEntities(const LevelManager &levelManager);
-    void confVisibleAmmo(const ammoContainer_t &ammoCont);
+    void confVisibleAmmo(const AmmoContainer_t &ammoCont);
     void loadStaticElementEntities(const LevelManager &levelManager);
     void loadStaticElementGroup(const LevelManager &levelManager,
                                 const std::vector<StaticLevelElementData> *staticData, LevelStaticElementType_e elementType);
-    void createAmmosEntities(ammoContainer_t &ammoCont, CollisionTag_e collTag, bool visibleShot = false);
+    void createAmmosEntities(AmmoContainer_t &ammoCont, CollisionTag_e collTag, bool visibleShot = false);
     uint32_t loadWeaponEntity();
     uint32_t createWallEntity();
     uint32_t createDoorEntity();
@@ -68,10 +68,10 @@ private:
     void confStaticComponent(uint32_t entityNum, const pairFloat_t &elementSize,
                              bool traversable, LevelStaticElementType_e type);
     void loadEnemySprites(const std::vector<SpriteData> &vectSprite,
-                          const std::vector<EnemyData> &enemiesData, uint32_t numEntity, const ammoContainer_t &visibleAmmo);
+                          const std::vector<EnemyData> &enemiesData, uint32_t numEntity, const AmmoContainer_t &visibleAmmo);
     void memTimerPausedValue();
     void applyTimerPausedValue();
-    void confPlayerShoot(const ammoContainer_t &playerVisibleShots, const pairFloat_t &point, float degreeAngle);
+    void confPlayerShoot(const AmmoContainer_t &playerVisibleShots, const pairFloat_t &point, float degreeAngle);
 private:
     GraphicEngine m_graphicEngine;
     PhysicalEngine m_physicalEngine;

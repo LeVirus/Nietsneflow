@@ -358,35 +358,61 @@ void CollisionSystem::treatPlayerPickObject(CollisionArgs &args)
             searchComponentByType<ObjectConfComponent>(args.entityNumB, Components_e::OBJECT_CONF_COMPONENT);
     assert(playerComp);
     assert(objectComp);
-    m_vectEntitiesToDelete.push_back(args.entityNumB);
+    uint32_t index;
     switch (objectComp->m_type)
     {
     case ObjectType_e::GUN_AMMO:
-        playerComp->m_ammunationsCount[static_cast<uint32_t>(WeaponsType_e::GUN)] += objectComp->m_containing;
+        index = static_cast<uint32_t>(WeaponsType_e::GUN);
+        if(playerComp->m_ammunationsCount[index] == MAX_WEAPONS_AMMO[index])
+        {
+            return;
+        }
+        playerComp->m_ammunationsCount[index] += objectComp->m_containing;
         break;
     case ObjectType_e::LITTLE_HEAL:
+        if(playerComp->m_life == 100)
+        {
+            return;
+        }
         playerComp->m_life += objectComp->m_containing;
         if(playerComp->m_life > 100)
         {
             playerComp->m_life = 100;
         }
+        m_vectEntitiesToDelete.push_back(args.entityNumB);
+        return;
         break;
     case ObjectType_e::CARD:
         break;
     case ObjectType_e::SHOTGUN:
     {
-        uint32_t index = static_cast<uint32_t>(WeaponsType_e::SHOTGUN);
+        index = static_cast<uint32_t>(WeaponsType_e::SHOTGUN);
+        if(playerComp->m_weapons[index] && playerComp->m_ammunationsCount[index] == MAX_WEAPONS_AMMO[index])
+        {
+            return;
+        }
         playerComp->m_weapons[index] = true;
         playerComp->m_ammunationsCount[index] += objectComp->m_containing;
+        setPlayerWeapon(*playerComp, WeaponsType_e::SHOTGUN);
     }
         break;
     case ObjectType_e::SHOTGUN_AMMO:
-        playerComp->m_ammunationsCount[static_cast<uint32_t>(WeaponsType_e::SHOTGUN)] += objectComp->m_containing;
+        index = static_cast<uint32_t>(WeaponsType_e::SHOTGUN);
+        if(playerComp->m_ammunationsCount[index] == MAX_WEAPONS_AMMO[index])
+        {
+            return;
+        }
+        playerComp->m_ammunationsCount[index] += objectComp->m_containing;
         break;
     case ObjectType_e::TOTAL:
         assert(false);
         break;
     }
+    if(playerComp->m_ammunationsCount[index] > MAX_WEAPONS_AMMO[index])
+    {
+        playerComp->m_ammunationsCount[index] = MAX_WEAPONS_AMMO[index];
+    }
+    m_vectEntitiesToDelete.push_back(args.entityNumB);
 }
 
 //===================================================================

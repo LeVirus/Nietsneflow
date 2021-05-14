@@ -282,6 +282,13 @@ void changePlayerWeapon(PlayerConfComponent &playerComp, bool next)
             }
         }while(true);
     }
+    setPlayerWeapon(playerComp, weapon);
+}
+
+
+//===================================================================
+void setPlayerWeapon(PlayerConfComponent &playerComp, WeaponsType_e weapon)
+{
     if(playerComp.m_currentWeapon != weapon)
     {
         playerComp.m_currentWeapon = weapon;
