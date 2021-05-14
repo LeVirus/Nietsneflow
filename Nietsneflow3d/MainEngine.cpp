@@ -373,7 +373,12 @@ void MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
             EnemyConfComponent *enemyComp = m_ecsManager.getComponentManager().
                     searchComponentByType<EnemyConfComponent>(numEntity,
                                                               Components_e::ENEMY_CONF_COMPONENT);
+            SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().
+                    searchComponentByType<SpriteTextureComponent>(numEntity,
+                                                              Components_e::SPRITE_TEXTURE_COMPONENT);
             assert(enemyComp);
+            assert(spriteComp);
+            spriteComp->m_glFpsSize = enemiesData[i].m_inGameSpriteSize;
             createAmmosEntities(enemyComp->m_stdAmmo, CollisionTag_e::BULLET_ENEMY_CT);
             createAmmosEntities(enemyComp->m_visibleAmmo, CollisionTag_e::BULLET_ENEMY_CT, true);
             loadEnemySprites(levelManager.getPictureData().getSpriteData(),
@@ -486,7 +491,7 @@ void MainEngine::confVisibleAmmo(const ammoContainer_t &ammoCont)
         assert(circleComp);
         assert(spriteComp);
         circleComp->m_ray = 5.0f;
-        spriteComp->m_glFpsSize = {0.5f, 0.2f};
+        spriteComp->m_glFpsSize = {0.2f, 0.1f};
     }
 }
 
@@ -899,10 +904,14 @@ void MainEngine::loadStaticElementGroup(const LevelManager &levelManager,
                 ObjectConfComponent *objComp = m_ecsManager.getComponentManager().
                         searchComponentByType<ObjectConfComponent>(entityNum,
                                                                    Components_e::OBJECT_CONF_COMPONENT);
+                SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().
+                        searchComponentByType<SpriteTextureComponent>(entityNum,
+                                                                      Components_e::SPRITE_TEXTURE_COMPONENT);
                 assert(objComp);
+                assert(spriteComp);
                 objComp->m_containing = staticData->operator[](i).m_containing;
-                std::cerr << objComp->m_containing << "\n";
                 objComp->m_type = staticData->operator[](i).m_type;
+                spriteComp->m_glFpsSize = staticData->operator[](i).m_inGameSpriteSize;
             }
             else
             {

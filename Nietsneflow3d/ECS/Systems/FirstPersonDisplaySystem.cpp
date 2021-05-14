@@ -125,7 +125,7 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
     float trigoAngle = getTrigoAngle(mapCompA->m_absoluteMapPositionPX, centerPosB);
     //get lateral pos from angle
     float lateralPos = getLateralAngle(degreeObserverAngle, trigoAngle);
-    confNormalEntityVertex(numEntity, visionComp, lateralPos, distance);
+    confNormalEntityVertex(numEntity, visionComp, genCollComp->m_tag, lateralPos, distance);
     fillVertexFromEntity(numEntity, numIteration, simpleDistance, DisplayMode_e::STANDART_DM);
 }
 
@@ -449,6 +449,7 @@ void FirstPersonDisplaySystem::setVectTextures(std::vector<Texture> &vectTexture
 
 //===================================================================
 void FirstPersonDisplaySystem::confNormalEntityVertex(uint32_t numEntity, VisionComponent *visionComp,
+                                                      CollisionTag_e tag,
                                                       float lateralPosDegree, float distance)
 {
     PositionVertexComponent *positionComp = stairwayToComponentManager().
@@ -466,9 +467,18 @@ void FirstPersonDisplaySystem::confNormalEntityVertex(uint32_t numEntity, Vision
     {
         distance = 1.5f;
     }
-    float halfLateralSize = spriteComp->m_glFpsSize.first  / (distance / LEVEL_TILE_SIZE_PX);
-    float downPos = -1.0f / (distance / LEVEL_TILE_SIZE_PX),
-            upPos = spriteComp->m_glFpsSize.second / (distance / LEVEL_TILE_SIZE_PX);
+    float halfLateralSize = spriteComp->m_glFpsSize.first  / (distance / LEVEL_TILE_SIZE_PX),
+            downPos, upPos;
+    if(tag == CollisionTag_e::BULLET_ENEMY_CT || tag == CollisionTag_e::BULLET_PLAYER_CT)
+    {
+        upPos = spriteComp->m_glFpsSize.second / (distance / LEVEL_TILE_SIZE_PX);
+        downPos = -upPos;
+    }
+    else
+    {
+        downPos = -1.0f / (distance / LEVEL_TILE_SIZE_PX);
+        upPos = downPos + spriteComp->m_glFpsSize.second / (distance / LEVEL_TILE_SIZE_PX);
+    }
     positionComp->m_vertex[0].first = lateralPosGL - halfLateralSize;
     positionComp->m_vertex[0].second = upPos;
     positionComp->m_vertex[1].first = lateralPosGL + halfLateralSize;

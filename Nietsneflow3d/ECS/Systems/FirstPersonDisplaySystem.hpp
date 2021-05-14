@@ -59,7 +59,7 @@ private:
                             MapCoordComponent *mapCompB, VisionComponent *visionComp,
                             uint32_t &toRemove, float degreeObserverAngle, uint32_t numIteration);
     void confNormalEntityVertex(uint32_t numEntity,
-                                VisionComponent *visionComp, float lateralPosDegree, float distance);
+                                VisionComponent *visionComp, CollisionTag_e tag, float lateralPosDegree, float distance);
     void drawVertex();
     pairFloat_t getCenterPosition(MapCoordComponent const *mapComp,
                                   GeneralCollisionComponent *genCollComp, float numEntity);
