@@ -241,32 +241,51 @@ void InputSystem::treatMainMenu(uint32_t playerEntity)
 //===================================================================
 void changePlayerWeapon(PlayerConfComponent &playerComp, bool next)
 {
-    playerComp.m_weaponChange = true;
+    WeaponsType_e weapon = playerComp.m_currentWeapon;
     if(!next)
     {
-        //first weapon
-        if(playerComp.m_currentWeapon == WeaponsType_e::GUN)
+        do
         {
-            playerComp.m_currentWeapon = WeaponsType_e::SHOTGUN;
-        }
-        else
-        {
-            playerComp.m_currentWeapon = static_cast<WeaponsType_e>(
-                        static_cast<uint8_t>(playerComp.m_currentWeapon) - 1);
-        }
+            //first weapon
+            if(weapon == WeaponsType_e::GUN)
+            {
+                weapon = WeaponsType_e::SHOTGUN;
+            }
+            else
+            {
+                weapon = static_cast<WeaponsType_e>(
+                            static_cast<uint32_t>(weapon) - 1);
+            }
+            if(playerComp.m_weapons[static_cast<uint32_t>(weapon)])
+            {
+                break;
+            }
+        }while(true);
     }
     else if(next)
     {
-        //last weapon
-        if(playerComp.m_currentWeapon == WeaponsType_e::SHOTGUN)
+        do
         {
-            playerComp.m_currentWeapon = WeaponsType_e::GUN;
-        }
-        else
-        {
-            playerComp.m_currentWeapon = static_cast<WeaponsType_e>(
-                        static_cast<uint8_t>(playerComp.m_currentWeapon) + 1);
-        }
+            //last weapon
+            if(weapon == WeaponsType_e::SHOTGUN)
+            {
+                weapon = WeaponsType_e::GUN;
+            }
+            else
+            {
+                weapon = static_cast<WeaponsType_e>(
+                            static_cast<uint8_t>(weapon) + 1);
+            }
+            if(playerComp.m_weapons[static_cast<uint32_t>(weapon)])
+            {
+                break;
+            }
+        }while(true);
+    }
+    if(playerComp.m_currentWeapon != weapon)
+    {
+        playerComp.m_currentWeapon = weapon;
+        playerComp.m_weaponChange = true;
     }
 }
 

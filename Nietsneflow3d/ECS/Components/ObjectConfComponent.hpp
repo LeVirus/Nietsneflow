@@ -10,6 +10,7 @@ enum class ObjectType_e
     LITTLE_HEAL,
     BIG_HEAL,
     CARD,
+    SHOTGUN,
     TOTAL
 };
 

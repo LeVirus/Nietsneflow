@@ -364,7 +364,27 @@ void CollisionSystem::treatPlayerPickObject(CollisionArgs &args)
     case ObjectType_e::GUN_AMMO:
         playerComp->m_ammunationsCount[static_cast<uint32_t>(WeaponsType_e::GUN)] += objectComp->m_containing;
         break;
-    default:
+    case ObjectType_e::LITTLE_HEAL:
+        playerComp->m_life += objectComp->m_containing;
+        if(playerComp->m_life > 100)
+        {
+            playerComp->m_life = 100;
+        }
+        break;
+    case ObjectType_e::CARD:
+        break;
+    case ObjectType_e::SHOTGUN:
+    {
+        uint32_t index = static_cast<uint32_t>(WeaponsType_e::SHOTGUN);
+        playerComp->m_weapons[index] = true;
+        playerComp->m_ammunationsCount[index] += objectComp->m_containing;
+    }
+        break;
+    case ObjectType_e::SHOTGUN_AMMO:
+        playerComp->m_ammunationsCount[static_cast<uint32_t>(WeaponsType_e::SHOTGUN)] += objectComp->m_containing;
+        break;
+    case ObjectType_e::TOTAL:
+        assert(false);
         break;
     }
 }
