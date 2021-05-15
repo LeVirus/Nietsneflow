@@ -312,6 +312,8 @@ void LevelManager::loadEnemyData(const INIReader &reader)
                          vectEnemy.back());
         loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::VISIBLE_SHOOT,
                          vectEnemy.back());
+        loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::VISIBLE_SHOOT_DESTRUCT,
+                         vectEnemy.back());
     }
     m_level.setEnemyElement(vectEnemy);
 }
@@ -381,6 +383,11 @@ void LevelManager::loadEnemySprites(const INIReader &reader, const std::string &
         spriteType = "VisibleShot";
         vectPtr = &enemyData.m_visibleShotSprites;
         break;
+    case EnemySpriteElementType_e::VISIBLE_SHOOT_DESTRUCT:
+        spriteType = "VisibleShotDestruct";
+        vectPtr = &enemyData.m_visibleShotDestructSprites;
+        break;
+
     }
     assert(vectPtr);
     std::string sprites = reader.Get(sectionName, spriteType, "");

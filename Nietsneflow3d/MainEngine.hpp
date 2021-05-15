@@ -77,6 +77,9 @@ private:
                              bool traversable, LevelStaticElementType_e type);
     void loadEnemySprites(const std::vector<SpriteData> &vectSprite,
                           const std::vector<EnemyData> &enemiesData, uint32_t numEntity, const AmmoContainer_t &visibleAmmo);
+    void loadVisibleShotEnemySprites(const std::vector<SpriteData> &vectSprite,
+                                     const AmmoContainer_t &visibleAmmo,
+                                     const EnemyData &enemyData);
     void memTimerPausedValue();
     void applyTimerPausedValue();
     void confPlayerShoot(const AmmoContainer_t &playerVisibleShots, const pairFloat_t &point, float degreeAngle);

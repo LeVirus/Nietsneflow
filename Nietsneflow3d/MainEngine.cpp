@@ -495,7 +495,6 @@ void MainEngine::loadEnemySprites(const std::vector<SpriteData> &vectSprite,
         {
             memSpriteComp->m_vectSpriteData.emplace_back(&vectSprite[enemiesData[i].m_staticRightSprites[j]]);
         }
-
         for(uint32_t j = 0; j < enemiesData[i].m_moveSprites.size(); ++j)
         {
             memSpriteComp->m_vectSpriteData.emplace_back(&vectSprite[enemiesData[i].m_moveSprites[j]]);
@@ -510,30 +509,42 @@ void MainEngine::loadEnemySprites(const std::vector<SpriteData> &vectSprite,
         }
         if(!enemiesData[i].m_visibleShotSprites.empty())
         {
-            for(uint32_t k = 0; k < visibleAmmo.size(); ++k)
-            {
-                SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().
-                        searchComponentByType<SpriteTextureComponent>(*visibleAmmo[k],
-                                                                      Components_e::SPRITE_TEXTURE_COMPONENT);
-                MemSpriteDataComponent *memSpriteComp = m_ecsManager.getComponentManager().
-                        searchComponentByType<MemSpriteDataComponent>(*visibleAmmo[k],
-                                                                      Components_e::MEM_SPRITE_DATA_COMPONENT);
-                ShotConfComponent *shotConfComp = m_ecsManager.getComponentManager().
-                        searchComponentByType<ShotConfComponent>(*visibleAmmo[k],
-                                                                      Components_e::SHOT_CONF_COMPONENT);
-                assert(shotConfComp);
-                assert(spriteComp);
-                assert(memSpriteComp);
-                memSpriteComp->m_vectSpriteData.reserve(enemiesData[i].m_visibleShotSprites.size());
-                for(uint32_t l = 0; l < visibleAmmo.size(); ++l)
-                {
-                    memSpriteComp->m_vectSpriteData.emplace_back(&vectSprite[enemiesData[i].m_visibleShotSprites[l]]);
-                }
-                spriteComp->m_spriteData = &vectSprite[enemiesData[i].
-                        m_visibleShotSprites[static_cast<uint32_t>(shotConfComp->m_spritePhaseShot)]];
-            }
+            loadVisibleShotEnemySprites(vectSprite, visibleAmmo, enemiesData[i]);
         }
         assert(memSpriteComp->m_vectSpriteData.size() == vectSize);
+    }
+}
+
+//===================================================================
+void MainEngine::loadVisibleShotEnemySprites(const std::vector<SpriteData> &vectSprite,
+                                             const AmmoContainer_t &visibleAmmo,
+                                             const EnemyData &enemyData)
+{
+    for(uint32_t k = 0; k < visibleAmmo.size(); ++k)
+    {
+        SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().
+                searchComponentByType<SpriteTextureComponent>(*visibleAmmo[k],
+                                                              Components_e::SPRITE_TEXTURE_COMPONENT);
+        MemSpriteDataComponent *memSpriteComp = m_ecsManager.getComponentManager().
+                searchComponentByType<MemSpriteDataComponent>(*visibleAmmo[k],
+                                                              Components_e::MEM_SPRITE_DATA_COMPONENT);
+        ShotConfComponent *shotConfComp = m_ecsManager.getComponentManager().
+                searchComponentByType<ShotConfComponent>(*visibleAmmo[k],
+                                                              Components_e::SHOT_CONF_COMPONENT);
+        assert(shotConfComp);
+        assert(spriteComp);
+        assert(memSpriteComp);
+        memSpriteComp->m_vectSpriteData.reserve(enemyData.m_visibleShotSprites.size());
+        for(uint32_t l = 0; l < enemyData.m_visibleShotSprites.size(); ++l)
+        {
+            memSpriteComp->m_vectSpriteData.emplace_back(&vectSprite[enemyData.m_visibleShotSprites[l]]);
+        }
+        for(uint32_t l = 0; l < enemyData.m_visibleShotDestructSprites.size(); ++l)
+        {
+            memSpriteComp->m_vectSpriteData.emplace_back(&vectSprite[enemyData.m_visibleShotDestructSprites[l]]);
+        }
+        spriteComp->m_spriteData = &vectSprite[enemyData.
+                m_visibleShotSprites[static_cast<uint32_t>(shotConfComp->m_spritePhaseShot)]];
     }
 }
 

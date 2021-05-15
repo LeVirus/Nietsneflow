@@ -58,7 +58,7 @@ struct EnemyData
     std::vector<uint8_t> m_staticFrontSprites, m_staticFrontLeftSprites, m_staticFrontRightSprites,
     m_staticBackSprites, m_staticBackLeftSprites, m_staticBackRightSprites,
     m_staticLeftSprites, m_staticRightSprites, m_moveSprites,
-    m_attackSprites, m_dyingSprites, m_visibleShotSprites;
+    m_attackSprites, m_dyingSprites, m_visibleShotSprites, m_visibleShotDestructSprites;
 
     //In Game sprite size in % relative to a tile
     pairDouble_t m_inGameSpriteSize;

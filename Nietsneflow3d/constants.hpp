@@ -98,7 +98,8 @@ enum class EnemySpriteElementType_e
     MOVE,
     ATTACK,
     DYING,
-    VISIBLE_SHOOT
+    VISIBLE_SHOOT,
+    VISIBLE_SHOOT_DESTRUCT
 };
 
 enum class EnemySpriteType_e
