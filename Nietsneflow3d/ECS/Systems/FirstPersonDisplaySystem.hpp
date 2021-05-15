@@ -43,6 +43,7 @@ class FirstPersonDisplaySystem : public ecs::System
 public:
     FirstPersonDisplaySystem();
     void execSystem()override;
+    void drawPlayerDamage();
     void setVectTextures(std::vector<Texture> &vectTexture);
     void setShader(Shader &shader);
 private:

@@ -49,7 +49,6 @@ void ColorDisplaySystem::drawVertex()
 //===================================================================
 void ColorDisplaySystem::execSystem()
 {
-    System::execSystem();
     fillVertexFromEntities();
     drawVertex();
 }
@@ -61,12 +60,36 @@ void ColorDisplaySystem::setShader(Shader &shader)
 }
 
 //===================================================================
+void ColorDisplaySystem::memColorSystemBackgroundEntities(uint32_t ground, uint32_t ceiling)
+{
+    m_ground = ground;
+    m_ceiling = ceiling;
+    mVectNumEntity.reserve(2);
+    mVectNumEntity.emplace_back(m_ground);
+    mVectNumEntity.emplace_back(m_ceiling);
+}
+
+//===================================================================
 void ColorDisplaySystem::drawEntity(const PositionVertexComponent *posComp,
                                     const ColorVertexComponent *colorComp)
 {
     m_verticesData.clear();
     m_verticesData.loadVertexColorComponent(posComp, colorComp);
     drawVertex();
+}
+
+//===================================================================
+void ColorDisplaySystem::drawVisibleDamage()
+{
+    PositionVertexComponent *posComp = stairwayToComponentManager().
+            searchComponentByType<PositionVertexComponent>(m_damage,
+                                                           Components_e::POSITION_VERTEX_COMPONENT);
+    ColorVertexComponent *colorComp = stairwayToComponentManager().
+            searchComponentByType<ColorVertexComponent>(m_damage,
+                                                        Components_e::COLOR_VERTEX_COMPONENT);
+    assert(posComp);
+    assert(colorComp);
+    drawEntity(posComp, colorComp);
 }
 
 //===================================================================

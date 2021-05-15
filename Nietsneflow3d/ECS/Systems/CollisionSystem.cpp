@@ -358,7 +358,7 @@ void CollisionSystem::treatPlayerPickObject(CollisionArgs &args)
             searchComponentByType<ObjectConfComponent>(args.entityNumB, Components_e::OBJECT_CONF_COMPONENT);
     assert(playerComp);
     assert(objectComp);
-    uint32_t index;
+    uint32_t index = 0;
     switch (objectComp->m_type)
     {
     case ObjectType_e::GUN_AMMO:
@@ -369,6 +369,7 @@ void CollisionSystem::treatPlayerPickObject(CollisionArgs &args)
         }
         playerComp->m_ammunationsCount[index] += objectComp->m_containing;
         break;
+    case ObjectType_e::BIG_HEAL:
     case ObjectType_e::LITTLE_HEAL:
         if(playerComp->m_life == 100)
         {

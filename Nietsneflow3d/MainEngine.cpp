@@ -135,6 +135,12 @@ void MainEngine::clearObjectToDelete()
 }
 
 //===================================================================
+void MainEngine::memColorSystemBackgroundEntities(uint32_t ground, uint32_t ceiling)
+{
+    m_graphicEngine.memColorSystemBackgroundEntities(ground, ceiling);
+}
+
+//===================================================================
 void MainEngine::memTimerPausedValue()
 {
     TimerComponent *timerComp;
@@ -172,6 +178,65 @@ void MainEngine::applyTimerPausedValue()
     m_vectMemPausedTimer.clear();
 }
 
+//===================================================================
+void MainEngine::loadDamageEntity()
+{
+    std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComponents;
+    bitsetComponents[Components_e::COLOR_VERTEX_COMPONENT] = true;
+    bitsetComponents[Components_e::POSITION_VERTEX_COMPONENT] = true;
+    uint32_t entityNum = m_ecsManager.addEntity(bitsetComponents);
+    PositionVertexComponent *posComp = m_ecsManager.getComponentManager().
+            searchComponentByType<PositionVertexComponent>(entityNum, Components_e::POSITION_VERTEX_COMPONENT);
+    assert(posComp);
+    posComp->m_vertex.reserve(4);
+    posComp->m_vertex.emplace_back(-1.0f, 1.0f);
+    posComp->m_vertex.emplace_back(1.0f, 1.0f);
+    posComp->m_vertex.emplace_back(1.0f, -1.0f);
+    posComp->m_vertex.emplace_back(-1.0f, -1.0f);
+
+    ColorVertexComponent *colorComp = m_ecsManager.getComponentManager().
+            searchComponentByType<ColorVertexComponent>(entityNum, Components_e::COLOR_VERTEX_COMPONENT);
+    assert(colorComp);
+    colorComp->m_vertex.reserve(4);
+    colorComp->m_vertex.emplace_back(0.7f, 0.2f, 0.1f);
+    colorComp->m_vertex.emplace_back(0.7f, 0.2f, 0.1f);
+    colorComp->m_vertex.emplace_back(0.7f, 0.2f, 0.1f);
+    colorComp->m_vertex.emplace_back(0.7f, 0.2f, 0.1f);
+    memDamageEntity(entityNum);
+}
+
+//===================================================================
+void MainEngine::loadGroundAndCeilingEntities(const GroundCeilingData &groundData,
+                                              const GroundCeilingData &ceilingData)
+{
+    uint32_t ceiling, ground;
+    ground = createBackgroundEntity(&groundData);
+    confGroundComponents(ground);
+    ceiling = createBackgroundEntity(&ceilingData);
+    confCeilingComponents(ceiling);
+    memColorSystemBackgroundEntities(ground, ceiling);
+}
+
+//===================================================================
+uint32_t MainEngine::createBackgroundEntity(GroundCeilingData const *data)
+{
+    std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComponents;
+    bitsetComponents[Components_e::POSITION_VERTEX_COMPONENT] = true;
+    if(data->m_apparence == DisplayType_e::COLOR)
+    {
+        bitsetComponents[Components_e::COLOR_VERTEX_COMPONENT] = true;
+    }
+    else if(data->m_apparence == DisplayType_e::TEXTURE)
+    {
+        bitsetComponents[Components_e::SPRITE_TEXTURE_COMPONENT] = true;
+    }
+    else
+    {
+        bitsetComponents[Components_e::SPRITE_TEXTURE_COMPONENT] = true;
+        bitsetComponents[Components_e::COLOR_VERTEX_COMPONENT] = true;
+    }
+    return m_ecsManager.addEntity(bitsetComponents);
+}
 
 //===================================================================
 void MainEngine::loadGraphicPicture(const PictureData &picData, const FontData &fontData)
@@ -180,45 +245,11 @@ void MainEngine::loadGraphicPicture(const PictureData &picData, const FontData &
 }
 
 //===================================================================
-void MainEngine::loadGroundAndCeilingEntities(const GroundCeilingData &groundData,
-                                              const GroundCeilingData &ceilingData)
-{
-    GroundCeilingData const *ptr = &groundData;
-    for(uint32_t i = 0; i < 2; ++i)
-    {
-        std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComponents;
-        bitsetComponents[Components_e::POSITION_VERTEX_COMPONENT] = true;
-        if(ptr->m_apparence == DisplayType_e::COLOR)
-        {
-            bitsetComponents[Components_e::COLOR_VERTEX_COMPONENT] = true;
-        }
-        else if(ptr->m_apparence == DisplayType_e::TEXTURE)
-        {
-            bitsetComponents[Components_e::SPRITE_TEXTURE_COMPONENT] = true;
-        }
-        else
-        {
-            bitsetComponents[Components_e::SPRITE_TEXTURE_COMPONENT] = true;
-            bitsetComponents[Components_e::COLOR_VERTEX_COMPONENT] = true;
-        }
-        uint32_t entityNum = m_ecsManager.addEntity(bitsetComponents);
-        if(i)
-        {
-            confGroundComponents(entityNum);
-        }
-        else
-        {
-            confCeilingComponents(entityNum);
-        }
-        ptr = &ceilingData;
-    }
-}
-
-//===================================================================
 void MainEngine::loadLevelEntities(const LevelManager &levelManager)
 {
     loadGroundAndCeilingEntities(levelManager.getPictureData().getGroundData(),
                                  levelManager.getPictureData().getCeilingData());
+    loadDamageEntity();
     loadStaticElementEntities(levelManager);
     loadPlayerEntity(levelManager.getPictureData().getSpriteData(),
                      levelManager.getLevel(), loadWeaponsEntity(levelManager));

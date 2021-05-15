@@ -106,6 +106,18 @@ void GraphicEngine::fillMenuWrite(WriteComponent *writeComp)
 }
 
 //===================================================================
+void GraphicEngine::memColorSystemBackgroundEntities(uint32_t ground, uint32_t ceiling)
+{
+    m_colorSystem->memColorSystemBackgroundEntities(ground, ceiling);
+}
+
+//===================================================================
+void GraphicEngine::memDamageEntity(uint32_t damage)
+{
+    m_colorSystem->memDamageEntity(damage);
+}
+
+//===================================================================
 void GraphicEngine::initGLWindow()
 {
     // glfw: initialize and configure

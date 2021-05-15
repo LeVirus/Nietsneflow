@@ -53,6 +53,8 @@ public:
     {
         return *m_window;
     }
+    void memColorSystemBackgroundEntities(uint32_t ground, uint32_t ceiling);
+    void memDamageEntity(uint32_t damage);
 private:
     void initGLWindow();
     void initGlad();

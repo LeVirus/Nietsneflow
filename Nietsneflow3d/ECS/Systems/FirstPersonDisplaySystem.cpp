@@ -11,6 +11,8 @@
 #include <ECS/Components/SpriteTextureComponent.hpp>
 #include <ECS/Components/CircleCollisionComponent.hpp>
 #include <ECS/Components/DoorComponent.hpp>
+#include <ECS/Components/PlayerConfComponent.hpp>
+#include <ECS/Systems/ColorDisplaySystem.hpp>
 #include <PictureData.hpp>
 #include <cmath>
 
@@ -32,13 +34,32 @@ void FirstPersonDisplaySystem::execSystem()
     System::execSystem();
     confCompVertexMemEntities();
     drawVertex();
+    drawPlayerDamage();
+}
+
+//===================================================================
+void FirstPersonDisplaySystem::drawPlayerDamage()
+{
+    for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
+    {
+        PlayerConfComponent *playerComp = stairwayToComponentManager().
+                searchComponentByType<PlayerConfComponent>(mVectNumEntity[i],
+                                                           Components_e::PLAYER_CONF_COMPONENT);
+        assert(playerComp);
+        if(playerComp->m_takeDamage)
+        {
+            mptrSystemManager->searchSystemByType<ColorDisplaySystem>(
+                        static_cast<uint32_t>(Systems_e::COLOR_DISPLAY_SYSTEM))->drawVisibleDamage();
+            playerComp->m_takeDamage = false;
+        }
+    }
 }
 
 //===================================================================
 void FirstPersonDisplaySystem::confCompVertexMemEntities()
 {
-    uint32_t numEntity = mVectNumEntity.size();
-    m_numVertexToDraw.resize(numEntity);
+    uint32_t vectEntitiesSize = mVectNumEntity.size();
+    m_numVertexToDraw.resize(vectEntitiesSize);
     //treat one player
     uint32_t toRemove = 0;
     VisionComponent *visionComp;
@@ -46,7 +67,7 @@ void FirstPersonDisplaySystem::confCompVertexMemEntities()
     MapCoordComponent *mapCompA;
     GeneralCollisionComponent *genCollComp;
     MapCoordComponent *mapCompB;
-    for(uint32_t i = 0; i < numEntity; ++i)
+    for(uint32_t i = 0; i < vectEntitiesSize; ++i)
     {
         visionComp = stairwayToComponentManager().
                 searchComponentByType<VisionComponent>(mVectNumEntity[i], Components_e::VISION_COMPONENT);

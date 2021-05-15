@@ -29,6 +29,13 @@ public:
     void confSystems();
 private:
     void clearObjectToDelete();
+    void memColorSystemBackgroundEntities(uint32_t ground, uint32_t ceiling);
+    inline void memDamageEntity(uint32_t damage)
+    {
+        m_graphicEngine.memDamageEntity(damage);
+    }
+
+    void loadDamageEntity();
     void loadGroundAndCeilingEntities(const GroundCeilingData &groundData,
                                       const GroundCeilingData &ceilingData);
     void confCeilingComponents(uint32_t entityNum);
@@ -43,6 +50,7 @@ private:
     void confPlayerEntity(const std::vector<SpriteData> &vectSpriteData, uint32_t entityNum, const Level &level, uint32_t numWeaponEntity);
     void confShotsEntities(const AmmoContainer_t &ammoEntities, uint32_t damageValue);
     uint32_t loadWeaponsEntity(const LevelManager &levelManager);
+    uint32_t createBackgroundEntity(GroundCeilingData const *data);
     void loadWallEntities(const LevelManager &levelManager);
     void loadDoorEntities(const LevelManager &levelManager);
     void loadEnemiesEntities(const LevelManager &levelManager);

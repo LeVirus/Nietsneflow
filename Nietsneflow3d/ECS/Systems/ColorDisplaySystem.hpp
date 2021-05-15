@@ -7,9 +7,20 @@
 
 class ColorDisplaySystem : public ecs::System
 {
-private:
-    Shader *m_shader;
-    VerticesData m_verticesData;
+public:
+    ColorDisplaySystem();
+    void execSystem()override;
+    void setShader(Shader &shader);
+    void memColorSystemBackgroundEntities(uint32_t ground, uint32_t ceiling);
+    inline void memDamageEntity(uint32_t damage)
+    {
+        m_damage = damage;
+    }
+    void drawEntity(const PositionVertexComponent *posComp,
+                    const ColorVertexComponent *colorComp);
+    void drawVisibleDamage();
+
+    void display()const;
 private:
     void fillVertexFromEntities();
     void drawVertex();
@@ -19,11 +30,8 @@ private:
      * in parameters.
      */
     void setUsedComponents();
-public:
-    ColorDisplaySystem();
-    void execSystem()override;
-    void setShader(Shader &shader);
-    void drawEntity(const PositionVertexComponent *posComp,
-                    const ColorVertexComponent *colorComp);
-    void display()const;
+private:
+    uint32_t m_ground, m_ceiling, m_damage;
+    Shader *m_shader;
+    VerticesData m_verticesData;
 };
