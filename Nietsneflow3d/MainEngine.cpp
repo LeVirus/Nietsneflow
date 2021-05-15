@@ -395,7 +395,7 @@ void MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
     for(uint32_t i = 0; i < enemiesData.size(); ++i)
     {
         const SpriteData &memSpriteData = levelManager.getPictureData().
-                getSpriteData()[enemiesData[i].m_staticSprites[0]];
+                getSpriteData()[enemiesData[i].m_staticFrontSprites[0]];
         for(uint32_t j = 0; j < enemiesData[i].m_TileGamePosition.size(); ++j)
         {
             uint32_t numEntity = createEnemyEntity();
@@ -463,10 +463,39 @@ void MainEngine::loadEnemySprites(const std::vector<SpriteData> &vectSprite,
     {
         uint32_t vectSize = static_cast<uint32_t>(EnemySpriteType_e::TOTAL_SPRITE);
         memSpriteComp->m_vectSpriteData.reserve(vectSize);
-        for(uint32_t j = 0; j < enemiesData[i].m_staticSprites.size(); ++j)
+        for(uint32_t j = 0; j < enemiesData[i].m_staticFrontSprites.size(); ++j)
         {
-            memSpriteComp->m_vectSpriteData.emplace_back(&vectSprite[enemiesData[i].m_staticSprites[j]]);
+            memSpriteComp->m_vectSpriteData.emplace_back(&vectSprite[enemiesData[i].m_staticFrontSprites[j]]);
         }
+        for(uint32_t j = 0; j < enemiesData[i].m_staticFrontLeftSprites.size(); ++j)
+        {
+            memSpriteComp->m_vectSpriteData.emplace_back(&vectSprite[enemiesData[i].m_staticFrontLeftSprites[j]]);
+        }
+        for(uint32_t j = 0; j < enemiesData[i].m_staticFrontRightSprites.size(); ++j)
+        {
+            memSpriteComp->m_vectSpriteData.emplace_back(&vectSprite[enemiesData[i].m_staticFrontRightSprites[j]]);
+        }
+        for(uint32_t j = 0; j < enemiesData[i].m_staticBackSprites.size(); ++j)
+        {
+            memSpriteComp->m_vectSpriteData.emplace_back(&vectSprite[enemiesData[i].m_staticBackSprites[j]]);
+        }
+        for(uint32_t j = 0; j < enemiesData[i].m_staticBackLeftSprites.size(); ++j)
+        {
+            memSpriteComp->m_vectSpriteData.emplace_back(&vectSprite[enemiesData[i].m_staticBackLeftSprites[j]]);
+        }
+        for(uint32_t j = 0; j < enemiesData[i].m_staticBackRightSprites.size(); ++j)
+        {
+            memSpriteComp->m_vectSpriteData.emplace_back(&vectSprite[enemiesData[i].m_staticBackRightSprites[j]]);
+        }
+        for(uint32_t j = 0; j < enemiesData[i].m_staticLeftSprites.size(); ++j)
+        {
+            memSpriteComp->m_vectSpriteData.emplace_back(&vectSprite[enemiesData[i].m_staticLeftSprites[j]]);
+        }
+        for(uint32_t j = 0; j < enemiesData[i].m_staticRightSprites.size(); ++j)
+        {
+            memSpriteComp->m_vectSpriteData.emplace_back(&vectSprite[enemiesData[i].m_staticRightSprites[j]]);
+        }
+
         for(uint32_t j = 0; j < enemiesData[i].m_moveSprites.size(); ++j)
         {
             memSpriteComp->m_vectSpriteData.emplace_back(&vectSprite[enemiesData[i].m_moveSprites[j]]);

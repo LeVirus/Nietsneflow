@@ -287,8 +287,23 @@ void LevelManager::loadEnemyData(const INIReader &reader)
                 reader.GetReal(vectINISections[i], "SpriteWeightGame", 1.0);
         vectEnemy.back().m_inGameSpriteSize.second =
                 reader.GetReal(vectINISections[i], "SpriteHeightGame", 1.0);
-        loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::STATIC,
+        loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::STATIC_FRONT,
                          vectEnemy.back());
+        loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::STATIC_FRONT_LEFT,
+                         vectEnemy.back());
+        loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::STATIC_FRONT_RIGHT,
+                         vectEnemy.back());
+        loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::STATIC_BACK,
+                         vectEnemy.back());
+        loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::STATIC_BACK_LEFT,
+                         vectEnemy.back());
+        loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::STATIC_BACK_RIGHT,
+                         vectEnemy.back());
+        loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::STATIC_LEFT,
+                         vectEnemy.back());
+        loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::STATIC_RIGHT,
+                         vectEnemy.back());
+
         loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::MOVE,
                          vectEnemy.back());
         loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::ATTACK,
@@ -318,10 +333,37 @@ void LevelManager::loadEnemySprites(const INIReader &reader, const std::string &
     std::string spriteType;
     switch(spriteTypeEnum)
     {
-    //DIRTY TO MODIFY
-    case EnemySpriteElementType_e::STATIC:
-        spriteType = "StaticSprite";
-        vectPtr = &enemyData.m_staticSprites;
+    case EnemySpriteElementType_e::STATIC_FRONT:
+        spriteType = "StaticSpriteFront";
+        vectPtr = &enemyData.m_staticFrontSprites;
+        break;
+    case EnemySpriteElementType_e::STATIC_FRONT_LEFT:
+        spriteType = "StaticSpriteFrontLeft";
+        vectPtr = &enemyData.m_staticFrontLeftSprites;
+        break;
+    case EnemySpriteElementType_e::STATIC_FRONT_RIGHT:
+        spriteType = "StaticSpriteFrontRight";
+        vectPtr = &enemyData.m_staticFrontRightSprites;
+        break;
+    case EnemySpriteElementType_e::STATIC_BACK:
+        spriteType = "StaticSpriteBack";
+        vectPtr = &enemyData.m_staticBackSprites;
+        break;
+    case EnemySpriteElementType_e::STATIC_BACK_LEFT:
+        spriteType = "StaticSpriteBackLeft";
+        vectPtr = &enemyData.m_staticBackLeftSprites;
+        break;
+    case EnemySpriteElementType_e::STATIC_BACK_RIGHT:
+        spriteType = "StaticSpriteBackRight";
+        vectPtr = &enemyData.m_staticBackRightSprites;
+        break;
+    case EnemySpriteElementType_e::STATIC_LEFT:
+        spriteType = "StaticSpriteLeft";
+        vectPtr = &enemyData.m_staticLeftSprites;
+        break;
+    case EnemySpriteElementType_e::STATIC_RIGHT:
+        spriteType = "StaticSpriteRight";
+        vectPtr = &enemyData.m_staticRightSprites;
         break;
     case EnemySpriteElementType_e::ATTACK:
         spriteType = "AttackSprite";
