@@ -196,21 +196,28 @@ void LevelManager::loadWeaponsDisplayData(const INIReader &reader)
     std::vector<std::string> vectINISections;
     vectINISections = reader.getSectionNamesContaining("Weapons");
     assert(!vectINISections.empty());
-
     loadWeaponsData(reader, WeaponsType_e::GUN, vectINISections[0], vectWeaponsDisplayData);
     loadWeaponsData(reader, WeaponsType_e::SHOTGUN, vectINISections[0], vectWeaponsDisplayData);
-
-
-    std::string sprites = reader.Get(vectINISections[0], "VisibleShots", "");
-    std::istringstream isss(sprites);
-    vectStr_t resultss(std::istream_iterator<std::string>{isss},
-                       std::istream_iterator<std::string>());
-    vectVisibleShotsData.reserve(resultss.size());
-    for(uint32_t i = 0; i < resultss.size(); ++i)
-    {
-        vectVisibleShotsData.emplace_back(*(m_pictureData.getIdentifier(resultss[i])));
-    }
+    loadDisplayData(reader, vectINISections[0], "VisibleShot", vectVisibleShotsData);
+    loadDisplayData(reader, vectINISections[0], "VisibleShotDestruct", vectVisibleShotsData);
     m_level.setWeaponsElement(vectWeaponsDisplayData, vectVisibleShotsData);
+}
+
+//===================================================================
+void LevelManager::loadDisplayData(const INIReader &reader,
+                                   std::string_view sectionName,
+                                   std::string_view elementName,
+                                   std::vector<uint8_t> &vectVisibleShotsData)
+{
+    std::string sprites = reader.Get(sectionName.data(), elementName.data(), "");
+    std::istringstream iss(sprites);
+    vectStr_t results(std::istream_iterator<std::string>{iss},
+                      std::istream_iterator<std::string>());
+    vectVisibleShotsData.reserve(vectVisibleShotsData.size() + results.size());
+    for(uint32_t i = 0; i < results.size(); ++i)
+    {
+        vectVisibleShotsData.emplace_back(*(m_pictureData.getIdentifier(results[i])));
+    }
 }
 
 //===================================================================
