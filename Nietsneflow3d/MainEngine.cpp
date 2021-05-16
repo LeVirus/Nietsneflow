@@ -1011,7 +1011,6 @@ void MainEngine::confGroundComponents(uint32_t entityNum)
     posComp->m_vertex.emplace_back(1.0f, 0.0f);
     posComp->m_vertex.emplace_back(1.0f, -1.0f);
     posComp->m_vertex.emplace_back(-1.0f, -1.0f);
-
     ColorVertexComponent *colorComp = m_ecsManager.getComponentManager().
             searchComponentByType<ColorVertexComponent>(entityNum, Components_e::COLOR_VERTEX_COMPONENT);
     assert(colorComp);

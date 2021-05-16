@@ -21,7 +21,7 @@ struct StaticLevelElementData
     pairDouble_t m_inGameSpriteSize;
     ObjectType_e m_type;
     uint32_t m_containing;
-    bool m_traversable;
+    bool m_traversable = true;
 };
 
 struct WallData
