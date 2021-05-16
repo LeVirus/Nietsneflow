@@ -67,7 +67,7 @@ private:
     uint32_t createVisibleShotEntity();
     uint32_t createWriteEntity();
     uint32_t createSimpleSpriteEntity();
-    uint32_t createStaticEntity();
+    uint32_t createStaticEntity(bool traversable);
     uint32_t createObjectEntity();
 
     void confBaseComponent(uint32_t entityNum, const SpriteData &memSpriteData,

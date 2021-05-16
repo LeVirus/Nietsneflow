@@ -667,15 +667,18 @@ uint32_t MainEngine::createSimpleSpriteEntity()
 }
 
 //===================================================================
-uint32_t MainEngine::createStaticEntity()
+uint32_t MainEngine::createStaticEntity(bool traversable)
 {
     std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComponents;
     bitsetComponents[Components_e::POSITION_VERTEX_COMPONENT] = true;
     bitsetComponents[Components_e::SPRITE_TEXTURE_COMPONENT] = true;
     bitsetComponents[Components_e::MAP_COORD_COMPONENT] = true;
     bitsetComponents[Components_e::STATIC_ELEMENT_COMPONENT] = true;
-    bitsetComponents[Components_e::RECTANGLE_COLLISION_COMPONENT] = true;
-    bitsetComponents[Components_e::GENERAL_COLLISION_COMPONENT] = true;
+    if(!traversable)
+    {
+        bitsetComponents[Components_e::RECTANGLE_COLLISION_COMPONENT] = true;
+        bitsetComponents[Components_e::GENERAL_COLLISION_COMPONENT] = true;
+    }
     return m_ecsManager.addEntity(bitsetComponents);
 }
 
@@ -962,8 +965,22 @@ void MainEngine::loadStaticElementGroup(const LevelManager &levelManager,
                                         const std::vector<StaticLevelElementData> *staticData,
                                         LevelStaticElementType_e elementType)
 {
+    CollisionTag_e tag;
     for(uint32_t i = 0; i < staticData->size(); ++i)
     {
+        switch(elementType)
+        {
+        case LevelStaticElementType_e::CEILING:
+            tag = CollisionTag_e::GHOST_CT;
+            break;
+        case LevelStaticElementType_e::GROUND:
+            tag = CollisionTag_e::WALL_CT;
+            break;
+        case LevelStaticElementType_e::OBJECT:
+            tag = CollisionTag_e::OBJECT_CT;
+            break;
+        }
+
         const SpriteData &memSpriteData = levelManager.getPictureData().
                 getSpriteData()[staticData->operator[](i).m_numSprite];
         for(uint32_t j = 0; j < staticData->operator[](i).m_TileGamePosition.size(); ++j)
@@ -975,19 +992,20 @@ void MainEngine::loadStaticElementGroup(const LevelManager &levelManager,
                 ObjectConfComponent *objComp = m_ecsManager.getComponentManager().
                         searchComponentByType<ObjectConfComponent>(entityNum,
                                                                    Components_e::OBJECT_CONF_COMPONENT);
-                SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().
-                        searchComponentByType<SpriteTextureComponent>(entityNum,
-                                                                      Components_e::SPRITE_TEXTURE_COMPONENT);
                 assert(objComp);
-                assert(spriteComp);
                 objComp->m_containing = staticData->operator[](i).m_containing;
                 objComp->m_type = staticData->operator[](i).m_type;
-                spriteComp->m_glFpsSize = staticData->operator[](i).m_inGameSpriteSize;
             }
             else
             {
-                entityNum = createStaticEntity();
+                bool traversable = staticData->operator[](i).m_traversable;
+                entityNum = createStaticEntity(traversable);
             }
+            SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().
+                    searchComponentByType<SpriteTextureComponent>(entityNum,
+                                                                  Components_e::SPRITE_TEXTURE_COMPONENT);
+            assert(spriteComp);
+            spriteComp->m_glFpsSize = staticData->operator[](i).m_inGameSpriteSize;
             confBaseComponent(entityNum,
                               memSpriteData,
                               staticData->operator[](i).m_TileGamePosition[j],
