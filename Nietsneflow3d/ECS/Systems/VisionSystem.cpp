@@ -43,6 +43,7 @@ void VisionSystem::execSystem()
     std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComp;
     bitsetComp[Components_e::MAP_COORD_COMPONENT] = true;
     bitsetComp[Components_e::SPRITE_TEXTURE_COMPONENT] = true;
+    bitsetComp[Components_e::STATIC_ELEMENT_COMPONENT] = true;
     std::vector<uint32_t> vectEntities = m_memECSManager->getEntityContainingComponents(bitsetComp);
     for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
     {
@@ -68,11 +69,6 @@ void VisionSystem::execSystem()
                     searchComponentByType<GeneralCollisionComponent>(vectEntities[j],
                                           Components_e::GENERAL_COLLISION_COMPONENT);
             assert(collCompB);
-            if((collComp->m_tag == CollisionTag_e::ENEMY_CT && collCompB->m_tag != CollisionTag_e::PLAYER_CT) ||
-                    (collCompB->m_tag == CollisionTag_e::DOOR_CT) || (collCompB->m_tag == CollisionTag_e::WALL_CT))
-            {
-                continue;
-            }
             //FAIRE DES TESTS POUR LES COLLISIONS
             treatVisible(visionCompA, vectEntities[j], collCompB->m_shape);
         }

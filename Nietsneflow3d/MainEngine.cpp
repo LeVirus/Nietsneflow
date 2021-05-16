@@ -1009,7 +1009,7 @@ void MainEngine::loadStaticElementGroup(const LevelManager &levelManager,
             confBaseComponent(entityNum,
                               memSpriteData,
                               staticData->operator[](i).m_TileGamePosition[j],
-                    CollisionShape_e::RECTANGLE_C, CollisionTag_e::OBJECT_CT);
+                    CollisionShape_e::RECTANGLE_C, tag);
             confStaticComponent(entityNum,
                                 staticData->operator[](i).m_inGameSpriteSize,
                     staticData->operator[](i).m_traversable,
