@@ -736,13 +736,14 @@ void MainEngine::confBaseComponent(uint32_t entityNum, const SpriteData &memSpri
 }
 
 //===================================================================
-void MainEngine::confStaticComponent(uint32_t entityNum,
-                                     const pairFloat_t& elementSize)
+void MainEngine::confStaticComponent(uint32_t entityNum, const pairFloat_t& elementSize,
+                                     LevelStaticElementType_e elementType)
 {
     FPSVisibleStaticElementComponent *staticComp = m_ecsManager.getComponentManager().
             searchComponentByType<FPSVisibleStaticElementComponent>(entityNum, Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
     assert(staticComp);
     staticComp->m_inGameSpriteSize = elementSize;
+    staticComp->m_levelElementType = elementType;
 }
 
 //===================================================================
@@ -999,7 +1000,7 @@ void MainEngine::loadStaticElementGroup(const LevelManager &levelManager,
             fpsStaticComp->m_inGameSpriteSize = staticData->operator[](i).m_inGameSpriteSize;
             confBaseComponent(entityNum, memSpriteData, staticData->operator[](i).m_TileGamePosition[j],
                     CollisionShape_e::CIRCLE_C, tag);
-            confStaticComponent(entityNum, staticData->operator[](i).m_inGameSpriteSize);
+            confStaticComponent(entityNum, staticData->operator[](i).m_inGameSpriteSize, elementType);
         }
     }
 }

@@ -10,5 +10,6 @@ struct FPSVisibleStaticElementComponent : public ecs::Component
         muiTypeComponent = Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT;
     }
     pairFloat_t m_inGameSpriteSize;
+    LevelStaticElementType_e m_levelElementType;
     virtual ~FPSVisibleStaticElementComponent() = default;
 };
