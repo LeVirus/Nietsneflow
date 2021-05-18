@@ -128,8 +128,17 @@ void CollisionSystem::treatEnemyShooted(uint32_t enemyEntityNum, uint32_t damage
 //===================================================================
 void CollisionSystem::treatSegmentShots()
 {
+    GeneralCollisionComponent *tagComp;
     for(uint32_t i = 0; i < m_vectMemShots.size(); ++i)
     {
+        tagComp = stairwayToComponentManager().
+                searchComponentByType<GeneralCollisionComponent>(
+                    std::get<2>(m_vectMemShots[i]), Components_e::GENERAL_COLLISION_COMPONENT);
+        assert(tagComp);
+        if(tagComp->m_tag == CollisionTag_e::WALL_CT)
+        {
+            continue;
+        }
         if(std::get<1>(m_vectMemShots[i])->m_tag == CollisionTag_e::BULLET_PLAYER_CT)
         {
             treatEnemyShooted(std::get<2>(m_vectMemShots[i]));
