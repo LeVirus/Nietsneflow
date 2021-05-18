@@ -69,7 +69,6 @@ void VisionSystem::execSystem()
                     searchComponentByType<GeneralCollisionComponent>(vectEntities[j],
                                           Components_e::GENERAL_COLLISION_COMPONENT);
             assert(collCompB);
-            //FAIRE DES TESTS POUR LES COLLISIONS
             treatVisible(visionCompA, vectEntities[j], collCompB->m_shape);
         }
         updateSprites(mVectNumEntity[i], vectEntities/*visionCompA->m_vectVisibleEntities*/);
@@ -292,11 +291,11 @@ EnemySpriteType_e VisionSystem::getOrientationFromAngle(uint32_t observerEntity,
 }
 
 //===========================================================================
-void VisionSystem::treatVisible(VisionComponent *visionComp, uint32_t checkVisibleId,
+void VisionSystem::treatVisible(VisionComponent *visionComp, uint32_t numEntity,
                                 CollisionShape_e shapeElement)
 {
     MapCoordComponent *mapCompB = stairwayToComponentManager().
-            searchComponentByType<MapCoordComponent>(checkVisibleId, Components_e::MAP_COORD_COMPONENT);
+            searchComponentByType<MapCoordComponent>(numEntity, Components_e::MAP_COORD_COMPONENT);
     assert(visionComp);
     assert(mapCompB);
     switch(shapeElement)
@@ -304,22 +303,22 @@ void VisionSystem::treatVisible(VisionComponent *visionComp, uint32_t checkVisib
     case CollisionShape_e::CIRCLE_C:
     {
         CircleCollisionComponent *circleColl = stairwayToComponentManager().
-                searchComponentByType<CircleCollisionComponent>(checkVisibleId, Components_e::CIRCLE_COLLISION_COMPONENT);
+                searchComponentByType<CircleCollisionComponent>(numEntity, Components_e::CIRCLE_COLLISION_COMPONENT);
         assert(circleColl);
         if(checkTriangleCircleCollision(visionComp->m_triangleVision, mapCompB->m_absoluteMapPositionPX, circleColl->m_ray))
         {
-            visionComp->m_vectVisibleEntities.push_back(checkVisibleId);
+            visionComp->m_vectVisibleEntities.push_back(numEntity);
         }
     }
         break;
     case CollisionShape_e::RECTANGLE_C:
     {
         RectangleCollisionComponent *rectColl = stairwayToComponentManager().
-                searchComponentByType<RectangleCollisionComponent>(checkVisibleId, Components_e::RECTANGLE_COLLISION_COMPONENT);
+                searchComponentByType<RectangleCollisionComponent>(numEntity, Components_e::RECTANGLE_COLLISION_COMPONENT);
         assert(rectColl);
         if(checkTriangleRectCollision(visionComp->m_triangleVision, {mapCompB->m_absoluteMapPositionPX, rectColl->m_size}))
         {
-            visionComp->m_vectVisibleEntities.push_back(checkVisibleId);
+            visionComp->m_vectVisibleEntities.push_back(numEntity);
         }
     }
         break;

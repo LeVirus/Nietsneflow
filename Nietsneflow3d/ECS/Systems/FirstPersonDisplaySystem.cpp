@@ -67,6 +67,7 @@ void FirstPersonDisplaySystem::confCompVertexMemEntities()
     MapCoordComponent *mapCompA;
     GeneralCollisionComponent *genCollComp;
     MapCoordComponent *mapCompB;
+    uint32_t numIteration;
     for(uint32_t i = 0; i < vectEntitiesSize; ++i)
     {
         visionComp = stairwayToComponentManager().
@@ -81,7 +82,6 @@ void FirstPersonDisplaySystem::confCompVertexMemEntities()
         toRemove = 0;
         m_numVertexToDraw[i] = visionComp->m_vectVisibleEntities.size();
         m_entitiesNumMem.clear();
-        uint32_t numIteration;
         //draw dynamic element
         for(numIteration = 0; numIteration < m_numVertexToDraw[i]; ++numIteration)
         {

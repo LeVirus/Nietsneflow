@@ -310,7 +310,7 @@ void MainEngine::loadWallEntities(const LevelManager &levelManager)
         {
             uint32_t numEntity = createWallEntity();
             confBaseComponent(numEntity, memSpriteData, wallData[i].m_TileGamePosition[j],
-                              CollisionShape_e::RECTANGLE_C);
+                              CollisionShape_e::RECTANGLE_C, CollisionTag_e::WALL_CT);
             spriteComp = m_ecsManager.getComponentManager().
                     searchComponentByType<SpriteTextureComponent>(numEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
             assert(spriteComp);
@@ -345,7 +345,7 @@ void MainEngine::loadDoorEntities(const LevelManager &levelManager)
         {
             uint32_t numEntity = createDoorEntity();
             confBaseComponent(numEntity, memSpriteData, doorData[i].m_TileGamePosition[j],
-                              CollisionShape_e::RECTANGLE_C);
+                              CollisionShape_e::RECTANGLE_C, CollisionTag_e::DOOR_CT);
             GeneralCollisionComponent *tagComp = m_ecsManager.getComponentManager().
                     searchComponentByType<GeneralCollisionComponent>(numEntity, Components_e::GENERAL_COLLISION_COMPONENT);
             assert(tagComp);
@@ -399,8 +399,8 @@ void MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
         for(uint32_t j = 0; j < enemiesData[i].m_TileGamePosition.size(); ++j)
         {
             uint32_t numEntity = createEnemyEntity();
-            confBaseComponent(numEntity, memSpriteData,
-                              enemiesData[i].m_TileGamePosition[j], CollisionShape_e::CIRCLE_C);
+            confBaseComponent(numEntity, memSpriteData, enemiesData[i].m_TileGamePosition[j],
+                              CollisionShape_e::CIRCLE_C, CollisionTag_e::ENEMY_CT);
             EnemyConfComponent *enemyComp = m_ecsManager.getComponentManager().
                     searchComponentByType<EnemyConfComponent>(numEntity,
                                                               Components_e::ENEMY_CONF_COMPONENT);
@@ -612,6 +612,7 @@ uint32_t MainEngine::createEnemyEntity()
     std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComponents;
     bitsetComponents[Components_e::POSITION_VERTEX_COMPONENT] = true;
     bitsetComponents[Components_e::SPRITE_TEXTURE_COMPONENT] = true;
+    bitsetComponents[Components_e::STATIC_ELEMENT_COMPONENT] = true;
     bitsetComponents[Components_e::MAP_COORD_COMPONENT] = true;
     bitsetComponents[Components_e::CIRCLE_COLLISION_COMPONENT] = true;
     bitsetComponents[Components_e::GENERAL_COLLISION_COMPONENT] = true;
@@ -638,6 +639,7 @@ uint32_t MainEngine::createVisibleShotEntity()
     std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComponents;
     bitsetComponents[Components_e::CIRCLE_COLLISION_COMPONENT] = true;
     bitsetComponents[Components_e::GENERAL_COLLISION_COMPONENT] = true;
+    bitsetComponents[Components_e::STATIC_ELEMENT_COMPONENT] = true;
     bitsetComponents[Components_e::SPRITE_TEXTURE_COMPONENT] = true;
     bitsetComponents[Components_e::MOVEABLE_COMPONENT] = true;
     bitsetComponents[Components_e::MAP_COORD_COMPONENT] = true;
@@ -667,18 +669,15 @@ uint32_t MainEngine::createSimpleSpriteEntity()
 }
 
 //===================================================================
-uint32_t MainEngine::createStaticEntity(bool traversable)
+uint32_t MainEngine::createStaticEntity()
 {
     std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComponents;
     bitsetComponents[Components_e::POSITION_VERTEX_COMPONENT] = true;
     bitsetComponents[Components_e::SPRITE_TEXTURE_COMPONENT] = true;
     bitsetComponents[Components_e::MAP_COORD_COMPONENT] = true;
     bitsetComponents[Components_e::STATIC_ELEMENT_COMPONENT] = true;
-    if(!traversable)
-    {
-        bitsetComponents[Components_e::RECTANGLE_COLLISION_COMPONENT] = true;
-        bitsetComponents[Components_e::GENERAL_COLLISION_COMPONENT] = true;
-    }
+    bitsetComponents[Components_e::GENERAL_COLLISION_COMPONENT] = true;
+    bitsetComponents[Components_e::CIRCLE_COLLISION_COMPONENT] = true;
     return m_ecsManager.addEntity(bitsetComponents);
 }
 
@@ -690,17 +689,16 @@ uint32_t MainEngine::createObjectEntity()
     bitsetComponents[Components_e::SPRITE_TEXTURE_COMPONENT] = true;
     bitsetComponents[Components_e::MAP_COORD_COMPONENT] = true;
     bitsetComponents[Components_e::STATIC_ELEMENT_COMPONENT] = true;
-    bitsetComponents[Components_e::RECTANGLE_COLLISION_COMPONENT] = true;
+    bitsetComponents[Components_e::CIRCLE_COLLISION_COMPONENT] = true;
     bitsetComponents[Components_e::GENERAL_COLLISION_COMPONENT] = true;
     bitsetComponents[Components_e::OBJECT_CONF_COMPONENT] = true;
     return m_ecsManager.addEntity(bitsetComponents);
 }
 
 //===================================================================
-void MainEngine::confBaseComponent(uint32_t entityNum,
-                                   const SpriteData &memSpriteData,
-                                   const pairUI_t& coordLevel,
-                                   CollisionShape_e collisionShape, CollisionTag_e tag)
+void MainEngine::confBaseComponent(uint32_t entityNum, const SpriteData &memSpriteData,
+                                   const pairUI_t& coordLevel, CollisionShape_e collisionShape,
+                                   CollisionTag_e tag)
 {
     SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().
             searchComponentByType<SpriteTextureComponent>(entityNum, Components_e::SPRITE_TEXTURE_COMPONENT);
@@ -709,16 +707,18 @@ void MainEngine::confBaseComponent(uint32_t entityNum,
     MapCoordComponent *mapComp = m_ecsManager.getComponentManager().
             searchComponentByType<MapCoordComponent>(entityNum, Components_e::MAP_COORD_COMPONENT);
     assert(mapComp);
+    mapComp->m_coord = coordLevel;
+    mapComp->m_absoluteMapPositionPX = getAbsolutePosition(coordLevel);
     GeneralCollisionComponent *tagComp = m_ecsManager.getComponentManager().
             searchComponentByType<GeneralCollisionComponent>(entityNum, Components_e::GENERAL_COLLISION_COMPONENT);
     assert(tagComp);
+    tagComp->m_shape = collisionShape;
     if(collisionShape == CollisionShape_e::RECTANGLE_C)
     {
         RectangleCollisionComponent *rectComp = m_ecsManager.getComponentManager().
                 searchComponentByType<RectangleCollisionComponent>(entityNum, Components_e::RECTANGLE_COLLISION_COMPONENT);
         assert(rectComp);
         rectComp->m_size = {LEVEL_TILE_SIZE_PX, LEVEL_TILE_SIZE_PX};
-        tagComp->m_tag = tag;
     }
     else if(collisionShape == CollisionShape_e::CIRCLE_C)
     {
@@ -726,26 +726,21 @@ void MainEngine::confBaseComponent(uint32_t entityNum,
                 searchComponentByType<CircleCollisionComponent>(entityNum, Components_e::CIRCLE_COLLISION_COMPONENT);
         assert(circleComp);
         circleComp->m_ray = ENEMY_RAY;
-        tagComp->m_tag = CollisionTag_e::ENEMY_CT;
         spriteComp->m_glFpsSize.first = 0.5f;
         spriteComp->m_glFpsSize.second = 0.8f;
     }
-    mapComp->m_coord = coordLevel;
-    mapComp->m_absoluteMapPositionPX = getAbsolutePosition(coordLevel);
-    tagComp->m_shape = collisionShape;
+    tagComp->m_tag = tag;
 }
 
 //===================================================================
 void MainEngine::confStaticComponent(uint32_t entityNum,
                                      const pairFloat_t& elementSize,
-                                     bool traversable,
                                      LevelStaticElementType_e type)
 {
     StaticElementComponent *staticComp = m_ecsManager.getComponentManager().
             searchComponentByType<StaticElementComponent>(entityNum, Components_e::STATIC_ELEMENT_COMPONENT);
     assert(staticComp);
     staticComp->m_inGameSpriteSize = elementSize;
-    staticComp->m_traversable = traversable;
     staticComp->m_type = type;
 }
 
@@ -968,19 +963,6 @@ void MainEngine::loadStaticElementGroup(const LevelManager &levelManager,
     CollisionTag_e tag;
     for(uint32_t i = 0; i < staticData->size(); ++i)
     {
-        switch(elementType)
-        {
-        case LevelStaticElementType_e::CEILING:
-            tag = CollisionTag_e::GHOST_CT;
-            break;
-        case LevelStaticElementType_e::GROUND:
-            tag = CollisionTag_e::WALL_CT;
-            break;
-        case LevelStaticElementType_e::OBJECT:
-            tag = CollisionTag_e::OBJECT_CT;
-            break;
-        }
-
         const SpriteData &memSpriteData = levelManager.getPictureData().
                 getSpriteData()[staticData->operator[](i).m_numSprite];
         for(uint32_t j = 0; j < staticData->operator[](i).m_TileGamePosition.size(); ++j)
@@ -988,6 +970,7 @@ void MainEngine::loadStaticElementGroup(const LevelManager &levelManager,
             uint32_t entityNum;
             if(elementType == LevelStaticElementType_e::OBJECT)
             {
+                tag = CollisionTag_e::OBJECT_CT;
                 entityNum = createObjectEntity();
                 ObjectConfComponent *objComp = m_ecsManager.getComponentManager().
                         searchComponentByType<ObjectConfComponent>(entityNum,
@@ -998,21 +981,24 @@ void MainEngine::loadStaticElementGroup(const LevelManager &levelManager,
             }
             else
             {
-                bool traversable = staticData->operator[](i).m_traversable;
-                entityNum = createStaticEntity(traversable);
+                if(staticData->operator[](i).m_traversable)
+                {
+                    tag = CollisionTag_e::GHOST_CT;
+                }
+                else
+                {
+                    tag = CollisionTag_e::WALL_CT;
+                }
+                entityNum = createStaticEntity();
             }
             SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().
                     searchComponentByType<SpriteTextureComponent>(entityNum,
                                                                   Components_e::SPRITE_TEXTURE_COMPONENT);
             assert(spriteComp);
             spriteComp->m_glFpsSize = staticData->operator[](i).m_inGameSpriteSize;
-            confBaseComponent(entityNum,
-                              memSpriteData,
-                              staticData->operator[](i).m_TileGamePosition[j],
-                    CollisionShape_e::RECTANGLE_C, tag);
-            confStaticComponent(entityNum,
-                                staticData->operator[](i).m_inGameSpriteSize,
-                    staticData->operator[](i).m_traversable,
+            confBaseComponent(entityNum, memSpriteData, staticData->operator[](i).m_TileGamePosition[j],
+                    CollisionShape_e::CIRCLE_C, tag);
+            confStaticComponent(entityNum, staticData->operator[](i).m_inGameSpriteSize,
                     static_cast<LevelStaticElementType_e>(elementType));
         }
     }

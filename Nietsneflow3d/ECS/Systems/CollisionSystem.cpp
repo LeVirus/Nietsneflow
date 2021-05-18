@@ -45,6 +45,7 @@ void CollisionSystem::execSystem()
         GeneralCollisionComponent *tagCompA = stairwayToComponentManager().
                 searchComponentByType<GeneralCollisionComponent>(mVectNumEntity[i],
                                                                  Components_e::GENERAL_COLLISION_COMPONENT);
+        assert(tagCompA);
         if(!tagCompA->m_active)
         {
             continue;
@@ -71,7 +72,6 @@ void CollisionSystem::execSystem()
         {
             segmentCompA = nullptr;
         }
-        assert(tagCompA);
         for(uint32_t j = 0; j < mVectNumEntity.size(); ++j)
         {
             if(i == j)
@@ -277,15 +277,7 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
             if(args.tagCompA->m_tag == CollisionTag_e::PLAYER_CT ||
                     args.tagCompA->m_tag == CollisionTag_e::ENEMY_CT)
             {
-                if(args.tagCompA->m_tag == CollisionTag_e::PLAYER_CT &&
-                        args.tagCompB->m_tag == CollisionTag_e::OBJECT_CT)
-                {
-                    treatPlayerPickObject(args);
-                }
-                else
-                {
-                    collisionCircleRectEject(args, circleCompA, rectCompB);
-                }
+                collisionCircleRectEject(args, circleCompA, rectCompB);
             }
         }
     }
@@ -298,7 +290,19 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
                                                circleCompB.m_ray);
         if(collision)
         {
-            collisionCircleCircleEject(args, circleCompA, circleCompB);
+            if(args.tagCompA->m_tag == CollisionTag_e::PLAYER_CT &&
+                    args.tagCompB->m_tag == CollisionTag_e::OBJECT_CT)
+            {
+                treatPlayerPickObject(args);
+            }
+            else if((args.tagCompA->m_tag == CollisionTag_e::PLAYER_CT ||
+                    args.tagCompA->m_tag == CollisionTag_e::ENEMY_CT) &&
+                    (args.tagCompB->m_tag == CollisionTag_e::WALL_CT ||
+                     args.tagCompB->m_tag == CollisionTag_e::PLAYER_CT ||
+                     args.tagCompB->m_tag == CollisionTag_e::ENEMY_CT))
+            {
+                collisionCircleCircleEject(args, circleCompA, circleCompB);
+            }
         }
     }
         break;
@@ -537,7 +541,6 @@ void CollisionSystem::collisionCircleRectEject(CollisionArgs &args,
                 elementPosX : elementSecondPosX;
     float pointElementY = circlePosY < elementPosY ?
                 elementPosY : elementSecondPosY;
-
     float diffY = getVerticalCircleRectEject({circlePosX, circlePosY, pointElementX,
                                               elementPosY,
                                               elementSecondPosY,

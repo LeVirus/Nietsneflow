@@ -11,6 +11,5 @@ struct StaticElementComponent : public ecs::Component
     }
     pairFloat_t m_inGameSpriteSize;
     LevelStaticElementType_e m_type;
-    bool m_traversable;
     virtual ~StaticElementComponent() = default;
 };

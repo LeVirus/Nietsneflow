@@ -25,7 +25,7 @@ private:
     EnemySpriteType_e getOrientationFromAngle(uint32_t observerEntity, uint32_t targetEntity,
                                               float targetDegreeAngle);
     void setUsedComponents();
-    void treatVisible(VisionComponent *visionComp, uint32_t checkVisibleId,
+    void treatVisible(VisionComponent *visionComp, uint32_t numEntity,
                       CollisionShape_e shapeElement);
     void updateSprites(uint32_t observerEntity, const std::vector<uint32_t> &vectEntities);
     void updateVisibleShotSprite(uint32_t shotEntity, MemSpriteDataComponent *memSpriteComp,
