@@ -9,6 +9,7 @@
 #include <ECS/Components/RectangleCollisionComponent.hpp>
 #include <ECS/Components/MoveableComponent.hpp>
 #include <ECS/Components/SpriteTextureComponent.hpp>
+#include <ECS/Components/FPSVisibleStaticElementComponent.hpp>
 #include <ECS/Components/CircleCollisionComponent.hpp>
 #include <ECS/Components/DoorComponent.hpp>
 #include <ECS/Components/PlayerConfComponent.hpp>
@@ -475,9 +476,10 @@ void FirstPersonDisplaySystem::confNormalEntityVertex(uint32_t numEntity, Vision
 {
     PositionVertexComponent *positionComp = stairwayToComponentManager().
             searchComponentByType<PositionVertexComponent>(numEntity, Components_e::POSITION_VERTEX_COMPONENT);
-    SpriteTextureComponent *spriteComp = stairwayToComponentManager().
-                searchComponentByType<SpriteTextureComponent>(numEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
-    assert(spriteComp);
+    FPSVisibleStaticElementComponent *fpsStaticComp = stairwayToComponentManager().
+            searchComponentByType<FPSVisibleStaticElementComponent>(
+                numEntity, Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
+    assert(fpsStaticComp);
     assert(positionComp);
     assert(visionComp);
     positionComp->m_vertex.resize(4);
@@ -488,17 +490,17 @@ void FirstPersonDisplaySystem::confNormalEntityVertex(uint32_t numEntity, Vision
     {
         distance = 1.5f;
     }
-    float halfLateralSize = spriteComp->m_glFpsSize.first  / (distance / LEVEL_TILE_SIZE_PX),
+    float halfLateralSize = fpsStaticComp->m_inGameSpriteSize.first  / (distance / LEVEL_TILE_SIZE_PX),
             downPos, upPos;
     if(tag == CollisionTag_e::BULLET_ENEMY_CT || tag == CollisionTag_e::BULLET_PLAYER_CT)
     {
         downPos = -0.3f / (distance / LEVEL_TILE_SIZE_PX);
-        upPos = downPos + spriteComp->m_glFpsSize.second / (distance / LEVEL_TILE_SIZE_PX);
+        upPos = downPos + fpsStaticComp->m_inGameSpriteSize.second / (distance / LEVEL_TILE_SIZE_PX);
     }
     else
     {
-        downPos = -1.0f / (distance / LEVEL_TILE_SIZE_PX);
-        upPos = downPos + spriteComp->m_glFpsSize.second / (distance / LEVEL_TILE_SIZE_PX);
+        downPos = -RAYCAST_VERTICAL_SIZE / (distance / LEVEL_TILE_SIZE_PX);
+        upPos = downPos + fpsStaticComp->m_inGameSpriteSize.second / (distance / LEVEL_TILE_SIZE_PX);
     }
     positionComp->m_vertex[0].first = lateralPosGL - halfLateralSize;
     positionComp->m_vertex[0].second = upPos;

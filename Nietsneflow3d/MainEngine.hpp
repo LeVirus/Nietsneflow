@@ -73,7 +73,7 @@ private:
     void confBaseComponent(uint32_t entityNum, const SpriteData &memSpriteData,
                            const pairUI_t &coordLevel, CollisionShape_e collisionShape,
                            CollisionTag_e tag);
-    void confStaticComponent(uint32_t entityNum, const pairFloat_t &elementSize, LevelStaticElementType_e type);
+    void confStaticComponent(uint32_t entityNum, const pairFloat_t &elementSize);
     void loadEnemySprites(const std::vector<SpriteData> &vectSprite,
                           const std::vector<EnemyData> &enemiesData, uint32_t numEntity, const AmmoContainer_t &visibleAmmo);
     void loadVisibleShotEnemySprites(const std::vector<SpriteData> &vectSprite,

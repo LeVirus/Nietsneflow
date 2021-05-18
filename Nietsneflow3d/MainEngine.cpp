@@ -4,7 +4,7 @@
 #include <ECS/Components/ColorVertexComponent.hpp>
 #include <ECS/Components/MapCoordComponent.hpp>
 #include <ECS/Components/SpriteTextureComponent.hpp>
-#include <ECS/Components/StaticElementComponent.hpp>
+#include <ECS/Components/FPSVisibleStaticElementComponent.hpp>
 #include <ECS/Components/MoveableComponent.hpp>
 #include <ECS/Components/CircleCollisionComponent.hpp>
 #include <ECS/Components/RectangleCollisionComponent.hpp>
@@ -404,12 +404,12 @@ void MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
             EnemyConfComponent *enemyComp = m_ecsManager.getComponentManager().
                     searchComponentByType<EnemyConfComponent>(numEntity,
                                                               Components_e::ENEMY_CONF_COMPONENT);
-            SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().
-                    searchComponentByType<SpriteTextureComponent>(numEntity,
-                                                              Components_e::SPRITE_TEXTURE_COMPONENT);
+            FPSVisibleStaticElementComponent *fpsStaticComp = m_ecsManager.getComponentManager().
+                    searchComponentByType<FPSVisibleStaticElementComponent>(
+                        numEntity, Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
             assert(enemyComp);
-            assert(spriteComp);
-            spriteComp->m_glFpsSize = enemiesData[i].m_inGameSpriteSize;
+            assert(fpsStaticComp);
+            fpsStaticComp->m_inGameSpriteSize = enemiesData[i].m_inGameSpriteSize;
             createAmmosEntities(enemyComp->m_stdAmmo, CollisionTag_e::BULLET_ENEMY_CT);
             createAmmosEntities(enemyComp->m_visibleAmmo, CollisionTag_e::BULLET_ENEMY_CT, true);
             loadEnemySprites(levelManager.getPictureData().getSpriteData(),
@@ -556,13 +556,13 @@ void MainEngine::confVisibleAmmo(const AmmoContainer_t &ammoCont)
         CircleCollisionComponent *circleComp = m_ecsManager.getComponentManager().
                 searchComponentByType<CircleCollisionComponent>(*ammoCont[i],
                                                                 Components_e::CIRCLE_COLLISION_COMPONENT);
-        SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().
-                searchComponentByType<SpriteTextureComponent>(*ammoCont[i],
-                                                                Components_e::SPRITE_TEXTURE_COMPONENT);
+        FPSVisibleStaticElementComponent *fpsStaticComp = m_ecsManager.getComponentManager().
+                searchComponentByType<FPSVisibleStaticElementComponent>(
+                    *ammoCont[i], Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
         assert(circleComp);
-        assert(spriteComp);
+        assert(fpsStaticComp);
         circleComp->m_ray = 5.0f;
-        spriteComp->m_glFpsSize = {0.2f, 0.3f};
+        fpsStaticComp->m_inGameSpriteSize = {0.2f, 0.3f};
     }
 }
 
@@ -612,7 +612,7 @@ uint32_t MainEngine::createEnemyEntity()
     std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComponents;
     bitsetComponents[Components_e::POSITION_VERTEX_COMPONENT] = true;
     bitsetComponents[Components_e::SPRITE_TEXTURE_COMPONENT] = true;
-    bitsetComponents[Components_e::STATIC_ELEMENT_COMPONENT] = true;
+    bitsetComponents[Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT] = true;
     bitsetComponents[Components_e::MAP_COORD_COMPONENT] = true;
     bitsetComponents[Components_e::CIRCLE_COLLISION_COMPONENT] = true;
     bitsetComponents[Components_e::GENERAL_COLLISION_COMPONENT] = true;
@@ -639,7 +639,7 @@ uint32_t MainEngine::createVisibleShotEntity()
     std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComponents;
     bitsetComponents[Components_e::CIRCLE_COLLISION_COMPONENT] = true;
     bitsetComponents[Components_e::GENERAL_COLLISION_COMPONENT] = true;
-    bitsetComponents[Components_e::STATIC_ELEMENT_COMPONENT] = true;
+    bitsetComponents[Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT] = true;
     bitsetComponents[Components_e::SPRITE_TEXTURE_COMPONENT] = true;
     bitsetComponents[Components_e::MOVEABLE_COMPONENT] = true;
     bitsetComponents[Components_e::MAP_COORD_COMPONENT] = true;
@@ -675,7 +675,7 @@ uint32_t MainEngine::createStaticEntity()
     bitsetComponents[Components_e::POSITION_VERTEX_COMPONENT] = true;
     bitsetComponents[Components_e::SPRITE_TEXTURE_COMPONENT] = true;
     bitsetComponents[Components_e::MAP_COORD_COMPONENT] = true;
-    bitsetComponents[Components_e::STATIC_ELEMENT_COMPONENT] = true;
+    bitsetComponents[Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT] = true;
     bitsetComponents[Components_e::GENERAL_COLLISION_COMPONENT] = true;
     bitsetComponents[Components_e::CIRCLE_COLLISION_COMPONENT] = true;
     return m_ecsManager.addEntity(bitsetComponents);
@@ -688,7 +688,7 @@ uint32_t MainEngine::createObjectEntity()
     bitsetComponents[Components_e::POSITION_VERTEX_COMPONENT] = true;
     bitsetComponents[Components_e::SPRITE_TEXTURE_COMPONENT] = true;
     bitsetComponents[Components_e::MAP_COORD_COMPONENT] = true;
-    bitsetComponents[Components_e::STATIC_ELEMENT_COMPONENT] = true;
+    bitsetComponents[Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT] = true;
     bitsetComponents[Components_e::CIRCLE_COLLISION_COMPONENT] = true;
     bitsetComponents[Components_e::GENERAL_COLLISION_COMPONENT] = true;
     bitsetComponents[Components_e::OBJECT_CONF_COMPONENT] = true;
@@ -722,26 +722,27 @@ void MainEngine::confBaseComponent(uint32_t entityNum, const SpriteData &memSpri
     }
     else if(collisionShape == CollisionShape_e::CIRCLE_C)
     {
+        FPSVisibleStaticElementComponent *fpsStaticComp = m_ecsManager.getComponentManager().
+                searchComponentByType<FPSVisibleStaticElementComponent>(
+                    entityNum, Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
         CircleCollisionComponent *circleComp = m_ecsManager.getComponentManager().
                 searchComponentByType<CircleCollisionComponent>(entityNum, Components_e::CIRCLE_COLLISION_COMPONENT);
+        assert(fpsStaticComp);
         assert(circleComp);
         circleComp->m_ray = ENEMY_RAY;
-        spriteComp->m_glFpsSize.first = 0.5f;
-        spriteComp->m_glFpsSize.second = 0.8f;
+        fpsStaticComp->m_inGameSpriteSize = {0.5f, 0.8f};
     }
     tagComp->m_tag = tag;
 }
 
 //===================================================================
 void MainEngine::confStaticComponent(uint32_t entityNum,
-                                     const pairFloat_t& elementSize,
-                                     LevelStaticElementType_e type)
+                                     const pairFloat_t& elementSize)
 {
-    StaticElementComponent *staticComp = m_ecsManager.getComponentManager().
-            searchComponentByType<StaticElementComponent>(entityNum, Components_e::STATIC_ELEMENT_COMPONENT);
+    FPSVisibleStaticElementComponent *staticComp = m_ecsManager.getComponentManager().
+            searchComponentByType<FPSVisibleStaticElementComponent>(entityNum, Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
     assert(staticComp);
     staticComp->m_inGameSpriteSize = elementSize;
-    staticComp->m_type = type;
 }
 
 //===================================================================
@@ -991,15 +992,14 @@ void MainEngine::loadStaticElementGroup(const LevelManager &levelManager,
                 }
                 entityNum = createStaticEntity();
             }
-            SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().
-                    searchComponentByType<SpriteTextureComponent>(entityNum,
-                                                                  Components_e::SPRITE_TEXTURE_COMPONENT);
-            assert(spriteComp);
-            spriteComp->m_glFpsSize = staticData->operator[](i).m_inGameSpriteSize;
+            FPSVisibleStaticElementComponent *fpsStaticComp = m_ecsManager.getComponentManager().
+                    searchComponentByType<FPSVisibleStaticElementComponent>(
+                        entityNum, Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
+            assert(fpsStaticComp);
+            fpsStaticComp->m_inGameSpriteSize = staticData->operator[](i).m_inGameSpriteSize;
             confBaseComponent(entityNum, memSpriteData, staticData->operator[](i).m_TileGamePosition[j],
                     CollisionShape_e::CIRCLE_C, tag);
-            confStaticComponent(entityNum, staticData->operator[](i).m_inGameSpriteSize,
-                    static_cast<LevelStaticElementType_e>(elementType));
+            confStaticComponent(entityNum, staticData->operator[](i).m_inGameSpriteSize);
         }
     }
 }

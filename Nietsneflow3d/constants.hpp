@@ -22,7 +22,7 @@ enum Components_e
     CIRCLE_COLLISION_COMPONENT,
     SEGMENT_COLLISION_COMPONENT,
     RECTANGLE_COLLISION_COMPONENT,
-    STATIC_ELEMENT_COMPONENT,
+    FPS_VISIBLE_STATIC_ELEMENT_COMPONENT,//no raycast element
     GENERAL_COLLISION_COMPONENT,
     MOVEABLE_COMPONENT,
     VISION_COMPONENT,
@@ -220,6 +220,7 @@ enum class ShotPhase_e
     TOTAL
 };
 
+inline const float RAYCAST_VERTICAL_SIZE = 1.0f;
 inline const float STD_FONT_SIZE = 0.06f;
 inline const float MENU_FONT_SIZE = 0.15f;
 inline const float PI = 3.14159265359f;

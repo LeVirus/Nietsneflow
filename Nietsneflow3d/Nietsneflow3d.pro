@@ -33,6 +33,7 @@ SOURCES += main.cpp \
 
 HEADERS += \
     ECS/Components/EnemyConfComponent.hpp \
+    ECS/Components/FPSVisibleStaticElementComponent.hpp \
     ECS/Components/MemSpriteDataComponent.hpp \
     ECS/Components/SegmentCollisionComponent.hpp \
     ECS/Components/ShotConfComponent.hpp \
@@ -75,7 +76,6 @@ HEADERS += \
     OpenGLUtils/glheaders.hpp \
     OpenGLUtils/VerticesData.hpp \
     ECS/Systems/MapDisplaySystem.hpp \
-    ECS/Components/StaticElementComponent.hpp \
     ECS/Components/MoveableComponent.hpp \
     ECS/Components/MapCoordComponent.hpp \
     PhysicalEngine.hpp \

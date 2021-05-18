@@ -43,7 +43,7 @@ void VisionSystem::execSystem()
     std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComp;
     bitsetComp[Components_e::MAP_COORD_COMPONENT] = true;
     bitsetComp[Components_e::SPRITE_TEXTURE_COMPONENT] = true;
-    bitsetComp[Components_e::STATIC_ELEMENT_COMPONENT] = true;
+    bitsetComp[Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT] = true;
     std::vector<uint32_t> vectEntities = m_memECSManager->getEntityContainingComponents(bitsetComp);
     for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
     {
@@ -71,7 +71,7 @@ void VisionSystem::execSystem()
             assert(collCompB);
             treatVisible(visionCompA, vectEntities[j], collCompB->m_shape);
         }
-        updateSprites(mVectNumEntity[i], vectEntities/*visionCompA->m_vectVisibleEntities*/);
+        updateSprites(mVectNumEntity[i], vectEntities);
     }
 }
 

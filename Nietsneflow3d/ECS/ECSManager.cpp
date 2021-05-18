@@ -3,7 +3,7 @@
 #include <ECS/Components/SpriteTextureComponent.hpp>
 #include <ECS/Components/ColorVertexComponent.hpp>
 #include <ECS/Components/MapCoordComponent.hpp>
-#include <ECS/Components/StaticElementComponent.hpp>
+#include <ECS/Components/FPSVisibleStaticElementComponent.hpp>
 #include <ECS/Components/MoveableComponent.hpp>
 #include <ECS/Components/InputComponent.hpp>
 #include <ECS/Components/GeneralCollisionComponent.hpp>
@@ -147,11 +147,11 @@ void ECSManager::syncComponentsFromEntities(uint32_t numEntity,
                         std::make_unique<MapCoordComponent>());
         }
             break;
-        case Components_e::STATIC_ELEMENT_COMPONENT:
+        case Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT:
         {
             m_componentManager->instanciateExternComponent(
                         numEntity,
-                        std::make_unique<StaticElementComponent>());
+                        std::make_unique<FPSVisibleStaticElementComponent>());
         }
             break;
         case Components_e::MOVEABLE_COMPONENT:
