@@ -155,7 +155,7 @@ void LevelManager::readStaticElement(const INIReader &reader, StaticLevelElement
         staticElement.m_type = static_cast<ObjectType_e>(type);
     }
     fillPositionVect(reader, sectionName, staticElement.m_TileGamePosition);
-    if(elementType == LevelStaticElementType_e::GROUND)
+    if(elementType != LevelStaticElementType_e::OBJECT)
     {
         staticElement.m_traversable = reader.GetBoolean(sectionName, "traversable", true);
     }
