@@ -7,17 +7,6 @@
 
 class ECSManager
 {
-private:
-    ecs::Engine m_ecsEngine;
-    ecs::ComponentManager *m_componentManager = nullptr;
-    ecs::SystemManager *m_systemManager = nullptr;
-private:
-    void initComponents();
-    void initSystems();
-    void syncComponentsFromEntities(uint32_t numEntity,
-                                    const std::vector<Components_e> &vectComp);
-    void instanciatePositionVertexComponent(uint32_t numEntity);
-    void instanciateColorVertexComponent(uint32_t numEntity);
 public:
     ECSManager();
     void init();
@@ -30,4 +19,15 @@ public:
     inline ecs::Engine &getEngine(){return m_ecsEngine;}
     inline ecs::ComponentManager &getComponentManager(){return *m_componentManager;}
     inline ecs::SystemManager &getSystemManager(){return *m_systemManager;}
+private:
+    void initComponents();
+    void initSystems();
+    void syncComponentsFromEntities(uint32_t numEntity,
+                                    const std::vector<Components_e> &vectComp);
+    void instanciatePositionVertexComponent(uint32_t numEntity);
+    void instanciateColorVertexComponent(uint32_t numEntity);
+private:
+    ecs::Engine m_ecsEngine;
+    ecs::ComponentManager *m_componentManager = nullptr;
+    ecs::SystemManager *m_systemManager = nullptr;
 };

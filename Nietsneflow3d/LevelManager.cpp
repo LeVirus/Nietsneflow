@@ -506,7 +506,7 @@ void LevelManager::loadLevel(const std::string &INIFileName, uint32_t levelNum)
 {
     INIReader reader(LEVEL_RESSOURCES_DIR_STR + std::string("Level") +
                      std::to_string(levelNum) + std::string ("/") + INIFileName);
-    if (reader.ParseError() < 0)
+    if(reader.ParseError() < 0)
     {
         assert("Error while reading INI file.");
     }

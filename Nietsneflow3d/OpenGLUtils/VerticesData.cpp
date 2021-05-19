@@ -37,7 +37,7 @@ void VerticesData::setVectGLPointer()
     switch (m_shaderNum)
     {
     case Shader_e::COLOR_S:
-        m_shaderInterpretData = {2,3};
+        m_shaderInterpretData = {2,4};
         break;
     case Shader_e::TEXTURE_S:
         m_shaderInterpretData = {2,2};
@@ -67,6 +67,7 @@ bool VerticesData::loadVertexColorComponent(const PositionVertexComponent *posCo
         m_vertexBuffer.emplace_back(std::get<0>(colorComp->m_vertex[j]));
         m_vertexBuffer.emplace_back(std::get<1>(colorComp->m_vertex[j]));
         m_vertexBuffer.emplace_back(std::get<2>(colorComp->m_vertex[j]));
+        m_vertexBuffer.emplace_back(std::get<3>(colorComp->m_vertex[j]));
     }
     BaseShapeTypeGL_e shapeType = (sizeVertex == 3 ? BaseShapeTypeGL_e::TRIANGLE :
                                                      BaseShapeTypeGL_e::RECTANGLE);

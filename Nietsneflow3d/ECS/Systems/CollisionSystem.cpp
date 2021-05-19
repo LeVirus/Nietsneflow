@@ -139,6 +139,11 @@ void CollisionSystem::treatSegmentShots()
         {
             continue;
         }
+        else if(tagComp->m_tag == CollisionTag_e::EXIT_CT)
+        {
+            tagComp->m_active = false;
+            continue;
+        }
         if(std::get<1>(m_vectMemShots[i])->m_tag == CollisionTag_e::BULLET_PLAYER_CT)
         {
             treatEnemyShooted(std::get<2>(m_vectMemShots[i]));
@@ -176,7 +181,6 @@ void CollisionSystem::initArrayTag()
     m_tagArray.insert({CollisionTag_e::PLAYER_CT, CollisionTag_e::DOOR_CT});
     m_tagArray.insert({CollisionTag_e::PLAYER_CT, CollisionTag_e::ENEMY_CT});
     m_tagArray.insert({CollisionTag_e::PLAYER_CT, CollisionTag_e::OBJECT_CT});
-    m_tagArray.insert({CollisionTag_e::PLAYER_CT, CollisionTag_e::EXIT_CT});
 
     m_tagArray.insert({CollisionTag_e::ENEMY_CT, CollisionTag_e::PLAYER_CT});
     m_tagArray.insert({CollisionTag_e::ENEMY_CT, CollisionTag_e::WALL_CT});
@@ -198,6 +202,7 @@ void CollisionSystem::initArrayTag()
     m_tagArray.insert({CollisionTag_e::BULLET_PLAYER_CT, CollisionTag_e::ENEMY_CT});
     m_tagArray.insert({CollisionTag_e::BULLET_PLAYER_CT, CollisionTag_e::WALL_CT});
     m_tagArray.insert({CollisionTag_e::BULLET_PLAYER_CT, CollisionTag_e::DOOR_CT});
+    m_tagArray.insert({CollisionTag_e::BULLET_PLAYER_CT, CollisionTag_e::EXIT_CT});
 
     m_tagArray.insert({CollisionTag_e::OBJECT_CT, CollisionTag_e::PLAYER_CT});
 }
@@ -312,6 +317,11 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
                      args.tagCompB->m_tag == CollisionTag_e::ENEMY_CT))
             {
                 collisionCircleCircleEject(args, circleCompA, circleCompB);
+            }
+            else if(args.tagCompA->m_tag == CollisionTag_e::BULLET_PLAYER_CT &&
+                    args.tagCompB->m_tag == CollisionTag_e::EXIT_CT)
+            {
+                args.tagCompB->m_active = false;
             }
         }
     }

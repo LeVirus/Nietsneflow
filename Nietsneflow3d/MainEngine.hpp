@@ -7,8 +7,8 @@
 
 class LevelManager;
 class Level;
-class EnemyData;
 class FontData;
+struct EnemyData;
 struct EnemyConfComponent;
 
 class MainEngine
@@ -26,6 +26,10 @@ public:
     {
         return m_gamePaused;
     }
+    inline void clearLevel()
+    {
+        m_ecsManager.getEngine().RmAllEntity();
+    }
     void confSystems();
 private:
     void clearObjectToDelete();
@@ -34,7 +38,6 @@ private:
     {
         m_graphicEngine.memDamageEntity(damage);
     }
-
     void loadDamageEntity();
     void loadGroundAndCeilingEntities(const GroundCeilingData &groundData,
                                       const GroundCeilingData &ceilingData);
@@ -90,6 +93,7 @@ private:
     bool m_gamePaused = false;
     SpriteData const *m_memCursorSpriteData = nullptr, *m_memVisibleShotA = nullptr;
     pairFloat_t m_menuCornerUpLeft = {-0.5f, 0.5f};
+    GeneralCollisionComponent *m_exitColl = nullptr;
 };
 
 void confBullet(GeneralCollisionComponent *genColl, SegmentCollisionComponent *segmentColl,

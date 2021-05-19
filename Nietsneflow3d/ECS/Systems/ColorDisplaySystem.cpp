@@ -1,4 +1,4 @@
-    #include "ColorDisplaySystem.hpp"
+#include "ColorDisplaySystem.hpp"
 #include <constants.hpp>
 #include <includesLib/BaseECS/engine.hpp>
 #include <ECS/Components/ColorVertexComponent.hpp>

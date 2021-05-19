@@ -47,6 +47,10 @@ bool MainEngine::mainLoop()
         m_physicalEngine.runIteration(m_gamePaused);
         clearObjectToDelete();
         m_graphicEngine.runIteration(m_gamePaused);
+        if(!m_exitColl->m_active)
+        {
+            return true;
+        }
     }while(!m_graphicEngine.windowShouldClose());
     return false;
 }
@@ -199,10 +203,10 @@ void MainEngine::loadDamageEntity()
             searchComponentByType<ColorVertexComponent>(entityNum, Components_e::COLOR_VERTEX_COMPONENT);
     assert(colorComp);
     colorComp->m_vertex.reserve(4);
-    colorComp->m_vertex.emplace_back(0.7f, 0.2f, 0.1f);
-    colorComp->m_vertex.emplace_back(0.7f, 0.2f, 0.1f);
-    colorComp->m_vertex.emplace_back(0.7f, 0.2f, 0.1f);
-    colorComp->m_vertex.emplace_back(0.7f, 0.2f, 0.1f);
+    colorComp->m_vertex.emplace_back(0.7f, 0.2f, 0.1f, 1.0f);
+    colorComp->m_vertex.emplace_back(0.7f, 0.2f, 0.1f, 1.0f);
+    colorComp->m_vertex.emplace_back(0.7f, 0.2f, 0.1f, 1.0f);
+    colorComp->m_vertex.emplace_back(0.7f, 0.2f, 0.1f, 1.0f);
     memDamageEntity(entityNum);
 }
 
@@ -831,9 +835,9 @@ void MainEngine::confPlayerEntity(const std::vector<SpriteData> &vectSpriteData,
     map->m_absoluteMapPositionPX = getAbsolutePosition(map->m_coord);
     updatePlayerOrientation(*move, *pos, *vision);
     color->m_vertex.reserve(3);
-    color->m_vertex.emplace_back(0.9f, 0.00f, 0.00f);
-    color->m_vertex.emplace_back(0.9f, 0.00f, 0.00f);
-    color->m_vertex.emplace_back(0.9f, 0.00f, 0.00f);
+    color->m_vertex.emplace_back(0.9f, 0.00f, 0.00f, 1.0f);
+    color->m_vertex.emplace_back(0.9f, 0.00f, 0.00f, 1.0f);
+    color->m_vertex.emplace_back(0.9f, 0.00f, 0.00f, 1.0f);
     circleColl->m_ray = PLAYER_RAY;
     tagColl->m_tag = CollisionTag_e::PLAYER_CT;
     tagColl->m_shape = CollisionShape_e::CIRCLE_C;
@@ -972,9 +976,12 @@ void MainEngine::loadExitElement(const LevelManager &levelManager,
     assert(fpsStaticComp);
     fpsStaticComp->m_inGameSpriteSize = exit.m_inGameSpriteSize;
     assert(!exit.m_TileGamePosition.empty());
+    //mem exit comp determine when level is over
+    m_exitColl = m_ecsManager.getComponentManager().
+            searchComponentByType<GeneralCollisionComponent>(entityNum, Components_e::GENERAL_COLLISION_COMPONENT);
+    assert(m_exitColl);
     confBaseComponent(entityNum, memSpriteData, exit.m_TileGamePosition[0],
             CollisionShape_e::CIRCLE_C, CollisionTag_e::EXIT_CT);
-
     confStaticComponent(entityNum, exit.m_inGameSpriteSize, LevelStaticElementType_e::GROUND);
 }
 
@@ -1041,10 +1048,10 @@ void MainEngine::confGroundComponents(uint32_t entityNum)
             searchComponentByType<ColorVertexComponent>(entityNum, Components_e::COLOR_VERTEX_COMPONENT);
     assert(colorComp);
     colorComp->m_vertex.reserve(4);
-    colorComp->m_vertex.emplace_back(0.1f, 0.2f, 0.1f);
-    colorComp->m_vertex.emplace_back(0.1f, 0.2f, 0.1f);
-    colorComp->m_vertex.emplace_back(0.3f, 0.9f, 0.1f);
-    colorComp->m_vertex.emplace_back(0.3f, 0.9f, 0.1f);
+    colorComp->m_vertex.emplace_back(0.1f, 0.2f, 0.1f, 1.0f);
+    colorComp->m_vertex.emplace_back(0.1f, 0.2f, 0.1f, 1.0f);
+    colorComp->m_vertex.emplace_back(0.3f, 0.9f, 0.1f, 1.0f);
+    colorComp->m_vertex.emplace_back(0.3f, 0.9f, 0.1f, 1.0f);
 
 }
 
@@ -1064,10 +1071,10 @@ void MainEngine::confCeilingComponents(uint32_t entityNum)
             searchComponentByType<ColorVertexComponent>(entityNum, Components_e::COLOR_VERTEX_COMPONENT);
     assert(colorComp);
     colorComp->m_vertex.reserve(4);
-    colorComp->m_vertex.emplace_back(0.1f, 0.2f, 0.3f);
-    colorComp->m_vertex.emplace_back(0.1f, 0.2f, 0.3f);
-    colorComp->m_vertex.emplace_back(0.3f, 0.9f, 0.8f);
-    colorComp->m_vertex.emplace_back(0.3f, 0.9f, 0.8f);
+    colorComp->m_vertex.emplace_back(0.1f, 0.2f, 0.3f, 1.0f);
+    colorComp->m_vertex.emplace_back(0.1f, 0.2f, 0.3f, 1.0f);
+    colorComp->m_vertex.emplace_back(0.3f, 0.9f, 0.8f, 1.0f);
+    colorComp->m_vertex.emplace_back(0.3f, 0.9f, 0.8f, 1.0f);
 }
 
 //===================================================================

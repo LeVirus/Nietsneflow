@@ -12,6 +12,7 @@ int main()
         {
             break;
         }
+        game.clearLevel();
     }
     return 0;
 }
