@@ -139,14 +139,36 @@ void LevelManager::loadGeneralStaticElements(const INIReader &reader,
 }
 
 //===================================================================
-void LevelManager::readStaticElement(const INIReader &reader, StaticLevelElementData &staticElement,
-                                     const std::string & sectionName, LevelStaticElementType_e elementType)
+void LevelManager::loadExit(const INIReader &reader)
+{
+    std::vector<std::string> vectINISections;
+    StaticLevelElementData stat;
+    vectINISections = reader.getSectionNamesContaining("Exit");
+    assert(!vectINISections.empty());
+    loadSpriteData(reader, vectINISections[0], stat);
+    std::string gamePositions = reader.Get(vectINISections[0], "GamePosition", "");
+    assert(!gamePositions.empty() && "Error while getting positions.");
+    std::vector<uint32_t> results = convertStrToVectUI(gamePositions);
+    stat.m_TileGamePosition.push_back({results[0], results[1]});
+    m_level.setExitElement(stat);
+}
+
+//===================================================================
+void LevelManager::loadSpriteData(const INIReader &reader, const std::string &sectionName,
+                                  StaticLevelElementData &staticElement)
 {
     staticElement.m_numSprite = getSpriteId(reader, sectionName);
     staticElement.m_inGameSpriteSize.first =
             reader.GetReal(sectionName, "SpriteWeightGame", 1.0);
     staticElement.m_inGameSpriteSize.second =
             reader.GetReal(sectionName, "SpriteHeightGame", 1.0);
+}
+
+//===================================================================
+void LevelManager::readStaticElement(const INIReader &reader, StaticLevelElementData &staticElement,
+                                     const std::string & sectionName, LevelStaticElementType_e elementType)
+{
+    loadSpriteData(reader, sectionName, staticElement);
     if(elementType == LevelStaticElementType_e::OBJECT)
     {
         staticElement.m_containing = reader.GetInteger(sectionName, "Containing", 1);
@@ -493,6 +515,7 @@ void LevelManager::loadLevel(const std::string &INIFileName, uint32_t levelNum)
     loadGeneralStaticElements(reader, LevelStaticElementType_e::GROUND);
     loadGeneralStaticElements(reader, LevelStaticElementType_e::CEILING);
     loadGeneralStaticElements(reader, LevelStaticElementType_e::OBJECT);
+    loadExit(reader);
     loadWeaponsDisplayData(reader);
     loadWallData(reader);
     loadDoorData(reader);

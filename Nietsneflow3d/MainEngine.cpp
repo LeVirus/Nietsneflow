@@ -39,7 +39,7 @@ void MainEngine::init()
 }
 
 //===================================================================
-void MainEngine::mainLoop()
+bool MainEngine::mainLoop()
 {
     m_graphicEngine.getMapSystem().confLevelData();
     do
@@ -48,6 +48,7 @@ void MainEngine::mainLoop()
         clearObjectToDelete();
         m_graphicEngine.runIteration(m_gamePaused);
     }while(!m_graphicEngine.windowShouldClose());
+    return false;
 }
 
 //===================================================================
@@ -955,6 +956,26 @@ void MainEngine::loadStaticElementEntities(const LevelManager &levelManager)
                            LevelStaticElementType_e::CEILING);
     loadStaticElementGroup(levelManager, &levelManager.getLevel().getObjectElementData(),
                            LevelStaticElementType_e::OBJECT);
+    loadExitElement(levelManager, levelManager.getLevel().getExitElementData());
+}
+
+//===================================================================
+void MainEngine::loadExitElement(const LevelManager &levelManager,
+                                 const StaticLevelElementData &exit)
+{
+    const SpriteData &memSpriteData = levelManager.getPictureData().
+            getSpriteData()[exit.m_numSprite];
+    uint32_t entityNum = createStaticEntity();
+    FPSVisibleStaticElementComponent *fpsStaticComp = m_ecsManager.getComponentManager().
+            searchComponentByType<FPSVisibleStaticElementComponent>(
+                entityNum, Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
+    assert(fpsStaticComp);
+    fpsStaticComp->m_inGameSpriteSize = exit.m_inGameSpriteSize;
+    assert(!exit.m_TileGamePosition.empty());
+    confBaseComponent(entityNum, memSpriteData, exit.m_TileGamePosition[0],
+            CollisionShape_e::CIRCLE_C, CollisionTag_e::EXIT_CT);
+
+    confStaticComponent(entityNum, exit.m_inGameSpriteSize, LevelStaticElementType_e::GROUND);
 }
 
 //===================================================================

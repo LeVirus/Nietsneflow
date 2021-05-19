@@ -12,5 +12,5 @@ public:
     Game() = default;
     void loadLevelData(uint32_t levelNum);
     void initEngine();
-    void launchGame();
+    bool launchGame();
 };

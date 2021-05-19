@@ -18,7 +18,7 @@ void Game::initEngine()
 }
 
 //===================================================================
-void Game::launchGame()
+bool Game::launchGame()
 {
-    m_mainEngine.mainLoop();
+    return m_mainEngine.mainLoop();
 }

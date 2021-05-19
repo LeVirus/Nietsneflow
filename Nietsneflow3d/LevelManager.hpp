@@ -39,6 +39,9 @@ private:
                           vectPairUI_t &vectPos);
     uint8_t getSpriteId(const INIReader &reader, const std::string &sectionName);
     void loadWeaponsDisplayData(const INIReader &reader);
+    void loadExit(const INIReader &reader);
+    void loadSpriteData(const INIReader &reader, const std::string &sectionName,
+                        StaticLevelElementData &staticElement);
     void loadDisplayData(const INIReader &reader,
                          std::string_view sectionName,
                          std::string_view elementName,

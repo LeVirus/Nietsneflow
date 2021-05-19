@@ -194,7 +194,8 @@ enum class CollisionTag_e
     BULLET_PLAYER_CT,
     BULLET_ENEMY_CT,
     GHOST_CT,
-    OBJECT_CT
+    OBJECT_CT,
+    EXIT_CT
 };
 
 enum class CollisionShape_e

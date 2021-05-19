@@ -68,19 +68,6 @@ struct EnemyData
 
 class Level
 {
-private:
-    pairUI_t m_playerDeparture;
-    static pairUI_t m_size;
-    Direction_e m_playerDepartureDirection;
-    std::vector<StaticLevelElementData> m_groundElement, m_ceilingElement, m_objectElement;
-    std::vector<WallData> m_wallData;
-    //store the sprite number and the screen display size
-    std::vector<pairUIPairFloat_t> m_weaponsDisplayData;
-    std::vector<uint8_t> m_vectVisibleShot;
-    std::vector<DoorData> m_doorData;
-    std::vector<EnemyData> m_enemyData;
-    static std::vector<ElementRaycast> m_levelCaseType;
-    static float m_rangeViewPX;
 public:
     Level();
     void setPlayerInitData(const pairFloat_t &pairInitPlayerPos,
@@ -127,6 +114,11 @@ public:
     inline const std::vector<StaticLevelElementData> &getGroundElementData()const
     {
         return m_groundElement;
+    }
+
+    inline const StaticLevelElementData &getExitElementData()const
+    {
+        return m_exitStaticElement;
     }
 
     inline const std::vector<StaticLevelElementData> &getCeilingElementData()const
@@ -190,13 +182,30 @@ public:
         return Level::m_rangeViewPX;
     }
 
-
+    inline void setExitElement(const StaticLevelElementData &stat)
+    {
+        m_exitStaticElement = stat;
+    }
 
     /**
      * @brief updateVisualOrientation Modify vertex position relative to orientation.
      */
     static void updatePlayerOrientation(const MoveableComponent &moveComp,
                                         PositionVertexComponent &posComp);
+private:
+    pairUI_t m_playerDeparture;
+    static pairUI_t m_size;
+    Direction_e m_playerDepartureDirection;
+    std::vector<StaticLevelElementData> m_groundElement, m_ceilingElement, m_objectElement;
+    StaticLevelElementData m_exitStaticElement;
+    std::vector<WallData> m_wallData;
+    //store the sprite number and the screen display size
+    std::vector<pairUIPairFloat_t> m_weaponsDisplayData;
+    std::vector<uint8_t> m_vectVisibleShot;
+    std::vector<DoorData> m_doorData;
+    std::vector<EnemyData> m_enemyData;
+    static std::vector<ElementRaycast> m_levelCaseType;
+    static float m_rangeViewPX;
 };
 
 pairFloat_t getAbsolutePosition(const pairUI_t &coord);

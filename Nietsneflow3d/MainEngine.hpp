@@ -18,7 +18,7 @@ public:
     void loadGraphicPicture(const PictureData &picData, const FontData &fontData);
     void init();
     void loadLevelEntities(const LevelManager &levelManager);
-    void mainLoop();
+    bool mainLoop();
     void playerShoot(PlayerConfComponent *playerComp, const pairFloat_t &point,
                float degreeAngle);
     void setUnsetPaused();
@@ -58,6 +58,7 @@ private:
     void loadStaticElementEntities(const LevelManager &levelManager);
     void loadStaticElementGroup(const LevelManager &levelManager,
                                 const std::vector<StaticLevelElementData> *staticData, LevelStaticElementType_e elementType);
+    void loadExitElement(const LevelManager &levelManager, const StaticLevelElementData &exit);
     void createAmmosEntities(AmmoContainer_t &ammoCont, CollisionTag_e collTag, bool visibleShot = false);
     uint32_t loadWeaponEntity();
     uint32_t createWallEntity();
@@ -69,7 +70,6 @@ private:
     uint32_t createSimpleSpriteEntity();
     uint32_t createStaticEntity();
     uint32_t createObjectEntity();
-
     void confBaseComponent(uint32_t entityNum, const SpriteData &memSpriteData,
                            const pairUI_t &coordLevel, CollisionShape_e collisionShape,
                            CollisionTag_e tag);

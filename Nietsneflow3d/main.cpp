@@ -5,7 +5,13 @@ int main()
 {
     Game game;
     game.initEngine();
-    game.loadLevelData(1);
-    game.launchGame();
+    for(uint32_t i = 1; i < 3; ++i)
+    {
+        game.loadLevelData(i);
+        if(!game.launchGame())
+        {
+            break;
+        }
+    }
     return 0;
 }
