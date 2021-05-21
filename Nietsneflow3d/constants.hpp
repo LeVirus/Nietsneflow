@@ -250,6 +250,7 @@ inline const std::string STR_PLAYER_AMMO = "AMMO::";
 inline const std::string SHADER_DIR_STR = "../Nietsneflow3d/Ressources/Shader/";
 inline const std::string LEVEL_RESSOURCES_DIR_STR = "../Nietsneflow3d/Ressources/";
 inline const std::string TEXTURES_DIR_STR = "../Nietsneflow3d/Ressources/Textures/";
+inline const std::string MENU_ENTRIES = "RETURN TO GAME\\NEW GAME\\EXIT GAME";
 inline const std::map<Shader_e, std::string> SHADER_ID_MAP
 {
     {Shader_e::COLOR_S, "ceilingFloor"},

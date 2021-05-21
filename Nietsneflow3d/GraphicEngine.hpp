@@ -40,7 +40,7 @@ public:
                      StaticDisplaySystem *staticDisplaySystem);
     void updateAmmoCount(WriteComponent *writeComp, PlayerConfComponent *playerComp);
     void updatePlayerLife(WriteComponent *writeComp, PlayerConfComponent *playerComp);
-    void fillMenuWrite(WriteComponent *writeComp);
+    void fillMenuWrite(WriteComponent *writeComp, const std::string &menuEntry);
     inline MapDisplaySystem &getMapSystem()
     {
         return *m_mapSystem;
@@ -54,8 +54,9 @@ public:
         return *m_window;
     }
     void memColorSystemBackgroundEntities(uint32_t ground, uint32_t ceiling);
-    void setTransition();
-    void unsetTransition();
+    void setTransition(bool gamePaused);
+    void unsetTransition(bool gamePaused);
+    void mainDisplay(bool gamePaused);
 private:
     void preDisplay();
     void postDisplay();

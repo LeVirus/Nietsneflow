@@ -33,6 +33,7 @@ public:
     void confSystems();
 private:
     void clearObjectToDelete();
+    void displayTransitionMenu();
     void memColorSystemBackgroundEntities(uint32_t ground, uint32_t ceiling);
     void loadDamageEntity();
     void loadTransitionEntity();
@@ -93,6 +94,7 @@ private:
     SpriteData const *m_memCursorSpriteData = nullptr, *m_memVisibleShotA = nullptr;
     pairFloat_t m_menuCornerUpLeft = {-0.5f, 0.5f};
     GeneralCollisionComponent *m_exitColl = nullptr;
+    WriteComponent *m_writeConf = nullptr;
 };
 
 void confBullet(GeneralCollisionComponent *genColl, SegmentCollisionComponent *segmentColl,

@@ -41,6 +41,37 @@ void GraphicEngine::loadPictureData(const PictureData &pictureData, const FontDa
 void GraphicEngine::runIteration(bool gamePaused)
 {
     preDisplay();
+    mainDisplay(gamePaused);
+    postDisplay();
+}
+
+//===================================================================
+void GraphicEngine::setTransition(bool gamePaused)
+{
+    for(uint32_t i = 0; i < m_transitionFrameNumber; ++i)
+    {
+        preDisplay();
+        mainDisplay(gamePaused);
+        m_colorSystem->setTransition(i, m_transitionFrameNumber);
+        postDisplay();
+    }
+}
+
+//===================================================================
+void GraphicEngine::unsetTransition(bool gamePaused)
+{
+    for(uint32_t i = m_transitionFrameNumber; i > 0; --i)
+    {
+        preDisplay();
+        mainDisplay(gamePaused);
+        m_colorSystem->setTransition(i, m_transitionFrameNumber);
+        postDisplay();
+    }
+}
+
+//===================================================================
+void GraphicEngine::mainDisplay(bool gamePaused)
+{
     if(!gamePaused)
     {
         displayGameIteration();
@@ -48,31 +79,6 @@ void GraphicEngine::runIteration(bool gamePaused)
     else
     {
         m_staticDisplaySystem->displayMenu();
-    }
-    postDisplay();
-}
-
-//===================================================================
-void GraphicEngine::setTransition()
-{
-    for(uint32_t i = 0; i < m_transitionFrameNumber; ++i)
-    {
-        preDisplay();
-        displayGameIteration();
-        m_colorSystem->setTransition(i, m_transitionFrameNumber);
-        postDisplay();
-    }
-}
-
-//===================================================================
-void GraphicEngine::unsetTransition()
-{
-    for(uint32_t i = m_transitionFrameNumber; i > 0; --i)
-    {
-        preDisplay();
-        displayGameIteration();
-        m_colorSystem->setTransition(i, m_transitionFrameNumber);
-        postDisplay();
     }
 }
 
@@ -139,9 +145,9 @@ void GraphicEngine::updatePlayerLife(WriteComponent *writeComp, PlayerConfCompon
 }
 
 //===================================================================
-void GraphicEngine::fillMenuWrite(WriteComponent *writeComp)
+void GraphicEngine::fillMenuWrite(WriteComponent *writeComp, const std::string &menuEntry)
 {
-    writeComp->m_str = "RETURN TO GAME\\NEW GAME\\EXIT GAME";
+    writeComp->m_str = menuEntry;
     writeComp->m_fontSpriteData = m_ptrFontData->getWriteData(writeComp->m_str, writeComp->m_numTexture);
 }
 

@@ -42,7 +42,7 @@ void MainEngine::init()
 bool MainEngine::mainLoop()
 {
     m_graphicEngine.getMapSystem().confLevelData();
-    m_graphicEngine.unsetTransition();
+    m_graphicEngine.unsetTransition(m_gamePaused);
     do
     {
         m_physicalEngine.runIteration(m_gamePaused);
@@ -50,11 +50,29 @@ bool MainEngine::mainLoop()
         m_graphicEngine.runIteration(m_gamePaused);
         if(!m_exitColl->m_active)
         {
-            m_graphicEngine.setTransition();
+            m_graphicEngine.setTransition(m_gamePaused);
+            displayTransitionMenu();
             return true;
         }
     }while(!m_graphicEngine.windowShouldClose());
     return false;
+}
+
+//===================================================================
+void MainEngine::displayTransitionMenu()
+{
+    m_gamePaused = true;
+    assert(m_writeConf);
+    m_graphicEngine.fillMenuWrite(m_writeConf, "CONTINUE");
+    m_graphicEngine.mainDisplay(m_gamePaused);
+    m_graphicEngine.unsetTransition(m_gamePaused);
+    do
+    {
+        m_graphicEngine.runIteration(m_gamePaused);
+        m_physicalEngine.runIteration(m_gamePaused);
+    }while(m_gamePaused);
+    m_graphicEngine.setTransition(true);
+    m_graphicEngine.fillMenuWrite(m_writeConf, MENU_ENTRIES);
 }
 
 //===================================================================
@@ -948,9 +966,10 @@ void MainEngine::confWriteEntities(PlayerConfComponent *playerConf)
     writeConf = m_ecsManager.getComponentManager().
             searchComponentByType<WriteComponent>(numMenuWrite, Components_e::WRITE_COMPONENT);
     assert(writeConf);
+    m_writeConf = writeConf;
     writeConf->m_upLeftPositionGL = m_menuCornerUpLeft;
     writeConf->m_fontSize = MENU_FONT_SIZE;
-    m_graphicEngine.fillMenuWrite(writeConf);
+    m_graphicEngine.fillMenuWrite(writeConf, MENU_ENTRIES);
     playerConf->m_menuEntity = numMenuWrite;
     playerConf->m_ammoWriteEntity = numAmmoWrite;
     playerConf->m_lifeWriteEntity = numLifeWrite;
