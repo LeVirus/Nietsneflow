@@ -194,7 +194,7 @@ void InputSystem::treatMainMenu(uint32_t playerEntity)
             searchComponentByType<PlayerConfComponent>(playerEntity,
                                                        Components_e::PLAYER_CONF_COMPONENT);
     assert(playerComp);
-    if(!m_keyUpPressed && glfwGetKey(m_window, GLFW_KEY_UP) == GLFW_PRESS)
+    if(!m_modeTransition && !m_keyUpPressed && glfwGetKey(m_window, GLFW_KEY_UP) == GLFW_PRESS)
     {
         m_keyUpPressed = true;
         uint32_t index = static_cast<uint32_t>(playerComp->m_currentCursorPos);
@@ -207,7 +207,7 @@ void InputSystem::treatMainMenu(uint32_t playerEntity)
             playerComp->m_currentCursorPos = static_cast<CurrentMenuCursorPos_e>(index - 1);
         }
     }
-    else if(!m_keyDownPressed && glfwGetKey(m_window, GLFW_KEY_DOWN) == GLFW_PRESS)
+    else if(!m_modeTransition && !m_keyDownPressed && glfwGetKey(m_window, GLFW_KEY_DOWN) == GLFW_PRESS)
     {
         m_keyDownPressed = true;
         uint32_t index = static_cast<uint32_t>(playerComp->m_currentCursorPos);

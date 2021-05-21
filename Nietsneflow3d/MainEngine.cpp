@@ -64,13 +64,16 @@ void MainEngine::displayTransitionMenu()
     m_gamePaused = true;
     assert(m_writeConf);
     m_graphicEngine.fillMenuWrite(m_writeConf, "CONTINUE");
+    m_physicalEngine.setModeTransitionMenu(true);
     m_graphicEngine.mainDisplay(m_gamePaused);
+    m_playerConf->m_currentCursorPos = static_cast<CurrentMenuCursorPos_e>(0);
     m_graphicEngine.unsetTransition(m_gamePaused);
     do
     {
         m_graphicEngine.runIteration(m_gamePaused);
         m_physicalEngine.runIteration(m_gamePaused);
     }while(m_gamePaused);
+    m_physicalEngine.setModeTransitionMenu(false);
     m_graphicEngine.setTransition(true);
     m_graphicEngine.fillMenuWrite(m_writeConf, MENU_ENTRIES);
 }
@@ -861,6 +864,7 @@ void MainEngine::confPlayerEntity(const std::vector<SpriteData> &vectSpriteData,
     assert(tagColl);
     assert(vision);
     assert(playerConf);
+    m_playerConf = playerConf;
     createAmmosEntities(playerConf->m_shootEntities, CollisionTag_e::BULLET_PLAYER_CT);
     createAmmosEntities(playerConf->m_visibleShootEntities, CollisionTag_e::BULLET_PLAYER_CT, true);
     confShotsEntities(playerConf->m_shootEntities, 1);

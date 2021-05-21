@@ -21,6 +21,7 @@ public:
     void memPlayerEntity(uint32_t playerEntity);
     void confVisibleShoot(const AmmoContainer_t &visibleShots,
                           const pairFloat_t &point, float degreeAngle);
+    void setModeTransitionMenu(bool transition);
     inline const std::vector<uint32_t> &getObjectEntityToDelete()const
     {
         return m_collisionSystem->getObjectEntityToDelete();

@@ -52,6 +52,12 @@ void PhysicalEngine::confVisibleShoot(const AmmoContainer_t &visibleShots,
 }
 
 //===================================================================
+void PhysicalEngine::setModeTransitionMenu(bool transition)
+{
+    m_inputSystem->setModeTransitionMenu(transition);
+}
+
+//===================================================================
 void moveElement(MoveableComponent &moveComp,
                  MapCoordComponent &mapComp, MoveOrientation_e moveDirection)
 {
