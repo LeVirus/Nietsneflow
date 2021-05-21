@@ -42,6 +42,7 @@ void MainEngine::init()
 bool MainEngine::mainLoop()
 {
     m_graphicEngine.getMapSystem().confLevelData();
+    m_graphicEngine.unsetTransition();
     do
     {
         m_physicalEngine.runIteration(m_gamePaused);

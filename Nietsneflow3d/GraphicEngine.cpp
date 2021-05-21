@@ -55,11 +55,23 @@ void GraphicEngine::runIteration(bool gamePaused)
 //===================================================================
 void GraphicEngine::setTransition()
 {
-    for(uint32_t i = 0; i < 100; ++i)
+    for(uint32_t i = 0; i < m_transitionFrameNumber; ++i)
     {
         preDisplay();
         displayGameIteration();
-        m_colorSystem->setTransition(i, 50);
+        m_colorSystem->setTransition(i, m_transitionFrameNumber);
+        postDisplay();
+    }
+}
+
+//===================================================================
+void GraphicEngine::unsetTransition()
+{
+    for(uint32_t i = m_transitionFrameNumber; i > 0; --i)
+    {
+        preDisplay();
+        displayGameIteration();
+        m_colorSystem->setTransition(i, m_transitionFrameNumber);
         postDisplay();
     }
 }

@@ -55,6 +55,7 @@ public:
     }
     void memColorSystemBackgroundEntities(uint32_t ground, uint32_t ceiling);
     void setTransition();
+    void unsetTransition();
 private:
     void preDisplay();
     void postDisplay();
@@ -82,6 +83,7 @@ private:
     FirstPersonDisplaySystem *m_firstPersonSystem = nullptr;
     VisionSystem *m_visionSystem = nullptr;
     StaticDisplaySystem *m_staticDisplaySystem = nullptr;
+    uint32_t m_transitionFrameNumber = 30;
 };
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
