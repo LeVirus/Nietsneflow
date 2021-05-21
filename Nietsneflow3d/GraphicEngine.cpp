@@ -40,23 +40,52 @@ void GraphicEngine::loadPictureData(const PictureData &pictureData, const FontDa
 //===================================================================
 void GraphicEngine::runIteration(bool gamePaused)
 {
-    // render
-    // ------
-    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
+    preDisplay();
     if(!gamePaused)
     {
-        m_colorSystem->execSystem();
-        m_visionSystem->execSystem();
-        m_firstPersonSystem->execSystem();
-        m_mapSystem->execSystem();
+        displayGameIteration();
     }
-    m_staticDisplaySystem->setUnsetMenuActive(gamePaused);
-    m_staticDisplaySystem->execSystem();
-    // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
-    // -------------------------------------------------------------------------------
+    else
+    {
+        m_staticDisplaySystem->displayMenu();
+    }
+    postDisplay();
+}
+
+//===================================================================
+void GraphicEngine::setTransition()
+{
+    for(uint32_t i = 0; i < 100; ++i)
+    {
+        preDisplay();
+        displayGameIteration();
+        m_colorSystem->setTransition(i, 50);
+        postDisplay();
+    }
+}
+
+//===================================================================
+void GraphicEngine::preDisplay()
+{
+    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+}
+
+//===================================================================
+void GraphicEngine::postDisplay()
+{
     glfwSwapBuffers(m_window);
     glfwPollEvents();
+}
+
+//===================================================================
+void GraphicEngine::displayGameIteration()
+{
+    m_colorSystem->execSystem();
+    m_visionSystem->execSystem();
+    m_firstPersonSystem->execSystem();
+    m_mapSystem->execSystem();
+    m_staticDisplaySystem->execSystem();
 }
 
 //===================================================================
@@ -71,7 +100,6 @@ void GraphicEngine::linkSystems(ColorDisplaySystem *colorSystem,
                                 FirstPersonDisplaySystem *firstPersonSystem,
                                 VisionSystem *visionSystem,
                                 StaticDisplaySystem *staticDisplaySystem)
-
 {
     m_colorSystem = colorSystem;
     m_mapSystem = mapSystem;
@@ -109,12 +137,6 @@ void GraphicEngine::fillMenuWrite(WriteComponent *writeComp)
 void GraphicEngine::memColorSystemBackgroundEntities(uint32_t ground, uint32_t ceiling)
 {
     m_colorSystem->memColorSystemBackgroundEntities(ground, ceiling);
-}
-
-//===================================================================
-void GraphicEngine::memDamageEntity(uint32_t damage)
-{
-    m_colorSystem->memDamageEntity(damage);
 }
 
 //===================================================================

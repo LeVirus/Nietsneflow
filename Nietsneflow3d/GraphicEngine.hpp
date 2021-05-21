@@ -54,8 +54,11 @@ public:
         return *m_window;
     }
     void memColorSystemBackgroundEntities(uint32_t ground, uint32_t ceiling);
-    void memDamageEntity(uint32_t damage);
+    void setTransition();
 private:
+    void preDisplay();
+    void postDisplay();
+    void displayGameIteration();
     void initGLWindow();
     void initGlad();
     void initGLShader();

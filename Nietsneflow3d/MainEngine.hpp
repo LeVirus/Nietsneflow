@@ -34,11 +34,10 @@ public:
 private:
     void clearObjectToDelete();
     void memColorSystemBackgroundEntities(uint32_t ground, uint32_t ceiling);
-    inline void memDamageEntity(uint32_t damage)
-    {
-        m_graphicEngine.memDamageEntity(damage);
-    }
     void loadDamageEntity();
+    void loadTransitionEntity();
+    void confUnifiedColorEntity(uint32_t entityNum, const tupleFloat_t &color);
+    uint32_t createColorEntity();
     void loadGroundAndCeilingEntities(const GroundCeilingData &groundData,
                                       const GroundCeilingData &ceilingData);
     void confCeilingComponents(uint32_t entityNum);

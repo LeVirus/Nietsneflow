@@ -70,6 +70,34 @@ void ColorDisplaySystem::memColorSystemBackgroundEntities(uint32_t ground, uint3
 }
 
 //===================================================================
+void ColorDisplaySystem::loadDamageEntity(uint32_t damage)
+{
+    m_damage = damage;
+    m_damageMemComponents.first = stairwayToComponentManager().
+            searchComponentByType<PositionVertexComponent>(m_damage,
+                                                           Components_e::POSITION_VERTEX_COMPONENT);
+    m_damageMemComponents.second = stairwayToComponentManager().
+            searchComponentByType<ColorVertexComponent>(m_damage,
+                                                        Components_e::COLOR_VERTEX_COMPONENT);
+    assert(m_damageMemComponents.first);
+    assert(m_damageMemComponents.second);
+}
+
+//===================================================================
+void ColorDisplaySystem::loadTransitionEntity(uint32_t transition)
+{
+    m_transition = transition;
+    m_transitionMemComponents.first = stairwayToComponentManager().
+            searchComponentByType<PositionVertexComponent>(m_transition,
+                                                           Components_e::POSITION_VERTEX_COMPONENT);
+    m_transitionMemComponents.second = stairwayToComponentManager().
+            searchComponentByType<ColorVertexComponent>(m_transition,
+                                                        Components_e::COLOR_VERTEX_COMPONENT);
+    assert(m_transitionMemComponents.first);
+    assert(m_transitionMemComponents.second);
+}
+
+//===================================================================
 void ColorDisplaySystem::drawEntity(const PositionVertexComponent *posComp,
                                     const ColorVertexComponent *colorComp)
 {
@@ -81,19 +109,22 @@ void ColorDisplaySystem::drawEntity(const PositionVertexComponent *posComp,
 //===================================================================
 void ColorDisplaySystem::drawVisibleDamage()
 {
-    PositionVertexComponent *posComp = stairwayToComponentManager().
-            searchComponentByType<PositionVertexComponent>(m_damage,
-                                                           Components_e::POSITION_VERTEX_COMPONENT);
-    ColorVertexComponent *colorComp = stairwayToComponentManager().
-            searchComponentByType<ColorVertexComponent>(m_damage,
-                                                        Components_e::COLOR_VERTEX_COMPONENT);
-    assert(posComp);
-    assert(colorComp);
-    drawEntity(posComp, colorComp);
+    drawEntity(m_damageMemComponents.first, m_damageMemComponents.second);
 }
 
 //===================================================================
-void ColorDisplaySystem::display() const
+void ColorDisplaySystem::setTransition(uint32_t current, uint32_t total)
+{
+    float currentTransparency = static_cast<float>(current) / static_cast<float>(total);
+    std::get<3>(m_transitionMemComponents.second->m_vertex[0]) = currentTransparency;
+    std::get<3>(m_transitionMemComponents.second->m_vertex[1]) = currentTransparency;
+    std::get<3>(m_transitionMemComponents.second->m_vertex[2]) = currentTransparency;
+    std::get<3>(m_transitionMemComponents.second->m_vertex[3]) = currentTransparency;
+    drawEntity(m_transitionMemComponents.first, m_transitionMemComponents.second);
+}
+
+//===================================================================
+void ColorDisplaySystem::display()const
 {
     m_shader->display();
 }

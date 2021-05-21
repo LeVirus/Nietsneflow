@@ -74,24 +74,6 @@ void StaticDisplaySystem::execSystem()
                     searchComponentByType<PlayerConfComponent>(mVectNumEntity[i],
                                                                Components_e::PLAYER_CONF_COMPONENT);
         assert(playerComp);
-        if(m_menuActive)
-        {
-            treatWriteVertex(playerComp->m_menuEntity, VertexID_e::MENU_WRITE);
-            SpriteTextureComponent *spriteComp = stairwayToComponentManager().
-                    searchComponentByType<SpriteTextureComponent>(playerComp->m_menuCursorEntity,
-                                                                  Components_e::SPRITE_TEXTURE_COMPONENT);
-            assert(spriteComp);
-            if(m_currentCursorPos != playerComp->m_currentCursorPos)
-            {
-                updateMenuCursorPosition(playerComp);
-            }
-            if(!m_cursorInit)
-            {
-                fillCursorMenuVertex(playerComp);
-            }
-            drawVertex(spriteComp->m_spriteData->m_textureNum, VertexID_e::MENU_CURSOR);
-            continue;
-        }
         //DRAW WEAPON
         SpriteTextureComponent *spriteComp = stairwayToComponentManager().
                 searchComponentByType<SpriteTextureComponent>(playerComp->m_weaponEntity,
@@ -106,6 +88,33 @@ void StaticDisplaySystem::execSystem()
     }
 }
 
+//===================================================================
+void StaticDisplaySystem::displayMenu()
+{
+    System::execSystem();
+    m_shader->use();
+    for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
+    {
+        PlayerConfComponent *playerComp = stairwayToComponentManager().
+                    searchComponentByType<PlayerConfComponent>(mVectNumEntity[i],
+                                                               Components_e::PLAYER_CONF_COMPONENT);
+        assert(playerComp);
+        treatWriteVertex(playerComp->m_menuEntity, VertexID_e::MENU_WRITE);
+        SpriteTextureComponent *spriteComp = stairwayToComponentManager().
+                searchComponentByType<SpriteTextureComponent>(playerComp->m_menuCursorEntity,
+                                                              Components_e::SPRITE_TEXTURE_COMPONENT);
+        assert(spriteComp);
+        if(m_currentCursorPos != playerComp->m_currentCursorPos)
+        {
+            updateMenuCursorPosition(playerComp);
+        }
+        if(!m_cursorInit)
+        {
+            fillCursorMenuVertex(playerComp);
+        }
+        drawVertex(spriteComp->m_spriteData->m_textureNum, VertexID_e::MENU_CURSOR);
+    }
+}
 
 //===================================================================
 void StaticDisplaySystem::confWriteVertex(WriteComponent *writeComp,

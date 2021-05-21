@@ -35,15 +35,12 @@ class StaticDisplaySystem : public ecs::System
 public:
     StaticDisplaySystem();
     void execSystem()override;
+    void displayMenu();
     void setShader(Shader &shader);
     void setWeaponSprite(uint32_t weaponEntity, WeaponsSpriteType_e weaponSprite);
     inline void setVectTextures(std::vector<Texture> &vectTexture)
     {
         m_ptrVectTexture = &vectTexture;
-    }
-    inline void setUnsetMenuActive(bool active)
-    {
-        m_menuActive = active;
     }
     inline void memFontDataPtr(FontData const *fontData)
     {
@@ -65,7 +62,7 @@ private:
                            MemPositionsVertexComponents *memPosComp);
 private:
     FontData const *m_fontDataPtr;
-    bool m_menuActive = false, m_cursorInit = false;
+    bool m_cursorInit = false;
     Shader *m_shader;
     std::array<VerticesData, static_cast<uint32_t>(VertexID_e::TOTAL)> m_vertices;
     std::vector<Texture> *m_ptrVectTexture = nullptr;

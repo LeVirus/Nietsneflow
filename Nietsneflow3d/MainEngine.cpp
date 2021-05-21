@@ -49,6 +49,7 @@ bool MainEngine::mainLoop()
         m_graphicEngine.runIteration(m_gamePaused);
         if(!m_exitColl->m_active)
         {
+            m_graphicEngine.setTransition();
             return true;
         }
     }while(!m_graphicEngine.windowShouldClose());
@@ -186,28 +187,60 @@ void MainEngine::applyTimerPausedValue()
 //===================================================================
 void MainEngine::loadDamageEntity()
 {
-    std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComponents;
-    bitsetComponents[Components_e::COLOR_VERTEX_COMPONENT] = true;
-    bitsetComponents[Components_e::POSITION_VERTEX_COMPONENT] = true;
-    uint32_t entityNum = m_ecsManager.addEntity(bitsetComponents);
+    uint32_t entityNum = createColorEntity();
+    confUnifiedColorEntity(entityNum, {0.7f, 0.2f, 0.1f});
+    m_ecsManager.getSystemManager().searchSystemByType<ColorDisplaySystem>(
+                static_cast<uint32_t>(Systems_e::COLOR_DISPLAY_SYSTEM))->loadDamageEntity(entityNum);}
+
+//===================================================================
+void MainEngine::loadTransitionEntity()
+{
+    uint32_t entityNum = createColorEntity();
+    confUnifiedColorEntity(entityNum, {0.0f, 0.0f, 0.0f});
+    m_ecsManager.getSystemManager().searchSystemByType<ColorDisplaySystem>(
+                static_cast<uint32_t>(Systems_e::COLOR_DISPLAY_SYSTEM))->loadTransitionEntity(entityNum);
+}
+
+//===================================================================
+void MainEngine::confUnifiedColorEntity(uint32_t entityNum, const tupleFloat_t &color)
+{
     PositionVertexComponent *posComp = m_ecsManager.getComponentManager().
             searchComponentByType<PositionVertexComponent>(entityNum, Components_e::POSITION_VERTEX_COMPONENT);
     assert(posComp);
+    if(!posComp->m_vertex.empty())
+    {
+        posComp->m_vertex.clear();
+    }
     posComp->m_vertex.reserve(4);
     posComp->m_vertex.emplace_back(-1.0f, 1.0f);
     posComp->m_vertex.emplace_back(1.0f, 1.0f);
     posComp->m_vertex.emplace_back(1.0f, -1.0f);
     posComp->m_vertex.emplace_back(-1.0f, -1.0f);
-
     ColorVertexComponent *colorComp = m_ecsManager.getComponentManager().
             searchComponentByType<ColorVertexComponent>(entityNum, Components_e::COLOR_VERTEX_COMPONENT);
     assert(colorComp);
+    if(!colorComp->m_vertex.empty())
+    {
+        colorComp->m_vertex.clear();
+    }
     colorComp->m_vertex.reserve(4);
-    colorComp->m_vertex.emplace_back(0.7f, 0.2f, 0.1f, 1.0f);
-    colorComp->m_vertex.emplace_back(0.7f, 0.2f, 0.1f, 1.0f);
-    colorComp->m_vertex.emplace_back(0.7f, 0.2f, 0.1f, 1.0f);
-    colorComp->m_vertex.emplace_back(0.7f, 0.2f, 0.1f, 1.0f);
-    memDamageEntity(entityNum);
+    colorComp->m_vertex.emplace_back(std::get<0>(color), std::get<1>(color),
+                                     std::get<2>(color), 1.0f);
+    colorComp->m_vertex.emplace_back(std::get<0>(color), std::get<1>(color),
+                                     std::get<2>(color), 1.0f);
+    colorComp->m_vertex.emplace_back(std::get<0>(color), std::get<1>(color),
+                                     std::get<2>(color), 1.0f);
+    colorComp->m_vertex.emplace_back(std::get<0>(color), std::get<1>(color),
+                                     std::get<2>(color), 1.0f);
+}
+
+//===================================================================
+uint32_t MainEngine::createColorEntity()
+{
+    std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComponents;
+    bitsetComponents[Components_e::COLOR_VERTEX_COMPONENT] = true;
+    bitsetComponents[Components_e::POSITION_VERTEX_COMPONENT] = true;
+    return m_ecsManager.addEntity(bitsetComponents);
 }
 
 //===================================================================
@@ -255,6 +288,7 @@ void MainEngine::loadLevelEntities(const LevelManager &levelManager)
     loadGroundAndCeilingEntities(levelManager.getPictureData().getGroundData(),
                                  levelManager.getPictureData().getCeilingData());
     loadDamageEntity();
+    loadTransitionEntity();
     loadStaticElementEntities(levelManager);
     loadPlayerEntity(levelManager.getPictureData().getSpriteData(),
                      levelManager.getLevel(), loadWeaponsEntity(levelManager));

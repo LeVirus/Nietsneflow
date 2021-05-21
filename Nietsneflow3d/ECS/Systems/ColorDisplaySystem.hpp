@@ -5,6 +5,8 @@
 #include <OpenGLUtils/glheaders.hpp>
 #include <OpenGLUtils/VerticesData.hpp>
 
+using PairCompPosColor_t = std::pair<PositionVertexComponent *, ColorVertexComponent*>;
+
 class ColorDisplaySystem : public ecs::System
 {
 public:
@@ -12,14 +14,11 @@ public:
     void execSystem()override;
     void setShader(Shader &shader);
     void memColorSystemBackgroundEntities(uint32_t ground, uint32_t ceiling);
-    inline void memDamageEntity(uint32_t damage)
-    {
-        m_damage = damage;
-    }
-    void drawEntity(const PositionVertexComponent *posComp,
-                    const ColorVertexComponent *colorComp);
+    void loadDamageEntity(uint32_t damage);
+    void loadTransitionEntity(uint32_t transition);
+    void drawEntity(const PositionVertexComponent *posComp, const ColorVertexComponent *colorComp);
     void drawVisibleDamage();
-
+    void setTransition(uint32_t current, uint32_t total);
     void display()const;
 private:
     void fillVertexFromEntities();
@@ -31,7 +30,9 @@ private:
      */
     void setUsedComponents();
 private:
-    uint32_t m_ground, m_ceiling, m_damage;
+    uint32_t m_ground, m_ceiling, m_damage, m_transition;
     Shader *m_shader;
     VerticesData m_verticesData;
+    PairCompPosColor_t m_transitionMemComponents = {nullptr, nullptr},
+    m_damageMemComponents = {nullptr, nullptr};
 };
