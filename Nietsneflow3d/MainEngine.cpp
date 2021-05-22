@@ -541,6 +541,7 @@ void MainEngine::createAmmosEntities(AmmoContainer_t &ammoCount, CollisionTag_e 
         assert(genColl);
         genColl->m_active = false;
         genColl->m_tag = collTag;
+        genColl->m_shape = (visibleShot) ? CollisionShape_e::CIRCLE_C : CollisionShape_e::SEGMENT_C;
     }
     if(visibleShot)
     {
@@ -908,7 +909,6 @@ void MainEngine::confPlayerEntity(const std::vector<SpriteData> &vectSpriteData,
     confShotsEntities(playerConf->m_visibleShootEntities, 1);
     loadPlayerVisibleShotsSprite(vectSpriteData, level.getVisibleShotsData(),
                                  playerConf->m_visibleShootEntities);
-
     map->m_coord = level.getPlayerDeparture();
     Direction_e playerDir = level.getPlayerDepartureDirection();
     switch(playerDir)

@@ -105,6 +105,7 @@ void IASystem::treatVisibleShot(const AmmoContainer_t &stdAmmo)
                                                          Components_e::MOVEABLE_COMPONENT);
         assert(ammoMapComp);
         assert(ammoMoveComp);
+        assert(genColl->m_shape == CollisionShape_e::CIRCLE_C);
         moveElement(*ammoMoveComp, *ammoMapComp, MoveOrientation_e::FORWARD);
     }
 }
