@@ -42,6 +42,10 @@ void MainEngine::init()
 bool MainEngine::mainLoop()
 {
     m_graphicEngine.getMapSystem().confLevelData();
+    if(m_playerMem)
+    {
+        loadPlayerGear();
+    }
     m_graphicEngine.unsetTransition(m_gamePaused);
     do
     {
@@ -50,12 +54,45 @@ bool MainEngine::mainLoop()
         m_graphicEngine.runIteration(m_gamePaused);
         if(!m_exitColl->m_active)
         {
+            memPlayerGear();
             m_graphicEngine.setTransition(m_gamePaused);
             displayTransitionMenu();
             return true;
         }
     }while(!m_graphicEngine.windowShouldClose());
     return false;
+}
+
+//===================================================================
+void MainEngine::memPlayerGear()
+{
+    assert(m_playerConf);
+    m_memPlayerConf.m_ammunationsCount = m_playerConf->m_ammunationsCount;
+    m_memPlayerConf.m_currentWeapon = m_playerConf->m_currentWeapon;
+    m_memPlayerConf.m_previousWeapon = m_playerConf->m_previousWeapon;
+    m_memPlayerConf.m_weapons = m_playerConf->m_weapons;
+    m_memPlayerConf.m_life = m_playerConf->m_life;
+    m_playerMem = true;
+}
+
+//===================================================================
+void MainEngine::loadPlayerGear()
+{
+    assert(m_playerConf);
+    m_playerConf->m_ammunationsCount = m_memPlayerConf.m_ammunationsCount;
+    m_playerConf->m_currentWeapon = m_memPlayerConf.m_currentWeapon;
+    m_playerConf->m_previousWeapon = m_memPlayerConf.m_previousWeapon;
+    m_playerConf->m_weapons = m_memPlayerConf.m_weapons;
+    m_playerConf->m_life = m_memPlayerConf.m_life;
+    m_playerMem = false;
+    StaticDisplaySystem *staticDisplay = m_ecsManager.getSystemManager().
+            searchSystemByType<StaticDisplaySystem>(static_cast<uint32_t>(Systems_e::STATIC_DISPLAY_SYSTEM));
+    assert(staticDisplay);
+    //update FPS weapon sprite
+    std::map<WeaponsType_e, WeaponsSpriteType_e>::const_iterator it =
+            staticDisplay->getWeaponsSpriteAssociated().find(m_playerConf->m_currentWeapon);
+    assert(it != staticDisplay->getWeaponsSpriteAssociated().end());
+    staticDisplay->setWeaponSprite(m_playerConf->m_weaponEntity, it->second);
 }
 
 //===================================================================

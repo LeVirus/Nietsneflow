@@ -11,6 +11,14 @@ class FontData;
 struct EnemyData;
 struct EnemyConfComponent;
 
+struct MemPlayerConf
+{
+    WeaponsType_e m_currentWeapon, m_previousWeapon;
+    std::array<uint32_t, static_cast<uint32_t>(WeaponsType_e::TOTAL)> m_ammunationsCount;
+    std::array<bool, static_cast<uint32_t>(WeaponsType_e::TOTAL)> m_weapons;
+    uint32_t m_life;
+};
+
 class MainEngine
 {
 public:
@@ -33,6 +41,8 @@ public:
     void confSystems();
 private:
     void clearObjectToDelete();
+    void memPlayerGear();
+    void loadPlayerGear();
     void displayTransitionMenu();
     void memColorSystemBackgroundEntities(uint32_t ground, uint32_t ceiling);
     void loadDamageEntity();
@@ -42,9 +52,9 @@ private:
     void loadGroundAndCeilingEntities(const GroundCeilingData &groundData,
                                       const GroundCeilingData &ceilingData);
     void confCeilingComponents(uint32_t entityNum);
+    void confGroundComponents(uint32_t entityNum);
     void confMenuCursorEntity(PlayerConfComponent *playerConf);
     void confWriteEntities(PlayerConfComponent *playerConf);
-    void confGroundComponents(uint32_t entityNum);
     void linkSystemsToGraphicEngine();
     void linkSystemsToPhysicalEngine();
     void loadPlayerVisibleShotsSprite(const std::vector<SpriteData> &vectSpriteData, const std::vector<uint8_t> &vectSprite,
@@ -90,12 +100,13 @@ private:
     PhysicalEngine m_physicalEngine;
     ECSManager m_ecsManager;
     std::vector<std::pair<uint32_t, time_t>> m_vectMemPausedTimer;
-    bool m_gamePaused = false;
+    bool m_gamePaused = false, m_playerMem = false;
     SpriteData const *m_memCursorSpriteData = nullptr, *m_memVisibleShotA = nullptr;
     pairFloat_t m_menuCornerUpLeft = {-0.5f, 0.5f};
     GeneralCollisionComponent *m_exitColl = nullptr;
     WriteComponent *m_writeConf = nullptr;
     PlayerConfComponent *m_playerConf = nullptr;
+    MemPlayerConf m_memPlayerConf;
 };
 
 void confBullet(GeneralCollisionComponent *genColl, SegmentCollisionComponent *segmentColl,

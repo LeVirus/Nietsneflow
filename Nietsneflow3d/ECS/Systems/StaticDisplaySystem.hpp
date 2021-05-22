@@ -46,6 +46,10 @@ public:
     {
         m_fontDataPtr = fontData;
     }
+    inline const std::map<WeaponsType_e, WeaponsSpriteType_e> &getWeaponsSpriteAssociated()const
+    {
+        return m_weaponSpriteAssociated;
+    }
 private:
     void fillWeaponMapEnum();
     void fillCursorMenuVertex(PlayerConfComponent *playerComp);
@@ -67,7 +71,7 @@ private:
     std::array<VerticesData, static_cast<uint32_t>(VertexID_e::TOTAL)> m_vertices;
     std::vector<Texture> *m_ptrVectTexture = nullptr;
     WeaponsSpriteType_e m_currentWeaponSprite;
-    static std::map<WeaponsType_e, WeaponsSpriteType_e> m_weaponSpriteAssociated;
+    std::map<WeaponsType_e, WeaponsSpriteType_e> m_weaponSpriteAssociated;
     float m_speedMoveWeaponChange = 0.05f;
     pairFloat_t m_forkWeaponMovementX = {-0.4f, 0.1f}, m_forkWeaponMovementY = {-0.8f, -0.6f};
     float m_diffTotalDistanceMoveWeaponX = std::abs(m_forkWeaponMovementX.first -

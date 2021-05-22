@@ -8,7 +8,6 @@
 #include <ECS/Components/WriteComponent.hpp>
 #include <cassert>
 
-std::map<WeaponsType_e, WeaponsSpriteType_e> StaticDisplaySystem::m_weaponSpriteAssociated;
 
 //===================================================================
 StaticDisplaySystem::StaticDisplaySystem()
