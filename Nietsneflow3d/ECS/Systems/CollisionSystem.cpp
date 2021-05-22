@@ -415,9 +415,12 @@ void CollisionSystem::treatPlayerPickObject(CollisionArgs &args)
         {
             return;
         }
-        playerComp->m_weapons[index] = true;
+        if(!playerComp->m_weapons[index] && static_cast<uint32_t>(playerComp->m_currentWeapon) < index)
+        {
+            playerComp->m_weapons[index] = true;
+            setPlayerWeapon(*playerComp, WeaponsType_e::SHOTGUN);
+        }
         playerComp->m_ammunationsCount[index] += objectComp->m_containing;
-        setPlayerWeapon(*playerComp, WeaponsType_e::SHOTGUN);
     }
         break;
     case ObjectType_e::SHOTGUN_AMMO:
