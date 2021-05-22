@@ -18,7 +18,7 @@ void Game::initEngine()
 }
 
 //===================================================================
-bool Game::launchGame()
+bool Game::launchGame(bool &memGameOver)
 {
-    return m_mainEngine.mainLoop();
+    return m_mainEngine.mainLoop(memGameOver);
 }

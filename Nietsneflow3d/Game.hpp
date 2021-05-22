@@ -13,7 +13,7 @@ public:
     {
         m_mainEngine.clearLevel();
     }
-    bool launchGame();
+    bool launchGame(bool &memGameOver);
 private:
     MainEngine m_mainEngine;
     LevelManager m_levelManager;

@@ -26,7 +26,7 @@ public:
     void loadGraphicPicture(const PictureData &picData, const FontData &fontData);
     void init();
     void loadLevelEntities(const LevelManager &levelManager);
-    bool mainLoop();
+    bool mainLoop(bool &memGameOver);
     void playerShoot(PlayerConfComponent *playerComp, const pairFloat_t &point,
                float degreeAngle);
     void setUnsetPaused();

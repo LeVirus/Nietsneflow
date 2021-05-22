@@ -39,12 +39,17 @@ void MainEngine::init()
 }
 
 //===================================================================
-bool MainEngine::mainLoop()
+bool MainEngine::mainLoop(bool &memGameOver)
 {
+    memGameOver = false;
     m_graphicEngine.getMapSystem().confLevelData();
     if(m_playerMem)
     {
         loadPlayerGear();
+    }
+    else
+    {
+        memPlayerGear();
     }
     m_graphicEngine.unsetTransition(m_gamePaused);
     do
@@ -55,6 +60,13 @@ bool MainEngine::mainLoop()
         if(!m_exitColl->m_active)
         {
             memPlayerGear();
+            m_graphicEngine.setTransition(m_gamePaused);
+            displayTransitionMenu();
+            return true;
+        }
+        if(!m_playerConf->m_life)
+        {
+            memGameOver = true;
             m_graphicEngine.setTransition(m_gamePaused);
             displayTransitionMenu();
             return true;
