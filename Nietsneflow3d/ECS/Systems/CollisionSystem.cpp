@@ -291,7 +291,24 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
         {
             if(args.tagCompA->m_tag == CollisionTag_e::PLAYER_CT)
             {
-                collisionCircleRectEject(args, circleCompA, rectCompB);
+                if(args.tagCompB->m_tag == CollisionTag_e::DOOR_CT)
+                {
+                    DoorComponent *doorComp = stairwayToComponentManager().
+                            searchComponentByType<DoorComponent>(args.entityNumB, Components_e::DOOR_COMPONENT);
+                    assert(doorComp);
+                    if(doorComp->m_currentState == DoorState_e::MOVE_CLOSE)
+                    {
+                        doorComp->m_currentState = DoorState_e::MOVE_OPEN;
+                    }
+                    else
+                    {
+                        collisionCircleRectEject(args, circleCompA, rectCompB);
+                    }
+                }
+                else
+                {
+                    collisionCircleRectEject(args, circleCompA, rectCompB);
+                }
             }
             if(args.tagCompA->m_tag == CollisionTag_e::ENEMY_CT)
             {
