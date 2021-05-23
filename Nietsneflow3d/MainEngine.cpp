@@ -670,10 +670,15 @@ void MainEngine::confVisibleAmmo(const AmmoContainer_t &ammoCont)
         FPSVisibleStaticElementComponent *fpsStaticComp = m_ecsManager.getComponentManager().
                 searchComponentByType<FPSVisibleStaticElementComponent>(
                     *ammoCont[i], Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
+        MoveableComponent *moveComp = m_ecsManager.getComponentManager().
+                searchComponentByType<MoveableComponent>(
+                    *ammoCont[i], Components_e::MOVEABLE_COMPONENT);
         assert(circleComp);
         assert(fpsStaticComp);
+        assert(moveComp);
         circleComp->m_ray = 5.0f;
         fpsStaticComp->m_inGameSpriteSize = {0.2f, 0.3f};
+        moveComp->m_velocity = 5.0f;
     }
 }
 
