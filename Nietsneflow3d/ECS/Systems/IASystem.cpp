@@ -8,10 +8,14 @@
 #include <ECS/Components/CircleCollisionComponent.hpp>
 #include <ECS/Components/PlayerConfComponent.hpp>
 #include <ECS/Components/ShotConfComponent.hpp>
+#include <ECS/Components/DoorComponent.hpp>
+#include <ECS/Components/MapCoordComponent.hpp>
+#include <ECS/Components/RectangleCollisionComponent.hpp>
 #include <cassert>
 #include <random>
 #include <iostream>
 #include "IASystem.hpp"
+#include "FirstPersonDisplaySystem.hpp"
 #include "PhysicalEngine.hpp"
 #include "CollisionUtils.hpp"
 #include "MainEngine.hpp"
@@ -49,14 +53,20 @@ void IASystem::execSystem()
         assert(enemyMapComp);
         distancePlayer = getDistance(m_playerMapComp->m_absoluteMapPositionPX,
                                      enemyMapComp->m_absoluteMapPositionPX);
+        float radiantAngle = getTrigoAngle(m_playerMapComp->m_absoluteMapPositionPX,
+                      enemyMapComp->m_absoluteMapPositionPX, false);
         if(enemyConfComp->m_behaviourMode != EnemyBehaviourMode_e::ATTACK &&
-                distancePlayer < m_distanceEnemyBehaviour)
+                checkEnemyTriggerAttackMode(radiantAngle, distancePlayer, enemyMapComp))
         {
             timerComp = stairwayToComponentManager().searchComponentByType<TimerComponent>(
                         mVectNumEntity[i], Components_e::TIMER_COMPONENT);
             assert(timerComp);
             timerComp->m_clockB = std::chrono::system_clock::now();
             enemyConfComp->m_behaviourMode = EnemyBehaviourMode_e::ATTACK;
+        }
+        else
+        {
+            std::cerr << "DDDD\n";
         }
         if(enemyConfComp->m_behaviourMode == EnemyBehaviourMode_e::ATTACK)
         {
@@ -65,6 +75,72 @@ void IASystem::execSystem()
     }
 }
 
+//===================================================================
+bool IASystem::checkEnemyTriggerAttackMode(float radiantAngle, float distancePlayer,
+                                           MapCoordComponent *enemyMapComp)
+{
+    if(distancePlayer > m_distanceEnemyBehaviour)
+    {
+        return false;
+    }
+    DoorComponent *doorComp;
+    MapCoordComponent *mapComp;
+    RectangleCollisionComponent *rectComp;
+    std::optional<float> verticalLeadCoef = getLeadCoef(radiantAngle, false),
+    lateralLeadCoef = getLeadCoef(radiantAngle, true);
+    pairFloat_t currentPoint = enemyMapComp->m_absoluteMapPositionPX;
+    std::optional<pairUI_t> currentCoord;
+    std::optional<ElementRaycast> element;
+    bool lateral, randA, randB;
+    for(uint32_t k = 0; k < 20; ++k)//limit distance
+    {
+        currentPoint = getLimitPointRayCasting(currentPoint, radiantAngle,
+                                               lateralLeadCoef, verticalLeadCoef, lateral);
+        currentCoord = getCorrectedCoord(currentPoint, lateral, radiantAngle);
+        if(!currentCoord)
+        {
+            break;
+        }
+        element = Level::getElementCase(*currentCoord);
+        if(element)
+        {
+            if(element->m_type == LevelCaseType_e::WALL_LC)
+            {
+                break;
+            }
+            else if(element->m_type == LevelCaseType_e::DOOR_LC)
+            {
+                doorComp = stairwayToComponentManager().
+                        searchComponentByType<DoorComponent>(
+                            (*element).m_numEntity, Components_e::DOOR_COMPONENT);
+                mapComp = stairwayToComponentManager().
+                        searchComponentByType<MapCoordComponent>(
+                            (*element).m_numEntity, Components_e::MAP_COORD_COMPONENT);
+                rectComp = stairwayToComponentManager().
+                        searchComponentByType<RectangleCollisionComponent>(
+                            (*element).m_numEntity, Components_e::RECTANGLE_COLLISION_COMPONENT);
+                assert(doorComp);
+                assert(mapComp);
+                assert(rectComp);
+                //first case x pos limit second y pos limit
+                pairFloat_t doorPos[2] = {{mapComp->m_absoluteMapPositionPX.first,
+                                           mapComp->m_absoluteMapPositionPX.first +
+                                           rectComp->m_size.first},
+                                          {mapComp->m_absoluteMapPositionPX.second,
+                                           mapComp->m_absoluteMapPositionPX.second +
+                                           rectComp->m_size.second}};
+                //if door collision
+                if(treatDisplayDoor(radiantAngle, doorComp->m_vertical, currentPoint,
+                                    doorPos, verticalLeadCoef, lateralLeadCoef,
+                                    randA, randB))
+                {
+                    break;
+                }
+            }
+        }
+    }
+    return getDistance(enemyMapComp->m_absoluteMapPositionPX, currentPoint);
+}
 
 //===================================================================
 void IASystem::treatVisibleShot(const AmmoContainer_t &stdAmmo)

@@ -700,12 +700,12 @@ bool treatDisplayDoor(float radiantAngle, bool doorVertical, pairFloat_t &curren
                       bool &textLateral, bool &textFace)
 {
     //exclude case
-    if((std::cos(radiantAngle) < 0.0f && currentPoint.first < doorPos[0].first ) ||
+    if((std::cos(radiantAngle) < 0.0f && currentPoint.first < doorPos[0].first) ||
             (std::cos(radiantAngle) > 0.0f && currentPoint.first > doorPos[0].second))
     {
         return false;
     }
-    if((std::sin(radiantAngle) > 0.0f && currentPoint.second < doorPos[1].first ) ||
+    if((std::sin(radiantAngle) > 0.0f && currentPoint.second < doorPos[1].first) ||
             (std::sin(radiantAngle) < 0.0f && currentPoint.second > doorPos[1].second))
     {
         return false;

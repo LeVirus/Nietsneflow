@@ -17,6 +17,8 @@ public:
     void confVisibleShoot(const AmmoContainer_t &visibleShots,
                           const pairFloat_t &point, float degreeAngle);
 private:
+    bool checkEnemyTriggerAttackMode(float radiantAngle, float distancePlayer,
+                                     MapCoordComponent *enemyMapComp);
     void treatEnemyBehaviourAttack(uint32_t enemyEntity, MapCoordComponent *enemyMapComp,
                                    EnemyConfComponent *enemyConfComp, float distancePlayer);
     void updateEnemyDirection(EnemyConfComponent *enemyConfComp, MoveableComponent *moveComp,
@@ -28,6 +30,6 @@ private:
     uint32_t m_playerEntity;
     MapCoordComponent *m_playerMapComp = nullptr;
     PlayerConfComponent *m_playerComp = nullptr;
-    float m_distanceEnemyBehaviour = LEVEL_TILE_SIZE_PX * 4.0f;
+    float m_distanceEnemyBehaviour = LEVEL_TILE_SIZE_PX * 15.0f;
 };
 
