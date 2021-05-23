@@ -289,10 +289,20 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
                                  args.mapCompB.m_absoluteMapPositionPX, rectCompB.m_size);
         if(collision)
         {
-            if(args.tagCompA->m_tag == CollisionTag_e::PLAYER_CT ||
-                    args.tagCompA->m_tag == CollisionTag_e::ENEMY_CT)
+            if(args.tagCompA->m_tag == CollisionTag_e::PLAYER_CT)
             {
                 collisionCircleRectEject(args, circleCompA, rectCompB);
+            }
+            if(args.tagCompA->m_tag == CollisionTag_e::ENEMY_CT)
+            {
+                collisionCircleRectEject(args, circleCompA, rectCompB);
+                if(args.tagCompB->m_tag == CollisionTag_e::DOOR_CT)
+                {
+                    DoorComponent *doorComp = stairwayToComponentManager().
+                            searchComponentByType<DoorComponent>(args.entityNumB, Components_e::DOOR_COMPONENT);
+                    assert(doorComp);
+                    doorComp->m_currentState = DoorState_e::MOVE_OPEN;
+                }
             }
         }
     }
