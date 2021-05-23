@@ -19,7 +19,7 @@ public:
 private:
     bool checkEnemyTriggerAttackMode(float radiantAngle, float distancePlayer,
                                      MapCoordComponent *enemyMapComp);
-    void treatEnemyBehaviourAttack(uint32_t enemyEntity, MapCoordComponent *enemyMapComp,
+    void treatEnemyBehaviourAttack(uint32_t enemyEntity, MapCoordComponent *enemyMapComp, float radiantAnglePlayerDirection,
                                    EnemyConfComponent *enemyConfComp, float distancePlayer);
     void updateEnemyDirection(EnemyConfComponent *enemyConfComp, MoveableComponent *moveComp,
                               MapCoordComponent *enemyMapComp);

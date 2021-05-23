@@ -726,7 +726,6 @@ void CollisionSystem::collisionCircleCircleEject(CollisionArgs &args,
         assert(hyp > distanceX && hyp > distanceY);
         float diffX = getRectTriangleSide(distanceY, hyp);
         float diffY = getRectTriangleSide(distanceX, hyp);
-
         diffX -= distanceX;
         diffY -= distanceY;
         if(circleAPosX < circleBPosX)

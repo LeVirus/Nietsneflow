@@ -50,7 +50,7 @@ struct EnemyConfComponent : public ecs::Component
     }
     bool m_staticPhase, m_touched = false;
     std::pair<bool, Direction_e> m_wallTouch = {false, Direction_e::EAST};
-    uint32_t m_weaponEntity, m_life = 3;
+    uint32_t m_weaponEntity, m_life = 3, m_countPlayerInvisibility = 0;
     AmmoContainer_t m_stdAmmo, m_visibleAmmo;
     EnemyDisplayMode_e m_displayMode = EnemyDisplayMode_e::NORMAL;
     EnemySpriteType_e m_visibleOrientation;

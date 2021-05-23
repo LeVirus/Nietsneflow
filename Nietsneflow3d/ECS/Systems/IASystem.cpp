@@ -53,24 +53,23 @@ void IASystem::execSystem()
         assert(enemyMapComp);
         distancePlayer = getDistance(m_playerMapComp->m_absoluteMapPositionPX,
                                      enemyMapComp->m_absoluteMapPositionPX);
-        float radiantAngle = getTrigoAngle(m_playerMapComp->m_absoluteMapPositionPX,
-                      enemyMapComp->m_absoluteMapPositionPX, false);
+        float radiantAnglePlayerDirection = getTrigoAngle(enemyMapComp->m_absoluteMapPositionPX,
+                                                          m_playerMapComp->m_absoluteMapPositionPX, false);
         if(enemyConfComp->m_behaviourMode != EnemyBehaviourMode_e::ATTACK &&
-                checkEnemyTriggerAttackMode(radiantAngle, distancePlayer, enemyMapComp))
+                checkEnemyTriggerAttackMode(radiantAnglePlayerDirection,
+                                            distancePlayer, enemyMapComp))
         {
             timerComp = stairwayToComponentManager().searchComponentByType<TimerComponent>(
                         mVectNumEntity[i], Components_e::TIMER_COMPONENT);
             assert(timerComp);
             timerComp->m_clockB = std::chrono::system_clock::now();
             enemyConfComp->m_behaviourMode = EnemyBehaviourMode_e::ATTACK;
-        }
-        else
-        {
-            std::cerr << "DDDD\n";
+            enemyConfComp->m_countPlayerInvisibility = 0;
         }
         if(enemyConfComp->m_behaviourMode == EnemyBehaviourMode_e::ATTACK)
         {
-            treatEnemyBehaviourAttack(mVectNumEntity[i], enemyMapComp, enemyConfComp, distancePlayer);
+            treatEnemyBehaviourAttack(mVectNumEntity[i], enemyMapComp, radiantAnglePlayerDirection,
+                                      enemyConfComp, distancePlayer);
         }
     }
 }
@@ -139,7 +138,7 @@ bool IASystem::checkEnemyTriggerAttackMode(float radiantAngle, float distancePla
             }
         }
     }
-    return getDistance(enemyMapComp->m_absoluteMapPositionPX, currentPoint);
+    return (getDistance(enemyMapComp->m_absoluteMapPositionPX, currentPoint) > distancePlayer);
 }
 
 //===================================================================
@@ -229,6 +228,7 @@ void IASystem::enemyShoot(EnemyConfComponent *enemyConfComp, MoveableComponent *
 
 //===================================================================
 void IASystem::treatEnemyBehaviourAttack(uint32_t enemyEntity, MapCoordComponent *enemyMapComp,
+                                         float radiantAnglePlayerDirection,
                                          EnemyConfComponent *enemyConfComp, float distancePlayer)
 {
     MoveableComponent *moveComp = stairwayToComponentManager().
@@ -258,6 +258,13 @@ void IASystem::treatEnemyBehaviourAttack(uint32_t enemyEntity, MapCoordComponent
         if(enemyConfComp->m_attackPhase == EnemyAttackPhase_e::SHOOT)
         {
             enemyShoot(enemyConfComp, moveComp, enemyMapComp, true);
+        }
+        if(!checkEnemyTriggerAttackMode(radiantAnglePlayerDirection, distancePlayer, enemyMapComp))
+        {
+            if(++enemyConfComp->m_countPlayerInvisibility > 5)
+            {
+               enemyConfComp->m_behaviourMode = EnemyBehaviourMode_e::PASSIVE;
+            }
         }
     }
     else if(enemyConfComp->m_attackPhase != EnemyAttackPhase_e::SHOOT &&
