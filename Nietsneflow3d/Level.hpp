@@ -209,5 +209,6 @@ private:
 };
 
 pairFloat_t getAbsolutePosition(const pairUI_t &coord);
+pairFloat_t getCenteredAbsolutePosition(const pairUI_t &coord);
 
 std::optional<pairUI_t> getLevelCoord(const pairFloat_t &position);

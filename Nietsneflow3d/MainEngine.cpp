@@ -824,7 +824,15 @@ void MainEngine::confBaseComponent(uint32_t entityNum, const SpriteData &memSpri
             searchComponentByType<MapCoordComponent>(entityNum, Components_e::MAP_COORD_COMPONENT);
     assert(mapComp);
     mapComp->m_coord = coordLevel;
-    mapComp->m_absoluteMapPositionPX = getAbsolutePosition(coordLevel);
+    if(tag == CollisionTag_e::OBJECT_CT || tag == CollisionTag_e::ENEMY_CT ||
+            (tag == CollisionTag_e::WALL_CT && collisionShape == CollisionShape_e::CIRCLE_C))
+    {
+        mapComp->m_absoluteMapPositionPX = getCenteredAbsolutePosition(coordLevel);
+    }
+    else
+    {
+        mapComp->m_absoluteMapPositionPX = getAbsolutePosition(coordLevel);
+    }
     GeneralCollisionComponent *tagComp = m_ecsManager.getComponentManager().
             searchComponentByType<GeneralCollisionComponent>(entityNum, Components_e::GENERAL_COLLISION_COMPONENT);
     assert(tagComp);
@@ -943,7 +951,7 @@ void MainEngine::confPlayerEntity(const std::vector<SpriteData> &vectSpriteData,
         move->m_degreeOrientation = 180.0f;
         break;
     }
-    map->m_absoluteMapPositionPX = getAbsolutePosition(map->m_coord);
+    map->m_absoluteMapPositionPX = getCenteredAbsolutePosition(map->m_coord);
     updatePlayerOrientation(*move, *pos, *vision);
     color->m_vertex.reserve(3);
     color->m_vertex.emplace_back(0.9f, 0.00f, 0.00f, 1.0f);
