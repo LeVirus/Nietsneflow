@@ -109,15 +109,19 @@ void InputSystem::treatPlayerInput()
             {
                 changePlayerWeapon(*playerComp, true);
             }
-            else if(!playerComp->m_timerShootActive &&
-                    playerComp->m_ammunationsCount[static_cast<uint32_t>(
-                        playerComp->m_currentWeapon)] > 0)
+            else if(glfwGetKey(m_window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
             {
-                if(glfwGetKey(m_window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+                if(!playerComp->m_timerShootActive &&
+                        playerComp->m_ammunationsCount[static_cast<uint32_t>(
+                            playerComp->m_currentWeapon)] > 0)
                 {
                     playerComp->m_playerShoot = true;
                     m_mainEngine->playerAttack(mVectNumEntity[i], playerComp, mapComp->m_absoluteMapPositionPX,
                                                moveComp->m_degreeOrientation);
+                }
+                else
+                {
+                    changePlayerWeapon(*playerComp, false);
                 }
             }
         }
