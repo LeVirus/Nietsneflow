@@ -37,8 +37,8 @@ private:
     IASystem *m_iaSystem = nullptr;
 };
 
-void moveElement(MoveableComponent &moveComp,
-                MapCoordComponent &mapComp, MoveOrientation_e moveDirection);
+void moveElement(MoveableComponent &moveComp, float distanceMove,
+                 MapCoordComponent &mapComp, MoveOrientation_e moveDirection);
 void updatePlayerOrientation(const MoveableComponent &moveComp,
                              PositionVertexComponent &posComp, VisionComponent &visionComp);
 void updatePlayerArrow(const MoveableComponent &moveComp,

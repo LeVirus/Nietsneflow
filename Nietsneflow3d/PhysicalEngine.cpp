@@ -58,7 +58,7 @@ void PhysicalEngine::setModeTransitionMenu(bool transition)
 }
 
 //===================================================================
-void moveElement(MoveableComponent &moveComp,
+void moveElement(MoveableComponent &moveComp, float distanceMove,
                  MapCoordComponent &mapComp, MoveOrientation_e moveDirection)
 {
     float radiantAngle;
@@ -92,16 +92,16 @@ void moveElement(MoveableComponent &moveComp,
     moveComp.m_currentDegreeMoveDirection = angle;
     radiantAngle = getRadiantAngle(angle);
     mapComp.m_absoluteMapPositionPX.first +=
-            cos(radiantAngle) * moveComp.m_velocity;
-    if(mapComp.m_absoluteMapPositionPX.first < moveComp.m_velocity)
+            cos(radiantAngle) * distanceMove;
+    if(mapComp.m_absoluteMapPositionPX.first < distanceMove)
     {
-        mapComp.m_absoluteMapPositionPX.first = moveComp.m_velocity;
+        mapComp.m_absoluteMapPositionPX.first = distanceMove;
     }
     mapComp.m_absoluteMapPositionPX.second -=
-            sin(radiantAngle) * moveComp.m_velocity;
-    if(mapComp.m_absoluteMapPositionPX.second < moveComp.m_velocity)
+            sin(radiantAngle) * distanceMove;
+    if(mapComp.m_absoluteMapPositionPX.second < distanceMove)
     {
-        mapComp.m_absoluteMapPositionPX.second = moveComp.m_velocity;
+        mapComp.m_absoluteMapPositionPX.second = distanceMove;
     }
     mapComp.m_coord = *getLevelCoord(mapComp.m_absoluteMapPositionPX);
 }

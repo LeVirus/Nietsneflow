@@ -53,14 +53,15 @@ private:
                                       const GroundCeilingData &ceilingData);
     void confCeilingComponents(uint32_t entityNum);
     void confGroundComponents(uint32_t entityNum);
-    void confMenuCursorEntity(PlayerConfComponent *playerConf);
-    void confWriteEntities(PlayerConfComponent *playerConf);
+    void confMenuCursorEntity();
+    void confWriteEntities();
     void linkSystemsToGraphicEngine();
     void linkSystemsToPhysicalEngine();
     void loadPlayerVisibleShotsSprite(const std::vector<SpriteData> &vectSpriteData, const std::vector<uint8_t> &vectSprite,
                                       const AmmoContainer_t &ammoEntities);
     void loadPlayerEntity(const std::vector<SpriteData> &vectSpriteData, const Level &level, uint32_t numWeaponEntity);
     void confPlayerEntity(const std::vector<SpriteData> &vectSpriteData, uint32_t entityNum, const Level &level, uint32_t numWeaponEntity);
+    void confActionEntity();
     void confShotsEntities(const AmmoContainer_t &ammoEntities, uint32_t damageValue);
     uint32_t loadWeaponsEntity(const LevelManager &levelManager);
     uint32_t createBackgroundEntity(GroundCeilingData const *data);

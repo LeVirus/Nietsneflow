@@ -188,6 +188,7 @@ enum class DisplayMode_e
 enum class CollisionTag_e
 {
     PLAYER_CT,
+    PLAYER_ACTION_CT,
     WALL_CT,
     DOOR_CT,
     ENEMY_CT,

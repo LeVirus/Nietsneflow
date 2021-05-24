@@ -824,7 +824,7 @@ void MainEngine::confBaseComponent(uint32_t entityNum, const SpriteData &memSpri
             searchComponentByType<MapCoordComponent>(entityNum, Components_e::MAP_COORD_COMPONENT);
     assert(mapComp);
     mapComp->m_coord = coordLevel;
-    if(tag == CollisionTag_e::OBJECT_CT || tag == CollisionTag_e::ENEMY_CT ||
+    if(tag == CollisionTag_e::EXIT_CT || tag == CollisionTag_e::OBJECT_CT || tag == CollisionTag_e::ENEMY_CT ||
             (tag == CollisionTag_e::WALL_CT && collisionShape == CollisionShape_e::CIRCLE_C))
     {
         mapComp->m_absoluteMapPositionPX = getCenteredAbsolutePosition(coordLevel);
@@ -928,12 +928,12 @@ void MainEngine::confPlayerEntity(const std::vector<SpriteData> &vectSpriteData,
     assert(vision);
     assert(playerConf);
     m_playerConf = playerConf;
-    createAmmosEntities(playerConf->m_shootEntities, CollisionTag_e::BULLET_PLAYER_CT);
-    createAmmosEntities(playerConf->m_visibleShootEntities, CollisionTag_e::BULLET_PLAYER_CT, true);
-    confShotsEntities(playerConf->m_shootEntities, 1);
-    confShotsEntities(playerConf->m_visibleShootEntities, 1);
+    createAmmosEntities(m_playerConf->m_shootEntities, CollisionTag_e::BULLET_PLAYER_CT);
+    createAmmosEntities(m_playerConf->m_visibleShootEntities, CollisionTag_e::BULLET_PLAYER_CT, true);
+    confShotsEntities(m_playerConf->m_shootEntities, 1);
+    confShotsEntities(m_playerConf->m_visibleShootEntities, 1);
     loadPlayerVisibleShotsSprite(vectSpriteData, level.getVisibleShotsData(),
-                                 playerConf->m_visibleShootEntities);
+                                 m_playerConf->m_visibleShootEntities);
     map->m_coord = level.getPlayerDeparture();
     Direction_e playerDir = level.getPlayerDepartureDirection();
     switch(playerDir)
@@ -960,16 +960,44 @@ void MainEngine::confPlayerEntity(const std::vector<SpriteData> &vectSpriteData,
     circleColl->m_ray = PLAYER_RAY;
     tagColl->m_tag = CollisionTag_e::PLAYER_CT;
     tagColl->m_shape = CollisionShape_e::CIRCLE_C;
-    playerConf->m_weaponEntity = numWeaponEntity;
-    playerConf->m_currentWeapon = WeaponsType_e::GUN;
-    playerConf->m_previousWeapon = WeaponsType_e::GUN;
+    m_playerConf->m_weaponEntity = numWeaponEntity;
+    m_playerConf->m_currentWeapon = WeaponsType_e::GUN;
+    m_playerConf->m_previousWeapon = WeaponsType_e::GUN;
     //set standart weapon sprite
     StaticDisplaySystem *staticDisplay = m_ecsManager.getSystemManager().
             searchSystemByType<StaticDisplaySystem>(static_cast<uint32_t>(Systems_e::STATIC_DISPLAY_SYSTEM));
     assert(staticDisplay);
     staticDisplay->setWeaponSprite(numWeaponEntity, WeaponsSpriteType_e::GUN_STATIC);
-    confWriteEntities(playerConf);
-    confMenuCursorEntity(playerConf);
+    confWriteEntities();
+    confMenuCursorEntity();
+    confActionEntity();
+}
+
+//===================================================================
+void MainEngine::confActionEntity()
+{
+    std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComponents;
+    bitsetComponents[Components_e::GENERAL_COLLISION_COMPONENT] = true;
+    bitsetComponents[Components_e::MAP_COORD_COMPONENT] = true;
+    bitsetComponents[Components_e::CIRCLE_COLLISION_COMPONENT] = true;
+    uint32_t entityNum = m_ecsManager.addEntity(bitsetComponents);
+    GeneralCollisionComponent *genCollComp = m_ecsManager.getComponentManager().
+            searchComponentByType<GeneralCollisionComponent>(entityNum,
+                                                             Components_e::GENERAL_COLLISION_COMPONENT);
+    MapCoordComponent *mapComp = m_ecsManager.getComponentManager().
+            searchComponentByType<MapCoordComponent>(entityNum,
+                                                     Components_e::MAP_COORD_COMPONENT);
+    CircleCollisionComponent *circleColl = m_ecsManager.getComponentManager().
+            searchComponentByType<CircleCollisionComponent>(entityNum,
+                                                     Components_e::CIRCLE_COLLISION_COMPONENT);
+    assert(genCollComp);
+    assert(mapComp);
+    assert(circleColl);
+    genCollComp->m_active = false;
+    genCollComp->m_shape = CollisionShape_e::CIRCLE_C;
+    genCollComp->m_tag = CollisionTag_e::PLAYER_ACTION_CT;
+    circleColl->m_ray = 15.0f;
+    m_playerConf->m_actionEntity = entityNum;
 }
 
 //===================================================================
@@ -1010,7 +1038,7 @@ void MainEngine::loadPlayerVisibleShotsSprite(const std::vector<SpriteData> &vec
 }
 
 //===================================================================
-void MainEngine::confWriteEntities(PlayerConfComponent *playerConf)
+void MainEngine::confWriteEntities()
 {
     uint32_t numAmmoWrite = createWriteEntity(),
             numLifeWrite = createWriteEntity(), numMenuWrite = createWriteEntity();
@@ -1020,14 +1048,14 @@ void MainEngine::confWriteEntities(PlayerConfComponent *playerConf)
     assert(writeConf);
     writeConf->m_upLeftPositionGL = {-0.95f, -0.9f};
     writeConf->m_fontSize = STD_FONT_SIZE;
-    m_graphicEngine.updateAmmoCount(writeConf, playerConf);
+    m_graphicEngine.updateAmmoCount(writeConf, m_playerConf);
     //LIFE
     writeConf = m_ecsManager.getComponentManager().
             searchComponentByType<WriteComponent>(numLifeWrite, Components_e::WRITE_COMPONENT);
     assert(writeConf);
     writeConf->m_upLeftPositionGL = {-0.95f, -0.8f};
     writeConf->m_fontSize = STD_FONT_SIZE;
-    m_graphicEngine.updatePlayerLife(writeConf, playerConf);
+    m_graphicEngine.updatePlayerLife(writeConf, m_playerConf);
     //MENU
     writeConf = m_ecsManager.getComponentManager().
             searchComponentByType<WriteComponent>(numMenuWrite, Components_e::WRITE_COMPONENT);
@@ -1036,13 +1064,13 @@ void MainEngine::confWriteEntities(PlayerConfComponent *playerConf)
     writeConf->m_upLeftPositionGL = m_menuCornerUpLeft;
     writeConf->m_fontSize = MENU_FONT_SIZE;
     m_graphicEngine.fillMenuWrite(writeConf, MENU_ENTRIES);
-    playerConf->m_menuEntity = numMenuWrite;
-    playerConf->m_ammoWriteEntity = numAmmoWrite;
-    playerConf->m_lifeWriteEntity = numLifeWrite;
+    m_playerConf->m_menuEntity = numMenuWrite;
+    m_playerConf->m_ammoWriteEntity = numAmmoWrite;
+    m_playerConf->m_lifeWriteEntity = numLifeWrite;
 }
 
 //===================================================================
-void MainEngine::confMenuCursorEntity(PlayerConfComponent *playerConf)
+void MainEngine::confMenuCursorEntity()
 {
     uint32_t cursorEntity = createSimpleSpriteEntity();
     PositionVertexComponent *posCursor = m_ecsManager.getComponentManager().
@@ -1054,7 +1082,7 @@ void MainEngine::confMenuCursorEntity(PlayerConfComponent *playerConf)
     assert(posCursor);
     assert(spriteCursor);
     assert(m_memCursorSpriteData);
-    playerConf->m_menuCursorEntity = cursorEntity;
+    m_playerConf->m_menuCursorEntity = cursorEntity;
     spriteCursor->m_spriteData = m_memCursorSpriteData;
     posCursor->m_vertex.reserve(4);
     float leftPos = m_menuCornerUpLeft.first - 0.25f,

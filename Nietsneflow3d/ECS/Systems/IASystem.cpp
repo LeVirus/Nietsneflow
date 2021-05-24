@@ -181,7 +181,8 @@ void IASystem::treatVisibleShot(const AmmoContainer_t &stdAmmo)
         assert(ammoMapComp);
         assert(ammoMoveComp);
         assert(genColl->m_shape == CollisionShape_e::CIRCLE_C);
-        moveElement(*ammoMoveComp, *ammoMapComp, MoveOrientation_e::FORWARD);
+        moveElement(*ammoMoveComp, (*ammoMoveComp).m_velocity, *ammoMapComp,
+                    MoveOrientation_e::FORWARD);
     }
 }
 
@@ -301,7 +302,7 @@ void IASystem::treatEnemyBehaviourAttack(uint32_t enemyEntity, MapCoordComponent
             }
             enemyConfComp->m_wallTouch.first = false;
         }
-        moveElement(*moveComp, *enemyMapComp, MoveOrientation_e::FORWARD);
+        moveElement(*moveComp, (*moveComp).m_velocity, *enemyMapComp, MoveOrientation_e::FORWARD);
     }
 }
 

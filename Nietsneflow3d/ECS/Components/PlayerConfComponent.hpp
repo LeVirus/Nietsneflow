@@ -25,10 +25,10 @@ struct PlayerConfComponent : public ecs::Component
             return true;
         }
     }
-    bool m_playerAction = false, m_playerShoot = false, m_timerShootActive = false,
+    bool m_playerShoot = false, m_timerShootActive = false,
     m_weaponChange = false, m_inMovement = false, m_spritePositionCorrected = true, m_takeDamage = false;
     pairFloat_t m_currentWeaponMove = {-0.02f, -0.01f};
-    uint32_t m_weaponEntity, m_ammoWriteEntity, m_menuEntity, m_menuCursorEntity,
+    uint32_t m_weaponEntity, m_ammoWriteEntity, m_menuEntity, m_menuCursorEntity, m_actionEntity,
     m_lifeWriteEntity, m_life = 100;
     AmmoContainer_t m_shootEntities, m_visibleShootEntities;
     WeaponsType_e m_currentWeapon, m_previousWeapon;

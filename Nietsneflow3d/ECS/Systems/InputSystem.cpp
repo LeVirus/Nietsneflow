@@ -6,6 +6,7 @@
 #include <ECS/Components/VisionComponent.hpp>
 #include <ECS/Components/PlayerConfComponent.hpp>
 #include <ECS/Components/WriteComponent.hpp>
+#include <ECS/Components/GeneralCollisionComponent.hpp>
 #include "PhysicalEngine.hpp"
 #include <MainEngine.hpp>
 #include <cassert>
@@ -81,9 +82,20 @@ void InputSystem::treatPlayerInput()
             }
             updatePlayerOrientation(*moveComp, *posComp, *visionComp);
         }
-        playerComp->m_playerAction = (glfwGetKey(m_window, GLFW_KEY_SPACE) ==
-                                      GLFW_PRESS) ?
-                    true : false;
+        if(glfwGetKey(m_window, GLFW_KEY_SPACE) == GLFW_PRESS)
+        {
+            MapCoordComponent *mapCompAction = stairwayToComponentManager().
+                    searchComponentByType<MapCoordComponent>(playerComp->m_actionEntity,
+                                                             Components_e::MAP_COORD_COMPONENT);
+            assert(mapCompAction);
+            mapCompAction->m_absoluteMapPositionPX = mapComp->m_absoluteMapPositionPX;
+            moveElement(*moveComp, LEVEL_HALF_TILE_SIZE_PX, *mapCompAction, MoveOrientation_e::FORWARD);
+            GeneralCollisionComponent *genCompAction = stairwayToComponentManager().
+                    searchComponentByType<GeneralCollisionComponent>(playerComp->m_actionEntity,
+                                                                     Components_e::GENERAL_COLLISION_COMPONENT);
+            assert(genCompAction);
+            genCompAction->m_active = true;
+        }
         if(glfwGetKey(m_window, GLFW_KEY_M) == GLFW_PRESS)
         {
             m_mainEngine->setUnsetPaused();
@@ -167,7 +179,7 @@ void InputSystem::treatPlayerMove(PlayerConfComponent *playerComp, MoveableCompo
     }
     if(playerComp->m_inMovement)
     {
-        moveElement(*moveComp, *mapComp, currentMoveDirection);
+        moveElement(*moveComp, (*moveComp).m_velocity, *mapComp, currentMoveDirection);
     }
 }
 
