@@ -27,7 +27,7 @@ public:
     void init();
     void loadLevelEntities(const LevelManager &levelManager);
     bool mainLoop(bool &memGameOver);
-    void playerShoot(PlayerConfComponent *playerComp, const pairFloat_t &point,
+    void playerAttack(uint32_t playerEntity, PlayerConfComponent *playerComp, const pairFloat_t &point,
                float degreeAngle);
     void setUnsetPaused();
     inline bool isGamePaused()
@@ -62,6 +62,7 @@ private:
     void loadPlayerEntity(const std::vector<SpriteData> &vectSpriteData, const Level &level, uint32_t numWeaponEntity);
     void confPlayerEntity(const std::vector<SpriteData> &vectSpriteData, uint32_t entityNum, const Level &level, uint32_t numWeaponEntity);
     void confActionEntity();
+    void confAxeHitEntity();
     void confShotsEntities(const AmmoContainer_t &ammoEntities, uint32_t damageValue);
     uint32_t loadWeaponsEntity(const LevelManager &levelManager);
     uint32_t createBackgroundEntity(GroundCeilingData const *data);
@@ -113,3 +114,5 @@ private:
 void confBullet(GeneralCollisionComponent *genColl, SegmentCollisionComponent *segmentColl,
                 CollisionTag_e collTag, const pairFloat_t &point, float degreeAngle);
 void setWeaponPlayer();
+void confActionShape(MapCoordComponent *mapCompAction, MapCoordComponent *playerMapComp,
+                     MoveableComponent *playerMoveComp, GeneralCollisionComponent *genCompAction);

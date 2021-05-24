@@ -29,11 +29,11 @@ struct PlayerConfComponent : public ecs::Component
     m_weaponChange = false, m_inMovement = false, m_spritePositionCorrected = true, m_takeDamage = false;
     pairFloat_t m_currentWeaponMove = {-0.02f, -0.01f};
     uint32_t m_weaponEntity, m_ammoWriteEntity, m_menuEntity, m_menuCursorEntity, m_actionEntity,
-    m_lifeWriteEntity, m_life = 100;
+    m_hitAxeEntity, m_lifeWriteEntity, m_life = 100;
     AmmoContainer_t m_shootEntities, m_visibleShootEntities;
     WeaponsType_e m_currentWeapon, m_previousWeapon;
-    std::array<uint32_t, static_cast<uint32_t>(WeaponsType_e::TOTAL)> m_ammunationsCount = {20, 0};
-    std::array<bool, static_cast<uint32_t>(WeaponsType_e::TOTAL)> m_weapons = {true, false};
+    std::array<uint32_t, static_cast<uint32_t>(WeaponsType_e::TOTAL)> m_ammunationsCount = {1, 20, 0};
+    std::array<bool, static_cast<uint32_t>(WeaponsType_e::TOTAL)> m_weapons = {true, true, false};
     CurrentMenuCursorPos_e m_currentCursorPos = static_cast<CurrentMenuCursorPos_e>(0);
     virtual ~PlayerConfComponent() = default;
 };

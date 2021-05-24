@@ -88,13 +88,11 @@ void InputSystem::treatPlayerInput()
                     searchComponentByType<MapCoordComponent>(playerComp->m_actionEntity,
                                                              Components_e::MAP_COORD_COMPONENT);
             assert(mapCompAction);
-            mapCompAction->m_absoluteMapPositionPX = mapComp->m_absoluteMapPositionPX;
-            moveElement(*moveComp, LEVEL_HALF_TILE_SIZE_PX, *mapCompAction, MoveOrientation_e::FORWARD);
             GeneralCollisionComponent *genCompAction = stairwayToComponentManager().
                     searchComponentByType<GeneralCollisionComponent>(playerComp->m_actionEntity,
                                                                      Components_e::GENERAL_COLLISION_COMPONENT);
             assert(genCompAction);
-            genCompAction->m_active = true;
+            confActionShape(mapCompAction, mapComp, moveComp, genCompAction);
         }
         if(glfwGetKey(m_window, GLFW_KEY_M) == GLFW_PRESS)
         {
@@ -118,8 +116,8 @@ void InputSystem::treatPlayerInput()
                 if(glfwGetKey(m_window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
                 {
                     playerComp->m_playerShoot = true;
-                    m_mainEngine->playerShoot(playerComp, mapComp->m_absoluteMapPositionPX,
-                                              moveComp->m_degreeOrientation);
+                    m_mainEngine->playerAttack(mVectNumEntity[i], playerComp, mapComp->m_absoluteMapPositionPX,
+                                               moveComp->m_degreeOrientation);
                 }
             }
         }
@@ -259,7 +257,7 @@ void changePlayerWeapon(PlayerConfComponent &playerComp, bool next)
         do
         {
             //first weapon
-            if(weapon == WeaponsType_e::GUN)
+            if(weapon == WeaponsType_e::AXE)
             {
                 weapon = WeaponsType_e::SHOTGUN;
             }
@@ -281,7 +279,7 @@ void changePlayerWeapon(PlayerConfComponent &playerComp, bool next)
             //last weapon
             if(weapon == WeaponsType_e::SHOTGUN)
             {
-                weapon = WeaponsType_e::GUN;
+                weapon = WeaponsType_e::AXE;
             }
             else
             {

@@ -19,6 +19,7 @@ StaticDisplaySystem::StaticDisplaySystem()
 //===================================================================
 void StaticDisplaySystem::fillWeaponMapEnum()
 {
+    m_weaponSpriteAssociated.insert({WeaponsType_e::AXE, WeaponsSpriteType_e::AXE_STATIC});
     m_weaponSpriteAssociated.insert({WeaponsType_e::GUN, WeaponsSpriteType_e::GUN_STATIC});
     m_weaponSpriteAssociated.insert({WeaponsType_e::SHOTGUN, WeaponsSpriteType_e::SHOTGUN_STATIC});
 }

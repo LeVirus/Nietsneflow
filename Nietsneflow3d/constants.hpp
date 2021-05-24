@@ -133,6 +133,8 @@ enum class EnemySpriteType_e
 
 enum class WeaponsSpriteType_e
 {
+    AXE_STATIC,
+    AXE_ATTACK,
     GUN_STATIC,
     GUN_SHOOT,
     SHOTGUN_STATIC,
@@ -142,6 +144,7 @@ enum class WeaponsSpriteType_e
 
 enum class WeaponsType_e
 {
+    AXE,
     GUN,
     SHOTGUN,
     TOTAL
@@ -193,6 +196,7 @@ enum class CollisionTag_e
     DOOR_CT,
     ENEMY_CT,
     BULLET_PLAYER_CT,
+    HIT_PLAYER_CT,
     BULLET_ENEMY_CT,
     GHOST_CT,
     OBJECT_CT,
@@ -259,4 +263,4 @@ inline const std::map<Shader_e, std::string> SHADER_ID_MAP
 };
 
 inline std::array<uint32_t, static_cast<uint32_t>(WeaponsType_e::TOTAL)> MAX_WEAPONS_AMMO =
-{100, 50};
+{1, 100, 50};

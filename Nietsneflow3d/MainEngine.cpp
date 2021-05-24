@@ -135,8 +135,8 @@ void MainEngine::confPlayerShoot(const AmmoContainer_t &playerVisibleShots,
 }
 
 //===================================================================
-void MainEngine::playerShoot(PlayerConfComponent *playerComp, const pairFloat_t &point,
-                             float degreeAngle)
+void MainEngine::playerAttack(uint32_t playerEntity, PlayerConfComponent *playerComp, const pairFloat_t &point,
+                              float degreeAngle)
 {
     if(playerComp->m_currentWeapon == WeaponsType_e::TOTAL)
     {
@@ -146,7 +146,28 @@ void MainEngine::playerShoot(PlayerConfComponent *playerComp, const pairFloat_t 
             searchComponentByType<GeneralCollisionComponent>(*playerComp->m_shootEntities[0],
             Components_e::GENERAL_COLLISION_COMPONENT);
     assert(genColl);
-    if(playerComp->m_currentWeapon == WeaponsType_e::GUN)
+    if(playerComp->m_currentWeapon == WeaponsType_e::AXE)
+    {
+        GeneralCollisionComponent *actionGenColl = m_ecsManager.getComponentManager().
+                searchComponentByType<GeneralCollisionComponent>(playerComp->m_hitAxeEntity,
+                Components_e::GENERAL_COLLISION_COMPONENT);
+        MapCoordComponent *playerMapComp = m_ecsManager.getComponentManager().
+                searchComponentByType<MapCoordComponent>(playerEntity,
+                Components_e::MAP_COORD_COMPONENT);
+        MoveableComponent *playerMoveComp = m_ecsManager.getComponentManager().
+                searchComponentByType<MoveableComponent>(playerEntity,
+                Components_e::MOVEABLE_COMPONENT);
+        MapCoordComponent *actionMapComp = m_ecsManager.getComponentManager().
+                searchComponentByType<MapCoordComponent>(playerComp->m_hitAxeEntity,
+                Components_e::MAP_COORD_COMPONENT);
+        assert(playerMoveComp);
+        assert(playerMapComp);
+        assert(actionGenColl);
+        assert(playerMapComp);
+        confActionShape(actionMapComp, playerMapComp, playerMoveComp, actionGenColl);
+        return;
+    }
+    else if(playerComp->m_currentWeapon == WeaponsType_e::GUN)
     {
         SegmentCollisionComponent *segmentColl = m_ecsManager.getComponentManager().
                 searchComponentByType<SegmentCollisionComponent>(*playerComp->m_shootEntities[0],
@@ -161,6 +182,15 @@ void MainEngine::playerShoot(PlayerConfComponent *playerComp, const pairFloat_t 
     uint32_t currentWeapon = static_cast<uint32_t>(playerComp->m_currentWeapon);
     assert(playerComp->m_ammunationsCount[currentWeapon] > 0);
     --playerComp->m_ammunationsCount[currentWeapon];
+}
+
+//===================================================================
+void confActionShape(MapCoordComponent *mapCompAction, MapCoordComponent *playerMapComp,
+                     MoveableComponent *playerMoveComp, GeneralCollisionComponent *genCompAction)
+{
+    mapCompAction->m_absoluteMapPositionPX = playerMapComp->m_absoluteMapPositionPX;
+    moveElement(*playerMoveComp, LEVEL_HALF_TILE_SIZE_PX, *mapCompAction, MoveOrientation_e::FORWARD);
+    genCompAction->m_active = true;
 }
 
 //===================================================================
@@ -971,6 +1001,7 @@ void MainEngine::confPlayerEntity(const std::vector<SpriteData> &vectSpriteData,
     confWriteEntities();
     confMenuCursorEntity();
     confActionEntity();
+    confAxeHitEntity();
 }
 
 //===================================================================
@@ -998,6 +1029,39 @@ void MainEngine::confActionEntity()
     genCollComp->m_tag = CollisionTag_e::PLAYER_ACTION_CT;
     circleColl->m_ray = 15.0f;
     m_playerConf->m_actionEntity = entityNum;
+}
+
+//===================================================================
+void MainEngine::confAxeHitEntity()
+{
+    std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComponents;
+    bitsetComponents[Components_e::GENERAL_COLLISION_COMPONENT] = true;
+    bitsetComponents[Components_e::MAP_COORD_COMPONENT] = true;
+    bitsetComponents[Components_e::CIRCLE_COLLISION_COMPONENT] = true;
+    bitsetComponents[Components_e::SHOT_CONF_COMPONENT] = true;
+    uint32_t entityNum = m_ecsManager.addEntity(bitsetComponents);
+    GeneralCollisionComponent *genCollComp = m_ecsManager.getComponentManager().
+            searchComponentByType<GeneralCollisionComponent>(entityNum,
+                                                             Components_e::GENERAL_COLLISION_COMPONENT);
+    MapCoordComponent *mapComp = m_ecsManager.getComponentManager().
+            searchComponentByType<MapCoordComponent>(entityNum,
+                                                     Components_e::MAP_COORD_COMPONENT);
+    CircleCollisionComponent *circleColl = m_ecsManager.getComponentManager().
+            searchComponentByType<CircleCollisionComponent>(entityNum,
+                                                     Components_e::CIRCLE_COLLISION_COMPONENT);
+    ShotConfComponent *shotComp = m_ecsManager.getComponentManager().
+            searchComponentByType<ShotConfComponent>(entityNum,
+                                                     Components_e::SHOT_CONF_COMPONENT);
+    assert(shotComp);
+    assert(genCollComp);
+    assert(mapComp);
+    assert(circleColl);
+    genCollComp->m_active = false;
+    genCollComp->m_shape = CollisionShape_e::CIRCLE_C;
+    genCollComp->m_tag = CollisionTag_e::HIT_PLAYER_CT;
+    circleColl->m_ray = 10.0f;
+    shotComp->m_damage = 1;
+    m_playerConf->m_hitAxeEntity = entityNum;
 }
 
 //===================================================================
