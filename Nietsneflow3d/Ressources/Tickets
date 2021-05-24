@@ -1,0 +1,121 @@
+BUGS======================================================================
+
+0)
+Door does not display when open and player is on the way
+
+1)
+assert à CollisionSystem.cpp::89    EnemyConfComponent == nullptr
+assert à CollisionSystem.cpp::726   hyp > distanceX && hyp > distanceY
+assert à CollisionSystem.cpp::770  
+
+2)
+Wall eject when strafe + move==============================OK
+
+3)
+Collision issue on shoot
+
+4)
+raycasting line issue
+
+5)
+enemy display limit issue
+
+6)
+Weapon move go down progressivly
+
+7)
+Shoot touch several targets==================================OK
+
+8)
+raycast Issue at 90 limit
+
+9)
+display order issue with wall and static element
+
+10)
+Weapon stays down some time
+
+11)
+On second stage weapons and ammo are not memorized==============================OK
+
+12)
+On second stage visible ammo are not visible================================OK
+
+13)
+Rammasser une arme déja en possetion fait changer l'arme courrante===============================OK
+
+IMPROVE===================================================================================================
+==========================================================================================================
+
+1)
+Weapon movement on begin and end movement
+
+2)
+Weapons animations
+
+3)
+Enemy animations========================~
+
+4) 
+Improve Enemy behaviour
+
+5)
+Set collision behaviour from tag instead of shape
+
+6)
+Ajouter armure
+
+7)
+Set door still open if player or enemiy is in the way================================OK
+
+8)
+Set action collision=======================================OK
+
+9)
+Add Axe weapons===================================OK
+
+10)
+Change elements data in general directory instead of level dir
+
+NEW FUNCTIONALITIES=====================================================================================================
+========================================================================================================================
+
+1)
+Enemy IA
+
+	Set enemy orientation====================================OK
+	Set move input API=======================================OK
+	Create move and attack Behaviour on detecting player or other targeted entity=================================OK
+        Set enemy react on vision==================================OK
+        Set enemy stop attack when player is not visible anymore from a time=====================OK
+        Set Enemy open door============================OK
+
+2) 
+Create visible PROJECTILE,  ====================================OK 
+possibility of zone damage if the projectile is explosive
+
+3)
+Create Start menu, game over menu 
+
+4)
+End level behaviour, next level=======================OK, 
+ending credit...
+
+5)
+Collectable object life, ammo, armor, weapons================OK
+
+7)
+Ajouter animation de dégats aux enemy=====================================OK
+
+8)
+Pour les balles "segments" ajouter animation sur les elements touchés
+
+9)
+Créer un système de carte pour ouvrir certaines portes
+Optional (level design), create switch to interact with something
+
+10)
+Optionnel :: afficher l'inventaire dans le menu
+
+11)
+En cas de game over recommencer le niveau============================================OK
