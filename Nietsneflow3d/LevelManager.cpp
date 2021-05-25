@@ -221,7 +221,7 @@ void LevelManager::fillWallPositionVect(const INIReader &reader,
     uint32_t j = 0;
     while(j < results.size())
     {
-        assert(results[j] <= static_cast<uint32_t>(WallShapeINI_e::POINT));
+        assert(results[j] <= static_cast<uint32_t>(WallShapeINI_e::DIAG_DOWN_LEFT));
         assert(results.size() > (j + 2));
         origins = {results[j + 1], results[j + 2]};
         switch(static_cast<WallShapeINI_e>(results[j]))
@@ -244,6 +244,21 @@ void LevelManager::fillWallPositionVect(const INIReader &reader,
         case WallShapeINI_e::POINT:
             vectPos.insert(origins);
             j += 3;
+            break;
+        case WallShapeINI_e::DIAG_RECT:
+            assert(results.size() > (j + 4));
+            fillPositionDiagRectangle(origins, results[j + 3], vectPos);
+            j += 5;
+            break;
+        case WallShapeINI_e::DIAG_UP_LEFT:
+            assert(results.size() > (j + 3));
+            fillPositionDiagLineUpLeft(origins, results[j + 3], vectPos);
+            j += 4;
+            break;
+        case WallShapeINI_e::DIAG_DOWN_LEFT:
+            assert(results.size() > (j + 3));
+            fillPositionDiagLineDownLeft(origins, results[j + 3], vectPos);
+            j += 4;
             break;
         }
     }
@@ -283,6 +298,52 @@ void fillPositionRectangle(const pairUI_t &origins, const pairUI_t &size,
                              size.second - 1, vectPos);
     fillPositionVerticalLine({origins.first + size.first - 1, origins.second + 1},
                              size.second - 1, vectPos);
+}
+
+//===================================================================
+void fillPositionDiagLineUpLeft(const pairUI_t &origins, uint32_t size,
+                                std::set<pairUI_t> &vectPos)
+{
+    pairUI_t current = origins;
+    for(uint32_t j = 0; j < size; ++j, ++current.first, ++current.second)
+    {
+        vectPos.insert(current);
+    }
+}
+
+//===================================================================
+void fillPositionDiagLineDownLeft(const pairUI_t &origins, uint32_t size,
+                                  std::set<pairUI_t> &vectPos)
+{
+    pairUI_t current = origins;
+    for(uint32_t j = 0; j < size; ++j, ++current.first, --current.second)
+    {
+        vectPos.insert(current);
+        if(current.second == 0)
+        {
+            break;
+        }
+    }
+}
+
+//===================================================================
+void fillPositionDiagRectangle(const pairUI_t &origins, uint32_t size,
+                               std::set<pairUI_t> &vectPos)
+{
+    if(size % 2 == 1)
+    {
+        ++size;
+    }
+    uint32_t halfSizeA = size / 2;
+    uint32_t halfSizeB = halfSizeA + size % 2;
+    fillPositionDiagLineUpLeft({origins.first, origins.second + halfSizeA}, halfSizeB,
+                               vectPos);
+    fillPositionDiagLineDownLeft({origins.first, origins.second + halfSizeA}, halfSizeB,
+                                 vectPos);
+    fillPositionDiagLineUpLeft({origins.first + halfSizeA, origins.second}, halfSizeB,
+                               vectPos);
+    fillPositionDiagLineDownLeft({origins.first + halfSizeA, origins.second + size - 1},
+                                 halfSizeB, vectPos);
 }
 
 //===================================================================

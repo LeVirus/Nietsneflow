@@ -44,6 +44,9 @@ On second stage visible ammo are not visible================================OK
 13)
 Rammasser une arme déja en possetion fait changer l'arme courrante===============================OK
 
+14)
+Visible shot does not destruct on level limit
+
 IMPROVE===================================================================================================
 ==========================================================================================================
 

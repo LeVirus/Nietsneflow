@@ -50,7 +50,10 @@ enum class WallShapeINI_e
     RECTANGLE,
     VERT_LINE,
     HORIZ_LINE,
-    POINT
+    POINT,
+    DIAG_RECT,
+    DIAG_UP_LEFT,
+    DIAG_DOWN_LEFT,
 };
 
 enum class Systems_e

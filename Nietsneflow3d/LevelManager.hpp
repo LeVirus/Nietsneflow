@@ -69,6 +69,13 @@ std::vector<uint32_t> getBrutPositionData(const INIReader &reader, const std::st
 std::vector<float> convertStrToVectFloat(const std::string &str);
 void fillPositionVerticalLine(const pairUI_t &origins, uint32_t size,
                               std::set<pairUI_t> &vectPos);
-void fillPositionHorizontalLine(const pairUI_t &origins, uint32_t size, std::set<pairUI_t> &vectPos);
+void fillPositionHorizontalLine(const pairUI_t &origins, uint32_t size,
+                                std::set<pairUI_t> &vectPos);
 void fillPositionRectangle(const pairUI_t &origins, const pairUI_t &size,
                            std::set<pairUI_t> &vectPos);
+void fillPositionDiagLineUpLeft(const pairUI_t &origins, uint32_t size,
+                                std::set<pairUI_t> &vectPos);
+void fillPositionDiagLineDownLeft(const pairUI_t &origins, uint32_t size,
+                                  std::set<pairUI_t> &vectPos);
+void fillPositionDiagRectangle(const pairUI_t &origins, uint32_t size,
+                               std::set<pairUI_t> &vectPos);
