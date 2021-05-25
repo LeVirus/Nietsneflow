@@ -35,8 +35,10 @@ private:
     void readStaticElement(const INIReader &reader, StaticLevelElementData &staticElement,
                            const std::string &sectionName,
                                   LevelStaticElementType_e elementType);
-    void fillPositionVect(const INIReader &reader, const std::string &sectionName,
-                          vectPairUI_t &vectPos);
+    void fillStandartPositionVect(const INIReader &reader, const std::string &sectionName,
+                                  vectPairUI_t &vectPos);
+    void fillWallPositionVect(const INIReader &reader, const std::string &sectionName,
+                              std::set<pairUI_t> &vectPos);
     uint8_t getSpriteId(const INIReader &reader, const std::string &sectionName);
     void loadWeaponsDisplayData(const INIReader &reader);
     void loadExit(const INIReader &reader);
@@ -63,4 +65,10 @@ private:
     std::string m_spriteCursorName;
 };
 std::vector<uint32_t> convertStrToVectUI(const std::string &str);
+std::vector<uint32_t> getBrutPositionData(const INIReader &reader, const std::string & sectionName);
 std::vector<float> convertStrToVectFloat(const std::string &str);
+void fillPositionVerticalLine(const pairUI_t &origins, uint32_t size,
+                              std::set<pairUI_t> &vectPos);
+void fillPositionHorizontalLine(const pairUI_t &origins, uint32_t size, std::set<pairUI_t> &vectPos);
+void fillPositionRectangle(const pairUI_t &origins, const pairUI_t &size,
+                           std::set<pairUI_t> &vectPos);

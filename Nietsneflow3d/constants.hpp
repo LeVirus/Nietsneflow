@@ -45,6 +45,14 @@ enum class CurrentMenuCursorPos_e
     TOTAL
 };
 
+enum class WallShapeINI_e
+{
+    RECTANGLE,
+    VERT_LINE,
+    HORIZ_LINE,
+    POINT
+};
+
 enum class Systems_e
 {
     COLOR_DISPLAY_SYSTEM,

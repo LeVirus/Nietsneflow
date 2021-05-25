@@ -446,15 +446,16 @@ void MainEngine::loadWallEntities(const LevelManager &levelManager)
     for(uint32_t i = 0; i < wallData.size(); ++i)
     {
         const SpriteData &memSpriteData = levelManager.getPictureData().getSpriteData()[wallData[i].m_sprites[0]];
-        for(uint32_t j = 0; j < wallData[i].m_TileGamePosition.size(); ++j)
+        for(std::set<pairUI_t>::const_iterator it = wallData[i].m_TileGamePosition.begin();
+            it != wallData[i].m_TileGamePosition.end(); ++it)
         {
             uint32_t numEntity = createWallEntity();
-            confBaseComponent(numEntity, memSpriteData, wallData[i].m_TileGamePosition[j],
+            confBaseComponent(numEntity, memSpriteData, (*it),
                               CollisionShape_e::RECTANGLE_C, CollisionTag_e::WALL_CT);
             spriteComp = m_ecsManager.getComponentManager().
                     searchComponentByType<SpriteTextureComponent>(numEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
             assert(spriteComp);
-            Level::addElementCase(spriteComp, wallData[i].m_TileGamePosition[j], LevelCaseType_e::WALL_LC, numEntity);
+            Level::addElementCase(spriteComp, (*it), LevelCaseType_e::WALL_LC, numEntity);
             memSpriteComp = m_ecsManager.getComponentManager().
                     searchComponentByType<MemSpriteDataComponent>(numEntity,
                                                                   Components_e::MEM_SPRITE_DATA_COMPONENT);

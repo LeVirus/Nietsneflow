@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <functional>
 #include <vector>
+#include <set>
 #include <constants.hpp>
 #include <ECS/Components/ObjectConfComponent.hpp>
 
@@ -27,7 +28,7 @@ struct StaticLevelElementData
 struct WallData
 {
     std::vector<uint8_t> m_sprites;
-    vectPairUI_t m_TileGamePosition;
+    std::set<pairUI_t> m_TileGamePosition;
 };
 
 struct DoorData
