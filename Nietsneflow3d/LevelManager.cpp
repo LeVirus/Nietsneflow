@@ -150,6 +150,7 @@ void LevelManager::loadExit(const INIReader &reader)
     assert(!gamePositions.empty() && "Error while getting positions.");
     std::vector<uint32_t> results = convertStrToVectUI(gamePositions);
     stat.m_TileGamePosition.push_back({results[0], results[1]});
+    m_level.deleteWall(stat.m_TileGamePosition.back());
     m_level.setExitElement(stat);
 }
 
@@ -194,8 +195,8 @@ std::vector<uint32_t> getBrutPositionData(const INIReader &reader,
 
 //===================================================================
 void LevelManager::fillStandartPositionVect(const INIReader &reader,
-                                    const std::string & sectionName,
-                                    vectPairUI_t &vectPos)
+                                            const std::string & sectionName,
+                                            vectPairUI_t &vectPos)
 {
     std::vector<uint32_t> results = getBrutPositionData(reader, sectionName);
     size_t finalSize = results.size() / 2;
@@ -205,6 +206,7 @@ void LevelManager::fillStandartPositionVect(const INIReader &reader,
     for(uint32_t j = 0; j < results.size(); j += 2)
     {
         vectPos.emplace_back(pairUI_t{results[j], results[j + 1]});
+        m_level.deleteWall(vectPos.back());
     }
 }
 
@@ -600,12 +602,12 @@ void LevelManager::loadLevel(const std::string &INIFileName, uint32_t levelNum)
     }
     loadLevelData(reader);
     loadPlayerData(reader);
+    loadWallData(reader);
     loadGeneralStaticElements(reader, LevelStaticElementType_e::GROUND);
     loadGeneralStaticElements(reader, LevelStaticElementType_e::CEILING);
     loadGeneralStaticElements(reader, LevelStaticElementType_e::OBJECT);
     loadExit(reader);
     loadWeaponsDisplayData(reader);
-    loadWallData(reader);
     loadDoorData(reader);
     loadEnemyData(reader);
     loadUtilsData(reader);

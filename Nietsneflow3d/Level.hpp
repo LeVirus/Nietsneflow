@@ -193,6 +193,7 @@ public:
      */
     static void updatePlayerOrientation(const MoveableComponent &moveComp,
                                         PositionVertexComponent &posComp);
+    void deleteWall(const pairUI_t &coord);
 private:
     pairUI_t m_playerDeparture;
     static pairUI_t m_size;
