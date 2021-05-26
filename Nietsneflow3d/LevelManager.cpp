@@ -246,7 +246,7 @@ void LevelManager::fillWallPositionVect(const INIReader &reader,
             j += 3;
             break;
         case WallShapeINI_e::DIAG_RECT:
-            assert(results.size() > (j + 4));
+            assert(results.size() > (j + 3));
             fillPositionDiagRectangle(origins, results[j + 3], vectPos);
             j += 5;
             break;
@@ -330,7 +330,7 @@ void fillPositionDiagLineDownLeft(const pairUI_t &origins, uint32_t size,
 void fillPositionDiagRectangle(const pairUI_t &origins, uint32_t size,
                                std::set<pairUI_t> &vectPos)
 {
-    if(size % 2 == 1)
+    if(size % 2 == 0)
     {
         ++size;
     }
