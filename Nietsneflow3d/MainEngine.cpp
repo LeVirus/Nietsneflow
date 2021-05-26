@@ -443,12 +443,19 @@ void MainEngine::loadWallEntities(const LevelManager &levelManager)
     SpriteTextureComponent *spriteComp;
     const std::vector<SpriteData> &vectSprite = levelManager.getPictureData().getSpriteData();
     assert(!Level::getLevelCaseType().empty());
+    std::set<pairUI_t> memWall;
+    std::pair<std::set<pairUI_t>::const_iterator, bool> itt;
     for(uint32_t i = 0; i < wallData.size(); ++i)
     {
         const SpriteData &memSpriteData = levelManager.getPictureData().getSpriteData()[wallData[i].m_sprites[0]];
         for(std::set<pairUI_t>::const_iterator it = wallData[i].m_TileGamePosition.begin();
             it != wallData[i].m_TileGamePosition.end(); ++it)
         {
+            itt = memWall.insert(*it);
+            if(!itt.second)
+            {
+                continue;
+            }
             uint32_t numEntity = createWallEntity();
             confBaseComponent(numEntity, memSpriteData, (*it),
                               CollisionShape_e::RECTANGLE_C, CollisionTag_e::WALL_CT);
