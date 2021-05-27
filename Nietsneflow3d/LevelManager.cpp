@@ -185,11 +185,15 @@ void LevelManager::readStaticElement(const INIReader &reader, StaticLevelElement
 }
 
 //===================================================================
-std::vector<uint32_t> getBrutPositionData(const INIReader &reader,
-                                          const std::string &sectionName)
+std::optional<std::vector<uint32_t>> getBrutPositionData(const INIReader &reader,
+                                          const std::string &sectionName,
+                                          const std::string &propertyName)
 {
-    std::string gamePositions = reader.Get(sectionName, "GamePosition", "");
-    assert(!gamePositions.empty() && "Error while getting positions.");
+    std::string gamePositions = reader.Get(sectionName, propertyName, "");
+    if(gamePositions.empty())
+    {
+        return {};
+    }
     return convertStrToVectUI(gamePositions);
 }
 
@@ -198,14 +202,15 @@ void LevelManager::fillStandartPositionVect(const INIReader &reader,
                                             const std::string & sectionName,
                                             vectPairUI_t &vectPos)
 {
-    std::vector<uint32_t> results = getBrutPositionData(reader, sectionName);
-    size_t finalSize = results.size() / 2;
-    assert(!results.empty() && "Error inconsistent position datas.");
-    assert(!(results.size() % 2) && "Error inconsistent position datas.");
+    std::optional<std::vector<uint32_t>> results = getBrutPositionData(reader, sectionName, "GamePosition");
+    assert(results);
+    assert(!(*results).empty() && "Error inconsistent position datas.");
+    size_t finalSize = (*results).size() / 2;
+    assert(!((*results).size() % 2) && "Error inconsistent position datas.");
     vectPos.reserve(finalSize);
-    for(uint32_t j = 0; j < results.size(); j += 2)
+    for(uint32_t j = 0; j < (*results).size(); j += 2)
     {
-        vectPos.emplace_back(pairUI_t{results[j], results[j + 1]});
+        vectPos.emplace_back(pairUI_t{(*results)[j], (*results)[j + 1]});
         m_level.deleteWall(vectPos.back());
     }
 }
@@ -215,30 +220,31 @@ void LevelManager::fillWallPositionVect(const INIReader &reader,
                                         const std::string &sectionName,
                                         std::set<pairUI_t> &vectPos)
 {
-    std::vector<uint32_t> results = getBrutPositionData(reader, sectionName);
-    assert(!results.empty() && "Error inconsistent position datas.");
+    std::optional<std::vector<uint32_t>> results = getBrutPositionData(reader, sectionName, "GamePosition");
+    assert(results);
+    assert(!(*results).empty() && "Error inconsistent position datas.");
     pairUI_t origins;
     uint32_t j = 0;
-    while(j < results.size())
+    while(j < (*results).size())
     {
-        assert(results[j] <= static_cast<uint32_t>(WallShapeINI_e::DIAG_DOWN_LEFT));
-        assert(results.size() > (j + 2));
-        origins = {results[j + 1], results[j + 2]};
-        switch(static_cast<WallShapeINI_e>(results[j]))
+        assert((*results)[j] <= static_cast<uint32_t>(WallShapeINI_e::DIAG_DOWN_LEFT));
+        assert((*results).size() > (j + 2));
+        origins = {(*results)[j + 1], (*results)[j + 2]};
+        switch(static_cast<WallShapeINI_e>((*results)[j]))
         {
         case WallShapeINI_e::RECTANGLE:
-            assert(results.size() > (j + 4));
-            fillPositionRectangle(origins, {results[j + 3], results[j + 4]}, vectPos);
+            assert((*results).size() > (j + 4));
+            fillPositionRectangle(origins, {(*results)[j + 3], (*results)[j + 4]}, vectPos);
             j += 5;
             break;
         case WallShapeINI_e::VERT_LINE:
-            assert(results.size() > (j + 3));
-            fillPositionVerticalLine(origins, results[j + 3], vectPos);
+            assert((*results).size() > (j + 3));
+            fillPositionVerticalLine(origins, (*results)[j + 3], vectPos);
             j += 4;
             break;
         case WallShapeINI_e::HORIZ_LINE:
-            assert(results.size() > (j + 3));
-            fillPositionHorizontalLine(origins, results[j + 3], vectPos);
+            assert((*results).size() > (j + 3));
+            fillPositionHorizontalLine(origins, (*results)[j + 3], vectPos);
             j += 4;
             break;
         case WallShapeINI_e::POINT:
@@ -246,20 +252,46 @@ void LevelManager::fillWallPositionVect(const INIReader &reader,
             j += 3;
             break;
         case WallShapeINI_e::DIAG_RECT:
-            assert(results.size() > (j + 3));
-            fillPositionDiagRectangle(origins, results[j + 3], vectPos);
-            j += 5;
+            assert((*results).size() > (j + 3));
+            fillPositionDiagRectangle(origins, (*results)[j + 3], vectPos);
+            j += 4;
             break;
         case WallShapeINI_e::DIAG_UP_LEFT:
-            assert(results.size() > (j + 3));
-            fillPositionDiagLineUpLeft(origins, results[j + 3], vectPos);
+            assert((*results).size() > (j + 3));
+            fillPositionDiagLineUpLeft(origins, (*results)[j + 3], vectPos);
             j += 4;
             break;
         case WallShapeINI_e::DIAG_DOWN_LEFT:
-            assert(results.size() > (j + 3));
-            fillPositionDiagLineDownLeft(origins, results[j + 3], vectPos);
+            assert((*results).size() > (j + 3));
+            fillPositionDiagLineDownLeft(origins, (*results)[j + 3], vectPos);
             j += 4;
             break;
+        default:
+            assert(false);
+            break;
+        }
+    }
+}
+
+//===================================================================
+void LevelManager::removeWallPositionVect(const INIReader &reader,
+                                          const std::string &sectionName,
+                                          std::set<pairUI_t> &vectPos)
+{
+    std::optional<std::vector<uint32_t>> results = getBrutPositionData(reader, sectionName, "RemovePosition");
+    if(!results || (*results).empty())
+    {
+        return;
+    }
+    std::set<pairUI_t> wallToRemove;
+    fillWallPositionVect(reader, sectionName, wallToRemove);
+    std::set<pairUI_t>::iterator itt;
+    for(std::set<pairUI_t>::const_iterator it = wallToRemove.begin(); it != wallToRemove.end(); ++it)
+    {
+        itt = vectPos.find(*it);
+        if(itt != vectPos.end())
+        {
+            vectPos.erase(itt);
         }
     }
 }
@@ -458,6 +490,7 @@ void LevelManager::loadWallData(const INIReader &reader)
             vectWall.back().m_sprites.emplace_back(*m_pictureData.getIdentifier(results[i]));
         }
         fillWallPositionVect(reader, vectINISections[i], vectWall.back().m_TileGamePosition);
+        removeWallPositionVect(reader, vectINISections[i], vectWall.back().m_TileGamePosition);
     }
     m_level.setWallElement(vectWall);
 }
