@@ -37,7 +37,7 @@ private:
                                   LevelStaticElementType_e elementType);
     void fillStandartPositionVect(const INIReader &reader, const std::string &sectionName,
                                   vectPairUI_t &vectPos);
-    void fillWallPositionVect(const INIReader &reader, const std::string &sectionName,
+    bool fillWallPositionVect(const INIReader &reader, const std::string &sectionName, const std::string &propertyName,
                               std::set<pairUI_t> &vectPos);
     void removeWallPositionVect(const INIReader &reader, const std::string &sectionName,
                                 std::set<pairUI_t> &vectPos);

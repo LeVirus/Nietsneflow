@@ -54,6 +54,7 @@ enum class WallShapeINI_e
     DIAG_RECT,
     DIAG_UP_LEFT,
     DIAG_DOWN_LEFT,
+    TOTAL
 };
 
 enum class Systems_e

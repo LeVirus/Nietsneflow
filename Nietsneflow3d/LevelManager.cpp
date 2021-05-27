@@ -186,8 +186,8 @@ void LevelManager::readStaticElement(const INIReader &reader, StaticLevelElement
 
 //===================================================================
 std::optional<std::vector<uint32_t>> getBrutPositionData(const INIReader &reader,
-                                          const std::string &sectionName,
-                                          const std::string &propertyName)
+                                                         const std::string &sectionName,
+                                                         const std::string &propertyName)
 {
     std::string gamePositions = reader.Get(sectionName, propertyName, "");
     if(gamePositions.empty())
@@ -216,18 +216,22 @@ void LevelManager::fillStandartPositionVect(const INIReader &reader,
 }
 
 //===================================================================
-void LevelManager::fillWallPositionVect(const INIReader &reader,
+bool LevelManager::fillWallPositionVect(const INIReader &reader,
                                         const std::string &sectionName,
+                                        const std::string &propertyName,
                                         std::set<pairUI_t> &vectPos)
 {
-    std::optional<std::vector<uint32_t>> results = getBrutPositionData(reader, sectionName, "GamePosition");
-    assert(results);
-    assert(!(*results).empty() && "Error inconsistent position datas.");
+    std::optional<std::vector<uint32_t>> results = getBrutPositionData(reader, sectionName, propertyName);
+
+    if(!results || (*results).empty())
+    {
+        return false;
+    }
     pairUI_t origins;
     uint32_t j = 0;
     while(j < (*results).size())
     {
-        assert((*results)[j] <= static_cast<uint32_t>(WallShapeINI_e::DIAG_DOWN_LEFT));
+        assert((*results)[j] < static_cast<uint32_t>(WallShapeINI_e::TOTAL));
         assert((*results).size() > (j + 2));
         origins = {(*results)[j + 1], (*results)[j + 2]};
         switch(static_cast<WallShapeINI_e>((*results)[j]))
@@ -271,6 +275,7 @@ void LevelManager::fillWallPositionVect(const INIReader &reader,
             break;
         }
     }
+    return true;
 }
 
 //===================================================================
@@ -278,13 +283,11 @@ void LevelManager::removeWallPositionVect(const INIReader &reader,
                                           const std::string &sectionName,
                                           std::set<pairUI_t> &vectPos)
 {
-    std::optional<std::vector<uint32_t>> results = getBrutPositionData(reader, sectionName, "RemovePosition");
-    if(!results || (*results).empty())
+    std::set<pairUI_t> wallToRemove;
+    if(!fillWallPositionVect(reader, sectionName, "RemovePosition", wallToRemove))
     {
         return;
     }
-    std::set<pairUI_t> wallToRemove;
-    fillWallPositionVect(reader, sectionName, wallToRemove);
     std::set<pairUI_t>::iterator itt;
     for(std::set<pairUI_t>::const_iterator it = wallToRemove.begin(); it != wallToRemove.end(); ++it)
     {
@@ -489,7 +492,10 @@ void LevelManager::loadWallData(const INIReader &reader)
         {
             vectWall.back().m_sprites.emplace_back(*m_pictureData.getIdentifier(results[i]));
         }
-        fillWallPositionVect(reader, vectINISections[i], vectWall.back().m_TileGamePosition);
+        if(!fillWallPositionVect(reader, vectINISections[i], "GamePosition", vectWall.back().m_TileGamePosition))
+        {
+            assert(false);
+        }
         removeWallPositionVect(reader, vectINISections[i], vectWall.back().m_TileGamePosition);
     }
     m_level.setWallElement(vectWall);
