@@ -588,7 +588,8 @@ void FirstPersonDisplaySystem::rayCasting()
                 {
                     if(element->m_type == LevelCaseType_e::WALL_LC)
                     {
-                        textPos = lateral ? currentPoint.first : currentPoint.second;
+                        textPos = lateral ? std::fmod(currentPoint.first, LEVEL_TILE_SIZE_PX) /*+ *textPos*/ :
+                                                            std::fmod(currentPoint.second, LEVEL_TILE_SIZE_PX) /*+ *textPos*/;
                         memDistance(element->m_numEntity, j, getCameraDistance(mapCompCamera->m_absoluteMapPositionPX,
                                                                                currentPoint, cameraRadiantAngle), textPos);
                         break;
