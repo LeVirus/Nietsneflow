@@ -72,7 +72,7 @@ private:
     void confVisibleAmmo(const AmmoContainer_t &ammoCont);
     void loadStaticElementEntities(const LevelManager &levelManager);
     void loadStaticElementGroup(const LevelManager &levelManager,
-                                const std::vector<StaticLevelElementData> *staticData, LevelStaticElementType_e elementType);
+                                const std::map<std::string, StaticLevelElementData> &staticData, LevelStaticElementType_e elementType);
     void loadExitElement(const LevelManager &levelManager, const StaticLevelElementData &exit);
     void createAmmosEntities(AmmoContainer_t &ammoCont, CollisionTag_e collTag, bool visibleShot = false);
     uint32_t loadWeaponEntity();
@@ -90,7 +90,7 @@ private:
                            CollisionTag_e tag);
     void confStaticComponent(uint32_t entityNum, const pairFloat_t &elementSize, LevelStaticElementType_e elementType);
     void loadEnemySprites(const std::vector<SpriteData> &vectSprite,
-                          const std::vector<EnemyData> &enemiesData, uint32_t numEntity, const AmmoContainer_t &visibleAmmo);
+                          const std::map<std::string, EnemyData> &enemiesData, uint32_t numEntity, const AmmoContainer_t &visibleAmmo);
     void loadVisibleShotEnemySprites(const std::vector<SpriteData> &vectSprite,
                                      const AmmoContainer_t &visibleAmmo,
                                      const EnemyData &enemyData);

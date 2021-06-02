@@ -63,19 +63,7 @@ uint32_t Level::getLevelCaseIndex(const pairUI_t &tilePosition)
     return index;
 }
 
-//===================================================================
-void Level::deleteWall(const pairUI_t &coord)
-{
-    std::set<pairUI_t>::iterator it;
-    for(uint32_t i = 0; i < m_wallData.size(); ++i)
-    {
-        it = m_wallData[i].m_TileGamePosition.find(coord);
-        if(it != m_wallData[i].m_TileGamePosition.end())
-        {
-            m_wallData[i].m_TileGamePosition.erase(*it);
-        }
-    }
-}
+
 
 //===================================================================
 pairFloat_t getAbsolutePosition(const pairUI_t &coord)

@@ -438,18 +438,21 @@ uint32_t MainEngine::loadWeaponsEntity(const LevelManager &levelManager)
 //===================================================================
 void MainEngine::loadWallEntities(const LevelManager &levelManager)
 {
-    const std::vector<WallData> &wallData = levelManager.getLevel().getWallData();
+    const std::map<std::string, WallData> &wallData = levelManager.getWallData();
     MemSpriteDataComponent *memSpriteComp;
     SpriteTextureComponent *spriteComp;
     const std::vector<SpriteData> &vectSprite = levelManager.getPictureData().getSpriteData();
     assert(!Level::getLevelCaseType().empty());
     std::set<pairUI_t> memWall;
     std::pair<std::set<pairUI_t>::const_iterator, bool> itt;
-    for(uint32_t i = 0; i < wallData.size(); ++i)
+    std::map<std::string, WallData>::const_iterator iter = wallData.begin();
+    for(; iter != wallData.end(); ++iter)
     {
-        const SpriteData &memSpriteData = levelManager.getPictureData().getSpriteData()[wallData[i].m_sprites[0]];
-        for(std::set<pairUI_t>::const_iterator it = wallData[i].m_TileGamePosition.begin();
-            it != wallData[i].m_TileGamePosition.end(); ++it)
+        assert(!iter->second.m_sprites.empty());
+        assert(iter->second.m_sprites[0] < vectSprite.size());
+        const SpriteData &memSpriteData = vectSprite[iter->second.m_sprites[0]];
+        for(std::set<pairUI_t>::const_iterator it = iter->second.m_TileGamePosition.begin();
+            it != iter->second.m_TileGamePosition.end(); ++it)
         {
             itt = memWall.insert(*it);
             if(!itt.second)
@@ -470,11 +473,11 @@ void MainEngine::loadWallEntities(const LevelManager &levelManager)
             {
                 continue;
             }
-            uint32_t vectSize = wallData[i].m_sprites.size();
+            uint32_t vectSize = iter->second.m_sprites.size();
             memSpriteComp->m_vectSpriteData.reserve(static_cast<uint32_t>(WallSpriteType_e::TOTAL_SPRITE));
             for(uint32_t j = 0; j < vectSize; ++j)
             {
-                memSpriteComp->m_vectSpriteData.emplace_back(&vectSprite[wallData[i].m_sprites[j]]);
+                memSpriteComp->m_vectSpriteData.emplace_back(&vectSprite[iter->second.m_sprites[j]]);
             }
         }
     }
@@ -483,16 +486,17 @@ void MainEngine::loadWallEntities(const LevelManager &levelManager)
 //===================================================================
 void MainEngine::loadDoorEntities(const LevelManager &levelManager)
 {
-    const std::vector<DoorData> &doorData = levelManager.getLevel().getDoorData();
+    const std::map<std::string, DoorData> &doorData = levelManager.getDoorData();
     MemSpriteDataComponent *memSpriteComp;
     const std::vector<SpriteData> &vectSprite = levelManager.getPictureData().getSpriteData();
-    for(uint32_t i = 0; i < doorData.size(); ++i)
+    std::map<std::string, DoorData>::const_iterator it = doorData.begin();
+    for(; it != doorData.end(); ++it)
     {
-        const SpriteData &memSpriteData = levelManager.getPictureData().getSpriteData()[doorData[i].m_numSprite];
-        for(uint32_t j = 0; j < doorData[i].m_TileGamePosition.size(); ++j)
+        const SpriteData &memSpriteData = levelManager.getPictureData().getSpriteData()[it->second.m_numSprite];
+        for(uint32_t j = 0; j < it->second.m_TileGamePosition.size(); ++j)
         {
             uint32_t numEntity = createDoorEntity();
-            confBaseComponent(numEntity, memSpriteData, doorData[i].m_TileGamePosition[j],
+            confBaseComponent(numEntity, memSpriteData, it->second.m_TileGamePosition[j],
                               CollisionShape_e::RECTANGLE_C, CollisionTag_e::DOOR_CT);
             GeneralCollisionComponent *tagComp = m_ecsManager.getComponentManager().
                     searchComponentByType<GeneralCollisionComponent>(numEntity, Components_e::GENERAL_COLLISION_COMPONENT);
@@ -507,7 +511,7 @@ void MainEngine::loadDoorEntities(const LevelManager &levelManager)
             DoorComponent *doorComp = m_ecsManager.getComponentManager().
                     searchComponentByType<DoorComponent>(numEntity, Components_e::DOOR_COMPONENT);
             assert(doorComp);
-            if(doorData[i].m_vertical)
+            if(it->second.m_vertical)
             {
                 mapComp->m_absoluteMapPositionPX.first += DOOR_CASE_POS_PX;
                 rectComp->m_size = {WIDTH_DOOR_SIZE_PX, LEVEL_TILE_SIZE_PX};
@@ -517,7 +521,7 @@ void MainEngine::loadDoorEntities(const LevelManager &levelManager)
                 mapComp->m_absoluteMapPositionPX.second += DOOR_CASE_POS_PX;
                 rectComp->m_size = {LEVEL_TILE_SIZE_PX, WIDTH_DOOR_SIZE_PX};
             }
-            doorComp->m_vertical = doorData[i].m_vertical;
+            doorComp->m_vertical = it->second.m_vertical;
             memSpriteComp = m_ecsManager.getComponentManager().
                     searchComponentByType<MemSpriteDataComponent>(numEntity,
                                                                   Components_e::MEM_SPRITE_DATA_COMPONENT);
@@ -525,13 +529,13 @@ void MainEngine::loadDoorEntities(const LevelManager &levelManager)
             SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().
                     searchComponentByType<SpriteTextureComponent>(numEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
             assert(spriteComp);
-            Level::addElementCase(spriteComp, doorData[i].m_TileGamePosition[j], LevelCaseType_e::DOOR_LC, numEntity);
+            Level::addElementCase(spriteComp, it->second.m_TileGamePosition[j], LevelCaseType_e::DOOR_LC, numEntity);
 
             if(!memSpriteComp)
             {
                 continue;
             }
-            memSpriteComp->m_vectSpriteData.emplace_back(&vectSprite[doorData[i].m_numSprite]);
+            memSpriteComp->m_vectSpriteData.emplace_back(&vectSprite[it->second.m_numSprite]);
         }
     }
 }
@@ -539,15 +543,16 @@ void MainEngine::loadDoorEntities(const LevelManager &levelManager)
 //===================================================================
 void MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
 {
-    const std::vector<EnemyData> &enemiesData = levelManager.getLevel().getEnemiesData();
-    for(uint32_t i = 0; i < enemiesData.size(); ++i)
+    const std::map<std::string, EnemyData> &enemiesData = levelManager.getEnemiesData();
+    std::map<std::string, EnemyData>::const_iterator it = enemiesData.begin();
+    for(; it != enemiesData.end(); ++it)
     {
         const SpriteData &memSpriteData = levelManager.getPictureData().
-                getSpriteData()[enemiesData[i].m_staticFrontSprites[0]];
-        for(uint32_t j = 0; j < enemiesData[i].m_TileGamePosition.size(); ++j)
+                getSpriteData()[it->second.m_staticFrontSprites[0]];
+        for(uint32_t j = 0; j < it->second.m_TileGamePosition.size(); ++j)
         {
             uint32_t numEntity = createEnemyEntity();
-            confBaseComponent(numEntity, memSpriteData, enemiesData[i].m_TileGamePosition[j],
+            confBaseComponent(numEntity, memSpriteData, it->second.m_TileGamePosition[j],
                               CollisionShape_e::CIRCLE_C, CollisionTag_e::ENEMY_CT);
             EnemyConfComponent *enemyComp = m_ecsManager.getComponentManager().
                     searchComponentByType<EnemyConfComponent>(numEntity,
@@ -557,7 +562,7 @@ void MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
                         numEntity, Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
             assert(enemyComp);
             assert(fpsStaticComp);
-            fpsStaticComp->m_inGameSpriteSize = enemiesData[i].m_inGameSpriteSize;
+            fpsStaticComp->m_inGameSpriteSize = it->second.m_inGameSpriteSize;
             createAmmosEntities(enemyComp->m_stdAmmo, CollisionTag_e::BULLET_ENEMY_CT);
             createAmmosEntities(enemyComp->m_visibleAmmo, CollisionTag_e::BULLET_ENEMY_CT, true);
             loadEnemySprites(levelManager.getPictureData().getSpriteData(),
@@ -601,64 +606,65 @@ void MainEngine::createAmmosEntities(AmmoContainer_t &ammoCount, CollisionTag_e 
 
 //===================================================================
 void MainEngine::loadEnemySprites(const std::vector<SpriteData> &vectSprite,
-                                  const std::vector<EnemyData> &enemiesData, uint32_t numEntity,
+                                  const std::map<std::string, EnemyData> &enemiesData, uint32_t numEntity,
                                   const AmmoContainer_t &visibleAmmo)
 {
     MemSpriteDataComponent *memSpriteComp = m_ecsManager.getComponentManager().
             searchComponentByType<MemSpriteDataComponent>(numEntity,
                                                           Components_e::MEM_SPRITE_DATA_COMPONENT);
     assert(memSpriteComp);
-    for(uint32_t i = 0; i < enemiesData.size(); ++i)
+    std::map<std::string, EnemyData>::const_iterator it = enemiesData.begin();
+    for(; it != enemiesData.end(); ++it)
     {
         uint32_t vectSize = static_cast<uint32_t>(EnemySpriteType_e::TOTAL_SPRITE);
         memSpriteComp->m_vectSpriteData.reserve(vectSize);
-        for(uint32_t j = 0; j < enemiesData[i].m_staticFrontSprites.size(); ++j)
+        for(uint32_t j = 0; j < it->second.m_staticFrontSprites.size(); ++j)
         {
-            memSpriteComp->m_vectSpriteData.emplace_back(&vectSprite[enemiesData[i].m_staticFrontSprites[j]]);
+            memSpriteComp->m_vectSpriteData.emplace_back(&vectSprite[it->second.m_staticFrontSprites[j]]);
         }
-        for(uint32_t j = 0; j < enemiesData[i].m_staticFrontLeftSprites.size(); ++j)
+        for(uint32_t j = 0; j < it->second.m_staticFrontLeftSprites.size(); ++j)
         {
-            memSpriteComp->m_vectSpriteData.emplace_back(&vectSprite[enemiesData[i].m_staticFrontLeftSprites[j]]);
+            memSpriteComp->m_vectSpriteData.emplace_back(&vectSprite[it->second.m_staticFrontLeftSprites[j]]);
         }
-        for(uint32_t j = 0; j < enemiesData[i].m_staticFrontRightSprites.size(); ++j)
+        for(uint32_t j = 0; j < it->second.m_staticFrontRightSprites.size(); ++j)
         {
-            memSpriteComp->m_vectSpriteData.emplace_back(&vectSprite[enemiesData[i].m_staticFrontRightSprites[j]]);
+            memSpriteComp->m_vectSpriteData.emplace_back(&vectSprite[it->second.m_staticFrontRightSprites[j]]);
         }
-        for(uint32_t j = 0; j < enemiesData[i].m_staticBackSprites.size(); ++j)
+        for(uint32_t j = 0; j < it->second.m_staticBackSprites.size(); ++j)
         {
-            memSpriteComp->m_vectSpriteData.emplace_back(&vectSprite[enemiesData[i].m_staticBackSprites[j]]);
+            memSpriteComp->m_vectSpriteData.emplace_back(&vectSprite[it->second.m_staticBackSprites[j]]);
         }
-        for(uint32_t j = 0; j < enemiesData[i].m_staticBackLeftSprites.size(); ++j)
+        for(uint32_t j = 0; j < it->second.m_staticBackLeftSprites.size(); ++j)
         {
-            memSpriteComp->m_vectSpriteData.emplace_back(&vectSprite[enemiesData[i].m_staticBackLeftSprites[j]]);
+            memSpriteComp->m_vectSpriteData.emplace_back(&vectSprite[it->second.m_staticBackLeftSprites[j]]);
         }
-        for(uint32_t j = 0; j < enemiesData[i].m_staticBackRightSprites.size(); ++j)
+        for(uint32_t j = 0; j < it->second.m_staticBackRightSprites.size(); ++j)
         {
-            memSpriteComp->m_vectSpriteData.emplace_back(&vectSprite[enemiesData[i].m_staticBackRightSprites[j]]);
+            memSpriteComp->m_vectSpriteData.emplace_back(&vectSprite[it->second.m_staticBackRightSprites[j]]);
         }
-        for(uint32_t j = 0; j < enemiesData[i].m_staticLeftSprites.size(); ++j)
+        for(uint32_t j = 0; j < it->second.m_staticLeftSprites.size(); ++j)
         {
-            memSpriteComp->m_vectSpriteData.emplace_back(&vectSprite[enemiesData[i].m_staticLeftSprites[j]]);
+            memSpriteComp->m_vectSpriteData.emplace_back(&vectSprite[it->second.m_staticLeftSprites[j]]);
         }
-        for(uint32_t j = 0; j < enemiesData[i].m_staticRightSprites.size(); ++j)
+        for(uint32_t j = 0; j < it->second.m_staticRightSprites.size(); ++j)
         {
-            memSpriteComp->m_vectSpriteData.emplace_back(&vectSprite[enemiesData[i].m_staticRightSprites[j]]);
+            memSpriteComp->m_vectSpriteData.emplace_back(&vectSprite[it->second.m_staticRightSprites[j]]);
         }
-        for(uint32_t j = 0; j < enemiesData[i].m_moveSprites.size(); ++j)
+        for(uint32_t j = 0; j < it->second.m_moveSprites.size(); ++j)
         {
-            memSpriteComp->m_vectSpriteData.emplace_back(&vectSprite[enemiesData[i].m_moveSprites[j]]);
+            memSpriteComp->m_vectSpriteData.emplace_back(&vectSprite[it->second.m_moveSprites[j]]);
         }
-        for(uint32_t j = 0; j < enemiesData[i].m_attackSprites.size(); ++j)
+        for(uint32_t j = 0; j < it->second.m_attackSprites.size(); ++j)
         {
-            memSpriteComp->m_vectSpriteData.emplace_back(&vectSprite[enemiesData[i].m_attackSprites[j]]);
+            memSpriteComp->m_vectSpriteData.emplace_back(&vectSprite[it->second.m_attackSprites[j]]);
         }
-        for(uint32_t j = 0; j < enemiesData[i].m_dyingSprites.size(); ++j)
+        for(uint32_t j = 0; j < it->second.m_dyingSprites.size(); ++j)
         {
-            memSpriteComp->m_vectSpriteData.emplace_back(&vectSprite[enemiesData[i].m_dyingSprites[j]]);
+            memSpriteComp->m_vectSpriteData.emplace_back(&vectSprite[it->second.m_dyingSprites[j]]);
         }
-        if(!enemiesData[i].m_visibleShotSprites.empty())
+        if(!it->second.m_visibleShotSprites.empty())
         {
-            loadVisibleShotEnemySprites(vectSprite, visibleAmmo, enemiesData[i]);
+            loadVisibleShotEnemySprites(vectSprite, visibleAmmo, it->second);
         }
         assert(memSpriteComp->m_vectSpriteData.size() == vectSize);
     }
@@ -1174,13 +1180,13 @@ void MainEngine::loadStaticElementEntities(const LevelManager &levelManager)
     uint8_t cursorSpriteId = *levelManager.getPictureData().
             getIdentifier(levelManager.getCursorSpriteName());
     m_memCursorSpriteData = &levelManager.getPictureData().getSpriteData()[cursorSpriteId];
-    loadStaticElementGroup(levelManager, &levelManager.getLevel().getGroundElementData(),
+    loadStaticElementGroup(levelManager, levelManager.getGroundData(),
                            LevelStaticElementType_e::GROUND);
-    loadStaticElementGroup(levelManager, &levelManager.getLevel().getCeilingElementData(),
+    loadStaticElementGroup(levelManager, levelManager.getCeilingData(),
                            LevelStaticElementType_e::CEILING);
-    loadStaticElementGroup(levelManager, &levelManager.getLevel().getObjectElementData(),
+    loadStaticElementGroup(levelManager, levelManager.getObjectData(),
                            LevelStaticElementType_e::OBJECT);
-    loadExitElement(levelManager, levelManager.getLevel().getExitElementData());
+    loadExitElement(levelManager, levelManager.getExitElementData());
 }
 
 //===================================================================
@@ -1207,15 +1213,16 @@ void MainEngine::loadExitElement(const LevelManager &levelManager,
 
 //===================================================================
 void MainEngine::loadStaticElementGroup(const LevelManager &levelManager,
-                                        const std::vector<StaticLevelElementData> *staticData,
+                                        const std::map<std::string, StaticLevelElementData> &staticData,
                                         LevelStaticElementType_e elementType)
 {
     CollisionTag_e tag;
-    for(uint32_t i = 0; i < staticData->size(); ++i)
+    std::map<std::string, StaticLevelElementData>::const_iterator it = staticData.begin();
+    for(; it != staticData.end(); ++it)
     {
         const SpriteData &memSpriteData = levelManager.getPictureData().
-                getSpriteData()[staticData->operator[](i).m_numSprite];
-        for(uint32_t j = 0; j < staticData->operator[](i).m_TileGamePosition.size(); ++j)
+                getSpriteData()[it->second.m_numSprite];
+        for(uint32_t j = 0; j < it->second.m_TileGamePosition.size(); ++j)
         {
             uint32_t entityNum;
             if(elementType == LevelStaticElementType_e::OBJECT)
@@ -1226,12 +1233,12 @@ void MainEngine::loadStaticElementGroup(const LevelManager &levelManager,
                         searchComponentByType<ObjectConfComponent>(entityNum,
                                                                    Components_e::OBJECT_CONF_COMPONENT);
                 assert(objComp);
-                objComp->m_containing = staticData->operator[](i).m_containing;
-                objComp->m_type = staticData->operator[](i).m_type;
+                objComp->m_containing = it->second.m_containing;
+                objComp->m_type = it->second.m_type;
             }
             else
             {
-                if(staticData->operator[](i).m_traversable)
+                if(it->second.m_traversable)
                 {
                     tag = CollisionTag_e::GHOST_CT;
                 }
@@ -1245,10 +1252,10 @@ void MainEngine::loadStaticElementGroup(const LevelManager &levelManager,
                     searchComponentByType<FPSVisibleStaticElementComponent>(
                         entityNum, Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
             assert(fpsStaticComp);
-            fpsStaticComp->m_inGameSpriteSize = staticData->operator[](i).m_inGameSpriteSize;
-            confBaseComponent(entityNum, memSpriteData, staticData->operator[](i).m_TileGamePosition[j],
+            fpsStaticComp->m_inGameSpriteSize = it->second.m_inGameSpriteSize;
+            confBaseComponent(entityNum, memSpriteData, it->second.m_TileGamePosition[j],
                     CollisionShape_e::CIRCLE_C, tag);
-            confStaticComponent(entityNum, staticData->operator[](i).m_inGameSpriteSize, elementType);
+            confStaticComponent(entityNum, it->second.m_inGameSpriteSize, elementType);
         }
     }
 }

@@ -92,7 +92,7 @@ void LevelManager::loadLevelData(const INIReader &reader)
 }
 
 //===================================================================
-void LevelManager::loadPlayerData(const INIReader &reader)
+void LevelManager::loadPositionPlayerData(const INIReader &reader)
 {
     m_level.setPlayerInitData({reader.GetInteger("PlayerInit", "playerDepartureX", 0),
                                reader.GetInteger("PlayerInit", "playerDepartureY", 0)},
@@ -104,37 +104,28 @@ void LevelManager::loadPlayerData(const INIReader &reader)
 void LevelManager::loadGeneralStaticElements(const INIReader &reader,
                                              LevelStaticElementType_e elementType)
 {
+    std::map<std::string, StaticLevelElementData> *memMap;
     std::vector<std::string> vectINISections;
     switch(elementType)
     {
         case LevelStaticElementType_e::GROUND:
         vectINISections = reader.getSectionNamesContaining("Ground");
+        memMap = &m_groundElement;
         break;
         case LevelStaticElementType_e::CEILING:
         vectINISections = reader.getSectionNamesContaining("Ceiling");
+        memMap = &m_ceilingElement;
         break;
         case LevelStaticElementType_e::OBJECT:
         vectINISections = reader.getSectionNamesContaining("Object");
+        memMap = &m_objectElement;
         break;
     }
-    std::vector<StaticLevelElementData> vectStaticElement;
-    vectStaticElement.reserve(vectINISections.size());
     for(uint32_t i = 0; i < vectINISections.size(); ++i)
     {
-        vectStaticElement.emplace_back(StaticLevelElementData());
-        readStaticElement(reader, vectStaticElement.back(), vectINISections[i], elementType);
-    }
-    switch(elementType)
-    {
-        case LevelStaticElementType_e::GROUND:
-        m_level.setGroundElement(vectStaticElement);
-        break;
-        case LevelStaticElementType_e::CEILING:
-        m_level.setCeilingElement(vectStaticElement);
-        break;
-        case LevelStaticElementType_e::OBJECT:
-        m_level.setObjectElement(vectStaticElement);
-        break;
+        memMap->insert({vectINISections[i], StaticLevelElementData()});
+        readStandardStaticElement(reader, memMap->operator[](vectINISections[i]),
+                vectINISections[i], elementType);
     }
 }
 
@@ -142,16 +133,25 @@ void LevelManager::loadGeneralStaticElements(const INIReader &reader,
 void LevelManager::loadExit(const INIReader &reader)
 {
     std::vector<std::string> vectINISections;
-    StaticLevelElementData stat;
     vectINISections = reader.getSectionNamesContaining("Exit");
     assert(!vectINISections.empty());
-    loadSpriteData(reader, vectINISections[0], stat);
+    loadSpriteData(reader, vectINISections[0], m_exitStaticElement);
+}
+
+//===================================================================
+void LevelManager::loadPositionExit(const INIReader &reader)
+{
+    std::vector<std::string> vectINISections;
+    vectINISections = reader.getSectionNamesContaining("Exit");
+    assert(!vectINISections.empty());
     std::string gamePositions = reader.Get(vectINISections[0], "GamePosition", "");
     assert(!gamePositions.empty() && "Error while getting positions.");
     std::vector<uint32_t> results = convertStrToVectUI(gamePositions);
-    stat.m_TileGamePosition.push_back({results[0], results[1]});
-    m_level.deleteWall(stat.m_TileGamePosition.back());
-    m_level.setExitElement(stat);
+    for(uint32_t i = 0; i < results.size(); i += 2)
+    {
+        m_exitStaticElement.m_TileGamePosition.push_back({results[i], results[i + 2]});
+        deleteWall(m_exitStaticElement.m_TileGamePosition.back());
+    }
 }
 
 //===================================================================
@@ -166,8 +166,8 @@ void LevelManager::loadSpriteData(const INIReader &reader, const std::string &se
 }
 
 //===================================================================
-void LevelManager::readStaticElement(const INIReader &reader, StaticLevelElementData &staticElement,
-                                     const std::string & sectionName, LevelStaticElementType_e elementType)
+void LevelManager::readStandardStaticElement(const INIReader &reader, StaticLevelElementData &staticElement,
+                                             const std::string & sectionName, LevelStaticElementType_e elementType)
 {
     loadSpriteData(reader, sectionName, staticElement);
     if(elementType == LevelStaticElementType_e::OBJECT)
@@ -177,7 +177,6 @@ void LevelManager::readStaticElement(const INIReader &reader, StaticLevelElement
         assert(type < static_cast<uint32_t>(ObjectType_e::TOTAL));
         staticElement.m_type = static_cast<ObjectType_e>(type);
     }
-    fillStandartPositionVect(reader, sectionName, staticElement.m_TileGamePosition);
     if(elementType != LevelStaticElementType_e::OBJECT)
     {
         staticElement.m_traversable = reader.GetBoolean(sectionName, "traversable", true);
@@ -199,11 +198,14 @@ std::optional<std::vector<uint32_t>> getBrutPositionData(const INIReader &reader
 
 //===================================================================
 void LevelManager::fillStandartPositionVect(const INIReader &reader,
-                                            const std::string & sectionName,
+                                            const std::string &sectionName,
                                             vectPairUI_t &vectPos)
 {
     std::optional<std::vector<uint32_t>> results = getBrutPositionData(reader, sectionName, "GamePosition");
-    assert(results);
+    if(!results)
+    {
+        return;
+    }
     assert(!(*results).empty() && "Error inconsistent position datas.");
     size_t finalSize = (*results).size() / 2;
     assert(!((*results).size() % 2) && "Error inconsistent position datas.");
@@ -211,7 +213,22 @@ void LevelManager::fillStandartPositionVect(const INIReader &reader,
     for(uint32_t j = 0; j < (*results).size(); j += 2)
     {
         vectPos.emplace_back(pairUI_t{(*results)[j], (*results)[j + 1]});
-        m_level.deleteWall(vectPos.back());
+        deleteWall(vectPos.back());
+    }
+}
+
+//===================================================================
+void LevelManager::deleteWall(const pairUI_t &coord)
+{
+    std::set<pairUI_t>::iterator itt;
+    std::map<std::string, WallData>::iterator it = m_wallData.begin();
+    for(; it != m_wallData.end(); ++it)
+    {
+        itt = it->second.m_TileGamePosition.find(coord);
+        if(itt != it->second.m_TileGamePosition.end())
+        {
+            it->second.m_TileGamePosition.erase(*itt);
+        }
     }
 }
 
@@ -475,95 +492,125 @@ void LevelManager::loadWeaponsData(const INIReader &reader, WeaponsType_e weapon
 //===================================================================
 void LevelManager::loadWallData(const INIReader &reader)
 {
-    std::vector<WallData> vectWall;
     std::vector<std::string> vectINISections;
     vectINISections = reader.getSectionNamesContaining("Wall");
-    vectWall.reserve(vectINISections.size());
     for(uint32_t i = 0; i < vectINISections.size(); ++i)
     {
-        vectWall.emplace_back(WallData());
+        m_wallData.insert({vectINISections[i], WallData()});
         std::string sprites = reader.Get(vectINISections[i], "Sprite", "");
         assert(!sprites.empty() && "Wall sprites cannot be loaded.");
         std::istringstream iss(sprites);
         vectStr_t results(std::istream_iterator<std::string>{iss},
                           std::istream_iterator<std::string>());
-        vectWall.back().m_sprites.reserve(results.size());
+        m_wallData[vectINISections[i]].m_sprites.reserve(results.size());
+        //load sprites
         for(uint32_t i = 0; i < results.size(); ++i)
         {
-            vectWall.back().m_sprites.emplace_back(*m_pictureData.getIdentifier(results[i]));
+            m_wallData[vectINISections[i]].m_sprites.emplace_back(*m_pictureData.getIdentifier(results[i]));
         }
-        if(!fillWallPositionVect(reader, vectINISections[i], "GamePosition", vectWall.back().m_TileGamePosition))
+    }
+}
+
+//===================================================================
+void LevelManager::loadPositionWall(const INIReader &reader)
+{
+    std::vector<std::string> vectINISections = reader.getSectionNamesContaining("Wall");
+    std::map<std::string, WallData>::iterator it;
+    for(uint32_t i = 0; i < vectINISections.size(); ++i)
+    {
+        it = m_wallData.find(vectINISections[i]);
+        assert(it != m_wallData.end());
+        if(!fillWallPositionVect(reader, vectINISections[i], "GamePosition", it->second.m_TileGamePosition))
         {
             assert(false);
         }
-        removeWallPositionVect(reader, vectINISections[i], vectWall.back().m_TileGamePosition);
+        removeWallPositionVect(reader, vectINISections[i], it->second.m_TileGamePosition);
     }
-    m_level.setWallElement(vectWall);
 }
 
 //===================================================================
 void LevelManager::loadDoorData(const INIReader &reader)
 {
-    std::vector<DoorData> vectDoor;
     std::vector<std::string> vectINISections;
     vectINISections = reader.getSectionNamesContaining("Door");
-    vectDoor.reserve(vectINISections.size());
     for(uint32_t i = 0; i < vectINISections.size(); ++i)
     {
-        vectDoor.emplace_back(DoorData());
-        vectDoor.back().m_numSprite = getSpriteId(reader, vectINISections[i]);
-        fillStandartPositionVect(reader, vectINISections[i], vectDoor.back().m_TileGamePosition);
-        vectDoor.back().m_vertical = reader.GetBoolean(vectINISections[i], "Vertical", false);
+        m_doorData.insert({vectINISections[i], DoorData()});
+        m_doorData[vectINISections[i]].m_numSprite = getSpriteId(reader, vectINISections[i]);
+        m_doorData[vectINISections[i]].m_vertical = reader.GetBoolean(vectINISections[i], "Vertical", false);
     }
-    m_level.setDoorElement(vectDoor);
+}
+
+//===================================================================
+void LevelManager::loadPositionDoorData(const INIReader &reader)
+{
+    std::vector<std::string> vectINISections;
+    vectINISections = reader.getSectionNamesContaining("Door");
+    std::map<std::string, DoorData>::iterator it;
+    for(uint32_t i = 0; i < vectINISections.size(); ++i)
+    {
+        it = m_doorData.find(vectINISections[i]);
+        assert(it != m_doorData.end());
+        fillStandartPositionVect(reader, vectINISections[i], it->second.m_TileGamePosition);
+    }
 }
 
 //===================================================================
 void LevelManager::loadEnemyData(const INIReader &reader)
 {
-    std::vector<EnemyData> vectEnemy;
     std::vector<std::string> vectINISections;
     vectINISections = reader.getSectionNamesContaining("Enemy");
-    vectEnemy.reserve(vectINISections.size());
     for(uint32_t i = 0; i < vectINISections.size(); ++i)
     {
-        vectEnemy.emplace_back(EnemyData());
-        fillStandartPositionVect(reader, vectINISections[i], vectEnemy.back().m_TileGamePosition);
-        vectEnemy.back().m_traversable = reader.GetBoolean(vectINISections[i],
+        m_enemyData.insert({vectINISections[i], EnemyData()});
+        m_enemyData[vectINISections[i]].m_traversable = reader.GetBoolean(vectINISections[i],
                                                        "traversable", false);
-        vectEnemy.back().m_inGameSpriteSize.first =
+        m_enemyData[vectINISections[i]].m_inGameSpriteSize.first =
                 reader.GetReal(vectINISections[i], "SpriteWeightGame", 1.0);
-        vectEnemy.back().m_inGameSpriteSize.second =
+        m_enemyData[vectINISections[i]].m_inGameSpriteSize.second =
                 reader.GetReal(vectINISections[i], "SpriteHeightGame", 1.0);
         loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::STATIC_FRONT,
-                         vectEnemy.back());
+                         m_enemyData[vectINISections[i]]);
         loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::STATIC_FRONT_LEFT,
-                         vectEnemy.back());
+                         m_enemyData[vectINISections[i]]);
         loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::STATIC_FRONT_RIGHT,
-                         vectEnemy.back());
+                         m_enemyData[vectINISections[i]]);
         loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::STATIC_BACK,
-                         vectEnemy.back());
+                         m_enemyData[vectINISections[i]]);
         loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::STATIC_BACK_LEFT,
-                         vectEnemy.back());
+                         m_enemyData[vectINISections[i]]);
         loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::STATIC_BACK_RIGHT,
-                         vectEnemy.back());
+                         m_enemyData[vectINISections[i]]);
         loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::STATIC_LEFT,
-                         vectEnemy.back());
+                         m_enemyData[vectINISections[i]]);
         loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::STATIC_RIGHT,
-                         vectEnemy.back());
+                         m_enemyData[vectINISections[i]]);
 
         loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::MOVE,
-                         vectEnemy.back());
+                         m_enemyData[vectINISections[i]]);
         loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::ATTACK,
-                         vectEnemy.back());
+                         m_enemyData[vectINISections[i]]);
         loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::DYING,
-                         vectEnemy.back());
+                         m_enemyData[vectINISections[i]]);
         loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::VISIBLE_SHOOT,
-                         vectEnemy.back());
+                         m_enemyData[vectINISections[i]]);
         loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::VISIBLE_SHOOT_DESTRUCT,
-                         vectEnemy.back());
+                         m_enemyData[vectINISections[i]]);
     }
-    m_level.setEnemyElement(vectEnemy);
+}
+
+//===================================================================
+void LevelManager::loadPositionEnemyData(const INIReader &reader)
+{
+    std::vector<std::string> vectINISections;
+    vectINISections = reader.getSectionNamesContaining("Enemy");
+    std::map<std::string, EnemyData>::iterator it;
+    for(uint32_t i = 0; i < vectINISections.size(); ++i)
+    {
+        it = m_enemyData.find(vectINISections[i]);
+        assert(it != m_enemyData.end());
+        fillStandartPositionVect(reader, vectINISections[i], it->second.m_TileGamePosition);
+    }
 }
 
 //===================================================================
@@ -681,6 +728,26 @@ void LevelManager::loadTextureData(const std::string &INIFileName)
 }
 
 //===================================================================
+void LevelManager::loadStandardData(const std::string &INIFileName)
+{
+    INIReader reader(LEVEL_RESSOURCES_DIR_STR + INIFileName);
+    if (reader.ParseError() < 0)
+    {
+        assert("Error while reading INI file.");
+    }
+    loadLevelData(reader);
+    loadWallData(reader);
+    loadGeneralStaticElements(reader, LevelStaticElementType_e::GROUND);
+    loadGeneralStaticElements(reader, LevelStaticElementType_e::CEILING);
+    loadGeneralStaticElements(reader, LevelStaticElementType_e::OBJECT);
+    loadExit(reader);
+    loadDoorData(reader);
+    loadEnemyData(reader);
+    loadUtilsData(reader);
+    loadWeaponsDisplayData(reader);
+}
+
+//===================================================================
 void LevelManager::loadFontData(const std::string &INIFileName)
 {
     INIReader reader(LEVEL_RESSOURCES_DIR_STR + INIFileName);
@@ -692,6 +759,26 @@ void LevelManager::loadFontData(const std::string &INIFileName)
 }
 
 //===================================================================
+void LevelManager::loadPositionStaticElements(const INIReader &reader)
+{
+    std::map<std::string, StaticLevelElementData>::iterator it = m_groundElement.begin();
+    for(; it != m_groundElement.end(); ++it)
+    {
+        fillStandartPositionVect(reader, it->first, it->second.m_TileGamePosition);
+    }
+    it = m_ceilingElement.begin();
+    for(; it != m_ceilingElement.end(); ++it)
+    {
+        fillStandartPositionVect(reader, it->first, it->second.m_TileGamePosition);
+    }
+    it = m_objectElement.begin();
+    for(; it != m_objectElement.end(); ++it)
+    {
+        fillStandartPositionVect(reader, it->first, it->second.m_TileGamePosition);
+    }
+}
+
+//===================================================================
 void LevelManager::loadLevel(const std::string &INIFileName, uint32_t levelNum)
 {
     INIReader reader(LEVEL_RESSOURCES_DIR_STR + std::string("Level") +
@@ -700,15 +787,10 @@ void LevelManager::loadLevel(const std::string &INIFileName, uint32_t levelNum)
     {
         assert("Error while reading INI file.");
     }
-    loadLevelData(reader);
-    loadPlayerData(reader);
-    loadWallData(reader);
-    loadGeneralStaticElements(reader, LevelStaticElementType_e::GROUND);
-    loadGeneralStaticElements(reader, LevelStaticElementType_e::CEILING);
-    loadGeneralStaticElements(reader, LevelStaticElementType_e::OBJECT);
-    loadExit(reader);
-    loadWeaponsDisplayData(reader);
-    loadDoorData(reader);
-    loadEnemyData(reader);
-    loadUtilsData(reader);
+    loadPositionPlayerData(reader);
+    loadPositionWall(reader);
+    loadPositionStaticElements(reader);
+    loadPositionExit(reader);
+    loadPositionDoorData(reader);
+    loadPositionEnemyData(reader);
 }
