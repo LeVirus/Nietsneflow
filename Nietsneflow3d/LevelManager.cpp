@@ -149,7 +149,6 @@ void LevelManager::loadPositionExit(const INIReader &reader)
     std::vector<uint32_t> results = convertStrToVectUI(gamePositions);
     for(uint32_t i = 0; i < results.size(); i += 2)
     {
-        std::cerr << "Exit " << results[i] << " " << results[i + 1] << "\n";
         m_exitStaticElement.m_TileGamePosition.push_back({results[i], results[i + 1]});
         deleteWall(m_exitStaticElement.m_TileGamePosition.back());
     }

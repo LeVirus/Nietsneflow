@@ -472,7 +472,7 @@ void FirstPersonDisplaySystem::setVectTextures(std::vector<Texture> &vectTexture
 //===================================================================
 void FirstPersonDisplaySystem::confNormalEntityVertex(uint32_t numEntity, VisionComponent *visionComp,
                                                       CollisionTag_e tag,
-                                                      float lateralPosDegree, float distance)
+                                                      float lateralPosGL, float distance)
 {
     PositionVertexComponent *positionComp = stairwayToComponentManager().
             searchComponentByType<PositionVertexComponent>(numEntity, Components_e::POSITION_VERTEX_COMPONENT);
@@ -484,7 +484,6 @@ void FirstPersonDisplaySystem::confNormalEntityVertex(uint32_t numEntity, Vision
     assert(visionComp);
     positionComp->m_vertex.resize(4);
     //convert to GL context
-    float lateralPosGL = lateralPosDegree;
     //quickfix
     if(distance < 1.5f)
     {
