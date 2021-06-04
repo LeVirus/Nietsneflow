@@ -504,9 +504,9 @@ void LevelManager::loadWallData(const INIReader &reader)
                           std::istream_iterator<std::string>());
         m_wallData[vectINISections[i]].m_sprites.reserve(results.size());
         //load sprites
-        for(uint32_t i = 0; i < results.size(); ++i)
+        for(uint32_t j = 0; j < results.size(); ++j)
         {
-            m_wallData[vectINISections[i]].m_sprites.emplace_back(*m_pictureData.getIdentifier(results[i]));
+            m_wallData[vectINISections[i]].m_sprites.emplace_back(*m_pictureData.getIdentifier(results[j]));
         }
     }
 }
