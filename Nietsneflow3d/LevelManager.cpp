@@ -735,7 +735,6 @@ void LevelManager::loadStandardData(const std::string &INIFileName)
     {
         assert("Error while reading INI file.");
     }
-    loadLevelData(reader);
     loadWallData(reader);
     loadGeneralStaticElements(reader, LevelStaticElementType_e::GROUND);
     loadGeneralStaticElements(reader, LevelStaticElementType_e::CEILING);
@@ -787,6 +786,7 @@ void LevelManager::loadLevel(const std::string &INIFileName, uint32_t levelNum)
     {
         assert("Error while reading INI file.");
     }
+    loadLevelData(reader);
     loadPositionPlayerData(reader);
     loadPositionWall(reader);
     loadPositionStaticElements(reader);
