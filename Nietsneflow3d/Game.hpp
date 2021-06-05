@@ -9,10 +9,8 @@ public:
     Game() = default;
     void loadLevelData(uint32_t levelNum);
     void initEngine();
-    inline void clearLevel()
-    {
-        m_mainEngine.clearLevel();
-    }
+    void loadStandardData();
+    void clearLevel();
     bool launchGame(bool &memGameOver);
 private:
     MainEngine m_mainEngine;

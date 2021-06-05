@@ -998,9 +998,9 @@ void MainEngine::confPlayerEntity(const std::vector<SpriteData> &vectSpriteData,
     map->m_absoluteMapPositionPX = getCenteredAbsolutePosition(map->m_coord);
     updatePlayerOrientation(*move, *pos, *vision);
     color->m_vertex.reserve(3);
-    color->m_vertex.emplace_back(0.9f, 0.00f, 0.00f, 1.0f);
-    color->m_vertex.emplace_back(0.9f, 0.00f, 0.00f, 1.0f);
-    color->m_vertex.emplace_back(0.9f, 0.00f, 0.00f, 1.0f);
+    color->m_vertex.emplace_back(tupleTetraFloat{0.9f, 0.00f, 0.00f, 1.0f});
+    color->m_vertex.emplace_back(tupleTetraFloat{0.9f, 0.00f, 0.00f, 1.0f});
+    color->m_vertex.emplace_back(tupleTetraFloat{0.9f, 0.00f, 0.00f, 1.0f});
     circleColl->m_ray = PLAYER_RAY;
     tagColl->m_tag = CollisionTag_e::PLAYER_CT;
     tagColl->m_shape = CollisionShape_e::CIRCLE_C;

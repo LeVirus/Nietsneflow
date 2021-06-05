@@ -17,6 +17,7 @@ public:
     void loadStandardData(const std::string &INIFileName);
     void loadFontData(const std::string &INIFileName);
     void loadLevel(const std::string &INIFileName, uint32_t levelNum);
+    void clearExistingPositionsElement();
     inline const PictureData &getPictureData()const {return m_pictureData;}
     inline const Level &getLevel()const {return m_level;}
     inline const FontData &getFontData()const {return m_fontData;}

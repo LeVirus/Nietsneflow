@@ -5,6 +5,7 @@ int main()
 {
     Game game;
     game.initEngine();
+    game.loadStandardData();
     bool memGameOver;
     for(uint32_t i = 1; i < 3; ++i)
     {

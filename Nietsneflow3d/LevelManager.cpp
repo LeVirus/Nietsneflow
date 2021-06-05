@@ -783,7 +783,7 @@ void LevelManager::loadLevel(const std::string &INIFileName, uint32_t levelNum)
 {
     INIReader reader(LEVEL_RESSOURCES_DIR_STR + std::string("Level") +
                      std::to_string(levelNum) + std::string ("/") + INIFileName);
-    if(reader.ParseError() < 0)
+    if(reader.ParseError() != 0)
     {
         assert("Error while reading INI file.");
     }
@@ -793,4 +793,34 @@ void LevelManager::loadLevel(const std::string &INIFileName, uint32_t levelNum)
     loadPositionExit(reader);
     loadPositionDoorData(reader);
     loadPositionEnemyData(reader);
+}
+
+//===================================================================
+void LevelManager::clearExistingPositionsElement()
+{
+    m_exitStaticElement.m_TileGamePosition.clear();
+    for(std::map<std::string, WallData>::iterator it = m_wallData.begin(); it != m_wallData.end(); ++it)
+    {
+        it->second.m_TileGamePosition.clear();
+    }
+    for(std::map<std::string, StaticLevelElementData>::iterator it = m_groundElement.begin(); it != m_groundElement.end(); ++it)
+    {
+        it->second.m_TileGamePosition.clear();
+    }
+    for(std::map<std::string, StaticLevelElementData>::iterator it = m_ceilingElement.begin(); it != m_ceilingElement.end(); ++it)
+    {
+        it->second.m_TileGamePosition.clear();
+    }
+    for(std::map<std::string, StaticLevelElementData>::iterator it = m_objectElement.begin(); it != m_objectElement.end(); ++it)
+    {
+        it->second.m_TileGamePosition.clear();
+    }
+    for(std::map<std::string, DoorData>::iterator it = m_doorData.begin(); it != m_doorData.end(); ++it)
+    {
+        it->second.m_TileGamePosition.clear();
+    }
+    for(std::map<std::string, EnemyData>::iterator it = m_enemyData.begin(); it != m_enemyData.end(); ++it)
+    {
+        it->second.m_TileGamePosition.clear();
+    }
 }
