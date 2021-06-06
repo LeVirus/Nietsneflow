@@ -605,6 +605,44 @@ void MainEngine::createAmmosEntities(AmmoContainer_t &ammoCount, CollisionTag_e 
 }
 
 //===================================================================
+void MainEngine::createShotImpactEntities(const std::vector<SpriteData> &vectSpriteData,
+                                          const std::vector<uint8_t> &vectSprite,
+                                          std::array<uint32_t, SEGMENT_SHOT_NUMBER> &entitiesContainer,
+                                          const AmmoContainer_t &segmentShotContainer)
+{
+    for(uint32_t i = 0; i < entitiesContainer.size(); ++i)
+    {
+        entitiesContainer[i] = createShotImpactEntity();
+        FPSVisibleStaticElementComponent *fpsStaticComp = m_ecsManager.getComponentManager().
+                searchComponentByType<FPSVisibleStaticElementComponent>(
+                    entitiesContainer[i], Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
+        GeneralCollisionComponent *genComp = m_ecsManager.getComponentManager().
+                searchComponentByType<GeneralCollisionComponent>(entitiesContainer[i],
+                                                              Components_e::GENERAL_COLLISION_COMPONENT);
+        CircleCollisionComponent *circleComp = m_ecsManager.getComponentManager().
+                searchComponentByType<CircleCollisionComponent>(entitiesContainer[i],
+                                                              Components_e::CIRCLE_COLLISION_COMPONENT);
+        assert(genComp);
+        assert(circleComp);
+        assert(fpsStaticComp);
+        fpsStaticComp->m_inGameSpriteSize = {0.1f, 0.1f};
+        fpsStaticComp->m_levelElementType = LevelStaticElementType_e::IMPACT;
+        genComp->m_active = false;
+        genComp->m_tag = CollisionTag_e::GHOST_CT;
+        genComp->m_shape = CollisionShape_e::CIRCLE_C;
+        circleComp->m_ray = 0.1f;
+        assert(segmentShotContainer[i]);
+        //mem impact entity in shot component
+        ShotConfComponent *shotComp = m_ecsManager.getComponentManager().
+                searchComponentByType<ShotConfComponent>(*segmentShotContainer[i],
+                                                         Components_e::SHOT_CONF_COMPONENT);
+        assert(shotComp);
+        shotComp->m_impactEntity = entitiesContainer[i];
+    }
+    loadShotImpactSprite(vectSpriteData, vectSprite, entitiesContainer);
+}
+
+//===================================================================
 void MainEngine::loadEnemySprites(const std::vector<SpriteData> &vectSprite,
                                   const std::map<std::string, EnemyData> &enemiesData, uint32_t numEntity,
                                   const AmmoContainer_t &visibleAmmo)
@@ -811,6 +849,21 @@ uint32_t MainEngine::createVisibleShotEntity()
 }
 
 //===================================================================
+uint32_t MainEngine::createShotImpactEntity()
+{
+    std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComponents;
+    bitsetComponents[Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT] = true;
+    bitsetComponents[Components_e::MAP_COORD_COMPONENT] = true;
+    bitsetComponents[Components_e::POSITION_VERTEX_COMPONENT] = true;
+    bitsetComponents[Components_e::SPRITE_TEXTURE_COMPONENT] = true;
+    bitsetComponents[Components_e::TIMER_COMPONENT] = true;
+    bitsetComponents[Components_e::MEM_SPRITE_DATA_COMPONENT] = true;
+    bitsetComponents[Components_e::GENERAL_COLLISION_COMPONENT] = true;
+    bitsetComponents[Components_e::CIRCLE_COLLISION_COMPONENT] = true;
+    return m_ecsManager.addEntity(bitsetComponents);
+}
+
+//===================================================================
 uint32_t MainEngine::createWriteEntity()
 {
     std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComponents;
@@ -976,8 +1029,11 @@ void MainEngine::confPlayerEntity(const std::vector<SpriteData> &vectSpriteData,
     createAmmosEntities(m_playerConf->m_visibleShootEntities, CollisionTag_e::BULLET_PLAYER_CT, true);
     confShotsEntities(m_playerConf->m_shootEntities, 1);
     confShotsEntities(m_playerConf->m_visibleShootEntities, 1);
+    createShotImpactEntities(vectSpriteData, level.getShotImpact(),
+                             m_playerConf->m_shotImpact, m_playerConf->m_shootEntities);
     loadPlayerVisibleShotsSprite(vectSpriteData, level.getVisibleShotsData(),
                                  m_playerConf->m_visibleShootEntities);
+
     map->m_coord = level.getPlayerDeparture();
     Direction_e playerDir = level.getPlayerDepartureDirection();
     switch(playerDir)
@@ -1007,7 +1063,7 @@ void MainEngine::confPlayerEntity(const std::vector<SpriteData> &vectSpriteData,
     m_playerConf->m_weaponEntity = numWeaponEntity;
     m_playerConf->m_currentWeapon = WeaponsType_e::GUN;
     m_playerConf->m_previousWeapon = WeaponsType_e::GUN;
-    //set standart weapon sprite
+    //set standard weapon sprite
     StaticDisplaySystem *staticDisplay = m_ecsManager.getSystemManager().
             searchSystemByType<StaticDisplaySystem>(static_cast<uint32_t>(Systems_e::STATIC_DISPLAY_SYSTEM));
     assert(staticDisplay);
@@ -1088,6 +1144,29 @@ void MainEngine::confShotsEntities(const AmmoContainer_t &ammoEntities, uint32_t
                                                          Components_e::SHOT_CONF_COMPONENT);
         assert(shotConfComp);
         shotConfComp->m_damage = damageValue;
+    }
+}
+
+//===================================================================
+void MainEngine::loadShotImpactSprite(const std::vector<SpriteData> &vectSpriteData,
+                                      const std::vector<uint8_t> &vectSprite,
+                                      std::array<uint32_t, SEGMENT_SHOT_NUMBER> &target)
+{
+    for(uint32_t k = 0; k < target.size(); ++k)
+    {
+        MemSpriteDataComponent *memComp = m_ecsManager.getComponentManager().
+                searchComponentByType<MemSpriteDataComponent>(target[k],
+                                                              Components_e::MEM_SPRITE_DATA_COMPONENT);
+        SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().
+                searchComponentByType<SpriteTextureComponent>(target[k],
+                                                              Components_e::SPRITE_TEXTURE_COMPONENT);
+        assert(memComp);
+        assert(spriteComp);
+        for(uint32_t l = 0; l < vectSprite.size(); ++l)
+        {
+            memComp->m_vectSpriteData.emplace_back(&vectSpriteData[vectSprite[l]]);
+        }
+        spriteComp->m_spriteData = &vectSpriteData[vectSprite[0]];
     }
 }
 

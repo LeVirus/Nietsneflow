@@ -6,11 +6,13 @@
 #include <cmath>
 #include <vector>
 
+inline const uint32_t SEGMENT_SHOT_NUMBER = 4;
+
 using pairUI_t = std::pair<uint32_t, uint32_t>;
 using pairLong_t = std::pair<long, long>;
 using pairFloat_t = std::pair<float, float>;
 using pairDouble_t = std::pair<double, double>;
-using AmmoContainer_t = std::array<std::optional<uint32_t>, 4>;
+using AmmoContainer_t = std::array<std::optional<uint32_t>, SEGMENT_SHOT_NUMBER>;
 enum Components_e
 {
     POSITION_VERTEX_COMPONENT,
@@ -173,7 +175,8 @@ enum class LevelStaticElementType_e
 {
     GROUND,
     CEILING,
-    OBJECT
+    OBJECT,
+    IMPACT
 };
 
 enum class Shader_e

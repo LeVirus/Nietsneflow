@@ -108,15 +108,22 @@ public:
         return m_vectVisibleShot;
     }
 
+    inline const std::vector<uint8_t> &getShotImpact()const
+    {
+        return m_vectShotImpact;
+    }
+
     static inline void setLevelSize(const pairFloat_t &pairLevelSize)
     {
         m_size = pairLevelSize;
     }
     inline void setWeaponsElement(const std::vector<pairUIPairFloat_t> &vectWeapons,
-                                  const std::vector<uint8_t> &visibleShot)
+                                  const std::vector<uint8_t> &visibleShot,
+                                  const std::vector<uint8_t> &shotImpact)
     {
         m_weaponsDisplayData = vectWeapons;
         m_vectVisibleShot = visibleShot;
+        m_vectShotImpact = shotImpact;
     }
 
     inline static float getRangeView()
@@ -135,7 +142,7 @@ private:
     Direction_e m_playerDepartureDirection;
     //store the sprite number and the screen display size
     std::vector<pairUIPairFloat_t> m_weaponsDisplayData;
-    std::vector<uint8_t> m_vectVisibleShot;
+    std::vector<uint8_t> m_vectVisibleShot, m_vectShotImpact;
     static std::vector<ElementRaycast> m_levelCaseType;
     static float m_rangeViewPX;
 };

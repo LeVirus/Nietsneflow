@@ -108,17 +108,19 @@ void LevelManager::loadGeneralStaticElements(const INIReader &reader,
     std::vector<std::string> vectINISections;
     switch(elementType)
     {
-        case LevelStaticElementType_e::GROUND:
+    case LevelStaticElementType_e::GROUND:
         vectINISections = reader.getSectionNamesContaining("Ground");
         memMap = &m_groundElement;
         break;
-        case LevelStaticElementType_e::CEILING:
+    case LevelStaticElementType_e::CEILING:
         vectINISections = reader.getSectionNamesContaining("Ceiling");
         memMap = &m_ceilingElement;
         break;
-        case LevelStaticElementType_e::OBJECT:
+    case LevelStaticElementType_e::OBJECT:
         vectINISections = reader.getSectionNamesContaining("Object");
         memMap = &m_objectElement;
+        break;
+    case LevelStaticElementType_e::IMPACT:
         break;
     }
     for(uint32_t i = 0; i < vectINISections.size(); ++i)
@@ -411,7 +413,7 @@ uint8_t LevelManager::getSpriteId(const INIReader &reader,
 void LevelManager::loadWeaponsDisplayData(const INIReader &reader)
 {
     std::vector<pairUIPairFloat_t> vectWeaponsDisplayData;
-    std::vector<uint8_t> vectVisibleShotsData;
+    std::vector<uint8_t> vectVisibleShotsData, vectShotImpact;
     std::vector<std::string> vectINISections;
     vectINISections = reader.getSectionNamesContaining("Weapons");
     assert(!vectINISections.empty());
@@ -420,7 +422,8 @@ void LevelManager::loadWeaponsDisplayData(const INIReader &reader)
     loadWeaponsData(reader, WeaponsType_e::SHOTGUN, vectINISections[0], vectWeaponsDisplayData);
     loadDisplayData(reader, vectINISections[0], "VisibleShot", vectVisibleShotsData);
     loadDisplayData(reader, vectINISections[0], "VisibleShotDestruct", vectVisibleShotsData);
-    m_level.setWeaponsElement(vectWeaponsDisplayData, vectVisibleShotsData);
+    loadDisplayData(reader, vectINISections[0], "ShotImpact", vectShotImpact);
+    m_level.setWeaponsElement(vectWeaponsDisplayData, vectVisibleShotsData, vectShotImpact);
 }
 
 //===================================================================

@@ -92,7 +92,6 @@ void CollisionSystem::execSystem()
             }
             treatCollision(mVectNumEntity[i], mVectNumEntity[j],
                            tagCompA, tagCompB);
-
         }
         if(tagCompA->m_tag == CollisionTag_e::PLAYER_ACTION_CT)
         {
@@ -100,8 +99,7 @@ void CollisionSystem::execSystem()
         }
         if(segmentCompA && m_memDistCurrentBulletColl.second > EPSILON_FLOAT)
         {
-            m_vectMemShots.emplace_back(tupleShot_t{segmentCompA, tagCompA,
-                                                    m_memDistCurrentBulletColl.first});
+            m_vectMemShots.emplace_back(pairUI_t{mVectNumEntity[i], m_memDistCurrentBulletColl.first});
         }
         treatSegmentShots();
         m_vectMemShots.clear();
@@ -133,26 +131,32 @@ void CollisionSystem::treatEnemyShooted(uint32_t enemyEntityNum, uint32_t damage
 //===================================================================
 void CollisionSystem::treatSegmentShots()
 {
-    GeneralCollisionComponent *tagComp;
+    GeneralCollisionComponent *tagCompTarget, *tagCompBullet;
     for(uint32_t i = 0; i < m_vectMemShots.size(); ++i)
     {
-        tagComp = stairwayToComponentManager().
+        tagCompTarget = stairwayToComponentManager().
                 searchComponentByType<GeneralCollisionComponent>(
-                    std::get<2>(m_vectMemShots[i]), Components_e::GENERAL_COLLISION_COMPONENT);
-        assert(tagComp);
-        if(tagComp->m_tag == CollisionTag_e::WALL_CT)
+                    m_vectMemShots[i].second, Components_e::GENERAL_COLLISION_COMPONENT);
+        assert(tagCompTarget);
+        if(tagCompTarget->m_tag == CollisionTag_e::WALL_CT)
         {
+            confImpactShots(i, false);
             continue;
         }
-        if(std::get<1>(m_vectMemShots[i])->m_tag == CollisionTag_e::BULLET_PLAYER_CT)
+        tagCompBullet = stairwayToComponentManager().
+                searchComponentByType<GeneralCollisionComponent>(
+                    m_vectMemShots[i].first, Components_e::GENERAL_COLLISION_COMPONENT);
+        assert(tagCompBullet);
+        if(tagCompBullet->m_tag == CollisionTag_e::BULLET_PLAYER_CT)
         {
-            treatEnemyShooted(std::get<2>(m_vectMemShots[i]));
-            std::get<1>(m_vectMemShots[i])->m_active = false;
+            treatEnemyShooted(m_vectMemShots[i].second);
+            tagCompBullet->m_active = false;
+            confImpactShots(i, true);
         }
-        else if(std::get<1>(m_vectMemShots[i])->m_tag == CollisionTag_e::BULLET_ENEMY_CT)
+        else if(tagCompBullet->m_tag == CollisionTag_e::BULLET_ENEMY_CT)
         {
             PlayerConfComponent *playerConfCompB = stairwayToComponentManager().
-                    searchComponentByType<PlayerConfComponent>(std::get<2>(m_vectMemShots[i]),
+                    searchComponentByType<PlayerConfComponent>(m_vectMemShots[i].second,
                                                                Components_e::PLAYER_CONF_COMPONENT);
             assert(playerConfCompB);
             //if player is dead
@@ -162,6 +166,35 @@ void CollisionSystem::treatSegmentShots()
             }
         }
     }
+}
+
+//===================================================================
+void CollisionSystem::confImpactShots(uint32_t iterationNum, bool enemyTarget)
+{
+    SegmentCollisionComponent *segmentBullet = stairwayToComponentManager().
+            searchComponentByType<SegmentCollisionComponent>(m_vectMemShots[iterationNum].first,
+                                                             Components_e::SEGMENT_COLLISION_COMPONENT);
+    assert(segmentBullet);
+    ShotConfComponent *shotComp = stairwayToComponentManager().
+            searchComponentByType<ShotConfComponent>(m_vectMemShots[iterationNum].first,
+                                                     Components_e::SHOT_CONF_COMPONENT);
+    assert(shotComp);
+    assert(shotComp->m_impactEntity);
+    uint32_t impactEntity = *shotComp->m_impactEntity;
+    MapCoordComponent *mapImpact = stairwayToComponentManager().
+            searchComponentByType<MapCoordComponent>(impactEntity,
+                                                     Components_e::MAP_COORD_COMPONENT);
+    GeneralCollisionComponent *genImpact = stairwayToComponentManager().
+            searchComponentByType<GeneralCollisionComponent>(impactEntity,
+                                                             Components_e::GENERAL_COLLISION_COMPONENT);
+    TimerComponent *timerImpact = stairwayToComponentManager().
+            searchComponentByType<TimerComponent>(impactEntity, Components_e::TIMER_COMPONENT);
+    assert(timerImpact);
+    assert(mapImpact);
+    assert(genImpact);
+    mapImpact->m_absoluteMapPositionPX = segmentBullet->m_points.second;
+    genImpact->m_active = true;
+    timerImpact->m_clockA = std::chrono::system_clock::now();
 }
 
 //===================================================================
@@ -588,9 +621,9 @@ void CollisionSystem::calcBulletSegment(SegmentCollisionComponent &segmentCompA)
                                            mapComp->m_absoluteMapPositionPX.second +
                                            rectComp->m_size.second}};
                 if(treatDisplayDoor(radiantAngle, doorComp->m_vertical,
-                                      segmentCompA.m_points.second,
-                                      doorPos, verticalLeadCoef, lateralLeadCoef,
-                                      textLateral, textFace))
+                                    segmentCompA.m_points.second,
+                                    doorPos, verticalLeadCoef, lateralLeadCoef,
+                                    textLateral, textFace))
                 {
                     break;
                 }
