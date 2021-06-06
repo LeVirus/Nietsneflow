@@ -628,7 +628,7 @@ void MainEngine::createShotImpactEntities(const std::vector<SpriteData> &vectSpr
         fpsStaticComp->m_inGameSpriteSize = {0.1f, 0.1f};
         fpsStaticComp->m_levelElementType = LevelStaticElementType_e::IMPACT;
         genComp->m_active = false;
-        genComp->m_tag = CollisionTag_e::GHOST_CT;
+        genComp->m_tag = CollisionTag_e::IMPACT_CT;
         genComp->m_shape = CollisionShape_e::CIRCLE_C;
         circleComp->m_ray = 0.1f;
         assert(segmentShotContainer[i]);
@@ -860,6 +860,7 @@ uint32_t MainEngine::createShotImpactEntity()
     bitsetComponents[Components_e::MEM_SPRITE_DATA_COMPONENT] = true;
     bitsetComponents[Components_e::GENERAL_COLLISION_COMPONENT] = true;
     bitsetComponents[Components_e::CIRCLE_COLLISION_COMPONENT] = true;
+    bitsetComponents[Components_e::IMPACT_CONF_COMPONENT] = true;
     return m_ecsManager.addEntity(bitsetComponents);
 }
 

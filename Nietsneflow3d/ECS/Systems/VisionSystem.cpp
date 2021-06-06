@@ -18,6 +18,7 @@
 #include <ECS/Components/EnemyConfComponent.hpp>
 #include <ECS/Components/TimerComponent.hpp>
 #include <ECS/Components/ShotConfComponent.hpp>
+#include <ECS/Components/ImpactShotComponent.hpp>
 
 //===========================================================================
 VisionSystem::VisionSystem(const ECSManager *memECSManager) :
@@ -123,6 +124,10 @@ void VisionSystem::updateSprites(uint32_t observerEntity,
                 updateEnemySprites(vectEntities[i], observerEntity,
                                    memSpriteComp, spriteComp, timerComp, enemyConfComp);
             }
+        }
+        else if(genComp->m_tag == CollisionTag_e::IMPACT_CT)
+        {
+            updateImpactSprites(vectEntities[i], memSpriteComp, spriteComp, timerComp, genComp);
         }
     }
 }
@@ -235,6 +240,34 @@ void VisionSystem::updateEnemySprites(uint32_t enemyEntity, uint32_t observerEnt
             enemyConfComp->m_displayMode = EnemyDisplayMode_e::DEAD;
             spriteComp->m_spriteData = memSpriteComp->
                     m_vectSpriteData[static_cast<uint32_t>(EnemySpriteType_e::DEAD)];
+        }
+    }
+}
+
+//===========================================================================
+void VisionSystem::updateImpactSprites(uint32_t entityImpact, MemSpriteDataComponent *memSpriteComp,
+                                       SpriteTextureComponent *spriteComp,
+                                       TimerComponent *timerComp,
+                                       GeneralCollisionComponent *genComp)
+{
+    ImpactShotComponent *impactComp = stairwayToComponentManager().
+            searchComponentByType<ImpactShotComponent>(entityImpact,
+                                                       Components_e::IMPACT_CONF_COMPONENT);
+    assert(impactComp);
+    std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() -
+            timerComp->m_clockA;
+    if(elapsed_seconds.count() > 0.25)
+    {
+        if(impactComp->m_spritePhase == ImpactPhase_e::FIRST)
+        {
+            uint32_t current = static_cast<uint32_t>(impactComp->m_spritePhase);
+            impactComp->m_spritePhase = static_cast<ImpactPhase_e>(++current);
+            spriteComp->m_spriteData = memSpriteComp->m_vectSpriteData[current];
+            timerComp->m_clockA = std::chrono::system_clock::now();
+        }
+        else
+        {
+            genComp->m_active = false;
         }
     }
 }

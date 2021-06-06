@@ -36,6 +36,7 @@ enum Components_e
     WRITE_COMPONENT,
     SHOT_CONF_COMPONENT,
     OBJECT_CONF_COMPONENT,
+    IMPACT_CONF_COMPONENT,
     TOTAL_COMPONENTS
 };
 
@@ -215,7 +216,8 @@ enum class CollisionTag_e
     BULLET_ENEMY_CT,
     GHOST_CT,
     OBJECT_CT,
-    EXIT_CT
+    EXIT_CT,
+    IMPACT_CT
 };
 
 enum class CollisionShape_e

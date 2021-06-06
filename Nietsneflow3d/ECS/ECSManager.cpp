@@ -20,6 +20,7 @@
 #include <ECS/Components/WriteComponent.hpp>
 #include <ECS/Components/ShotConfComponent.hpp>
 #include <ECS/Components/ObjectConfComponent.hpp>
+#include <ECS/Components/ImpactShotComponent.hpp>
 #include <ECS/Systems/ColorDisplaySystem.hpp>
 #include <ECS/Systems/MapDisplaySystem.hpp>
 #include <ECS/Systems/InputSystem.hpp>
@@ -255,6 +256,12 @@ void ECSManager::syncComponentsFromEntities(uint32_t numEntity,
         {
             m_componentManager->instanciateExternComponent(numEntity,
                                                            std::make_unique<ObjectConfComponent>());
+        }
+            break;
+        case Components_e::IMPACT_CONF_COMPONENT:
+        {
+            m_componentManager->instanciateExternComponent(numEntity,
+                                                           std::make_unique<ImpactShotComponent>());
         }
             break;
         case Components_e::TOTAL_COMPONENTS:

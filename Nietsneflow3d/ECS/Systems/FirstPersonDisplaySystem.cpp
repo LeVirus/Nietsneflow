@@ -501,6 +501,11 @@ void FirstPersonDisplaySystem::confNormalEntityVertex(uint32_t numEntity, Vision
         upPos = RAYCAST_VERTICAL_SIZE / (distance / LEVEL_TILE_SIZE_PX);
         downPos = upPos - fpsStaticComp->m_inGameSpriteSize.second / (distance / LEVEL_TILE_SIZE_PX);
     }
+    else if(fpsStaticComp->m_levelElementType == LevelStaticElementType_e::IMPACT)
+    {
+        downPos = -0.15f;
+        upPos = downPos + fpsStaticComp->m_inGameSpriteSize.second / (distance / LEVEL_TILE_SIZE_PX);
+    }
     else
     {
         downPos = -RAYCAST_VERTICAL_SIZE / (distance / LEVEL_TILE_SIZE_PX);

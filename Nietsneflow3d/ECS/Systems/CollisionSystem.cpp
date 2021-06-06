@@ -11,6 +11,9 @@
 #include <ECS/Components/EnemyConfComponent.hpp>
 #include <ECS/Components/TimerComponent.hpp>
 #include <ECS/Components/ShotConfComponent.hpp>
+#include <ECS/Components/ImpactShotComponent.hpp>
+#include <ECS/Components/MemSpriteDataComponent.hpp>
+#include <ECS/Components/SpriteTextureComponent.hpp>
 #include <ECS/Systems/FirstPersonDisplaySystem.hpp>
 #include <BaseECS/engine.hpp>
 #include <CollisionUtils.hpp>
@@ -189,9 +192,20 @@ void CollisionSystem::confImpactShots(uint32_t iterationNum, bool enemyTarget)
                                                              Components_e::GENERAL_COLLISION_COMPONENT);
     TimerComponent *timerImpact = stairwayToComponentManager().
             searchComponentByType<TimerComponent>(impactEntity, Components_e::TIMER_COMPONENT);
+    ImpactShotComponent *impactComp= stairwayToComponentManager().
+            searchComponentByType<ImpactShotComponent>(impactEntity, Components_e::IMPACT_CONF_COMPONENT);
+    SpriteTextureComponent *spriteComp= stairwayToComponentManager().
+            searchComponentByType<SpriteTextureComponent>(impactEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
+    MemSpriteDataComponent *memSpriteComp= stairwayToComponentManager().
+            searchComponentByType<MemSpriteDataComponent>(impactEntity, Components_e::MEM_SPRITE_DATA_COMPONENT);
     assert(timerImpact);
+    assert(memSpriteComp);
+    assert(spriteComp);
+    assert(impactComp);
     assert(mapImpact);
     assert(genImpact);
+    impactComp->m_spritePhase = ImpactPhase_e::FIRST;
+    spriteComp->m_spriteData = memSpriteComp->m_vectSpriteData[static_cast<uint32_t>(impactComp->m_spritePhase)];
     mapImpact->m_absoluteMapPositionPX = segmentBullet->m_points.second;
     genImpact->m_active = true;
     timerImpact->m_clockA = std::chrono::system_clock::now();
@@ -600,6 +614,7 @@ void CollisionSystem::calcBulletSegment(SegmentCollisionComponent &segmentCompA)
         {
             if(element->m_type == LevelCaseType_e::WALL_LC)
             {
+                m_memDistCurrentBulletColl = {element->m_numEntity, 10000.0f};
                 break;
             }
             else if(element->m_type == LevelCaseType_e::DOOR_LC)
@@ -625,6 +640,7 @@ void CollisionSystem::calcBulletSegment(SegmentCollisionComponent &segmentCompA)
                                     doorPos, verticalLeadCoef, lateralLeadCoef,
                                     textLateral, textFace))
                 {
+                    m_memDistCurrentBulletColl = {element->m_numEntity, 10000.0f};
                     break;
                 }
             }
