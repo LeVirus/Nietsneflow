@@ -39,6 +39,8 @@ private:
 
 void moveElement(MoveableComponent &moveComp, float distanceMove,
                  MapCoordComponent &mapComp, MoveOrientation_e moveDirection);
+void moveElementFromAngle(float distanceMove, float radiantAngle,
+                          MapCoordComponent &mapComp);
 void updatePlayerOrientation(const MoveableComponent &moveComp,
                              PositionVertexComponent &posComp, VisionComponent &visionComp);
 void updatePlayerArrow(const MoveableComponent &moveComp,

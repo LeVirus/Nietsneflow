@@ -141,7 +141,8 @@ void CollisionSystem::treatSegmentShots()
                 searchComponentByType<GeneralCollisionComponent>(
                     m_vectMemShots[i].second, Components_e::GENERAL_COLLISION_COMPONENT);
         assert(tagCompTarget);
-        if(tagCompTarget->m_tag == CollisionTag_e::WALL_CT)
+        if(tagCompTarget->m_tag == CollisionTag_e::WALL_CT ||
+                tagCompTarget->m_tag == CollisionTag_e::DOOR_CT)
         {
             confImpactShots(i, false);
             continue;
@@ -198,6 +199,9 @@ void CollisionSystem::confImpactShots(uint32_t iterationNum, bool enemyTarget)
             searchComponentByType<SpriteTextureComponent>(impactEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
     MemSpriteDataComponent *memSpriteComp= stairwayToComponentManager().
             searchComponentByType<MemSpriteDataComponent>(impactEntity, Components_e::MEM_SPRITE_DATA_COMPONENT);
+    MapCoordComponent *mapTargetComp = stairwayToComponentManager().
+            searchComponentByType<MapCoordComponent>(m_vectMemShots[iterationNum].second, Components_e::MAP_COORD_COMPONENT);
+    assert(mapTargetComp);
     assert(timerImpact);
     assert(memSpriteComp);
     assert(spriteComp);
@@ -206,7 +210,17 @@ void CollisionSystem::confImpactShots(uint32_t iterationNum, bool enemyTarget)
     assert(genImpact);
     impactComp->m_spritePhase = ImpactPhase_e::FIRST;
     spriteComp->m_spriteData = memSpriteComp->m_vectSpriteData[static_cast<uint32_t>(impactComp->m_spritePhase)];
-    mapImpact->m_absoluteMapPositionPX = segmentBullet->m_points.second;
+    if(m_memDistCurrentBulletColl.second >= 10000.0f)
+    {
+        mapImpact->m_absoluteMapPositionPX = segmentBullet->m_points.second;
+    }
+    else
+    {
+        mapImpact->m_absoluteMapPositionPX = segmentBullet->m_points.first;
+        float radiantAngle = getTrigoAngle(segmentBullet->m_points.first,
+                                           segmentBullet->m_points.second, false);
+        moveElementFromAngle(m_memDistCurrentBulletColl.second, radiantAngle, *mapImpact);
+    }
     genImpact->m_active = true;
     timerImpact->m_clockA = std::chrono::system_clock::now();
 }

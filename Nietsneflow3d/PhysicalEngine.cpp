@@ -91,6 +91,14 @@ void moveElement(MoveableComponent &moveComp, float distanceMove,
     }
     moveComp.m_currentDegreeMoveDirection = angle;
     radiantAngle = getRadiantAngle(angle);
+    moveElementFromAngle(distanceMove, radiantAngle, mapComp);
+    mapComp.m_coord = *getLevelCoord(mapComp.m_absoluteMapPositionPX);
+}
+
+//===================================================================
+void moveElementFromAngle(float distanceMove, float radiantAngle,
+                          MapCoordComponent &mapComp)
+{
     mapComp.m_absoluteMapPositionPX.first +=
             cos(radiantAngle) * distanceMove;
     if(mapComp.m_absoluteMapPositionPX.first < distanceMove)
@@ -103,7 +111,6 @@ void moveElement(MoveableComponent &moveComp, float distanceMove,
     {
         mapComp.m_absoluteMapPositionPX.second = distanceMove;
     }
-    mapComp.m_coord = *getLevelCoord(mapComp.m_absoluteMapPositionPX);
 }
 
 //===================================================================
