@@ -805,9 +805,12 @@ bool treatVerticalIntersectDoor(pairFloat_t &currentPoint, const pairFloat_t doo
     float diffVert;
     pairFloat_t tmpPos = currentPoint;
     tmpPos.first = (leftCase) ? doorPos[0].first : doorPos[0].second;
-    diffVert = *verticalLeadCoef * std::abs(tmpPos.first - currentPoint.first) /
-            LEVEL_TILE_SIZE_PX;
-    tmpPos.second += diffVert;
+    if(std::abs(std::sin(radiantAngle)) > 0.0001f)
+    {
+        diffVert = *verticalLeadCoef * std::abs(tmpPos.first - currentPoint.first) /
+                LEVEL_TILE_SIZE_PX;
+        tmpPos.second += diffVert;
+    }
     if(tmpPos.second >= doorPos[1].first && tmpPos.second <= doorPos[1].second)
     {
         currentPoint = tmpPos;
