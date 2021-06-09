@@ -122,6 +122,8 @@ void CollisionSystem::treatEnemyShooted(uint32_t enemyEntityNum, uint32_t damage
     assert(timerComp);
     enemyConfCompB->m_touched = true;
     timerComp->m_clockC = std::chrono::system_clock::now();
+    timerComp->m_clockB = std::chrono::system_clock::now();
+    enemyConfCompB->m_attackPhase = EnemyAttackPhase_e::SHOOTED;
     //if enemy dead
     if(!enemyConfCompB->takeDamage(damage))
     {

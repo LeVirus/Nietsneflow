@@ -249,7 +249,7 @@ void IASystem::treatEnemyBehaviourAttack(uint32_t enemyEntity, MapCoordComponent
     assert(timerComp);
     std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() -
             timerComp->m_clockB;
-    if(elapsed_seconds.count() > 0.7)
+    if(elapsed_seconds.count() > 0.4)
     {
         enemyConfComp->m_attackPhase =
                 static_cast<EnemyAttackPhase_e>(std::rand() / ((RAND_MAX + 1u) / 4));
@@ -269,6 +269,7 @@ void IASystem::treatEnemyBehaviourAttack(uint32_t enemyEntity, MapCoordComponent
         }
     }
     else if(enemyConfComp->m_attackPhase != EnemyAttackPhase_e::SHOOT &&
+            enemyConfComp->m_attackPhase != EnemyAttackPhase_e::SHOOTED &&
             distancePlayer > LEVEL_TILE_SIZE_PX)
     {
         if(enemyConfComp->m_wallTouch.first)

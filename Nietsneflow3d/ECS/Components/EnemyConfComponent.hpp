@@ -25,7 +25,8 @@ enum class EnemyAttackPhase_e
     MOVE_TO_TARGET_LEFT,
     SHOOT,
     GET_AROUND_WALL_LEFT,
-    GET_AROUND_WALL_RIGHT
+    GET_AROUND_WALL_RIGHT,
+    SHOOTED//FROZEN
 };
 
 struct EnemyConfComponent : public ecs::Component
