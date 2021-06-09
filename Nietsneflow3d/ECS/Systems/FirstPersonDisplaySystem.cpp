@@ -698,10 +698,10 @@ std::optional<float> FirstPersonDisplaySystem::treatDoorRaycast(uint32_t numEnti
 bool treatDisplayDoor(float radiantAngle, bool doorVertical, pairFloat_t &currentPoint,
                       const pairFloat_t doorPos[], std::optional<float> verticalLeadCoef,
                       std::optional<float> lateralLeadCoef,
-                      bool &textLateral, bool &textFace)
+                      bool &textLateral, bool &textFace, bool bull)
 {
     //exclude case
-    if((std::cos(radiantAngle) < 0.0f && currentPoint.first < doorPos[0].first) ||
+    if((!bull && std::cos(radiantAngle) < 0.0f && currentPoint.first < doorPos[0].first) ||
             (std::cos(radiantAngle) > 0.0f && currentPoint.first > doorPos[0].second))
     {
         return false;

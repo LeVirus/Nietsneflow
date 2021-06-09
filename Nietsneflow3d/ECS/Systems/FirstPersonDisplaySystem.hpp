@@ -89,7 +89,7 @@ pairFloat_t getIntersectCoord(const pairFloat_t &observerPoint, const pairFloat_
                               float centerAngleVision, bool outLeft, bool YIntersect);
 bool treatDisplayDoor(float radiantAngle, bool doorVertical, pairFloat_t &currentPoint,
                       const pairFloat_t doorPos[], std::optional<float> verticalLeadCoef,
-                      std::optional<float> lateralLeadCoef, bool &textLateral, bool &textFace);
+                      std::optional<float> lateralLeadCoef, bool &textLateral, bool &textFace, bool bull = false);
 bool treatVerticalIntersectDoor(pairFloat_t &currentPoint, const pairFloat_t doorPos[],
                                std::optional<float> verticalLeadCoef, float radiantAngle);
 //return true if door collision

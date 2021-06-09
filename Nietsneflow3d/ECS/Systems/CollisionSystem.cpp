@@ -652,7 +652,7 @@ void CollisionSystem::calcBulletSegment(SegmentCollisionComponent &segmentCompA)
                 if(treatDisplayDoor(radiantAngle, doorComp->m_vertical,
                                     segmentCompA.m_points.second,
                                     doorPos, verticalLeadCoef, lateralLeadCoef,
-                                    textLateral, textFace))
+                                    textLateral, textFace, true))
                 {
                     m_memDistCurrentBulletColl = {element->m_numEntity, 10000.0f};
                     break;
