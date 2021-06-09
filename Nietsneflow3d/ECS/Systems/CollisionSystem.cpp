@@ -618,6 +618,11 @@ void CollisionSystem::calcBulletSegment(SegmentCollisionComponent &segmentCompA)
         segmentCompA.m_points.second = getLimitPointRayCasting(segmentCompA.m_points.second,
                                                                radiantAngle, lateralLeadCoef,
                                                                verticalLeadCoef, lateral);
+        //quickfix
+        if(std::cos(radiantAngle) < 0.0f && std::abs(std::sin(radiantAngle)) < 0.0001f)
+        {
+            lateral = false;
+        }
         currentCoord = getCorrectedCoord(segmentCompA.m_points.second, lateral, radiantAngle);
         if(!currentCoord)
         {
