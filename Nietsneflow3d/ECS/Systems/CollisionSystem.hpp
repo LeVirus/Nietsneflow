@@ -28,7 +28,7 @@ public:
     }
 private:
     void treatSegmentShots();
-    void confImpactShots(uint32_t iterationNum);
+    void confImpactShots(uint32_t numBullet);
     void rmCollisionMaskEntity(uint32_t numEntity);
     void setUsedComponents();
     void initArrayTag();

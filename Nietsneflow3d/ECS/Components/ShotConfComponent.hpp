@@ -11,7 +11,7 @@ struct ShotConfComponent : public ecs::Component
         muiTypeComponent = Components_e::SHOT_CONF_COMPONENT;
     }
     uint32_t m_damage = 5;
-    std::optional<uint32_t> m_impactEntity;
+    static std::array<uint32_t, 4> m_impactEntities;
     bool m_destructPhase = false;
     ShotPhase_e m_spritePhaseShot = ShotPhase_e::NORMAL;
     virtual ~ShotConfComponent() = default;

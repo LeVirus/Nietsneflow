@@ -30,6 +30,8 @@
 #include <LevelManager.hpp>
 #include <cassert>
 
+std::array<uint32_t, 4> ShotConfComponent::m_impactEntities;
+
 //===================================================================
 void MainEngine::init()
 {
@@ -610,6 +612,10 @@ void MainEngine::createShotImpactEntities(const std::vector<SpriteData> &vectSpr
                                           std::array<uint32_t, SEGMENT_SHOT_NUMBER> &entitiesContainer,
                                           const AmmoContainer_t &segmentShotContainer)
 {
+    ShotConfComponent *shotComp = m_ecsManager.getComponentManager().
+            searchComponentByType<ShotConfComponent>(*segmentShotContainer[0],
+                                                     Components_e::SHOT_CONF_COMPONENT);
+    assert(shotComp);
     for(uint32_t i = 0; i < entitiesContainer.size(); ++i)
     {
         entitiesContainer[i] = createShotImpactEntity();
@@ -633,11 +639,7 @@ void MainEngine::createShotImpactEntities(const std::vector<SpriteData> &vectSpr
         circleComp->m_ray = 0.1f;
         assert(segmentShotContainer[i]);
         //mem impact entity in shot component
-        ShotConfComponent *shotComp = m_ecsManager.getComponentManager().
-                searchComponentByType<ShotConfComponent>(*segmentShotContainer[i],
-                                                         Components_e::SHOT_CONF_COMPONENT);
-        assert(shotComp);
-        shotComp->m_impactEntity = entitiesContainer[i];
+        shotComp->m_impactEntities[i] = entitiesContainer[i];
     }
     loadShotImpactSprite(vectSpriteData, vectSprite, entitiesContainer);
 }

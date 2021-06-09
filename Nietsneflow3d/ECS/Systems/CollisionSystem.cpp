@@ -175,41 +175,57 @@ void CollisionSystem::treatSegmentShots()
 }
 
 //===================================================================
-void CollisionSystem::confImpactShots(uint32_t iterationNum)
+void CollisionSystem::confImpactShots(uint32_t numBullet)
 {
-    SegmentCollisionComponent *segmentBullet = stairwayToComponentManager().
-            searchComponentByType<SegmentCollisionComponent>(m_vectMemShots[iterationNum].first,
-                                                             Components_e::SEGMENT_COLLISION_COMPONENT);
-    assert(segmentBullet);
     ShotConfComponent *shotComp = stairwayToComponentManager().
-            searchComponentByType<ShotConfComponent>(m_vectMemShots[iterationNum].first,
+            searchComponentByType<ShotConfComponent>(m_vectMemShots[numBullet].first,
                                                      Components_e::SHOT_CONF_COMPONENT);
     assert(shotComp);
-    assert(shotComp->m_impactEntity);
-    uint32_t impactEntity = *shotComp->m_impactEntity;
+    //remove warning
+    GeneralCollisionComponent *genImpact = nullptr;
+    uint32_t impactEntity, current;
+    for(current = 0; current < shotComp->m_impactEntities.size(); ++current)
+    {
+
+        genImpact = stairwayToComponentManager().
+                searchComponentByType<GeneralCollisionComponent>(shotComp->m_impactEntities[current],
+                                                                 Components_e::GENERAL_COLLISION_COMPONENT);
+        assert(genImpact);
+        if(genImpact->m_active)
+        {
+            if(current == (shotComp->m_impactEntities.size() - 1))
+            {
+                return;
+            }
+            continue;
+        }
+        break;
+    }
+    impactEntity = shotComp->m_impactEntities[current];
+    ImpactShotComponent *impactComp = stairwayToComponentManager().
+            searchComponentByType<ImpactShotComponent>(impactEntity, Components_e::IMPACT_CONF_COMPONENT);
+    assert(impactComp);
+    SegmentCollisionComponent *segmentBullet = stairwayToComponentManager().
+            searchComponentByType<SegmentCollisionComponent>(m_vectMemShots[numBullet].first,
+                                                             Components_e::SEGMENT_COLLISION_COMPONENT);
+    assert(segmentBullet);
     MapCoordComponent *mapImpact = stairwayToComponentManager().
             searchComponentByType<MapCoordComponent>(impactEntity,
                                                      Components_e::MAP_COORD_COMPONENT);
-    GeneralCollisionComponent *genImpact = stairwayToComponentManager().
-            searchComponentByType<GeneralCollisionComponent>(impactEntity,
-                                                             Components_e::GENERAL_COLLISION_COMPONENT);
+
     TimerComponent *timerImpact = stairwayToComponentManager().
             searchComponentByType<TimerComponent>(impactEntity, Components_e::TIMER_COMPONENT);
-    ImpactShotComponent *impactComp= stairwayToComponentManager().
-            searchComponentByType<ImpactShotComponent>(impactEntity, Components_e::IMPACT_CONF_COMPONENT);
     SpriteTextureComponent *spriteComp= stairwayToComponentManager().
             searchComponentByType<SpriteTextureComponent>(impactEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
     MemSpriteDataComponent *memSpriteComp= stairwayToComponentManager().
             searchComponentByType<MemSpriteDataComponent>(impactEntity, Components_e::MEM_SPRITE_DATA_COMPONENT);
     MapCoordComponent *mapTargetComp = stairwayToComponentManager().
-            searchComponentByType<MapCoordComponent>(m_vectMemShots[iterationNum].second, Components_e::MAP_COORD_COMPONENT);
+            searchComponentByType<MapCoordComponent>(m_vectMemShots[numBullet].second, Components_e::MAP_COORD_COMPONENT);
     assert(mapTargetComp);
     assert(timerImpact);
     assert(memSpriteComp);
     assert(spriteComp);
-    assert(impactComp);
     assert(mapImpact);
-    assert(genImpact);
     impactComp->m_spritePhase = ImpactPhase_e::FIRST;
     spriteComp->m_spriteData = memSpriteComp->m_vectSpriteData[static_cast<uint32_t>(impactComp->m_spritePhase)];
     if(m_memDistCurrentBulletColl.second >= 10000.0f)

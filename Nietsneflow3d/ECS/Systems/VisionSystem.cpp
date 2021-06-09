@@ -257,7 +257,7 @@ void VisionSystem::updateImpactSprites(uint32_t entityImpact, MemSpriteDataCompo
     std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() -
             timerComp->m_clockA;
     impactComp->m_moveUp += 0.02f;
-    if(elapsed_seconds.count() > 0.10)
+    if(elapsed_seconds.count() > 0.20)
     {
         if(impactComp->m_spritePhase == ImpactPhase_e::FIRST)
         {
