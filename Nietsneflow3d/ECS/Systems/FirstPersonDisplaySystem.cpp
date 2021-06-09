@@ -771,9 +771,12 @@ bool treatLateralIntersectDoor(pairFloat_t &currentPoint, const pairFloat_t door
     float diffLat;
     pairFloat_t tmpPos = currentPoint;
     tmpPos.second = (upCase) ? doorPos[1].first : doorPos[1].second;
-    diffLat = *lateralLeadCoef * std::abs(tmpPos.second - currentPoint.second) /
-            LEVEL_TILE_SIZE_PX;
-    tmpPos.first += diffLat;
+    if(std::abs(std::cos(radiantAngle)) > 0.0001f)
+    {
+        diffLat = *lateralLeadCoef * std::abs(tmpPos.second - currentPoint.second) /
+                LEVEL_TILE_SIZE_PX;
+        tmpPos.first += diffLat;
+    }
     if(tmpPos.first >= doorPos[0].first && tmpPos.first <= doorPos[0].second)
     {
         currentPoint = tmpPos;
