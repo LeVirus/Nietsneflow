@@ -491,7 +491,8 @@ void FirstPersonDisplaySystem::confNormalEntityVertex(uint32_t numEntity, Vision
     }
     float halfLateralSize = fpsStaticComp->m_inGameSpriteSize.first  / (distance / LEVEL_TILE_SIZE_PX),
             downPos, upPos;
-    if(tag == CollisionTag_e::BULLET_ENEMY_CT || tag == CollisionTag_e::BULLET_PLAYER_CT)
+    if(tag == CollisionTag_e::BULLET_ENEMY_CT || tag == CollisionTag_e::BULLET_PLAYER_CT
+            || fpsStaticComp->m_levelElementType == LevelStaticElementType_e::IMPACT)
     {
         downPos = -0.3f / (distance / LEVEL_TILE_SIZE_PX);
         upPos = downPos + fpsStaticComp->m_inGameSpriteSize.second / (distance / LEVEL_TILE_SIZE_PX);
@@ -500,11 +501,6 @@ void FirstPersonDisplaySystem::confNormalEntityVertex(uint32_t numEntity, Vision
     {
         upPos = RAYCAST_VERTICAL_SIZE / (distance / LEVEL_TILE_SIZE_PX);
         downPos = upPos - fpsStaticComp->m_inGameSpriteSize.second / (distance / LEVEL_TILE_SIZE_PX);
-    }
-    else if(fpsStaticComp->m_levelElementType == LevelStaticElementType_e::IMPACT)
-    {
-        downPos = -0.15f;
-        upPos = downPos + fpsStaticComp->m_inGameSpriteSize.second / (distance / LEVEL_TILE_SIZE_PX);
     }
     else
     {
@@ -700,7 +696,7 @@ std::optional<float> FirstPersonDisplaySystem::treatDoorRaycast(uint32_t numEnti
 
 //===================================================================
 bool treatDisplayDoor(float radiantAngle, bool doorVertical, pairFloat_t &currentPoint,
-                      pairFloat_t doorPos[], std::optional<float> verticalLeadCoef,
+                      const pairFloat_t doorPos[], std::optional<float> verticalLeadCoef,
                       std::optional<float> lateralLeadCoef,
                       bool &textLateral, bool &textFace)
 {
@@ -717,7 +713,7 @@ bool treatDisplayDoor(float radiantAngle, bool doorVertical, pairFloat_t &curren
     }
     if(doorVertical)
     {
-        if(treatLateralIntersectDoor(currentPoint, doorPos, *lateralLeadCoef))
+        if(treatLateralIntersectDoor(currentPoint, doorPos, lateralLeadCoef, radiantAngle))
         {
             //determine if this is face of the door
             textFace = false;
@@ -727,7 +723,7 @@ bool treatDisplayDoor(float radiantAngle, bool doorVertical, pairFloat_t &curren
         {
             return false;
         }
-        if(treatVerticalIntersectDoor(currentPoint, doorPos, *verticalLeadCoef))
+        if(treatVerticalIntersectDoor(currentPoint, doorPos, verticalLeadCoef, radiantAngle))
         {
             textLateral = false;
             textFace = true;
@@ -736,7 +732,7 @@ bool treatDisplayDoor(float radiantAngle, bool doorVertical, pairFloat_t &curren
     }
     else
     {
-        if(treatVerticalIntersectDoor(currentPoint, doorPos, *verticalLeadCoef))
+        if(treatVerticalIntersectDoor(currentPoint, doorPos, verticalLeadCoef, radiantAngle))
         {
             textFace = false;
             return true;
@@ -745,7 +741,7 @@ bool treatDisplayDoor(float radiantAngle, bool doorVertical, pairFloat_t &curren
         {
             return false;
         }
-        if(treatLateralIntersectDoor(currentPoint, doorPos, *lateralLeadCoef))
+        if(treatLateralIntersectDoor(currentPoint, doorPos, lateralLeadCoef, radiantAngle))
         {
             textLateral = true;
             textFace = true;
@@ -757,7 +753,7 @@ bool treatDisplayDoor(float radiantAngle, bool doorVertical, pairFloat_t &curren
 
 //===================================================================
 bool treatLateralIntersectDoor(pairFloat_t &currentPoint, const pairFloat_t doorPos[],
-                               float lateralLeadCoef)
+                               std::optional<float> lateralLeadCoef, float radiantAngle)
 {
     bool upCase;
     if(currentPoint.second <= doorPos[1].first)
@@ -775,7 +771,7 @@ bool treatLateralIntersectDoor(pairFloat_t &currentPoint, const pairFloat_t door
     float diffLat;
     pairFloat_t tmpPos = currentPoint;
     tmpPos.second = (upCase) ? doorPos[1].first : doorPos[1].second;
-    diffLat = lateralLeadCoef * std::abs(tmpPos.second - currentPoint.second) /
+    diffLat = *lateralLeadCoef * std::abs(tmpPos.second - currentPoint.second) /
             LEVEL_TILE_SIZE_PX;
     tmpPos.first += diffLat;
     if(tmpPos.first >= doorPos[0].first && tmpPos.first <= doorPos[0].second)
@@ -788,7 +784,7 @@ bool treatLateralIntersectDoor(pairFloat_t &currentPoint, const pairFloat_t door
 
 //===================================================================
 bool treatVerticalIntersectDoor(pairFloat_t &currentPoint, const pairFloat_t doorPos[],
-                                float verticalLeadCoef)
+                                std::optional<float> verticalLeadCoef, float radiantAngle)
 {
     bool leftCase;
     if(currentPoint.first <= doorPos[0].first)
@@ -806,7 +802,7 @@ bool treatVerticalIntersectDoor(pairFloat_t &currentPoint, const pairFloat_t doo
     float diffVert;
     pairFloat_t tmpPos = currentPoint;
     tmpPos.first = (leftCase) ? doorPos[0].first : doorPos[0].second;
-    diffVert = verticalLeadCoef * std::abs(tmpPos.first - currentPoint.first) /
+    diffVert = *verticalLeadCoef * std::abs(tmpPos.first - currentPoint.first) /
             LEVEL_TILE_SIZE_PX;
     tmpPos.second += diffVert;
     if(tmpPos.second >= doorPos[1].first && tmpPos.second <= doorPos[1].second)

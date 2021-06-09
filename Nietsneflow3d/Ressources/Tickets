@@ -1,5 +1,8 @@
 BUGS======================================================================
 
+-3)
+Bullets impacts does not follow moveable  target
+
 -2)
 Bullets impact does not display when angle  == 90
 
