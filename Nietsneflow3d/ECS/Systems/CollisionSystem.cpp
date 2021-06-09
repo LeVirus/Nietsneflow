@@ -186,7 +186,6 @@ void CollisionSystem::confImpactShots(uint32_t numBullet)
     uint32_t impactEntity, current;
     for(current = 0; current < shotComp->m_impactEntities.size(); ++current)
     {
-
         genImpact = stairwayToComponentManager().
                 searchComponentByType<GeneralCollisionComponent>(shotComp->m_impactEntities[current],
                                                                  Components_e::GENERAL_COLLISION_COMPONENT);
@@ -608,8 +607,9 @@ void CollisionSystem::checkCollisionFirstSegment(uint32_t numEntityA, uint32_t n
                                        segmentCompA.m_points.first,
                                        segmentCompA.m_points.second))
         {
+            //Fix impact displayed behind element
             float distance = getDistance(segmentCompA.m_points.first,
-                                         mapCompB.m_absoluteMapPositionPX);
+                                         mapCompB.m_absoluteMapPositionPX) - 5.0f;
             if(m_memDistCurrentBulletColl.second <= EPSILON_FLOAT ||
                     distance < m_memDistCurrentBulletColl.second)
             {
