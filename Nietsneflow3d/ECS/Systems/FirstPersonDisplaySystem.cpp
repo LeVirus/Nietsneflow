@@ -13,6 +13,7 @@
 #include <ECS/Components/CircleCollisionComponent.hpp>
 #include <ECS/Components/DoorComponent.hpp>
 #include <ECS/Components/PlayerConfComponent.hpp>
+#include <ECS/Components/ImpactShotComponent.hpp>
 #include <ECS/Systems/ColorDisplaySystem.hpp>
 #include <PictureData.hpp>
 #include <cmath>
@@ -491,10 +492,18 @@ void FirstPersonDisplaySystem::confNormalEntityVertex(uint32_t numEntity, Vision
     }
     float halfLateralSize = fpsStaticComp->m_inGameSpriteSize.first  / (distance / LEVEL_TILE_SIZE_PX),
             downPos, upPos;
-    if(tag == CollisionTag_e::BULLET_ENEMY_CT || tag == CollisionTag_e::BULLET_PLAYER_CT
-            || fpsStaticComp->m_levelElementType == LevelStaticElementType_e::IMPACT)
+    if(tag == CollisionTag_e::BULLET_ENEMY_CT || tag == CollisionTag_e::BULLET_PLAYER_CT)
     {
         downPos = -0.3f / (distance / LEVEL_TILE_SIZE_PX);
+        upPos = downPos + fpsStaticComp->m_inGameSpriteSize.second / (distance / LEVEL_TILE_SIZE_PX);
+    }
+    else if(fpsStaticComp->m_levelElementType == LevelStaticElementType_e::IMPACT)
+    {
+        ImpactShotComponent *impactComp = stairwayToComponentManager().
+            searchComponentByType<ImpactShotComponent>(numEntity,
+                                                       Components_e::IMPACT_CONF_COMPONENT);
+        assert(impactComp);
+        downPos = (-0.3f + impactComp->m_moveUp) / (distance / LEVEL_TILE_SIZE_PX);
         upPos = downPos + fpsStaticComp->m_inGameSpriteSize.second / (distance / LEVEL_TILE_SIZE_PX);
     }
     else if(fpsStaticComp->m_levelElementType == LevelStaticElementType_e::CEILING)

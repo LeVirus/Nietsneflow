@@ -16,5 +16,6 @@ struct ImpactShotComponent : public ecs::Component
         muiTypeComponent = Components_e::IMPACT_CONF_COMPONENT;
     }
     ImpactPhase_e m_spritePhase = ImpactPhase_e::FIRST;
+    float m_moveUp = EPSILON_FLOAT;
     virtual ~ImpactShotComponent() = default;
 };

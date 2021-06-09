@@ -256,7 +256,8 @@ void VisionSystem::updateImpactSprites(uint32_t entityImpact, MemSpriteDataCompo
     assert(impactComp);
     std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() -
             timerComp->m_clockA;
-    if(elapsed_seconds.count() > 0.25)
+    impactComp->m_moveUp += 0.02f;
+    if(elapsed_seconds.count() > 0.10)
     {
         if(impactComp->m_spritePhase == ImpactPhase_e::FIRST)
         {
@@ -268,6 +269,7 @@ void VisionSystem::updateImpactSprites(uint32_t entityImpact, MemSpriteDataCompo
         else
         {
             genComp->m_active = false;
+            impactComp->m_moveUp = EPSILON_FLOAT;
         }
     }
 }

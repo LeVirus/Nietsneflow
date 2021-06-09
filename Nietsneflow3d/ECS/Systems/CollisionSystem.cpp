@@ -146,7 +146,7 @@ void CollisionSystem::treatSegmentShots()
         if(tagCompTarget->m_tag == CollisionTag_e::WALL_CT ||
                 tagCompTarget->m_tag == CollisionTag_e::DOOR_CT)
         {
-            confImpactShots(i, false);
+            confImpactShots(i);
             continue;
         }
         tagCompBullet = stairwayToComponentManager().
@@ -157,7 +157,7 @@ void CollisionSystem::treatSegmentShots()
         {
             treatEnemyShooted(m_vectMemShots[i].second);
             tagCompBullet->m_active = false;
-            confImpactShots(i, true);
+            confImpactShots(i);
         }
         else if(tagCompBullet->m_tag == CollisionTag_e::BULLET_ENEMY_CT)
         {
@@ -175,7 +175,7 @@ void CollisionSystem::treatSegmentShots()
 }
 
 //===================================================================
-void CollisionSystem::confImpactShots(uint32_t iterationNum, bool enemyTarget)
+void CollisionSystem::confImpactShots(uint32_t iterationNum)
 {
     SegmentCollisionComponent *segmentBullet = stairwayToComponentManager().
             searchComponentByType<SegmentCollisionComponent>(m_vectMemShots[iterationNum].first,

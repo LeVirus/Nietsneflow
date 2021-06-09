@@ -1,7 +1,7 @@
 BUGS======================================================================
 
--3)
-Bullets impacts does not follow moveable  target
+)
+Impact are behind enemy in vertical case
 
 -1)
 While back and action player eject wall
@@ -37,6 +37,9 @@ Weapon stays down some time
 
 14)
 Visible shot does not destruct on level limit
+
+-3)
+Bullets impacts does not follow moveable  target================================OK
 
 -2)
 Bullets impact does not display when angle  == 90================================OK
