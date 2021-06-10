@@ -70,7 +70,7 @@ void VisionSystem::execSystem()
                     searchComponentByType<GeneralCollisionComponent>(vectEntities[j],
                                           Components_e::GENERAL_COLLISION_COMPONENT);
             assert(collCompB);
-            treatVisible(visionCompA, vectEntities[j], collCompB->m_shape);
+            treatVisible(visionCompA, moveCompA, vectEntities[j], collCompB->m_shape);
         }
         updateSprites(mVectNumEntity[i], vectEntities);
     }
@@ -326,13 +326,21 @@ EnemySpriteType_e VisionSystem::getOrientationFromAngle(uint32_t observerEntity,
 }
 
 //===========================================================================
-void VisionSystem::treatVisible(VisionComponent *visionComp, uint32_t numEntity,
-                                CollisionShape_e shapeElement)
+void VisionSystem::treatVisible(VisionComponent *visionComp, MoveableComponent *moveCompA,
+                                uint32_t numEntity, CollisionShape_e shapeElement)
 {
     MapCoordComponent *mapCompB = stairwayToComponentManager().
             searchComponentByType<MapCoordComponent>(numEntity, Components_e::MAP_COORD_COMPONENT);
     assert(visionComp);
     assert(mapCompB);
+    float angleElement = getTrigoAngle(std::get<0>(visionComp->m_triangleVision),
+                                       mapCompB->m_absoluteMapPositionPX),
+            diffAngle = std::abs(angleElement - moveCompA->m_degreeOrientation);
+//    HALF_CONE_VISION
+    if(diffAngle > HALF_CONE_VISION + 30.0f && diffAngle < 270.0f )
+    {
+        return;
+    }
     switch(shapeElement)
     {
     case CollisionShape_e::CIRCLE_C:
