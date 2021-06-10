@@ -1,8 +1,5 @@
 BUGS======================================================================
 
-)
-Impact are behind enemy and object in vertical case
-
 -1)
 While back and action player eject wall
 
@@ -15,7 +12,7 @@ assert à CollisionSystem.cpp::726   hyp > distanceX && hyp > distanceY
 assert à CollisionSystem.cpp::770  
 
 3)
-Collision issue on shoot
+Collision issue on segment shoot
 
 4)
 raycasting line issue
@@ -36,7 +33,11 @@ display order issue with wall and static element
 Weapon stays down some time
 
 14)
-Visible shot does not destruct on level limit
+Visible shot does not destruct on level limit==============================OK
+
+
+)
+Impact are behind enemy and object in vertical case==========================OK
 
 -3)
 Bullets impacts does not follow moveable  target================================OK
@@ -105,9 +106,6 @@ Some enemies drop object
 3)
 Create Start menu, game over menu 
 
-8)
-Pour les balles "segments" ajouter animation sur les elements touchés
-
 9)
 Créer un système de carte pour ouvrir certaines portes
 Optional (level design), create switch to interact with something
@@ -117,6 +115,9 @@ Optionnel :: afficher l'inventaire dans le menu
 
 +++12)
 Create a visual level designer
+
+8)
+Pour les balles "segments" ajouter animation sur les elements touchés====================================OK
 
 2) 
 Create visible PROJECTILE,  ====================================OK 

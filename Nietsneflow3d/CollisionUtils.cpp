@@ -32,9 +32,9 @@ bool checkCircleRectCollision(const pairFloat_t &cicleCenter,
 
 //===================================================================
 bool checkCircleCircleCollision(const pairFloat_t &circleCenterA,
-        const float rayCircleA,
-        const pairFloat_t &circleCenterB,
-        const float rayCircleB)
+                                const float rayCircleA,
+                                const pairFloat_t &circleCenterB,
+                                const float rayCircleB)
 {
     float circleDiameterA = rayCircleA * 2.0f,
     circleDiameterB = rayCircleB * 2.0f;

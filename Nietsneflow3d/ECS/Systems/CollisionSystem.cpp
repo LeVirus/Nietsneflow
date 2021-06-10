@@ -479,36 +479,51 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
         break;
     }
     //TREAT VISIBLE SHOT
-    if(collision && ((args.tagCompA->m_tag == CollisionTag_e::BULLET_ENEMY_CT) ||
-            (args.tagCompA->m_tag == CollisionTag_e::BULLET_PLAYER_CT)))
+    if((args.tagCompA->m_tag == CollisionTag_e::BULLET_ENEMY_CT) ||
+            (args.tagCompA->m_tag == CollisionTag_e::BULLET_PLAYER_CT))
     {
-        ShotConfComponent *shotConfComp = stairwayToComponentManager().
-                searchComponentByType<ShotConfComponent>(args.entityNumA,
-                                                           Components_e::SHOT_CONF_COMPONENT);
-        assert(shotConfComp);
-        if(shotConfComp->m_destructPhase)
+        bool destruct = false;
+        if(args.mapCompA.m_absoluteMapPositionPX.first < 10.0f ||
+                args.mapCompA.m_absoluteMapPositionPX.second < 10.0f)
         {
-            return;
+            destruct = true;
         }
-        TimerComponent *timerComp = stairwayToComponentManager().
-                searchComponentByType<TimerComponent>(args.entityNumA, Components_e::TIMER_COMPONENT);
-        assert(timerComp);
-        timerComp->m_clockB = std::chrono::system_clock::now();
-        shotConfComp->m_destructPhase = true;
-        shotConfComp->m_spritePhaseShot = ShotPhase_e::SHOT_DESTRUCT_A;
-        if(args.tagCompA->m_tag == CollisionTag_e::BULLET_PLAYER_CT &&
-                args.tagCompB->m_tag == CollisionTag_e::ENEMY_CT)
+        if(destruct || collision)
         {
-            treatEnemyShooted(args.entityNumB, shotConfComp->m_damage);
-        }
-        else if(args.tagCompA->m_tag == CollisionTag_e::BULLET_ENEMY_CT &&
-                args.tagCompB->m_tag == CollisionTag_e::PLAYER_CT)
-        {
-            PlayerConfComponent * playerConf = stairwayToComponentManager().
-                    searchComponentByType<PlayerConfComponent>(args.entityNumB,
-                                          Components_e::PLAYER_CONF_COMPONENT);
-            assert(playerConf);
-            playerConf->takeDamage(shotConfComp->m_damage);
+            ShotConfComponent *shotConfComp = stairwayToComponentManager().
+                    searchComponentByType<ShotConfComponent>(args.entityNumA,
+                                                               Components_e::SHOT_CONF_COMPONENT);
+            assert(shotConfComp);
+
+
+            if(shotConfComp->m_destructPhase)
+            {
+                return;
+            }
+            TimerComponent *timerComp = stairwayToComponentManager().
+                    searchComponentByType<TimerComponent>(args.entityNumA, Components_e::TIMER_COMPONENT);
+            assert(timerComp);
+            timerComp->m_clockB = std::chrono::system_clock::now();
+            shotConfComp->m_destructPhase = true;
+            shotConfComp->m_spritePhaseShot = ShotPhase_e::SHOT_DESTRUCT_A;
+            if(destruct)
+            {
+                return;
+            }
+            if(args.tagCompA->m_tag == CollisionTag_e::BULLET_PLAYER_CT &&
+                    args.tagCompB->m_tag == CollisionTag_e::ENEMY_CT)
+            {
+                treatEnemyShooted(args.entityNumB, shotConfComp->m_damage);
+            }
+            else if(args.tagCompA->m_tag == CollisionTag_e::BULLET_ENEMY_CT &&
+                    args.tagCompB->m_tag == CollisionTag_e::PLAYER_CT)
+            {
+                PlayerConfComponent * playerConf = stairwayToComponentManager().
+                        searchComponentByType<PlayerConfComponent>(args.entityNumB,
+                                              Components_e::PLAYER_CONF_COMPONENT);
+                assert(playerConf);
+                playerConf->takeDamage(shotConfComp->m_damage);
+            }
         }
     }
 }
