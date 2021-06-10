@@ -37,7 +37,7 @@ void VisionSystem::setUsedComponents()
 void VisionSystem::execSystem()
 {
     System::execSystem();
-    GeneralCollisionComponent *collComp, *collCompB;
+    GeneralCollisionComponent *collCompB;
     VisionComponent *visionCompA;
     MapCoordComponent *mapCompA;
     MoveableComponent *moveCompA;
@@ -48,10 +48,6 @@ void VisionSystem::execSystem()
     std::vector<uint32_t> vectEntities = m_memECSManager->getEntityContainingComponents(bitsetComp);
     for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
     {
-        collComp = stairwayToComponentManager().
-                searchComponentByType<GeneralCollisionComponent>(mVectNumEntity[i],
-                                      Components_e::GENERAL_COLLISION_COMPONENT);
-        assert(collComp);
         visionCompA = stairwayToComponentManager().
                 searchComponentByType<VisionComponent>(mVectNumEntity[i], Components_e::VISION_COMPONENT);
         mapCompA = stairwayToComponentManager().
@@ -70,7 +66,7 @@ void VisionSystem::execSystem()
                     searchComponentByType<GeneralCollisionComponent>(vectEntities[j],
                                           Components_e::GENERAL_COLLISION_COMPONENT);
             assert(collCompB);
-            treatVisible(visionCompA, moveCompA, vectEntities[j], collCompB->m_shape);
+            treatVisible(visionCompA, moveCompA, vectEntities[j]);
         }
         updateSprites(mVectNumEntity[i], vectEntities);
     }
@@ -327,7 +323,7 @@ EnemySpriteType_e VisionSystem::getOrientationFromAngle(uint32_t observerEntity,
 
 //===========================================================================
 void VisionSystem::treatVisible(VisionComponent *visionComp, MoveableComponent *moveCompA,
-                                uint32_t numEntity, CollisionShape_e shapeElement)
+                                uint32_t numEntity)
 {
     MapCoordComponent *mapCompB = stairwayToComponentManager().
             searchComponentByType<MapCoordComponent>(numEntity, Components_e::MAP_COORD_COMPONENT);
@@ -336,37 +332,10 @@ void VisionSystem::treatVisible(VisionComponent *visionComp, MoveableComponent *
     float angleElement = getTrigoAngle(std::get<0>(visionComp->m_triangleVision),
                                        mapCompB->m_absoluteMapPositionPX),
             diffAngle = std::abs(angleElement - moveCompA->m_degreeOrientation);
-//    HALF_CONE_VISION
-    if(diffAngle > HALF_CONE_VISION + 30.0f && diffAngle < 270.0f )
+    if(diffAngle < HALF_CONE_VISION + 30.0f || diffAngle > 275.0f)
     {
-        return;
-    }
-    switch(shapeElement)
-    {
-    case CollisionShape_e::CIRCLE_C:
-    {
-        CircleCollisionComponent *circleColl = stairwayToComponentManager().
-                searchComponentByType<CircleCollisionComponent>(numEntity, Components_e::CIRCLE_COLLISION_COMPONENT);
-        assert(circleColl);
-        if(checkTriangleCircleCollision(visionComp->m_triangleVision, mapCompB->m_absoluteMapPositionPX, circleColl->m_ray))
-        {
-            visionComp->m_vectVisibleEntities.push_back(numEntity);
-        }
-    }
-        break;
-    case CollisionShape_e::RECTANGLE_C:
-    {
-        RectangleCollisionComponent *rectColl = stairwayToComponentManager().
-                searchComponentByType<RectangleCollisionComponent>(numEntity, Components_e::RECTANGLE_COLLISION_COMPONENT);
-        assert(rectColl);
-        if(checkTriangleRectCollision(visionComp->m_triangleVision, {mapCompB->m_absoluteMapPositionPX, rectColl->m_size}))
-        {
-            visionComp->m_vectVisibleEntities.push_back(numEntity);
-        }
-    }
-        break;
-    case CollisionShape_e::SEGMENT_C:
-        break;
+        visionComp->m_vectVisibleEntities.push_back(numEntity);
+        std::cerr << HALF_CONE_VISION + 30.0f << "  " << diffAngle << "  " << 260.0 << " \n";
     }
 }
 

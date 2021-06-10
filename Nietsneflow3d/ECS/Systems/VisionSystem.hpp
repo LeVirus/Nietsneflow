@@ -26,7 +26,7 @@ private:
                                               float targetDegreeAngle);
     void setUsedComponents();
     void treatVisible(VisionComponent *visionComp, MoveableComponent *moveCompA,
-                      uint32_t numEntity, CollisionShape_e shapeElement);
+                      uint32_t numEntity);
     void updateSprites(uint32_t observerEntity, const std::vector<uint32_t> &vectEntities);
     void updateVisibleShotSprite(uint32_t shotEntity, MemSpriteDataComponent *memSpriteComp,
                                  SpriteTextureComponent *spriteComp,
