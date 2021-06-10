@@ -228,6 +228,10 @@ void StaticDisplaySystem::setWeaponMovement(PlayerConfComponent *playerComp,
                 posComp->m_vertex[0].first <= m_forkWeaponMovementX.first)
         {
             playerComp->m_currentWeaponMove.first *= -1.0f;
+            //fix go down issue
+            modVertexPos(posComp, {EPSILON_FLOAT,
+                                   std::abs(memPosComp->m_vectSpriteData[index][0].second -
+                                   posComp->m_vertex[0].second)});
         }
         else if(playerComp->m_currentWeaponMove.first > EPSILON_FLOAT &&
                 posComp->m_vertex[0].first >= m_forkWeaponMovementX.second)

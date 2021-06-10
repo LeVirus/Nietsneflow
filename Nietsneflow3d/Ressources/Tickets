@@ -20,9 +20,6 @@ raycasting line issue
 5)
 enemy display limit issue
 
-6)
-Weapon move go down progressivly
-
 8)
 raycast Issue at 90 limit
 
@@ -31,6 +28,9 @@ display order issue with wall and static element
 
 10)
 Weapon stays down some time
+
+6)
+Weapon move go down progressivly===================================OK
 
 14)
 Visible shot does not destruct on level limit==============================OK
