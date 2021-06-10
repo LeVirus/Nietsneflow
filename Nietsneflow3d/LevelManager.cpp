@@ -463,8 +463,8 @@ void LevelManager::loadWeaponsData(const INIReader &reader, WeaponsType_e weapon
         break;
     case WeaponsType_e::SHOTGUN:
         weaponSpriteSection = "WeaponsShotgunSprite";
-        spriteWeight = "SpriteGunWeightGame";
-        spriteHeight = "SpriteGunHeightGame";
+        spriteWeight = "SpriteShotgunWeightGame";
+        spriteHeight = "SpriteShotgunHeightGame";
         break;
     case WeaponsType_e::TOTAL:
         assert(false);
@@ -477,7 +477,6 @@ void LevelManager::loadWeaponsData(const INIReader &reader, WeaponsType_e weapon
                       std::istream_iterator<std::string>());
     std::string resultWeight = reader.Get(sectionName.data(), spriteWeight, ""),
             resultHeight = reader.Get(sectionName.data(), spriteHeight, "");
-
     std::vector<float> vectWeight = convertStrToVectFloat(resultWeight),
             vectHeight = convertStrToVectFloat(resultHeight);
     assert(vectHeight.size() == vectWeight.size());

@@ -268,11 +268,12 @@ void StaticDisplaySystem::setWeaponMovement(PlayerConfComponent *playerComp,
         if(change)
         {
             modVertexPos(posComp, {modX, m_speedMoveWeaponChange});
-            if(posComp->m_vertex[0].second > memPosComp->m_vectSpriteData[index][0].second)
+            uint32_t currentWeapon = static_cast<uint32_t>(playerComp->m_currentWeapon);
+            if(posComp->m_vertex[0].second >= memPosComp->m_vectSpriteData[currentWeapon][0].second)
             {
                 for(uint32_t i = 0; i < 4; ++i)
                 {
-                    posComp->m_vertex[i] = memPosComp->m_vectSpriteData[index][i];
+                    posComp->m_vertex[i] = memPosComp->m_vectSpriteData[currentWeapon][i];
                     playerComp->m_spritePositionCorrected = true;
                 }
             }
