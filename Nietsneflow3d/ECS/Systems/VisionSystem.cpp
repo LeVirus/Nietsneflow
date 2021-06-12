@@ -335,7 +335,6 @@ void VisionSystem::treatVisible(VisionComponent *visionComp, MoveableComponent *
     if(diffAngle < HALF_CONE_VISION + 30.0f || diffAngle > 275.0f)
     {
         visionComp->m_vectVisibleEntities.push_back(numEntity);
-        std::cerr << HALF_CONE_VISION + 30.0f << "  " << diffAngle << "  " << 260.0 << " \n";
     }
 }
 

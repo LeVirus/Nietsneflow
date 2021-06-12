@@ -20,11 +20,11 @@ raycasting line issue
 8)
 raycast Issue at 90 limit
 
-9)
-display order issue with wall and static element
-
 10)
 Weapon stays down some time============================NR
+
+9)
+display order issue with wall and static element=============================OK
 
 5)
 enemy and element (non raycasting element) display limit issue================================OK

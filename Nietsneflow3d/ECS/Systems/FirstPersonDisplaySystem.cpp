@@ -133,11 +133,10 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
                                                   MapCoordComponent *mapCompB, VisionComponent *visionComp,
                                                   uint32_t &toRemove, float degreeObserverAngle, uint32_t numIteration)
 {
-    float radiantObserverAngle = getRadiantAngle(degreeObserverAngle);
     uint32_t numEntity = visionComp->m_vectVisibleEntities[numIteration];
     pairFloat_t centerPosB = getCenterPosition(mapCompB, genCollComp, numEntity);
-    float distance = getCameraDistance(mapCompA->m_absoluteMapPositionPX,
-                                       mapCompB->m_absoluteMapPositionPX, radiantObserverAngle);
+    float distance = getDistance(mapCompA->m_absoluteMapPositionPX,
+                                       mapCompB->m_absoluteMapPositionPX);
     float simpleDistance = getDistance(mapCompA->m_absoluteMapPositionPX,
                                        mapCompB->m_absoluteMapPositionPX);
     if(distance > visionComp->m_distanceVisibility || distance < 1.0f)
@@ -422,12 +421,16 @@ void FirstPersonDisplaySystem::fillVertexFromEntity(uint32_t numEntity, uint32_t
                                                           Components_e::SPRITE_TEXTURE_COMPONENT);
     assert(posComp);
     assert(spriteComp);
-    if(m_entitiesNumMem.size() == 1)
+
+
+    CircleCollisionComponent *circleComp = stairwayToComponentManager().
+            searchComponentByType<CircleCollisionComponent>(numEntity,
+                                                          Components_e::CIRCLE_COLLISION_COMPONENT);
+    if(circleComp)
     {
-        EntityData(distance - LEVEL_TILE_SIZE_PX, spriteComp->m_spriteData->m_textureNum,
-                                               numIteration);
+        distance -= circleComp->m_ray;
     }
-    m_entitiesNumMem.insert(EntityData(distance - LEVEL_TILE_SIZE_PX, spriteComp->m_spriteData->m_textureNum,
+    m_entitiesNumMem.insert(EntityData(distance, spriteComp->m_spriteData->m_textureNum,
                                        numIteration));
     if(displayMode == DisplayMode_e::STANDART_DM)
     {

@@ -636,7 +636,7 @@ void MainEngine::createShotImpactEntities(const std::vector<SpriteData> &vectSpr
         genComp->m_active = false;
         genComp->m_tag = CollisionTag_e::IMPACT_CT;
         genComp->m_shape = CollisionShape_e::CIRCLE_C;
-        circleComp->m_ray = 0.1f;
+        circleComp->m_ray = 30.0f;
         assert(segmentShotContainer[i]);
         //mem impact entity in shot component
         shotComp->m_impactEntities[i] = entitiesContainer[i];
