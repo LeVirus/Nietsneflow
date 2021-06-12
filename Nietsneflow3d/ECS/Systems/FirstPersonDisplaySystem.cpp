@@ -709,10 +709,6 @@ bool treatDisplayDoor(float radiantAngle, bool doorVertical, pairFloat_t &curren
             textFace = false;
             return true;
         }
-        if(!verticalLeadCoef)
-        {
-            return false;
-        }
         if(treatVerticalIntersectDoor(currentPoint, doorPos, verticalLeadCoef, radiantAngle))
         {
             textLateral = false;
@@ -726,10 +722,6 @@ bool treatDisplayDoor(float radiantAngle, bool doorVertical, pairFloat_t &curren
         {
             textFace = false;
             return true;
-        }
-        if(!lateralLeadCoef)
-        {
-            return false;
         }
         if(treatLateralIntersectDoor(currentPoint, doorPos, lateralLeadCoef, radiantAngle))
         {
