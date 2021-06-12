@@ -646,11 +646,12 @@ std::optional<pairUI_t> getCorrectedCoord(const pairFloat_t &currentPoint, bool 
     //treat limit angle cube case
     if(!treatLimitIntersect(point, lateral))
     {
-        if(lateral && std::sin(radiantAngle) > 0.0f)
+        if(std::sin(radiantAngle) > EPSILON_FLOAT &&
+                (lateral || std::abs(std::cos(radiantAngle)) < 0.0001f))
         {
             --point.second;
         }
-        else if(!lateral && std::cos(radiantAngle) < 0.0f)
+        else if(!lateral && std::cos(radiantAngle) < EPSILON_FLOAT)
         {
             --point.first;
         }

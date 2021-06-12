@@ -240,7 +240,8 @@ float getDistance(const pairFloat_t &pointA, const pairFloat_t &pointB)
     {
         return distanceY;
     }
-    return distanceY / std::cos(std::atan(distanceX / distanceY));
+    float valCos = std::cos(std::atan(distanceX / distanceY));
+    return distanceY / valCos;
 }
 
 //===================================================================

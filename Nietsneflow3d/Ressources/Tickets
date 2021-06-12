@@ -17,11 +17,11 @@ Collision issue on segment shoot
 4)
 raycasting line issue
 
-8)
-raycast Issue at 90 limit
-
 10)
 Weapon stays down some time============================NR
+
+8)
+raycast Issue at 90 limit=============================OK
 
 9)
 display order issue with wall and static element=============================OK
@@ -63,6 +63,15 @@ Wall eject when strafe + move==============================OK
 
 IMPROVE===================================================================================================
 ==========================================================================================================
+
+-3)
+Limit shoot intervalle time
+
+-2)
+collision moveable at wall angle when entity is at 90 degree
+
+-1)
+Conf wall multi sprite
 
 0)
 Set ceiling and ground textured display
