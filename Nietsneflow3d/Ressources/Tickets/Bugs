@@ -19,6 +19,8 @@ Collision issue on segment shoot
 
 4)
 raycasting line issue
+--On angle WALL (SOUTH EAST) player dir north west=======================OK
+--On center door
 
 10)
 Weapon stays down some time============================NR

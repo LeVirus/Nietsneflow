@@ -815,17 +815,6 @@ std::optional<pairUI_t> getCorrectedCoord(const pairFloat_t &currentPoint,
 {
     pairFloat_t point = currentPoint;
     //treat limit angle cube case
-    if(std::sin(radiantAngle) > EPSILON_FLOAT &&
-            (lateral || std::abs(std::cos(radiantAngle)) < 0.0001f))
-    {
-        --point.second;
-        return getLevelCoord(point);
-    }
-    if(!lateral && std::cos(radiantAngle) < EPSILON_FLOAT)
-    {
-        --point.first;
-        return getLevelCoord(point);
-    }
     std::optional<pairUI_t> currentCoord;
     if(std::fmod(point.second, LEVEL_TILE_SIZE_PX) <= 0.01f &&
             std::fmod(point.first, LEVEL_TILE_SIZE_PX) <= 0.01f)
@@ -855,6 +844,15 @@ std::optional<pairUI_t> getCorrectedCoord(const pairFloat_t &currentPoint,
             --point.first;
             --point.second;
         }
+    }
+    else if(std::sin(radiantAngle) > EPSILON_FLOAT &&
+            (lateral || std::abs(std::cos(radiantAngle)) < 0.0001f))
+    {
+        --point.second;
+    }
+    else if(!lateral && std::cos(radiantAngle) < EPSILON_FLOAT)
+    {
+        --point.first;
     }
     return getLevelCoord(point);
 }
