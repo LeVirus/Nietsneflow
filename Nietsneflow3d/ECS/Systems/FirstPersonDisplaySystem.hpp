@@ -8,6 +8,7 @@
 #include <OpenGLUtils/VerticesData.hpp>
 #include <OpenGLUtils/Texture.hpp>
 #include <ECS/Systems/MapDisplaySystem.hpp>
+#include <PhysicalEngine.hpp>
 
 struct GeneralCollisionComponent;
 struct RectangleCollisionComponent;
@@ -76,7 +77,7 @@ private:
     //number of entity to draw per player
     vectUI_t m_numVertexToDraw;
     uint32_t m_textureLineDrawNumber = 200;
-    float m_stepAngle = CONE_VISION / static_cast<float>(m_textureLineDrawNumber),
+    float m_stepAngle = getRadiantAngle(CONE_VISION / static_cast<float>(m_textureLineDrawNumber)),
     m_stepDrawLateralScreen = 2.0f / static_cast<float>(m_textureLineDrawNumber);
 };
 
@@ -91,10 +92,10 @@ bool treatDisplayDoor(float radiantAngle, bool doorVertical, pairFloat_t &curren
                       const pairFloat_t doorPos[], std::optional<float> verticalLeadCoef,
                       std::optional<float> lateralLeadCoef, bool &textLateral, bool &textFace, bool bull = false);
 bool treatVerticalIntersectDoor(pairFloat_t &currentPoint, const pairFloat_t doorPos[],
-                               std::optional<float> verticalLeadCoef, float radiantAngle);
+                               float verticalLeadCoef, float radiantAngle);
 //return true if door collision
 bool treatLateralIntersectDoor(pairFloat_t &currentPoint, const pairFloat_t doorPos[],
-                                std::optional<float> lateralLeadCoef, float radiantAngle);
+                                float lateralLeadCoef, float radiantAngle);
 void treatLimitAngle(float &degreeAngleA, float &degreeAngleB);
 void removeSecondRect(pairFloat_t absolPos[], float distance[], uint32_t &distanceToTreat);
 float getDoorDistance(const MapCoordComponent *mapCompCamera, const MapCoordComponent *mapCompDoor,
