@@ -105,6 +105,5 @@ std::optional<float> getModulo(float sinCosAngle, float position, float modulo, 
 std::optional<float> getLeadCoef(float radiantAngle, bool lateral);
 pairFloat_t getLimitPointRayCasting(const pairFloat_t &cameraPoint, float radiantAngle, std::optional<float> lateralLeadCoef, std::optional<float> verticalLeadCoef, bool &lateral);
 int32_t getCoord(float value, float tileSize);
-bool treatLimitIntersect(pairFloat_t &point, bool lateral);
 std::optional<pairUI_t> getCorrectedCoord(const pairFloat_t &currentPoint, bool lateral,
                                           float radiantAngle);

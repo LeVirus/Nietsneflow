@@ -639,27 +639,6 @@ void FirstPersonDisplaySystem::rayCasting()
 }
 
 //===================================================================
-std::optional<pairUI_t> getCorrectedCoord(const pairFloat_t &currentPoint, bool lateral,
-                                          float radiantAngle)
-{
-    pairFloat_t point = currentPoint;
-    //treat limit angle cube case
-    if(!treatLimitIntersect(point, lateral))
-    {
-        if(std::sin(radiantAngle) > EPSILON_FLOAT &&
-                (lateral || std::abs(std::cos(radiantAngle)) < 0.0001f))
-        {
-            --point.second;
-        }
-        else if(!lateral && std::cos(radiantAngle) < EPSILON_FLOAT)
-        {
-            --point.first;
-        }
-    }
-    return getLevelCoord(point);
-}
-
-//===================================================================
 std::optional<float> FirstPersonDisplaySystem::treatDoorRaycast(uint32_t numEntity, float radiantAngle,
                                                                 pairFloat_t &currentPoint,
                                                                 std::optional<float> lateralLeadCoef,
@@ -831,8 +810,22 @@ bool treatVerticalIntersectDoor(pairFloat_t &currentPoint, const pairFloat_t doo
 }
 
 //===================================================================
-bool treatLimitIntersect(pairFloat_t &point, bool lateral)
+std::optional<pairUI_t> getCorrectedCoord(const pairFloat_t &currentPoint,
+                                            bool lateral, float radiantAngle)
 {
+    pairFloat_t point = currentPoint;
+    //treat limit angle cube case
+    if(std::sin(radiantAngle) > EPSILON_FLOAT &&
+            (lateral || std::abs(std::cos(radiantAngle)) < 0.0001f))
+    {
+        --point.second;
+        return getLevelCoord(point);
+    }
+    if(!lateral && std::cos(radiantAngle) < EPSILON_FLOAT)
+    {
+        --point.first;
+        return getLevelCoord(point);
+    }
     std::optional<pairUI_t> currentCoord;
     if(std::fmod(point.second, LEVEL_TILE_SIZE_PX) <= 0.01f &&
             std::fmod(point.first, LEVEL_TILE_SIZE_PX) <= 0.01f)
@@ -844,7 +837,6 @@ bool treatLimitIntersect(pairFloat_t &point, bool lateral)
                     LevelCaseType_e::WALL_LC)
             {
                 --point.first;
-                return true;
             }
         }
         else if(!lateral)
@@ -854,7 +846,6 @@ bool treatLimitIntersect(pairFloat_t &point, bool lateral)
                     LevelCaseType_e::WALL_LC)
             {
                 --point.second;
-                return true;
             }
         }
         currentCoord = getLevelCoord({point.first - 1.0f, point.second - 1.0f});
@@ -863,10 +854,9 @@ bool treatLimitIntersect(pairFloat_t &point, bool lateral)
         {
             --point.first;
             --point.second;
-            return true;
         }
     }
-    return false;
+    return getLevelCoord(point);
 }
 
 //===================================================================
