@@ -1,0 +1,48 @@
+NEW FUNCTIONALITIES=====================================================================================================
+========================================================================================================================
+
+-1)
+Some enemies drop object
+
+3)
+Create Start menu, game over menu 
+
+9)
+Créer un système de carte pour ouvrir certaines portes
+Optional (level design), create switch to interact with something
+
+10)
+Optionnel :: afficher l'inventaire dans le menu
+
++++12)
+Create a visual level designer
+
+8)
+Pour les balles "segments" ajouter animation sur les elements touchés====================================OK
+
+2) 
+Create visible PROJECTILE,  ====================================OK 
+possibility of zone damage if the projectile is explosive
+
+1)
+Enemy IA
+
+	Set enemy orientation====================================OK
+	Set move input API=======================================OK
+	Create move and attack Behaviour on detecting player or other targeted entity=================================OK
+        Set enemy react on vision==================================OK
+        Set enemy stop attack when player is not visible anymore from a time=====================OK
+        Set Enemy open door============================OK
+
+4)
+End level behaviour, next level=======================OK, 
+ending credit...
+
+5)
+Collectable object life, ammo, armor, weapons================OK
+
+7)
+Ajouter animation de dégats aux enemy=====================================OK
+
+11)
+En cas de game over recommencer le niveau============================================OK

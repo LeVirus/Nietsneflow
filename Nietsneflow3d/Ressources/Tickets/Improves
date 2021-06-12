@@ -1,0 +1,44 @@
+IMPROVE===================================================================================================
+==========================================================================================================
+
+-3)
+Limit shoot intervalle time
+
+-2)
+collision moveable at wall angle when entity is at 90 degree
+
+-1)
+Conf wall multi sprite
+
+0)
+Set ceiling and ground textured display
+
+1)
+Weapon movement on begin and end movement
+
+2)
+Weapons animations
+
+4) 
+Improve Enemy behaviour
+
+5)
+Set collision behaviour from tag instead of shape
+
+6)
+Ajouter armure
+
+3)
+Enemy animations========================~
+
+7)
+Set door still open if player or enemiy is in the way================================OK
+
+8)
+Set action collision=======================================OK
+
+9)
+Add Axe weapons===================================OK
+
+10)
+Change elements data in general directory instead of level dir=================================OK

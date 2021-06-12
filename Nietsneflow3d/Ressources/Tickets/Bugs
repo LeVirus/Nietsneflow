@@ -1,0 +1,64 @@
+BUGS======================================================================
+
+-2)
+While enemy eject on wall 
+
+-1)
+While back and action player eject wall
+
+0)
+Door does not display when open and player is on the way
+
+1)
+assert à CollisionSystem.cpp::89    EnemyConfComponent == nullptr
+assert à CollisionSystem.cpp::726   hyp > distanceX && hyp > distanceY
+assert à CollisionSystem.cpp::770  
+
+3)
+Collision issue on segment shoot
+
+4)
+raycasting line issue
+
+10)
+Weapon stays down some time============================NR
+
+8)
+raycast Issue at 90 limit=============================OK
+
+9)
+display order issue with wall and static element=============================OK
+
+5)
+enemy and element (non raycasting element) display limit issue================================OK
+
+6)
+Weapon move go down progressivly===================================OK
+
+14)
+Visible shot does not destruct on level limit==============================OK
+
+
+)
+Impact are behind enemy and object in vertical case==========================OK
+
+-3)
+Bullets impacts does not follow moveable  target================================OK
+
+-2)
+Bullets impact does not display when angle  == 90================================OK
+
+7)
+Shoot touch several targets==================================OK
+
+11)
+On second stage weapons and ammo are not memorized==============================OK
+
+12)
+On second stage visible ammo are not visible================================OK
+
+13)
+Rammasser une arme déja en possetion fait changer l'arme courrante===============================OK
+
+2)
+Wall eject when strafe + move==============================OK
