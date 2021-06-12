@@ -811,7 +811,7 @@ std::optional<pairUI_t> getCorrectedCoord(const pairFloat_t &currentPoint,
     if(std::fmod(point.second, LEVEL_TILE_SIZE_PX) <= 0.01f &&
             std::fmod(point.first, LEVEL_TILE_SIZE_PX) <= 0.01f)
     {
-        if(lateral)
+        if(std::cos(radiantAngle) < EPSILON_FLOAT)
         {
             currentCoord = getLevelCoord({point.first - 1.0f, point.second});
             if(currentCoord && (*Level::getElementCase(*currentCoord)).m_type ==
@@ -820,7 +820,7 @@ std::optional<pairUI_t> getCorrectedCoord(const pairFloat_t &currentPoint,
                 --point.first;
             }
         }
-        else if(!lateral)
+        else if(std::sin(radiantAngle) > EPSILON_FLOAT)
         {
             currentCoord = getLevelCoord({point.first, point.second - 1.0f});
             if(currentCoord && (*Level::getElementCase(*currentCoord)).m_type ==
