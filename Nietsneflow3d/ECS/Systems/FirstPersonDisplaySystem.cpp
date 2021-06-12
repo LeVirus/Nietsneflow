@@ -144,6 +144,13 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
         ++toRemove;
         return;
     }
+    CircleCollisionComponent *circleComp = stairwayToComponentManager().
+            searchComponentByType<CircleCollisionComponent>(numEntity,
+                                                          Components_e::CIRCLE_COLLISION_COMPONENT);
+    if(circleComp)
+    {
+        simpleDistance -= circleComp->m_ray;
+    }
     float trigoAngle = getTrigoAngle(mapCompA->m_absoluteMapPositionPX, centerPosB);
     //get lateral pos from angle
     float lateralPos = getLateralAngle(degreeObserverAngle, trigoAngle);
@@ -421,15 +428,6 @@ void FirstPersonDisplaySystem::fillVertexFromEntity(uint32_t numEntity, uint32_t
                                                           Components_e::SPRITE_TEXTURE_COMPONENT);
     assert(posComp);
     assert(spriteComp);
-
-
-    CircleCollisionComponent *circleComp = stairwayToComponentManager().
-            searchComponentByType<CircleCollisionComponent>(numEntity,
-                                                          Components_e::CIRCLE_COLLISION_COMPONENT);
-    if(circleComp)
-    {
-        distance -= circleComp->m_ray;
-    }
     m_entitiesNumMem.insert(EntityData(distance, spriteComp->m_spriteData->m_textureNum,
                                        numIteration));
     if(displayMode == DisplayMode_e::STANDART_DM)
