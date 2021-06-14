@@ -179,16 +179,22 @@ bool checkCircleSegmentCollision(const pairFloat_t &circleCenter,
     {
         return false;
     }
-    float distanceX = maxX - minX;
-    float distanceY = maxY - minY;
-    float lenght = std::sqrt(distanceX * distanceX + distanceY * distanceY);
+    float lenght = getDistance(lineFirstPoint, lineSecondPoint);
     float dot = (((circleCenter.first - lineFirstPoint.first) * (lineSecondPoint.first - lineFirstPoint.first)) +
                  ((circleCenter.second - lineFirstPoint.second)*(lineSecondPoint.second - lineFirstPoint.second))) /
             (lenght * lenght);
 
     float closestX = lineFirstPoint.first + (dot * (lineSecondPoint.first - lineFirstPoint.first));
+    if(closestX < minX || closestX > maxX)
+    {
+        return false;
+    }
     float closestY = lineFirstPoint.second + (dot * (lineSecondPoint.second - lineFirstPoint.second));
-    return !(closestX < minX || closestX > maxX || closestY < minY || closestY > maxY);
+    if(closestY < minY || closestY > maxY)
+    {
+        return false;
+    }
+    return true;
 }
 
 //===================================================================

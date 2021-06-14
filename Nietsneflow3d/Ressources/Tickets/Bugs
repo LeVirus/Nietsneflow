@@ -1,5 +1,8 @@
 BUGS======================================================================
 
+-4)
+Enemy display order issue whith wall
+
 -3)
 While trigger end level weapon still move
 
@@ -18,7 +21,7 @@ assert à CollisionSystem.cpp::726   hyp > distanceX && hyp > distanceY
 assert à CollisionSystem.cpp::770  
 
 3)
-Collision issue on segment shoot
+Collision issue on segment shoot=======================~
 
 -4)
 Incoherent distance display of static element with raycast element==============================OK

@@ -953,7 +953,7 @@ void MainEngine::confBaseComponent(uint32_t entityNum, const SpriteData &memSpri
                 searchComponentByType<CircleCollisionComponent>(entityNum, Components_e::CIRCLE_COLLISION_COMPONENT);
         assert(fpsStaticComp);
         assert(circleComp);
-        circleComp->m_ray = ENEMY_RAY;
+        circleComp->m_ray = 5.0f;
         fpsStaticComp->m_inGameSpriteSize = {0.5f, 0.8f};
     }
     tagComp->m_tag = tag;
