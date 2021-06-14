@@ -49,7 +49,7 @@ public:
     void setShader(Shader &shader);
 private:
     void rayCasting();
-    std::optional<float> treatDoorRaycast(uint32_t numEntity, float radiantAngle,
+    std::optional<float> treatDoorRaycast(uint32_t numEntity, float currentRadiantAngle,
                           pairFloat_t &currentPoint, std::optional<float> lateralLeadCoef,
                           std::optional<float> verticalLeadCoef,
                           bool &textLateral, bool &textFace);
@@ -88,7 +88,7 @@ std::optional<uint32_t> getLimitIndex(const bool pointIn[], const float distance
 float getLateralAngle(float centerAngleVision, float trigoAngle);
 pairFloat_t getIntersectCoord(const pairFloat_t &observerPoint, const pairFloat_t &targetPoint,
                               float centerAngleVision, bool outLeft, bool YIntersect);
-bool treatDisplayDoor(float radiantAngle, bool doorVertical, pairFloat_t &currentPoint,
+bool treatDisplayDoor(float currentRadiantAngle, bool doorVertical, pairFloat_t &currentPoint,
                       const pairFloat_t doorPos[], std::optional<float> verticalLeadCoef,
                       std::optional<float> lateralLeadCoef, bool &textLateral, bool &textFace, bool bull = false);
 bool treatVerticalIntersectDoor(pairFloat_t &currentPoint, const pairFloat_t doorPos[],
