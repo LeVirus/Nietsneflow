@@ -1326,7 +1326,7 @@ void MainEngine::loadStaticElementGroup(const LevelManager &levelManager,
                 }
                 else
                 {
-                    tag = CollisionTag_e::WALL_CT;
+                    tag = CollisionTag_e::STATIC_SET_CT;
                 }
                 entityNum = createStaticEntity();
             }

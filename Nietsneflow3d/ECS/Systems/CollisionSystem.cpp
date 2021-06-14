@@ -259,6 +259,7 @@ void CollisionSystem::initArrayTag()
     m_tagArray.insert({CollisionTag_e::PLAYER_CT, CollisionTag_e::DOOR_CT});
     m_tagArray.insert({CollisionTag_e::PLAYER_CT, CollisionTag_e::ENEMY_CT});
     m_tagArray.insert({CollisionTag_e::PLAYER_CT, CollisionTag_e::OBJECT_CT});
+    m_tagArray.insert({CollisionTag_e::PLAYER_CT, CollisionTag_e::STATIC_SET_CT});
 
     m_tagArray.insert({CollisionTag_e::PLAYER_ACTION_CT, CollisionTag_e::DOOR_CT});
     m_tagArray.insert({CollisionTag_e::PLAYER_ACTION_CT, CollisionTag_e::EXIT_CT});
@@ -267,6 +268,8 @@ void CollisionSystem::initArrayTag()
     m_tagArray.insert({CollisionTag_e::ENEMY_CT, CollisionTag_e::PLAYER_CT});
     m_tagArray.insert({CollisionTag_e::ENEMY_CT, CollisionTag_e::WALL_CT});
     m_tagArray.insert({CollisionTag_e::ENEMY_CT, CollisionTag_e::DOOR_CT});
+    m_tagArray.insert({CollisionTag_e::ENEMY_CT, CollisionTag_e::DOOR_CT});
+    m_tagArray.insert({CollisionTag_e::ENEMY_CT, CollisionTag_e::STATIC_SET_CT});
 //    m_tagArray.insert({CollisionTag_e::ENEMY_CT, CollisionTag_e::ENEMY_CT});
 
     m_tagArray.insert({CollisionTag_e::WALL_CT, CollisionTag_e::PLAYER_CT});
@@ -285,7 +288,7 @@ void CollisionSystem::initArrayTag()
     m_tagArray.insert({CollisionTag_e::BULLET_PLAYER_CT, CollisionTag_e::WALL_CT});
     m_tagArray.insert({CollisionTag_e::BULLET_PLAYER_CT, CollisionTag_e::DOOR_CT});
 
-    m_tagArray.insert({CollisionTag_e::OBJECT_CT, CollisionTag_e::PLAYER_CT});
+//    m_tagArray.insert({CollisionTag_e::OBJECT_CT, CollisionTag_e::PLAYER_CT});
 }
 
 //===================================================================
@@ -454,7 +457,8 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
                     args.tagCompA->m_tag == CollisionTag_e::ENEMY_CT) &&
                     (args.tagCompB->m_tag == CollisionTag_e::WALL_CT ||
                      args.tagCompB->m_tag == CollisionTag_e::PLAYER_CT ||
-                     args.tagCompB->m_tag == CollisionTag_e::ENEMY_CT))
+                     args.tagCompB->m_tag == CollisionTag_e::ENEMY_CT ||
+                     args.tagCompB->m_tag == CollisionTag_e::STATIC_SET_CT))
             {
                 collisionCircleCircleEject(args, circleCompA, circleCompB);
             }

@@ -217,6 +217,7 @@ enum class CollisionTag_e
     GHOST_CT,
     OBJECT_CT,
     EXIT_CT,
+    STATIC_SET_CT,
     IMPACT_CT
 };
 
