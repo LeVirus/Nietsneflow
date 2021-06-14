@@ -20,11 +20,13 @@ assert à CollisionSystem.cpp::770
 3)
 Collision issue on segment shoot
 
+-4)
+Incoherent distance display of static element with raycast element==============================OK
+
 4)
 raycasting line issue
 --On angle WALL (SOUTH EAST) player dir north west=======================OK
 --On center door multi angle============================OK
---On limit door
 
 10)
 Weapon stays down some time============================NR

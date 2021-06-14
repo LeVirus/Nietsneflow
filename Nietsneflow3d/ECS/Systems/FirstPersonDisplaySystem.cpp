@@ -135,8 +135,9 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
 {
     uint32_t numEntity = visionComp->m_vectVisibleEntities[numIteration];
     pairFloat_t centerPosB = getCenterPosition(mapCompB, genCollComp, numEntity);
-    float distance = getDistance(mapCompA->m_absoluteMapPositionPX,
-                                       mapCompB->m_absoluteMapPositionPX);
+    float distance = getCameraDistance(mapCompA->m_absoluteMapPositionPX,
+                                       mapCompB->m_absoluteMapPositionPX,
+                                       getRadiantAngle(degreeObserverAngle));
     float simpleDistance = getDistance(mapCompA->m_absoluteMapPositionPX,
                                        mapCompB->m_absoluteMapPositionPX);
     if(distance > visionComp->m_distanceVisibility || distance < 1.0f)
