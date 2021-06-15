@@ -924,8 +924,8 @@ void MainEngine::confBaseComponent(uint32_t entityNum, const SpriteData &memSpri
             searchComponentByType<MapCoordComponent>(entityNum, Components_e::MAP_COORD_COMPONENT);
     assert(mapComp);
     mapComp->m_coord = coordLevel;
-    if(tag == CollisionTag_e::EXIT_CT || tag == CollisionTag_e::OBJECT_CT || tag == CollisionTag_e::ENEMY_CT ||
-            (tag == CollisionTag_e::WALL_CT && collisionShape == CollisionShape_e::CIRCLE_C))
+    if(tag == CollisionTag_e::EXIT_CT || tag == CollisionTag_e::OBJECT_CT ||
+            tag == CollisionTag_e::ENEMY_CT || tag == CollisionTag_e::STATIC_SET_CT)
     {
         mapComp->m_absoluteMapPositionPX = getCenteredAbsolutePosition(coordLevel);
     }
