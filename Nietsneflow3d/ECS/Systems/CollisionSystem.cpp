@@ -42,7 +42,6 @@ void CollisionSystem::execSystem()
 {
     SegmentCollisionComponent *segmentCompA;
     System::execSystem();
-    m_vectMemShots.clear();
     for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
     {
         GeneralCollisionComponent *tagCompA = stairwayToComponentManager().
@@ -93,8 +92,7 @@ void CollisionSystem::execSystem()
             {
                 continue;
             }
-            treatCollision(mVectNumEntity[i], mVectNumEntity[j],
-                           tagCompA, tagCompB);
+            treatCollision(mVectNumEntity[i], mVectNumEntity[j], tagCompA, tagCompB);
         }
         if(tagCompA->m_tag == CollisionTag_e::PLAYER_ACTION_CT)
         {
@@ -102,7 +100,11 @@ void CollisionSystem::execSystem()
         }
         if(segmentCompA && m_memDistCurrentBulletColl.second > EPSILON_FLOAT)
         {
-            m_vectMemShots.emplace_back(pairUI_t{mVectNumEntity[i], m_memDistCurrentBulletColl.first});
+            if(m_memDistCurrentBulletColl.first)
+            {
+                m_vectMemShots.emplace_back(pairUI_t{mVectNumEntity[i],
+                                                     (*m_memDistCurrentBulletColl.first)});
+            }
         }
         treatSegmentShots();
         m_vectMemShots.clear();
@@ -644,64 +646,11 @@ void CollisionSystem::checkCollisionFirstSegment(uint32_t numEntityA, uint32_t n
 void CollisionSystem::calcBulletSegment(SegmentCollisionComponent &segmentCompA)
 {
     float radiantAngle = getRadiantAngle(segmentCompA.m_degreeOrientation);
-    std::optional<float> verticalLeadCoef = getLeadCoef(radiantAngle, false);
-    std::optional<float> lateralLeadCoef = getLeadCoef(radiantAngle, true);
-    bool lateral, textLateral, textFace;
-    std::optional<pairUI_t> currentCoord;
-    std::optional<ElementRaycast> element;
-    segmentCompA.m_points.second = segmentCompA.m_points.first;
-    for(uint32_t k = 0; k < 20; ++k)//limit distance
-    {
-        segmentCompA.m_points.second = getLimitPointRayCasting(segmentCompA.m_points.second,
-                                                               radiantAngle, lateralLeadCoef,
-                                                               verticalLeadCoef, lateral);
-        //quickfix
-        if(std::cos(radiantAngle) < 0.0f && std::abs(std::sin(radiantAngle)) < 0.0001f)
-        {
-            lateral = false;
-        }
-        currentCoord = getCorrectedCoord(segmentCompA.m_points.second, lateral, radiantAngle);
-        if(!currentCoord)
-        {
-            break;
-        }
-        element = Level::getElementCase(*currentCoord);
-        if(element)
-        {
-            if(element->m_type == LevelCaseType_e::WALL_LC)
-            {
-                m_memDistCurrentBulletColl = {element->m_numEntity, 10000.0f};
-                break;
-            }
-            else if(element->m_type == LevelCaseType_e::DOOR_LC)
-            {
-                DoorComponent *doorComp = stairwayToComponentManager().
-                        searchComponentByType<DoorComponent>(element->m_numEntity, Components_e::DOOR_COMPONENT);
-                assert(doorComp);
-                RectangleCollisionComponent *rectComp = stairwayToComponentManager().
-                        searchComponentByType<RectangleCollisionComponent>(element->m_numEntity, Components_e::RECTANGLE_COLLISION_COMPONENT);
-                assert(rectComp);
-                MapCoordComponent *mapComp = stairwayToComponentManager().
-                        searchComponentByType<MapCoordComponent>(element->m_numEntity, Components_e::MAP_COORD_COMPONENT);
-                assert(mapComp);
-                //first case x pos limit second y pos limit
-                pairFloat_t doorPos[2] = {{mapComp->m_absoluteMapPositionPX.first,
-                                           mapComp->m_absoluteMapPositionPX.first +
-                                           rectComp->m_size.first},
-                                          {mapComp->m_absoluteMapPositionPX.second,
-                                           mapComp->m_absoluteMapPositionPX.second +
-                                           rectComp->m_size.second}};
-                if(treatDisplayDoor(radiantAngle, doorComp->m_vertical,
-                                    segmentCompA.m_points.second,
-                                    doorPos, verticalLeadCoef, lateralLeadCoef,
-                                    textLateral, textFace, true))
-                {
-                    m_memDistCurrentBulletColl = {element->m_numEntity, 10000.0f};
-                    break;
-                }
-            }
-        }
-    }
+    optionalTargetRaycast_t result = mptrSystemManager->searchSystemByType<FirstPersonDisplaySystem>(
+                static_cast<uint32_t>(Systems_e::FIRST_PERSON_DISPLAY_SYSTEM))->
+            calcLineSegmentRaycast(radiantAngle, segmentCompA.m_points.first, false);
+    segmentCompA.m_points.second = std::get<0>(*result);
+    m_memDistCurrentBulletColl = {std::get<2>(*result), 10000.0f};
 }
 
 //===================================================================

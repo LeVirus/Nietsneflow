@@ -553,7 +553,8 @@ void FirstPersonDisplaySystem::rayCasting()
 {
     MapCoordComponent *mapCompCamera;
     MoveableComponent *moveComp;
-    std::optional<std::tuple<pairFloat_t, float, uint32_t>> targetPoint;
+    optionalTargetRaycast_t targetPoint;
+    float cameraDistance;
     for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
     {
         //WORK FOR ONE PLAYER ONLY
@@ -574,10 +575,9 @@ void FirstPersonDisplaySystem::rayCasting()
                                                  mapCompCamera->m_absoluteMapPositionPX);
             if(targetPoint)
             {
-                memDistance(std::get<2>(*targetPoint), j,
-                            getCameraDistance(mapCompCamera->m_absoluteMapPositionPX,
-                                              std::get<0>(*targetPoint), cameraRadiantAngle),
-                            std::get<1>(*targetPoint));
+                cameraDistance = getCameraDistance(mapCompCamera->m_absoluteMapPositionPX,
+                                                   std::get<0>(*targetPoint), cameraRadiantAngle);
+                memDistance(*std::get<2>(*targetPoint), j, cameraDistance, std::get<1>(*targetPoint));
             }
             currentLateralScreen += m_stepDrawLateralScreen;
             currentRadiantAngle -= m_stepAngle;
@@ -591,7 +591,8 @@ void FirstPersonDisplaySystem::rayCasting()
 
 //===================================================================
 optionalTargetRaycast_t FirstPersonDisplaySystem::calcLineSegmentRaycast(float radiantAngle,
-                                                                         const pairFloat_t &originPoint)
+                                                                         const pairFloat_t &originPoint,
+                                                                         bool visual)
 {
     std::optional<ElementRaycast> element;
     float textPos;
@@ -643,7 +644,14 @@ optionalTargetRaycast_t FirstPersonDisplaySystem::calcLineSegmentRaycast(float r
             }
         }
     }
-    return {};
+    if(visual)
+    {
+        return {};
+    }
+    else
+    {
+        return tupleTargetRaycast_t{currentPoint, EPSILON_FLOAT, {}};
+    }
 }
 
 //===================================================================
