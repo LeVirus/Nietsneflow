@@ -82,63 +82,10 @@ bool IASystem::checkEnemyTriggerAttackMode(float radiantAngle, float distancePla
     {
         return false;
     }
-    DoorComponent *doorComp;
-    MapCoordComponent *mapComp;
-    RectangleCollisionComponent *rectComp;
-    std::optional<float> verticalLeadCoef = getLeadCoef(radiantAngle, false),
-    lateralLeadCoef = getLeadCoef(radiantAngle, true);
-    pairFloat_t currentPoint = enemyMapComp->m_absoluteMapPositionPX;
-    std::optional<pairUI_t> currentCoord;
-    std::optional<ElementRaycast> element;
-    bool lateral, randA, randB;
-    for(uint32_t k = 0; k < 20; ++k)//limit distance
-    {
-        currentPoint = getLimitPointRayCasting(currentPoint, radiantAngle,
-                                               lateralLeadCoef, verticalLeadCoef, lateral);
-        currentCoord = getCorrectedCoord(currentPoint, lateral, radiantAngle);
-        if(!currentCoord)
-        {
-            break;
-        }
-        element = Level::getElementCase(*currentCoord);
-        if(element)
-        {
-            if(element->m_type == LevelCaseType_e::WALL_LC)
-            {
-                break;
-            }
-            else if(element->m_type == LevelCaseType_e::DOOR_LC)
-            {
-                doorComp = stairwayToComponentManager().
-                        searchComponentByType<DoorComponent>(
-                            (*element).m_numEntity, Components_e::DOOR_COMPONENT);
-                mapComp = stairwayToComponentManager().
-                        searchComponentByType<MapCoordComponent>(
-                            (*element).m_numEntity, Components_e::MAP_COORD_COMPONENT);
-                rectComp = stairwayToComponentManager().
-                        searchComponentByType<RectangleCollisionComponent>(
-                            (*element).m_numEntity, Components_e::RECTANGLE_COLLISION_COMPONENT);
-                assert(doorComp);
-                assert(mapComp);
-                assert(rectComp);
-                //first case x pos limit second y pos limit
-                pairFloat_t doorPos[2] = {{mapComp->m_absoluteMapPositionPX.first,
-                                           mapComp->m_absoluteMapPositionPX.first +
-                                           rectComp->m_size.first},
-                                          {mapComp->m_absoluteMapPositionPX.second,
-                                           mapComp->m_absoluteMapPositionPX.second +
-                                           rectComp->m_size.second}};
-                //if door collision
-                if(treatDisplayDoor(radiantAngle, doorComp->m_vertical, currentPoint,
-                                    doorPos, verticalLeadCoef, lateralLeadCoef,
-                                    randA, randB))
-                {
-                    break;
-                }
-            }
-        }
-    }
-    return (getDistance(enemyMapComp->m_absoluteMapPositionPX, currentPoint) > distancePlayer);
+    optionalTargetRaycast_t result = mptrSystemManager->searchSystemByType<FirstPersonDisplaySystem>(
+                static_cast<uint32_t>(Systems_e::FIRST_PERSON_DISPLAY_SYSTEM))->
+            calcLineSegmentRaycast(radiantAngle, enemyMapComp->m_absoluteMapPositionPX, false);
+    return (getDistance(enemyMapComp->m_absoluteMapPositionPX, std::get<0>(*result)) > distancePlayer);
 }
 
 //===================================================================
