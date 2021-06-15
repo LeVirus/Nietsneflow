@@ -1,7 +1,10 @@
 BUGS======================================================================
 
+-5)
+Eject on door wall
+
 -4)
-Enemy display order issue whith wall
+Regression Element display order issue whith wall
 
 -3)
 While trigger end level weapon still move

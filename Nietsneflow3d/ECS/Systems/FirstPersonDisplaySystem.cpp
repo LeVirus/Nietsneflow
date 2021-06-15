@@ -122,7 +122,8 @@ void FirstPersonDisplaySystem::writeVertexRaycasting(const pairRaycastingData_t 
             searchComponentByType<SpriteTextureComponent>(entityData.first,
                                                           Components_e::SPRITE_TEXTURE_COMPONENT);
     assert(spriteComp);
-    float distance = vertex.loadRaycastingEntity(*spriteComp, entityData.second, m_textureLineDrawNumber);
+    float distance = vertex.loadRaycastingEntity(*spriteComp, entityData.second,
+                                                 m_textureLineDrawNumber);
     m_entitiesNumMem.insert(EntityData(distance, spriteComp->m_spriteData->m_textureNum,
                                        numIteration));
 }
@@ -135,28 +136,21 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
 {
     uint32_t numEntity = visionComp->m_vectVisibleEntities[numIteration];
     pairFloat_t centerPosB = getCenterPosition(mapCompB, genCollComp, numEntity);
-    float distance = getCameraDistance(mapCompA->m_absoluteMapPositionPX,
+    float simpleDistance = getCameraDistance(mapCompA->m_absoluteMapPositionPX,
                                        mapCompB->m_absoluteMapPositionPX,
                                        getRadiantAngle(degreeObserverAngle));
-    float simpleDistance = getDistance(mapCompA->m_absoluteMapPositionPX,
-                                       mapCompB->m_absoluteMapPositionPX);
-    if(distance > visionComp->m_distanceVisibility || distance < 1.0f)
+    float displayDistance = simpleDistance;
+    if(simpleDistance > visionComp->m_distanceVisibility || simpleDistance < 1.0f)
     {
         ++toRemove;
         return;
     }
-    CircleCollisionComponent *circleComp = stairwayToComponentManager().
-            searchComponentByType<CircleCollisionComponent>(numEntity,
-                                                          Components_e::CIRCLE_COLLISION_COMPONENT);
-    if(circleComp)
-    {
-        simpleDistance -= circleComp->m_ray;
-    }
+    displayDistance -= LEVEL_TILE_SIZE_PX;
     float trigoAngle = getTrigoAngle(mapCompA->m_absoluteMapPositionPX, centerPosB);
     //get lateral pos from angle
     float lateralPos = getLateralAngle(degreeObserverAngle, trigoAngle);
-    confNormalEntityVertex(numEntity, visionComp, genCollComp->m_tag, lateralPos, distance);
-    fillVertexFromEntity(numEntity, numIteration, simpleDistance, DisplayMode_e::STANDART_DM);
+    confNormalEntityVertex(numEntity, visionComp, genCollComp->m_tag, lateralPos, simpleDistance);
+    fillVertexFromEntity(numEntity, numIteration, displayDistance, DisplayMode_e::STANDART_DM);
 }
 
 //===================================================================
@@ -598,8 +592,8 @@ void FirstPersonDisplaySystem::rayCasting()
                 {
                     if(element->m_type == LevelCaseType_e::WALL_LC)
                     {
-                        textPos = lateral ? std::fmod(currentPoint.first, LEVEL_TILE_SIZE_PX) /*+ *textPos*/ :
-                                                            std::fmod(currentPoint.second, LEVEL_TILE_SIZE_PX) /*+ *textPos*/;
+                        textPos = lateral ? std::fmod(currentPoint.first, LEVEL_TILE_SIZE_PX) :
+                                            std::fmod(currentPoint.second, LEVEL_TILE_SIZE_PX);
                         memDistance(element->m_numEntity, j, getCameraDistance(mapCompCamera->m_absoluteMapPositionPX,
                                                                                currentPoint, cameraRadiantAngle), textPos);
                         break;
