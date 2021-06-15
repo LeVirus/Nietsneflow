@@ -13,10 +13,13 @@
 struct GeneralCollisionComponent;
 struct RectangleCollisionComponent;
 struct RayCastingIntersect;
+struct ElementRaycast;
 
 using vectUI_t = std::vector<uint32_t>;
 using mapRayCastingData_t = std::map<uint32_t, std::vector<RayCastingIntersect>>;
 using pairRaycastingData_t = std::pair<uint32_t, std::vector<RayCastingIntersect>>;
+using tupleTargetRaycast_t = std::tuple<pairFloat_t, float, uint32_t>;
+using optionalTargetRaycast_t = std::optional<tupleTargetRaycast_t>;
 
 struct RayCastingIntersect
 {
@@ -47,6 +50,9 @@ public:
     void drawPlayerDamage();
     void setVectTextures(std::vector<Texture> &vectTexture);
     void setShader(Shader &shader);
+    //return target point, texture position and entity num if collision
+    optionalTargetRaycast_t calcLineSegmentRaycast(float radiantAngle,
+                                               const pairFloat_t &originPoint);
 private:
     void rayCasting();
     std::optional<float> treatDoorRaycast(uint32_t numEntity, float currentRadiantAngle,

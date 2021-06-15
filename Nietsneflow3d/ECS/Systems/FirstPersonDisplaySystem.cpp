@@ -553,12 +553,7 @@ void FirstPersonDisplaySystem::rayCasting()
 {
     MapCoordComponent *mapCompCamera;
     MoveableComponent *moveComp;
-    std::optional<float> lateralLeadCoef, verticalLeadCoef;
-    float textPos;
-    pairFloat_t currentPoint;
-    std::optional<pairUI_t> currentCoord;
-    std::optional<ElementRaycast> element;
-    bool lateral = false, textLateral, textFace;
+    std::optional<std::tuple<pairFloat_t, float, uint32_t>> targetPoint;
     for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
     {
         //WORK FOR ONE PLAYER ONLY
@@ -575,52 +570,14 @@ void FirstPersonDisplaySystem::rayCasting()
         //mem entity num & distances
         for(uint32_t j = 0; j < m_textureLineDrawNumber; ++j)
         {
-            verticalLeadCoef = getLeadCoef(currentRadiantAngle, false);
-            lateralLeadCoef = getLeadCoef(currentRadiantAngle, true);
-            currentPoint = mapCompCamera->m_absoluteMapPositionPX;
-            for(uint32_t k = 0; k < 20; ++k)//limit distance
+            targetPoint = calcLineSegmentRaycast(currentRadiantAngle,
+                                                 mapCompCamera->m_absoluteMapPositionPX);
+            if(targetPoint)
             {
-                currentPoint = getLimitPointRayCasting(currentPoint, currentRadiantAngle,
-                                                       lateralLeadCoef, verticalLeadCoef, lateral);
-                currentCoord = getCorrectedCoord(currentPoint, lateral, currentRadiantAngle);
-                if(!currentCoord)
-                {
-                    break;
-                }
-                element = Level::getElementCase(*currentCoord);
-                if(element)
-                {
-                    if(element->m_type == LevelCaseType_e::WALL_LC)
-                    {
-                        textPos = lateral ? std::fmod(currentPoint.first, LEVEL_TILE_SIZE_PX) :
-                                            std::fmod(currentPoint.second, LEVEL_TILE_SIZE_PX);
-                        memDistance(element->m_numEntity, j, getCameraDistance(mapCompCamera->m_absoluteMapPositionPX,
-                                                                               currentPoint, cameraRadiantAngle), textPos);
-                        break;
-                    }
-                    else if(element->m_type == LevelCaseType_e::DOOR_LC)
-                    {
-                        std::optional<float> textPos = treatDoorRaycast(element->m_numEntity, currentRadiantAngle,
-                                                                        currentPoint, lateralLeadCoef,
-                                                                        verticalLeadCoef, textLateral, textFace);
-                        if(textPos)
-                        {
-                            if(!textFace)
-                            {
-                                textPos = 3.0f;
-                            }
-                            else
-                            {
-                                textPos = textLateral == textFace ? std::fmod(currentPoint.first, LEVEL_TILE_SIZE_PX) + *textPos :
-                                                        std::fmod(currentPoint.second, LEVEL_TILE_SIZE_PX) + *textPos;
-                            }
-                            memDistance(element->m_numEntity, j,
-                                        getCameraDistance(mapCompCamera->m_absoluteMapPositionPX,
-                                                          currentPoint, cameraRadiantAngle), *textPos);
-                            break;
-                        }
-                    }
-                }
+                memDistance(std::get<2>(*targetPoint), j,
+                            getCameraDistance(mapCompCamera->m_absoluteMapPositionPX,
+                                              std::get<0>(*targetPoint), cameraRadiantAngle),
+                            std::get<1>(*targetPoint));
             }
             currentLateralScreen += m_stepDrawLateralScreen;
             currentRadiantAngle -= m_stepAngle;
@@ -630,6 +587,63 @@ void FirstPersonDisplaySystem::rayCasting()
             }
         }
     }
+}
+
+//===================================================================
+optionalTargetRaycast_t FirstPersonDisplaySystem::calcLineSegmentRaycast(float radiantAngle,
+                                                                         const pairFloat_t &originPoint)
+{
+    std::optional<ElementRaycast> element;
+    float textPos;
+    bool textLateral, textFace, lateral/* = true*/;
+    std::optional<pairUI_t> currentCoord;
+    std::optional<float> lateralLeadCoef, verticalLeadCoef;
+    verticalLeadCoef = getLeadCoef(radiantAngle, false);
+    lateralLeadCoef = getLeadCoef(radiantAngle, true);
+    pairFloat_t currentPoint = originPoint;
+    for(uint32_t k = 0; k < 20; ++k)//limit distance
+    {
+        currentPoint = getLimitPointRayCasting(currentPoint, radiantAngle,
+                                               lateralLeadCoef, verticalLeadCoef, lateral);
+        currentCoord = getCorrectedCoord(currentPoint, lateral, radiantAngle);
+        if(!currentCoord)
+        {
+            break;
+        }
+        element = Level::getElementCase(*currentCoord);
+        if(element)
+        {
+            if(element->m_type == LevelCaseType_e::WALL_LC)
+            {
+                textPos = lateral ? std::fmod(currentPoint.first, LEVEL_TILE_SIZE_PX) :
+                                    std::fmod(currentPoint.second, LEVEL_TILE_SIZE_PX);
+                return tupleTargetRaycast_t{currentPoint, textPos, element->m_numEntity};
+            }
+            else if(element->m_type == LevelCaseType_e::DOOR_LC)
+            {
+                std::optional<float> textPosDoor = treatDoorRaycast(element->m_numEntity, radiantAngle,
+                                                                currentPoint, lateralLeadCoef,
+                                                                verticalLeadCoef, textLateral,
+                                                                textFace);
+                if(textPosDoor)
+                {
+                    if(!textFace)
+                    {
+                        textPosDoor = 3.0f;
+                    }
+                    else
+                    {
+                        textPosDoor = (textLateral == textFace) ? std::fmod(currentPoint.first,
+                                                                        LEVEL_TILE_SIZE_PX) + *textPosDoor :
+                                                std::fmod(currentPoint.second, LEVEL_TILE_SIZE_PX)
+                                                              + *textPosDoor;
+                    }
+                    return tupleTargetRaycast_t{currentPoint, *textPosDoor, element->m_numEntity};
+                }
+            }
+        }
+    }
+    return {};
 }
 
 //===================================================================
@@ -877,6 +891,7 @@ pairFloat_t getLimitPointRayCasting(const pairFloat_t &cameraPoint, float radian
     //limit case
     if(!verticalLeadCoef)
     {
+        lateral = true;
         modulo = getModulo(currentSin, cameraPoint.second, LEVEL_TILE_SIZE_PX, false);
         if(!modulo)
         {
@@ -896,6 +911,7 @@ pairFloat_t getLimitPointRayCasting(const pairFloat_t &cameraPoint, float radian
     //second limit case
     else if(!lateralLeadCoef)
     {
+        lateral = false;
         modulo = getModulo(currentCos, cameraPoint.first, LEVEL_TILE_SIZE_PX, true);
         if(!modulo)
         {
