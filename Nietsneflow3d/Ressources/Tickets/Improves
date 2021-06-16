@@ -3,6 +3,7 @@ IMPROVE=========================================================================
 
 -4)
 WHen no ammo change to best weapon
+
 -3)
 Limit shoot intervalle time
 
@@ -32,6 +33,9 @@ Ajouter armure
 
 3)
 Enemy animations========================~
+
+-5)
+Set static element collision box same as picture size=====================================OK
 
 7)
 Set door still open if player or enemiy is in the way================================OK

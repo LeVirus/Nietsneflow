@@ -547,8 +547,10 @@ void MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
 {
     const std::map<std::string, EnemyData> &enemiesData = levelManager.getEnemiesData();
     std::map<std::string, EnemyData>::const_iterator it = enemiesData.begin();
+    float collisionSize;
     for(; it != enemiesData.end(); ++it)
     {
+        collisionSize = (it->second.m_inGameSpriteSize.first * LEVEL_TILE_SIZE_PX) / 4.0f;
         const SpriteData &memSpriteData = levelManager.getPictureData().
                 getSpriteData()[it->second.m_staticFrontSprites[0]];
         for(uint32_t j = 0; j < it->second.m_TileGamePosition.size(); ++j)
@@ -565,6 +567,10 @@ void MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
             assert(enemyComp);
             assert(fpsStaticComp);
             fpsStaticComp->m_inGameSpriteSize = it->second.m_inGameSpriteSize;
+            CircleCollisionComponent *circleComp = m_ecsManager.getComponentManager().
+                    searchComponentByType<CircleCollisionComponent>(numEntity, Components_e::CIRCLE_COLLISION_COMPONENT);
+            assert(circleComp);
+            circleComp->m_ray = collisionSize;
             createAmmosEntities(enemyComp->m_stdAmmo, CollisionTag_e::BULLET_ENEMY_CT);
             createAmmosEntities(enemyComp->m_visibleAmmo, CollisionTag_e::BULLET_ENEMY_CT, true);
             loadEnemySprites(levelManager.getPictureData().getSpriteData(),
@@ -616,6 +622,7 @@ void MainEngine::createShotImpactEntities(const std::vector<SpriteData> &vectSpr
             searchComponentByType<ShotConfComponent>(*segmentShotContainer[0],
                                                      Components_e::SHOT_CONF_COMPONENT);
     assert(shotComp);
+    pairFloat_t pairSpriteSize = {0.1f, 0.1f};
     for(uint32_t i = 0; i < entitiesContainer.size(); ++i)
     {
         entitiesContainer[i] = createShotImpactEntity();
@@ -625,18 +632,13 @@ void MainEngine::createShotImpactEntities(const std::vector<SpriteData> &vectSpr
         GeneralCollisionComponent *genComp = m_ecsManager.getComponentManager().
                 searchComponentByType<GeneralCollisionComponent>(entitiesContainer[i],
                                                               Components_e::GENERAL_COLLISION_COMPONENT);
-        CircleCollisionComponent *circleComp = m_ecsManager.getComponentManager().
-                searchComponentByType<CircleCollisionComponent>(entitiesContainer[i],
-                                                              Components_e::CIRCLE_COLLISION_COMPONENT);
         assert(genComp);
-        assert(circleComp);
         assert(fpsStaticComp);
-        fpsStaticComp->m_inGameSpriteSize = {0.1f, 0.1f};
+        fpsStaticComp->m_inGameSpriteSize = pairSpriteSize;
         fpsStaticComp->m_levelElementType = LevelStaticElementType_e::IMPACT;
         genComp->m_active = false;
         genComp->m_tag = CollisionTag_e::IMPACT_CT;
         genComp->m_shape = CollisionShape_e::CIRCLE_C;
-        circleComp->m_ray = 30.0f;
         assert(segmentShotContainer[i]);
         //mem impact entity in shot component
         shotComp->m_impactEntities[i] = entitiesContainer[i];
@@ -746,6 +748,8 @@ void MainEngine::loadVisibleShotEnemySprites(const std::vector<SpriteData> &vect
 //===================================================================
 void MainEngine::confVisibleAmmo(const AmmoContainer_t &ammoCont)
 {
+    pairFloat_t pairSpriteSize = {0.2f, 0.3f};
+    float collisionRay = (pairSpriteSize.first * LEVEL_TILE_SIZE_PX) / 4.0f;
     for(uint32_t i = 0; i < ammoCont.size(); ++i)
     {
         CircleCollisionComponent *circleComp = m_ecsManager.getComponentManager().
@@ -760,8 +764,8 @@ void MainEngine::confVisibleAmmo(const AmmoContainer_t &ammoCont)
         assert(circleComp);
         assert(fpsStaticComp);
         assert(moveComp);
-        circleComp->m_ray = 5.0f;
-        fpsStaticComp->m_inGameSpriteSize = {0.2f, 0.3f};
+        circleComp->m_ray = collisionRay;
+        fpsStaticComp->m_inGameSpriteSize = pairSpriteSize;
         moveComp->m_velocity = 5.0f;
     }
 }
@@ -943,18 +947,6 @@ void MainEngine::confBaseComponent(uint32_t entityNum, const SpriteData &memSpri
                 searchComponentByType<RectangleCollisionComponent>(entityNum, Components_e::RECTANGLE_COLLISION_COMPONENT);
         assert(rectComp);
         rectComp->m_size = {LEVEL_TILE_SIZE_PX, LEVEL_TILE_SIZE_PX};
-    }
-    else if(collisionShape == CollisionShape_e::CIRCLE_C)
-    {
-        FPSVisibleStaticElementComponent *fpsStaticComp = m_ecsManager.getComponentManager().
-                searchComponentByType<FPSVisibleStaticElementComponent>(
-                    entityNum, Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
-        CircleCollisionComponent *circleComp = m_ecsManager.getComponentManager().
-                searchComponentByType<CircleCollisionComponent>(entityNum, Components_e::CIRCLE_COLLISION_COMPONENT);
-        assert(fpsStaticComp);
-        assert(circleComp);
-        circleComp->m_ray = 5.0f;
-        fpsStaticComp->m_inGameSpriteSize = {0.5f, 0.8f};
     }
     tagComp->m_tag = tag;
 }
@@ -1300,8 +1292,10 @@ void MainEngine::loadStaticElementGroup(const LevelManager &levelManager,
 {
     CollisionTag_e tag;
     std::map<std::string, StaticLevelElementData>::const_iterator it = staticData.begin();
+    float collisionSize;
     for(; it != staticData.end(); ++it)
     {
+        collisionSize = (it->second.m_inGameSpriteSize.first * LEVEL_TILE_SIZE_PX) / 4.0f;
         const SpriteData &memSpriteData = levelManager.getPictureData().
                 getSpriteData()[it->second.m_numSprite];
         for(uint32_t j = 0; j < it->second.m_TileGamePosition.size(); ++j)
@@ -1337,6 +1331,10 @@ void MainEngine::loadStaticElementGroup(const LevelManager &levelManager,
             fpsStaticComp->m_inGameSpriteSize = it->second.m_inGameSpriteSize;
             confBaseComponent(entityNum, memSpriteData, it->second.m_TileGamePosition[j],
                     CollisionShape_e::CIRCLE_C, tag);
+            CircleCollisionComponent *circleComp = m_ecsManager.getComponentManager().
+                    searchComponentByType<CircleCollisionComponent>(entityNum, Components_e::CIRCLE_COLLISION_COMPONENT);
+            assert(circleComp);
+            circleComp->m_ray = collisionSize;
             confStaticComponent(entityNum, it->second.m_inGameSpriteSize, elementType);
         }
     }

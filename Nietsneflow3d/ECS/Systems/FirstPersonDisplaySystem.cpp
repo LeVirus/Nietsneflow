@@ -596,7 +596,7 @@ optionalTargetRaycast_t FirstPersonDisplaySystem::calcLineSegmentRaycast(float r
 {
     std::optional<ElementRaycast> element;
     float textPos;
-    bool textLateral, textFace, lateral/* = true*/;
+    bool textLateral, textFace, lateral;
     std::optional<pairUI_t> currentCoord;
     std::optional<float> lateralLeadCoef, verticalLeadCoef;
     verticalLeadCoef = getLeadCoef(radiantAngle, false);
