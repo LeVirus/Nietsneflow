@@ -547,10 +547,10 @@ void MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
 {
     const std::map<std::string, EnemyData> &enemiesData = levelManager.getEnemiesData();
     std::map<std::string, EnemyData>::const_iterator it = enemiesData.begin();
-    float collisionSize;
+    float collisionRay;
     for(; it != enemiesData.end(); ++it)
     {
-        collisionSize = (it->second.m_inGameSpriteSize.first * LEVEL_TILE_SIZE_PX) / 4.0f;
+        collisionRay = (it->second.m_inGameSpriteSize.first * LEVEL_TILE_SIZE_PX) / 2.0f;
         const SpriteData &memSpriteData = levelManager.getPictureData().
                 getSpriteData()[it->second.m_staticFrontSprites[0]];
         for(uint32_t j = 0; j < it->second.m_TileGamePosition.size(); ++j)
@@ -570,7 +570,7 @@ void MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
             CircleCollisionComponent *circleComp = m_ecsManager.getComponentManager().
                     searchComponentByType<CircleCollisionComponent>(numEntity, Components_e::CIRCLE_COLLISION_COMPONENT);
             assert(circleComp);
-            circleComp->m_ray = collisionSize;
+            circleComp->m_ray = collisionRay;
             createAmmosEntities(enemyComp->m_stdAmmo, CollisionTag_e::BULLET_ENEMY_CT);
             createAmmosEntities(enemyComp->m_visibleAmmo, CollisionTag_e::BULLET_ENEMY_CT, true);
             loadEnemySprites(levelManager.getPictureData().getSpriteData(),
@@ -749,7 +749,7 @@ void MainEngine::loadVisibleShotEnemySprites(const std::vector<SpriteData> &vect
 void MainEngine::confVisibleAmmo(const AmmoContainer_t &ammoCont)
 {
     pairFloat_t pairSpriteSize = {0.2f, 0.3f};
-    float collisionRay = (pairSpriteSize.first * LEVEL_TILE_SIZE_PX) / 4.0f;
+    float collisionRay = (pairSpriteSize.first * LEVEL_TILE_SIZE_PX) / 2.0f;
     for(uint32_t i = 0; i < ammoCont.size(); ++i)
     {
         CircleCollisionComponent *circleComp = m_ecsManager.getComponentManager().
@@ -1292,10 +1292,10 @@ void MainEngine::loadStaticElementGroup(const LevelManager &levelManager,
 {
     CollisionTag_e tag;
     std::map<std::string, StaticLevelElementData>::const_iterator it = staticData.begin();
-    float collisionSize;
+    float collisionRay;
     for(; it != staticData.end(); ++it)
     {
-        collisionSize = (it->second.m_inGameSpriteSize.first * LEVEL_TILE_SIZE_PX) / 4.0f;
+        collisionRay = (it->second.m_inGameSpriteSize.first * LEVEL_TILE_SIZE_PX) / 2.0f;
         const SpriteData &memSpriteData = levelManager.getPictureData().
                 getSpriteData()[it->second.m_numSprite];
         for(uint32_t j = 0; j < it->second.m_TileGamePosition.size(); ++j)
@@ -1334,7 +1334,7 @@ void MainEngine::loadStaticElementGroup(const LevelManager &levelManager,
             CircleCollisionComponent *circleComp = m_ecsManager.getComponentManager().
                     searchComponentByType<CircleCollisionComponent>(entityNum, Components_e::CIRCLE_COLLISION_COMPONENT);
             assert(circleComp);
-            circleComp->m_ray = collisionSize;
+            circleComp->m_ray = collisionRay;
             confStaticComponent(entityNum, it->second.m_inGameSpriteSize, elementType);
         }
     }

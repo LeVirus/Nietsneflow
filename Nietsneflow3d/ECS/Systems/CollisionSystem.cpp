@@ -238,7 +238,7 @@ void CollisionSystem::confImpactShots(uint32_t numBullet)
         mapImpact->m_absoluteMapPositionPX = segmentBullet->m_points.first;
         float radiantAngle = getTrigoAngle(segmentBullet->m_points.first,
                                            segmentBullet->m_points.second, false);
-        moveElementFromAngle(m_memDistCurrentBulletColl.second, radiantAngle, *mapImpact);
+        moveElementFromAngle(m_memDistCurrentBulletColl.second, radiantAngle, (*mapImpact).m_absoluteMapPositionPX);
     }
     genImpact->m_active = true;
     timerImpact->m_clockA = std::chrono::system_clock::now();
