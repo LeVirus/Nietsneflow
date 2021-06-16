@@ -61,6 +61,7 @@ bool MainEngine::mainLoop(bool &memGameOver)
         m_graphicEngine.runIteration(m_gamePaused);
         if(!m_exitColl->m_active)
         {
+            m_playerConf->m_inMovement = false;
             memPlayerGear();
             m_graphicEngine.setTransition(m_gamePaused);
             displayTransitionMenu();

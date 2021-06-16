@@ -146,7 +146,7 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
         return;
     }
     if(!behindRaycastElement(mapCompA, simpleDistance, radiantObserverAngle,
-                                  visionComp->m_vectVisibleEntities[numIteration]))
+                             visionComp->m_vectVisibleEntities[numIteration]))
     {
         displayDistance -= LEVEL_TILE_SIZE_PX;
     }

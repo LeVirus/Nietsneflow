@@ -3,11 +3,8 @@ BUGS======================================================================
 -5)
 Eject on door wall
 
--3)
-While trigger end level weapon still move
-
 -2)
-While enemy eject on wall 
+While enemy touch eject on wall 
 
 -1)
 While back and action player eject wall
@@ -22,6 +19,9 @@ assert à CollisionSystem.cpp::770
 
 3)
 Collision issue on segment shoot
+
+-3)
+While trigger end level weapon still move============================OK
 
 -4)
 Regression Element display order issue whith wall===============================OK
