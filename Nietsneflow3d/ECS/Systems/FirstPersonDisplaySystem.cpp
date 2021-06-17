@@ -145,10 +145,13 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
         ++toRemove;
         return;
     }
-    if(!behindRaycastElement(mapCompA, simpleDistance, radiantObserverAngle,
-                             visionComp->m_vectVisibleEntities[numIteration]))
+    if(genCollComp->m_tag == CollisionTag_e::IMPACT_CT ||
+            !behindRaycastElement(mapCompA, simpleDistance, radiantObserverAngle,
+                                  visionComp->m_vectVisibleEntities[numIteration]))
     {
+        std::cerr << displayDistance << "A\n";
         displayDistance -= LEVEL_TILE_SIZE_PX;
+        std::cerr << displayDistance << "B\n";
     }
     float trigoAngle = getTrigoAngle(mapCompA->m_absoluteMapPositionPX, centerPosB);
     //get lateral pos from angle
