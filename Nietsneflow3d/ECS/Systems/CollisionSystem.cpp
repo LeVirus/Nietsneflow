@@ -500,8 +500,6 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
                     searchComponentByType<ShotConfComponent>(args.entityNumA,
                                                                Components_e::SHOT_CONF_COMPONENT);
             assert(shotConfComp);
-
-
             if(shotConfComp->m_destructPhase)
             {
                 return;

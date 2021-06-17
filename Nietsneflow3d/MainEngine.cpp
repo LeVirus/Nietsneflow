@@ -134,7 +134,7 @@ void MainEngine::displayTransitionMenu()
 void MainEngine::confPlayerShoot(const AmmoContainer_t &playerVisibleShots,
                                  const pairFloat_t &point, float degreeAngle)
 {
-    m_physicalEngine.confVisibleShoot(playerVisibleShots, point, degreeAngle);
+    m_physicalEngine.confPlayerVisibleShoot(playerVisibleShots, point, degreeAngle);
 }
 
 //===================================================================
@@ -501,10 +501,6 @@ void MainEngine::loadDoorEntities(const LevelManager &levelManager)
             uint32_t numEntity = createDoorEntity();
             confBaseComponent(numEntity, memSpriteData, it->second.m_TileGamePosition[j],
                               CollisionShape_e::RECTANGLE_C, CollisionTag_e::DOOR_CT);
-            GeneralCollisionComponent *tagComp = m_ecsManager.getComponentManager().
-                    searchComponentByType<GeneralCollisionComponent>(numEntity, Components_e::GENERAL_COLLISION_COMPONENT);
-            assert(tagComp);
-            tagComp->m_tag = CollisionTag_e::DOOR_CT;
             MapCoordComponent *mapComp = m_ecsManager.getComponentManager().
                     searchComponentByType<MapCoordComponent>(numEntity, Components_e::MAP_COORD_COMPONENT);
             assert(mapComp);
