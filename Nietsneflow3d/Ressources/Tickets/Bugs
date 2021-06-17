@@ -9,13 +9,13 @@ While enemy touch eject on wall
 -1)
 While back and action player eject wall
 
+3)
+Collision issue on segment shoot
+
 1)
 assert à CollisionSystem.cpp::89    EnemyConfComponent == nullptr
 assert à CollisionSystem.cpp::726   hyp > distanceX && hyp > distanceY
 assert à CollisionSystem.cpp::770  
-
-3)
-Collision issue on segment shoot
 
 0)
 Door does not display when open and player is on the way===================================OK

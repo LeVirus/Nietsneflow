@@ -145,7 +145,8 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
         ++toRemove;
         return;
     }
-    if(genCollComp->m_tag == CollisionTag_e::IMPACT_CT || genCollComp->m_tag == CollisionTag_e::BULLET_PLAYER_CT ||
+    if(genCollComp->m_tag == CollisionTag_e::IMPACT_CT ||
+            genCollComp->m_tag == CollisionTag_e::BULLET_PLAYER_CT ||
             genCollComp->m_tag == CollisionTag_e::BULLET_ENEMY_CT ||
             !behindRaycastElement(mapCompA, simpleDistance, radiantObserverAngle,
                                   visionComp->m_vectVisibleEntities[numIteration]))
@@ -174,7 +175,7 @@ bool FirstPersonDisplaySystem::behindRaycastElement(const MapCoordComponent *map
                                            mapCompObserver->m_absoluteMapPositionPX, false);
     float distanceRaycast = getDistance(mapCompObserver->m_absoluteMapPositionPX,
                                         std::get<0>(*resultRaycast));
-    if(distanceRaycast < distance)
+    if(distanceRaycast < distance && (distance - distanceRaycast) > LEVEL_THIRD_TILE_SIZE_PX)
     {
         return true;
     }
@@ -182,7 +183,7 @@ bool FirstPersonDisplaySystem::behindRaycastElement(const MapCoordComponent *map
                                            mapCompObserver->m_absoluteMapPositionPX, false);
     distanceRaycast = getDistance(mapCompObserver->m_absoluteMapPositionPX,
                                         std::get<0>(*resultRaycast));
-    if(distanceRaycast < distance)
+    if(distanceRaycast < distance && (distance - distanceRaycast) > LEVEL_THIRD_TILE_SIZE_PX)
     {
         return true;
     }
