@@ -55,6 +55,11 @@ public:
                                                    const pairFloat_t &originPoint,
                                                    bool visual = true);
 private:
+    optionalTargetRaycast_t calcDoorSegmentRaycast(float radiantAngle,
+                                                   std::optional<float> lateralLeadCoef,
+                                                   std::optional<float> verticalLeadCoef,
+                                                   pairFloat_t &currentPoint,
+                                                   const ElementRaycast &element);
     bool behindRaycastElement(const MapCoordComponent *mapCompObserver, float distance,
                               float radiantObserverAngle, uint32_t targetEntity);
     void rayCasting();

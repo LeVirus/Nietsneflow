@@ -630,12 +630,27 @@ optionalTargetRaycast_t FirstPersonDisplaySystem::calcLineSegmentRaycast(float r
 {
     std::optional<ElementRaycast> element;
     float textPos;
-    bool textLateral, textFace, lateral;
+    bool lateral;
     std::optional<pairUI_t> currentCoord;
     std::optional<float> lateralLeadCoef, verticalLeadCoef;
     verticalLeadCoef = getLeadCoef(radiantAngle, false);
     lateralLeadCoef = getLeadCoef(radiantAngle, true);
     pairFloat_t currentPoint = originPoint;
+    optionalTargetRaycast_t result;
+    if(visual)
+    {
+        currentCoord = getLevelCoord(currentPoint);
+        element = Level::getElementCase(*currentCoord);
+        if(element && (*element).m_type == LevelCaseType_e::DOOR_LC)
+        {
+            result = calcDoorSegmentRaycast(radiantAngle, lateralLeadCoef,
+                                            verticalLeadCoef, currentPoint, *element);
+            if(result)
+            {
+                return result;
+            }
+        }
+    }
     for(uint32_t k = 0; k < 20; ++k)//limit distance
     {
         currentPoint = getLimitPointRayCasting(currentPoint, radiantAngle,
@@ -656,24 +671,11 @@ optionalTargetRaycast_t FirstPersonDisplaySystem::calcLineSegmentRaycast(float r
             }
             else if(element->m_type == LevelCaseType_e::DOOR_LC)
             {
-                std::optional<float> textPosDoor = treatDoorRaycast(element->m_numEntity, radiantAngle,
-                                                                currentPoint, lateralLeadCoef,
-                                                                verticalLeadCoef, textLateral,
-                                                                textFace);
-                if(textPosDoor)
+                result = calcDoorSegmentRaycast(radiantAngle, lateralLeadCoef,
+                                                verticalLeadCoef, currentPoint, *element);
+                if(result)
                 {
-                    if(!textFace)
-                    {
-                        textPosDoor = 3.0f;
-                    }
-                    else
-                    {
-                        textPosDoor = (textLateral == textFace) ? std::fmod(currentPoint.first,
-                                                                        LEVEL_TILE_SIZE_PX) + *textPosDoor :
-                                                std::fmod(currentPoint.second, LEVEL_TILE_SIZE_PX)
-                                                              + *textPosDoor;
-                    }
-                    return tupleTargetRaycast_t{currentPoint, *textPosDoor, element->m_numEntity};
+                    return result;
                 }
             }
         }
@@ -686,6 +688,35 @@ optionalTargetRaycast_t FirstPersonDisplaySystem::calcLineSegmentRaycast(float r
     {
         return tupleTargetRaycast_t{currentPoint, EPSILON_FLOAT, {}};
     }
+}
+
+optionalTargetRaycast_t FirstPersonDisplaySystem::calcDoorSegmentRaycast(float radiantAngle,
+                                                                         std::optional<float> lateralLeadCoef,
+                                                                         std::optional<float> verticalLeadCoef,
+                                                                         pairFloat_t &currentPoint,
+                                                                         const ElementRaycast &element)
+{
+    bool textFace, textLateral;
+    std::optional<float> textPosDoor = treatDoorRaycast(element.m_numEntity, radiantAngle,
+                                                        currentPoint, lateralLeadCoef,
+                                                        verticalLeadCoef, textLateral,
+                                                        textFace);
+    if(textPosDoor)
+    {
+        if(!textFace)
+        {
+            textPosDoor = 3.0f;
+        }
+        else
+        {
+            textPosDoor = (textLateral == textFace) ? std::fmod(currentPoint.first,
+                                                            LEVEL_TILE_SIZE_PX) + *textPosDoor :
+                                    std::fmod(currentPoint.second, LEVEL_TILE_SIZE_PX)
+                                                  + *textPosDoor;
+        }
+        return tupleTargetRaycast_t{currentPoint, *textPosDoor, element.m_numEntity};
+    }
+    return {};
 }
 
 //===================================================================
