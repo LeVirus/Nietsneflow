@@ -171,26 +171,19 @@ bool checkCircleSegmentCollision(const pairFloat_t &circleCenter,
                                  const pairFloat_t &lineFirstPoint,
                                  const pairFloat_t &lineSecondPoint)
 {
-    float minX = std::min(lineFirstPoint.first, lineSecondPoint.first);
-    float maxX = std::max(lineFirstPoint.first, lineSecondPoint.first);
-    float minY = std::min(lineFirstPoint.second, lineSecondPoint.second);
-    float maxY = std::max(lineFirstPoint.second, lineSecondPoint.second);
-    if(!checkCircleRectCollision(circleCenter, circleRay, {minX, minY}, {maxX - minX, maxY - minY}))
+    float segmentAngle = getTrigoAngle(lineFirstPoint, lineSecondPoint, false),
+            limitAngleA, limitAngleB;
+    pairFloat_t limitPointA = circleCenter, limitPointB = circleCenter;
+    moveElementFromAngle(circleRay, segmentAngle - PI_HALF, limitPointA);
+    moveElementFromAngle(circleRay, segmentAngle + PI_HALF, limitPointB);
+    limitAngleA = getTrigoAngle(lineFirstPoint, limitPointA, false);
+    limitAngleB = getTrigoAngle(lineFirstPoint, limitPointB, false);
+    if(segmentAngle < limitAngleA || segmentAngle > limitAngleB)
     {
         return false;
     }
-    float lenght = getDistance(lineFirstPoint, lineSecondPoint);
-    float dot = (((circleCenter.first - lineFirstPoint.first) * (lineSecondPoint.first - lineFirstPoint.first)) +
-                 ((circleCenter.second - lineFirstPoint.second)*(lineSecondPoint.second - lineFirstPoint.second))) /
-            (lenght * lenght);
-
-    float closestX = lineFirstPoint.first + (dot * (lineSecondPoint.first - lineFirstPoint.first));
-    if(closestX < minX || closestX > maxX)
-    {
-        return false;
-    }
-    float closestY = lineFirstPoint.second + (dot * (lineSecondPoint.second - lineFirstPoint.second));
-    if(closestY < minY || closestY > maxY)
+    if(getDistance(lineFirstPoint, lineSecondPoint) <
+            (getDistance(lineFirstPoint, circleCenter) - circleRay))
     {
         return false;
     }

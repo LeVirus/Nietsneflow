@@ -547,7 +547,7 @@ void MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
     float collisionRay;
     for(; it != enemiesData.end(); ++it)
     {
-        collisionRay = (it->second.m_inGameSpriteSize.first * LEVEL_TILE_SIZE_PX) / 2.0f;
+        collisionRay = it->second.m_inGameSpriteSize.first * LEVEL_HALF_TILE_SIZE_PX;
         const SpriteData &memSpriteData = levelManager.getPictureData().
                 getSpriteData()[it->second.m_staticFrontSprites[0]];
         for(uint32_t j = 0; j < it->second.m_TileGamePosition.size(); ++j)
@@ -746,7 +746,7 @@ void MainEngine::loadVisibleShotEnemySprites(const std::vector<SpriteData> &vect
 void MainEngine::confVisibleAmmo(const AmmoContainer_t &ammoCont)
 {
     pairFloat_t pairSpriteSize = {0.2f, 0.3f};
-    float collisionRay = (pairSpriteSize.first * LEVEL_TILE_SIZE_PX) / 2.0f;
+    float collisionRay = pairSpriteSize.first * LEVEL_HALF_TILE_SIZE_PX;
     for(uint32_t i = 0; i < ammoCont.size(); ++i)
     {
         CircleCollisionComponent *circleComp = m_ecsManager.getComponentManager().
@@ -1292,7 +1292,7 @@ void MainEngine::loadStaticElementGroup(const LevelManager &levelManager,
     float collisionRay;
     for(; it != staticData.end(); ++it)
     {
-        collisionRay = (it->second.m_inGameSpriteSize.first * LEVEL_TILE_SIZE_PX) / 2.0f;
+        collisionRay = it->second.m_inGameSpriteSize.first * LEVEL_HALF_TILE_SIZE_PX;
         const SpriteData &memSpriteData = levelManager.getPictureData().
                 getSpriteData()[it->second.m_numSprite];
         for(uint32_t j = 0; j < it->second.m_TileGamePosition.size(); ++j)

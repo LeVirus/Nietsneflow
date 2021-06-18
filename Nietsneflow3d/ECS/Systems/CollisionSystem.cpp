@@ -489,8 +489,9 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
             (args.tagCompA->m_tag == CollisionTag_e::BULLET_PLAYER_CT))
     {
         bool destruct = false;
-        if(args.mapCompA.m_absoluteMapPositionPX.first < 10.0f ||
-                args.mapCompA.m_absoluteMapPositionPX.second < 10.0f)
+        //limit level case
+        if(args.mapCompA.m_absoluteMapPositionPX.first < LEVEL_THIRD_TILE_SIZE_PX ||
+                args.mapCompA.m_absoluteMapPositionPX.second < LEVEL_THIRD_TILE_SIZE_PX)
         {
             destruct = true;
         }
