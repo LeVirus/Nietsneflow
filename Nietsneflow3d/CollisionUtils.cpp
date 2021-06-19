@@ -171,13 +171,17 @@ bool checkCircleSegmentCollision(const pairFloat_t &circleCenter,
                                  const pairFloat_t &lineFirstPoint,
                                  const pairFloat_t &lineSecondPoint)
 {
-    float segmentAngle = getTrigoAngle(lineFirstPoint, lineSecondPoint, false),
+    float segmentAngle = std::fmod(getTrigoAngle(lineFirstPoint, lineSecondPoint, false), PI_DOUBLE),
             limitAngleA, limitAngleB;
     pairFloat_t limitPointA = circleCenter, limitPointB = circleCenter;
     moveElementFromAngle(circleRay, segmentAngle - PI_HALF, limitPointA);
     moveElementFromAngle(circleRay, segmentAngle + PI_HALF, limitPointB);
-    limitAngleA = getTrigoAngle(lineFirstPoint, limitPointA, false);
-    limitAngleB = getTrigoAngle(lineFirstPoint, limitPointB, false);
+    limitAngleA = std::fmod(getTrigoAngle(lineFirstPoint, limitPointA, false), PI_DOUBLE);
+    limitAngleB = std::fmod(getTrigoAngle(lineFirstPoint, limitPointB, false), PI_DOUBLE);
+    if((limitAngleA - limitAngleB) > PI)
+    {
+        limitAngleA -= PI_DOUBLE;
+    }
     if(segmentAngle < limitAngleA || segmentAngle > limitAngleB)
     {
         return false;

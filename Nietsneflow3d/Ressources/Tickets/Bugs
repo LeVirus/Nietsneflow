@@ -9,22 +9,22 @@ While enemy touch eject on wall
 -1)
 While back and action player eject wall
 
-3)
-Collision issue on segment shoot
-
 1)
 assert à CollisionSystem.cpp::89    EnemyConfComponent == nullptr
 assert à CollisionSystem.cpp::726   hyp > distanceX && hyp > distanceY
 assert à CollisionSystem.cpp::770  
+
+-4)
+Regression Element display order issue whith wall
+
+3)
+Collision issue on segment shoot===============================OK
 
 0)
 Door does not display when open and player is on the way===================================OK
 
 -3)
 While trigger end level weapon still move============================OK
-
--4)
-Regression Element display order issue whith wall===============================OK
 
 -4)
 Incoherent distance display of static element with raycast element==============================OK
