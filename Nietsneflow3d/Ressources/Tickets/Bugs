@@ -24,7 +24,7 @@ assert à CollisionSystem.cpp::726   hyp > distanceX && hyp > distanceY
 assert à CollisionSystem.cpp::770  
 
 3)
-Collision issue on segment shoot
+Collision issue on segment shoot=========================================OK
 
 -4)
 Regression Element display order issue whith wall==================================OK

@@ -188,7 +188,7 @@ bool FirstPersonDisplaySystem::behindRaycastElement(const MapCoordComponent *map
         return true;
     }
     refPoint = mapCompTarget->m_absoluteMapPositionPX;
-    moveElementFromAngle(circleComp->m_ray, radiantObserverAngle + PI_HALF, refPoint);
+    moveElementFromAngle(circleComp->m_ray, radiantObserverAngle - PI_HALF, refPoint);
     targetlimitRadiantAngle = getTrigoAngle(mapCompObserver->m_absoluteMapPositionPX,
                                             refPoint, false);
 
