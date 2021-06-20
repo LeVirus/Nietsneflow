@@ -170,6 +170,7 @@ void CollisionSystem::treatSegmentShots()
             //if player is dead
             if(!playerConfCompB->takeDamage(5))
             {
+                playerConfCompB->m_inMovement = false;
                 //player dead
             }
         }
@@ -527,7 +528,11 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
                         searchComponentByType<PlayerConfComponent>(args.entityNumB,
                                               Components_e::PLAYER_CONF_COMPONENT);
                 assert(playerConf);
-                playerConf->takeDamage(shotConfComp->m_damage);
+                if(!playerConf->takeDamage(shotConfComp->m_damage))
+                {
+                    playerConf->m_inMovement = false;
+                    //player dead
+                }
             }
         }
     }

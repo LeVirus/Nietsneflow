@@ -1,8 +1,5 @@
 BUGS======================================================================
 
--8)
-While dead transition weapon move if player move before death
-
 -7)
 Coll exit on door??
 
@@ -22,6 +19,9 @@ While back and action player eject wall
 assert à CollisionSystem.cpp::89    EnemyConfComponent == nullptr
 assert à CollisionSystem.cpp::726   hyp > distanceX && hyp > distanceY
 assert à CollisionSystem.cpp::770  
+
+-8)
+While dead transition weapon move if player move before death================================OK
 
 3)
 Collision issue on segment shoot=========================================OK
