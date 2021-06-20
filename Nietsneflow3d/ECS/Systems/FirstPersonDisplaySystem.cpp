@@ -183,7 +183,6 @@ bool FirstPersonDisplaySystem::behindRaycastElement(const MapCoordComponent *map
                                            mapCompObserver->m_absoluteMapPositionPX, false);
     float distanceRaycast = getDistance(mapCompObserver->m_absoluteMapPositionPX,
                                         std::get<0>(*resultRaycast));
-    std::cerr << distanceRaycast << "  " <<  distance << "\n";
     if(distanceRaycast < distance)
     {
         return true;
