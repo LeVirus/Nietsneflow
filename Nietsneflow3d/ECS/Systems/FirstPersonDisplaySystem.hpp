@@ -60,7 +60,7 @@ private:
                                                    std::optional<float> verticalLeadCoef,
                                                    pairFloat_t &currentPoint,
                                                    const ElementRaycast &element);
-    bool behindRaycastElement(const MapCoordComponent *mapCompObserver, float distance,
+    bool behindRaycastElement(const MapCoordComponent *mapCompObserver, const MapCoordComponent *mapCompTarget, float distance,
                               float radiantObserverAngle, uint32_t targetEntity);
     void rayCasting();
     std::optional<float> treatDoorRaycast(uint32_t numEntity, float currentRadiantAngle,

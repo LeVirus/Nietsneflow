@@ -1,5 +1,14 @@
 BUGS======================================================================
 
+-8)
+While dead transition weapon move if player move before death
+
+-7)
+Coll exit on door??
+
+-6)
+Enemy stay stuck on angle wall or door
+
 -5)
 Eject on door wall
 
@@ -18,7 +27,7 @@ assert à CollisionSystem.cpp::770
 Regression Element display order issue whith wall
 
 3)
-Collision issue on segment shoot===============================OK
+Collision issue on segment shoot
 
 0)
 Door does not display when open and player is on the way===================================OK

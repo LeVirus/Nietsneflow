@@ -136,19 +136,22 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
 {
     uint32_t numEntity = visionComp->m_vectVisibleEntities[numIteration];
     pairFloat_t centerPosB = getCenterPosition(mapCompB, genCollComp, numEntity);
-    float radiantObserverAngle = getRadiantAngle(degreeObserverAngle);
-    float simpleDistance = getCameraDistance(mapCompA->m_absoluteMapPositionPX,
+    float simpleDistance, radiantObserverAngle = getRadiantAngle(degreeObserverAngle),
+            cameraDistance = getCameraDistance(mapCompA->m_absoluteMapPositionPX,
                                              mapCompB->m_absoluteMapPositionPX, radiantObserverAngle);
-    float displayDistance = simpleDistance;
-    if(simpleDistance > visionComp->m_distanceVisibility || simpleDistance < 1.0f)
+    float displayDistance = cameraDistance;
+    if(cameraDistance > visionComp->m_distanceVisibility || cameraDistance < 1.0f)
     {
         ++toRemove;
         return;
     }
-    if(genCollComp->m_tag == CollisionTag_e::IMPACT_CT ||
+    simpleDistance = getDistance(mapCompA->m_absoluteMapPositionPX,
+                                 mapCompB->m_absoluteMapPositionPX);
+    if(simpleDistance > LEVEL_TILE_SIZE_PX * 3.0f ||
+            genCollComp->m_tag == CollisionTag_e::IMPACT_CT ||
             genCollComp->m_tag == CollisionTag_e::BULLET_PLAYER_CT ||
             genCollComp->m_tag == CollisionTag_e::BULLET_ENEMY_CT ||
-            !behindRaycastElement(mapCompA, simpleDistance, radiantObserverAngle,
+            !behindRaycastElement(mapCompA, mapCompB, simpleDistance, radiantObserverAngle,
                                   visionComp->m_vectVisibleEntities[numIteration]))
     {
         displayDistance -= LEVEL_TILE_SIZE_PX;
@@ -156,34 +159,45 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
     float trigoAngle = getTrigoAngle(mapCompA->m_absoluteMapPositionPX, centerPosB);
     //get lateral pos from angle
     float lateralPos = getLateralAngle(degreeObserverAngle, trigoAngle);
-    confNormalEntityVertex(numEntity, visionComp, genCollComp->m_tag, lateralPos, simpleDistance);
+    confNormalEntityVertex(numEntity, visionComp, genCollComp->m_tag, lateralPos, cameraDistance);
     fillVertexFromEntity(numEntity, numIteration, displayDistance, DisplayMode_e::STANDART_DM);
 }
 
 //===================================================================
 bool FirstPersonDisplaySystem::behindRaycastElement(const MapCoordComponent *mapCompObserver,
+                                                    const MapCoordComponent *mapCompTarget,
                                                     float distance, float radiantObserverAngle,
                                                     uint32_t targetEntity)
 {
-    float diffRadiantConeVision = getRadiantAngle(HALF_CONE_VISION);
+    float targetlimitRadiantAngle;
     optionalTargetRaycast_t resultRaycast;
+    pairFloat_t refPoint = mapCompTarget->m_absoluteMapPositionPX;
     CircleCollisionComponent *circleComp = stairwayToComponentManager().
             searchComponentByType<CircleCollisionComponent>(targetEntity,
                                                             Components_e::CIRCLE_COLLISION_COMPONENT);
     assert(circleComp);
-    resultRaycast = calcLineSegmentRaycast(radiantObserverAngle + diffRadiantConeVision,
+    moveElementFromAngle(circleComp->m_ray, radiantObserverAngle + PI_HALF, refPoint);
+    targetlimitRadiantAngle = getTrigoAngle(mapCompObserver->m_absoluteMapPositionPX,
+                                            refPoint, false);
+    resultRaycast = calcLineSegmentRaycast(targetlimitRadiantAngle,
                                            mapCompObserver->m_absoluteMapPositionPX, false);
     float distanceRaycast = getDistance(mapCompObserver->m_absoluteMapPositionPX,
                                         std::get<0>(*resultRaycast));
-    if(distanceRaycast < distance && (distance - distanceRaycast) > LEVEL_THIRD_TILE_SIZE_PX)
+    std::cerr << distanceRaycast << "  " <<  distance << "\n";
+    if(distanceRaycast < distance)
     {
         return true;
     }
-    resultRaycast = calcLineSegmentRaycast(radiantObserverAngle - diffRadiantConeVision,
+    refPoint = mapCompTarget->m_absoluteMapPositionPX;
+    moveElementFromAngle(circleComp->m_ray, radiantObserverAngle + PI_HALF, refPoint);
+    targetlimitRadiantAngle = getTrigoAngle(mapCompObserver->m_absoluteMapPositionPX,
+                                            refPoint, false);
+
+    resultRaycast = calcLineSegmentRaycast(targetlimitRadiantAngle,
                                            mapCompObserver->m_absoluteMapPositionPX, false);
     distanceRaycast = getDistance(mapCompObserver->m_absoluteMapPositionPX,
                                         std::get<0>(*resultRaycast));
-    if(distanceRaycast < distance && (distance - distanceRaycast) > LEVEL_THIRD_TILE_SIZE_PX)
+    if(distanceRaycast < distance)
     {
         return true;
     }
