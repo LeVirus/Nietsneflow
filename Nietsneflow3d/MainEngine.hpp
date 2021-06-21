@@ -121,5 +121,5 @@ private:
 void confBullet(GeneralCollisionComponent *genColl, SegmentCollisionComponent *segmentColl,
                 CollisionTag_e collTag, const pairFloat_t &point, float degreeAngle);
 void setWeaponPlayer();
-void confActionShape(MapCoordComponent *mapCompAction, MapCoordComponent *playerMapComp,
-                     MoveableComponent *playerMoveComp, GeneralCollisionComponent *genCompAction);
+void confActionShape(MapCoordComponent *mapCompAction, const MapCoordComponent *playerMapComp,
+                     const MoveableComponent *playerMoveComp, GeneralCollisionComponent *genCompAction);

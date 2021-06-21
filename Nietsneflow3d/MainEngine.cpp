@@ -188,11 +188,12 @@ void MainEngine::playerAttack(uint32_t playerEntity, PlayerConfComponent *player
 }
 
 //===================================================================
-void confActionShape(MapCoordComponent *mapCompAction, MapCoordComponent *playerMapComp,
-                     MoveableComponent *playerMoveComp, GeneralCollisionComponent *genCompAction)
+void confActionShape(MapCoordComponent *mapCompAction, const MapCoordComponent *playerMapComp,
+                     const MoveableComponent *playerMoveComp, GeneralCollisionComponent *genCompAction)
 {
     mapCompAction->m_absoluteMapPositionPX = playerMapComp->m_absoluteMapPositionPX;
-    moveElement(*playerMoveComp, LEVEL_HALF_TILE_SIZE_PX, *mapCompAction, MoveOrientation_e::FORWARD);
+    moveElementFromAngle(LEVEL_HALF_TILE_SIZE_PX, getRadiantAngle(playerMoveComp->m_degreeOrientation),
+                         mapCompAction->m_absoluteMapPositionPX);
     genCompAction->m_active = true;
 }
 

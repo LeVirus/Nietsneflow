@@ -4,21 +4,21 @@ BUGS======================================================================
 Coll exit on door??
 
 -5)
-Eject on door wall
+Eject on door limit
 
 -2)
 While enemy touch eject on wall 
-
--1)
-While back and action player eject wall
-
--6)
-Enemy stay stuck on angle wall or door===================================~~
 
 1)
 assert à CollisionSystem.cpp::89    EnemyConfComponent == nullptr
 assert à CollisionSystem.cpp::726   hyp > distanceX && hyp > distanceY
 assert à CollisionSystem.cpp::770  
+
+-6)
+Enemy stay stuck on angle wall or door===================================~~
+
+-1)
+While back and action player eject wall====================================OK
 
 -8)
 While dead transition weapon move if player move before death================================OK
