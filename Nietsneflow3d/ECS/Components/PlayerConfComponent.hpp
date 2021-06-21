@@ -17,6 +17,7 @@ struct PlayerConfComponent : public ecs::Component
         if(m_life <= damage)
         {
             m_life = 0;
+            m_inMovement = false;
             return false;
         }
         else

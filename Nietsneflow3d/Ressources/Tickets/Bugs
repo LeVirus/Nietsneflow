@@ -3,9 +3,6 @@ BUGS======================================================================
 -7)
 Coll exit on door??
 
--6)
-Enemy stay stuck on angle wall or door
-
 -5)
 Eject on door wall
 
@@ -14,6 +11,9 @@ While enemy touch eject on wall
 
 -1)
 While back and action player eject wall
+
+-6)
+Enemy stay stuck on angle wall or door===================================~~
 
 1)
 assert à CollisionSystem.cpp::89    EnemyConfComponent == nullptr

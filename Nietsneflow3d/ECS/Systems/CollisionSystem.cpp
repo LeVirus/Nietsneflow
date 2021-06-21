@@ -170,7 +170,6 @@ void CollisionSystem::treatSegmentShots()
             //if player is dead
             if(!playerConfCompB->takeDamage(5))
             {
-                playerConfCompB->m_inMovement = false;
                 //player dead
             }
         }
@@ -530,7 +529,6 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
                 assert(playerConf);
                 if(!playerConf->takeDamage(shotConfComp->m_damage))
                 {
-                    playerConf->m_inMovement = false;
                     //player dead
                 }
             }

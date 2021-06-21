@@ -198,6 +198,7 @@ void IASystem::treatEnemyBehaviourAttack(uint32_t enemyEntity, MapCoordComponent
             timerComp->m_clockB;
     if(elapsed_seconds.count() > 0.4)
     {
+        enemyConfComp->m_prevWall = false;
         enemyConfComp->m_attackPhase =
                 static_cast<EnemyAttackPhase_e>(std::rand() / ((RAND_MAX + 1u) / 4));
 
@@ -219,8 +220,9 @@ void IASystem::treatEnemyBehaviourAttack(uint32_t enemyEntity, MapCoordComponent
             enemyConfComp->m_attackPhase != EnemyAttackPhase_e::SHOOTED &&
             distancePlayer > LEVEL_TILE_SIZE_PX)
     {
-        if(enemyConfComp->m_wallTouch.first)
+        if(!enemyConfComp->m_prevWall && enemyConfComp->m_wallTouch.first)
         {
+            enemyConfComp->m_prevWall = true;
             float directionToTarget = getTrigoAngle(enemyMapComp->m_absoluteMapPositionPX,
                                             m_playerMapComp->m_absoluteMapPositionPX, false);
             switch(enemyConfComp->m_wallTouch.second)

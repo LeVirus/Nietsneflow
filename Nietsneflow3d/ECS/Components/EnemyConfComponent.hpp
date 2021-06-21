@@ -24,8 +24,6 @@ enum class EnemyAttackPhase_e
     MOVE_TO_TARGET_RIGHT,
     MOVE_TO_TARGET_LEFT,
     SHOOT,
-    GET_AROUND_WALL_LEFT,
-    GET_AROUND_WALL_RIGHT,
     SHOOTED//FROZEN
 };
 
@@ -49,7 +47,7 @@ struct EnemyConfComponent : public ecs::Component
             return true;
         }
     }
-    bool m_staticPhase, m_touched = false;
+    bool m_staticPhase, m_prevWall = false, m_touched = false;
     std::pair<bool, Direction_e> m_wallTouch = {false, Direction_e::EAST};
     uint32_t m_weaponEntity, m_life = 3, m_countPlayerInvisibility = 0;
     AmmoContainer_t m_stdAmmo, m_visibleAmmo;
