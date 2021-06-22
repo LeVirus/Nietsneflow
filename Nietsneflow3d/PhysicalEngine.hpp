@@ -37,8 +37,6 @@ private:
     IASystem *m_iaSystem = nullptr;
 };
 
-void moveElement(MoveableComponent &moveComp, float distanceMove,
-                 MapCoordComponent &mapComp, MoveOrientation_e moveDirection);
 void moveElementFromAngle(float distanceMove, float radiantAngle,
                           pairFloat_t &point);
 void updatePlayerOrientation(const MoveableComponent &moveComp,

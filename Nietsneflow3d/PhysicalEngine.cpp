@@ -58,44 +58,6 @@ void PhysicalEngine::setModeTransitionMenu(bool transition)
 }
 
 //===================================================================
-void moveElement(MoveableComponent &moveComp, float distanceMove,
-                 MapCoordComponent &mapComp, MoveOrientation_e moveDirection)
-{
-    float radiantAngle;
-    float angle = moveComp.m_degreeOrientation;
-    switch(moveDirection)
-    {
-    case MoveOrientation_e::FORWARD:
-        break;
-    case MoveOrientation_e::FORWARD_LEFT:
-        angle += 45;
-        break;
-    case MoveOrientation_e::FORWARD_RIGHT:
-        angle += 315;
-        break;
-    case MoveOrientation_e::BACKWARD:
-        angle += 180;
-        break;
-    case MoveOrientation_e::BACKWARD_LEFT:
-        angle += 135;
-        break;
-    case MoveOrientation_e::BACKWARD_RIGHT:
-        angle += 225;
-        break;
-    case MoveOrientation_e::LEFT:
-        angle += 90;
-        break;
-    case MoveOrientation_e::RIGHT:
-        angle += 270;
-        break;
-    }
-    moveComp.m_currentDegreeMoveDirection = angle;
-    radiantAngle = getRadiantAngle(angle);
-    moveElementFromAngle(distanceMove, radiantAngle, mapComp.m_absoluteMapPositionPX);
-    mapComp.m_coord = *getLevelCoord(mapComp.m_absoluteMapPositionPX);
-}
-
-//===================================================================
 void moveElementFromAngle(float distanceMove, float radiantAngle,
                           pairFloat_t &point)
 {

@@ -143,7 +143,6 @@ void InputSystem::treatPlayerMove(PlayerConfComponent *playerComp, MoveableCompo
     //STRAFE
     if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS)
     {
-
         currentMoveDirection = MoveOrientation_e::RIGHT;
         playerComp->m_inMovement = true;
     }
@@ -186,7 +185,36 @@ void InputSystem::treatPlayerMove(PlayerConfComponent *playerComp, MoveableCompo
     }
     if(playerComp->m_inMovement)
     {
-        moveElement(*moveComp, (*moveComp).m_velocity, *mapComp, currentMoveDirection);
+        moveComp->m_currentDegreeMoveDirection = moveComp->m_degreeOrientation;
+        switch(currentMoveDirection)
+        {
+        case MoveOrientation_e::FORWARD:
+            break;
+        case MoveOrientation_e::FORWARD_LEFT:
+            moveComp->m_currentDegreeMoveDirection += 45;
+            break;
+        case MoveOrientation_e::FORWARD_RIGHT:
+            moveComp->m_currentDegreeMoveDirection += 315;
+            break;
+        case MoveOrientation_e::BACKWARD:
+            moveComp->m_currentDegreeMoveDirection += 180;
+            break;
+        case MoveOrientation_e::BACKWARD_LEFT:
+            moveComp->m_currentDegreeMoveDirection += 135;
+            break;
+        case MoveOrientation_e::BACKWARD_RIGHT:
+            moveComp->m_currentDegreeMoveDirection += 225;
+            break;
+        case MoveOrientation_e::LEFT:
+            moveComp->m_currentDegreeMoveDirection += 90;
+            break;
+        case MoveOrientation_e::RIGHT:
+            moveComp->m_currentDegreeMoveDirection += 270;
+            break;
+        }
+        moveElementFromAngle(moveComp->m_velocity,
+                             getRadiantAngle(moveComp->m_currentDegreeMoveDirection),
+                             mapComp->m_absoluteMapPositionPX);
     }
 }
 
