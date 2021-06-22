@@ -691,7 +691,7 @@ void CollisionSystem::collisionCircleRectEject(CollisionArgs &args,
                                                 elementSecondPosX,
                                                 circleCollA.m_ray, radDegree,
                                                 angleBehavior}, limitEjectX);
-    collisionEject(mapComp, diffX, diffY, limitEjectY);
+    collisionEject(mapComp, diffX, diffY, limitEjectY, limitEjectX);
     if(args.tagCompA->m_tag == CollisionTag_e::ENEMY_CT)
     {
         EnemyConfComponent *enemyComp = stairwayToComponentManager().
@@ -721,7 +721,7 @@ float CollisionSystem::getVerticalCircleRectEject(const EjectYArgs& args, bool &
     {
         float distUpPoint = std::abs(args.circlePosY - args.elementPosY),
                 distDownPoint = std::abs(args.circlePosY - args.elementSecondPosY);
-        if(distUpPoint < distDownPoint )
+        if(distUpPoint < distDownPoint)
         {
             --diffY;
             limitEject = true;
