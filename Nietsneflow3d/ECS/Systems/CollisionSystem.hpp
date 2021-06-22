@@ -46,16 +46,16 @@ private:
     void collisionCircleRectEject(CollisionArgs &args,
                                   const CircleCollisionComponent &circleCollA,
                                   const RectangleCollisionComponent &rectCollB);
-    float getVerticalCircleRectEject(const EjectYArgs& args);
-    float getHorizontalCircleRectEject(const EjectXArgs &args);
+    float getVerticalCircleRectEject(const EjectYArgs &args, bool &limitEject);
+    float getHorizontalCircleRectEject(const EjectXArgs &args, bool &limitEject);
     void collisionCircleCircleEject(CollisionArgs &args,
                                     const CircleCollisionComponent &circleCollA,
                                     const CircleCollisionComponent &circleCollB);
 //    void treatCollisionCircleSegment(CollisionArgs &args,
 //                                     const CircleCollisionComponent &circleCollA,
 //                                     const SegmentCollisionComponent &segmCollB);
-    void collisionEject(MapCoordComponent &mapComp,
-                                     float diffX, float diffY);
+    void collisionEject(MapCoordComponent &mapComp, float diffX, float diffY,
+                        bool limitEjectY = false, bool limitEjectX = false);
     //Components accessors
     CircleCollisionComponent &getCircleComponent(uint32_t entityNum);
     RectangleCollisionComponent &getRectangleComponent(uint32_t entityNum);

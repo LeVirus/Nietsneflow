@@ -672,28 +672,26 @@ void CollisionSystem::collisionCircleRectEject(CollisionArgs &args,
     float elementPosY = args.mapCompB.m_absoluteMapPositionPX.second;
     float elementSecondPosX = elementPosX + rectCollB.m_size.first;
     float elementSecondPosY = elementPosY + rectCollB.m_size.second;
-    bool angleBehavior = false;
+    bool angleBehavior = false, limitEjectY = false, limitEjectX = false;
     //collision on angle of rect
     if((circlePosX < elementPosX || circlePosX > elementSecondPosX) &&
             (circlePosY < elementPosY || circlePosY > elementSecondPosY))
     {
         angleBehavior = true;
     }
-    float pointElementX = circlePosX < elementPosX ?
-                elementPosX : elementSecondPosX;
-    float pointElementY = circlePosY < elementPosY ?
-                elementPosY : elementSecondPosY;
-    float diffY = getVerticalCircleRectEject({circlePosX, circlePosY, pointElementX,
-                                              elementPosY,
+    float pointElementX = (circlePosX < elementPosX) ? elementPosX : elementSecondPosX;
+    float pointElementY = (circlePosY < elementPosY) ? elementPosY : elementSecondPosY;
+    float diffY = getVerticalCircleRectEject({circlePosX, circlePosY,
+                                              pointElementX, elementPosY,
                                               elementSecondPosY,
                                               circleCollA.m_ray, radDegree,
-                                              angleBehavior});
+                                              angleBehavior}, limitEjectY);
     float diffX = getHorizontalCircleRectEject({circlePosX, circlePosY, pointElementY,
                                                 elementPosX,
                                                 elementSecondPosX,
                                                 circleCollA.m_ray, radDegree,
-                                                angleBehavior});
-    collisionEject(mapComp, diffX, diffY);
+                                                angleBehavior}, limitEjectX);
+    collisionEject(mapComp, diffX, diffY, limitEjectY);
     if(args.tagCompA->m_tag == CollisionTag_e::ENEMY_CT)
     {
         EnemyConfComponent *enemyComp = stairwayToComponentManager().
@@ -716,9 +714,28 @@ void CollisionSystem::collisionCircleRectEject(CollisionArgs &args,
 }
 
 //===================================================================
-float CollisionSystem::getVerticalCircleRectEject(const EjectYArgs& args)
+float CollisionSystem::getVerticalCircleRectEject(const EjectYArgs& args, bool &limitEject)
 {
-    float adj, diffY = 0.0f;//avoid warning
+    float adj, diffY = EPSILON_FLOAT;
+    if(args.angleMode && std::abs(std::sin(args.radDegree)) < 0.01f)
+    {
+        float distUpPoint = std::abs(args.circlePosY - args.elementPosY),
+                distDownPoint = std::abs(args.circlePosY - args.elementSecondPosY);
+        if(distUpPoint < distDownPoint )
+        {
+            --diffY;
+            limitEject = true;
+        }
+        else if(distUpPoint > distDownPoint)
+        {
+            ++diffY;
+            limitEject = true;
+        }
+        if(limitEject)
+        {
+            return diffY;
+        }
+    }
     if(args.angleMode)
     {
         adj = std::abs(args.circlePosX - args.elementPosX);
@@ -753,9 +770,28 @@ float CollisionSystem::getVerticalCircleRectEject(const EjectYArgs& args)
 }
 
 //===================================================================
-float CollisionSystem::getHorizontalCircleRectEject(const EjectXArgs &args)
+float CollisionSystem::getHorizontalCircleRectEject(const EjectXArgs &args, bool &limitEject)
 {
-    float adj, diffX = 0.0f;//avoid warning
+    float adj, diffX = EPSILON_FLOAT;
+    if(args.angleMode && std::abs(std::cos(args.radDegree)) < 0.01f)
+    {
+        float distLeftPoint = std::abs(args.circlePosX - args.elementPosX),
+                distRightPoint = std::abs(args.circlePosX - args.elementSecondPosX);
+        if(distLeftPoint < distRightPoint )
+        {
+            --diffX;
+            limitEject = true;
+        }
+        else if(distLeftPoint > distRightPoint)
+        {
+            ++diffX;
+            limitEject = true;
+        }
+        if(limitEject)
+        {
+            return diffX;
+        }
+    }
     if(args.angleMode)
     {
         adj = std::abs(args.circlePosY - args.elementPosY);
@@ -791,15 +827,15 @@ float CollisionSystem::getHorizontalCircleRectEject(const EjectXArgs &args)
 
 //===================================================================
 void CollisionSystem::collisionEject(MapCoordComponent &mapComp,
-                                     float diffX, float diffY)
+                                     float diffX, float diffY, bool limitEjectY, bool limitEjectX)
 {
-    if(std::abs(diffX) < std::abs(diffY))
-    {
-        mapComp.m_absoluteMapPositionPX.first += diffX;
-    }
-    else
+    if(!limitEjectX && (limitEjectY || std::abs(diffY) < std::abs(diffX)))
     {
         mapComp.m_absoluteMapPositionPX.second += diffY;
+    }
+    if(!limitEjectY && (limitEjectX || std::abs(diffY) > std::abs(diffX)))
+    {
+        mapComp.m_absoluteMapPositionPX.first += diffX;
     }
 }
 
