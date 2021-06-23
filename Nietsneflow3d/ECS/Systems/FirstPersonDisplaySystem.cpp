@@ -147,10 +147,7 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
     }
     simpleDistance = getDistance(mapCompA->m_absoluteMapPositionPX,
                                  mapCompB->m_absoluteMapPositionPX);
-    if(simpleDistance > LEVEL_TILE_SIZE_PX * 3.0f ||
-            genCollComp->m_tag == CollisionTag_e::IMPACT_CT ||
-            genCollComp->m_tag == CollisionTag_e::BULLET_PLAYER_CT ||
-            genCollComp->m_tag == CollisionTag_e::BULLET_ENEMY_CT ||
+    if(genCollComp->m_tag == CollisionTag_e::IMPACT_CT ||
             !behindRaycastElement(mapCompA, mapCompB, simpleDistance, radiantObserverAngle,
                                   visionComp->m_vectVisibleEntities[numIteration]))
     {
