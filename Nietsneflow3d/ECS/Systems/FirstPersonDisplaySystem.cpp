@@ -121,17 +121,9 @@ void FirstPersonDisplaySystem::writeVertexRaycasting(const pairRaycastingData_t 
     SpriteTextureComponent *spriteComp = stairwayToComponentManager().
             searchComponentByType<SpriteTextureComponent>(entityData.first,
                                                           Components_e::SPRITE_TEXTURE_COMPONENT);
-    GeneralCollisionComponent *tagComp = stairwayToComponentManager().
-            searchComponentByType<GeneralCollisionComponent>(entityData.first,
-                                                             Components_e::GENERAL_COLLISION_COMPONENT);
     assert(spriteComp);
-    assert(tagComp);
     float distance = vertex.loadRaycastingEntity(*spriteComp, entityData.second,
                                                  m_textureLineDrawNumber);
-    if(tagComp->m_tag == CollisionTag_e::DOOR_CT)
-    {
-        distance -= LEVEL_TILE_SIZE_PX;
-    }
     m_entitiesNumMem.insert(EntityData(distance, spriteComp->m_spriteData->m_textureNum,
                                        numIteration));
 }
