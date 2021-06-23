@@ -1,7 +1,10 @@
 BUGS======================================================================
 
--8)
-Element appears behind door if they are just behind
+-10)
+Regression impact behind door
+
+-9)
+Display issue limit door wall while door closed
 
 -7)
 Coll exit on door??
@@ -16,6 +19,9 @@ assert à CollisionSystem.cpp::770
 
 -6)
 Enemy stay stuck on angle wall or door===================================~~
+
+-8)
+Element appears behind door if they are just behind=============================OK
 
 -5)
 Eject on door limit===============================OK
