@@ -147,8 +147,23 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
     }
     simpleDistance = getDistance(mapCompA->m_absoluteMapPositionPX,
                                  mapCompB->m_absoluteMapPositionPX);
-//    if(genCollComp->m_tag == CollisionTag_e::BULLET_PLAYER_CT)
-//        simpleDistance -= 5;//RTEST
+    if(genCollComp->m_tag == CollisionTag_e::BULLET_PLAYER_CT ||
+            genCollComp->m_tag == CollisionTag_e::BULLET_ENEMY_CT)
+    {
+        MoveableComponent *moveComp = stairwayToComponentManager().
+                searchComponentByType<MoveableComponent>(numEntity,
+                                                         Components_e::MOVEABLE_COMPONENT);
+        assert(moveComp);
+        //if counter angle
+        if(std::abs(degreeObserverAngle - moveComp->m_degreeOrientation) < 160.0f)
+        {
+            simpleDistance -= 5.0f;
+        }
+        else
+        {
+            simpleDistance += 5.0f;
+        }
+    }
     if(genCollComp->m_tag == CollisionTag_e::IMPACT_CT ||
             !behindRaycastElement(mapCompA, mapCompB, simpleDistance, radiantObserverAngle,
                                   visionComp->m_vectVisibleEntities[numIteration]))
