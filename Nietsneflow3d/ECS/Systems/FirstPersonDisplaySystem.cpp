@@ -155,7 +155,7 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
                                                          Components_e::MOVEABLE_COMPONENT);
         assert(moveComp);
         //if counter angle
-        if(std::abs(degreeObserverAngle - moveComp->m_degreeOrientation) < 160.0f)
+        if(std::abs(degreeObserverAngle - moveComp->m_degreeOrientation) < 170.0f)
         {
             simpleDistance -= 5.0f;
         }
