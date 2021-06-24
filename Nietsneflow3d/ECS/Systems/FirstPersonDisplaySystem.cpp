@@ -147,6 +147,8 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
     }
     simpleDistance = getDistance(mapCompA->m_absoluteMapPositionPX,
                                  mapCompB->m_absoluteMapPositionPX);
+//    if(genCollComp->m_tag == CollisionTag_e::BULLET_PLAYER_CT)
+//        simpleDistance -= 5;//RTEST
     if(genCollComp->m_tag == CollisionTag_e::IMPACT_CT ||
             !behindRaycastElement(mapCompA, mapCompB, simpleDistance, radiantObserverAngle,
                                   visionComp->m_vectVisibleEntities[numIteration]))
@@ -188,7 +190,6 @@ bool FirstPersonDisplaySystem::behindRaycastElement(const MapCoordComponent *map
     moveElementFromAngle(circleComp->m_ray, radiantObserverAngle - PI_HALF, refPoint);
     targetlimitRadiantAngle = getTrigoAngle(mapCompObserver->m_absoluteMapPositionPX,
                                             refPoint, false);
-
     resultRaycast = calcLineSegmentRaycast(targetlimitRadiantAngle,
                                            mapCompObserver->m_absoluteMapPositionPX, false);
     distanceRaycast = getDistance(mapCompObserver->m_absoluteMapPositionPX,
@@ -650,18 +651,15 @@ optionalTargetRaycast_t FirstPersonDisplaySystem::calcLineSegmentRaycast(float r
     lateralLeadCoef = getLeadCoef(radiantAngle, true);
     pairFloat_t currentPoint = originPoint;
     optionalTargetRaycast_t result;
-    if(visual)
+    currentCoord = getLevelCoord(currentPoint);
+    element = Level::getElementCase(*currentCoord);
+    if(element && (*element).m_type == LevelCaseType_e::DOOR_LC)
     {
-        currentCoord = getLevelCoord(currentPoint);
-        element = Level::getElementCase(*currentCoord);
-        if(element && (*element).m_type == LevelCaseType_e::DOOR_LC)
+        result = calcDoorSegmentRaycast(radiantAngle, lateralLeadCoef,
+                                        verticalLeadCoef, currentPoint, *element);
+        if(result)
         {
-            result = calcDoorSegmentRaycast(radiantAngle, lateralLeadCoef,
-                                            verticalLeadCoef, currentPoint, *element);
-            if(result)
-            {
-                return result;
-            }
+            return result;
         }
     }
     for(uint32_t k = 0; k < 20; ++k)//limit distance
