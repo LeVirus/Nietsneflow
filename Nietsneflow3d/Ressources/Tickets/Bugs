@@ -9,13 +9,16 @@ Coll exit on door??
 -2)
 While enemy touch eject on wall 
 
--9)
-Display issue limit door wall while door closed
-
 1)
 assert à CollisionSystem.cpp::89    EnemyConfComponent == nullptr
 assert à CollisionSystem.cpp::726   hyp > distanceX && hyp > distanceY
 assert à CollisionSystem.cpp::770  
+
+-11)
+Shot behind door might appear to verify
+
+-9)
+Display issue limit door wall while door closed===========================OK
 
 -9)
 if player on same case as door segment calc isssue=============================OK

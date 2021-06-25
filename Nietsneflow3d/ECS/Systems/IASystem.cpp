@@ -221,40 +221,7 @@ void IASystem::treatEnemyBehaviourAttack(uint32_t enemyEntity, MapCoordComponent
             enemyConfComp->m_attackPhase != EnemyAttackPhase_e::SHOOTED &&
             distancePlayer > LEVEL_TILE_SIZE_PX)
     {
-        if(!enemyConfComp->m_prevWall && enemyConfComp->m_wallTouch.first)
-        {
-            enemyConfComp->m_prevWall = true;
-            float directionToTarget = getTrigoAngle(enemyMapComp->m_absoluteMapPositionPX,
-                                            m_playerMapComp->m_absoluteMapPositionPX, false);
-            switch(enemyConfComp->m_wallTouch.second)
-            {
-            case Direction_e::EAST:
-            case Direction_e::WEST:
-                if(std::sin(directionToTarget) < EPSILON_FLOAT)
-                {
-                    moveComp->m_degreeOrientation = 270.0f;
-                }
-                else
-                {
-                    moveComp->m_degreeOrientation = 90.0f;
-                }
-                break;
-            case Direction_e::NORTH:
-            case Direction_e::SOUTH:
-                if(std::cos(directionToTarget) < EPSILON_FLOAT)
-                {
-                    moveComp->m_degreeOrientation = 180.0f;
-                }
-                else
-                {
-                    moveComp->m_degreeOrientation = 0.0f;
-                }
-                break;
-            }
-            enemyConfComp->m_wallTouch.first = false;
-        }
-        moveElementFromAngle(moveComp->m_velocity,
-                             getRadiantAngle(moveComp->m_degreeOrientation),
+        moveElementFromAngle(moveComp->m_velocity, getRadiantAngle(moveComp->m_degreeOrientation),
                              enemyMapComp->m_absoluteMapPositionPX);
     }
 }

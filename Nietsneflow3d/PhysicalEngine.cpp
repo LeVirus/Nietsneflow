@@ -61,14 +61,14 @@ void PhysicalEngine::setModeTransitionMenu(bool transition)
 void moveElementFromAngle(float distanceMove, float radiantAngle,
                           pairFloat_t &point)
 {
-    point.first +=
-            cos(radiantAngle) * distanceMove;
+    point.first += std::cos(radiantAngle) * distanceMove;
+    //limit case
     if(point.first < distanceMove)
     {
         point.first = distanceMove;
     }
-    point.second -=
-            sin(radiantAngle) * distanceMove;
+    point.second -= std::sin(radiantAngle) * distanceMove;
+    //limit case
     if(point.second < distanceMove)
     {
         point.second = distanceMove;

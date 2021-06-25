@@ -696,25 +696,6 @@ void CollisionSystem::collisionCircleRectEject(CollisionArgs &args,
                                               angleBehavior}, limitEjectX);
     }
     collisionEject(mapComp, diffX, diffY, limitEjectY, limitEjectX);
-    if(args.tagCompA->m_tag == CollisionTag_e::ENEMY_CT)
-    {
-        EnemyConfComponent *enemyComp = stairwayToComponentManager().
-                searchComponentByType<EnemyConfComponent>(args.entityNumA,
-                                                          Components_e::ENEMY_CONF_COMPONENT);
-        assert(enemyComp);
-        enemyComp->m_wallTouch.first = true;
-        if(std::abs(diffX) > std::abs(diffY))
-        {
-            enemyComp->m_wallTouch.second = (diffY < EPSILON_FLOAT) ?
-                        Direction_e::NORTH : Direction_e::SOUTH;
-        }
-        else
-        {
-            enemyComp->m_wallTouch.second = (diffX < EPSILON_FLOAT) ?
-                        Direction_e::EAST : Direction_e::WEST;
-        }
-        return;
-    }
 }
 
 //===================================================================
