@@ -183,6 +183,7 @@ bool FirstPersonDisplaySystem::behindRaycastElement(const MapCoordComponent *map
                                                     float distance, float radiantObserverAngle,
                                                     uint32_t targetEntity)
 {
+    bool door = false;
     float targetlimitRadiantAngle;
     optionalTargetRaycast_t resultRaycast;
     pairFloat_t refPoint = mapCompTarget->m_absoluteMapPositionPX;
@@ -190,6 +191,14 @@ bool FirstPersonDisplaySystem::behindRaycastElement(const MapCoordComponent *map
             searchComponentByType<CircleCollisionComponent>(targetEntity,
                                                             Components_e::CIRCLE_COLLISION_COMPONENT);
     assert(circleComp);
+    std::optional<pairUI_t> caseUI = getLevelCoord(mapCompTarget->m_absoluteMapPositionPX);
+    if(caseUI)
+    {
+        if((*Level::getElementCase(*caseUI)).m_type == LevelCaseType_e::DOOR_LC)
+        {
+            door = true;
+        }
+    }
     moveElementFromAngle(circleComp->m_ray, radiantObserverAngle + PI_HALF, refPoint);
     targetlimitRadiantAngle = getTrigoAngle(mapCompObserver->m_absoluteMapPositionPX,
                                             refPoint, false);
@@ -199,6 +208,10 @@ bool FirstPersonDisplaySystem::behindRaycastElement(const MapCoordComponent *map
                                         std::get<0>(*resultRaycast));
     if(distanceRaycast < distance)
     {
+        if(!door && std::abs(distanceRaycast - distance) < 5.0f)
+        {
+            return false;
+        }
         return true;
     }
     refPoint = mapCompTarget->m_absoluteMapPositionPX;
@@ -211,6 +224,10 @@ bool FirstPersonDisplaySystem::behindRaycastElement(const MapCoordComponent *map
                                         std::get<0>(*resultRaycast));
     if(distanceRaycast < distance)
     {
+        if(!door && std::abs(distanceRaycast - distance) < 5.0f)
+        {
+            return false;
+        }
         return true;
     }
     return false;

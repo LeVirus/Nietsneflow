@@ -1,8 +1,5 @@
 BUGS======================================================================
 
--6)
-Enemy stay stuck on angle wall or door
-
 -7)
 Coll exit on door??
 
@@ -15,7 +12,10 @@ assert à CollisionSystem.cpp::726   hyp > distanceX && hyp > distanceY
 assert à CollisionSystem.cpp::770  
 
 -11)
-Shot behind door might appear to verify
+Shot behind door might appear to verify=====================??
+
+-6)
+Enemy stay stuck on angle wall or door======================OK
 
 -9)
 Display issue limit door wall while door closed===========================OK
