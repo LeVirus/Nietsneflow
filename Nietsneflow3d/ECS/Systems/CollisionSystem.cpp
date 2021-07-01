@@ -665,7 +665,7 @@ void CollisionSystem::collisionCircleRectEject(CollisionArgs &args,
             searchComponentByType<MoveableComponent>(args.entityNumA,
                                                      Components_e::MOVEABLE_COMPONENT);
     assert(moveComp);
-    float radDegree = getRadiantAngle(moveComp->m_currentDegreeMoveDirection);
+    float radiantObserverAngle = getRadiantAngle(moveComp->m_currentDegreeMoveDirection);
     float circlePosX = args.mapCompA.m_absoluteMapPositionPX.first;
     float circlePosY = args.mapCompA.m_absoluteMapPositionPX.second;
     float elementPosX = args.mapCompB.m_absoluteMapPositionPX.first;
@@ -685,15 +685,20 @@ void CollisionSystem::collisionCircleRectEject(CollisionArgs &args,
     diffY = getVerticalCircleRectEject({circlePosX, circlePosY,
                                         pointElementX, elementPosY,
                                         elementSecondPosY,
-                                        circleCollA.m_ray, radDegree,
+                                        circleCollA.m_ray, radiantObserverAngle,
                                         angleBehavior}, limitEjectY);
     if(!limitEjectY)
     {
         diffX = getHorizontalCircleRectEject({circlePosX, circlePosY, pointElementY,
                                               elementPosX,
                                               elementSecondPosX,
-                                              circleCollA.m_ray, radDegree,
+                                              circleCollA.m_ray, radiantObserverAngle,
                                               angleBehavior}, limitEjectX);
+    }
+    float check = std::min(std::abs(diffX), std::abs(diffY));
+    if(!angleBehavior)
+    {
+        assert(check <= moveComp->m_velocity);
     }
     collisionEject(mapComp, diffX, diffY, limitEjectY, limitEjectX);
 }
@@ -701,7 +706,7 @@ void CollisionSystem::collisionCircleRectEject(CollisionArgs &args,
 //===================================================================
 float CollisionSystem::getVerticalCircleRectEject(const EjectYArgs& args, bool &limitEject)
 {
-    float adj, diffY = EPSILON_FLOAT;
+    float adj, diffYA = EPSILON_FLOAT, diffYB;
     if(std::abs(std::sin(args.radDegree)) < 0.01f &&
             (args.angleMode || args.circlePosY < args.elementPosY ||
              args.circlePosY > args.elementSecondPosY))
@@ -711,54 +716,46 @@ float CollisionSystem::getVerticalCircleRectEject(const EjectYArgs& args, bool &
         limitEject = true;
         if(distUpPoint < distDownPoint)
         {
-            --diffY;
+            --diffYA;
         }
         else
         {
-            ++diffY;
+            ++diffYA;
         }
         if(limitEject)
         {
-            return diffY;
+            return diffYA;
         }
     }
     if(args.angleMode)
     {
         adj = std::abs(args.circlePosX - args.elementPosX);
-        diffY = getRectTriangleSide(adj, args.ray);
-    }
-    //DOWN
-    if(std::sin(args.radDegree) < 0.0f)
-    {
-        if(args.angleMode)
+        diffYA = getRectTriangleSide(adj, args.ray);
+        //DOWN
+        if(std::sin(args.radDegree) < EPSILON_FLOAT)
         {
-            diffY -= (args.elementPosY - args.circlePosY);
-            diffY = -diffY;
+            diffYA -= (args.elementPosY - args.circlePosY);
+            diffYA = -diffYA;
         }
+        //UP
         else
         {
-            diffY = -args.ray + (args.elementPosY - args.circlePosY);
+            diffYA -= (args.circlePosY - args.elementSecondPosY);
         }
     }
-    //UP
     else
     {
-        if(args.angleMode)
-        {
-            diffY -= (args.circlePosY - args.elementSecondPosY);
-        }
-        else
-        {
-            diffY = args.ray - (args.circlePosY - args.elementSecondPosY);
-        }
+        diffYA = args.elementSecondPosY - (args.circlePosY - args.ray);
+        diffYB = args.elementPosY - (args.circlePosY + args.ray);
+        diffYA = (std::abs(diffYA) < std::abs(diffYB)) ? diffYA : diffYB;
     }
-    return diffY;
+    return diffYA;
 }
 
 //===================================================================
 float CollisionSystem::getHorizontalCircleRectEject(const EjectXArgs &args, bool &limitEject)
 {
-    float adj, diffX = EPSILON_FLOAT;
+    float adj, diffXA = EPSILON_FLOAT, diffXB;
     if(std::abs(std::cos(args.radDegree)) < 0.01f &&
             (args.angleMode || args.circlePosX < args.elementPosX ||
              args.circlePosX > args.elementSecondPosX))
@@ -768,48 +765,40 @@ float CollisionSystem::getHorizontalCircleRectEject(const EjectXArgs &args, bool
         limitEject = true;
         if(distLeftPoint < distRightPoint )
         {
-            --diffX;
+            --diffXA;
         }
         else
         {
-            ++diffX;
+            ++diffXA;
         }
         if(limitEject)
         {
-            return diffX;
+            return diffXA;
         }
     }
     if(args.angleMode)
     {
         adj = std::abs(args.circlePosY - args.elementPosY);
-        diffX = getRectTriangleSide(adj, args.ray);
-    }
-    //RIGHT
-    if(std::cos(args.radDegree) > 0.0f)
-    {
-        if(args.angleMode)
+        diffXA = getRectTriangleSide(adj, args.ray);
+        //RIGHT
+        if(std::cos(args.radDegree) > EPSILON_FLOAT)
         {
-            diffX -= (args.elementPosX - args.circlePosX);
-            diffX = -diffX;
+            diffXA -= (args.elementPosX - args.circlePosX);
+            diffXA = -diffXA;
         }
+        //LEFT
         else
         {
-            diffX = -args.ray + (args.elementPosX - args.circlePosX);
+            diffXA -= (args.circlePosX - args.elementSecondPosX);
         }
     }
-    //LEFT
     else
     {
-        if(args.angleMode)
-        {
-            diffX -= (args.circlePosX - args.elementSecondPosX);
-        }
-        else
-        {
-            diffX = args.ray - (args.circlePosX - args.elementSecondPosX);
-        }
+        diffXA = args.elementSecondPosX - (args.circlePosX - args.ray) ;
+        diffXB = args.elementPosX - (args.circlePosX + args.ray);
+        diffXA = (std::abs(diffXA) < std::abs(diffXB)) ? diffXA : diffXB;
     }
-    return diffX;
+    return diffXA;
 }
 
 //===================================================================

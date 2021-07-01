@@ -3,16 +3,16 @@ BUGS======================================================================
 -7)
 Coll exit on door??
 
--2)
-While enemy touch eject on wall 
-
 1)
 assert à CollisionSystem.cpp::89    EnemyConfComponent == nullptr
 assert à CollisionSystem.cpp::726   hyp > distanceX && hyp > distanceY
 assert à CollisionSystem.cpp::770  
 
 -11)
-Shot behind door might appear to verify=====================??
+Shot behind door might appear to verify
+
+-2)
+While enemy touch eject on wall==================================OK 
 
 -6)
 Enemy stay stuck on angle wall or door======================OK
