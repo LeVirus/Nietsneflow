@@ -159,10 +159,6 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
         {
             simpleDistance -= 5.0f;
         }
-        else
-        {
-            simpleDistance += 5.0f;
-        }
     }
     if(genCollComp->m_tag == CollisionTag_e::IMPACT_CT ||
             !behindRaycastElement(mapCompA, mapCompB, simpleDistance, radiantObserverAngle,
@@ -199,6 +195,7 @@ bool FirstPersonDisplaySystem::behindRaycastElement(const MapCoordComponent *map
             door = true;
         }
     }
+    //check first limit point
     moveElementFromAngle(circleComp->m_ray, radiantObserverAngle + PI_HALF, refPoint);
     targetlimitRadiantAngle = getTrigoAngle(mapCompObserver->m_absoluteMapPositionPX,
                                             refPoint, false);
@@ -215,6 +212,7 @@ bool FirstPersonDisplaySystem::behindRaycastElement(const MapCoordComponent *map
         return true;
     }
     refPoint = mapCompTarget->m_absoluteMapPositionPX;
+    //check second limit point
     moveElementFromAngle(circleComp->m_ray, radiantObserverAngle - PI_HALF, refPoint);
     targetlimitRadiantAngle = getTrigoAngle(mapCompObserver->m_absoluteMapPositionPX,
                                             refPoint, false);

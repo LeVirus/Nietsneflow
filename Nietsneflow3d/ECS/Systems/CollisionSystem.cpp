@@ -698,6 +698,8 @@ void CollisionSystem::collisionCircleRectEject(CollisionArgs &args,
     float check = std::min(std::abs(diffX), std::abs(diffY));
     if(!angleBehavior)
     {
+        if(check > moveComp->m_velocity)
+            std::cerr << diffX << " " << diffY << "\n";
         assert(check <= moveComp->m_velocity);
     }
     collisionEject(mapComp, diffX, diffY, limitEjectY, limitEjectX);
