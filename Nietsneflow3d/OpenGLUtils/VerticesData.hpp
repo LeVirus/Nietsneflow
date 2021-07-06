@@ -15,6 +15,7 @@ struct WriteComponent;
 using mapRayCastingData_t = std::map<uint32_t, std::vector<RayCastingIntersect>>;
 using pairRaycastingData_t = std::pair<uint32_t, std::vector<RayCastingIntersect>>;
 
+struct GroundCeililngRayCastingIntersect;
 class Shader;
 
 class VerticesData
@@ -33,9 +34,12 @@ public:
                                             SpriteTextureComponent &spriteComp);
     void loadVertexWriteTextureComponent(const PositionVertexComponent &posComp,
                                          const WriteComponent &writeComp);
-    float loadRaycastingEntity(const SpriteTextureComponent &spriteComp,
-                               const std::vector<RayCastingIntersect> &raycastingData,
-                               uint32_t totalLateralLine);
+    float loadWallDoorRaycastingEntity(const SpriteTextureComponent &spriteComp,
+                                       const std::vector<RayCastingIntersect> &raycastingData,
+                                       uint32_t totalLateralLine);
+    float loadGroundRaycastingEntity(const SpriteTextureComponent &spriteComp,
+                                     const std::vector<GroundCeililngRayCastingIntersect> &raycastingData,
+                                     uint32_t totalLateralLine);
     void loadVertexTextureDrawByLineComponent(const PositionVertexComponent &posComp,
                                               const SpriteTextureComponent &spriteComp,
                                               uint32_t lineDrawNumber, DoorComponent *doorComp = nullptr);

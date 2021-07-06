@@ -63,9 +63,11 @@ void LevelManager::loadSpriteData(const INIReader &reader, const std::string &se
 void LevelManager::loadGroundAndCeilingData(const INIReader &reader)
 {
     std::array<GroundCeilingData, 2> arrayGAndCData;
+    //first ground
+    std::string current = "Ground";
     for(uint32_t i = 0; i < 2 ; ++i)
     {
-        DisplayType_e displayType = reader.GetBoolean("Ground", "displayType", true) ?
+        DisplayType_e displayType = reader.GetBoolean(current, "displayType", true) ?
                     DisplayType_e::COLOR : DisplayType_e::TEXTURE;
         if(displayType == DisplayType_e::TEXTURE)
         {
@@ -75,11 +77,13 @@ void LevelManager::loadGroundAndCeilingData(const INIReader &reader)
         }
         else
         {
-            arrayGAndCData[i].m_tupleColor = {reader.GetReal("Ground", "colorR", -1.0),
-                                              reader.GetReal("Ground", "colorG", -1.0),
-                                              reader.GetReal("Ground", "colorB", -1.0)};
+            arrayGAndCData[i].m_tupleColor = {reader.GetReal(current, "colorR", -1.0),
+                                              reader.GetReal(current, "colorG", -1.0),
+                                              reader.GetReal(current, "colorB", -1.0)};
         }
         arrayGAndCData[i].m_apparence = displayType;
+        //second ceiling
+        current = "Ceiling";
     }
     m_pictureData.setGroundAndCeilingData(arrayGAndCData);
 }
@@ -725,8 +729,8 @@ void LevelManager::loadTextureData(const std::string &INIFileName)
     }
     loadTexturePath(reader);
     loadSpriteData(reader);
-    loadGroundAndCeilingData(reader);
     m_pictureData.setUpToDate();
+    loadGroundAndCeilingData(reader);
 }
 
 //===================================================================

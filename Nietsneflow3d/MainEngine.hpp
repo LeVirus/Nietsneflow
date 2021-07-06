@@ -44,15 +44,17 @@ private:
     void memPlayerGear();
     void loadPlayerGear();
     void displayTransitionMenu();
-    void memColorSystemBackgroundEntities(uint32_t ground, uint32_t ceiling);
     void loadDamageEntity();
     void loadTransitionEntity();
     void confUnifiedColorEntity(uint32_t entityNum, const tupleFloat_t &color);
     uint32_t createColorEntity();
+    uint32_t createTextureEntity();
     void loadGroundAndCeilingEntities(const GroundCeilingData &groundData,
-                                      const GroundCeilingData &ceilingData);
-    void confCeilingComponents(uint32_t entityNum);
-    void confGroundComponents(uint32_t entityNum);
+                                      const GroundCeilingData &ceilingData, const LevelManager &levelManager);
+    void confCeilingComponents(uint32_t entityNum, const GroundCeilingData &ceilingData,
+                               const std::vector<SpriteData> &vectSprite);
+    void confGroundComponents(uint32_t entityNum, const GroundCeilingData &groundData,
+                              const std::vector<SpriteData> &vectSprite);
     void confMenuCursorEntity();
     void confWriteEntities();
     void linkSystemsToGraphicEngine();
@@ -104,6 +106,18 @@ private:
     void memTimerPausedValue();
     void applyTimerPausedValue();
     void confPlayerShoot(const AmmoContainer_t &playerVisibleShots, const pairFloat_t &point, float degreeAngle);
+    inline void memColorSystemEntity(uint32_t entity)
+    {
+        m_graphicEngine.memColorSystemEntity(entity);
+    }
+    inline void memCeilingBackgroundFPSSystemEntity(uint32_t entity)
+    {
+        m_graphicEngine.memColorSystemEntity(entity);
+    }
+    inline void memGroundBackgroundFPSSystemEntity(uint32_t entity)
+    {
+        m_graphicEngine.memGroundBackgroundFPSSystemEntity(entity);
+    }
 private:
     GraphicEngine m_graphicEngine;
     PhysicalEngine m_physicalEngine;

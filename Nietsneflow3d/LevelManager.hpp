@@ -41,6 +41,11 @@ public:
     {
         return m_enemyData;
     }
+    inline const std::vector<SpriteData> &getPictureSpriteData()const
+    {
+        return m_pictureData.getSpriteData();
+    }
+
 private:
     //texture and sprite loading
     void loadTexturePath(const INIReader &reader);
@@ -96,7 +101,6 @@ private:
     std::map<std::string, StaticLevelElementData> m_groundElement, m_ceilingElement, m_objectElement;
     std::map<std::string, DoorData> m_doorData;
     std::map<std::string, EnemyData> m_enemyData;
-
 };
 
 std::vector<uint32_t> convertStrToVectUI(const std::string &str);

@@ -16,12 +16,12 @@ struct GLFWwindow;
 struct WriteComponent;
 struct PlayerConfComponent;
 class PictureData;
-class ColorDisplaySystem;
 class MapDisplaySystem;
 class FirstPersonDisplaySystem;
 class VisionSystem;
 class StaticDisplaySystem;
 class FontData;
+class ColorDisplaySystem;
 
 using VectSpriteDataRef_t = std::vector<std::reference_wrapper<SpriteData>>;
 
@@ -33,10 +33,8 @@ public:
     void loadPictureData(const PictureData &pictureData, const FontData &fontData);
     void runIteration(bool gamePaused);
     bool windowShouldClose();
-    void linkSystems(ColorDisplaySystem *colorSystem,
-                     MapDisplaySystem *mapSystem,
-                     FirstPersonDisplaySystem *firstPersonSystem,
-                     VisionSystem *visionSystem,
+    void linkSystems(ColorDisplaySystem *colorSystem, MapDisplaySystem *mapSystem,
+                     FirstPersonDisplaySystem *firstPersonSystem, VisionSystem *visionSystem,
                      StaticDisplaySystem *staticDisplaySystem);
     void updateAmmoCount(WriteComponent *writeComp, PlayerConfComponent *playerComp);
     void updatePlayerLife(WriteComponent *writeComp, PlayerConfComponent *playerComp);
@@ -53,7 +51,9 @@ public:
     {
         return *m_window;
     }
-    void memColorSystemBackgroundEntities(uint32_t ground, uint32_t ceiling);
+    void memColorSystemEntity(uint32_t entity);
+    void memGroundBackgroundFPSSystemEntity(uint32_t entity);
+    void memCeilingBackgroundFPSSystemEntity(uint32_t entity);
     void setTransition(bool gamePaused);
     void unsetTransition(bool gamePaused);
     void mainDisplay(bool gamePaused);

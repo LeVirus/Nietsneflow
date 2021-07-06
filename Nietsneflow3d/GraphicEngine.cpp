@@ -152,9 +152,21 @@ void GraphicEngine::fillMenuWrite(WriteComponent *writeComp, const std::string &
 }
 
 //===================================================================
-void GraphicEngine::memColorSystemBackgroundEntities(uint32_t ground, uint32_t ceiling)
+void GraphicEngine::memColorSystemEntity(uint32_t entity)
 {
-    m_colorSystem->memColorSystemBackgroundEntities(ground, ceiling);
+    m_colorSystem->addColorSystemEntity(entity);
+}
+
+//===================================================================
+void GraphicEngine::memGroundBackgroundFPSSystemEntity(uint32_t entity)
+{
+    m_firstPersonSystem->memGroundBackgroundEntity(entity);
+}
+
+//===================================================================
+void GraphicEngine::memCeilingBackgroundFPSSystemEntity(uint32_t entity)
+{
+    m_firstPersonSystem->memCeilingBackgroundEntity(entity);
 }
 
 //===================================================================

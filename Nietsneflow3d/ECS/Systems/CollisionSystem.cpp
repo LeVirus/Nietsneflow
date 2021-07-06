@@ -690,17 +690,9 @@ void CollisionSystem::collisionCircleRectEject(CollisionArgs &args,
     if(!limitEjectY)
     {
         diffX = getHorizontalCircleRectEject({circlePosX, circlePosY, pointElementY,
-                                              elementPosX,
-                                              elementSecondPosX,
+                                              elementPosX, elementSecondPosX,
                                               circleCollA.m_ray, radiantObserverAngle,
                                               angleBehavior}, limitEjectX);
-    }
-    float check = std::min(std::abs(diffX), std::abs(diffY));
-    if(!angleBehavior)
-    {
-        if(check > moveComp->m_velocity)
-            std::cerr << diffX << " " << diffY << "\n";
-        assert(check <= moveComp->m_velocity);
     }
     collisionEject(mapComp, diffX, diffY, limitEjectY, limitEjectX);
 }

@@ -142,17 +142,18 @@ void VerticesData::loadVertexWriteTextureComponent(const PositionVertexComponent
 }
 
 //===================================================================
-float VerticesData::loadRaycastingEntity(const SpriteTextureComponent &spriteComp,
-                                         const std::vector<RayCastingIntersect> &raycastingData,
-                                         uint32_t totalLateralLine)
+float VerticesData::loadWallDoorRaycastingEntity(const SpriteTextureComponent &spriteComp,
+                                                 const std::vector<RayCastingIntersect> &raycastingData,
+                                                 uint32_t totalLateralLine)
 {
     float lateralPosA, lateralPosB, verticalPos, lateralText, closerDist = raycastingData[0].m_distance;
     float diffTotalTexturePos = (spriteComp.m_spriteData->m_texturePosVertex[1].first -
-                                 spriteComp.m_spriteData->m_texturePosVertex[0].first);
+                                 spriteComp.m_spriteData->m_texturePosVertex[0].first),
+            totalGLLateralPos = static_cast<float>(totalLateralLine);
     for(uint32_t i = 0; i < raycastingData.size(); ++i)
     {
-        lateralPosA = 2.0f * static_cast<float>(raycastingData[i].m_lateral) / static_cast<float>(totalLateralLine) - 1.0f;
-        lateralPosB = 2.0f * static_cast<float>(raycastingData[i].m_lateral + 1) / static_cast<float>(totalLateralLine) - 1.0f;
+        lateralPosA = 2.0f * static_cast<float>(raycastingData[i].m_lateral) / totalGLLateralPos - 1.0f;
+        lateralPosB = 2.0f * static_cast<float>(raycastingData[i].m_lateral + 1) / totalGLLateralPos - 1.0f;
         verticalPos = RAYCAST_VERTICAL_SIZE / (raycastingData[i].m_distance / LEVEL_TILE_SIZE_PX);
         lateralText = spriteComp.m_spriteData->m_texturePosVertex[0].first +
                 (raycastingData[i].m_texturePos / LEVEL_TILE_SIZE_PX) * diffTotalTexturePos;
@@ -171,6 +172,20 @@ float VerticesData::loadRaycastingEntity(const SpriteTextureComponent &spriteCom
         }
     }
     return closerDist;
+}
+
+//===================================================================
+float VerticesData::loadGroundRaycastingEntity(const SpriteTextureComponent &spriteComp,
+                                               const std::vector<GroundCeililngRayCastingIntersect> &raycastingData,
+                                               uint32_t totalLateralLine)
+{
+    float lateralPosA, lateralPosB, verticalPos, lateralText,
+            totalLines = static_cast<float>(totalLateralLine) - 1.0f;
+    for(uint32_t i = 0; i < raycastingData.size(); ++i)
+    {
+        lateralPosA = 2.0f * static_cast<float>(raycastingData[i].m_lateral) / totalLines;
+        lateralPosB = 2.0f * static_cast<float>(raycastingData[i].m_lateral + 1) / totalLines;
+    }
 }
 
 //===================================================================

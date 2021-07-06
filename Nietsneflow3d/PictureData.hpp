@@ -47,12 +47,6 @@ struct SpriteData
 
 class PictureData
 {
-private:
-    vectStr_t m_vectTexturePath;
-    GroundCeilingData m_groundData, m_ceilingData;
-    std::vector<SpriteData> m_vectSpriteData;
-    std::map<std::string, uint8_t> m_mapIdentifier;
-    bool m_upToDate = false;
 public:
     PictureData();
     void setTexturePath(const vectStr_t &vectTextures);
@@ -66,4 +60,10 @@ public:
     inline const std::vector<SpriteData> &getSpriteData()const {return m_vectSpriteData;}
     inline const GroundCeilingData &getCeilingData()const {return m_ceilingData;}
     inline const GroundCeilingData &getGroundData()const {return m_groundData;}
+private:
+    vectStr_t m_vectTexturePath;
+    GroundCeilingData m_groundData, m_ceilingData;
+    std::vector<SpriteData> m_vectSpriteData;
+    std::map<std::string, uint8_t> m_mapIdentifier;
+    bool m_upToDate = false;
 };

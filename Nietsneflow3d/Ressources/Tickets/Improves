@@ -7,9 +7,6 @@ WHen no ammo change to best weapon
 -3)
 Limit shoot intervalle time
 
--2)
-collision moveable at wall angle when entity is at 90 degree
-
 -1)
 Conf wall multi sprite
 
@@ -36,6 +33,9 @@ Enemy animations========================~
 
 -5)
 Set static element collision box same as picture size=====================================OK
+
+-2)
+collision moveable at wall angle when entity is at 90 degree=============================OK
 
 7)
 Set door still open if player or enemiy is in the way================================OK

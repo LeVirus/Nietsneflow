@@ -104,26 +104,62 @@ void FirstPersonDisplaySystem::confCompVertexMemEntities()
         m_numVertexToDraw[i] -= toRemove;
         ++numIteration;
         rayCasting();
+        writeVertexGroundCeilingRaycast();
         //draw wall and door
         for(mapRayCastingData_t::const_iterator it = m_raycastingData.begin();
             it != m_raycastingData.end(); ++it, ++numIteration)
         {
-            writeVertexRaycasting(*it, numIteration);
+            writeVertexWallDoorRaycasting(*it, numIteration);
         }
     }
 }
 
 //===================================================================
-void FirstPersonDisplaySystem::writeVertexRaycasting(const pairRaycastingData_t &entityData,
-                                                     uint32_t numIteration)
+void FirstPersonDisplaySystem::writeVertexGroundCeilingRaycast()
+{
+    if(m_groundEntity)
+    {
+        PositionVertexComponent *posComp = stairwayToComponentManager().
+                searchComponentByType<PositionVertexComponent>(*m_groundEntity, Components_e::POSITION_VERTEX_COMPONENT);
+        assert(posComp);
+        SpriteTextureComponent *spriteComp = stairwayToComponentManager().
+                searchComponentByType<SpriteTextureComponent>(*m_groundEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
+        assert(spriteComp);
+        m_groundVertice.clear();
+        m_groundVertice.loadVertexStandartTextureComponent(*posComp, *spriteComp);
+    }
+    if(m_ceilingEntity)
+    {
+//        PositionVertexComponent *posComp = m_ecsManager.getComponentManager().
+//                searchComponentByType<PositionVertexComponent>(*m_groundEntity, Components_e::POSITION_VERTEX_COMPONENT);
+//        assert(posComp);
+//        ColorVertexComponent *colorComp = m_ecsManager.getComponentManager().
+//                searchComponentByType<ColorVertexComponent>(*m_groundEntity, Components_e::COLOR_VERTEX_COMPONENT);
+//        assert(colorComp);
+    }
+//    m_groundVertice.clear();
+//    for(uint32_t i = 0; i < m_groundCeilingRaycastPoint.size(); ++i)
+//    {
+//        for(uint32_t j = 0; j < m_groundCeilingRaycastPoint[i].size(); ++j)
+//        {
+//            loadGroundRaycastingEntity(const SpriteTextureComponent &spriteComp,
+//                                       const std::vector<GroundCeililngRayCastingIntersect> &raycastingData,
+//                                       uint32_t totalLateralLine);
+//        }
+//    }
+}
+
+//===================================================================
+void FirstPersonDisplaySystem::writeVertexWallDoorRaycasting(const pairRaycastingData_t &entityData,
+                                                             uint32_t numIteration)
 {
     VerticesData &vertex = getClearedVertice(numIteration);
     SpriteTextureComponent *spriteComp = stairwayToComponentManager().
             searchComponentByType<SpriteTextureComponent>(entityData.first,
                                                           Components_e::SPRITE_TEXTURE_COMPONENT);
     assert(spriteComp);
-    float distance = vertex.loadRaycastingEntity(*spriteComp, entityData.second,
-                                                 m_textureLineDrawNumber);
+    float distance = vertex.loadWallDoorRaycastingEntity(*spriteComp, entityData.second,
+                                                 RAYCAST_LINE_NUMBER);
     m_entitiesNumMem.insert(EntityData(distance, spriteComp->m_spriteData->m_textureNum,
                                        numIteration));
 }
@@ -512,7 +548,7 @@ void FirstPersonDisplaySystem::fillVertexFromEntity(uint32_t numEntity, uint32_t
         DoorComponent *doorComp = nullptr;
         doorComp = stairwayToComponentManager().
                 searchComponentByType<DoorComponent>(numEntity, Components_e::DOOR_COMPONENT);
-        vertex.loadVertexTextureDrawByLineComponent(*posComp, *spriteComp, m_textureLineDrawNumber, doorComp);
+        vertex.loadVertexTextureDrawByLineComponent(*posComp, *spriteComp, RAYCAST_LINE_NUMBER, doorComp);
     }
 }
 
@@ -520,28 +556,28 @@ void FirstPersonDisplaySystem::fillVertexFromEntity(uint32_t numEntity, uint32_t
 VerticesData &FirstPersonDisplaySystem::getClearedVertice(uint32_t index)
 {
     //use 1 vertex for 1 sprite for beginning
-    if(index < m_vectVerticesData.size())
+    if(index < m_vectWallDoorVerticesData.size())
     {
-        m_vectVerticesData[index].clear();
-        m_vectVerticesData[index].setShaderType(Shader_e::TEXTURE_S);
+        m_vectWallDoorVerticesData[index].clear();
+        m_vectWallDoorVerticesData[index].setShaderType(Shader_e::TEXTURE_S);
     }
     else
     {
         do
         {
-            m_vectVerticesData.push_back(VerticesData(Shader_e::TEXTURE_S));
+            m_vectWallDoorVerticesData.push_back(VerticesData(Shader_e::TEXTURE_S));
         }
-        while(index >= m_vectVerticesData.size());
-        assert(index < m_vectVerticesData.size());
+        while(index >= m_vectWallDoorVerticesData.size());
+        assert(index < m_vectWallDoorVerticesData.size());
     }
-    return m_vectVerticesData[index];
+    return m_vectWallDoorVerticesData[index];
 }
 
 //===================================================================
 void FirstPersonDisplaySystem::setVectTextures(std::vector<Texture> &vectTexture)
 {
     m_ptrVectTexture = &vectTexture;
-    m_vectVerticesData.reserve(50);
+    m_vectWallDoorVerticesData.reserve(50);
 }
 
 //===================================================================
@@ -604,6 +640,16 @@ void FirstPersonDisplaySystem::confNormalEntityVertex(uint32_t numEntity, Vision
 void FirstPersonDisplaySystem::drawVertex()
 {
     m_shader->use();
+    if(m_groundEntity)
+    {
+        SpriteTextureComponent *spriteComp = stairwayToComponentManager().
+                searchComponentByType<SpriteTextureComponent>(*m_groundEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
+        assert(spriteComp);
+        m_ptrVectTexture->operator[](static_cast<uint32_t>(spriteComp->m_spriteData->
+                                                           m_textureNum)).bind();
+        m_groundVertice.confVertexBuffer();
+        m_groundVertice.drawElement();
+    }
     //DONT WORK for multiple player
     for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
     {
@@ -612,10 +658,10 @@ void FirstPersonDisplaySystem::drawVertex()
             it != m_entitiesNumMem.end(); ++it)
         {
             numIteration = it->m_iterationNum;
-            assert(numIteration < m_vectVerticesData.size());
+            assert(numIteration < m_vectWallDoorVerticesData.size());
             m_ptrVectTexture->operator[](static_cast<uint32_t>(it->m_textureNum)).bind();
-            m_vectVerticesData[numIteration].confVertexBuffer();
-            m_vectVerticesData[numIteration].drawElement();
+            m_vectWallDoorVerticesData[numIteration].confVertexBuffer();
+            m_vectWallDoorVerticesData[numIteration].drawElement();
         }
     }
 }
@@ -647,8 +693,9 @@ void FirstPersonDisplaySystem::rayCasting()
         float currentRadiantAngle = getRadiantAngle(leftAngle), currentLateralScreen = -1.0f;
         float cameraRadiantAngle = getRadiantAngle(moveComp->m_degreeOrientation);
         //mem entity num & distances
-        for(uint32_t j = 0; j < m_textureLineDrawNumber; ++j)
+        for(uint32_t j = 0; j < RAYCAST_LINE_NUMBER; ++j)
         {
+            //mem ground and ceiling
             targetPoint = calcLineSegmentRaycast(currentRadiantAngle,
                                                  mapCompCamera->m_absoluteMapPositionPX);
             if(targetPoint)
@@ -670,8 +717,9 @@ void FirstPersonDisplaySystem::rayCasting()
 //===================================================================
 optionalTargetRaycast_t FirstPersonDisplaySystem::calcLineSegmentRaycast(float radiantAngle,
                                                                          const pairFloat_t &originPoint,
-                                                                         bool visual)
+                                                                         bool visual, uint32_t iteration)
 {
+    clearGroundCeilingRaycast();
     std::optional<ElementRaycast> element;
     float textPos;
     bool lateral;
@@ -692,10 +740,18 @@ optionalTargetRaycast_t FirstPersonDisplaySystem::calcLineSegmentRaycast(float r
             return result;
         }
     }
+    if(visual)
+    {
+        m_groundCeilingRaycastPoint[iteration].push_back(currentPoint);
+    }
     for(uint32_t k = 0; k < 20; ++k)//limit distance
     {
         currentPoint = getLimitPointRayCasting(currentPoint, radiantAngle,
                                                lateralLeadCoef, verticalLeadCoef, lateral);
+        if(visual)
+        {
+            m_groundCeilingRaycastPoint[iteration].push_back(currentPoint);
+        }
         currentCoord = getCorrectedCoord(currentPoint, lateral, radiantAngle);
         if(!currentCoord)
         {
@@ -731,6 +787,7 @@ optionalTargetRaycast_t FirstPersonDisplaySystem::calcLineSegmentRaycast(float r
     }
 }
 
+//===================================================================
 optionalTargetRaycast_t FirstPersonDisplaySystem::calcDoorSegmentRaycast(float radiantAngle,
                                                                          std::optional<float> lateralLeadCoef,
                                                                          std::optional<float> verticalLeadCoef,

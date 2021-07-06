@@ -60,13 +60,9 @@ void ColorDisplaySystem::setShader(Shader &shader)
 }
 
 //===================================================================
-void ColorDisplaySystem::memColorSystemBackgroundEntities(uint32_t ground, uint32_t ceiling)
+void ColorDisplaySystem::addColorSystemEntity(uint32_t entity)
 {
-    m_ground = ground;
-    m_ceiling = ceiling;
-    mVectNumEntity.reserve(2);
-    mVectNumEntity.emplace_back(m_ground);
-    mVectNumEntity.emplace_back(m_ceiling);
+    mVectNumEntity.emplace_back(entity);
 }
 
 //===================================================================

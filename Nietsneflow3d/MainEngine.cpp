@@ -246,12 +246,6 @@ void MainEngine::clearObjectToDelete()
 }
 
 //===================================================================
-void MainEngine::memColorSystemBackgroundEntities(uint32_t ground, uint32_t ceiling)
-{
-    m_graphicEngine.memColorSystemBackgroundEntities(ground, ceiling);
-}
-
-//===================================================================
 void MainEngine::memTimerPausedValue()
 {
     TimerComponent *timerComp;
@@ -348,16 +342,24 @@ uint32_t MainEngine::createColorEntity()
     return m_ecsManager.addEntity(bitsetComponents);
 }
 
+uint32_t MainEngine::createTextureEntity()
+{
+    std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComponents;
+    bitsetComponents[Components_e::POSITION_VERTEX_COMPONENT] = true;
+    bitsetComponents[Components_e::SPRITE_TEXTURE_COMPONENT] = true;
+    return m_ecsManager.addEntity(bitsetComponents);
+}
+
 //===================================================================
 void MainEngine::loadGroundAndCeilingEntities(const GroundCeilingData &groundData,
-                                              const GroundCeilingData &ceilingData)
+                                              const GroundCeilingData &ceilingData,
+                                              const LevelManager &levelManager)
 {
     uint32_t ceiling, ground;
     ground = createBackgroundEntity(&groundData);
-    confGroundComponents(ground);
+    confGroundComponents(ground, groundData, levelManager.getPictureSpriteData());
     ceiling = createBackgroundEntity(&ceilingData);
-    confCeilingComponents(ceiling);
-    memColorSystemBackgroundEntities(ground, ceiling);
+    confCeilingComponents(ceiling, ceilingData, levelManager.getPictureSpriteData());
 }
 
 //===================================================================
@@ -391,7 +393,8 @@ void MainEngine::loadGraphicPicture(const PictureData &picData, const FontData &
 void MainEngine::loadLevelEntities(const LevelManager &levelManager)
 {
     loadGroundAndCeilingEntities(levelManager.getPictureData().getGroundData(),
-                                 levelManager.getPictureData().getCeilingData());
+                                 levelManager.getPictureData().getCeilingData(), 
+                                 levelManager);
     loadDamageEntity();
     loadTransitionEntity();
     loadStaticElementEntities(levelManager);
@@ -1339,47 +1342,82 @@ void MainEngine::loadStaticElementGroup(const LevelManager &levelManager,
 }
 
 //===================================================================
-void MainEngine::confGroundComponents(uint32_t entityNum)
+void MainEngine::confGroundComponents(uint32_t entityNum,
+                                      const GroundCeilingData &groundData,
+                                      const std::vector<SpriteData> &vectSprite)
 {
-    PositionVertexComponent *posComp = m_ecsManager.getComponentManager().
-            searchComponentByType<PositionVertexComponent>(entityNum, Components_e::POSITION_VERTEX_COMPONENT);
-    assert(posComp);
-    posComp->m_vertex.reserve(4);
-    posComp->m_vertex.emplace_back(-1.0f, 0.0f);
-    posComp->m_vertex.emplace_back(1.0f, 0.0f);
-    posComp->m_vertex.emplace_back(1.0f, -1.0f);
-    posComp->m_vertex.emplace_back(-1.0f, -1.0f);
-    ColorVertexComponent *colorComp = m_ecsManager.getComponentManager().
-            searchComponentByType<ColorVertexComponent>(entityNum, Components_e::COLOR_VERTEX_COMPONENT);
-    assert(colorComp);
-    colorComp->m_vertex.reserve(4);
-    colorComp->m_vertex.emplace_back(0.1f, 0.2f, 0.1f, 1.0f);
-    colorComp->m_vertex.emplace_back(0.1f, 0.2f, 0.1f, 1.0f);
-    colorComp->m_vertex.emplace_back(0.3f, 0.9f, 0.1f, 1.0f);
-    colorComp->m_vertex.emplace_back(0.3f, 0.9f, 0.1f, 1.0f);
-
+    if(groundData.m_apparence == DisplayType_e::COLOR)
+    {
+        PositionVertexComponent *posComp = m_ecsManager.getComponentManager().
+                searchComponentByType<PositionVertexComponent>(entityNum, Components_e::POSITION_VERTEX_COMPONENT);
+        assert(posComp);
+        posComp->m_vertex.reserve(4);
+        posComp->m_vertex.emplace_back(-1.0f, 0.0f);
+        posComp->m_vertex.emplace_back(1.0f, 0.0f);
+        posComp->m_vertex.emplace_back(1.0f, -1.0f);
+        posComp->m_vertex.emplace_back(-1.0f, -1.0f);
+        ColorVertexComponent *colorComp = m_ecsManager.getComponentManager().
+                searchComponentByType<ColorVertexComponent>(entityNum, Components_e::COLOR_VERTEX_COMPONENT);
+        assert(colorComp);
+        colorComp->m_vertex.reserve(4);
+        colorComp->m_vertex.emplace_back(0.1f, 0.2f, 0.1f, 1.0f);
+        colorComp->m_vertex.emplace_back(0.1f, 0.2f, 0.1f, 1.0f);
+        colorComp->m_vertex.emplace_back(0.3f, 0.9f, 0.1f, 1.0f);
+        colorComp->m_vertex.emplace_back(0.3f, 0.9f, 0.1f, 1.0f);
+        memColorSystemEntity(entityNum);
+    }
+    else if(groundData.m_apparence == DisplayType_e::TEXTURE)
+    {
+        //OOOOOK TEST
+        PositionVertexComponent *posComp = m_ecsManager.getComponentManager().
+                searchComponentByType<PositionVertexComponent>(entityNum, Components_e::POSITION_VERTEX_COMPONENT);
+        assert(posComp);
+        posComp->m_vertex.reserve(4);
+        posComp->m_vertex.emplace_back(-1.0f, 0.0f);
+        posComp->m_vertex.emplace_back(1.0f, 0.0f);
+        posComp->m_vertex.emplace_back(1.0f, -1.0f);
+        posComp->m_vertex.emplace_back(-1.0f, -1.0f);
+        SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().
+                searchComponentByType<SpriteTextureComponent>(entityNum, Components_e::SPRITE_TEXTURE_COMPONENT);
+        assert(spriteComp);
+        spriteComp->m_spriteData = &vectSprite[groundData.m_spriteNum];
+        memGroundBackgroundFPSSystemEntity(entityNum);
+    }
 }
 
 //===================================================================
-void MainEngine::confCeilingComponents(uint32_t entityNum)
+void MainEngine::confCeilingComponents(uint32_t entityNum, const
+                                       GroundCeilingData &ceilingData, const std::vector<SpriteData> &vectSprite)
 {
-    PositionVertexComponent *posComp = m_ecsManager.getComponentManager().
-            searchComponentByType<PositionVertexComponent>(entityNum, Components_e::POSITION_VERTEX_COMPONENT);
-    assert(posComp);
-    posComp->m_vertex.reserve(4);
-    posComp->m_vertex.emplace_back(-1.0f, 1.0f);
-    posComp->m_vertex.emplace_back(1.0f, 1.0f);
-    posComp->m_vertex.emplace_back(1.0f, 0.0f);
-    posComp->m_vertex.emplace_back(-1.0f, 0.0f);
 
-    ColorVertexComponent *colorComp = m_ecsManager.getComponentManager().
-            searchComponentByType<ColorVertexComponent>(entityNum, Components_e::COLOR_VERTEX_COMPONENT);
-    assert(colorComp);
-    colorComp->m_vertex.reserve(4);
-    colorComp->m_vertex.emplace_back(0.1f, 0.2f, 0.3f, 1.0f);
-    colorComp->m_vertex.emplace_back(0.1f, 0.2f, 0.3f, 1.0f);
-    colorComp->m_vertex.emplace_back(0.3f, 0.9f, 0.8f, 1.0f);
-    colorComp->m_vertex.emplace_back(0.3f, 0.9f, 0.8f, 1.0f);
+    if(ceilingData.m_apparence == DisplayType_e::COLOR)
+    {
+        PositionVertexComponent *posComp = m_ecsManager.getComponentManager().
+                searchComponentByType<PositionVertexComponent>(entityNum, Components_e::POSITION_VERTEX_COMPONENT);
+        assert(posComp);
+        posComp->m_vertex.reserve(4);
+        posComp->m_vertex.emplace_back(-1.0f, 1.0f);
+        posComp->m_vertex.emplace_back(1.0f, 1.0f);
+        posComp->m_vertex.emplace_back(1.0f, 0.0f);
+        posComp->m_vertex.emplace_back(-1.0f, 0.0f);
+        ColorVertexComponent *colorComp = m_ecsManager.getComponentManager().
+                searchComponentByType<ColorVertexComponent>(entityNum, Components_e::COLOR_VERTEX_COMPONENT);
+        assert(colorComp);
+        colorComp->m_vertex.reserve(4);
+        colorComp->m_vertex.emplace_back(0.1f, 0.2f, 0.3f, 1.0f);
+        colorComp->m_vertex.emplace_back(0.1f, 0.2f, 0.3f, 1.0f);
+        colorComp->m_vertex.emplace_back(0.3f, 0.9f, 0.8f, 1.0f);
+        colorComp->m_vertex.emplace_back(0.3f, 0.9f, 0.8f, 1.0f);
+        memColorSystemEntity(entityNum);
+    }
+    else if(ceilingData.m_apparence == DisplayType_e::TEXTURE)
+    {
+        SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().
+                searchComponentByType<SpriteTextureComponent>(entityNum, Components_e::SPRITE_TEXTURE_COMPONENT);
+        assert(spriteComp);
+        spriteComp->m_spriteData = &vectSprite[ceilingData.m_spriteNum];
+        memCeilingBackgroundFPSSystemEntity(entityNum);
+    }
 }
 
 //===================================================================

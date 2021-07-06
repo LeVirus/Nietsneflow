@@ -13,7 +13,7 @@ public:
     ColorDisplaySystem();
     void execSystem()override;
     void setShader(Shader &shader);
-    void memColorSystemBackgroundEntities(uint32_t ground, uint32_t ceiling);
+    void addColorSystemEntity(uint32_t entity);
     void loadDamageEntity(uint32_t damage);
     void loadTransitionEntity(uint32_t transition);
     void drawEntity(const PositionVertexComponent *posComp, const ColorVertexComponent *colorComp);
@@ -30,7 +30,7 @@ private:
      */
     void setUsedComponents();
 private:
-    uint32_t m_ground, m_ceiling, m_damage, m_transition;
+    uint32_t m_damage, m_transition;
     Shader *m_shader;
     VerticesData m_verticesData;
     PairCompPosColor_t m_transitionMemComponents = {nullptr, nullptr},
