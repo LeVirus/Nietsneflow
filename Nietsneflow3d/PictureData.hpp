@@ -20,7 +20,7 @@ struct GroundCeilingData
 {
     DisplayType_e m_apparence /*= E_DISPLAY_TYPE::COLOR*/;
     uint8_t m_spriteNum;
-    tupleFloat_t m_tupleColor;
+    std::array<tupleFloat_t, 4> m_color;
 };
 
 /**

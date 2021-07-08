@@ -76,8 +76,8 @@ enum class Systems_e
 enum class DisplayType_e
 {
     COLOR,
-    TEXTURE,
-    BOTH
+    SIMPLE_TEXTURE,
+    TEXTURED_TILE
 };
 
 enum class Direction_e

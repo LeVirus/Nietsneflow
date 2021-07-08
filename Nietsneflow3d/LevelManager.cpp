@@ -67,21 +67,27 @@ void LevelManager::loadGroundAndCeilingData(const INIReader &reader)
     std::string current = "Ground";
     for(uint32_t i = 0; i < 2 ; ++i)
     {
-        DisplayType_e displayType = reader.GetBoolean(current, "displayType", true) ?
-                    DisplayType_e::COLOR : DisplayType_e::TEXTURE;
-        if(displayType == DisplayType_e::TEXTURE)
+        arrayGAndCData[i].m_apparence =
+                static_cast<DisplayType_e>(reader.GetInteger(current, "displayType", 0));
+        if(arrayGAndCData[i].m_apparence == DisplayType_e::COLOR)
         {
-            std::optional<uint8_t> id = m_pictureData.getIdentifier(reader.Get("Ground", "sprite", ""));
+            std::vector<float> colorR, colorG, colorB;
+
+            colorR = convertStrToVectFloat(reader.Get(current, "colorR", ""));
+            colorG = convertStrToVectFloat(reader.Get(current, "colorG", ""));
+            colorB = convertStrToVectFloat(reader.Get(current, "colorB", ""));
+            for(uint32_t j = 0; j < 4 ; ++j)
+            {
+                arrayGAndCData[i].m_color[j] = tupleFloat_t{colorR[j], colorG[j], colorB[j]};
+            }
+        }
+        else if(arrayGAndCData[i].m_apparence == DisplayType_e::SIMPLE_TEXTURE)
+        {
+            std::optional<uint8_t> id = m_pictureData.getIdentifier(
+                        reader.Get(current, "sprite", ""));
             assert(id && "Cannot get tegetIdentifierier.");
             arrayGAndCData[i].m_spriteNum = *id;
         }
-        else
-        {
-            arrayGAndCData[i].m_tupleColor = {reader.GetReal(current, "colorR", -1.0),
-                                              reader.GetReal(current, "colorG", -1.0),
-                                              reader.GetReal(current, "colorB", -1.0)};
-        }
-        arrayGAndCData[i].m_apparence = displayType;
         //second ceiling
         current = "Ceiling";
     }

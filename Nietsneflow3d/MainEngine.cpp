@@ -371,7 +371,7 @@ uint32_t MainEngine::createBackgroundEntity(GroundCeilingData const *data)
     {
         bitsetComponents[Components_e::COLOR_VERTEX_COMPONENT] = true;
     }
-    else if(data->m_apparence == DisplayType_e::TEXTURE)
+    else if(data->m_apparence == DisplayType_e::SIMPLE_TEXTURE)
     {
         bitsetComponents[Components_e::SPRITE_TEXTURE_COMPONENT] = true;
     }
@@ -1360,15 +1360,22 @@ void MainEngine::confGroundComponents(uint32_t entityNum,
                 searchComponentByType<ColorVertexComponent>(entityNum, Components_e::COLOR_VERTEX_COMPONENT);
         assert(colorComp);
         colorComp->m_vertex.reserve(4);
-        colorComp->m_vertex.emplace_back(0.1f, 0.2f, 0.1f, 1.0f);
-        colorComp->m_vertex.emplace_back(0.1f, 0.2f, 0.1f, 1.0f);
-        colorComp->m_vertex.emplace_back(0.3f, 0.9f, 0.1f, 1.0f);
-        colorComp->m_vertex.emplace_back(0.3f, 0.9f, 0.1f, 1.0f);
+        colorComp->m_vertex.emplace_back(std::get<0>(groundData.m_color[0]),
+                std::get<1>(groundData.m_color[0]), std::get<2>(groundData.m_color[0]),
+                1.0);
+        colorComp->m_vertex.emplace_back(std::get<0>(groundData.m_color[1]),
+                std::get<1>(groundData.m_color[1]), std::get<2>(groundData.m_color[1]),
+                1.0);
+        colorComp->m_vertex.emplace_back(std::get<0>(groundData.m_color[2]),
+                std::get<1>(groundData.m_color[2]), std::get<2>(groundData.m_color[2]),
+                1.0);
+        colorComp->m_vertex.emplace_back(std::get<0>(groundData.m_color[3]),
+                std::get<1>(groundData.m_color[3]), std::get<2>(groundData.m_color[3]),
+                1.0);
         memColorSystemEntity(entityNum);
     }
-    else if(groundData.m_apparence == DisplayType_e::TEXTURE)
+    else if(groundData.m_apparence == DisplayType_e::SIMPLE_TEXTURE)
     {
-        //OOOOOK TEST
         PositionVertexComponent *posComp = m_ecsManager.getComponentManager().
                 searchComponentByType<PositionVertexComponent>(entityNum, Components_e::POSITION_VERTEX_COMPONENT);
         assert(posComp);
@@ -1404,13 +1411,21 @@ void MainEngine::confCeilingComponents(uint32_t entityNum, const
                 searchComponentByType<ColorVertexComponent>(entityNum, Components_e::COLOR_VERTEX_COMPONENT);
         assert(colorComp);
         colorComp->m_vertex.reserve(4);
-        colorComp->m_vertex.emplace_back(0.1f, 0.2f, 0.3f, 1.0f);
-        colorComp->m_vertex.emplace_back(0.1f, 0.2f, 0.3f, 1.0f);
-        colorComp->m_vertex.emplace_back(0.3f, 0.9f, 0.8f, 1.0f);
-        colorComp->m_vertex.emplace_back(0.3f, 0.9f, 0.8f, 1.0f);
+        colorComp->m_vertex.emplace_back(std::get<0>(ceilingData.m_color[0]),
+                std::get<1>(ceilingData.m_color[0]), std::get<2>(ceilingData.m_color[0]),
+                1.0);
+        colorComp->m_vertex.emplace_back(std::get<0>(ceilingData.m_color[1]),
+                std::get<1>(ceilingData.m_color[1]), std::get<2>(ceilingData.m_color[1]),
+                1.0);
+        colorComp->m_vertex.emplace_back(std::get<0>(ceilingData.m_color[2]),
+                std::get<1>(ceilingData.m_color[2]), std::get<2>(ceilingData.m_color[2]),
+                1.0);
+        colorComp->m_vertex.emplace_back(std::get<0>(ceilingData.m_color[3]),
+                std::get<1>(ceilingData.m_color[3]), std::get<2>(ceilingData.m_color[3]),
+                1.0);
         memColorSystemEntity(entityNum);
     }
-    else if(ceilingData.m_apparence == DisplayType_e::TEXTURE)
+    else if(ceilingData.m_apparence == DisplayType_e::SIMPLE_TEXTURE)
     {
         PositionVertexComponent *posComp = m_ecsManager.getComponentManager().
                 searchComponentByType<PositionVertexComponent>(entityNum, Components_e::POSITION_VERTEX_COMPONENT);
