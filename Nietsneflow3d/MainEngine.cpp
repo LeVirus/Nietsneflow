@@ -1412,6 +1412,14 @@ void MainEngine::confCeilingComponents(uint32_t entityNum, const
     }
     else if(ceilingData.m_apparence == DisplayType_e::TEXTURE)
     {
+        PositionVertexComponent *posComp = m_ecsManager.getComponentManager().
+                searchComponentByType<PositionVertexComponent>(entityNum, Components_e::POSITION_VERTEX_COMPONENT);
+        assert(posComp);
+        posComp->m_vertex.reserve(4);
+        posComp->m_vertex.emplace_back(-1.0f, 1.0f);
+        posComp->m_vertex.emplace_back(1.0f, 1.0f);
+        posComp->m_vertex.emplace_back(1.0f, 0.0f);
+        posComp->m_vertex.emplace_back(-1.0f, 0.0f);
         SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().
                 searchComponentByType<SpriteTextureComponent>(entityNum, Components_e::SPRITE_TEXTURE_COMPONENT);
         assert(spriteComp);

@@ -112,7 +112,7 @@ private:
     }
     inline void memCeilingBackgroundFPSSystemEntity(uint32_t entity)
     {
-        m_graphicEngine.memColorSystemEntity(entity);
+        m_graphicEngine.memCeilingBackgroundFPSSystemEntity(entity);
     }
     inline void memGroundBackgroundFPSSystemEntity(uint32_t entity)
     {

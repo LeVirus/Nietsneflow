@@ -95,12 +95,13 @@ private:
     void confNormalEntityVertex(uint32_t numEntity,
                                 VisionComponent *visionComp, CollisionTag_e tag, float lateralPosGL, float distance);
     void drawVertex();
+    void drawTextureBackground();
     pairFloat_t getCenterPosition(MapCoordComponent const *mapComp,
                                   GeneralCollisionComponent *genCollComp, float numEntity);
     void fillVertexFromEntity(uint32_t numEntity, uint32_t numIteration, float distance,
                               DisplayMode_e displayMode);
     VerticesData &getClearedVertice(uint32_t index);
-    void writeVertexGroundCeilingRaycast();
+    void writeVertexGroundCeiling();
     inline void clearGroundCeilingRaycast()
     {
         for(uint32_t i = 0; i < m_groundCeilingRaycastPoint.size(); ++i)
@@ -112,7 +113,7 @@ private:
     Shader *m_shader;
     std::multiset<EntityData> m_entitiesNumMem;
     std::vector<VerticesData> m_vectWallDoorVerticesData;
-    VerticesData m_groundVertice;
+    VerticesData m_groundVertice, m_ceilingVertice;
     std::vector<Texture> *m_ptrVectTexture = nullptr;
     mapRayCastingData_t m_raycastingData;
     //number of entity to draw per player

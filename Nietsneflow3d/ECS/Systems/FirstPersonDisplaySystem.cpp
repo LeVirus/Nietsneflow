@@ -104,7 +104,7 @@ void FirstPersonDisplaySystem::confCompVertexMemEntities()
         m_numVertexToDraw[i] -= toRemove;
         ++numIteration;
         rayCasting();
-        writeVertexGroundCeilingRaycast();
+        writeVertexGroundCeiling();
         //draw wall and door
         for(mapRayCastingData_t::const_iterator it = m_raycastingData.begin();
             it != m_raycastingData.end(); ++it, ++numIteration)
@@ -115,7 +115,7 @@ void FirstPersonDisplaySystem::confCompVertexMemEntities()
 }
 
 //===================================================================
-void FirstPersonDisplaySystem::writeVertexGroundCeilingRaycast()
+void FirstPersonDisplaySystem::writeVertexGroundCeiling()
 {
     if(m_groundEntity)
     {
@@ -130,12 +130,14 @@ void FirstPersonDisplaySystem::writeVertexGroundCeilingRaycast()
     }
     if(m_ceilingEntity)
     {
-//        PositionVertexComponent *posComp = m_ecsManager.getComponentManager().
-//                searchComponentByType<PositionVertexComponent>(*m_groundEntity, Components_e::POSITION_VERTEX_COMPONENT);
-//        assert(posComp);
-//        ColorVertexComponent *colorComp = m_ecsManager.getComponentManager().
-//                searchComponentByType<ColorVertexComponent>(*m_groundEntity, Components_e::COLOR_VERTEX_COMPONENT);
-//        assert(colorComp);
+        PositionVertexComponent *posComp = stairwayToComponentManager().
+                searchComponentByType<PositionVertexComponent>(*m_ceilingEntity, Components_e::POSITION_VERTEX_COMPONENT);
+        assert(posComp);
+        SpriteTextureComponent *spriteComp = stairwayToComponentManager().
+                searchComponentByType<SpriteTextureComponent>(*m_ceilingEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
+        assert(spriteComp);
+        m_ceilingVertice.clear();
+        m_ceilingVertice.loadVertexStandartTextureComponent(*posComp, *spriteComp);
     }
 //    m_groundVertice.clear();
 //    for(uint32_t i = 0; i < m_groundCeilingRaycastPoint.size(); ++i)
@@ -640,16 +642,7 @@ void FirstPersonDisplaySystem::confNormalEntityVertex(uint32_t numEntity, Vision
 void FirstPersonDisplaySystem::drawVertex()
 {
     m_shader->use();
-    if(m_groundEntity)
-    {
-        SpriteTextureComponent *spriteComp = stairwayToComponentManager().
-                searchComponentByType<SpriteTextureComponent>(*m_groundEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
-        assert(spriteComp);
-        m_ptrVectTexture->operator[](static_cast<uint32_t>(spriteComp->m_spriteData->
-                                                           m_textureNum)).bind();
-        m_groundVertice.confVertexBuffer();
-        m_groundVertice.drawElement();
-    }
+    drawTextureBackground();
     //DONT WORK for multiple player
     for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
     {
@@ -663,6 +656,31 @@ void FirstPersonDisplaySystem::drawVertex()
             m_vectWallDoorVerticesData[numIteration].confVertexBuffer();
             m_vectWallDoorVerticesData[numIteration].drawElement();
         }
+    }
+}
+
+//===================================================================
+void FirstPersonDisplaySystem::drawTextureBackground()
+{
+    if(m_groundEntity)
+    {
+        SpriteTextureComponent *spriteComp = stairwayToComponentManager().
+                searchComponentByType<SpriteTextureComponent>(*m_groundEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
+        assert(spriteComp);
+        m_ptrVectTexture->operator[](static_cast<uint32_t>(spriteComp->m_spriteData->
+                                                           m_textureNum)).bind();
+        m_groundVertice.confVertexBuffer();
+        m_groundVertice.drawElement();
+    }
+    if(m_ceilingEntity)
+    {
+        SpriteTextureComponent *spriteComp = stairwayToComponentManager().
+                searchComponentByType<SpriteTextureComponent>(*m_ceilingEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
+        assert(spriteComp);
+        m_ptrVectTexture->operator[](static_cast<uint32_t>(spriteComp->m_spriteData->
+                                                           m_textureNum)).bind();
+        m_ceilingVertice.confVertexBuffer();
+        m_ceilingVertice.drawElement();
     }
 }
 
