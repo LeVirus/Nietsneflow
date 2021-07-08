@@ -117,27 +117,46 @@ void FirstPersonDisplaySystem::confCompVertexMemEntities()
 //===================================================================
 void FirstPersonDisplaySystem::writeVertexGroundCeiling()
 {
-    if(m_groundEntity)
+    if(m_groundBackground)
     {
         PositionVertexComponent *posComp = stairwayToComponentManager().
-                searchComponentByType<PositionVertexComponent>(*m_groundEntity, Components_e::POSITION_VERTEX_COMPONENT);
+                searchComponentByType<PositionVertexComponent>((*m_groundBackground).first, Components_e::POSITION_VERTEX_COMPONENT);
         assert(posComp);
         SpriteTextureComponent *spriteComp = stairwayToComponentManager().
-                searchComponentByType<SpriteTextureComponent>(*m_groundEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
+                searchComponentByType<SpriteTextureComponent>((*m_groundBackground).first, Components_e::SPRITE_TEXTURE_COMPONENT);
         assert(spriteComp);
-        m_groundVertice.clear();
-        m_groundVertice.loadVertexStandartTextureComponent(*posComp, *spriteComp);
+        //if simple texture
+        if((*m_groundBackground).second)
+        {
+            if(m_groundVertice.empty())
+            {
+                m_groundVertice.loadVertexStandartTextureComponent(*posComp, *spriteComp);
+            }
+        }
+        else
+        {
+            m_groundVertice.clear();
+        }
     }
-    if(m_ceilingEntity)
+    if(m_ceilingBackground)
     {
         PositionVertexComponent *posComp = stairwayToComponentManager().
-                searchComponentByType<PositionVertexComponent>(*m_ceilingEntity, Components_e::POSITION_VERTEX_COMPONENT);
+                searchComponentByType<PositionVertexComponent>((*m_ceilingBackground).first, Components_e::POSITION_VERTEX_COMPONENT);
         assert(posComp);
         SpriteTextureComponent *spriteComp = stairwayToComponentManager().
-                searchComponentByType<SpriteTextureComponent>(*m_ceilingEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
+                searchComponentByType<SpriteTextureComponent>((*m_ceilingBackground).first, Components_e::SPRITE_TEXTURE_COMPONENT);
         assert(spriteComp);
-        m_ceilingVertice.clear();
-        m_ceilingVertice.loadVertexStandartTextureComponent(*posComp, *spriteComp);
+        if((*m_ceilingBackground).second)
+        {
+            if(m_ceilingVertice.empty())
+            {
+                m_ceilingVertice.loadVertexStandartTextureComponent(*posComp, *spriteComp);
+            }
+        }
+        else
+        {
+            m_ceilingVertice.clear();
+        }
     }
 //    m_groundVertice.clear();
 //    for(uint32_t i = 0; i < m_groundCeilingRaycastPoint.size(); ++i)
@@ -662,20 +681,20 @@ void FirstPersonDisplaySystem::drawVertex()
 //===================================================================
 void FirstPersonDisplaySystem::drawTextureBackground()
 {
-    if(m_groundEntity)
+    if(m_groundBackground)
     {
         SpriteTextureComponent *spriteComp = stairwayToComponentManager().
-                searchComponentByType<SpriteTextureComponent>(*m_groundEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
+                searchComponentByType<SpriteTextureComponent>((*m_groundBackground).first, Components_e::SPRITE_TEXTURE_COMPONENT);
         assert(spriteComp);
         m_ptrVectTexture->operator[](static_cast<uint32_t>(spriteComp->m_spriteData->
                                                            m_textureNum)).bind();
         m_groundVertice.confVertexBuffer();
         m_groundVertice.drawElement();
     }
-    if(m_ceilingEntity)
+    if(m_ceilingBackground)
     {
         SpriteTextureComponent *spriteComp = stairwayToComponentManager().
-                searchComponentByType<SpriteTextureComponent>(*m_ceilingEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
+                searchComponentByType<SpriteTextureComponent>((*m_ceilingBackground).first, Components_e::SPRITE_TEXTURE_COMPONENT);
         assert(spriteComp);
         m_ptrVectTexture->operator[](static_cast<uint32_t>(spriteComp->m_spriteData->
                                                            m_textureNum)).bind();

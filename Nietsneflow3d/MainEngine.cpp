@@ -378,7 +378,6 @@ uint32_t MainEngine::createBackgroundEntity(GroundCeilingData const *data)
     else
     {
         bitsetComponents[Components_e::SPRITE_TEXTURE_COMPONENT] = true;
-        bitsetComponents[Components_e::COLOR_VERTEX_COMPONENT] = true;
     }
     return m_ecsManager.addEntity(bitsetComponents);
 }
@@ -1374,21 +1373,25 @@ void MainEngine::confGroundComponents(uint32_t entityNum,
                 1.0);
         memColorSystemEntity(entityNum);
     }
-    else if(groundData.m_apparence == DisplayType_e::SIMPLE_TEXTURE)
+    else
     {
-        PositionVertexComponent *posComp = m_ecsManager.getComponentManager().
-                searchComponentByType<PositionVertexComponent>(entityNum, Components_e::POSITION_VERTEX_COMPONENT);
-        assert(posComp);
-        posComp->m_vertex.reserve(4);
-        posComp->m_vertex.emplace_back(-1.0f, 0.0f);
-        posComp->m_vertex.emplace_back(1.0f, 0.0f);
-        posComp->m_vertex.emplace_back(1.0f, -1.0f);
-        posComp->m_vertex.emplace_back(-1.0f, -1.0f);
+        bool simpleTexture = (groundData.m_apparence == DisplayType_e::SIMPLE_TEXTURE);
+        if(simpleTexture)
+        {
+            PositionVertexComponent *posComp = m_ecsManager.getComponentManager().
+                    searchComponentByType<PositionVertexComponent>(entityNum, Components_e::POSITION_VERTEX_COMPONENT);
+            assert(posComp);
+            posComp->m_vertex.reserve(4);
+            posComp->m_vertex.emplace_back(-1.0f, 0.0f);
+            posComp->m_vertex.emplace_back(1.0f, 0.0f);
+            posComp->m_vertex.emplace_back(1.0f, -1.0f);
+            posComp->m_vertex.emplace_back(-1.0f, -1.0f);
+        }
         SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().
                 searchComponentByType<SpriteTextureComponent>(entityNum, Components_e::SPRITE_TEXTURE_COMPONENT);
         assert(spriteComp);
         spriteComp->m_spriteData = &vectSprite[groundData.m_spriteNum];
-        memGroundBackgroundFPSSystemEntity(entityNum);
+        memGroundBackgroundFPSSystemEntity(entityNum, simpleTexture);
     }
 }
 
@@ -1425,21 +1428,25 @@ void MainEngine::confCeilingComponents(uint32_t entityNum, const
                 1.0);
         memColorSystemEntity(entityNum);
     }
-    else if(ceilingData.m_apparence == DisplayType_e::SIMPLE_TEXTURE)
+    else
     {
-        PositionVertexComponent *posComp = m_ecsManager.getComponentManager().
-                searchComponentByType<PositionVertexComponent>(entityNum, Components_e::POSITION_VERTEX_COMPONENT);
-        assert(posComp);
-        posComp->m_vertex.reserve(4);
-        posComp->m_vertex.emplace_back(-1.0f, 1.0f);
-        posComp->m_vertex.emplace_back(1.0f, 1.0f);
-        posComp->m_vertex.emplace_back(1.0f, 0.0f);
-        posComp->m_vertex.emplace_back(-1.0f, 0.0f);
-        SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().
-                searchComponentByType<SpriteTextureComponent>(entityNum, Components_e::SPRITE_TEXTURE_COMPONENT);
-        assert(spriteComp);
-        spriteComp->m_spriteData = &vectSprite[ceilingData.m_spriteNum];
-        memCeilingBackgroundFPSSystemEntity(entityNum);
+        bool simpleTexture = ceilingData.m_apparence == DisplayType_e::SIMPLE_TEXTURE;
+        if(simpleTexture)
+        {
+            PositionVertexComponent *posComp = m_ecsManager.getComponentManager().
+                    searchComponentByType<PositionVertexComponent>(entityNum, Components_e::POSITION_VERTEX_COMPONENT);
+            assert(posComp);
+            posComp->m_vertex.reserve(4);
+            posComp->m_vertex.emplace_back(-1.0f, 1.0f);
+            posComp->m_vertex.emplace_back(1.0f, 1.0f);
+            posComp->m_vertex.emplace_back(1.0f, 0.0f);
+            posComp->m_vertex.emplace_back(-1.0f, 0.0f);
+        }
+            SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().
+                    searchComponentByType<SpriteTextureComponent>(entityNum, Components_e::SPRITE_TEXTURE_COMPONENT);
+            assert(spriteComp);
+            spriteComp->m_spriteData = &vectSprite[ceilingData.m_spriteNum];
+            memCeilingBackgroundFPSSystemEntity(entityNum, simpleTexture);
     }
 }
 

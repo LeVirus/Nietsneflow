@@ -37,6 +37,7 @@ public:
     inline void clearLevel()
     {
         m_ecsManager.getEngine().RmAllEntity();
+        m_graphicEngine.clearFPSSystem();
     }
     void confSystems();
 private:
@@ -110,13 +111,13 @@ private:
     {
         m_graphicEngine.memColorSystemEntity(entity);
     }
-    inline void memCeilingBackgroundFPSSystemEntity(uint32_t entity)
+    inline void memCeilingBackgroundFPSSystemEntity(uint32_t entity, bool simpleTexture)
     {
-        m_graphicEngine.memCeilingBackgroundFPSSystemEntity(entity);
+        m_graphicEngine.memCeilingBackgroundFPSSystemEntity(entity, simpleTexture);
     }
-    inline void memGroundBackgroundFPSSystemEntity(uint32_t entity)
+    inline void memGroundBackgroundFPSSystemEntity(uint32_t entity, bool simpleTexture)
     {
-        m_graphicEngine.memGroundBackgroundFPSSystemEntity(entity);
+        m_graphicEngine.memGroundBackgroundFPSSystemEntity(entity, simpleTexture);
     }
 private:
     GraphicEngine m_graphicEngine;

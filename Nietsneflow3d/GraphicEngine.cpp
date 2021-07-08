@@ -152,21 +152,27 @@ void GraphicEngine::fillMenuWrite(WriteComponent *writeComp, const std::string &
 }
 
 //===================================================================
+void GraphicEngine::clearFPSSystem()
+{
+    m_firstPersonSystem->clearBackgroundData();
+}
+
+//===================================================================
 void GraphicEngine::memColorSystemEntity(uint32_t entity)
 {
     m_colorSystem->addColorSystemEntity(entity);
 }
 
 //===================================================================
-void GraphicEngine::memGroundBackgroundFPSSystemEntity(uint32_t entity)
+void GraphicEngine::memGroundBackgroundFPSSystemEntity(uint32_t entity, bool simpleTexture)
 {
-    m_firstPersonSystem->memGroundBackgroundEntity(entity);
+    m_firstPersonSystem->memGroundBackgroundEntity(entity, simpleTexture);
 }
 
 //===================================================================
-void GraphicEngine::memCeilingBackgroundFPSSystemEntity(uint32_t entity)
+void GraphicEngine::memCeilingBackgroundFPSSystemEntity(uint32_t entity, bool simpleTexture)
 {
-    m_firstPersonSystem->memCeilingBackgroundEntity(entity);
+    m_firstPersonSystem->memCeilingBackgroundEntity(entity, simpleTexture);
 }
 
 //===================================================================

@@ -27,6 +27,7 @@ public:
     void clear();
     inline void setShaderType(Shader_e shaderNum){m_shaderNum = shaderNum;}
     inline const std::vector<float> &getVectVertex()const{return m_vertexBuffer;}
+    inline bool empty()const{return m_vertexBuffer.empty();}
     inline const std::vector<uint32_t> &getVectIndices()const{return m_indices;}
     bool loadVertexColorComponent(const PositionVertexComponent *posComp,
                                   const ColorVertexComponent *colorComp);

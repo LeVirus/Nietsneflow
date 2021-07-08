@@ -60,13 +60,18 @@ public:
     void drawPlayerDamage();
     void setVectTextures(std::vector<Texture> &vectTexture);
     void setShader(Shader &shader);
-    inline void memGroundBackgroundEntity(uint32_t entity)
+    inline void memGroundBackgroundEntity(uint32_t entity, bool simpleTexture)
     {
-        m_groundEntity = entity;
+        m_groundBackground = {entity, simpleTexture};
     }
-    inline void memCeilingBackgroundEntity(uint32_t entity)
+    inline void memCeilingBackgroundEntity(uint32_t entity, bool simpleTexture)
     {
-        m_ceilingEntity = entity;
+        m_ceilingBackground = {entity, simpleTexture};
+    }
+    inline void clearBackgroundData()
+    {
+        m_groundBackground = std::nullopt;
+        m_ceilingBackground = std::nullopt;
     }
     //return target point, texture position and entity num if collision
     optionalTargetRaycast_t calcLineSegmentRaycast(float radiantAngle,
@@ -121,7 +126,8 @@ private:
     std::array<std::vector<pairFloat_t>, RAYCAST_LINE_NUMBER> m_groundCeilingRaycastPoint;
     float m_stepAngle = getRadiantAngle(CONE_VISION / static_cast<float>(RAYCAST_LINE_NUMBER)),
     m_stepDrawLateralScreen = 2.0f / static_cast<float>(RAYCAST_LINE_NUMBER);
-    std::optional<uint32_t> m_groundEntity, m_ceilingEntity;
+    //second :: false = tiled texture     true = simple texture
+    std::optional<std::pair<uint32_t, bool>> m_groundBackground, m_ceilingBackground;
 };
 
 float getQuarterAngle(float angle);
