@@ -133,6 +133,7 @@ void FirstPersonDisplaySystem::writeVertexGroundCeiling()
                 m_groundVertice.loadVertexStandartTextureComponent(*posComp, *spriteComp);
             }
         }
+        //tiled texture
         else
         {
             m_groundVertice.clear();
@@ -146,6 +147,7 @@ void FirstPersonDisplaySystem::writeVertexGroundCeiling()
         SpriteTextureComponent *spriteComp = stairwayToComponentManager().
                 searchComponentByType<SpriteTextureComponent>((*m_ceilingBackground).first, Components_e::SPRITE_TEXTURE_COMPONENT);
         assert(spriteComp);
+        //simple texture
         if((*m_ceilingBackground).second)
         {
             if(m_ceilingVertice.empty())
@@ -153,6 +155,7 @@ void FirstPersonDisplaySystem::writeVertexGroundCeiling()
                 m_ceilingVertice.loadVertexStandartTextureComponent(*posComp, *spriteComp);
             }
         }
+        //tiled texture
         else
         {
             m_ceilingVertice.clear();
