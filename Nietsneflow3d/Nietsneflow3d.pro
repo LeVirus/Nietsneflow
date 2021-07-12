@@ -5,7 +5,7 @@ CONFIG -= qt
 QMAKE_CXXFLAGS += -std=c++17
 QMAKE_CXXFLAGS_DEBUG += -Wall -Wextra -Wpedantic -Og
 INCLUDEPATH += includesLib
-LIBS += -L../Nietsneflow3d/lib  -lECS -lglad -ldl -lglfw3 -lX11 -lXxf86vm -lXrandr -pthread -lXi
+LIBS += -L../Nietsneflow3d/lib  -lECS -lglad -ldl -lglfw -lX11 -lXxf86vm -lXrandr -pthread -lXi
 
 SOURCES += main.cpp \
     ECS/Systems/IASystem.cpp \

@@ -5,6 +5,7 @@
 #include <limits>
 #include <cmath>
 #include <vector>
+#include <optional>
 
 inline const uint32_t SEGMENT_SHOT_NUMBER = 4;
 
