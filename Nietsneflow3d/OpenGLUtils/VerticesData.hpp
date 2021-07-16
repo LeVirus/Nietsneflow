@@ -14,6 +14,7 @@ struct WriteComponent;
 
 using mapRayCastingData_t = std::map<uint32_t, std::vector<RayCastingIntersect>>;
 using pairRaycastingData_t = std::pair<uint32_t, std::vector<RayCastingIntersect>>;
+using groundCeilingRaycastContainer_t = std::array<std::vector<pairFloat_t>, RAYCAST_LINE_NUMBER>;
 
 struct GroundCeililngRayCastingIntersect;
 class Shader;
@@ -38,9 +39,9 @@ public:
     float loadWallDoorRaycastingEntity(const SpriteTextureComponent &spriteComp,
                                        const std::vector<RayCastingIntersect> &raycastingData,
                                        uint32_t totalLateralLine);
-    float loadGroundRaycastingEntity(const SpriteTextureComponent &spriteComp,
-                                     const std::vector<GroundCeililngRayCastingIntersect> &raycastingData,
-                                     uint32_t totalLateralLine);
+    void loadGroundRaycastingEntity(const groundCeilingRaycastContainer_t &groundCeilingRaycastPoint,
+                                    const SpriteTextureComponent *spriteComp,
+                                    const pairFloat_t &observerPoint, float observerAngleRadiant);
     void loadVertexTextureDrawByLineComponent(const PositionVertexComponent &posComp,
                                               const SpriteTextureComponent &spriteComp,
                                               uint32_t lineDrawNumber, DoorComponent *doorComp = nullptr);

@@ -269,6 +269,8 @@ float getDistance(const pairFloat_t &pointA, const pairFloat_t &pointB)
 float getCameraDistance(const pairFloat_t &observerPoint, const pairFloat_t &targetPoint,
                         float observerAngleRadiant, bool limit)
 {
+    assert(static_cast<uint32_t>(observerPoint.first) != static_cast<uint32_t>(targetPoint.first) ||
+            static_cast<uint32_t>(observerPoint.second) != static_cast<uint32_t>(targetPoint.second));
     float angleCalc;
     if(limit)
     {

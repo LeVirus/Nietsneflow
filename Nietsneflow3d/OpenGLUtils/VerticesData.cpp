@@ -175,16 +175,61 @@ float VerticesData::loadWallDoorRaycastingEntity(const SpriteTextureComponent &s
 }
 
 //===================================================================
-float VerticesData::loadGroundRaycastingEntity(const SpriteTextureComponent &spriteComp,
-                                               const std::vector<GroundCeililngRayCastingIntersect> &raycastingData,
-                                               uint32_t totalLateralLine)
+void VerticesData::loadGroundRaycastingEntity(const groundCeilingRaycastContainer_t &groundCeilingRaycastPoint,
+                                              const SpriteTextureComponent *spriteComp,
+                                              const pairFloat_t &observerPoint, float observerAngleRadiant)
 {
-    float lateralPosA, lateralPosB, verticalPos, lateralText,
-            totalLines = static_cast<float>(totalLateralLine) - 1.0f;
-    for(uint32_t i = 0; i < raycastingData.size(); ++i)
+    float lateralPosA, lateralPosB, verticalPosA, verticalPosB, lateralTextA, verticalTextA, lateralTextB,
+            verticalTextB, distanceA, distanceB, totalGLLateralPos = static_cast<float>(RAYCAST_LINE_NUMBER);
+    pairFloat_t previousPoint;
+    pairFloat_t textureSize = {spriteComp->m_spriteData->m_texturePosVertex[0].first -
+                               spriteComp->m_spriteData->m_texturePosVertex[1].first,
+                              spriteComp->m_spriteData->m_texturePosVertex[0].second -
+                               spriteComp->m_spriteData->m_texturePosVertex[3].second};
+    previousPoint = observerPoint;
+    for(uint32_t i = 0; i < groundCeilingRaycastPoint.size(); ++i)
     {
-        lateralPosA = 2.0f * static_cast<float>(raycastingData[i].m_lateral) / totalLines;
-        lateralPosB = 2.0f * static_cast<float>(raycastingData[i].m_lateral + 1) / totalLines;
+        lateralPosA = 2.0f * static_cast<float>(i) / totalGLLateralPos - 1.0f;
+        lateralPosB = 2.0f * static_cast<float>(i + 1) / totalGLLateralPos - 1.0f;
+        for(uint32_t j = 0; j < groundCeilingRaycastPoint[i].size(); ++j)
+        {
+            lateralTextA = spriteComp->m_spriteData->m_texturePosVertex[0].first +
+                    std::fmod(previousPoint.first, LEVEL_TILE_SIZE_PX) / textureSize.first;
+            verticalTextA = spriteComp->m_spriteData->m_texturePosVertex[0].second +
+                    std::fmod(previousPoint.second, LEVEL_TILE_SIZE_PX) / textureSize.second;
+            lateralTextB = spriteComp->m_spriteData->m_texturePosVertex[0].first +
+                    std::fmod(groundCeilingRaycastPoint[i][j].first, LEVEL_TILE_SIZE_PX) / textureSize.first;
+            verticalTextB = spriteComp->m_spriteData->m_texturePosVertex[0].second +
+                    std::fmod(groundCeilingRaycastPoint[i][j].second, LEVEL_TILE_SIZE_PX) / textureSize.second;
+            if(j == 0 || (j == 1 && static_cast<uint32_t>(observerPoint.first) == static_cast<uint32_t>(previousPoint.first) &&
+                          static_cast<uint32_t>(observerPoint.second) == static_cast<uint32_t>(previousPoint.second)))
+            {
+                verticalPosA = -1.0f;
+            }
+            else
+            {
+                distanceA = getCameraDistance(observerPoint, previousPoint, observerAngleRadiant);
+                assert(distanceA > 0.01f);
+                verticalPosA = -RAYCAST_VERTICAL_SIZE / (distanceA / LEVEL_TILE_SIZE_PX);
+            }
+            if(j == 0 && static_cast<uint32_t>(observerPoint.first) == static_cast<uint32_t>(groundCeilingRaycastPoint[i][j].first) &&
+                          static_cast<uint32_t>(observerPoint.second) == static_cast<uint32_t>(groundCeilingRaycastPoint[i][j].second))
+            {
+                verticalPosB = -1.0f;
+            }
+            else
+            {
+                distanceB = getCameraDistance(observerPoint, groundCeilingRaycastPoint[i][j], observerAngleRadiant);
+                assert(distanceB > 0.01f);
+                verticalPosB = -RAYCAST_VERTICAL_SIZE / (distanceB / LEVEL_TILE_SIZE_PX);
+            }
+            previousPoint = groundCeilingRaycastPoint[i][j];
+            addTexturePoint({lateralPosA, verticalPosA}, {lateralTextA, verticalTextA});
+            addTexturePoint({lateralPosB, verticalPosA}, {lateralTextB, verticalTextA});
+            addTexturePoint({lateralPosB, verticalPosB}, {lateralTextB, verticalTextB});
+            addTexturePoint({lateralPosA, verticalPosB}, {lateralTextA, verticalTextB});
+            addIndices(BaseShapeTypeGL_e::RECTANGLE);
+        }
     }
 }
 

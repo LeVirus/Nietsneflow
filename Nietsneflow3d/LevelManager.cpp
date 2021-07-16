@@ -81,7 +81,7 @@ void LevelManager::loadGroundAndCeilingData(const INIReader &reader)
                 arrayGAndCData[i].m_color[j] = tupleFloat_t{colorR[j], colorG[j], colorB[j]};
             }
         }
-        else if(arrayGAndCData[i].m_apparence == DisplayType_e::SIMPLE_TEXTURE)
+        else
         {
             std::optional<uint8_t> id = m_pictureData.getIdentifier(
                         reader.Get(current, "sprite", ""));

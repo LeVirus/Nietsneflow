@@ -86,8 +86,7 @@ void PictureData::clear()
 }
 
 //===================================================================
-void PictureData::setGroundAndCeilingData(const std::array<GroundCeilingData, 2>
-                                          &arrayGAndCData)
+void PictureData::setGroundAndCeilingData(const std::array<GroundCeilingData, 2> &arrayGAndCData)
 {
     m_groundData = arrayGAndCData[0];
     m_ceilingData = arrayGAndCData[1];

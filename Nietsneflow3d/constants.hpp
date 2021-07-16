@@ -270,6 +270,8 @@ inline const float CONE_VISION = 60.0f;
 inline const float HALF_CONE_VISION = CONE_VISION / 2.0f;
 inline const float DOUBLE_CONE_VISION = CONE_VISION * 2.0f;
 
+inline const uint32_t RAYCAST_LINE_NUMBER = 200, RAYCAST_DEPTH = 20;
+
 inline const std::string STR_PLAYER_LIFE = "LIFE::";
 inline const std::string STR_PLAYER_AMMO = "AMMO::";
 inline const std::string SHADER_DIR_STR = "../Nietsneflow3d/Ressources/Shader/";

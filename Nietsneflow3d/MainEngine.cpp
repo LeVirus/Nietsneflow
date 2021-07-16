@@ -356,6 +356,7 @@ void MainEngine::loadGroundAndCeilingEntities(const GroundCeilingData &groundDat
                                               const LevelManager &levelManager)
 {
     uint32_t ceiling, ground;
+    m_graphicEngine.clearFPSSystem();
     ground = createBackgroundEntity(&groundData);
     confGroundComponents(ground, groundData, levelManager.getPictureSpriteData());
     ceiling = createBackgroundEntity(&ceilingData);
@@ -370,10 +371,6 @@ uint32_t MainEngine::createBackgroundEntity(GroundCeilingData const *data)
     if(data->m_apparence == DisplayType_e::COLOR)
     {
         bitsetComponents[Components_e::COLOR_VERTEX_COMPONENT] = true;
-    }
-    else if(data->m_apparence == DisplayType_e::SIMPLE_TEXTURE)
-    {
-        bitsetComponents[Components_e::SPRITE_TEXTURE_COMPONENT] = true;
     }
     else
     {
@@ -1390,6 +1387,7 @@ void MainEngine::confGroundComponents(uint32_t entityNum,
         SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().
                 searchComponentByType<SpriteTextureComponent>(entityNum, Components_e::SPRITE_TEXTURE_COMPONENT);
         assert(spriteComp);
+        assert(vectSprite.size() >= groundData.m_spriteNum);
         spriteComp->m_spriteData = &vectSprite[groundData.m_spriteNum];
         memGroundBackgroundFPSSystemEntity(entityNum, simpleTexture);
     }
