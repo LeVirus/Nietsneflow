@@ -64,3 +64,6 @@ private:
     uint32_t m_cursor = 0, m_sizeOfVertex;
     uint32_t m_ebo, m_vao, m_vbo;
 };
+
+pairFloat_t getTextureCoord(const pairFloat_t &pointA, const pairFloat_t &pointB,
+                            const std::array<pairFloat_t, 4> &texturePosVertex, const pairFloat_t &textureSize);
