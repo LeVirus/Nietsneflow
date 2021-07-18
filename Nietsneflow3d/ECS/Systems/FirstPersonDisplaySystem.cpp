@@ -796,7 +796,6 @@ optionalTargetRaycast_t FirstPersonDisplaySystem::calcLineSegmentRaycast(float r
         //mem all point
         if(visual && m_groundCeilingRaycastActive)
         {
-            assert(iteration < m_groundCeilingRaycastPoint.size());
             m_groundCeilingRaycastPoint[iteration].push_back(currentPoint);
         }
         currentCoord = getCorrectedCoord(currentPoint, lateral, radiantAngle);
@@ -819,6 +818,10 @@ optionalTargetRaycast_t FirstPersonDisplaySystem::calcLineSegmentRaycast(float r
                                                 verticalLeadCoef, currentPoint, *element);
                 if(result)
                 {
+                    if(visual && m_groundCeilingRaycastActive)
+                    {
+                        m_groundCeilingRaycastPoint[iteration].push_back(std::get<0>(*result));
+                    }
                     return result;
                 }
             }
