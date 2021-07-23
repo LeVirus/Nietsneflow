@@ -214,7 +214,7 @@ void InputSystem::treatPlayerMove(PlayerConfComponent *playerComp, MoveableCompo
         }
         moveElementFromAngle(moveComp->m_velocity,
                              getRadiantAngle(moveComp->m_currentDegreeMoveDirection),
-                             mapComp->m_absoluteMapPositionPX);
+                             mapComp->m_absoluteMapPositionPX, true);
     }
 }
 

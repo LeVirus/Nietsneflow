@@ -715,7 +715,6 @@ void FirstPersonDisplaySystem::rayCasting()
         float radiantObserverAngle = getRadiantAngle(moveComp->m_degreeOrientation);
         float currentRadiantAngle = getRadiantAngle(leftAngle), currentLateralScreen = -1.0f;
         float cameraRadiantAngle = getRadiantAngle(moveComp->m_degreeOrientation);
-        float maxGroundCeilingDistance = 10000.f;
         //mem entity num & distances
         for(uint32_t j = 0; j < RAYCAST_LINE_NUMBER; ++j)
         {
@@ -726,13 +725,12 @@ void FirstPersonDisplaySystem::rayCasting()
                 cameraDistance = getCameraDistance(mapCompCamera->m_absoluteMapPositionPX,
                                                    std::get<0>(*targetPoint), cameraRadiantAngle);
                 memDistance(*std::get<2>(*targetPoint), j, cameraDistance, std::get<1>(*targetPoint));
-                maxGroundCeilingDistance = cameraDistance;
             }
             if(m_groundCeilingRaycastActive)
             {
                 calcVerticalGroundCeilingLineRaycast(mapCompCamera->m_absoluteMapPositionPX,
-                                                     currentRadiantAngle, maxGroundCeilingDistance,
-                                                     currentLateralScreen, radiantObserverAngle);
+                                                     currentRadiantAngle, currentLateralScreen,
+                                                     radiantObserverAngle);
             }
             currentLateralScreen += SCREEN_HORIZ_BACKGROUND_GL_STEP;
             currentRadiantAngle -= m_stepAngle;
@@ -747,12 +745,11 @@ void FirstPersonDisplaySystem::rayCasting()
 //===================================================================
 void FirstPersonDisplaySystem::calcVerticalGroundCeilingLineRaycast(const pairFloat_t &observerPos,
                                                                     float currentRadiantAngle,
-                                                                    float maxGroundCeilingDistance,
                                                                     float currentGLLatPos,
                                                                     float radiantObserverAngle)
 {
     SpriteTextureComponent *spriteGroundComp;
-    pairFloat_t currentGL = {currentGLLatPos, -1.0f};
+    pairFloat_t currentGroundGL = {currentGLLatPos, -1.0f};
     pairFloat_t currentPoint;
     float totalDistanceTarget;
     float calcAngle = std::abs(radiantObserverAngle - currentRadiantAngle);
@@ -767,30 +764,25 @@ void FirstPersonDisplaySystem::calcVerticalGroundCeilingLineRaycast(const pairFl
     {
         m_memGroundCeilingDistance = std::array<float, RAYCAST_GROUND_CEILING_NUMBER>();
         for(uint32_t i = 0; i < RAYCAST_GROUND_CEILING_NUMBER; ++i,
-            currentGL.second += SCREEN_VERT_BACKGROUND_GL_STEP)
+            currentGroundGL.second += SCREEN_VERT_BACKGROUND_GL_STEP)
         {
-            totalDistanceTarget = 30.0f / currentGL.second;
+            totalDistanceTarget = 30.0f / currentGroundGL.second;
             currentPoint = observerPos;
             moveElementFromAngle(totalDistanceTarget, currentRadiantAngle, currentPoint);
             (*m_memGroundCeilingDistance)[i] = getCameraDistance(observerPos, currentPoint, currentRadiantAngle);
         }
-        currentGL = {currentGLLatPos, -1.0f};
+        currentGroundGL = {currentGLLatPos, -1.0f};
     }
-    for(uint32_t i = 0; i < RAYCAST_GROUND_CEILING_NUMBER; ++i,
-        currentGL.second += SCREEN_VERT_BACKGROUND_GL_STEP)
+    for(uint32_t i = 0; i < RAYCAST_GROUND_CEILING_NUMBER; ++i)
     {
-        totalDistanceTarget = std::abs((*m_memGroundCeilingDistance)[i] /
-                                       std::cos(calcAngle));
-        if(totalDistanceTarget > maxGroundCeilingDistance)
-        {
-            return;
-        }
+        totalDistanceTarget = (*m_memGroundCeilingDistance)[i] / std::cos(calcAngle);
         currentPoint = observerPos;
         moveElementFromAngle(totalDistanceTarget, currentRadiantAngle, currentPoint);
         if(m_groundBackground)
         {
             m_groundVertice.loadPointBackgroundRaycasting(spriteGroundComp,
-                                                          currentGL, currentPoint);
+                                                          currentGroundGL, currentPoint);
+            currentGroundGL.second += SCREEN_VERT_BACKGROUND_GL_STEP;
         }
     }
 }

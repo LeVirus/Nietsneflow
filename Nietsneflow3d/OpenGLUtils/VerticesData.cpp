@@ -188,10 +188,6 @@ void VerticesData::loadPointBackgroundRaycasting(const SpriteTextureComponent *s
     texturePoint = getPointTextureCoord(currentPoint,
                                         spriteComp->m_spriteData->m_texturePosVertex,
                                         textureSize);
-    //TEST
-//    texturePoint = {0.5f, 0.5f};
-//    std::cerr << GLPos.first << "  " << GLPos.second << "\n";
-//std::cerr << "add";
     addTexturePoint({GLPos.first, GLPos.second - SCREEN_VERT_BACKGROUND_GL_STEP},
     {texturePoint.first, texturePoint.second});
     addTexturePoint({GLPos.first + SCREEN_HORIZ_BACKGROUND_GL_STEP,

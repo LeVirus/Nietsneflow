@@ -89,7 +89,6 @@ private:
     void rayCasting();
     void calcVerticalGroundCeilingLineRaycast(const pairFloat_t &observerPos,
                                               float currentRadiantAngle,
-                                              float maxGroundCeilingDistance,
                                               float currentGLLatPos, float radiantObserverAngle);
     std::optional<float> treatDoorRaycast(uint32_t numEntity, float currentRadiantAngle,
                           pairFloat_t &currentPoint, std::optional<float> lateralLeadCoef,
