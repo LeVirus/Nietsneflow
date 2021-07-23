@@ -85,7 +85,7 @@ private:
                                   const std::vector<uint8_t> &vectSprite,
                                   std::array<uint32_t, SEGMENT_SHOT_NUMBER> &entitiesContainer, const AmmoContainer_t &segmentShotContainer);
     uint32_t loadWeaponEntity();
-    uint32_t createWallEntity();
+    uint32_t createWallEntity(bool multiSprite);
     uint32_t createDoorEntity();
     uint32_t createEnemyEntity();
     uint32_t createShotEntity();

@@ -70,6 +70,12 @@ void VisionSystem::execSystem()
         }
         updateSprites(mVectNumEntity[i], vectEntities);
     }
+    bitsetComp.reset();
+    bitsetComp[Components_e::MAP_COORD_COMPONENT] = true;
+    bitsetComp[Components_e::SPRITE_TEXTURE_COMPONENT] = true;
+    bitsetComp[Components_e::MEM_SPRITE_DATA_COMPONENT] = true;
+    vectEntities = m_memECSManager->getEntityContainingComponents(bitsetComp);
+    updateWallSprites(vectEntities);
 }
 
 //===========================================================================
@@ -124,6 +130,47 @@ void VisionSystem::updateSprites(uint32_t observerEntity,
         else if(genComp->m_tag == CollisionTag_e::IMPACT_CT)
         {
             updateImpactSprites(vectEntities[i], memSpriteComp, spriteComp, timerComp, genComp);
+        }
+    }
+}
+
+//===========================================================================
+void VisionSystem::updateWallSprites(const std::vector<uint32_t> &vectEntities)
+{
+    MemSpriteDataComponent *memSpriteComp;
+    GeneralCollisionComponent *genComp;
+    SpriteTextureComponent *spriteComp;
+    TimerComponent *timerComp;
+    for(uint32_t i = 0; i < vectEntities.size(); ++i)
+    {
+        spriteComp = stairwayToComponentManager().
+                searchComponentByType<SpriteTextureComponent>(vectEntities[i],
+                                                              Components_e::SPRITE_TEXTURE_COMPONENT);
+        assert(spriteComp);
+        timerComp = stairwayToComponentManager().
+                searchComponentByType<TimerComponent>(vectEntities[i], Components_e::TIMER_COMPONENT);
+        assert(timerComp);
+        genComp = stairwayToComponentManager().
+                searchComponentByType<GeneralCollisionComponent>(vectEntities[i], Components_e::GENERAL_COLLISION_COMPONENT);
+        assert(genComp);
+        memSpriteComp = stairwayToComponentManager().
+                searchComponentByType<MemSpriteDataComponent>(vectEntities[i], Components_e::MEM_SPRITE_DATA_COMPONENT);
+        assert(memSpriteComp);
+        if(genComp->m_tag == CollisionTag_e::WALL_CT)
+        {
+            std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() -
+                    timerComp->m_clockA;
+            if(elapsed_seconds.count() > 0.20)
+            {
+                ++memSpriteComp->m_current;
+                if(memSpriteComp->m_current >= memSpriteComp->m_vectSpriteData.size())
+                {
+                    memSpriteComp->m_current = 0;
+                }
+                spriteComp->m_spriteData = memSpriteComp->
+                        m_vectSpriteData[memSpriteComp->m_current];
+                timerComp->m_clockA = std::chrono::system_clock::now();
+            }
         }
     }
 }

@@ -16,5 +16,6 @@ struct MemSpriteDataComponent : public ecs::Component
         muiTypeComponent = Components_e::MEM_SPRITE_DATA_COMPONENT;
     }
     std::vector<SpriteData const *> m_vectSpriteData;
+    uint32_t m_current = 0;
     virtual ~MemSpriteDataComponent() = default;
 };

@@ -7,9 +7,6 @@ WHen no ammo change to best weapon
 -3)
 Limit shoot intervalle time
 
--1)
-Conf wall multi sprite
-
 1)
 Weapon movement on begin and end movement
 
@@ -27,6 +24,9 @@ Ajouter armure
 
 3)
 Enemy animations========================~
+
+-1)
+Conf wall multi sprite===========================OK
 
 -5)
 Move ini load background conf in level instead of general picture conf data==============OK
