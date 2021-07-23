@@ -51,7 +51,7 @@ public:
     {
         return *m_window;
     }
-    void clearFPSSystem();
+    void clearSystems();
     void memColorSystemEntity(uint32_t entity);
     void memGroundBackgroundFPSSystemEntity(uint32_t entity, bool simpleTexture);
     void memCeilingBackgroundFPSSystemEntity(uint32_t entity, bool simpleTexture);

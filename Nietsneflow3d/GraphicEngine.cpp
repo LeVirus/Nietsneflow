@@ -152,9 +152,10 @@ void GraphicEngine::fillMenuWrite(WriteComponent *writeComp, const std::string &
 }
 
 //===================================================================
-void GraphicEngine::clearFPSSystem()
+void GraphicEngine::clearSystems()
 {
     m_firstPersonSystem->clearBackgroundData();
+    m_visionSystem->clearMemMultiSpritesWall();
 }
 
 //===================================================================

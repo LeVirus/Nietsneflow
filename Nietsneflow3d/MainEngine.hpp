@@ -37,7 +37,7 @@ public:
     inline void clearLevel()
     {
         m_ecsManager.getEngine().RmAllEntity();
-        m_graphicEngine.clearFPSSystem();
+        m_graphicEngine.clearSystems();
     }
     void confSystems();
 private:

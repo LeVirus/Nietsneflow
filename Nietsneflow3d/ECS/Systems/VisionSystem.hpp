@@ -21,6 +21,10 @@ public:
     VisionSystem(const ECSManager* memECSManager);
     void memECSManager(const ECSManager *memECSMan);
     void execSystem()override;
+    inline void clearMemMultiSpritesWall()
+    {
+        m_memMultiSpritesWallEntities.clear();
+    }
 private:
     EnemySpriteType_e getOrientationFromAngle(uint32_t observerEntity, uint32_t targetEntity,
                                               float targetDegreeAngle);
@@ -28,7 +32,8 @@ private:
     void treatVisible(VisionComponent *visionComp, MoveableComponent *moveCompA,
                       uint32_t numEntity);
     void updateSprites(uint32_t observerEntity, const std::vector<uint32_t> &vectEntities);
-    void updateWallSprites(const std::vector<uint32_t> &vectEntities);
+    void updateWallSprites();
+    void memMultiSpritesWallEntities();
     void updateVisibleShotSprite(uint32_t shotEntity, MemSpriteDataComponent *memSpriteComp,
                                  SpriteTextureComponent *spriteComp,
                                  TimerComponent *timerComp, GeneralCollisionComponent *genComp);
@@ -41,6 +46,7 @@ private:
                              TimerComponent *timerComp, GeneralCollisionComponent *genComp);
 private:
     const ECSManager* m_memECSManager;
+    std::vector<uint32_t> m_memMultiSpritesWallEntities;
 };
 
 void updateTriangleVisionFromPosition(VisionComponent *visionComp, const MapCoordComponent *mapComp,

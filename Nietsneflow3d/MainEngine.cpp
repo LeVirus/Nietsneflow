@@ -356,7 +356,7 @@ void MainEngine::loadGroundAndCeilingEntities(const GroundCeilingData &groundDat
                                               const LevelManager &levelManager)
 {
     uint32_t ceiling, ground;
-    m_graphicEngine.clearFPSSystem();
+    m_graphicEngine.clearSystems();
     ground = createBackgroundEntity(&groundData);
     confGroundComponents(ground, groundData, levelManager.getPictureSpriteData());
     ceiling = createBackgroundEntity(&ceilingData);
