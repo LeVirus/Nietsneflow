@@ -60,7 +60,7 @@ void LevelManager::loadSpriteData(const INIReader &reader, const std::string &se
 }
 
 //===================================================================
-void LevelManager::loadGroundAndCeilingData(const INIReader &reader)
+void LevelManager::loadBackgroundData(const INIReader &reader)
 {
     std::array<GroundCeilingData, 2> arrayGAndCData;
     //first ground
@@ -736,7 +736,6 @@ void LevelManager::loadTextureData(const std::string &INIFileName)
     loadTexturePath(reader);
     loadSpriteData(reader);
     m_pictureData.setUpToDate();
-    loadGroundAndCeilingData(reader);
 }
 
 //===================================================================
@@ -805,6 +804,7 @@ void LevelManager::loadLevel(const std::string &INIFileName, uint32_t levelNum)
     loadPositionExit(reader);
     loadPositionDoorData(reader);
     loadPositionEnemyData(reader);
+    loadBackgroundData(reader);
 }
 
 //===================================================================

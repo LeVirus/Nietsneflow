@@ -51,7 +51,7 @@ private:
     void loadTexturePath(const INIReader &reader);
     void loadSpriteData(const INIReader &reader, const std::string &sectionName = "Sprite",
                         bool font = false);
-    void loadGroundAndCeilingData(const INIReader &reader);
+    void loadBackgroundData(const INIReader &reader);
 
     //Level element datas loading
     void loadLevelData(const INIReader &reader);
