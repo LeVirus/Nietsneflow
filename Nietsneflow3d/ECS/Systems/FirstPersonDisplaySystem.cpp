@@ -748,8 +748,8 @@ void FirstPersonDisplaySystem::calcVerticalGroundCeilingLineRaycast(const pairFl
                                                                     float currentGLLatPos,
                                                                     float radiantObserverAngle)
 {
-    SpriteTextureComponent *spriteGroundComp;
-    pairFloat_t currentGroundGL = {currentGLLatPos, -1.0f};
+    SpriteTextureComponent *spriteGroundComp = nullptr, *spriteCeilingComp = nullptr;
+    pairFloat_t currentGroundGL = {currentGLLatPos, -1.0f}, currentCeilingGL = {currentGLLatPos, 1.0f};
     pairFloat_t currentPoint;
     float totalDistanceTarget;
     float calcAngle = std::abs(radiantObserverAngle - currentRadiantAngle);
@@ -759,6 +759,13 @@ void FirstPersonDisplaySystem::calcVerticalGroundCeilingLineRaycast(const pairFl
                 searchComponentByType<SpriteTextureComponent>((*m_groundBackground).first,
                                                               Components_e::SPRITE_TEXTURE_COMPONENT);
         assert(spriteGroundComp);
+    }
+    if(m_ceilingBackground)
+    {
+        spriteCeilingComp = stairwayToComponentManager().
+                searchComponentByType<SpriteTextureComponent>((*m_ceilingBackground).first,
+                                                              Components_e::SPRITE_TEXTURE_COMPONENT);
+        assert(spriteCeilingComp);
     }
     if(!m_memGroundCeilingDistance)
     {
@@ -783,6 +790,12 @@ void FirstPersonDisplaySystem::calcVerticalGroundCeilingLineRaycast(const pairFl
             m_groundVertice.loadPointBackgroundRaycasting(spriteGroundComp,
                                                           currentGroundGL, currentPoint);
             currentGroundGL.second += SCREEN_VERT_BACKGROUND_GL_STEP;
+        }
+        if(m_ceilingBackground)
+        {
+            m_ceilingVertice.loadPointBackgroundRaycasting(spriteCeilingComp,
+                                                           currentCeilingGL, currentPoint);
+            currentCeilingGL.second -= SCREEN_VERT_BACKGROUND_GL_STEP;
         }
     }
 }

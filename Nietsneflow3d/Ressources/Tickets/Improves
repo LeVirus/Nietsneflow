@@ -10,9 +10,6 @@ Limit shoot intervalle time
 -1)
 Conf wall multi sprite
 
-0)
-Set ceiling and ground textured display
-
 1)
 Weapon movement on begin and end movement
 
@@ -30,6 +27,9 @@ Ajouter armure
 
 3)
 Enemy animations========================~
+
+0)
+Set ceiling and ground textured display==========================OK
 
 -5)
 Set static element collision box same as picture size=====================================OK
