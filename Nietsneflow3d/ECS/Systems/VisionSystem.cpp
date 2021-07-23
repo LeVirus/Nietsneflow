@@ -137,7 +137,6 @@ void VisionSystem::updateWallSprites()
         memMultiSpritesWallEntities();
     }
     MemSpriteDataComponent *memSpriteComp;
-    GeneralCollisionComponent *genComp;
     SpriteTextureComponent *spriteComp;
     TimerComponent *timerComp;
     for(uint32_t i = 0; i < m_memMultiSpritesWallEntities.size(); ++i)
@@ -149,27 +148,21 @@ void VisionSystem::updateWallSprites()
         timerComp = stairwayToComponentManager().
                 searchComponentByType<TimerComponent>(m_memMultiSpritesWallEntities[i], Components_e::TIMER_COMPONENT);
         assert(timerComp);
-        genComp = stairwayToComponentManager().
-                searchComponentByType<GeneralCollisionComponent>(m_memMultiSpritesWallEntities[i], Components_e::GENERAL_COLLISION_COMPONENT);
-        assert(genComp);
         memSpriteComp = stairwayToComponentManager().
                 searchComponentByType<MemSpriteDataComponent>(m_memMultiSpritesWallEntities[i], Components_e::MEM_SPRITE_DATA_COMPONENT);
         assert(memSpriteComp);
-        if(genComp->m_tag == CollisionTag_e::WALL_CT)
+        std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() -
+                timerComp->m_clockA;
+        if(elapsed_seconds.count() > 0.20)
         {
-            std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() -
-                    timerComp->m_clockA;
-            if(elapsed_seconds.count() > 0.20)
+            ++memSpriteComp->m_current;
+            if(memSpriteComp->m_current >= memSpriteComp->m_vectSpriteData.size())
             {
-                ++memSpriteComp->m_current;
-                if(memSpriteComp->m_current >= memSpriteComp->m_vectSpriteData.size())
-                {
-                    memSpriteComp->m_current = 0;
-                }
-                spriteComp->m_spriteData = memSpriteComp->
-                        m_vectSpriteData[memSpriteComp->m_current];
-                timerComp->m_clockA = std::chrono::system_clock::now();
+                memSpriteComp->m_current = 0;
             }
+            spriteComp->m_spriteData = memSpriteComp->
+                    m_vectSpriteData[memSpriteComp->m_current];
+            timerComp->m_clockA = std::chrono::system_clock::now();
         }
     }
 }
