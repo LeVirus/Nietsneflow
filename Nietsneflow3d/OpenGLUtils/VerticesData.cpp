@@ -207,10 +207,10 @@ pairFloat_t getPointTextureCoord(const pairFloat_t &point,
                                  const pairFloat_t &textureSize)
 {
     pairFloat_t textCoord;
-    float mod = std::fmod(point.first, LEVEL_TILE_SIZE_PX);
+    float mod = std::abs(std::fmod(point.first, LEVEL_TILE_SIZE_PX));
         textCoord.first = texturePosVertex[0].first +
                 (mod / LEVEL_TILE_SIZE_PX) * textureSize.first;
-    mod = std::fmod(point.second, LEVEL_TILE_SIZE_PX);
+    mod = std::abs(std::fmod(point.second, LEVEL_TILE_SIZE_PX));
     textCoord.second = texturePosVertex[0].second +
             (mod / LEVEL_TILE_SIZE_PX) * textureSize.second;
     return textCoord;
