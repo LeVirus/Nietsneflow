@@ -14,7 +14,6 @@ struct WriteComponent;
 
 using mapRayCastingData_t = std::map<uint32_t, std::vector<RayCastingIntersect>>;
 using pairRaycastingData_t = std::pair<uint32_t, std::vector<RayCastingIntersect>>;
-using groundCeilingRaycastContainer_t = std::array<std::vector<pairFloat_t>, RAYCAST_LINE_NUMBER>;
 
 struct GroundCeililngRayCastingIntersect;
 class Shader;
@@ -39,9 +38,8 @@ public:
     float loadWallDoorRaycastingEntity(const SpriteTextureComponent &spriteComp,
                                        const std::vector<RayCastingIntersect> &raycastingData,
                                        uint32_t totalLateralLine);
-    void loadGroundRaycastingEntity(const groundCeilingRaycastContainer_t &groundCeilingRaycastPoint,
-                                    const SpriteTextureComponent *spriteComp,
-                                    const pairFloat_t &observerPoint, float observerAngleRadiant);
+    void loadPointBackgroundRaycasting(const SpriteTextureComponent *spriteComp,
+                                       const pairFloat_t &observerPoint, const pairFloat_t &currentPoint);
     void loadVertexTextureDrawByLineComponent(const PositionVertexComponent &posComp,
                                               const SpriteTextureComponent &spriteComp,
                                               uint32_t lineDrawNumber, DoorComponent *doorComp = nullptr);
@@ -65,5 +63,7 @@ private:
     uint32_t m_ebo, m_vao, m_vbo;
 };
 
-pairFloat_t getTextureCoord(const pairFloat_t &pointA, const pairFloat_t &pointB,
-                            const std::array<pairFloat_t, 4> &texturePosVertex, const pairFloat_t &textureSize);
+pairFloat_t getTexturePixelFromCoord(const pairFloat_t &pointA, const std::array<pairFloat_t, 4> &texturePosVertex);
+pairFloat_t getPointTextureCoord(const pairFloat_t &point,
+                            const std::array<pairFloat_t, 4> &texturePosVertex,
+                            const pairFloat_t &textureSize);

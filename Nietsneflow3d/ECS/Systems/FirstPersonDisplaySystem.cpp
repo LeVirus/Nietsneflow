@@ -120,7 +120,7 @@ void FirstPersonDisplaySystem::writeVertexGroundCeiling()
 {
     for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
     {
-        if(m_groundBackground)
+        if(m_groundBackground && (*m_groundBackground).second)
         {
             PositionVertexComponent *posComp = stairwayToComponentManager().
                     searchComponentByType<PositionVertexComponent>((*m_groundBackground).first, Components_e::POSITION_VERTEX_COMPONENT);
@@ -128,30 +128,12 @@ void FirstPersonDisplaySystem::writeVertexGroundCeiling()
             SpriteTextureComponent *spriteComp = stairwayToComponentManager().
                     searchComponentByType<SpriteTextureComponent>((*m_groundBackground).first, Components_e::SPRITE_TEXTURE_COMPONENT);
             assert(spriteComp);
-            //if simple texture
-            if((*m_groundBackground).second)
+            if(m_groundVertice.empty())
             {
-                if(m_groundVertice.empty())
-                {
-                    m_groundVertice.loadVertexStandartTextureComponent(*posComp, *spriteComp);
-                }
-            }
-            //tiled texture
-            else
-            {
-                MapCoordComponent *mapComp = stairwayToComponentManager().
-                        searchComponentByType<MapCoordComponent>(mVectNumEntity[i], Components_e::MAP_COORD_COMPONENT);
-                assert(mapComp);
-                MoveableComponent *moveComp = stairwayToComponentManager().
-                        searchComponentByType<MoveableComponent>(mVectNumEntity[i], Components_e::MOVEABLE_COMPONENT);
-                assert(moveComp);
-                m_groundVertice.clear();
-                m_groundVertice.loadGroundRaycastingEntity(m_groundCeilingRaycastPoint, spriteComp,
-                                                           mapComp->m_absoluteMapPositionPX,
-                                                           getRadiantAngle(moveComp->m_degreeOrientation));
+                m_groundVertice.loadVertexStandartTextureComponent(*posComp, *spriteComp);
             }
         }
-        if(m_ceilingBackground)
+        if(m_ceilingBackground && (*m_ceilingBackground).second)
         {
             PositionVertexComponent *posComp = stairwayToComponentManager().
                     searchComponentByType<PositionVertexComponent>((*m_ceilingBackground).first, Components_e::POSITION_VERTEX_COMPONENT);
@@ -159,18 +141,9 @@ void FirstPersonDisplaySystem::writeVertexGroundCeiling()
             SpriteTextureComponent *spriteComp = stairwayToComponentManager().
                     searchComponentByType<SpriteTextureComponent>((*m_ceilingBackground).first, Components_e::SPRITE_TEXTURE_COMPONENT);
             assert(spriteComp);
-            //simple texture
-            if((*m_ceilingBackground).second)
+            if(m_ceilingVertice.empty())
             {
-                if(m_ceilingVertice.empty())
-                {
-                    m_ceilingVertice.loadVertexStandartTextureComponent(*posComp, *spriteComp);
-                }
-            }
-            //tiled texture
-            else
-            {
-                m_ceilingVertice.clear();
+                m_ceilingVertice.loadVertexStandartTextureComponent(*posComp, *spriteComp);
             }
         }
     }
@@ -720,11 +693,18 @@ void FirstPersonDisplaySystem::rayCasting()
     MoveableComponent *moveComp;
     optionalTargetRaycast_t targetPoint;
     float cameraDistance;
-    clearGroundCeilingRaycastArray();
     for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
     {
         //WORK FOR ONE PLAYER ONLY
         m_raycastingData.clear();
+        if(m_groundBackground)
+        {
+            m_groundVertice.clear();
+        }
+        if(m_ceilingBackground)
+        {
+            m_ceilingVertice.clear();
+        }
         mapCompCamera = stairwayToComponentManager().
                 searchComponentByType<MapCoordComponent>(mVectNumEntity[i], Components_e::MAP_COORD_COMPONENT);
         assert(mapCompCamera);
@@ -732,20 +712,29 @@ void FirstPersonDisplaySystem::rayCasting()
                 searchComponentByType<MoveableComponent>(mVectNumEntity[i], Components_e::MOVEABLE_COMPONENT);
         assert(moveComp);
         float leftAngle = moveComp->m_degreeOrientation + HALF_CONE_VISION;
+        float radiantObserverAngle = getRadiantAngle(moveComp->m_degreeOrientation);
         float currentRadiantAngle = getRadiantAngle(leftAngle), currentLateralScreen = -1.0f;
         float cameraRadiantAngle = getRadiantAngle(moveComp->m_degreeOrientation);
+        float maxGroundCeilingDistance = 10000.f;
         //mem entity num & distances
         for(uint32_t j = 0; j < RAYCAST_LINE_NUMBER; ++j)
         {
             //mem ground and ceiling
-            targetPoint = calcLineSegmentRaycast(currentRadiantAngle, mapCompCamera->m_absoluteMapPositionPX, true, j);
+            targetPoint = calcLineSegmentRaycast(currentRadiantAngle, mapCompCamera->m_absoluteMapPositionPX, true);
             if(targetPoint)
             {
                 cameraDistance = getCameraDistance(mapCompCamera->m_absoluteMapPositionPX,
                                                    std::get<0>(*targetPoint), cameraRadiantAngle);
                 memDistance(*std::get<2>(*targetPoint), j, cameraDistance, std::get<1>(*targetPoint));
+                maxGroundCeilingDistance = cameraDistance;
             }
-            currentLateralScreen += m_stepDrawLateralScreen;
+            if(m_groundCeilingRaycastActive)
+            {
+                calcVerticalGroundCeilingLineRaycast(mapCompCamera->m_absoluteMapPositionPX,
+                                                     currentRadiantAngle, maxGroundCeilingDistance,
+                                                     currentLateralScreen, radiantObserverAngle);
+            }
+            currentLateralScreen += SCREEN_HORIZ_BACKGROUND_GL_STEP;
             currentRadiantAngle -= m_stepAngle;
             if(currentRadiantAngle < EPSILON_FLOAT)
             {
@@ -756,18 +745,60 @@ void FirstPersonDisplaySystem::rayCasting()
 }
 
 //===================================================================
-void FirstPersonDisplaySystem::clearGroundCeilingRaycastArray()
+void FirstPersonDisplaySystem::calcVerticalGroundCeilingLineRaycast(const pairFloat_t &observerPos,
+                                                                    float currentRadiantAngle,
+                                                                    float maxGroundCeilingDistance,
+                                                                    float currentGLLatPos,
+                                                                    float radiantObserverAngle)
 {
-    for(uint32_t i = 0; i < m_groundCeilingRaycastPoint.size(); ++i)
+    SpriteTextureComponent *spriteGroundComp;
+    pairFloat_t currentGL = {currentGLLatPos, -1.0f};
+    pairFloat_t currentPoint;
+    float totalDistanceTarget;
+    float calcAngle = std::abs(radiantObserverAngle - currentRadiantAngle);
+    if(m_groundBackground)
     {
-        m_groundCeilingRaycastPoint[i].clear();
+        spriteGroundComp = stairwayToComponentManager().
+                searchComponentByType<SpriteTextureComponent>((*m_groundBackground).first,
+                                                              Components_e::SPRITE_TEXTURE_COMPONENT);
+        assert(spriteGroundComp);
+    }
+    if(!m_memGroundCeilingDistance)
+    {
+        m_memGroundCeilingDistance = std::array<float, RAYCAST_GROUND_CEILING_NUMBER>();
+        for(uint32_t i = 0; i < RAYCAST_GROUND_CEILING_NUMBER; ++i,
+            currentGL.second += SCREEN_VERT_BACKGROUND_GL_STEP)
+        {
+            totalDistanceTarget = 30.0f / currentGL.second;
+            currentPoint = observerPos;
+            moveElementFromAngle(totalDistanceTarget, currentRadiantAngle, currentPoint);
+            (*m_memGroundCeilingDistance)[i] = getCameraDistance(observerPos, currentPoint, currentRadiantAngle);
+        }
+        currentGL = {currentGLLatPos, -1.0f};
+    }
+    for(uint32_t i = 0; i < RAYCAST_GROUND_CEILING_NUMBER; ++i,
+        currentGL.second += SCREEN_VERT_BACKGROUND_GL_STEP)
+    {
+        totalDistanceTarget = std::abs((*m_memGroundCeilingDistance)[i] /
+                                       std::cos(calcAngle));
+        if(totalDistanceTarget > maxGroundCeilingDistance)
+        {
+            return;
+        }
+        currentPoint = observerPos;
+        moveElementFromAngle(totalDistanceTarget, currentRadiantAngle, currentPoint);
+        if(m_groundBackground)
+        {
+            m_groundVertice.loadPointBackgroundRaycasting(spriteGroundComp,
+                                                          currentGL, currentPoint);
+        }
     }
 }
 
 //===================================================================
 optionalTargetRaycast_t FirstPersonDisplaySystem::calcLineSegmentRaycast(float radiantAngle,
                                                                          const pairFloat_t &originPoint,
-                                                                         bool visual, uint32_t iteration)
+                                                                         bool visual)
 {
     std::optional<ElementRaycast> element;
     float textPos;
@@ -793,11 +824,6 @@ optionalTargetRaycast_t FirstPersonDisplaySystem::calcLineSegmentRaycast(float r
     {
         currentPoint = getLimitPointRayCasting(currentPoint, radiantAngle,
                                                lateralLeadCoef, verticalLeadCoef, lateral);
-        //mem all point
-        if(visual && m_groundCeilingRaycastActive)
-        {
-            m_groundCeilingRaycastPoint[iteration].push_back(currentPoint);
-        }
         currentCoord = getCorrectedCoord(currentPoint, lateral, radiantAngle);
         if(!currentCoord)
         {
@@ -818,10 +844,6 @@ optionalTargetRaycast_t FirstPersonDisplaySystem::calcLineSegmentRaycast(float r
                                                 verticalLeadCoef, currentPoint, *element);
                 if(result)
                 {
-                    if(visual && m_groundCeilingRaycastActive)
-                    {
-                        m_groundCeilingRaycastPoint[iteration].push_back(std::get<0>(*result));
-                    }
                     return result;
                 }
             }

@@ -175,82 +175,48 @@ float VerticesData::loadWallDoorRaycastingEntity(const SpriteTextureComponent &s
 }
 
 //===================================================================
-void VerticesData::loadGroundRaycastingEntity(const groundCeilingRaycastContainer_t &groundCeilingRaycastPoint,
-                                              const SpriteTextureComponent *spriteComp,
-                                              const pairFloat_t &observerPoint, float observerAngleRadiant)
+void VerticesData::loadPointBackgroundRaycasting(const SpriteTextureComponent *spriteComp,
+                                                 const pairFloat_t &GLPos,
+                                                 const pairFloat_t &currentPoint)
 {
-    float lateralPosA, lateralPosB, verticalPosA, verticalPosB, distanceA, distanceB,
-            totalGLLateralPos = static_cast<float>(RAYCAST_LINE_NUMBER);
-    pairFloat_t previousPoint, texturePointA, texturePointB;
+    pairFloat_t texturePoint;
     pairFloat_t textureSize = {spriteComp->m_spriteData->m_texturePosVertex[1].first -
                                spriteComp->m_spriteData->m_texturePosVertex[0].first,
                                spriteComp->m_spriteData->m_texturePosVertex[3].second -
                                spriteComp->m_spriteData->m_texturePosVertex[0].second};
-    previousPoint = observerPoint;
-    for(uint32_t i = 0; i < groundCeilingRaycastPoint.size(); ++i)
-    {
-        lateralPosA = 2.0f * static_cast<float>(i) / totalGLLateralPos - 1.0f;
-        lateralPosB = 2.0f * static_cast<float>(i + 1) / totalGLLateralPos - 1.0f;
-        for(uint32_t j = 0; j < groundCeilingRaycastPoint[i].size(); ++j)
-        {
-            texturePointA = getTextureCoord(previousPoint, groundCeilingRaycastPoint[i][j],
-                                            spriteComp->m_spriteData->m_texturePosVertex, textureSize);
-            texturePointB = getTextureCoord(groundCeilingRaycastPoint[i][j], previousPoint,
-                                            spriteComp->m_spriteData->m_texturePosVertex, textureSize);
-            //DOWN SCREEN
-            if(j == 0 || (j == 1 && static_cast<uint32_t>(observerPoint.first) == static_cast<uint32_t>(previousPoint.first) &&
-                          static_cast<uint32_t>(observerPoint.second) == static_cast<uint32_t>(previousPoint.second)))
-            {
-                verticalPosA = -1.0f;
-            }
-            else
-            {
-                distanceA = getCameraDistance(observerPoint, previousPoint, observerAngleRadiant);
-                verticalPosA = -RAYCAST_VERTICAL_SIZE / (distanceA / LEVEL_TILE_SIZE_PX);
-            }
-            if(j == 0 && static_cast<uint32_t>(observerPoint.first) == static_cast<uint32_t>(groundCeilingRaycastPoint[i][j].first) &&
-                          static_cast<uint32_t>(observerPoint.second) == static_cast<uint32_t>(groundCeilingRaycastPoint[i][j].second))
-            {
-                verticalPosB = -1.0f;
-            }
-            else
-            {
-                distanceB = getCameraDistance(observerPoint, groundCeilingRaycastPoint[i][j], observerAngleRadiant);
-                verticalPosB = -(RAYCAST_VERTICAL_SIZE / (distanceB / LEVEL_TILE_SIZE_PX));
-            }
-            previousPoint = groundCeilingRaycastPoint[i][j];
-            addTexturePoint({lateralPosA, verticalPosA}, {texturePointA.first, texturePointA.second});
-            addTexturePoint({lateralPosB, verticalPosA}, {texturePointA.first, texturePointA.second});
-            addTexturePoint({lateralPosB, verticalPosB}, {texturePointB.first, texturePointB.second});
-            addTexturePoint({lateralPosA, verticalPosB}, {texturePointB.first, texturePointB.second});
-            addIndices(BaseShapeTypeGL_e::RECTANGLE);
-        }
-    }
+
+    texturePoint = getPointTextureCoord(currentPoint,
+                                        spriteComp->m_spriteData->m_texturePosVertex,
+                                        textureSize);
+    //TEST
+//    texturePoint = {0.5f, 0.5f};
+//    std::cerr << GLPos.first << "  " << GLPos.second << "\n";
+//std::cerr << "add";
+    addTexturePoint({GLPos.first, GLPos.second - SCREEN_VERT_BACKGROUND_GL_STEP},
+    {texturePoint.first, texturePoint.second});
+    addTexturePoint({GLPos.first + SCREEN_HORIZ_BACKGROUND_GL_STEP,
+                     GLPos.second - SCREEN_VERT_BACKGROUND_GL_STEP},
+    {texturePoint.first, texturePoint.second});
+    addTexturePoint({GLPos.first + SCREEN_HORIZ_BACKGROUND_GL_STEP, GLPos.second},
+    {texturePoint.first, texturePoint.second});
+    addTexturePoint({GLPos.first, GLPos.second},
+    {texturePoint.first, texturePoint.second});
+
+    addIndices(BaseShapeTypeGL_e::RECTANGLE);
 }
 
 //===================================================================
-pairFloat_t getTextureCoord(const pairFloat_t &refPoint, const pairFloat_t &linkPoint,
-                            const std::array<pairFloat_t, 4> &texturePosVertex, const pairFloat_t &textureSize)
+pairFloat_t getPointTextureCoord(const pairFloat_t &point,
+                                 const std::array<pairFloat_t, 4> &texturePosVertex,
+                                 const pairFloat_t &textureSize)
 {
     pairFloat_t textCoord;
-    float mod = std::fmod(refPoint.first, LEVEL_TILE_SIZE_PX);
-    if(refPoint.first > linkPoint.first && mod < 0.01f)
-    {
-        textCoord.first = texturePosVertex[1].first;
-    }
-    else
-    {
-        textCoord.first = texturePosVertex[0].first + (mod / LEVEL_TILE_SIZE_PX) * textureSize.first;
-    }
-    mod = std::fmod(refPoint.second, LEVEL_TILE_SIZE_PX);
-    if(refPoint.second > linkPoint.second && mod < 0.01f)
-    {
-        textCoord.second = texturePosVertex[3].second;
-    }
-    else
-    {
-        textCoord.second = texturePosVertex[0].second + (mod / LEVEL_TILE_SIZE_PX) * textureSize.second;
-    }
+    float mod = std::fmod(point.first, LEVEL_TILE_SIZE_PX);
+        textCoord.first = texturePosVertex[0].first +
+                (mod / LEVEL_TILE_SIZE_PX) * textureSize.first;
+    mod = std::fmod(point.second, LEVEL_TILE_SIZE_PX);
+    textCoord.second = texturePosVertex[0].second +
+            (mod / LEVEL_TILE_SIZE_PX) * textureSize.second;
     return textCoord;
 }
 

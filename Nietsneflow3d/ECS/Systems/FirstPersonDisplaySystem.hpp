@@ -21,7 +21,6 @@ using pairRaycastingData_t = std::pair<uint32_t, std::vector<RayCastingIntersect
 using tupleTargetRaycast_t = std::tuple<pairFloat_t, float, std::optional<uint32_t>>;
 using optionalTargetRaycast_t = std::optional<tupleTargetRaycast_t>;
 using vectPairFloatPairFloat_t = std::vector<std::pair<float, pairFloat_t>>;
-using groundCeilingRaycastContainer_t = std::array<std::vector<pairFloat_t>, RAYCAST_LINE_NUMBER>;
 struct GroundCeililngRayCastingIntersect
 {
     //first distance second texture pos
@@ -78,7 +77,7 @@ public:
     //return target point, texture position and entity num if collision
     optionalTargetRaycast_t calcLineSegmentRaycast(float radiantAngle,
                                                    const pairFloat_t &originPoint,
-                                                   bool visual, uint32_t iteration = 0);
+                                                   bool visual);
 private:
     optionalTargetRaycast_t calcDoorSegmentRaycast(float radiantAngle,
                                                    std::optional<float> lateralLeadCoef,
@@ -88,7 +87,10 @@ private:
     bool behindRaycastElement(const MapCoordComponent *mapCompObserver, const MapCoordComponent *mapCompTarget, float distance,
                               float radiantObserverAngle, uint32_t targetEntity);
     void rayCasting();
-    void clearGroundCeilingRaycastArray();
+    void calcVerticalGroundCeilingLineRaycast(const pairFloat_t &observerPos,
+                                              float currentRadiantAngle,
+                                              float maxGroundCeilingDistance,
+                                              float currentGLLatPos, float radiantObserverAngle);
     std::optional<float> treatDoorRaycast(uint32_t numEntity, float currentRadiantAngle,
                           pairFloat_t &currentPoint, std::optional<float> lateralLeadCoef,
                           std::optional<float> verticalLeadCoef,
@@ -119,12 +121,11 @@ private:
     mapRayCastingData_t m_raycastingData;
     //number of entity to draw per player
     vectUI_t m_numVertexToDraw;
-    groundCeilingRaycastContainer_t m_groundCeilingRaycastPoint;
-    float m_stepAngle = getRadiantAngle(CONE_VISION / static_cast<float>(RAYCAST_LINE_NUMBER)),
-    m_stepDrawLateralScreen = 2.0f / static_cast<float>(RAYCAST_LINE_NUMBER);
+    float m_stepAngle = getRadiantAngle(CONE_VISION / static_cast<float>(RAYCAST_LINE_NUMBER));
     //second :: false = tiled texture     true = simple texture
     std::optional<std::pair<uint32_t, bool>> m_groundBackground, m_ceilingBackground;
     bool m_groundCeilingRaycastActive = false;
+    std::optional<std::array<float, RAYCAST_GROUND_CEILING_NUMBER>> m_memGroundCeilingDistance;
 };
 
 float getQuarterAngle(float angle);

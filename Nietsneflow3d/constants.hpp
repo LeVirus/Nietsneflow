@@ -270,7 +270,10 @@ inline const float CONE_VISION = 60.0f;
 inline const float HALF_CONE_VISION = CONE_VISION / 2.0f;
 inline const float DOUBLE_CONE_VISION = CONE_VISION * 2.0f;
 
-inline const uint32_t RAYCAST_LINE_NUMBER = 200, RAYCAST_DEPTH = 20;
+inline const uint32_t RAYCAST_LINE_NUMBER = 200, RAYCAST_DEPTH = 20,
+RAYCAST_GROUND_CEILING_NUMBER = RAYCAST_LINE_NUMBER / 2.0f;
+inline const float SCREEN_VERT_BACKGROUND_GL_STEP = 1.0f / RAYCAST_GROUND_CEILING_NUMBER;
+inline const float SCREEN_HORIZ_BACKGROUND_GL_STEP = 2.0f / RAYCAST_LINE_NUMBER;
 
 inline const std::string STR_PLAYER_LIFE = "LIFE::";
 inline const std::string STR_PLAYER_AMMO = "AMMO::";
