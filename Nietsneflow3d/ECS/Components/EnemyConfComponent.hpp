@@ -54,8 +54,7 @@ struct EnemyConfComponent : public ecs::Component
     EnemySpriteType_e m_currentSprite;
     EnemyBehaviourMode_e m_behaviourMode = EnemyBehaviourMode_e::PASSIVE;
     EnemyAttackPhase_e m_attackPhase;
-    float m_dyingTime = 0.4f, m_dyingInterval = m_dyingTime / 4.0f,
-    m_attackInterval = 0.15f;
+    float m_dyingInterval = 0.1f, m_attackInterval = 0.15f;
     virtual ~EnemyConfComponent() = default;
 };
 

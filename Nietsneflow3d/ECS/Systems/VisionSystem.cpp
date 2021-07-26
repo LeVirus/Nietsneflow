@@ -310,16 +310,14 @@ void VisionSystem::updateEnemySprites(uint32_t enemyEntity, uint32_t observerEnt
     }
     else if(enemyConfComp->m_displayMode == EnemyDisplayMode_e::DYING)
     {
-        std::chrono::duration<double> elapsed_secondsA = std::chrono::system_clock::now() -
-                timerComp->m_clockA,
-                elapsed_secondsB = std::chrono::system_clock::now() -
+        uint32_t currentSprite = static_cast<uint32_t>(enemyConfComp->m_currentSprite);
+        std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() -
                 timerComp->m_clockB;
-        if(elapsed_secondsA.count() > enemyConfComp->m_dyingTime)
+        if(currentSprite == static_cast<uint32_t>(EnemySpriteType_e::DEAD))
         {
             enemyConfComp->m_displayMode = EnemyDisplayMode_e::DEAD;
-            enemyConfComp->m_currentSprite = EnemySpriteType_e::DEAD;
         }
-        else if(elapsed_secondsB.count() > enemyConfComp->m_dyingInterval)
+        else if(elapsed_seconds.count() > enemyConfComp->m_dyingInterval)
         {
             enemyConfComp->m_currentSprite =
                     static_cast<EnemySpriteType_e>(static_cast<uint32_t>(enemyConfComp->m_currentSprite) + 1);
