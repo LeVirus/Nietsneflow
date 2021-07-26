@@ -186,23 +186,67 @@ void StaticDisplaySystem::confWeaponsVertexFromComponent(PlayerConfComponent *pl
     }
     else
     {
-        std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() -
-                timerComp->m_clockA;
         if(playerComp->m_playerShoot)
         {
             timerComp->m_clockA = std::chrono::system_clock::now();
+            playerComp->m_numWeaponSprite = static_cast<uint32_t>(m_weaponSpriteAssociated
+                                                                  [playerComp->m_currentWeapon]) + 1;
             WeaponsSpriteType_e spriteNum = static_cast<WeaponsSpriteType_e>(
-                        static_cast<uint32_t>(m_weaponSpriteAssociated
-                                              [playerComp->m_currentWeapon]) + 1);
+                        playerComp->m_numWeaponSprite);
             setWeaponSprite(playerComp->m_weaponEntity, spriteNum);
             playerComp->m_playerShoot = false;
             playerComp->m_timerShootActive = true;
+            playerComp->m_shootFirstPhase = true;
         }
-        else if(playerComp->m_timerShootActive && elapsed_seconds.count() > 0.2)
+        else if(playerComp->m_timerShootActive)
         {
-            setWeaponSprite(playerComp->m_weaponEntity,
-                            m_weaponSpriteAssociated[playerComp->m_currentWeapon]);
-            playerComp->m_timerShootActive = false;
+            WeaponsSpriteType_e spriteNum = static_cast<WeaponsSpriteType_e>(
+                        playerComp->m_numWeaponSprite);
+            std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() -
+                    timerComp->m_clockA;
+            if(playerComp->m_currentWeapon == WeaponsType_e::GUN ||
+                    playerComp->m_currentWeapon == WeaponsType_e::AXE)
+            {
+                if(elapsed_seconds.count() > 0.2)
+                {
+                    setWeaponSprite(playerComp->m_weaponEntity,
+                                    m_weaponSpriteAssociated[playerComp->m_currentWeapon]);
+                    playerComp->m_timerShootActive = false;
+                }
+            }
+            else if(playerComp->m_currentWeapon == WeaponsType_e::SHOTGUN)
+            {
+                if(elapsed_seconds.count() > 0.15)
+                {
+                    if(playerComp->m_shootFirstPhase)
+                    {
+                        if(spriteNum == WeaponsSpriteType_e::SHOTGUN_RELOAD_C)
+                        {
+                            playerComp->m_shootFirstPhase = false;
+                            --playerComp->m_numWeaponSprite;
+                        }
+                        else
+                        {
+                            ++playerComp->m_numWeaponSprite;
+                        }
+                    }
+                    else
+                    {
+                        if(spriteNum == WeaponsSpriteType_e::SHOTGUN_RELOAD_A)
+                        {
+                            playerComp->m_timerShootActive = false;
+                            playerComp->m_numWeaponSprite = static_cast<uint32_t>(WeaponsSpriteType_e::SHOTGUN_STATIC);
+                        }
+                        else
+                        {
+                            --playerComp->m_numWeaponSprite;
+                        }
+                    }
+                    setWeaponSprite(playerComp->m_weaponEntity,
+                                    static_cast<WeaponsSpriteType_e>(playerComp->m_numWeaponSprite));
+                    timerComp->m_clockA = std::chrono::system_clock::now();
+                }
+            }
         }
         else if(!playerComp->m_timerShootActive)
         {

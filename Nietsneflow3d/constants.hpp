@@ -156,6 +156,9 @@ enum class WeaponsSpriteType_e
     GUN_SHOOT,
     SHOTGUN_STATIC,
     SHOTGUN_SHOOT,
+    SHOTGUN_RELOAD_A,
+    SHOTGUN_RELOAD_B,
+    SHOTGUN_RELOAD_C,
     TOTAL_SPRITE
 };
 

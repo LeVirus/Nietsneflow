@@ -26,8 +26,9 @@ struct PlayerConfComponent : public ecs::Component
             return true;
         }
     }
-    bool m_playerShoot = false, m_timerShootActive = false,
+    bool m_playerShoot = false, m_timerShootActive = false, m_shootFirstPhase,
     m_weaponChange = false, m_inMovement = false, m_spritePositionCorrected = true, m_takeDamage = false;
+    uint32_t m_numWeaponSprite;
     pairFloat_t m_currentWeaponMove = {-0.02f, -0.01f};
     uint32_t m_weaponEntity, m_ammoWriteEntity, m_menuEntity, m_menuCursorEntity, m_actionEntity,
     m_hitAxeEntity, m_lifeWriteEntity, m_life = 100;
