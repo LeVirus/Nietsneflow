@@ -111,9 +111,9 @@ enum class EnemySpriteElementType_e
     STATIC_BACK_RIGHT,
     STATIC_LEFT,
     STATIC_RIGHT,
-    MOVE,
     ATTACK,
     DYING,
+    TOUCHED,
     VISIBLE_SHOOT,
     VISIBLE_SHOOT_DESTRUCT
 };
@@ -135,14 +135,14 @@ enum class EnemySpriteType_e
     STATIC_LEFT_A,
     STATIC_LEFT_B,
     STATIC_RIGHT_A,
-    STATIC_RIGHT_B,
-    MOVE_A,
-    MOVE_B,
+    STATIC_RIGHT_B,//16
     ATTACK_A,
     ATTACK_B,
-    DYING,
+    DYING_A,
+    DYING_B,
+    DYING_C,
+    DYING_D,
     DEAD,
-    TMP,//TMP^^
     TOUCHED,
     TOTAL_SPRITE
 };

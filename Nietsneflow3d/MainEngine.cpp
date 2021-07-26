@@ -697,10 +697,6 @@ void MainEngine::loadEnemySprites(const std::vector<SpriteData> &vectSprite,
         {
             memSpriteComp->m_vectSpriteData.emplace_back(&vectSprite[it->second.m_staticRightSprites[j]]);
         }
-        for(uint32_t j = 0; j < it->second.m_moveSprites.size(); ++j)
-        {
-            memSpriteComp->m_vectSpriteData.emplace_back(&vectSprite[it->second.m_moveSprites[j]]);
-        }
         for(uint32_t j = 0; j < it->second.m_attackSprites.size(); ++j)
         {
             memSpriteComp->m_vectSpriteData.emplace_back(&vectSprite[it->second.m_attackSprites[j]]);
@@ -708,6 +704,10 @@ void MainEngine::loadEnemySprites(const std::vector<SpriteData> &vectSprite,
         for(uint32_t j = 0; j < it->second.m_dyingSprites.size(); ++j)
         {
             memSpriteComp->m_vectSpriteData.emplace_back(&vectSprite[it->second.m_dyingSprites[j]]);
+        }
+        for(uint32_t j = 0; j < it->second.m_touched.size(); ++j)
+        {
+            memSpriteComp->m_vectSpriteData.emplace_back(&vectSprite[it->second.m_touched[j]]);
         }
         if(!it->second.m_visibleShotSprites.empty())
         {

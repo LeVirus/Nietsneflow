@@ -598,11 +598,11 @@ void LevelManager::loadEnemyData(const INIReader &reader)
         loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::STATIC_RIGHT,
                          m_enemyData[vectINISections[i]]);
 
-        loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::MOVE,
-                         m_enemyData[vectINISections[i]]);
         loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::ATTACK,
                          m_enemyData[vectINISections[i]]);
         loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::DYING,
+                         m_enemyData[vectINISections[i]]);
+        loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::TOUCHED,
                          m_enemyData[vectINISections[i]]);
         loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::VISIBLE_SHOOT,
                          m_enemyData[vectINISections[i]]);
@@ -678,13 +678,13 @@ void LevelManager::loadEnemySprites(const INIReader &reader, const std::string &
         spriteType = "AttackSprite";
         vectPtr = &enemyData.m_attackSprites;
         break;
-    case EnemySpriteElementType_e::MOVE:
-        spriteType = "MoveSprite";
-        vectPtr = &enemyData.m_moveSprites;
-        break;
     case EnemySpriteElementType_e::DYING:
         spriteType = "DyingSprite";
         vectPtr = &enemyData.m_dyingSprites;
+        break;
+    case EnemySpriteElementType_e::TOUCHED:
+        spriteType = "Touched";
+        vectPtr = &enemyData.m_touched;
         break;
     case EnemySpriteElementType_e::VISIBLE_SHOOT:
         spriteType = "VisibleShot";
