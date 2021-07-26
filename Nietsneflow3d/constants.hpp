@@ -138,6 +138,7 @@ enum class EnemySpriteType_e
     STATIC_RIGHT_B,//16
     ATTACK_A,
     ATTACK_B,
+    ATTACK_C,
     DYING_A,
     DYING_B,
     DYING_C,

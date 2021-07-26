@@ -51,10 +51,11 @@ struct EnemyConfComponent : public ecs::Component
     uint32_t m_weaponEntity, m_life = 3, m_countPlayerInvisibility = 0;
     AmmoContainer_t m_stdAmmo, m_visibleAmmo;
     EnemyDisplayMode_e m_displayMode = EnemyDisplayMode_e::NORMAL;
-    EnemySpriteType_e m_visibleOrientation;
+    EnemySpriteType_e m_currentSprite;
     EnemyBehaviourMode_e m_behaviourMode = EnemyBehaviourMode_e::PASSIVE;
     EnemyAttackPhase_e m_attackPhase;
-    float m_dyingTime = 0.4f, m_dyingInterval = m_dyingTime / 5.0f;
+    float m_dyingTime = 0.4f, m_dyingInterval = m_dyingTime / 4.0f,
+    m_attackInterval = 0.15f;
     virtual ~EnemyConfComponent() = default;
 };
 

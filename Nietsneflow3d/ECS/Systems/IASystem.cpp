@@ -202,7 +202,6 @@ void IASystem::treatEnemyBehaviourAttack(uint32_t enemyEntity, MapCoordComponent
         enemyConfComp->m_prevWall = false;
         enemyConfComp->m_attackPhase =
                 static_cast<EnemyAttackPhase_e>(std::rand() / ((RAND_MAX + 1u) / 4));
-
         timerComp->m_clockB = std::chrono::system_clock::now();
         updateEnemyDirection(enemyConfComp, moveComp, enemyMapComp);
         if(enemyConfComp->m_attackPhase == EnemyAttackPhase_e::SHOOT)

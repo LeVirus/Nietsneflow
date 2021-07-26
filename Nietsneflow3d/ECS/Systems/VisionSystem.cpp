@@ -240,8 +240,7 @@ void VisionSystem::updateEnemySprites(uint32_t enemyEntity, uint32_t observerEnt
     uint32_t indexSprite;
     if(enemyConfComp->m_touched)
     {
-        spriteComp->m_spriteData = memSpriteComp->
-                m_vectSpriteData[static_cast<uint32_t>(EnemySpriteType_e::TOUCHED)];
+        enemyConfComp->m_currentSprite = EnemySpriteType_e::TOUCHED;
         std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() -
                 timerComp->m_clockC;
         if(elapsed_seconds.count() > 0.2)
@@ -252,18 +251,36 @@ void VisionSystem::updateEnemySprites(uint32_t enemyEntity, uint32_t observerEnt
     else if(enemyConfComp->m_behaviourMode == EnemyBehaviourMode_e::ATTACK &&
             enemyConfComp->m_attackPhase == EnemyAttackPhase_e::SHOOT)
     {
-        spriteComp->m_spriteData = memSpriteComp->
-                m_vectSpriteData[static_cast<uint32_t>(EnemySpriteType_e::ATTACK_A)];
-        return;
+        uint32_t currentSprite = static_cast<uint32_t>(enemyConfComp->m_currentSprite);
+        //init
+        if(currentSprite == static_cast<uint32_t>(EnemySpriteType_e::ATTACK_C))
+        {
+            return;
+        }
+        else if(currentSprite == static_cast<uint32_t>(EnemySpriteType_e::ATTACK_A) ||
+                currentSprite == static_cast<uint32_t>(EnemySpriteType_e::ATTACK_B))
+        {
+            std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() -
+                    timerComp->m_clockC;
+            if(elapsed_seconds.count() > enemyConfComp->m_attackInterval)
+            {
+                enemyConfComp->m_currentSprite =
+                        static_cast<EnemySpriteType_e>(static_cast<uint32_t>(enemyConfComp->m_currentSprite) + 1);
+                timerComp->m_clockC = std::chrono::system_clock::now();
+            }
+        }
+        else
+        {
+            enemyConfComp->m_currentSprite = EnemySpriteType_e::ATTACK_A;
+            timerComp->m_clockC = std::chrono::system_clock::now();
+        }
     }
     else if(enemyConfComp->m_displayMode == EnemyDisplayMode_e::NORMAL)
     {
         if(enemyConfComp->m_life == 0)
         {
             enemyConfComp->m_displayMode = EnemyDisplayMode_e::DYING;
-            enemyConfComp->m_visibleOrientation = EnemySpriteType_e::DYING_A;
-            spriteComp->m_spriteData = memSpriteComp->
-                    m_vectSpriteData[static_cast<uint32_t>(EnemySpriteType_e::DYING_A)];
+            enemyConfComp->m_currentSprite = EnemySpriteType_e::DYING_A;
             timerComp->m_clockA = std::chrono::system_clock::now();
             timerComp->m_clockB = std::chrono::system_clock::now();
         }
@@ -288,7 +305,7 @@ void VisionSystem::updateEnemySprites(uint32_t enemyEntity, uint32_t observerEnt
             {
                 ++indexSprite;
             }
-            spriteComp->m_spriteData = memSpriteComp->m_vectSpriteData[indexSprite];
+            enemyConfComp->m_currentSprite = static_cast<EnemySpriteType_e>(indexSprite);
         }
     }
     else if(enemyConfComp->m_displayMode == EnemyDisplayMode_e::DYING)
@@ -300,18 +317,17 @@ void VisionSystem::updateEnemySprites(uint32_t enemyEntity, uint32_t observerEnt
         if(elapsed_secondsA.count() > enemyConfComp->m_dyingTime)
         {
             enemyConfComp->m_displayMode = EnemyDisplayMode_e::DEAD;
-            spriteComp->m_spriteData = memSpriteComp->
-                    m_vectSpriteData[static_cast<uint32_t>(EnemySpriteType_e::DEAD)];
+            enemyConfComp->m_currentSprite = EnemySpriteType_e::DEAD;
         }
         else if(elapsed_secondsB.count() > enemyConfComp->m_dyingInterval)
         {
-            enemyConfComp->m_visibleOrientation =
-                    static_cast<EnemySpriteType_e>(static_cast<uint32_t>(enemyConfComp->m_visibleOrientation) + 1);
-            spriteComp->m_spriteData = memSpriteComp->
-                    m_vectSpriteData[static_cast<uint32_t>(enemyConfComp->m_visibleOrientation)];
+            enemyConfComp->m_currentSprite =
+                    static_cast<EnemySpriteType_e>(static_cast<uint32_t>(enemyConfComp->m_currentSprite) + 1);
             timerComp->m_clockB = std::chrono::system_clock::now();
         }
     }
+    spriteComp->m_spriteData = memSpriteComp->
+            m_vectSpriteData[static_cast<uint32_t>(enemyConfComp->m_currentSprite)];
 }
 
 //===========================================================================
