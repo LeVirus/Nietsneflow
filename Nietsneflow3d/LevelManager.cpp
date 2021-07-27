@@ -462,9 +462,9 @@ void LevelManager::loadWeaponsData(const INIReader &reader, WeaponsType_e weapon
     switch (weapon)
     {
     case WeaponsType_e::AXE:
-        weaponSpriteSection = "WeaponsAxeSprite";
-        spriteWeight = "SpriteAxeWeightGame";
-        spriteHeight = "SpriteAxeHeightGame";
+        weaponSpriteSection = "WeaponsFistSprite";
+        spriteWeight = "SpriteFistWeightGame";
+        spriteHeight = "SpriteFistHeightGame";
         break;
     case WeaponsType_e::GUN:
         weaponSpriteSection = "WeaponsGunSprite";

@@ -69,6 +69,8 @@ private:
     bool m_cursorInit = false;
     Shader *m_shader;
     std::array<VerticesData, static_cast<uint32_t>(VertexID_e::TOTAL)> m_vertices;
+    std::array<double, static_cast<uint32_t>(WeaponsType_e::TOTAL)> m_weaponsLatences =
+    {0.2, 0.2, 0.15};
     std::vector<Texture> *m_ptrVectTexture = nullptr;
     WeaponsSpriteType_e m_currentWeaponSprite;
     std::map<WeaponsType_e, WeaponsSpriteType_e> m_weaponSpriteAssociated;

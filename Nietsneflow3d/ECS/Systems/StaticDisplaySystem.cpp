@@ -207,7 +207,7 @@ void StaticDisplaySystem::confWeaponsVertexFromComponent(PlayerConfComponent *pl
             if(playerComp->m_currentWeapon == WeaponsType_e::GUN ||
                     playerComp->m_currentWeapon == WeaponsType_e::AXE)
             {
-                if(elapsed_seconds.count() > 0.2)
+                if(elapsed_seconds.count() > m_weaponsLatences[static_cast<uint32_t>(WeaponsType_e::GUN)])
                 {
                     setWeaponSprite(playerComp->m_weaponEntity,
                                     m_weaponSpriteAssociated[playerComp->m_currentWeapon]);
@@ -216,7 +216,7 @@ void StaticDisplaySystem::confWeaponsVertexFromComponent(PlayerConfComponent *pl
             }
             else if(playerComp->m_currentWeapon == WeaponsType_e::SHOTGUN)
             {
-                if(elapsed_seconds.count() > 0.15)
+                if(elapsed_seconds.count() > m_weaponsLatences[static_cast<uint32_t>(WeaponsType_e::SHOTGUN)])
                 {
                     if(playerComp->m_shootFirstPhase)
                     {
@@ -232,10 +232,15 @@ void StaticDisplaySystem::confWeaponsVertexFromComponent(PlayerConfComponent *pl
                     }
                     else
                     {
-                        if(spriteNum == WeaponsSpriteType_e::SHOTGUN_RELOAD_A)
+                        if(spriteNum == WeaponsSpriteType_e::SHOTGUN_STATIC)
                         {
                             playerComp->m_timerShootActive = false;
-                            playerComp->m_numWeaponSprite = static_cast<uint32_t>(WeaponsSpriteType_e::SHOTGUN_STATIC);
+                            return;
+                        }
+                        if(spriteNum == WeaponsSpriteType_e::SHOTGUN_RELOAD_A)
+                        {
+                            playerComp->m_numWeaponSprite =
+                                    static_cast<uint32_t>(WeaponsSpriteType_e::SHOTGUN_STATIC);
                         }
                         else
                         {
@@ -326,7 +331,8 @@ void StaticDisplaySystem::setWeaponMovement(PlayerConfComponent *playerComp,
         if(change)
         {
             modVertexPos(posComp, {modX, m_speedMoveWeaponChange});
-            uint32_t currentWeapon = static_cast<uint32_t>(playerComp->m_currentWeapon);
+            uint32_t currentWeapon = static_cast<uint32_t>(
+                        m_weaponSpriteAssociated[playerComp->m_currentWeapon]);
             if(posComp->m_vertex[0].second >= memPosComp->m_vectSpriteData[currentWeapon][0].second)
             {
                 for(uint32_t i = 0; i < 4; ++i)
@@ -361,7 +367,7 @@ void StaticDisplaySystem::setDisplayWeaponChange(PositionVertexComponent *posCom
     else
     {
         modVertexPos(posComp, {EPSILON_FLOAT, m_speedMoveWeaponChange});
-        uint32_t index = static_cast<uint32_t>(playerComp->m_currentWeapon);
+        uint32_t index = static_cast<uint32_t>(m_weaponSpriteAssociated[playerComp->m_currentWeapon]);
         if(posComp->m_vertex[0].second >= memPosComp->m_vectSpriteData[index][0].second)
         {
             posComp->m_vertex[0].second = memPosComp->m_vectSpriteData[index][0].second;
