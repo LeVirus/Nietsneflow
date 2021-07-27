@@ -149,7 +149,7 @@ void MainEngine::playerAttack(uint32_t playerEntity, PlayerConfComponent *player
             searchComponentByType<GeneralCollisionComponent>(*playerComp->m_shootEntities[0],
             Components_e::GENERAL_COLLISION_COMPONENT);
     assert(genColl);
-    if(playerComp->m_currentWeapon == WeaponsType_e::AXE)
+    if(playerComp->m_currentWeapon == WeaponsType_e::FIST)
     {
         GeneralCollisionComponent *actionGenColl = m_ecsManager.getComponentManager().
                 searchComponentByType<GeneralCollisionComponent>(playerComp->m_hitAxeEntity,

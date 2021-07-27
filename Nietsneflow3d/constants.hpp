@@ -151,8 +151,10 @@ enum class EnemySpriteType_e
 
 enum class WeaponsSpriteType_e
 {
-    AXE_STATIC,
-    AXE_ATTACK,
+    FIST_STATIC,
+    FIST_ATTACK_A,
+    FIST_ATTACK_B,
+    FIST_ATTACK_C,
     GUN_STATIC,
     GUN_SHOOT,
     SHOTGUN_STATIC,
@@ -165,7 +167,7 @@ enum class WeaponsSpriteType_e
 
 enum class WeaponsType_e
 {
-    AXE,
+    FIST,
     GUN,
     SHOTGUN,
     TOTAL

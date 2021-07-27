@@ -19,7 +19,7 @@ StaticDisplaySystem::StaticDisplaySystem()
 //===================================================================
 void StaticDisplaySystem::fillWeaponMapEnum()
 {
-    m_weaponSpriteAssociated.insert({WeaponsType_e::AXE, WeaponsSpriteType_e::AXE_STATIC});
+    m_weaponSpriteAssociated.insert({WeaponsType_e::FIST, WeaponsSpriteType_e::FIST_STATIC});
     m_weaponSpriteAssociated.insert({WeaponsType_e::GUN, WeaponsSpriteType_e::GUN_STATIC});
     m_weaponSpriteAssociated.insert({WeaponsType_e::SHOTGUN, WeaponsSpriteType_e::SHOTGUN_STATIC});
 }
@@ -200,57 +200,22 @@ void StaticDisplaySystem::confWeaponsVertexFromComponent(PlayerConfComponent *pl
         }
         else if(playerComp->m_timerShootActive)
         {
-            WeaponsSpriteType_e spriteNum = static_cast<WeaponsSpriteType_e>(
-                        playerComp->m_numWeaponSprite);
             std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() -
                     timerComp->m_clockA;
-            if(playerComp->m_currentWeapon == WeaponsType_e::GUN ||
-                    playerComp->m_currentWeapon == WeaponsType_e::AXE)
+            float elapsedSecond = elapsed_seconds.count();
+            //TMP
+            if(playerComp->m_currentWeapon == WeaponsType_e::GUN)
             {
-                if(elapsed_seconds.count() > m_weaponsLatences[static_cast<uint32_t>(WeaponsType_e::GUN)])
+                if(elapsedSecond > m_weaponsLatences[static_cast<uint32_t>(WeaponsType_e::GUN)])
                 {
                     setWeaponSprite(playerComp->m_weaponEntity,
                                     m_weaponSpriteAssociated[playerComp->m_currentWeapon]);
                     playerComp->m_timerShootActive = false;
                 }
             }
-            else if(playerComp->m_currentWeapon == WeaponsType_e::SHOTGUN)
+            else
             {
-                if(elapsed_seconds.count() > m_weaponsLatences[static_cast<uint32_t>(WeaponsType_e::SHOTGUN)])
-                {
-                    if(playerComp->m_shootFirstPhase)
-                    {
-                        if(spriteNum == WeaponsSpriteType_e::SHOTGUN_RELOAD_C)
-                        {
-                            playerComp->m_shootFirstPhase = false;
-                            --playerComp->m_numWeaponSprite;
-                        }
-                        else
-                        {
-                            ++playerComp->m_numWeaponSprite;
-                        }
-                    }
-                    else
-                    {
-                        if(spriteNum == WeaponsSpriteType_e::SHOTGUN_STATIC)
-                        {
-                            playerComp->m_timerShootActive = false;
-                            return;
-                        }
-                        if(spriteNum == WeaponsSpriteType_e::SHOTGUN_RELOAD_A)
-                        {
-                            playerComp->m_numWeaponSprite =
-                                    static_cast<uint32_t>(WeaponsSpriteType_e::SHOTGUN_STATIC);
-                        }
-                        else
-                        {
-                            --playerComp->m_numWeaponSprite;
-                        }
-                    }
-                    setWeaponSprite(playerComp->m_weaponEntity,
-                                    static_cast<WeaponsSpriteType_e>(playerComp->m_numWeaponSprite));
-                    timerComp->m_clockA = std::chrono::system_clock::now();
-                }
+                treatWeaponShootAnimation(elapsedSecond, playerComp, timerComp, playerComp->m_currentWeapon);
             }
         }
         else if(!playerComp->m_timerShootActive)
@@ -262,6 +227,64 @@ void StaticDisplaySystem::confWeaponsVertexFromComponent(PlayerConfComponent *pl
     m_vertices[index].clear();
     m_vertices[index].loadVertexStandartTextureComponent(*posComp, *weaponSpriteComp);
 }
+
+//===================================================================
+void StaticDisplaySystem::treatWeaponShootAnimation(float elapsedSeconds,
+                                                    PlayerConfComponent *playerComp,
+                                                    TimerComponent *timerComp,
+                                                    WeaponsType_e weapon)
+{
+    WeaponsSpriteType_e spriteNumMax, spriteNumBase, spriteNumLastAnim;
+    if(weapon == WeaponsType_e::SHOTGUN)
+    {
+        spriteNumMax = WeaponsSpriteType_e::SHOTGUN_RELOAD_C;
+        spriteNumBase = WeaponsSpriteType_e::SHOTGUN_STATIC;
+        spriteNumLastAnim = WeaponsSpriteType_e::SHOTGUN_RELOAD_A;
+    }
+    if(weapon == WeaponsType_e::FIST)
+    {
+        spriteNumMax = WeaponsSpriteType_e::FIST_ATTACK_C;
+        spriteNumBase = WeaponsSpriteType_e::FIST_STATIC;
+        spriteNumLastAnim = WeaponsSpriteType_e::FIST_ATTACK_A;
+    }
+    WeaponsSpriteType_e spriteNum = static_cast<WeaponsSpriteType_e>(
+                playerComp->m_numWeaponSprite);
+    if(elapsedSeconds > m_weaponsLatences[static_cast<uint32_t>(weapon)])
+    {
+        if(playerComp->m_shootFirstPhase)
+        {
+            if(spriteNum == spriteNumMax)
+            {
+                playerComp->m_shootFirstPhase = false;
+                --playerComp->m_numWeaponSprite;
+            }
+            else
+            {
+                ++playerComp->m_numWeaponSprite;
+            }
+        }
+        else
+        {
+            if(spriteNum == spriteNumBase)
+            {
+                playerComp->m_timerShootActive = false;
+                return;
+            }
+            if(spriteNum == spriteNumLastAnim)
+            {
+                playerComp->m_numWeaponSprite = static_cast<uint32_t>(spriteNumBase);
+            }
+            else
+            {
+                --playerComp->m_numWeaponSprite;
+            }
+        }
+        setWeaponSprite(playerComp->m_weaponEntity,
+                        static_cast<WeaponsSpriteType_e>(playerComp->m_numWeaponSprite));
+        timerComp->m_clockA = std::chrono::system_clock::now();
+    }
+}
+
 
 //===================================================================
 void StaticDisplaySystem::setWeaponMovement(PlayerConfComponent *playerComp,

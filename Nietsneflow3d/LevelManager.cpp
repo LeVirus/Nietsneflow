@@ -427,7 +427,7 @@ void LevelManager::loadWeaponsDisplayData(const INIReader &reader)
     std::vector<std::string> vectINISections;
     vectINISections = reader.getSectionNamesContaining("Weapons");
     assert(!vectINISections.empty());
-    loadWeaponsData(reader, WeaponsType_e::AXE, vectINISections[0], vectWeaponsDisplayData);
+    loadWeaponsData(reader, WeaponsType_e::FIST, vectINISections[0], vectWeaponsDisplayData);
     loadWeaponsData(reader, WeaponsType_e::GUN, vectINISections[0], vectWeaponsDisplayData);
     loadWeaponsData(reader, WeaponsType_e::SHOTGUN, vectINISections[0], vectWeaponsDisplayData);
     loadDisplayData(reader, vectINISections[0], "VisibleShot", vectVisibleShotsData);
@@ -461,7 +461,7 @@ void LevelManager::loadWeaponsData(const INIReader &reader, WeaponsType_e weapon
     std::string weaponSpriteSection, spriteWeight, spriteHeight;
     switch (weapon)
     {
-    case WeaponsType_e::AXE:
+    case WeaponsType_e::FIST:
         weaponSpriteSection = "WeaponsFistSprite";
         spriteWeight = "SpriteFistWeightGame";
         spriteHeight = "SpriteFistHeightGame";

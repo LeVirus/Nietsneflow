@@ -294,7 +294,7 @@ void changePlayerWeapon(PlayerConfComponent &playerComp, bool next)
         do
         {
             //first weapon
-            if(weapon == WeaponsType_e::AXE)
+            if(weapon == WeaponsType_e::FIST)
             {
                 weapon = WeaponsType_e::SHOTGUN;
             }
@@ -316,7 +316,7 @@ void changePlayerWeapon(PlayerConfComponent &playerComp, bool next)
             //last weapon
             if(weapon == WeaponsType_e::SHOTGUN)
             {
-                weapon = WeaponsType_e::AXE;
+                weapon = WeaponsType_e::FIST;
             }
             else
             {

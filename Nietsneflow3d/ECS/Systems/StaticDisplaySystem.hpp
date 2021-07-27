@@ -60,6 +60,8 @@ private:
     void treatWriteVertex(uint32_t numEntity, VertexID_e type, const std::string &value = "");
     void drawLineWriteVertex(PositionVertexComponent *posComp, WriteComponent *writeComp);
     void confWeaponsVertexFromComponent(PlayerConfComponent *playerComp, SpriteTextureComponent *weaponSpriteComp);
+    void treatWeaponShootAnimation(float elapsedSeconds, PlayerConfComponent *playerComp,
+                                    TimerComponent *timerComp, WeaponsType_e weapon);
     void setDisplayWeaponChange(PositionVertexComponent *posComp, PlayerConfComponent *playerComp,
                                 MemPositionsVertexComponents *memPosComp);
     void setWeaponMovement(PlayerConfComponent *playerComp, PositionVertexComponent *posComp,
@@ -70,7 +72,7 @@ private:
     Shader *m_shader;
     std::array<VerticesData, static_cast<uint32_t>(VertexID_e::TOTAL)> m_vertices;
     std::array<double, static_cast<uint32_t>(WeaponsType_e::TOTAL)> m_weaponsLatences =
-    {0.2, 0.2, 0.15};
+    {0.08, 0.2, 0.15};
     std::vector<Texture> *m_ptrVectTexture = nullptr;
     WeaponsSpriteType_e m_currentWeaponSprite;
     std::map<WeaponsType_e, WeaponsSpriteType_e> m_weaponSpriteAssociated;
