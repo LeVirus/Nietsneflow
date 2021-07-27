@@ -157,6 +157,8 @@ enum class WeaponsSpriteType_e
     FIST_ATTACK_C,
     GUN_STATIC,
     GUN_SHOOT,
+    GUN_ATTACK_A,
+    GUN_ATTACK_B,
     SHOTGUN_STATIC,
     SHOTGUN_SHOOT,
     SHOTGUN_RELOAD_A,

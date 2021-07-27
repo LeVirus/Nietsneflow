@@ -202,21 +202,8 @@ void StaticDisplaySystem::confWeaponsVertexFromComponent(PlayerConfComponent *pl
         {
             std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() -
                     timerComp->m_clockA;
-            float elapsedSecond = elapsed_seconds.count();
-            //TMP
-            if(playerComp->m_currentWeapon == WeaponsType_e::GUN)
-            {
-                if(elapsedSecond > m_weaponsLatences[static_cast<uint32_t>(WeaponsType_e::GUN)])
-                {
-                    setWeaponSprite(playerComp->m_weaponEntity,
-                                    m_weaponSpriteAssociated[playerComp->m_currentWeapon]);
-                    playerComp->m_timerShootActive = false;
-                }
-            }
-            else
-            {
-                treatWeaponShootAnimation(elapsedSecond, playerComp, timerComp, playerComp->m_currentWeapon);
-            }
+            treatWeaponShootAnimation(elapsed_seconds.count(),
+                                      playerComp, timerComp, playerComp->m_currentWeapon);
         }
         else if(!playerComp->m_timerShootActive)
         {
@@ -241,11 +228,18 @@ void StaticDisplaySystem::treatWeaponShootAnimation(float elapsedSeconds,
         spriteNumBase = WeaponsSpriteType_e::SHOTGUN_STATIC;
         spriteNumLastAnim = WeaponsSpriteType_e::SHOTGUN_RELOAD_A;
     }
-    if(weapon == WeaponsType_e::FIST)
+    else if(weapon == WeaponsType_e::FIST)
     {
         spriteNumMax = WeaponsSpriteType_e::FIST_ATTACK_C;
         spriteNumBase = WeaponsSpriteType_e::FIST_STATIC;
         spriteNumLastAnim = WeaponsSpriteType_e::FIST_ATTACK_A;
+    }
+    //remove warning GUN
+    else
+    {
+        spriteNumMax = WeaponsSpriteType_e::GUN_ATTACK_B;
+        spriteNumBase = WeaponsSpriteType_e::GUN_STATIC;
+        spriteNumLastAnim = WeaponsSpriteType_e::GUN_ATTACK_A;
     }
     WeaponsSpriteType_e spriteNum = static_cast<WeaponsSpriteType_e>(
                 playerComp->m_numWeaponSprite);
@@ -255,8 +249,16 @@ void StaticDisplaySystem::treatWeaponShootAnimation(float elapsedSeconds,
         {
             if(spriteNum == spriteNumMax)
             {
-                playerComp->m_shootFirstPhase = false;
-                --playerComp->m_numWeaponSprite;
+                if(weapon == WeaponsType_e::GUN)
+                {
+                    playerComp->m_timerShootActive = false;
+                    playerComp->m_numWeaponSprite = static_cast<uint32_t>(spriteNumBase);
+                }
+                else
+                {
+                    playerComp->m_shootFirstPhase = false;
+                    --playerComp->m_numWeaponSprite;
+                }
             }
             else
             {
