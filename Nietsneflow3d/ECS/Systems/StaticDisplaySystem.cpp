@@ -22,6 +22,7 @@ void StaticDisplaySystem::fillWeaponMapEnum()
     m_weaponSpriteAssociated.insert({WeaponsType_e::FIST, WeaponsSpriteType_e::FIST_STATIC});
     m_weaponSpriteAssociated.insert({WeaponsType_e::GUN, WeaponsSpriteType_e::GUN_STATIC});
     m_weaponSpriteAssociated.insert({WeaponsType_e::SHOTGUN, WeaponsSpriteType_e::SHOTGUN_STATIC});
+    m_weaponSpriteAssociated.insert({WeaponsType_e::PLASMA_RIFLE, WeaponsSpriteType_e::PLASMA_RIFLE_STATIC});
 }
 
 //===================================================================
@@ -234,6 +235,13 @@ void StaticDisplaySystem::treatWeaponShootAnimation(float elapsedSeconds,
         spriteNumBase = WeaponsSpriteType_e::FIST_STATIC;
         spriteNumLastAnim = WeaponsSpriteType_e::FIST_ATTACK_A;
     }
+    else if(weapon == WeaponsType_e::PLASMA_RIFLE)
+    {
+        //TMP
+        spriteNumMax = WeaponsSpriteType_e::PLASMA_RIFLE_RELOAD;
+        spriteNumBase = WeaponsSpriteType_e::PLASMA_RIFLE_STATIC;
+        spriteNumLastAnim = WeaponsSpriteType_e::PLASMA_RIFLE_ATTACK_A;
+    }
     //remove warning GUN
     else
     {
@@ -249,7 +257,7 @@ void StaticDisplaySystem::treatWeaponShootAnimation(float elapsedSeconds,
         {
             if(spriteNum == spriteNumMax)
             {
-                if(weapon == WeaponsType_e::GUN)
+                if(weapon == WeaponsType_e::GUN || weapon == WeaponsType_e::PLASMA_RIFLE)
                 {
                     playerComp->m_timerShootActive = false;
                     playerComp->m_numWeaponSprite = static_cast<uint32_t>(spriteNumBase);

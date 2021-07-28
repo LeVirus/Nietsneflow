@@ -11,6 +11,8 @@ enum class ObjectType_e
     BIG_HEAL,
     CARD,
     SHOTGUN,
+    PLASMA_RIFLE,
+    PLASMA_RIFLE_AMMO,
     TOTAL
 };
 

@@ -164,6 +164,10 @@ enum class WeaponsSpriteType_e
     SHOTGUN_RELOAD_A,
     SHOTGUN_RELOAD_B,
     SHOTGUN_RELOAD_C,
+    PLASMA_RIFLE_STATIC,
+    PLASMA_RIFLE_ATTACK_A,
+    PLASMA_RIFLE_ATTACK_B,
+    PLASMA_RIFLE_RELOAD,
     TOTAL_SPRITE
 };
 
@@ -172,6 +176,7 @@ enum class WeaponsType_e
     FIST,
     GUN,
     SHOTGUN,
+    PLASMA_RIFLE,
     TOTAL
 };
 
@@ -297,4 +302,4 @@ inline const std::map<Shader_e, std::string> SHADER_ID_MAP
 };
 
 inline std::array<uint32_t, static_cast<uint32_t>(WeaponsType_e::TOTAL)> MAX_WEAPONS_AMMO =
-{1, 100, 50};
+{1, 100, 50, 100};

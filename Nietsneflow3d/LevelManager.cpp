@@ -430,6 +430,7 @@ void LevelManager::loadWeaponsDisplayData(const INIReader &reader)
     loadWeaponsData(reader, WeaponsType_e::FIST, vectINISections[0], vectWeaponsDisplayData);
     loadWeaponsData(reader, WeaponsType_e::GUN, vectINISections[0], vectWeaponsDisplayData);
     loadWeaponsData(reader, WeaponsType_e::SHOTGUN, vectINISections[0], vectWeaponsDisplayData);
+    loadWeaponsData(reader, WeaponsType_e::PLASMA_RIFLE, vectINISections[0], vectWeaponsDisplayData);
     loadDisplayData(reader, vectINISections[0], "VisibleShot", vectVisibleShotsData);
     loadDisplayData(reader, vectINISections[0], "VisibleShotDestruct", vectVisibleShotsData);
     loadDisplayData(reader, vectINISections[0], "ShotImpact", vectShotImpact);
@@ -475,6 +476,11 @@ void LevelManager::loadWeaponsData(const INIReader &reader, WeaponsType_e weapon
         weaponSpriteSection = "WeaponsShotgunSprite";
         spriteWeight = "SpriteShotgunWeightGame";
         spriteHeight = "SpriteShotgunHeightGame";
+        break;
+    case WeaponsType_e::PLASMA_RIFLE:
+        weaponSpriteSection = "WeaponsPlasmaRifleSprite";
+        spriteWeight = "SpritePlasmaRifleWeightGame";
+        spriteHeight = "SpritePlasmaRifleHeightGame";
         break;
     case WeaponsType_e::TOTAL:
         assert(false);
@@ -776,13 +782,11 @@ void LevelManager::loadPositionStaticElements(const INIReader &reader)
     {
         fillStandartPositionVect(reader, it->first, it->second.m_TileGamePosition);
     }
-    it = m_ceilingElement.begin();
-    for(; it != m_ceilingElement.end(); ++it)
+    for(it = m_ceilingElement.begin(); it != m_ceilingElement.end(); ++it)
     {
         fillStandartPositionVect(reader, it->first, it->second.m_TileGamePosition);
     }
-    it = m_objectElement.begin();
-    for(; it != m_objectElement.end(); ++it)
+    for(it = m_objectElement.begin(); it != m_objectElement.end(); ++it)
     {
         fillStandartPositionVect(reader, it->first, it->second.m_TileGamePosition);
     }

@@ -12,6 +12,7 @@ struct GeneralCollisionComponent;
 struct CollisionArgs;
 struct EjectYArgs;
 struct EjectXArgs;
+struct PlayerConfComponent;
 
 class CollisionSystem : public ecs::System
 {
@@ -73,6 +74,11 @@ private:
     std::vector<pairUI_t> m_vectMemShots;
     std::vector<uint32_t> m_vectEntitiesToDelete;
 };
+
+bool pickUpWeapon(WeaponsType_e weapon, PlayerConfComponent *playerComp,
+                  uint32_t objectContaining);
+bool pickUpAmmo(WeaponsType_e weapon, PlayerConfComponent *playerComp,
+                  uint32_t objectContaining);
 
 struct CollisionArgs
 {

@@ -182,6 +182,10 @@ void MainEngine::playerAttack(uint32_t playerEntity, PlayerConfComponent *player
     {
         confPlayerShoot(playerComp->m_visibleShootEntities, point, degreeAngle);
     }
+    else if(playerComp->m_currentWeapon == WeaponsType_e::PLASMA_RIFLE)
+    {
+        confPlayerShoot(playerComp->m_visibleShootEntities, point, degreeAngle);
+    }
     uint32_t currentWeapon = static_cast<uint32_t>(playerComp->m_currentWeapon);
     assert(playerComp->m_ammunationsCount[currentWeapon] > 0);
     --playerComp->m_ammunationsCount[currentWeapon];
