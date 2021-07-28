@@ -545,7 +545,6 @@ void CollisionSystem::treatPlayerPickObject(CollisionArgs &args)
             searchComponentByType<ObjectConfComponent>(args.entityNumB, Components_e::OBJECT_CONF_COMPONENT);
     assert(playerComp);
     assert(objectComp);
-    uint32_t index = 0;
     switch (objectComp->m_type)
     {
     case ObjectType_e::GUN_AMMO:
@@ -600,10 +599,6 @@ void CollisionSystem::treatPlayerPickObject(CollisionArgs &args)
         assert(false);
         break;
     }
-    if(playerComp->m_ammunationsCount[index] > MAX_WEAPONS_AMMO[index])
-    {
-        playerComp->m_ammunationsCount[index] = MAX_WEAPONS_AMMO[index];
-    }
     m_vectEntitiesToDelete.push_back(args.entityNumB);
 }
 
@@ -617,6 +612,10 @@ bool pickUpAmmo(WeaponsType_e weapon, PlayerConfComponent *playerComp,
         return false;
     }
     playerComp->m_ammunationsCount[index] += objectContaining;
+    if(playerComp->m_ammunationsCount[index] > MAX_WEAPONS_AMMO[index])
+    {
+        playerComp->m_ammunationsCount[index] = MAX_WEAPONS_AMMO[index];
+    }
     return true;
 }
 
@@ -630,13 +629,19 @@ bool pickUpWeapon(WeaponsType_e weapon, PlayerConfComponent *playerComp,
     {
         return false;
     }
-    if(!playerComp->m_weapons[index] &&
-            static_cast<uint32_t>(playerComp->m_currentWeapon) < index)
+    if(!playerComp->m_weapons[index])
     {
         playerComp->m_weapons[index] = true;
-        setPlayerWeapon(*playerComp, weapon);
+        if(static_cast<uint32_t>(playerComp->m_currentWeapon) < index)
+        {
+            setPlayerWeapon(*playerComp, weapon);
+        }
     }
     playerComp->m_ammunationsCount[index] += objectContaining;
+    if(playerComp->m_ammunationsCount[index] > MAX_WEAPONS_AMMO[index])
+    {
+        playerComp->m_ammunationsCount[index] = MAX_WEAPONS_AMMO[index];
+    }
     return true;
 }
 

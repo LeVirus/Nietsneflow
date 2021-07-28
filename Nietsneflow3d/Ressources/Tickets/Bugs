@@ -1,8 +1,5 @@
 BUGS======================================================================
 
--16)
-New weapon pick up but does not appear in inventory some times (When pick up 2 weapons at the same time?)
-
 -14)
 First enemy display can display random texture
 
@@ -26,6 +23,9 @@ While enemy touch eject on wall==================================??
 assert à CollisionSystem.cpp::89    EnemyConfComponent == nullptr
 assert à CollisionSystem.cpp::726   hyp > distanceX && hyp > distanceY
 assert à CollisionSystem.cpp::770  
+
+-16)
+New weapon pick up but does not appear in inventory some times (When pick up 2 weapons at the same time?)=================================OK
 
 -15)
 While pick up new weapons when shooting animation is working on crash or bad animation=======================OK
