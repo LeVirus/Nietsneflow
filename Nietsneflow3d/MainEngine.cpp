@@ -35,6 +35,7 @@ std::array<uint32_t, 4> ShotConfComponent::m_impactEntities;
 //===================================================================
 void MainEngine::init()
 {
+    std::srand(std::time(nullptr));
     m_ecsManager.init();
     linkSystemsToGraphicEngine();
     linkSystemsToPhysicalEngine();
@@ -210,7 +211,12 @@ void confBullet(GeneralCollisionComponent *genColl, SegmentCollisionComponent *s
     genColl->m_tag = collTag;
     genColl->m_shape = CollisionShape_e::SEGMENT_C;
     genColl->m_active = true;
-    segmentColl->m_degreeOrientation = degreeAngle;
+    float diff = std::rand() / ((RAND_MAX + 1u) / 9) - 4.0f;
+    segmentColl->m_degreeOrientation = degreeAngle + diff;
+    if(segmentColl->m_degreeOrientation < EPSILON_FLOAT)
+    {
+        segmentColl->m_degreeOrientation += 360.0f;
+    }
     segmentColl->m_points.first = point;
 }
 
