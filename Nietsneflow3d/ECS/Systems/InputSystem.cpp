@@ -336,6 +336,7 @@ void changePlayerWeapon(PlayerConfComponent &playerComp, bool next)
 //===================================================================
 void setPlayerWeapon(PlayerConfComponent &playerComp, WeaponsType_e weapon)
 {
+    playerComp.m_timerShootActive = false;
     if(playerComp.m_currentWeapon != weapon)
     {
         playerComp.m_currentWeapon = weapon;

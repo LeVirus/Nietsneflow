@@ -1,8 +1,5 @@
 BUGS======================================================================
 
--15)
-While pick up new weapons when shooting animation is working on crash or bad animation
-
 -14)
 First enemy display can display random texture
 
@@ -26,6 +23,9 @@ While enemy touch eject on wall==================================??
 assert à CollisionSystem.cpp::89    EnemyConfComponent == nullptr
 assert à CollisionSystem.cpp::726   hyp > distanceX && hyp > distanceY
 assert à CollisionSystem.cpp::770  
+
+-15)
+While pick up new weapons when shooting animation is working on crash or bad animation=======================OK
 
 -6)
 Enemy stay stuck on angle wall or door======================OK

@@ -237,17 +237,14 @@ void StaticDisplaySystem::treatWeaponShootAnimation(float elapsedSeconds,
     }
     else if(weapon == WeaponsType_e::PLASMA_RIFLE)
     {
-        //TMP
         spriteNumMax = WeaponsSpriteType_e::PLASMA_RIFLE_RELOAD;
         spriteNumBase = WeaponsSpriteType_e::PLASMA_RIFLE_STATIC;
-        spriteNumLastAnim = WeaponsSpriteType_e::PLASMA_RIFLE_ATTACK_A;
     }
     //remove warning GUN
     else
     {
         spriteNumMax = WeaponsSpriteType_e::GUN_ATTACK_B;
         spriteNumBase = WeaponsSpriteType_e::GUN_STATIC;
-        spriteNumLastAnim = WeaponsSpriteType_e::GUN_ATTACK_A;
     }
     WeaponsSpriteType_e spriteNum = static_cast<WeaponsSpriteType_e>(
                 playerComp->m_numWeaponSprite);
