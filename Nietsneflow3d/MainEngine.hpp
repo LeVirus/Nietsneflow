@@ -107,6 +107,8 @@ private:
     void memTimerPausedValue();
     void applyTimerPausedValue();
     void confPlayerShoot(const AmmoContainer_t &playerVisibleShots, const pairFloat_t &point, float degreeAngle);
+    void confPlayerBullet(PlayerConfComponent *playerComp,
+                          const pairFloat_t &point, float degreeAngle, uint32_t numBullet);
     inline void memColorSystemEntity(uint32_t entity)
     {
         m_graphicEngine.memColorSystemEntity(entity);

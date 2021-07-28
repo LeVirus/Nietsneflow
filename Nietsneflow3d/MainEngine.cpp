@@ -146,10 +146,6 @@ void MainEngine::playerAttack(uint32_t playerEntity, PlayerConfComponent *player
     {
         return;
     }
-    GeneralCollisionComponent *genColl = m_ecsManager.getComponentManager().
-            searchComponentByType<GeneralCollisionComponent>(*playerComp->m_shootEntities[0],
-            Components_e::GENERAL_COLLISION_COMPONENT);
-    assert(genColl);
     if(playerComp->m_currentWeapon == WeaponsType_e::FIST)
     {
         GeneralCollisionComponent *actionGenColl = m_ecsManager.getComponentManager().
@@ -173,15 +169,14 @@ void MainEngine::playerAttack(uint32_t playerEntity, PlayerConfComponent *player
     }
     else if(playerComp->m_currentWeapon == WeaponsType_e::GUN)
     {
-        SegmentCollisionComponent *segmentColl = m_ecsManager.getComponentManager().
-                searchComponentByType<SegmentCollisionComponent>(*playerComp->m_shootEntities[0],
-                Components_e::SEGMENT_COLLISION_COMPONENT);
-        assert(segmentColl);
-        confBullet(genColl, segmentColl, CollisionTag_e::BULLET_PLAYER_CT, point, degreeAngle);
+        confPlayerBullet(playerComp, point, degreeAngle, 0);
     }
     else if(playerComp->m_currentWeapon == WeaponsType_e::SHOTGUN)
     {
-        confPlayerShoot(playerComp->m_visibleShootEntities, point, degreeAngle);
+        confPlayerBullet(playerComp, point, degreeAngle, 0);
+        confPlayerBullet(playerComp, point, degreeAngle, 1);
+        confPlayerBullet(playerComp, point, degreeAngle, 2);
+        confPlayerBullet(playerComp, point, degreeAngle, 3);
     }
     else if(playerComp->m_currentWeapon == WeaponsType_e::PLASMA_RIFLE)
     {
@@ -190,6 +185,23 @@ void MainEngine::playerAttack(uint32_t playerEntity, PlayerConfComponent *player
     uint32_t currentWeapon = static_cast<uint32_t>(playerComp->m_currentWeapon);
     assert(playerComp->m_ammunationsCount[currentWeapon] > 0);
     --playerComp->m_ammunationsCount[currentWeapon];
+}
+
+//===================================================================
+void MainEngine::confPlayerBullet(PlayerConfComponent *playerComp,
+                                  const pairFloat_t &point, float degreeAngle,
+                                  uint32_t numBullet)
+{
+    assert(numBullet < SEGMENT_SHOT_NUMBER);
+    GeneralCollisionComponent *genColl = m_ecsManager.getComponentManager().
+            searchComponentByType<GeneralCollisionComponent>(*playerComp->m_shootEntities[numBullet],
+            Components_e::GENERAL_COLLISION_COMPONENT);
+    SegmentCollisionComponent *segmentColl = m_ecsManager.getComponentManager().
+            searchComponentByType<SegmentCollisionComponent>(*playerComp->m_shootEntities[numBullet],
+            Components_e::SEGMENT_COLLISION_COMPONENT);
+    assert(genColl);
+    assert(segmentColl);
+    confBullet(genColl, segmentColl, CollisionTag_e::BULLET_PLAYER_CT, point, degreeAngle);
 }
 
 //===================================================================
