@@ -42,7 +42,7 @@ public:
     void confSystems();
 private:
     void clearObjectToDelete();
-    void memPlayerGear();
+    void savePlayerGear();
     void loadPlayerGear();
     void displayTransitionMenu();
     void loadDamageEntity();

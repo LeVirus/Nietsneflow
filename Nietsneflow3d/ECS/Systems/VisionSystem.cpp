@@ -237,10 +237,12 @@ void VisionSystem::updateEnemySprites(uint32_t enemyEntity, uint32_t observerEnt
                                       SpriteTextureComponent *spriteComp,
                                       TimerComponent *timerComp, EnemyConfComponent *enemyConfComp)
 {
-    uint32_t indexSprite;
+    mapEnemySprite_t::const_reverse_iterator lastElIt;
+    mapEnemySprite_t::const_iterator it;
     if(enemyConfComp->m_touched)
     {
-        enemyConfComp->m_currentSprite = EnemySpriteType_e::TOUCHED;
+        enemyConfComp->m_currentSprite =
+                enemyConfComp->m_mapSpriteAssociate.find(EnemySpriteType_e::TOUCHED)->second;
         std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() -
                 timerComp->m_clockC;
         if(elapsed_seconds.count() > 0.2)
@@ -251,27 +253,42 @@ void VisionSystem::updateEnemySprites(uint32_t enemyEntity, uint32_t observerEnt
     else if(enemyConfComp->m_behaviourMode == EnemyBehaviourMode_e::ATTACK &&
             enemyConfComp->m_attackPhase == EnemyAttackPhase_e::SHOOT)
     {
-        uint32_t currentSprite = static_cast<uint32_t>(enemyConfComp->m_currentSprite);
-        //init
-        if(currentSprite == static_cast<uint32_t>(EnemySpriteType_e::ATTACK_C))
+        lastElIt = std::find(enemyConfComp->m_mapSpriteAssociate.rbegin(),
+                             enemyConfComp->m_mapSpriteAssociate.rend(),
+                             EnemySpriteType_e::ATTACK);
+        //first element
+        it = enemyConfComp->m_mapSpriteAssociate.find(EnemySpriteType_e::ATTACK);
+        if(enemyConfComp->m_currentSprite == lastElIt->second)
         {
             return;
         }
-        else if(currentSprite == static_cast<uint32_t>(EnemySpriteType_e::ATTACK_A) ||
-                currentSprite == static_cast<uint32_t>(EnemySpriteType_e::ATTACK_B))
+        bool found = false;
+        for(; it->first == EnemySpriteType_e::ATTACK ||
+            it->second != lastElIt->second; ++it)
+        {
+            if(enemyConfComp->m_currentSprite == it->second)
+            {
+                found = true;
+                break;
+            }
+        }
+        if(found)
         {
             std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() -
                     timerComp->m_clockC;
             if(elapsed_seconds.count() > enemyConfComp->m_attackInterval)
             {
-                enemyConfComp->m_currentSprite =
-                        static_cast<EnemySpriteType_e>(static_cast<uint32_t>(enemyConfComp->m_currentSprite) + 1);
+                ++it;
+                enemyConfComp->m_currentSprite = it->second;
                 timerComp->m_clockC = std::chrono::system_clock::now();
             }
         }
+        //if sprite is not ATTACK
         else
         {
-            enemyConfComp->m_currentSprite = EnemySpriteType_e::ATTACK_A;
+            enemyConfComp->m_currentSprite =
+                    enemyConfComp->m_mapSpriteAssociate.find(
+                        EnemySpriteType_e::ATTACK)->second;
             timerComp->m_clockC = std::chrono::system_clock::now();
         }
     }
@@ -280,7 +297,8 @@ void VisionSystem::updateEnemySprites(uint32_t enemyEntity, uint32_t observerEnt
         if(enemyConfComp->m_life == 0)
         {
             enemyConfComp->m_displayMode = EnemyDisplayMode_e::DYING;
-            enemyConfComp->m_currentSprite = EnemySpriteType_e::DYING_A;
+            enemyConfComp->m_currentSprite = enemyConfComp->
+                    m_mapSpriteAssociate.find(EnemySpriteType_e::DYING)->second;
             timerComp->m_clockA = std::chrono::system_clock::now();
             timerComp->m_clockB = std::chrono::system_clock::now();
         }
@@ -293,34 +311,32 @@ void VisionSystem::updateEnemySprites(uint32_t enemyEntity, uint32_t observerEnt
             EnemySpriteType_e currentOrientationSprite =
                     getOrientationFromAngle(observerEntity, enemyEntity,
                                             enemyMoveComp->m_degreeOrientation);
-
-            indexSprite = static_cast<uint32_t>(currentOrientationSprite);
+            it = enemyConfComp->m_mapSpriteAssociate.find(currentOrientationSprite);
             std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() - timerComp->m_clockA;
             if(elapsed_seconds.count() > 0.5)
             {
-                enemyConfComp->m_staticPhase = (enemyConfComp->m_staticPhase) ? false : true;
+                ++enemyConfComp->m_staticPhase;
+                if(enemyConfComp->m_staticPhase >= enemyConfComp->m_maxMoveAnimation)
+                {
+                    enemyConfComp->m_staticPhase = 0;
+                }
                 timerComp->m_clockA = std::chrono::system_clock::now();
             }
-            if(!enemyConfComp->m_staticPhase)
-            {
-                ++indexSprite;
-            }
-            enemyConfComp->m_currentSprite = static_cast<EnemySpriteType_e>(indexSprite);
+            for(uint32_t i = 0; i < enemyConfComp->m_staticPhase; ++i, ++it);
+            enemyConfComp->m_currentSprite = it->second;
         }
     }
     else if(enemyConfComp->m_displayMode == EnemyDisplayMode_e::DYING)
     {
-        uint32_t currentSprite = static_cast<uint32_t>(enemyConfComp->m_currentSprite);
         std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() -
                 timerComp->m_clockB;
-        if(currentSprite == static_cast<uint32_t>(EnemySpriteType_e::DEAD))
+        if(enemyConfComp->m_currentSprite == static_cast<uint32_t>(EnemySpriteType_e::DEAD))
         {
             enemyConfComp->m_displayMode = EnemyDisplayMode_e::DEAD;
         }
         else if(elapsed_seconds.count() > enemyConfComp->m_dyingInterval)
         {
-            enemyConfComp->m_currentSprite =
-                    static_cast<EnemySpriteType_e>(static_cast<uint32_t>(enemyConfComp->m_currentSprite) + 1);
+            ++enemyConfComp->m_currentSprite;
             timerComp->m_clockB = std::chrono::system_clock::now();
         }
     }
@@ -360,8 +376,8 @@ void VisionSystem::updateImpactSprites(uint32_t entityImpact, MemSpriteDataCompo
 
 //===========================================================================
 EnemySpriteType_e VisionSystem::getOrientationFromAngle(uint32_t observerEntity,
-                                                        uint32_t targetEntity,
-                                                        float targetDegreeAngle)
+                                               uint32_t targetEntity,
+                                               float targetDegreeAngle)
 {
     MapCoordComponent *observMapComp = stairwayToComponentManager().
             searchComponentByType<MapCoordComponent>(observerEntity,
@@ -377,35 +393,35 @@ EnemySpriteType_e VisionSystem::getOrientationFromAngle(uint32_t observerEntity,
             valSin = std::sin(radDiff), valCos = std::cos(radDiff);
     if(valCos > 0.333f && valSin > 0.333f)
     {
-        return EnemySpriteType_e::STATIC_MID_BACK_RIGHT_A;
+        return EnemySpriteType_e::STATIC_BACK_RIGHT;
     }
     else if(valCos < -0.333f && valSin > 0.333f)
     {
-        return EnemySpriteType_e::STATIC_MID_FRONT_RIGHT_A;
+        return EnemySpriteType_e::STATIC_FRONT_RIGHT;
     }
     else if(valCos > 0.333f && valSin < -0.333f)
     {
-        return EnemySpriteType_e::STATIC_MID_BACK_LEFT_A;
+        return EnemySpriteType_e::STATIC_BACK_LEFT;
     }
     else if(valCos < -0.333f && valSin < -0.333f)
     {
-        return EnemySpriteType_e::STATIC_MID_FRONT_LEFT_A;
+        return EnemySpriteType_e::STATIC_FRONT_LEFT;
     }
     else if(valSin < -0.5f)
     {
-        return EnemySpriteType_e::STATIC_LEFT_A;
+        return EnemySpriteType_e::STATIC_LEFT;
     }
     else if(valSin > 0.5f)
     {
-        return EnemySpriteType_e::STATIC_RIGHT_A;
+        return EnemySpriteType_e::STATIC_RIGHT;
     }
     else if(valCos < -0.5f)
     {
-        return EnemySpriteType_e::STATIC_FRONT_A;
+        return EnemySpriteType_e::STATIC_FRONT;
     }
     else
     {
-        return EnemySpriteType_e::STATIC_BACK_A;
+        return EnemySpriteType_e::STATIC_BACK;
     }
 }
 

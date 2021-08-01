@@ -700,11 +700,13 @@ void LevelManager::loadEnemySprites(const INIReader &reader, const std::string &
         spriteType = "VisibleShotDestruct";
         vectPtr = &enemyData.m_visibleShotDestructSprites;
         break;
-
     }
     assert(vectPtr);
     std::string sprites = reader.Get(sectionName, spriteType, "");
-    assert(!sprites.empty() && "Enemy sprites cannot be loaded.");
+    std::cerr << sprites << " " << (int)spriteTypeEnum << "\n";
+    assert((spriteTypeEnum != EnemySpriteElementType_e::VISIBLE_SHOOT ||
+            spriteTypeEnum != EnemySpriteElementType_e::VISIBLE_SHOOT_DESTRUCT ||
+            !sprites.empty()) && "Enemy sprites cannot be loaded.");
     std::istringstream iss(sprites);
     vectStr_t results(std::istream_iterator<std::string>{iss},
                       std::istream_iterator<std::string>());

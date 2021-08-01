@@ -52,7 +52,7 @@ bool MainEngine::mainLoop(bool &memGameOver)
     }
     else
     {
-        memPlayerGear();
+        savePlayerGear();
     }
     m_graphicEngine.unsetTransition(m_gamePaused);
     do
@@ -63,7 +63,7 @@ bool MainEngine::mainLoop(bool &memGameOver)
         if(!m_exitColl->m_active)
         {
             m_playerConf->m_inMovement = false;
-            memPlayerGear();
+            savePlayerGear();
             m_graphicEngine.setTransition(m_gamePaused);
             displayTransitionMenu();
             return true;
@@ -80,7 +80,7 @@ bool MainEngine::mainLoop(bool &memGameOver)
 }
 
 //===================================================================
-void MainEngine::memPlayerGear()
+void MainEngine::savePlayerGear()
 {
     assert(m_playerConf);
     m_memPlayerConf.m_ammunationsCount = m_playerConf->m_ammunationsCount;
@@ -685,8 +685,6 @@ void MainEngine::loadEnemySprites(const std::vector<SpriteData> &vectSprite,
     std::map<std::string, EnemyData>::const_iterator it = enemiesData.begin();
     for(; it != enemiesData.end(); ++it)
     {
-        uint32_t vectSize = static_cast<uint32_t>(EnemySpriteType_e::TOTAL_SPRITE);
-        memSpriteComp->m_vectSpriteData.reserve(vectSize);
         for(uint32_t j = 0; j < it->second.m_staticFrontSprites.size(); ++j)
         {
             memSpriteComp->m_vectSpriteData.emplace_back(&vectSprite[it->second.m_staticFrontSprites[j]]);
@@ -735,7 +733,6 @@ void MainEngine::loadEnemySprites(const std::vector<SpriteData> &vectSprite,
         {
             loadVisibleShotEnemySprites(vectSprite, visibleAmmo, it->second);
         }
-        assert(memSpriteComp->m_vectSpriteData.size() == vectSize);
     }
 }
 
