@@ -9,6 +9,9 @@ If enemy behind player bullet collision
 -12)
 Static element  table desapear at limit vision
 
+-2)
+While enemy touch eject on wall==================================
+
 -7)
 Coll exit on door??
 
@@ -16,8 +19,6 @@ Coll exit on door??
 Shot behind door might appear to verify===========================??
 If impact are touching wall behind door ISSUE
 
--2)
-While enemy touch eject on wall==================================??
 
 1)
 assert à CollisionSystem.cpp::89    EnemyConfComponent == nullptr

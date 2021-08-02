@@ -5,6 +5,8 @@
 #include <ECS/ECSManager.hpp>
 #include <Level.hpp>
 
+using mapEnemySprite_t = std::map<EnemySpriteType_e, pairUI_t>;
+
 class LevelManager;
 class Level;
 class FontData;
@@ -100,7 +102,7 @@ private:
                            CollisionTag_e tag);
     void confStaticComponent(uint32_t entityNum, const pairFloat_t &elementSize, LevelStaticElementType_e elementType);
     void loadEnemySprites(const std::vector<SpriteData> &vectSprite,
-                          const std::map<std::string, EnemyData> &enemiesData, uint32_t numEntity, const AmmoContainer_t &visibleAmmo);
+                          const std::map<std::string, EnemyData> &enemiesData, uint32_t numEntity, EnemyConfComponent *enemyComp);
     void loadVisibleShotEnemySprites(const std::vector<SpriteData> &vectSprite,
                                      const AmmoContainer_t &visibleAmmo,
                                      const EnemyData &enemyData);
@@ -135,6 +137,10 @@ private:
     MemPlayerConf m_memPlayerConf;
 };
 
+void insertEnemySpriteFromType(const std::vector<SpriteData> &vectSprite,
+                               mapEnemySprite_t &mapSpriteAssociate,
+                               std::vector<SpriteData const *> &vectSpriteData,
+                               const std::vector<uint8_t> &enemyMemArray, EnemySpriteType_e type);
 void confBullet(GeneralCollisionComponent *genColl, SegmentCollisionComponent *segmentColl,
                 CollisionTag_e collTag, const pairFloat_t &point, float degreeAngle);
 void setWeaponPlayer();

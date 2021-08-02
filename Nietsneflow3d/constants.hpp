@@ -131,7 +131,6 @@ enum class EnemySpriteType_e
     STATIC_RIGHT,
     ATTACK,
     DYING,
-    DEAD,
     TOUCHED,
     TOTAL_SPRITE
 };

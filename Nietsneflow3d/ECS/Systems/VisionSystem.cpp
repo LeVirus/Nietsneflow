@@ -237,12 +237,11 @@ void VisionSystem::updateEnemySprites(uint32_t enemyEntity, uint32_t observerEnt
                                       SpriteTextureComponent *spriteComp,
                                       TimerComponent *timerComp, EnemyConfComponent *enemyConfComp)
 {
-    mapEnemySprite_t::const_reverse_iterator lastElIt;
     mapEnemySprite_t::const_iterator it;
     if(enemyConfComp->m_touched)
     {
         enemyConfComp->m_currentSprite =
-                enemyConfComp->m_mapSpriteAssociate.find(EnemySpriteType_e::TOUCHED)->second;
+                enemyConfComp->m_mapSpriteAssociate.find(EnemySpriteType_e::TOUCHED)->second.first;
         std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() -
                 timerComp->m_clockC;
         if(elapsed_seconds.count() > 0.2)
@@ -253,33 +252,21 @@ void VisionSystem::updateEnemySprites(uint32_t enemyEntity, uint32_t observerEnt
     else if(enemyConfComp->m_behaviourMode == EnemyBehaviourMode_e::ATTACK &&
             enemyConfComp->m_attackPhase == EnemyAttackPhase_e::SHOOT)
     {
-        lastElIt = std::find(enemyConfComp->m_mapSpriteAssociate.rbegin(),
-                             enemyConfComp->m_mapSpriteAssociate.rend(),
-                             EnemySpriteType_e::ATTACK);
         //first element
         it = enemyConfComp->m_mapSpriteAssociate.find(EnemySpriteType_e::ATTACK);
-        if(enemyConfComp->m_currentSprite == lastElIt->second)
+        //if last animation
+        if(enemyConfComp->m_currentSprite == it->second.second)
         {
             return;
         }
-        bool found = false;
-        for(; it->first == EnemySpriteType_e::ATTACK ||
-            it->second != lastElIt->second; ++it)
-        {
-            if(enemyConfComp->m_currentSprite == it->second)
-            {
-                found = true;
-                break;
-            }
-        }
-        if(found)
+        if(enemyConfComp->m_currentSprite >= it->second.first &&
+                enemyConfComp->m_currentSprite <= it->second.second)
         {
             std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() -
                     timerComp->m_clockC;
             if(elapsed_seconds.count() > enemyConfComp->m_attackInterval)
             {
-                ++it;
-                enemyConfComp->m_currentSprite = it->second;
+                ++enemyConfComp->m_currentSprite;
                 timerComp->m_clockC = std::chrono::system_clock::now();
             }
         }
@@ -288,7 +275,7 @@ void VisionSystem::updateEnemySprites(uint32_t enemyEntity, uint32_t observerEnt
         {
             enemyConfComp->m_currentSprite =
                     enemyConfComp->m_mapSpriteAssociate.find(
-                        EnemySpriteType_e::ATTACK)->second;
+                        EnemySpriteType_e::ATTACK)->second.first;
             timerComp->m_clockC = std::chrono::system_clock::now();
         }
     }
@@ -298,7 +285,7 @@ void VisionSystem::updateEnemySprites(uint32_t enemyEntity, uint32_t observerEnt
         {
             enemyConfComp->m_displayMode = EnemyDisplayMode_e::DYING;
             enemyConfComp->m_currentSprite = enemyConfComp->
-                    m_mapSpriteAssociate.find(EnemySpriteType_e::DYING)->second;
+                    m_mapSpriteAssociate.find(EnemySpriteType_e::DYING)->second.first;
             timerComp->m_clockA = std::chrono::system_clock::now();
             timerComp->m_clockB = std::chrono::system_clock::now();
         }
@@ -315,22 +302,25 @@ void VisionSystem::updateEnemySprites(uint32_t enemyEntity, uint32_t observerEnt
             std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() - timerComp->m_clockA;
             if(elapsed_seconds.count() > 0.5)
             {
-                ++enemyConfComp->m_staticPhase;
-                if(enemyConfComp->m_staticPhase >= enemyConfComp->m_maxMoveAnimation)
+                if(enemyConfComp->m_currentSprite < it->second.first ||
+                        enemyConfComp->m_currentSprite >= it->second.second)
                 {
-                    enemyConfComp->m_staticPhase = 0;
+                    enemyConfComp->m_currentSprite = it->second.first;
+                }
+                else
+                {
+                    ++enemyConfComp->m_currentSprite;
                 }
                 timerComp->m_clockA = std::chrono::system_clock::now();
             }
-            for(uint32_t i = 0; i < enemyConfComp->m_staticPhase; ++i, ++it);
-            enemyConfComp->m_currentSprite = it->second;
         }
     }
     else if(enemyConfComp->m_displayMode == EnemyDisplayMode_e::DYING)
     {
+        it = enemyConfComp->m_mapSpriteAssociate.find(EnemySpriteType_e::DYING);
         std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() -
                 timerComp->m_clockB;
-        if(enemyConfComp->m_currentSprite == static_cast<uint32_t>(EnemySpriteType_e::DEAD))
+        if(enemyConfComp->m_currentSprite == it->second.second)
         {
             enemyConfComp->m_displayMode = EnemyDisplayMode_e::DEAD;
         }
@@ -466,4 +456,19 @@ void updateTriangleVisionFromPosition(VisionComponent *visionComp, const MapCoor
         }
         angleDegree += (CONE_VISION + 20.0f);//QUICK FIX
     }
+}
+
+//===========================================================================
+mapEnemySprite_t::const_reverse_iterator findMapLastElement(const mapEnemySprite_t &map,
+                                                            EnemySpriteType_e key)
+{
+    for(mapEnemySprite_t::const_reverse_iterator rit = map.rbegin();
+        rit != map.rend(); ++rit)
+    {
+        if(rit->first == key)
+        {
+            return rit;
+        }
+    }
+    return map.rend();
 }

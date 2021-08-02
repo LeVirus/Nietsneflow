@@ -15,6 +15,8 @@ struct GeneralCollisionComponent;
 struct TimerComponent;
 struct TimerComponent;
 
+using mapEnemySprite_t = std::map<EnemySpriteType_e, pairUI_t>;
+
 class VisionSystem : public ecs::System
 {
 public:
@@ -49,5 +51,7 @@ private:
     std::vector<uint32_t> m_memMultiSpritesWallEntities;
 };
 
+mapEnemySprite_t::const_reverse_iterator findMapLastElement(const mapEnemySprite_t &map,
+                                                            EnemySpriteType_e key);
 void updateTriangleVisionFromPosition(VisionComponent *visionComp, const MapCoordComponent *mapComp,
                                       const MoveableComponent *movComp);

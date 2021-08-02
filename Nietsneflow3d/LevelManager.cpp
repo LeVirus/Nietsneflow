@@ -703,7 +703,6 @@ void LevelManager::loadEnemySprites(const INIReader &reader, const std::string &
     }
     assert(vectPtr);
     std::string sprites = reader.Get(sectionName, spriteType, "");
-    std::cerr << sprites << " " << (int)spriteTypeEnum << "\n";
     assert((spriteTypeEnum != EnemySpriteElementType_e::VISIBLE_SHOOT ||
             spriteTypeEnum != EnemySpriteElementType_e::VISIBLE_SHOOT_DESTRUCT ||
             !sprites.empty()) && "Enemy sprites cannot be loaded.");
