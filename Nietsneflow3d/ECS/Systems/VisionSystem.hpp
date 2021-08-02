@@ -43,6 +43,8 @@ private:
                             MemSpriteDataComponent *memSpriteComp,
                             SpriteTextureComponent *spriteComp,
                             TimerComponent *timerComp, EnemyConfComponent *enemyConfComp);
+    void updateEnemyNormalSprite(EnemyConfComponent *enemyConfComp, TimerComponent *timerComp,
+                                 uint32_t enemyEntity, uint32_t observerEntity);
     void updateImpactSprites(uint32_t entityImpact, MemSpriteDataComponent *memSpriteComp,
                              SpriteTextureComponent *spriteComp,
                              TimerComponent *timerComp, GeneralCollisionComponent *genComp);
@@ -55,3 +57,4 @@ mapEnemySprite_t::const_reverse_iterator findMapLastElement(const mapEnemySprite
                                                             EnemySpriteType_e key);
 void updateTriangleVisionFromPosition(VisionComponent *visionComp, const MapCoordComponent *mapComp,
                                       const MoveableComponent *movComp);
+void updateEnemyAttackSprite(EnemyConfComponent *enemyConfComp, TimerComponent *timerComp);
