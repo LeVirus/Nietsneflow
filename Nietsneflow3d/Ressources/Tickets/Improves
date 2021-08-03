@@ -1,11 +1,11 @@
 IMPROVE===================================================================================================
 ==========================================================================================================
 
+-5)
+Change fix background to moveable background from observer angle
+
 -4)
 WHen no ammo change to best weapon
-
--3)
-Limit shoot intervalle time
 
 1)
 Weapon movement on begin and end movement
@@ -21,6 +21,9 @@ Ajouter armure
 
 3)
 Enemy animations========================~
+
+-3)
+Limit shoot intervalle time==========================OK
 
 2)
 Weapons animations======================OK

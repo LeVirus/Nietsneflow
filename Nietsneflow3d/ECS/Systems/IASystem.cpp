@@ -43,7 +43,10 @@ void IASystem::execSystem()
         enemyConfComp = stairwayToComponentManager().searchComponentByType<EnemyConfComponent>(
                     mVectNumEntity[i], Components_e::ENEMY_CONF_COMPONENT);
         assert(enemyConfComp);
-        treatVisibleShot(enemyConfComp->m_visibleAmmo);
+        if(enemyConfComp->m_visibleShot)
+        {
+            treatVisibleShot(enemyConfComp->m_visibleAmmo);
+        }
         if(enemyConfComp->m_behaviourMode == EnemyBehaviourMode_e::DEAD ||
                 enemyConfComp->m_behaviourMode == EnemyBehaviourMode_e::DYING)
         {
@@ -169,6 +172,7 @@ void IASystem::enemyShoot(EnemyConfComponent *enemyConfComp, MoveableComponent *
         SegmentCollisionComponent *segmentComp = stairwayToComponentManager().
                 searchComponentByType<SegmentCollisionComponent>(
                     *enemyConfComp->m_stdAmmo[0], Components_e::SEGMENT_COLLISION_COMPONENT);
+        std::cerr << *enemyConfComp->m_stdAmmo[0] << " " << "FDSDDGSDGS\n";
         assert(genComp);
         assert(segmentComp);
         confBullet(genComp, segmentComp, CollisionTag_e::BULLET_ENEMY_CT,
@@ -184,17 +188,9 @@ void IASystem::treatEnemyBehaviourAttack(uint32_t enemyEntity, MapCoordComponent
     MoveableComponent *moveComp = stairwayToComponentManager().
             searchComponentByType<MoveableComponent>(enemyEntity,
                                                      Components_e::MOVEABLE_COMPONENT);
-    SegmentCollisionComponent *segmentComp = stairwayToComponentManager().
-            searchComponentByType<SegmentCollisionComponent>(*enemyConfComp->m_stdAmmo[0],
-            Components_e::SEGMENT_COLLISION_COMPONENT);
-    GeneralCollisionComponent *genComp = stairwayToComponentManager().
-            searchComponentByType<GeneralCollisionComponent>(*enemyConfComp->m_stdAmmo[0],
-            Components_e::GENERAL_COLLISION_COMPONENT);
     TimerComponent *timerComp = stairwayToComponentManager().searchComponentByType<TimerComponent>(
                 enemyEntity, Components_e::TIMER_COMPONENT);
     assert(moveComp);
-    assert(segmentComp);
-    assert(genComp);
     assert(timerComp);
     std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() -
             timerComp->m_clockB;

@@ -598,8 +598,16 @@ void MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
                     searchComponentByType<CircleCollisionComponent>(numEntity, Components_e::CIRCLE_COLLISION_COMPONENT);
             assert(circleComp);
             circleComp->m_ray = collisionRay;
-            createAmmosEntities(enemyComp->m_stdAmmo, CollisionTag_e::BULLET_ENEMY_CT);
-            createAmmosEntities(enemyComp->m_visibleAmmo, CollisionTag_e::BULLET_ENEMY_CT, true);
+            if(enemyComp->m_visibleShot)
+            {
+                createAmmosEntities(enemyComp->m_visibleAmmo, CollisionTag_e::BULLET_ENEMY_CT, enemyComp->m_visibleShot);
+            }
+            else
+            {
+                std::cerr << "DSFQSF\n";
+                createAmmosEntities(enemyComp->m_stdAmmo, CollisionTag_e::BULLET_ENEMY_CT, enemyComp->m_visibleShot);
+                assert(*enemyComp->m_stdAmmo[0] != 0);
+            }
             loadEnemySprites(levelManager.getPictureData().getSpriteData(),
                              it->second, numEntity, enemyComp);
             MoveableComponent *moveComp = m_ecsManager.getComponentManager().
@@ -620,6 +628,7 @@ void MainEngine::createAmmosEntities(AmmoContainer_t &ammoCount, CollisionTag_e 
         if(!visibleShot)
         {
             ammoCount[i] = createShotEntity();
+            std::cerr << *ammoCount[i] << " " << "FQF\n";
         }
         else
         {
