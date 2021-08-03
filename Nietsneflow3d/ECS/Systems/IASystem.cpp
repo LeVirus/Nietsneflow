@@ -172,7 +172,6 @@ void IASystem::enemyShoot(EnemyConfComponent *enemyConfComp, MoveableComponent *
         SegmentCollisionComponent *segmentComp = stairwayToComponentManager().
                 searchComponentByType<SegmentCollisionComponent>(
                     *enemyConfComp->m_stdAmmo[0], Components_e::SEGMENT_COLLISION_COMPONENT);
-        std::cerr << *enemyConfComp->m_stdAmmo[0] << " " << "FDSDDGSDGS\n";
         assert(genComp);
         assert(segmentComp);
         confBullet(genComp, segmentComp, CollisionTag_e::BULLET_ENEMY_CT,

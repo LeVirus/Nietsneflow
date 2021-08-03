@@ -82,7 +82,7 @@ private:
     void loadStaticElementGroup(const LevelManager &levelManager,
                                 const std::map<std::string, StaticLevelElementData> &staticData, LevelStaticElementType_e elementType);
     void loadExitElement(const LevelManager &levelManager, const StaticLevelElementData &exit);
-    void createAmmosEntities(AmmoContainer_t &ammoCont, CollisionTag_e collTag, bool visibleShot = false);
+    void createAmmosEntities(AmmoContainer_t &ammoCont, CollisionTag_e collTag, bool visibleShot);
     void createShotImpactEntities(const std::vector<SpriteData> &vectSpriteData,
                                   const std::vector<uint8_t> &vectSprite,
                                   std::array<uint32_t, SEGMENT_SHOT_NUMBER> &entitiesContainer, const AmmoContainer_t &segmentShotContainer);
