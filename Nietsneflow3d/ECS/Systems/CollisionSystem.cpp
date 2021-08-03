@@ -510,7 +510,7 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
             assert(timerComp);
             timerComp->m_clockB = std::chrono::system_clock::now();
             shotConfComp->m_destructPhase = true;
-            shotConfComp->m_spritePhaseShot = ShotPhase_e::SHOT_DESTRUCT_A;
+            shotConfComp->m_spriteShotNum = 1;
             if(destruct)
             {
                 return;

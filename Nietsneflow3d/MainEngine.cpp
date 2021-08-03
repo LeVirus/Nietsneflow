@@ -598,8 +598,7 @@ void MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
                     searchComponentByType<CircleCollisionComponent>(numEntity, Components_e::CIRCLE_COLLISION_COMPONENT);
             assert(circleComp);
             circleComp->m_ray = collisionRay;
-            loadEnemySprites(levelManager.getPictureData().getSpriteData(),
-                             it->second, numEntity, enemyComp);
+            enemyComp->m_visibleShot = !(it->second.m_visibleShotSprites.empty());
             if(enemyComp->m_visibleShot)
             {
                 createAmmosEntities(enemyComp->m_visibleAmmo, CollisionTag_e::BULLET_ENEMY_CT, enemyComp->m_visibleShot);
@@ -608,6 +607,8 @@ void MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
             {
                 createAmmosEntities(enemyComp->m_stdAmmo, CollisionTag_e::BULLET_ENEMY_CT, enemyComp->m_visibleShot);
             }
+            loadEnemySprites(levelManager.getPictureData().getSpriteData(),
+                             it->second, numEntity, enemyComp);
             MoveableComponent *moveComp = m_ecsManager.getComponentManager().
                     searchComponentByType<MoveableComponent>(numEntity,
                                                               Components_e::MOVEABLE_COMPONENT);
@@ -732,7 +733,6 @@ void MainEngine::loadEnemySprites(const std::vector<SpriteData> &vectSprite,
                               memSpriteComp->m_vectSpriteData,
                               enemiesData.m_touched,
                               EnemySpriteType_e::TOUCHED);
-    enemyComp->m_visibleShot = !(enemiesData.m_visibleShotSprites.empty());
     if(enemyComp->m_visibleShot)
     {
         loadVisibleShotEnemySprites(vectSprite, enemyComp->m_visibleAmmo, enemiesData);
@@ -784,7 +784,7 @@ void MainEngine::loadVisibleShotEnemySprites(const std::vector<SpriteData> &vect
             memSpriteComp->m_vectSpriteData.emplace_back(&vectSprite[enemyData.m_visibleShotDestructSprites[l]]);
         }
         spriteComp->m_spriteData = &vectSprite[enemyData.
-                m_visibleShotSprites[static_cast<uint32_t>(shotConfComp->m_spritePhaseShot)]];
+                m_visibleShotSprites[shotConfComp->m_spriteShotNum]];
     }
 }
 

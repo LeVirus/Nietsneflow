@@ -207,28 +207,21 @@ void VisionSystem::updateVisibleShotSprite(uint32_t shotEntity,
     }
     std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() -
             timerComp->m_clockB;
-    uint32_t spriteIndex = static_cast<uint32_t>(shotComp->m_spritePhaseShot);
     if(elapsed_seconds.count() > 0.12)
     {
-        if(shotComp->m_spritePhaseShot != ShotPhase_e::SHOT_DESTRUCT_C)
+        if(shotComp->m_spriteShotNum != memSpriteComp->m_vectSpriteData.size() - 1)
         {
-            ++spriteIndex;
+            ++shotComp->m_spriteShotNum;
             timerComp->m_clockB = std::chrono::system_clock::now();
         }
         else
         {
             genComp->m_active = false;
             shotComp->m_destructPhase = false;
-            shotComp->m_spritePhaseShot = ShotPhase_e::NORMAL;
-            spriteComp->m_spriteData = memSpriteComp->
-                    m_vectSpriteData[static_cast<uint32_t>(ShotPhase_e::NORMAL)];
-            return;
+            shotComp->m_spriteShotNum = 0;
         }
     }
-    shotComp->m_spritePhaseShot = static_cast<ShotPhase_e>(spriteIndex);
-    assert(static_cast<uint32_t>(ShotPhase_e::TOTAL) ==
-           memSpriteComp->m_vectSpriteData.size());
-    spriteComp->m_spriteData = memSpriteComp->m_vectSpriteData[spriteIndex];
+    spriteComp->m_spriteData = memSpriteComp->m_vectSpriteData[shotComp->m_spriteShotNum];
 }
 
 //===========================================================================
