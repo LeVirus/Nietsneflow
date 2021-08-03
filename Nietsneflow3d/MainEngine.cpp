@@ -601,7 +601,7 @@ void MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
             createAmmosEntities(enemyComp->m_stdAmmo, CollisionTag_e::BULLET_ENEMY_CT);
             createAmmosEntities(enemyComp->m_visibleAmmo, CollisionTag_e::BULLET_ENEMY_CT, true);
             loadEnemySprites(levelManager.getPictureData().getSpriteData(),
-                             enemiesData, numEntity, enemyComp);
+                             it->second, numEntity, enemyComp);
             MoveableComponent *moveComp = m_ecsManager.getComponentManager().
                     searchComponentByType<MoveableComponent>(numEntity,
                                                               Components_e::MOVEABLE_COMPONENT);
@@ -675,64 +675,60 @@ void MainEngine::createShotImpactEntities(const std::vector<SpriteData> &vectSpr
 
 //===================================================================
 void MainEngine::loadEnemySprites(const std::vector<SpriteData> &vectSprite,
-                                  const std::map<std::string, EnemyData> &enemiesData, uint32_t numEntity,
+                                  const EnemyData &enemiesData, uint32_t numEntity,
                                   EnemyConfComponent *enemyComp)
 {
     MemSpriteDataComponent *memSpriteComp = m_ecsManager.getComponentManager().
             searchComponentByType<MemSpriteDataComponent>(numEntity,
                                                           Components_e::MEM_SPRITE_DATA_COMPONENT);
     assert(memSpriteComp);
-    std::map<std::string, EnemyData>::const_iterator it = enemiesData.begin();
-    for(; it != enemiesData.end(); ++it)
+    insertEnemySpriteFromType(vectSprite, enemyComp->m_mapSpriteAssociate,
+                              memSpriteComp->m_vectSpriteData,
+                              enemiesData.m_staticFrontSprites,
+                              EnemySpriteType_e::STATIC_FRONT);
+    insertEnemySpriteFromType(vectSprite, enemyComp->m_mapSpriteAssociate,
+                              memSpriteComp->m_vectSpriteData,
+                              enemiesData.m_staticFrontLeftSprites,
+                              EnemySpriteType_e::STATIC_FRONT_LEFT);
+    insertEnemySpriteFromType(vectSprite, enemyComp->m_mapSpriteAssociate,
+                              memSpriteComp->m_vectSpriteData,
+                              enemiesData.m_staticFrontRightSprites,
+                              EnemySpriteType_e::STATIC_FRONT_RIGHT);
+    insertEnemySpriteFromType(vectSprite, enemyComp->m_mapSpriteAssociate,
+                              memSpriteComp->m_vectSpriteData,
+                              enemiesData.m_staticBackSprites,
+                              EnemySpriteType_e::STATIC_BACK);
+    insertEnemySpriteFromType(vectSprite, enemyComp->m_mapSpriteAssociate,
+                              memSpriteComp->m_vectSpriteData,
+                              enemiesData.m_staticBackLeftSprites,
+                              EnemySpriteType_e::STATIC_BACK_LEFT);
+    insertEnemySpriteFromType(vectSprite, enemyComp->m_mapSpriteAssociate,
+                              memSpriteComp->m_vectSpriteData,
+                              enemiesData.m_staticBackRightSprites,
+                              EnemySpriteType_e::STATIC_BACK_RIGHT);
+    insertEnemySpriteFromType(vectSprite, enemyComp->m_mapSpriteAssociate,
+                              memSpriteComp->m_vectSpriteData,
+                              enemiesData.m_staticLeftSprites,
+                              EnemySpriteType_e::STATIC_LEFT);
+    insertEnemySpriteFromType(vectSprite, enemyComp->m_mapSpriteAssociate,
+                              memSpriteComp->m_vectSpriteData,
+                              enemiesData.m_staticRightSprites,
+                              EnemySpriteType_e::STATIC_RIGHT);
+    insertEnemySpriteFromType(vectSprite, enemyComp->m_mapSpriteAssociate,
+                              memSpriteComp->m_vectSpriteData,
+                              enemiesData.m_attackSprites,
+                              EnemySpriteType_e::ATTACK);
+    insertEnemySpriteFromType(vectSprite, enemyComp->m_mapSpriteAssociate,
+                              memSpriteComp->m_vectSpriteData,
+                              enemiesData.m_dyingSprites,
+                              EnemySpriteType_e::DYING);
+    insertEnemySpriteFromType(vectSprite, enemyComp->m_mapSpriteAssociate,
+                              memSpriteComp->m_vectSpriteData,
+                              enemiesData.m_touched,
+                              EnemySpriteType_e::TOUCHED);
+    if(!enemiesData.m_visibleShotSprites.empty())
     {
-        insertEnemySpriteFromType(vectSprite, enemyComp->m_mapSpriteAssociate,
-                                  memSpriteComp->m_vectSpriteData,
-                                  it->second.m_staticFrontSprites,
-                                  EnemySpriteType_e::STATIC_FRONT);
-        insertEnemySpriteFromType(vectSprite, enemyComp->m_mapSpriteAssociate,
-                                  memSpriteComp->m_vectSpriteData,
-                                  it->second.m_staticFrontLeftSprites,
-                                  EnemySpriteType_e::STATIC_FRONT_LEFT);
-        insertEnemySpriteFromType(vectSprite, enemyComp->m_mapSpriteAssociate,
-                                  memSpriteComp->m_vectSpriteData,
-                                  it->second.m_staticFrontRightSprites,
-                                  EnemySpriteType_e::STATIC_FRONT_RIGHT);
-        insertEnemySpriteFromType(vectSprite, enemyComp->m_mapSpriteAssociate,
-                                  memSpriteComp->m_vectSpriteData,
-                                  it->second.m_staticBackSprites,
-                                  EnemySpriteType_e::STATIC_BACK);
-        insertEnemySpriteFromType(vectSprite, enemyComp->m_mapSpriteAssociate,
-                                  memSpriteComp->m_vectSpriteData,
-                                  it->second.m_staticBackLeftSprites,
-                                  EnemySpriteType_e::STATIC_BACK_LEFT);
-        insertEnemySpriteFromType(vectSprite, enemyComp->m_mapSpriteAssociate,
-                                  memSpriteComp->m_vectSpriteData,
-                                  it->second.m_staticBackRightSprites,
-                                  EnemySpriteType_e::STATIC_BACK_RIGHT);
-        insertEnemySpriteFromType(vectSprite, enemyComp->m_mapSpriteAssociate,
-                                  memSpriteComp->m_vectSpriteData,
-                                  it->second.m_staticLeftSprites,
-                                  EnemySpriteType_e::STATIC_LEFT);
-        insertEnemySpriteFromType(vectSprite, enemyComp->m_mapSpriteAssociate,
-                                  memSpriteComp->m_vectSpriteData,
-                                  it->second.m_staticRightSprites,
-                                  EnemySpriteType_e::STATIC_RIGHT);
-        insertEnemySpriteFromType(vectSprite, enemyComp->m_mapSpriteAssociate,
-                                  memSpriteComp->m_vectSpriteData,
-                                  it->second.m_attackSprites,
-                                  EnemySpriteType_e::ATTACK);
-        insertEnemySpriteFromType(vectSprite, enemyComp->m_mapSpriteAssociate,
-                                  memSpriteComp->m_vectSpriteData,
-                                  it->second.m_dyingSprites,
-                                  EnemySpriteType_e::DYING);
-        insertEnemySpriteFromType(vectSprite, enemyComp->m_mapSpriteAssociate,
-                                  memSpriteComp->m_vectSpriteData,
-                                  it->second.m_touched,
-                                  EnemySpriteType_e::TOUCHED);
-        if(!it->second.m_visibleShotSprites.empty())
-        {
-            loadVisibleShotEnemySprites(vectSprite, enemyComp->m_visibleAmmo, it->second);
-        }
+        loadVisibleShotEnemySprites(vectSprite, enemyComp->m_visibleAmmo, enemiesData);
     }
 }
 

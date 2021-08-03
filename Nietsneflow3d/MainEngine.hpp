@@ -102,7 +102,7 @@ private:
                            CollisionTag_e tag);
     void confStaticComponent(uint32_t entityNum, const pairFloat_t &elementSize, LevelStaticElementType_e elementType);
     void loadEnemySprites(const std::vector<SpriteData> &vectSprite,
-                          const std::map<std::string, EnemyData> &enemiesData, uint32_t numEntity, EnemyConfComponent *enemyComp);
+                          const EnemyData &enemiesData, uint32_t numEntity, EnemyConfComponent *enemyComp);
     void loadVisibleShotEnemySprites(const std::vector<SpriteData> &vectSprite,
                                      const AmmoContainer_t &visibleAmmo,
                                      const EnemyData &enemyData);
