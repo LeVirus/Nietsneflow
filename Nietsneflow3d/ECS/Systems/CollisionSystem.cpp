@@ -129,7 +129,7 @@ void CollisionSystem::treatEnemyShooted(uint32_t enemyEntityNum, uint32_t damage
     //if enemy dead
     if(!enemyConfCompB->takeDamage(damage))
     {
-        enemyConfCompB->m_behaviourMode = EnemyBehaviourMode_e::DEAD;
+        enemyConfCompB->m_behaviourMode = EnemyBehaviourMode_e::DYING;
         enemyConfCompB->m_touched = false;
         rmCollisionMaskEntity(enemyEntityNum);
     }

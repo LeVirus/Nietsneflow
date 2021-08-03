@@ -20,6 +20,7 @@ enum class EnemyBehaviourMode_e
 {
     PASSIVE,
     ATTACK,
+    DYING,
     DEAD
 };
 
@@ -61,7 +62,7 @@ struct EnemyConfComponent : public ecs::Component
     uint32_t m_currentSprite;
     EnemyBehaviourMode_e m_behaviourMode = EnemyBehaviourMode_e::PASSIVE;
     EnemyAttackPhase_e m_attackPhase;
-    float m_dyingInterval = 0.1f, m_attackInterval = 0.15f;
+    float m_dyingInterval = 0.5f, m_attackInterval = 0.15f;
     virtual ~EnemyConfComponent() = default;
 };
 
