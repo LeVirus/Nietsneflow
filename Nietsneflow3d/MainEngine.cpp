@@ -726,7 +726,8 @@ void MainEngine::loadEnemySprites(const std::vector<SpriteData> &vectSprite,
                               memSpriteComp->m_vectSpriteData,
                               enemiesData.m_touched,
                               EnemySpriteType_e::TOUCHED);
-    if(!enemiesData.m_visibleShotSprites.empty())
+    enemyComp->m_visibleShot = !(enemiesData.m_visibleShotSprites.empty());
+    if(enemyComp->m_visibleShot)
     {
         loadVisibleShotEnemySprites(vectSprite, enemyComp->m_visibleAmmo, enemiesData);
     }

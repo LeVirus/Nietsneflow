@@ -24,7 +24,7 @@ private:
     void updateEnemyDirection(EnemyConfComponent *enemyConfComp, MoveableComponent *moveComp,
                               MapCoordComponent *enemyMapComp);
     void enemyShoot(EnemyConfComponent *enemyConfComp, MoveableComponent *moveComp,
-                    MapCoordComponent *enemyMapComp, bool visibleShot);
+                    MapCoordComponent *enemyMapComp);
     void treatVisibleShot(const AmmoContainer_t &stdAmmo);
 private:
     uint32_t m_playerEntity;

@@ -153,10 +153,10 @@ void IASystem::updateEnemyDirection(EnemyConfComponent *enemyConfComp, MoveableC
 
 //===================================================================
 void IASystem::enemyShoot(EnemyConfComponent *enemyConfComp, MoveableComponent *moveComp,
-                          MapCoordComponent *enemyMapComp, bool visibleShot)
+                          MapCoordComponent *enemyMapComp)
 {
     GeneralCollisionComponent *genComp;
-    if(visibleShot)
+    if(enemyConfComp->m_visibleShot)
     {
         confVisibleShoot(enemyConfComp->m_visibleAmmo, enemyMapComp->m_absoluteMapPositionPX,
                          moveComp->m_degreeOrientation);
@@ -207,7 +207,7 @@ void IASystem::treatEnemyBehaviourAttack(uint32_t enemyEntity, MapCoordComponent
         updateEnemyDirection(enemyConfComp, moveComp, enemyMapComp);
         if(enemyConfComp->m_attackPhase == EnemyAttackPhase_e::SHOOT)
         {
-            enemyShoot(enemyConfComp, moveComp, enemyMapComp, true);
+            enemyShoot(enemyConfComp, moveComp, enemyMapComp);
         }
         if(!checkEnemyTriggerAttackMode(radiantAnglePlayerDirection, distancePlayer, enemyMapComp))
         {
