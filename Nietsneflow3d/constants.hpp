@@ -236,15 +236,6 @@ enum class LevelCaseType_e
     EMPTY_LC
 };
 
-enum class ShotPhase_e
-{
-    NORMAL,
-    SHOT_DESTRUCT_A,
-    SHOT_DESTRUCT_B,
-    SHOT_DESTRUCT_C,
-    TOTAL
-};
-
 inline const float RAYCAST_VERTICAL_SIZE = 1.0f;
 inline const float STD_FONT_SIZE = 0.06f;
 inline const float MENU_FONT_SIZE = 0.15f;

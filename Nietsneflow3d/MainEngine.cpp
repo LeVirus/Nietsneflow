@@ -1226,7 +1226,6 @@ void MainEngine::loadPlayerVisibleShotsSprite(const std::vector<SpriteData> &vec
                                                               Components_e::SPRITE_TEXTURE_COMPONENT);
         assert(memComp);
         assert(spriteComp);
-        assert(vectSprite.size() == static_cast<uint32_t>(ShotPhase_e::TOTAL));
         for(uint32_t l = 0; l < vectSprite.size(); ++l)
         {
             memComp->m_vectSpriteData.emplace_back(&vectSpriteData[vectSprite[l]]);
