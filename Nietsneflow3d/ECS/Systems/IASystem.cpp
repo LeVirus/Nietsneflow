@@ -56,17 +56,17 @@ void IASystem::execSystem()
                                      enemyMapComp->m_absoluteMapPositionPX);
         float radiantAnglePlayerDirection = getTrigoAngle(enemyMapComp->m_absoluteMapPositionPX,
                                                           m_playerMapComp->m_absoluteMapPositionPX, false);
-//        if(enemyConfComp->m_behaviourMode != EnemyBehaviourMode_e::ATTACK &&
-//                checkEnemyTriggerAttackMode(radiantAnglePlayerDirection,
-//                                            distancePlayer, enemyMapComp))
-//        {
-//            timerComp = stairwayToComponentManager().searchComponentByType<TimerComponent>(
-//                        mVectNumEntity[i], Components_e::TIMER_COMPONENT);
-//            assert(timerComp);
-//            timerComp->m_clockB = std::chrono::system_clock::now();
-//            enemyConfComp->m_behaviourMode = EnemyBehaviourMode_e::ATTACK;
-//            enemyConfComp->m_countPlayerInvisibility = 0;
-//        }
+        if(enemyConfComp->m_behaviourMode != EnemyBehaviourMode_e::ATTACK &&
+                checkEnemyTriggerAttackMode(radiantAnglePlayerDirection,
+                                            distancePlayer, enemyMapComp))
+        {
+            timerComp = stairwayToComponentManager().searchComponentByType<TimerComponent>(
+                        mVectNumEntity[i], Components_e::TIMER_COMPONENT);
+            assert(timerComp);
+            timerComp->m_clockB = std::chrono::system_clock::now();
+            enemyConfComp->m_behaviourMode = EnemyBehaviourMode_e::ATTACK;
+            enemyConfComp->m_countPlayerInvisibility = 0;
+        }
         if(enemyConfComp->m_behaviourMode == EnemyBehaviourMode_e::ATTACK)
         {
             treatEnemyBehaviourAttack(mVectNumEntity[i], enemyMapComp, radiantAnglePlayerDirection,
