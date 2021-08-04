@@ -6,6 +6,7 @@
 #include <ECS/Components/FPSVisibleStaticElementComponent.hpp>
 #include <ECS/Components/MoveableComponent.hpp>
 #include <ECS/Components/InputComponent.hpp>
+#include <ECS/Components/WeaponComponent.hpp>
 #include <ECS/Components/GeneralCollisionComponent.hpp>
 #include <ECS/Components/CircleCollisionComponent.hpp>
 #include <ECS/Components/SegmentCollisionComponent.hpp>
@@ -262,6 +263,12 @@ void ECSManager::syncComponentsFromEntities(uint32_t numEntity,
         {
             m_componentManager->instanciateExternComponent(numEntity,
                                                            std::make_unique<ImpactShotComponent>());
+        }
+            break;
+        case Components_e::WEAPON_COMPONENT:
+        {
+            m_componentManager->instanciateExternComponent(numEntity,
+                                                           std::make_unique<WeaponComponent>());
         }
             break;
         case Components_e::TOTAL_COMPONENTS:

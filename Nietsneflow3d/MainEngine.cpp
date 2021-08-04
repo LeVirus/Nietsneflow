@@ -19,6 +19,7 @@
 #include <ECS/Components/TimerComponent.hpp>
 #include <ECS/Components/EnemyConfComponent.hpp>
 #include <ECS/Components/ShotConfComponent.hpp>
+#include <ECS/Components/WeaponComponent.hpp>
 #include <ECS/Systems/ColorDisplaySystem.hpp>
 #include <ECS/Systems/MapDisplaySystem.hpp>
 #include <ECS/Systems/CollisionSystem.hpp>
@@ -436,25 +437,43 @@ uint32_t MainEngine::loadWeaponsEntity(const LevelManager &levelManager)
     MemPositionsVertexComponents *memPosVertex = m_ecsManager.getComponentManager().
             searchComponentByType<MemPositionsVertexComponents>(weaponEntity,
                                                                 Components_e::MEM_POSITIONS_VERTEX_COMPONENT);
+    WeaponComponent *weaponComp = m_ecsManager.getComponentManager().
+            searchComponentByType<WeaponComponent>(weaponEntity,
+                                                   Components_e::WEAPON_COMPONENT);
     assert(memSprite);
+    assert(weaponComp);
     assert(memPosVertex);
-    memSprite->m_vectSpriteData.reserve(static_cast<uint32_t>(WeaponsSpriteType_e::TOTAL_SPRITE));
-    float posUp, posDown = -1.0f, posLeft, posRight, diffLateral;
+
+    uint32_t totalSize = 0;
     for(uint32_t i = 0; i < vectWeapons.size(); ++i)
     {
-        memSprite->m_vectSpriteData.emplace_back(&vectSprite[vectWeapons[i].first]);
-        posUp = -1.0f + vectWeapons[i].second.second;
-        diffLateral = vectWeapons[i].second.first / 2.0f;
-        posLeft = -diffLateral;
-        posRight = diffLateral;
-        memPosVertex->m_vectSpriteData.emplace_back(std::array<pairFloat_t, 4>{
-                                                        {
-                                                            {posLeft, posUp},
-                                                            {posRight, posUp},
-                                                            {posRight, posDown},
-                                                            {posLeft, posDown}
-                                                        }
-                                                    });
+        totalSize += vectWeapons[i].size();
+    }
+    memSprite->m_vectSpriteData.reserve(totalSize);
+    float posUp, posDown = -1.0f, posLeft, posRight, diffLateral;
+    memSprite->m_vectSpriteData.reserve(vectWeapons.size());
+    for(uint32_t i = 0; i < vectWeapons.size(); ++i)
+    {
+        weaponComp->m_memPosSprite.emplace_back(
+        pairUI_t{memSprite->m_vectSpriteData.size(),
+         memSprite->m_vectSpriteData.size() + vectWeapons[i].size() - 1});
+        for(uint32_t j = 0; j < vectWeapons[i].size(); ++j)
+        {
+            memSprite->m_vectSpriteData.emplace_back(
+                        &vectSprite[vectWeapons[i][j].m_numSprite]);
+            posUp = -1.0f + vectWeapons[i][j].m_GLSize.second;
+            diffLateral = vectWeapons[i][j].m_GLSize.first / 2.0f;
+            posLeft = -diffLateral;
+            posRight = diffLateral;
+            memPosVertex->m_vectSpriteData.emplace_back(std::array<pairFloat_t, 4>{
+                                                            {
+                                                                {posLeft, posUp},
+                                                                {posRight, posUp},
+                                                                {posRight, posDown},
+                                                                {posLeft, posDown}
+                                                            }
+                                                        });
+        }
     }
     return weaponEntity;
 }
@@ -821,6 +840,7 @@ uint32_t MainEngine::loadWeaponEntity()
     bitsetComponents[Components_e::MEM_SPRITE_DATA_COMPONENT] = true;
     bitsetComponents[Components_e::MEM_POSITIONS_VERTEX_COMPONENT] = true;
     bitsetComponents[Components_e::TIMER_COMPONENT] = true;
+    bitsetComponents[Components_e::WEAPON_COMPONENT] = true;
     return m_ecsManager.addEntity(bitsetComponents);
 }
 
@@ -1101,8 +1121,8 @@ void MainEngine::confPlayerEntity(const std::vector<SpriteData> &vectSpriteData,
     tagColl->m_tag = CollisionTag_e::PLAYER_CT;
     tagColl->m_shape = CollisionShape_e::CIRCLE_C;
     m_playerConf->m_weaponEntity = numWeaponEntity;
-    m_playerConf->m_currentWeapon = WeaponsType_e::GUN;
-    m_playerConf->m_previousWeapon = WeaponsType_e::GUN;
+    m_playerConf->m_currentWeapon = 1;
+    m_playerConf->m_previousWeapon = 1;
     //set standard weapon sprite
     StaticDisplaySystem *staticDisplay = m_ecsManager.getSystemManager().
             searchSystemByType<StaticDisplaySystem>(static_cast<uint32_t>(Systems_e::STATIC_DISPLAY_SYSTEM));

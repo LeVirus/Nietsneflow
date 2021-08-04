@@ -34,7 +34,7 @@ struct PlayerConfComponent : public ecs::Component
     m_hitAxeEntity, m_lifeWriteEntity, m_life = 100;
     AmmoContainer_t m_shootEntities, m_visibleShootEntities;
     std::array<uint32_t, SEGMENT_SHOT_NUMBER> m_shotImpact;
-    WeaponsType_e m_currentWeapon, m_previousWeapon;
+    uint32_t m_currentWeapon, m_previousWeapon;
     std::array<uint32_t, static_cast<uint32_t>(WeaponsType_e::TOTAL)> m_ammunationsCount = {1, 20, 0, 0};
     std::array<bool, static_cast<uint32_t>(WeaponsType_e::TOTAL)> m_weapons = {true, true, false, false};
     CurrentMenuCursorPos_e m_currentCursorPos = static_cast<CurrentMenuCursorPos_e>(0);

@@ -39,6 +39,7 @@ HEADERS += \
     ECS/Components/ShotConfComponent.hpp \
     ECS/Components/TimerComponent.hpp \
     ECS/Components/VisionComponent.hpp \
+    ECS/Components/WeaponComponent.hpp \
     ECS/Components/WriteComponent.hpp \
     ECS/Systems/IASystem.hpp \
     ECS/Systems/VisionSystem.hpp \
