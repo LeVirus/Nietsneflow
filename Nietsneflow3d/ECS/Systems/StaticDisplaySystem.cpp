@@ -12,17 +12,7 @@
 //===================================================================
 StaticDisplaySystem::StaticDisplaySystem()
 {
-    fillWeaponMapEnum();
     bAddComponentToSystem(Components_e::VISION_COMPONENT);
-}
-
-//===================================================================
-void StaticDisplaySystem::fillWeaponMapEnum()
-{
-    m_weaponSpriteAssociated.insert({WeaponsType_e::FIST, WeaponsSpriteType_e::FIST_STATIC});
-    m_weaponSpriteAssociated.insert({WeaponsType_e::GUN, WeaponsSpriteType_e::GUN_STATIC});
-    m_weaponSpriteAssociated.insert({WeaponsType_e::SHOTGUN, WeaponsSpriteType_e::SHOTGUN_STATIC});
-    m_weaponSpriteAssociated.insert({WeaponsType_e::PLASMA_RIFLE, WeaponsSpriteType_e::PLASMA_RIFLE_STATIC});
 }
 
 //===================================================================

@@ -429,8 +429,7 @@ uint32_t MainEngine::loadWeaponsEntity(const LevelManager &levelManager)
 {
     uint32_t weaponEntity = loadWeaponEntity();
     const std::vector<SpriteData> &vectSprite = levelManager.getPictureData().getSpriteData();
-    const std::vector<pairUIPairFloat_t> &vectWeapons = levelManager.
-            getLevel().getWeaponsData();
+    const std::vector<std::vector<SpriteDisplayData>> &vectWeapons = levelManager.getWeaponsData();
     MemSpriteDataComponent *memSprite = m_ecsManager.getComponentManager().
             searchComponentByType<MemSpriteDataComponent>(weaponEntity,
                                                           Components_e::MEM_SPRITE_DATA_COMPONENT);

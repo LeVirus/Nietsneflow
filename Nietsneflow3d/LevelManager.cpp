@@ -422,88 +422,82 @@ uint8_t LevelManager::getSpriteId(const INIReader &reader,
 //===================================================================
 void LevelManager::loadWeaponsDisplayData(const INIReader &reader)
 {
-    std::vector<pairUIPairFloat_t> vectWeaponsDisplayData;
-    std::vector<uint8_t> vectVisibleShotsData, vectShotImpact;
     std::vector<std::string> vectINISections;
-    vectINISections = reader.getSectionNamesContaining("Weapons");
+    vectINISections = reader.getSectionNamesContaining("Weapon");
     assert(!vectINISections.empty());
-    loadWeaponsData(reader, WeaponsType_e::FIST, vectINISections[0], vectWeaponsDisplayData);
-    loadWeaponsData(reader, WeaponsType_e::GUN, vectINISections[0], vectWeaponsDisplayData);
-    loadWeaponsData(reader, WeaponsType_e::SHOTGUN, vectINISections[0], vectWeaponsDisplayData);
-    loadWeaponsData(reader, WeaponsType_e::PLASMA_RIFLE, vectINISections[0], vectWeaponsDisplayData);
-    loadDisplayData(reader, vectINISections[0], "VisibleShot", vectVisibleShotsData);
-    loadDisplayData(reader, vectINISections[0], "VisibleShotDestruct", vectVisibleShotsData);
-    loadDisplayData(reader, vectINISections[0], "ShotImpact", vectShotImpact);
-    m_level.setWeaponsElement(vectWeaponsDisplayData, vectVisibleShotsData, vectShotImpact);
-}
-
-//===================================================================
-void LevelManager::loadDisplayData(const INIReader &reader,
-                                   std::string_view sectionName,
-                                   std::string_view elementName,
-                                   std::vector<uint8_t> &vectVisibleShotsData)
-{
-    std::string sprites = reader.Get(sectionName.data(), elementName.data(), "");
-    std::istringstream iss(sprites);
-    vectStr_t results(std::istream_iterator<std::string>{iss},
-                      std::istream_iterator<std::string>());
-    vectVisibleShotsData.reserve(vectVisibleShotsData.size() + results.size());
-    for(uint32_t i = 0; i < results.size(); ++i)
+    for(uint32_t i = 0; i < vectINISections.size(); ++i)
     {
-        vectVisibleShotsData.emplace_back(*(m_pictureData.getIdentifier(results[i])));
+        loadWeaponData(reader, vectINISections[i], i);
+        loadDisplayData(reader, vectINISections[i], "VisibleShot", i);
+        loadDisplayData(reader, vectINISections[i], "VisibleShotDestruct", i);
+        loadDisplayData(reader, vectINISections[i], "ShotImpact", i);
     }
 }
 
 //===================================================================
-void LevelManager::loadWeaponsData(const INIReader &reader, WeaponsType_e weapon,
-                                   std::string_view sectionName,
-                                   std::vector<pairUIPairFloat_t> &vectWeaponsDisplayData)
+void LevelManager::loadDisplayData(const INIReader &reader, std::string_view sectionName,
+                                   std::string_view subSectionName, uint32_t numIt)
+{
+    std::string sprites = reader.Get(sectionName.data(), subSectionName.data(), "");
+    if(sprites.empty())
+    {
+        return;
+    }
+    m_vectShootDisplayData.insert({numIt, ShootDisplayData()});
+    std::istringstream iss(sprites);
+    vectStr_t vectsprite(std::istream_iterator<std::string>{iss},
+                                std::istream_iterator<std::string>());
+    std::vector<SpriteDisplayData> *vect = nullptr;
+    if(subSectionName == "VisibleShot")
+    {
+        vect = &m_vectShootDisplayData[numIt].m_active;
+    }
+    else if(subSectionName == "VisibleShotDestruct")
+    {
+        vect = &m_vectShootDisplayData[numIt].m_destruct;
+    }
+    else if(subSectionName == "ShotImpact")
+    {
+        m_vectShootDisplayData[numIt].m_impact.reserve(vectsprite.size());
+        for(uint32_t i = 0; i < vectsprite.size(); ++i)
+        {
+            m_vectShootDisplayData[numIt].m_impact.
+                    emplace_back(*(m_pictureData.getIdentifier(vectsprite[i])));
+        }
+        return;
+    }
+    assert(vect);
+    (*vect).reserve(vectsprite.size());
+    for(uint32_t i = 0; i < vectsprite.size(); ++i)
+    {
+        (*vect).emplace_back(*(m_pictureData.getIdentifier(vectsprite[i])));
+    }
+}
+
+//===================================================================
+void LevelManager::loadWeaponData(const INIReader &reader,
+                                  std::string_view sectionName, uint32_t numIt)
 {
     std::string weaponSpriteSection, spriteWeight, spriteHeight;
-    switch (weapon)
-    {
-    case WeaponsType_e::FIST:
-        weaponSpriteSection = "WeaponsFistSprite";
-        spriteWeight = "SpriteFistWeightGame";
-        spriteHeight = "SpriteFistHeightGame";
-        break;
-    case WeaponsType_e::GUN:
-        weaponSpriteSection = "WeaponsGunSprite";
-        spriteWeight = "SpriteGunWeightGame";
-        spriteHeight = "SpriteGunHeightGame";
-        break;
-    case WeaponsType_e::SHOTGUN:
-        weaponSpriteSection = "WeaponsShotgunSprite";
-        spriteWeight = "SpriteShotgunWeightGame";
-        spriteHeight = "SpriteShotgunHeightGame";
-        break;
-    case WeaponsType_e::PLASMA_RIFLE:
-        weaponSpriteSection = "WeaponsPlasmaRifleSprite";
-        spriteWeight = "SpritePlasmaRifleWeightGame";
-        spriteHeight = "SpritePlasmaRifleHeightGame";
-        break;
-    case WeaponsType_e::TOTAL:
-        assert(false);
-        break;
-    }
-    std::string sprites = reader.Get(sectionName.data(), weaponSpriteSection, "");
+
+    std::string sprites = reader.Get(sectionName.data(), "StaticSprite", "");
+    sprites += reader.Get(sectionName.data(), "AttackSprite", "");
     assert(!sprites.empty() && "Wall sprites cannot be loaded.");
     std::istringstream iss(sprites);
-    vectStr_t results(std::istream_iterator<std::string>{iss},
-                      std::istream_iterator<std::string>());
+    vectStr_t vectSprites(std::istream_iterator<std::string>{iss},
+                          std::istream_iterator<std::string>());
     std::string resultWeight = reader.Get(sectionName.data(), spriteWeight, ""),
             resultHeight = reader.Get(sectionName.data(), spriteHeight, "");
     std::vector<float> vectWeight = convertStrToVectFloat(resultWeight),
             vectHeight = convertStrToVectFloat(resultHeight);
     assert(vectHeight.size() == vectWeight.size());
-    assert(results.size() == vectWeight.size());
-    vectWeaponsDisplayData.reserve(results.size());
-    for(uint32_t i = 0; i < results.size(); ++i)
+    assert(vectSprites.size() == vectWeight.size());
+    m_vectWeaponsDisplayData.reserve(vectSprites.size());
+    for(uint32_t i = 0; i < vectSprites.size(); ++i)
     {
-        vectWeaponsDisplayData.emplace_back(pairUIPairFloat_t{
-                                                *(m_pictureData.getIdentifier(results[i])),
-                                                {vectWeight[i], vectHeight[i]}
-                                            });
+        m_vectWeaponsDisplayData[numIt].emplace_back(
+                    SpriteDisplayData{*(m_pictureData.getIdentifier(vectSprites[i])),
+                                      {vectWeight[i], vectHeight[i]}});
     }
 }
 

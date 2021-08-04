@@ -8,7 +8,6 @@
 #include <ECS/Components/ObjectConfComponent.hpp>
 
 using vectPairUI_t = std::vector<pairUI_t>;
-using pairUIPairFloat_t = std::pair<uint8_t, pairFloat_t>;
 
 struct MoveableComponent;
 struct PositionVertexComponent;
@@ -84,10 +83,6 @@ public:
     static std::optional<ElementRaycast> getElementCase(const pairUI_t &tilePosition);
 
     static uint32_t getLevelCaseIndex(const pairUI_t &tilePosition);
-    inline const std::vector<pairUIPairFloat_t> &getWeaponsData()const
-    {
-        return m_weaponsDisplayData;
-    }
 
     inline const pairUI_t &getPlayerDeparture()const
     {
@@ -104,27 +99,9 @@ public:
         return m_playerDepartureDirection;
     }
 
-    inline const std::vector<uint8_t> &getVisibleShotsData()const
-    {
-        return m_vectVisibleShot;
-    }
-
-    inline const std::vector<uint8_t> &getShotImpact()const
-    {
-        return m_vectShotImpact;
-    }
-
     static inline void setLevelSize(const pairFloat_t &pairLevelSize)
     {
         m_size = pairLevelSize;
-    }
-    inline void setWeaponsElement(const std::vector<pairUIPairFloat_t> &vectWeapons,
-                                  const std::vector<uint8_t> &visibleShot,
-                                  const std::vector<uint8_t> &shotImpact)
-    {
-        m_weaponsDisplayData = vectWeapons;
-        m_vectVisibleShot = visibleShot;
-        m_vectShotImpact = shotImpact;
     }
 
     inline static float getRangeView()
@@ -141,9 +118,6 @@ private:
     pairUI_t m_playerDeparture;
     static pairUI_t m_size;
     Direction_e m_playerDepartureDirection;
-    //store the sprite number and the screen display size
-    std::vector<pairUIPairFloat_t> m_weaponsDisplayData;
-    std::vector<uint8_t> m_vectVisibleShot, m_vectShotImpact;
     static std::vector<ElementRaycast> m_levelCaseType;
     static float m_rangeViewPX;
 };

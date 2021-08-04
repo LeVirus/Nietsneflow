@@ -9,6 +9,18 @@ class INIReader;
 
 using setStr = std::set<std::string>;
 
+struct SpriteDisplayData
+{
+    uint8_t m_numSprite;
+    pairFloat_t m_GLSize;
+};
+
+struct ShootDisplayData
+{
+    std::vector<SpriteDisplayData> m_active, m_destruct;
+    std::vector<uint8_t> m_impact;
+};
+
 class LevelManager
 {
 public:
@@ -45,7 +57,19 @@ public:
     {
         return m_pictureData.getSpriteData();
     }
+    inline const std::vector<uint8_t> &getVisibleShotsData()const
+    {
+        return m_vectVisibleShot;
+    }
 
+    inline const std::vector<uint8_t> &getShotImpact()const
+    {
+        return m_vectShotImpact;
+    }
+    inline const std::vector<std::vector<SpriteDisplayData>> &getWeaponsData()const
+    {
+        return m_vectWeaponsDisplayData;
+    }
 private:
     //texture and sprite loading
     void loadTexturePath(const INIReader &reader);
@@ -74,12 +98,9 @@ private:
     void loadSpriteData(const INIReader &reader, const std::string &sectionName,
                         StaticLevelElementData &staticElement);
     void loadDisplayData(const INIReader &reader,
-                         std::string_view sectionName,
-                         std::string_view elementName,
-                         std::vector<uint8_t> &vectVisibleShotsData);
-    void loadWeaponsData(const INIReader &reader, WeaponsType_e weapon,
-                         std::string_view sectionName,
-                         std::vector<pairUIPairFloat_t> &vectWeaponsDisplayData);
+                         std::string_view sectionName, std::string_view subSectionName, uint32_t numIt);
+    void loadWeaponData(const INIReader &reader,
+                         std::string_view sectionName, uint32_t numIt);
     void loadWallData(const INIReader &reader);
     void loadPositionWall(const INIReader &reader);
     void loadDoorData(const INIReader &reader);
@@ -101,6 +122,10 @@ private:
     std::map<std::string, StaticLevelElementData> m_groundElement, m_ceilingElement, m_objectElement;
     std::map<std::string, DoorData> m_doorData;
     std::map<std::string, EnemyData> m_enemyData;
+    //store the sprite number and the screen display size
+    std::vector<std::vector<SpriteDisplayData>> m_vectWeaponsDisplayData;
+    std::map<uint32_t, ShootDisplayData> m_vectShootDisplayData;
+    std::vector<uint8_t> m_vectVisibleShot, m_vectShotImpact;
 };
 
 std::vector<uint32_t> convertStrToVectUI(const std::string &str);

@@ -51,7 +51,6 @@ public:
         return m_weaponSpriteAssociated;
     }
 private:
-    void fillWeaponMapEnum();
     void fillCursorMenuVertex(PlayerConfComponent *playerComp);
     void updateMenuCursorPosition(PlayerConfComponent *playerComp);
     void confWriteVertex(WriteComponent *writeComp, PositionVertexComponent *posComp,
