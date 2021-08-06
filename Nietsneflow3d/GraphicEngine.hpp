@@ -22,7 +22,7 @@ class VisionSystem;
 class StaticDisplaySystem;
 class FontData;
 class ColorDisplaySystem;
-
+struct WeaponComponent;
 using VectSpriteDataRef_t = std::vector<std::reference_wrapper<SpriteData>>;
 
 class GraphicEngine
@@ -36,7 +36,7 @@ public:
     void linkSystems(ColorDisplaySystem *colorSystem, MapDisplaySystem *mapSystem,
                      FirstPersonDisplaySystem *firstPersonSystem, VisionSystem *visionSystem,
                      StaticDisplaySystem *staticDisplaySystem);
-    void updateAmmoCount(WriteComponent *writeComp, PlayerConfComponent *playerComp);
+    void updateAmmoCount(WriteComponent *writeComp, WeaponComponent *weaponComp);
     void updatePlayerLife(WriteComponent *writeComp, PlayerConfComponent *playerComp);
     void fillMenuWrite(WriteComponent *writeComp, const std::string &menuEntry);
     inline MapDisplaySystem &getMapSystem()

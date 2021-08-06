@@ -8,6 +8,7 @@ struct PlayerConfComponent;
 struct MoveableComponent;
 struct MapCoordComponent;
 class MainEngine;
+struct WeaponComponent;
 
 class InputSystem : public ecs::System
 {
@@ -40,5 +41,5 @@ private:
     bool m_modeTransition = false;
 };
 
-void changePlayerWeapon(PlayerConfComponent &playerComp, bool next);
-void setPlayerWeapon(PlayerConfComponent &playerComp, uint32_t weapon);
+void changePlayerWeapon(WeaponComponent &weaponComp, bool next);
+void setPlayerWeapon(WeaponComponent &weaponComp, uint32_t weapon);

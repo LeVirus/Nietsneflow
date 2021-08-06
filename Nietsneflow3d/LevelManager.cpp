@@ -425,7 +425,7 @@ void LevelManager::loadWeaponsDisplayData(const INIReader &reader)
     std::vector<std::string> vectINISections;
     vectINISections = reader.getSectionNamesContaining("Weapon");
     assert(!vectINISections.empty());
-    m_maxAmmoWeapons.reserve(vectINISections.size());
+    m_vectWeaponsINIData.reserve(vectINISections.size());
     for(uint32_t i = 0; i < vectINISections.size(); ++i)
     {
         loadWeaponData(reader, vectINISections[i], i);
@@ -444,25 +444,27 @@ void LevelManager::loadDisplayData(const INIReader &reader, std::string_view sec
     {
         return;
     }
-    m_vectShootDisplayData.insert({numIt, ShootDisplayData()});
+    m_mapShootDisplayData.insert({numIt, ShootDisplayData()});
     std::istringstream iss(sprites);
     vectStr_t vectsprite(std::istream_iterator<std::string>{iss},
                                 std::istream_iterator<std::string>());
-    std::vector<SpriteDisplayData> *vect = nullptr;
+    std::vector<WeaponSpriteData> *vect = nullptr;
+    pairFloat_t GLSize{0.5f, 0.5f};
     if(subSectionName == "VisibleShot")
     {
-        vect = &m_vectShootDisplayData[numIt].m_active;
+        vect = &m_mapShootDisplayData[numIt].m_active;
     }
     else if(subSectionName == "VisibleShotDestruct")
     {
-        vect = &m_vectShootDisplayData[numIt].m_destruct;
+        vect = &m_mapShootDisplayData[numIt].m_destruct;
     }
     else if(subSectionName == "ShotImpact")
     {
-        m_vectShootDisplayData[numIt].m_impact.reserve(vectsprite.size());
+        GLSize = {0.2f, 0.2f};
+        m_mapShootDisplayData[numIt].m_impact.reserve(vectsprite.size());
         for(uint32_t i = 0; i < vectsprite.size(); ++i)
         {
-            m_vectShootDisplayData[numIt].m_impact.
+            m_mapShootDisplayData[numIt].m_impact.
                     emplace_back(*(m_pictureData.getIdentifier(vectsprite[i])));
         }
         return;
@@ -471,7 +473,7 @@ void LevelManager::loadDisplayData(const INIReader &reader, std::string_view sec
     (*vect).reserve(vectsprite.size());
     for(uint32_t i = 0; i < vectsprite.size(); ++i)
     {
-        (*vect).emplace_back(*(m_pictureData.getIdentifier(vectsprite[i])));
+        (*vect).emplace_back(WeaponSpriteData{(*(m_pictureData.getIdentifier(vectsprite[i]))), GLSize});
     }
 }
 
@@ -480,7 +482,13 @@ void LevelManager::loadWeaponData(const INIReader &reader,
                                   std::string_view sectionName, uint32_t numIt)
 {
     std::string weaponSpriteSection, spriteWeight, spriteHeight;
-    float maxAmmo = std::stof(reader.Get(sectionName.data(), "StaticSprite", ""));
+    m_vectWeaponsINIData[numIt].m_maxAmmo =
+            std::stoul(reader.Get(sectionName.data(), "MaxAmmo", "1"));
+    assert(m_vectWeaponsINIData[numIt].m_maxAmmo != 1);
+    m_vectWeaponsINIData[numIt].m_simultaneousShots =
+            std::stoul(reader.Get(sectionName.data(), "NumberOfShots", "1"));
+    m_vectWeaponsINIData[numIt].m_attackType = static_cast<AttackType_e>(
+                std::stoul(reader.Get(sectionName.data(), "AttackType", "1")));
     std::string sprites = reader.Get(sectionName.data(), "StaticSprite", "");
     sprites += reader.Get(sectionName.data(), "AttackSprite", "");
     assert(!sprites.empty() && "Wall sprites cannot be loaded.");
@@ -493,12 +501,11 @@ void LevelManager::loadWeaponData(const INIReader &reader,
             vectHeight = convertStrToVectFloat(resultHeight);
     assert(vectHeight.size() == vectWeight.size());
     assert(vectSprites.size() == vectWeight.size());
-    m_vectWeaponsDisplayData.reserve(vectSprites.size());
-    m_maxAmmoWeapons.emplace_back(maxAmmo);
+    m_vectWeaponsINIData[numIt].m_spritesData.reserve(vectSprites.size());
     for(uint32_t i = 0; i < vectSprites.size(); ++i)
     {
-        m_vectWeaponsDisplayData[numIt].emplace_back(
-                    SpriteDisplayData{*(m_pictureData.getIdentifier(vectSprites[i])),
+        m_vectWeaponsINIData[numIt].m_spritesData.emplace_back(
+                    WeaponSpriteData{*(m_pictureData.getIdentifier(vectSprites[i])),
                                       {vectWeight[i], vectHeight[i]}});
     }
 }

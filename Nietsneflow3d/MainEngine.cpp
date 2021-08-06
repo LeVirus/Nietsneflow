@@ -84,10 +84,15 @@ bool MainEngine::mainLoop(bool &memGameOver)
 void MainEngine::savePlayerGear()
 {
     assert(m_playerConf);
-    m_memPlayerConf.m_ammunationsCount = m_playerConf->m_ammunationsCount;
-    m_memPlayerConf.m_currentWeapon = m_playerConf->m_currentWeapon;
-    m_memPlayerConf.m_previousWeapon = m_playerConf->m_previousWeapon;
-    m_memPlayerConf.m_weapons = m_playerConf->m_weapons;
+    m_memPlayerConf.m_ammunationsCount.resize(m_weaponComp->m_weaponsData.size());
+    for(uint32_t i = 0; i < m_memPlayerConf.m_ammunationsCount.size(); ++i)
+    {
+        m_memPlayerConf.m_ammunationsCount[i] =
+                m_weaponComp->m_weaponsData[i].m_ammunationsCount;
+        m_memPlayerConf.m_weapons[i] = m_weaponComp->m_weaponsData[i].m_posses;
+    }
+    m_memPlayerConf.m_currentWeapon = m_weaponComp->m_currentWeapon;
+    m_memPlayerConf.m_previousWeapon = m_weaponComp->m_previousWeapon;
     m_memPlayerConf.m_life = m_playerConf->m_life;
     m_playerMem = true;
 }
@@ -96,10 +101,16 @@ void MainEngine::savePlayerGear()
 void MainEngine::loadPlayerGear()
 {
     assert(m_playerConf);
-    m_playerConf->m_ammunationsCount = m_memPlayerConf.m_ammunationsCount;
-    m_playerConf->m_currentWeapon = m_memPlayerConf.m_currentWeapon;
-    m_playerConf->m_previousWeapon = m_memPlayerConf.m_previousWeapon;
-    m_playerConf->m_weapons = m_memPlayerConf.m_weapons;
+    assert(m_memPlayerConf.m_ammunationsCount.size() ==
+           m_weaponComp->m_weaponsData.size());
+    for(uint32_t i = 0; i < m_memPlayerConf.m_ammunationsCount.size(); ++i)
+    {
+        m_weaponComp->m_weaponsData[i].m_ammunationsCount =
+                m_memPlayerConf.m_ammunationsCount[i];
+        m_weaponComp->m_weaponsData[i].m_posses = m_memPlayerConf.m_weapons[i];
+    }
+    m_weaponComp->m_currentWeapon = m_memPlayerConf.m_currentWeapon;
+    m_weaponComp->m_previousWeapon = m_memPlayerConf.m_previousWeapon;
     m_playerConf->m_life = m_memPlayerConf.m_life;
     m_playerMem = false;
     StaticDisplaySystem *staticDisplay = m_ecsManager.getSystemManager().
@@ -108,7 +119,7 @@ void MainEngine::loadPlayerGear()
     //update FPS weapon sprite
     //weapon type weapon sprite
     std::map<uint32_t, uint32_t>::const_iterator it =
-            staticDisplay->getWeaponsSpriteAssociated().find(m_playerConf->m_currentWeapon);
+            staticDisplay->getWeaponsSpriteAssociated().find(m_weaponComp->m_currentWeapon);
     assert(it != staticDisplay->getWeaponsSpriteAssociated().end());
     staticDisplay->setWeaponSprite(m_playerConf->m_weaponEntity, it->second);
 }
@@ -145,14 +156,14 @@ void MainEngine::playerAttack(uint32_t playerEntity, PlayerConfComponent *player
                               float degreeAngle)
 {
 
-    if(playerComp->m_currentWeapon == WeaponsType_e::TOTAL)
-    {
-        return;
-    }
-    if(playerComp->m_currentWeapon == WeaponsType_e::FIST)
+    assert(m_weaponComp->m_currentWeapon < m_weaponComp->m_weaponsData.size());
+    const WeaponData &currentWeapon = m_weaponComp->m_weaponsData[
+            m_weaponComp->m_currentWeapon];
+    AttackType_e attackType = currentWeapon.m_attackType;
+    if(attackType == AttackType_e::MELEE)
     {
         GeneralCollisionComponent *actionGenColl = m_ecsManager.getComponentManager().
-                searchComponentByType<GeneralCollisionComponent>(playerComp->m_hitAxeEntity,
+                searchComponentByType<GeneralCollisionComponent>(playerComp->m_hitMeleeEntity,
                 Components_e::GENERAL_COLLISION_COMPONENT);
         MapCoordComponent *playerMapComp = m_ecsManager.getComponentManager().
                 searchComponentByType<MapCoordComponent>(playerEntity,
@@ -161,7 +172,7 @@ void MainEngine::playerAttack(uint32_t playerEntity, PlayerConfComponent *player
                 searchComponentByType<MoveableComponent>(playerEntity,
                 Components_e::MOVEABLE_COMPONENT);
         MapCoordComponent *actionMapComp = m_ecsManager.getComponentManager().
-                searchComponentByType<MapCoordComponent>(playerComp->m_hitAxeEntity,
+                searchComponentByType<MapCoordComponent>(playerComp->m_hitMeleeEntity,
                 Components_e::MAP_COORD_COMPONENT);
         assert(playerMoveComp);
         assert(playerMapComp);
@@ -170,24 +181,19 @@ void MainEngine::playerAttack(uint32_t playerEntity, PlayerConfComponent *player
         confActionShape(actionMapComp, playerMapComp, playerMoveComp, actionGenColl);
         return;
     }
-    else if(playerComp->m_currentWeapon == WeaponsType_e::GUN)
+    else if(attackType == AttackType_e::BULLETS)
     {
-        confPlayerBullet(playerComp, point, degreeAngle, 0);
+        for(uint32_t i = 0; i < currentWeapon.m_simultaneousShots; ++i)
+        {
+            confPlayerBullet(playerComp, point, degreeAngle, i);
+        }
     }
-    else if(playerComp->m_currentWeapon == WeaponsType_e::SHOTGUN)
-    {
-        confPlayerBullet(playerComp, point, degreeAngle, 0);
-        confPlayerBullet(playerComp, point, degreeAngle, 1);
-        confPlayerBullet(playerComp, point, degreeAngle, 2);
-        confPlayerBullet(playerComp, point, degreeAngle, 3);
-    }
-    else if(playerComp->m_currentWeapon == WeaponsType_e::PLASMA_RIFLE)
+    else if(attackType == AttackType_e::VISIBLE_SHOTS)
     {
         confPlayerVisibleShoot(playerComp->m_visibleShootEntities, point, degreeAngle);
     }
-    uint32_t currentWeapon = static_cast<uint32_t>(playerComp->m_currentWeapon);
-    assert(playerComp->m_ammunationsCount[currentWeapon] > 0);
-    --playerComp->m_ammunationsCount[currentWeapon];
+    assert(m_weaponComp->m_weaponsData[m_weaponComp->m_currentWeapon].m_ammunationsCount > 0);
+    --m_weaponComp->m_weaponsData[m_weaponComp->m_currentWeapon].m_ammunationsCount;
 }
 
 //===================================================================
@@ -419,8 +425,7 @@ void MainEngine::loadLevelEntities(const LevelManager &levelManager)
     loadDamageEntity();
     loadTransitionEntity();
     loadStaticElementEntities(levelManager);
-    loadPlayerEntity(levelManager.getPictureData().getSpriteData(),
-                     levelManager.getLevel(), loadWeaponsEntity(levelManager));
+    loadPlayerEntity(levelManager, loadWeaponsEntity(levelManager));
     Level::initLevelElementArray();
     loadWallEntities(levelManager);
     loadDoorEntities(levelManager);
@@ -432,7 +437,7 @@ uint32_t MainEngine::loadWeaponsEntity(const LevelManager &levelManager)
 {
     uint32_t weaponEntity = loadWeaponEntity();
     const std::vector<SpriteData> &vectSprite = levelManager.getPictureData().getSpriteData();
-    const std::vector<std::vector<SpriteDisplayData>> &vectWeapons = levelManager.getWeaponsData();
+    const std::vector<WeaponINIData> &vectWeapons = levelManager.getWeaponsData();
     MemSpriteDataComponent *memSprite = m_ecsManager.getComponentManager().
             searchComponentByType<MemSpriteDataComponent>(weaponEntity,
                                                           Components_e::MEM_SPRITE_DATA_COMPONENT);
@@ -442,29 +447,43 @@ uint32_t MainEngine::loadWeaponsEntity(const LevelManager &levelManager)
     WeaponComponent *weaponComp = m_ecsManager.getComponentManager().
             searchComponentByType<WeaponComponent>(weaponEntity,
                                                    Components_e::WEAPON_COMPONENT);
-    assert(memSprite);
     assert(weaponComp);
+    assert(memSprite);
     assert(memPosVertex);
-    weaponComp->m_maxAmmoWeapons = levelManager.getVectMaxAmmoWeapons();
+
+
+    weaponComp->m_weaponsData.resize(vectWeapons.size());
+    for(uint32_t i = 0; weaponComp->m_weaponsData.size(); ++i)
+    {
+        weaponComp->m_weaponsData[i].m_ammunationsCount = 0;
+        weaponComp->m_weaponsData[i].m_posses = false;
+    }
+    weaponComp->m_weaponsData[0].m_ammunationsCount = 1;
+    weaponComp->m_weaponsData[1].m_ammunationsCount = 20;
+    weaponComp->m_weaponsData[0].m_posses = true;
+    weaponComp->m_weaponsData[1].m_posses = true;
+    weaponComp->m_currentWeapon = 1;
+    weaponComp->m_previousWeapon = 1;
     uint32_t totalSize = 0;
     for(uint32_t i = 0; i < vectWeapons.size(); ++i)
     {
-        totalSize += vectWeapons[i].size();
+        totalSize += vectWeapons[i].m_spritesData.size();
     }
     memSprite->m_vectSpriteData.reserve(totalSize);
     float posUp, posDown = -1.0f, posLeft, posRight, diffLateral;
     memSprite->m_vectSpriteData.reserve(vectWeapons.size());
     for(uint32_t i = 0; i < vectWeapons.size(); ++i)
     {
-        weaponComp->m_memPosSprite.emplace_back(
-        pairUI_t{memSprite->m_vectSpriteData.size(),
-         memSprite->m_vectSpriteData.size() + vectWeapons[i].size() - 1});
-        for(uint32_t j = 0; j < vectWeapons[i].size(); ++j)
+        weaponComp->m_weaponsData[i].m_maxAmmunations = vectWeapons[i].m_maxAmmo;
+        weaponComp->m_weaponsData[i].m_memPosSprite =
+        {memSprite->m_vectSpriteData.size(),
+         memSprite->m_vectSpriteData.size() + vectWeapons[i].m_spritesData.size() - 1};
+        for(uint32_t j = 0; j < vectWeapons[i].m_spritesData.size(); ++j)
         {
             memSprite->m_vectSpriteData.emplace_back(
-                        &vectSprite[vectWeapons[i][j].m_numSprite]);
-            posUp = -1.0f + vectWeapons[i][j].m_GLSize.second;
-            diffLateral = vectWeapons[i][j].m_GLSize.first / 2.0f;
+                        &vectSprite[vectWeapons[i].m_spritesData[j].m_numSprite]);
+            posUp = -1.0f + vectWeapons[i].m_spritesData[j].m_GLSize.second;
+            diffLateral = vectWeapons[i].m_spritesData[j].m_GLSize.first / 2.0f;
             posLeft = -diffLateral;
             posRight = diffLateral;
             memPosVertex->m_vectSpriteData.emplace_back(std::array<pairFloat_t, 4>{
@@ -1030,8 +1049,8 @@ void MainEngine::confStaticComponent(uint32_t entityNum, const pairFloat_t& elem
 }
 
 //===================================================================
-void MainEngine::loadPlayerEntity(const std::vector<SpriteData> &vectSpriteData,
-                                  const Level &level, uint32_t numWeaponEntity)
+void MainEngine::loadPlayerEntity(const LevelManager &levelManager,
+                                  uint32_t numWeaponEntity)
 {
     std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComponents;
     bitsetComponents[Components_e::POSITION_VERTEX_COMPONENT] = true;
@@ -1044,17 +1063,19 @@ void MainEngine::loadPlayerEntity(const std::vector<SpriteData> &vectSpriteData,
     bitsetComponents[Components_e::VISION_COMPONENT] = true;
     bitsetComponents[Components_e::PLAYER_CONF_COMPONENT] = true;
     uint32_t entityNum = m_ecsManager.addEntity(bitsetComponents);
-    confPlayerEntity(vectSpriteData, entityNum, level, numWeaponEntity);
+    confPlayerEntity(levelManager, entityNum, levelManager.getLevel(), numWeaponEntity);
     //notify player entity number
     m_graphicEngine.getMapSystem().confPlayerComp(entityNum);
     m_physicalEngine.memPlayerEntity(entityNum);
 }
 
 //===================================================================
-void MainEngine::confPlayerEntity(const std::vector<SpriteData> &vectSpriteData,
+void MainEngine::confPlayerEntity(const LevelManager &levelManager,
                                   uint32_t entityNum, const Level &level,
                                   uint32_t numWeaponEntity)
 {
+    const std::vector<SpriteData> &vectSpriteData =
+            levelManager.getPictureData().getSpriteData();
     PositionVertexComponent *pos = m_ecsManager.getComponentManager().
             searchComponentByType<PositionVertexComponent>(entityNum,
                                                            Components_e::POSITION_VERTEX_COMPONENT);
@@ -1080,7 +1101,7 @@ void MainEngine::confPlayerEntity(const std::vector<SpriteData> &vectSpriteData,
             searchComponentByType<PlayerConfComponent>(entityNum,
                                                      Components_e::PLAYER_CONF_COMPONENT);
     WeaponComponent *weaponConf = m_ecsManager.getComponentManager().
-            searchComponentByType<WeaponComponent>(entityNum,
+            searchComponentByType<WeaponComponent>(playerConf->m_weaponEntity,
                                                    Components_e::WEAPON_COMPONENT);
     assert(pos);
     assert(map);
@@ -1092,21 +1113,14 @@ void MainEngine::confPlayerEntity(const std::vector<SpriteData> &vectSpriteData,
     assert(playerConf);
     assert(weaponConf);
     m_playerConf = playerConf;
-    m_playerConf->m_ammunationsCount.resize(weaponConf->m_maxAmmoWeapons.size());
-    std::fill(m_playerConf->m_ammunationsCount, 0);
-    m_playerConf->m_ammunationsCount[0] = 1;
-    m_playerConf->m_ammunationsCount[1] = 20;
-    m_playerConf->m_weapons.resize(weaponConf->m_maxAmmoWeapons.size());
-    std::fill(m_playerConf->m_weapons, false);
-    m_playerConf->m_weapons[0] = true;
-    m_playerConf->m_weapons[1] = true;
+    m_weaponComp = weaponConf;
     createAmmosEntities(m_playerConf->m_shootEntities, CollisionTag_e::BULLET_PLAYER_CT, false);
     createAmmosEntities(m_playerConf->m_visibleShootEntities, CollisionTag_e::BULLET_PLAYER_CT, true);
     confShotsEntities(m_playerConf->m_shootEntities, 1);
     confShotsEntities(m_playerConf->m_visibleShootEntities, 1);
-    createShotImpactEntities(vectSpriteData, level.getShotImpact(),
+    createShotImpactEntities(vectSpriteData, levelManager.getShotImpact(),
                              m_playerConf->m_shotImpact, m_playerConf->m_shootEntities);
-    loadPlayerVisibleShotsSprite(vectSpriteData, level.getVisibleShotsData(),
+    loadPlayerVisibleShotsSprite(vectSpriteData, levelManager.getVisibleShotsData(),
                                  m_playerConf->m_visibleShootEntities);
 
     map->m_coord = level.getPlayerDeparture();
@@ -1136,13 +1150,12 @@ void MainEngine::confPlayerEntity(const std::vector<SpriteData> &vectSpriteData,
     tagColl->m_tag = CollisionTag_e::PLAYER_CT;
     tagColl->m_shape = CollisionShape_e::CIRCLE_C;
     m_playerConf->m_weaponEntity = numWeaponEntity;
-    m_playerConf->m_currentWeapon = 1;
-    m_playerConf->m_previousWeapon = 1;
+
     //set standard weapon sprite
     StaticDisplaySystem *staticDisplay = m_ecsManager.getSystemManager().
             searchSystemByType<StaticDisplaySystem>(static_cast<uint32_t>(Systems_e::STATIC_DISPLAY_SYSTEM));
     assert(staticDisplay);
-    staticDisplay->setWeaponSprite(numWeaponEntity, WeaponsSpriteType_e::GUN_STATIC);
+    staticDisplay->setWeaponSprite(numWeaponEntity, 0);
     confWriteEntities();
     confMenuCursorEntity();
     confActionEntity();
@@ -1206,7 +1219,7 @@ void MainEngine::confAxeHitEntity()
     genCollComp->m_tag = CollisionTag_e::HIT_PLAYER_CT;
     circleColl->m_ray = 10.0f;
     shotComp->m_damage = 1;
-    m_playerConf->m_hitAxeEntity = entityNum;
+    m_playerConf->m_hitMeleeEntity = entityNum;
 }
 
 //===================================================================
@@ -1279,7 +1292,7 @@ void MainEngine::confWriteEntities()
     assert(writeConf);
     writeConf->m_upLeftPositionGL = {-0.95f, -0.9f};
     writeConf->m_fontSize = STD_FONT_SIZE;
-    m_graphicEngine.updateAmmoCount(writeConf, m_playerConf);
+    m_graphicEngine.updateAmmoCount(writeConf, m_weaponComp);
     //LIFE
     writeConf = m_ecsManager.getComponentManager().
             searchComponentByType<WriteComponent>(numLifeWrite, Components_e::WRITE_COMPONENT);

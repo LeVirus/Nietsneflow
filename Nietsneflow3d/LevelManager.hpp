@@ -9,15 +9,22 @@ class INIReader;
 
 using setStr = std::set<std::string>;
 
-struct SpriteDisplayData
+struct WeaponSpriteData
 {
     uint8_t m_numSprite;
     pairFloat_t m_GLSize;
 };
 
+struct WeaponINIData
+{
+    std::vector<WeaponSpriteData> m_spritesData;
+    uint32_t m_maxAmmo, m_simultaneousShot, m_simultaneousShots;
+    AttackType_e m_attackType;
+};
+
 struct ShootDisplayData
 {
-    std::vector<SpriteDisplayData> m_active, m_destruct;
+    std::vector<WeaponSpriteData> m_active, m_destruct;
     std::vector<uint8_t> m_impact;
 };
 
@@ -66,13 +73,9 @@ public:
     {
         return m_vectShotImpact;
     }
-    inline const std::vector<std::vector<SpriteDisplayData>> &getWeaponsData()const
+    inline const std::vector<WeaponINIData> &getWeaponsData()const
     {
-        return m_vectWeaponsDisplayData;
-    }
-    inline const std::vector<uint32_t> getVectMaxAmmoWeapons()const
-    {
-        return m_maxAmmoWeapons;
+        return m_vectWeaponsINIData;
     }
 private:
     //texture and sprite loading
@@ -127,9 +130,8 @@ private:
     std::map<std::string, DoorData> m_doorData;
     std::map<std::string, EnemyData> m_enemyData;
     //store the sprite number and the screen display size
-    std::vector<std::vector<SpriteDisplayData>> m_vectWeaponsDisplayData;
-    std::vector<uint32_t> m_maxAmmoWeapons;
-    std::map<uint32_t, ShootDisplayData> m_vectShootDisplayData;
+    std::vector<WeaponINIData> m_vectWeaponsINIData;
+    std::map<uint32_t, ShootDisplayData> m_mapShootDisplayData;
     std::vector<uint8_t> m_vectVisibleShot, m_vectShotImpact;
 };
 

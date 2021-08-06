@@ -11,6 +11,7 @@
 #include <ECS/Systems/StaticDisplaySystem.hpp>
 #include <ECS/Components/PlayerConfComponent.hpp>
 #include <ECS/Components/WriteComponent.hpp>
+#include <ECS/Components/WeaponComponent.hpp>
 
 //===================================================================
 GraphicEngine::GraphicEngine()
@@ -130,10 +131,10 @@ void GraphicEngine::linkSystems(ColorDisplaySystem *colorSystem,
 
 //===================================================================
 void GraphicEngine::updateAmmoCount(WriteComponent *writeComp,
-                                    PlayerConfComponent *playerComp)
+                                    WeaponComponent *weaponComp)
 {
-    writeComp->m_str = STR_PLAYER_AMMO + std::to_string(playerComp->m_ammunationsCount[
-                                                static_cast<uint32_t>(playerComp->m_currentWeapon)]);
+    writeComp->m_str = STR_PLAYER_AMMO + std::to_string(weaponComp->m_weaponsData[
+                                                weaponComp->m_currentWeapon].m_ammunationsCount);
     writeComp->m_fontSpriteData = m_ptrFontData->getWriteData(writeComp->m_str, writeComp->m_numTexture);
 }
 

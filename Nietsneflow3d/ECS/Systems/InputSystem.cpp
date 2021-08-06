@@ -7,6 +7,7 @@
 #include <ECS/Components/PlayerConfComponent.hpp>
 #include <ECS/Components/WriteComponent.hpp>
 #include <ECS/Components/GeneralCollisionComponent.hpp>
+#include <ECS/Components/WeaponComponent.hpp>
 #include "PhysicalEngine.hpp"
 #include <MainEngine.hpp>
 #include <cassert>
@@ -63,6 +64,10 @@ void InputSystem::treatPlayerInput()
                 searchComponentByType<PlayerConfComponent>(mVectNumEntity[i],
                                                          Components_e::PLAYER_CONF_COMPONENT);
         assert(playerComp);
+        WeaponComponent *weaponComp = stairwayToComponentManager().
+                searchComponentByType<WeaponComponent>(playerComp->m_weaponEntity,
+                                                       Components_e::WEAPON_COMPONENT);
+        assert(weaponComp);
         treatPlayerMove(playerComp, moveComp, mapComp);
         if(glfwGetKey(m_window, GLFW_KEY_RIGHT) == GLFW_PRESS)
         {
@@ -98,35 +103,35 @@ void InputSystem::treatPlayerInput()
         {
             m_mainEngine->setUnsetPaused();
         }
-        if(!playerComp->m_weaponChange && !playerComp->m_timerShootActive)
+        if(!weaponComp->m_weaponChange && !weaponComp->m_timerShootActive)
         {
             //Change weapon
             if(glfwGetKey(m_window, GLFW_KEY_E) == GLFW_PRESS)
             {
-                changePlayerWeapon(*playerComp, false);
+                changePlayerWeapon(*weaponComp, false);
             }
             else if(glfwGetKey(m_window, GLFW_KEY_R) == GLFW_PRESS)
             {
-                changePlayerWeapon(*playerComp, true);
+                changePlayerWeapon(*weaponComp, true);
             }
+            //SHOOT
             else if(glfwGetKey(m_window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
             {
-                uint32_t currentWeapon = static_cast<uint32_t>(playerComp->m_currentWeapon);
-                if(!playerComp->m_timerShootActive &&
-                        playerComp->m_ammunationsCount[currentWeapon] > 0)
+                if(!weaponComp->m_timerShootActive &&
+                        weaponComp->m_weaponsData[weaponComp->m_currentWeapon].m_ammunationsCount > 0)
                 {
                     playerComp->m_playerShoot = true;
                     m_mainEngine->playerAttack(mVectNumEntity[i], playerComp, mapComp->m_absoluteMapPositionPX,
                                                moveComp->m_degreeOrientation);
-                    if(playerComp->m_ammunationsCount[currentWeapon] == 0)
+                    if(weaponComp->m_weaponsData[weaponComp->m_currentWeapon].m_ammunationsCount == 0)
                     {
-                        changePlayerWeapon(*playerComp, true);
+                        changePlayerWeapon(*weaponComp, true);
                         playerComp->m_playerShoot = false;
                     }
                 }
                 else
                 {
-                    changePlayerWeapon(*playerComp, false);
+                    changePlayerWeapon(*weaponComp, false);
                 }
             }
         }
@@ -286,24 +291,22 @@ void InputSystem::treatMainMenu(uint32_t playerEntity)
 }
 
 //===================================================================
-void changePlayerWeapon(PlayerConfComponent &playerComp, bool next)
+void changePlayerWeapon(WeaponComponent &weaponComp, bool next)
 {
-    WeaponsType_e weapon = playerComp.m_currentWeapon;
     if(!next)
     {
         do
         {
             //first weapon
-            if(weapon == WeaponsType_e::FIST)
+            if(weaponComp.m_currentWeapon == 0)
             {
-                weapon = WeaponsType_e::PLASMA_RIFLE;
+                weaponComp.m_currentWeapon = weaponComp.m_weaponsData.size() - 1;
             }
             else
             {
-                weapon = static_cast<WeaponsType_e>(
-                            static_cast<uint32_t>(weapon) - 1);
+                --weaponComp.m_currentWeapon;
             }
-            if(playerComp.m_weapons[static_cast<uint32_t>(weapon)])
+            if(weaponComp.m_weaponsData[weaponComp.m_currentWeapon].m_posses)
             {
                 break;
             }
@@ -314,33 +317,32 @@ void changePlayerWeapon(PlayerConfComponent &playerComp, bool next)
         do
         {
             //last weapon
-            if(weapon == WeaponsType_e::PLASMA_RIFLE)
+            if(weaponComp.m_currentWeapon == weaponComp.m_weaponsData.size() - 1)
             {
-                weapon = WeaponsType_e::FIST;
+                weaponComp.m_currentWeapon = 0;
             }
             else
             {
-                weapon = static_cast<WeaponsType_e>(
-                            static_cast<uint8_t>(weapon) + 1);
+                ++weaponComp.m_currentWeapon;
             }
-            if(playerComp.m_weapons[static_cast<uint32_t>(weapon)])
+            if(weaponComp.m_weaponsData[weaponComp.m_currentWeapon].m_posses)
             {
                 break;
             }
         }while(true);
     }
-    setPlayerWeapon(playerComp, weapon);
+    setPlayerWeapon(weaponComp, weaponComp.m_currentWeapon);
 }
 
 
 //===================================================================
-void setPlayerWeapon(PlayerConfComponent &playerComp, uint32_t weapon)
+void setPlayerWeapon(WeaponComponent &weaponComp, uint32_t weapon)
 {
-    playerComp.m_timerShootActive = false;
-    if(playerComp.m_currentWeapon != weapon)
+    weaponComp.m_timerShootActive = false;
+    if(weaponComp.m_currentWeapon != weapon)
     {
-        playerComp.m_currentWeapon = weapon;
-        playerComp.m_weaponChange = true;
+        weaponComp.m_currentWeapon = weapon;
+        weaponComp.m_weaponChange = true;
     }
 }
 

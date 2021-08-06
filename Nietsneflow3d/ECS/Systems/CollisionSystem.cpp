@@ -14,6 +14,7 @@
 #include <ECS/Components/ImpactShotComponent.hpp>
 #include <ECS/Components/MemSpriteDataComponent.hpp>
 #include <ECS/Components/SpriteTextureComponent.hpp>
+#include <ECS/Components/WeaponComponent.hpp>
 #include <ECS/Systems/FirstPersonDisplaySystem.hpp>
 #include <BaseECS/engine.hpp>
 #include <CollisionUtils.hpp>
@@ -543,25 +544,28 @@ void CollisionSystem::treatPlayerPickObject(CollisionArgs &args)
             searchComponentByType<PlayerConfComponent>(args.entityNumA, Components_e::PLAYER_CONF_COMPONENT);
     ObjectConfComponent *objectComp = stairwayToComponentManager().
             searchComponentByType<ObjectConfComponent>(args.entityNumB, Components_e::OBJECT_CONF_COMPONENT);
+    WeaponComponent *weaponComp = stairwayToComponentManager().
+            searchComponentByType<WeaponComponent>(playerComp->m_weaponEntity, Components_e::WEAPON_COMPONENT);
+    assert(weaponComp);
     assert(playerComp);
     assert(objectComp);
     switch (objectComp->m_type)
     {
     case ObjectType_e::GUN_AMMO:
-        if(!pickUpAmmo(WeaponsType_e::GUN, playerComp, objectComp->m_containing))
+        if(!pickUpAmmo(1, weaponComp, objectComp->m_containing))
         {
             return;
         }
         break;
     case ObjectType_e::SHOTGUN_AMMO:
-        if(!pickUpAmmo(WeaponsType_e::SHOTGUN, playerComp, objectComp->m_containing))
+        if(!pickUpAmmo(2, weaponComp, objectComp->m_containing))
         {
             return;
         }
         break;
     case ObjectType_e::PLASMA_RIFLE_AMMO:
     {
-        if(!pickUpAmmo(WeaponsType_e::PLASMA_RIFLE, playerComp, objectComp->m_containing))
+        if(!pickUpAmmo(3, weaponComp, objectComp->m_containing))
         {
             return;
         }
@@ -584,13 +588,13 @@ void CollisionSystem::treatPlayerPickObject(CollisionArgs &args)
     case ObjectType_e::CARD:
         break;
     case ObjectType_e::SHOTGUN:
-        if(!pickUpWeapon(WeaponsType_e::SHOTGUN, playerComp, objectComp->m_containing))
+        if(!pickUpWeapon(3, weaponComp, objectComp->m_containing))
         {
             return;
         }
         break;
     case ObjectType_e::PLASMA_RIFLE:
-        if(!pickUpWeapon(WeaponsType_e::PLASMA_RIFLE, playerComp, objectComp->m_containing))
+        if(!pickUpWeapon(4, weaponComp, objectComp->m_containing))
         {
             return;
         }
@@ -603,44 +607,44 @@ void CollisionSystem::treatPlayerPickObject(CollisionArgs &args)
 }
 
 //===================================================================
-bool pickUpAmmo(uint32_t weaponNum, PlayerConfComponent *playerComp,
+bool pickUpAmmo(uint32_t numWeapon, WeaponComponent *weaponComp,
                 uint32_t objectContaining)
 {
-    uint32_t index = static_cast<uint32_t>(weaponNum);
-    if(playerComp->m_ammunationsCount[index] == MAX_WEAPONS_AMMO[index])
+    WeaponData &objectWeapon = weaponComp->m_weaponsData[numWeapon];
+    if(objectWeapon.m_ammunationsCount == objectWeapon.m_maxAmmunations)
     {
         return false;
     }
-    playerComp->m_ammunationsCount[index] += objectContaining;
-    if(playerComp->m_ammunationsCount[index] > MAX_WEAPONS_AMMO[index])
+    objectWeapon.m_ammunationsCount += objectContaining;
+    if(objectWeapon.m_ammunationsCount > objectWeapon.m_maxAmmunations)
     {
-        playerComp->m_ammunationsCount[index] = MAX_WEAPONS_AMMO[index];
+        objectWeapon.m_ammunationsCount = objectWeapon.m_maxAmmunations;
     }
     return true;
 }
 
 //===================================================================
-bool pickUpWeapon(uint32_t weaponNum, PlayerConfComponent *playerComp,
+bool pickUpWeapon(uint32_t numWeapon, WeaponComponent *weaponComp,
                   uint32_t objectContaining)
 {
-    uint32_t index = static_cast<uint32_t>(weapon);
-    if(playerComp->m_weapons[index] &&
-            playerComp->m_ammunationsCount[index] == MAX_WEAPONS_AMMO[index])
+    WeaponData &objectWeapon = weaponComp->m_weaponsData[numWeapon];
+    if(objectWeapon.m_posses &&
+            objectWeapon.m_ammunationsCount == objectWeapon.m_maxAmmunations)
     {
         return false;
     }
-    if(!playerComp->m_weapons[index])
+    if(!objectWeapon.m_posses)
     {
-        playerComp->m_weapons[index] = true;
-        if(static_cast<uint32_t>(playerComp->m_currentWeapon) < index)
+        objectWeapon.m_posses = true;
+        if(weaponComp->m_currentWeapon < numWeapon)
         {
-            setPlayerWeapon(*playerComp, weapon);
+            setPlayerWeapon(*weaponComp, numWeapon);
         }
     }
-    playerComp->m_ammunationsCount[index] += objectContaining;
-    if(playerComp->m_ammunationsCount[index] > MAX_WEAPONS_AMMO[index])
+    objectWeapon.m_ammunationsCount += objectContaining;
+    if(objectWeapon.m_ammunationsCount > objectWeapon.m_maxAmmunations)
     {
-        playerComp->m_ammunationsCount[index] = MAX_WEAPONS_AMMO[index];
+        objectWeapon.m_ammunationsCount = objectWeapon.m_maxAmmunations;
     }
     return true;
 }

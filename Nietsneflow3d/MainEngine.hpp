@@ -12,6 +12,7 @@ class Level;
 class FontData;
 struct EnemyData;
 struct EnemyConfComponent;
+struct WeaponComponent;
 
 struct MemPlayerConf
 {
@@ -67,8 +68,10 @@ private:
                               std::array<uint32_t, SEGMENT_SHOT_NUMBER> &target);
     void loadPlayerVisibleShotsSprite(const std::vector<SpriteData> &vectSpriteData, const std::vector<uint8_t> &vectSprite,
                                       const AmmoContainer_t &ammoEntities);
-    void loadPlayerEntity(const std::vector<SpriteData> &vectSpriteData, const Level &level, uint32_t numWeaponEntity);
-    void confPlayerEntity(const std::vector<SpriteData> &vectSpriteData, uint32_t entityNum, const Level &level, uint32_t numWeaponEntity);
+    void loadPlayerEntity(const LevelManager &levelManager, uint32_t numWeaponEntity);
+    void confPlayerEntity(const LevelManager &levelManager,
+                          uint32_t entityNum, const Level &level,
+                          uint32_t numWeaponEntity);
     void confActionEntity();
     void confAxeHitEntity();
     void confShotsEntities(const AmmoContainer_t &ammoEntities, uint32_t damageValue);
@@ -134,6 +137,7 @@ private:
     GeneralCollisionComponent *m_exitColl = nullptr;
     WriteComponent *m_writeConf = nullptr;
     PlayerConfComponent *m_playerConf = nullptr;
+    WeaponComponent *m_weaponComp;
     MemPlayerConf m_memPlayerConf;
 };
 
