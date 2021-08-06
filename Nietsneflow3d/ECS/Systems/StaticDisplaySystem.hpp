@@ -37,7 +37,7 @@ public:
     void execSystem()override;
     void displayMenu();
     void setShader(Shader &shader);
-    void setWeaponSprite(uint32_t weaponEntity, WeaponsSpriteType_e weaponSprite);
+    void setWeaponSprite(uint32_t weaponEntity, uint32_t weaponNumSprite);
     inline void setVectTextures(std::vector<Texture> &vectTexture)
     {
         m_ptrVectTexture = &vectTexture;
@@ -46,7 +46,7 @@ public:
     {
         m_fontDataPtr = fontData;
     }
-    inline const std::map<WeaponsType_e, WeaponsSpriteType_e> &getWeaponsSpriteAssociated()const
+    inline const std::map<uint32_t, uint32_t> &getWeaponsSpriteAssociated()const
     {
         return m_weaponSpriteAssociated;
     }
@@ -60,7 +60,7 @@ private:
     void drawLineWriteVertex(PositionVertexComponent *posComp, WriteComponent *writeComp);
     void confWeaponsVertexFromComponent(PlayerConfComponent *playerComp, SpriteTextureComponent *weaponSpriteComp);
     void treatWeaponShootAnimation(float elapsedSeconds, PlayerConfComponent *playerComp,
-                                    TimerComponent *timerComp, WeaponsType_e weapon);
+                                    TimerComponent *timerComp);
     void setDisplayWeaponChange(PositionVertexComponent *posComp, PlayerConfComponent *playerComp,
                                 MemPositionsVertexComponents *memPosComp);
     void setWeaponMovement(PlayerConfComponent *playerComp, PositionVertexComponent *posComp,
@@ -69,12 +69,12 @@ private:
     FontData const *m_fontDataPtr;
     bool m_cursorInit = false;
     Shader *m_shader;
-    std::array<VerticesData, static_cast<uint32_t>(VertexID_e::TOTAL)> m_vertices;
-    std::array<double, static_cast<uint32_t>(WeaponsType_e::TOTAL)> m_weaponsLatences =
-    {0.08, 0.12, 0.15, 0.1};
+    std::vector<VerticesData> m_vertices;
+    std::vector<double> m_weaponsLatences;
     std::vector<Texture> *m_ptrVectTexture = nullptr;
-    WeaponsSpriteType_e m_currentWeaponSprite;
-    std::map<WeaponsType_e, WeaponsSpriteType_e> m_weaponSpriteAssociated;
+    uint32_t m_currentNumWeaponSprite;
+    //weaponType, FirstSprite
+    std::map<uint32_t, uint32_t> m_weaponSpriteAssociated;
     float m_speedMoveWeaponChange = 0.05f;
     pairFloat_t m_forkWeaponMovementX = {-0.4f, 0.1f}, m_forkWeaponMovementY = {-0.8f, -0.6f};
     float m_diffTotalDistanceMoveWeaponX = std::abs(m_forkWeaponMovementX.first -

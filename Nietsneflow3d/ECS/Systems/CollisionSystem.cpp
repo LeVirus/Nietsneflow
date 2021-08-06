@@ -603,10 +603,10 @@ void CollisionSystem::treatPlayerPickObject(CollisionArgs &args)
 }
 
 //===================================================================
-bool pickUpAmmo(WeaponsType_e weapon, PlayerConfComponent *playerComp,
+bool pickUpAmmo(uint32_t weaponNum, PlayerConfComponent *playerComp,
                 uint32_t objectContaining)
 {
-    uint32_t index = static_cast<uint32_t>(weapon);
+    uint32_t index = static_cast<uint32_t>(weaponNum);
     if(playerComp->m_ammunationsCount[index] == MAX_WEAPONS_AMMO[index])
     {
         return false;
@@ -620,7 +620,7 @@ bool pickUpAmmo(WeaponsType_e weapon, PlayerConfComponent *playerComp,
 }
 
 //===================================================================
-bool pickUpWeapon(WeaponsType_e weapon, PlayerConfComponent *playerComp,
+bool pickUpWeapon(uint32_t weaponNum, PlayerConfComponent *playerComp,
                   uint32_t objectContaining)
 {
     uint32_t index = static_cast<uint32_t>(weapon);

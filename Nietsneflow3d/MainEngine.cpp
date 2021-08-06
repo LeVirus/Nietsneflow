@@ -106,7 +106,8 @@ void MainEngine::loadPlayerGear()
             searchSystemByType<StaticDisplaySystem>(static_cast<uint32_t>(Systems_e::STATIC_DISPLAY_SYSTEM));
     assert(staticDisplay);
     //update FPS weapon sprite
-    std::map<WeaponsType_e, WeaponsSpriteType_e>::const_iterator it =
+    //weapon type weapon sprite
+    std::map<uint32_t, uint32_t>::const_iterator it =
             staticDisplay->getWeaponsSpriteAssociated().find(m_playerConf->m_currentWeapon);
     assert(it != staticDisplay->getWeaponsSpriteAssociated().end());
     staticDisplay->setWeaponSprite(m_playerConf->m_weaponEntity, it->second);
@@ -133,7 +134,7 @@ void MainEngine::displayTransitionMenu()
 }
 
 //===================================================================
-void MainEngine::confPlayerShoot(const AmmoContainer_t &playerVisibleShots,
+void MainEngine::confPlayerVisibleShoot(const AmmoContainer_t &playerVisibleShots,
                                  const pairFloat_t &point, float degreeAngle)
 {
     m_physicalEngine.confPlayerVisibleShoot(playerVisibleShots, point, degreeAngle);
@@ -143,6 +144,7 @@ void MainEngine::confPlayerShoot(const AmmoContainer_t &playerVisibleShots,
 void MainEngine::playerAttack(uint32_t playerEntity, PlayerConfComponent *playerComp, const pairFloat_t &point,
                               float degreeAngle)
 {
+
     if(playerComp->m_currentWeapon == WeaponsType_e::TOTAL)
     {
         return;
@@ -181,7 +183,7 @@ void MainEngine::playerAttack(uint32_t playerEntity, PlayerConfComponent *player
     }
     else if(playerComp->m_currentWeapon == WeaponsType_e::PLASMA_RIFLE)
     {
-        confPlayerShoot(playerComp->m_visibleShootEntities, point, degreeAngle);
+        confPlayerVisibleShoot(playerComp->m_visibleShootEntities, point, degreeAngle);
     }
     uint32_t currentWeapon = static_cast<uint32_t>(playerComp->m_currentWeapon);
     assert(playerComp->m_ammunationsCount[currentWeapon] > 0);
@@ -443,7 +445,7 @@ uint32_t MainEngine::loadWeaponsEntity(const LevelManager &levelManager)
     assert(memSprite);
     assert(weaponComp);
     assert(memPosVertex);
-
+    weaponComp->m_maxAmmoWeapons = levelManager.getVectMaxAmmoWeapons();
     uint32_t totalSize = 0;
     for(uint32_t i = 0; i < vectWeapons.size(); ++i)
     {
@@ -1050,7 +1052,8 @@ void MainEngine::loadPlayerEntity(const std::vector<SpriteData> &vectSpriteData,
 
 //===================================================================
 void MainEngine::confPlayerEntity(const std::vector<SpriteData> &vectSpriteData,
-                                  uint32_t entityNum, const Level &level, uint32_t numWeaponEntity)
+                                  uint32_t entityNum, const Level &level,
+                                  uint32_t numWeaponEntity)
 {
     PositionVertexComponent *pos = m_ecsManager.getComponentManager().
             searchComponentByType<PositionVertexComponent>(entityNum,
@@ -1076,6 +1079,9 @@ void MainEngine::confPlayerEntity(const std::vector<SpriteData> &vectSpriteData,
     PlayerConfComponent *playerConf = m_ecsManager.getComponentManager().
             searchComponentByType<PlayerConfComponent>(entityNum,
                                                      Components_e::PLAYER_CONF_COMPONENT);
+    WeaponComponent *weaponConf = m_ecsManager.getComponentManager().
+            searchComponentByType<WeaponComponent>(entityNum,
+                                                   Components_e::WEAPON_COMPONENT);
     assert(pos);
     assert(map);
     assert(move);
@@ -1084,7 +1090,16 @@ void MainEngine::confPlayerEntity(const std::vector<SpriteData> &vectSpriteData,
     assert(tagColl);
     assert(vision);
     assert(playerConf);
+    assert(weaponConf);
     m_playerConf = playerConf;
+    m_playerConf->m_ammunationsCount.resize(weaponConf->m_maxAmmoWeapons.size());
+    std::fill(m_playerConf->m_ammunationsCount, 0);
+    m_playerConf->m_ammunationsCount[0] = 1;
+    m_playerConf->m_ammunationsCount[1] = 20;
+    m_playerConf->m_weapons.resize(weaponConf->m_maxAmmoWeapons.size());
+    std::fill(m_playerConf->m_weapons, false);
+    m_playerConf->m_weapons[0] = true;
+    m_playerConf->m_weapons[1] = true;
     createAmmosEntities(m_playerConf->m_shootEntities, CollisionTag_e::BULLET_PLAYER_CT, false);
     createAmmosEntities(m_playerConf->m_visibleShootEntities, CollisionTag_e::BULLET_PLAYER_CT, true);
     confShotsEntities(m_playerConf->m_shootEntities, 1);

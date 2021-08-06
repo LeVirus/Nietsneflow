@@ -75,10 +75,10 @@ private:
     std::vector<uint32_t> m_vectEntitiesToDelete;
 };
 
-bool pickUpWeapon(WeaponsType_e weapon, PlayerConfComponent *playerComp,
+bool pickUpWeapon(uint32_t weaponNum, PlayerConfComponent *playerComp,
                   uint32_t objectContaining);
-bool pickUpAmmo(WeaponsType_e weapon, PlayerConfComponent *playerComp,
-                  uint32_t objectContaining);
+bool pickUpAmmo(uint32_t weaponNum, PlayerConfComponent *playerComp,
+                uint32_t objectContaining);
 
 struct CollisionArgs
 {

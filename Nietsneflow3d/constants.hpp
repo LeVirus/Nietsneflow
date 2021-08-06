@@ -136,15 +136,6 @@ enum class EnemySpriteType_e
     TOTAL_SPRITE
 };
 
-enum class WeaponsType_e
-{
-    FIST,
-    GUN,
-    SHOTGUN,
-    PLASMA_RIFLE,
-    TOTAL
-};
-
 enum class WallSpriteType_e
 {
     STATIC_A,
@@ -256,6 +247,3 @@ inline const std::map<Shader_e, std::string> SHADER_ID_MAP
     {Shader_e::COLOR_S, "ceilingFloor"},
     {Shader_e::TEXTURE_S, "wall"}
 };
-
-inline std::array<uint32_t, static_cast<uint32_t>(WeaponsType_e::TOTAL)> MAX_WEAPONS_AMMO =
-{1, 100, 50, 100};

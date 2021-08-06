@@ -425,6 +425,7 @@ void LevelManager::loadWeaponsDisplayData(const INIReader &reader)
     std::vector<std::string> vectINISections;
     vectINISections = reader.getSectionNamesContaining("Weapon");
     assert(!vectINISections.empty());
+    m_maxAmmoWeapons.reserve(vectINISections.size());
     for(uint32_t i = 0; i < vectINISections.size(); ++i)
     {
         loadWeaponData(reader, vectINISections[i], i);
@@ -479,7 +480,7 @@ void LevelManager::loadWeaponData(const INIReader &reader,
                                   std::string_view sectionName, uint32_t numIt)
 {
     std::string weaponSpriteSection, spriteWeight, spriteHeight;
-
+    float maxAmmo = std::stof(reader.Get(sectionName.data(), "StaticSprite", ""));
     std::string sprites = reader.Get(sectionName.data(), "StaticSprite", "");
     sprites += reader.Get(sectionName.data(), "AttackSprite", "");
     assert(!sprites.empty() && "Wall sprites cannot be loaded.");
@@ -493,6 +494,7 @@ void LevelManager::loadWeaponData(const INIReader &reader,
     assert(vectHeight.size() == vectWeight.size());
     assert(vectSprites.size() == vectWeight.size());
     m_vectWeaponsDisplayData.reserve(vectSprites.size());
+    m_maxAmmoWeapons.emplace_back(maxAmmo);
     for(uint32_t i = 0; i < vectSprites.size(); ++i)
     {
         m_vectWeaponsDisplayData[numIt].emplace_back(

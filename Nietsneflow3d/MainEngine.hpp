@@ -15,9 +15,9 @@ struct EnemyConfComponent;
 
 struct MemPlayerConf
 {
-    WeaponsType_e m_currentWeapon, m_previousWeapon;
-    std::array<uint32_t, static_cast<uint32_t>(WeaponsType_e::TOTAL)> m_ammunationsCount;
-    std::array<bool, static_cast<uint32_t>(WeaponsType_e::TOTAL)> m_weapons;
+    uint32_t m_currentWeapon, m_previousWeapon;
+    std::vector<uint32_t> m_ammunationsCount;
+    std::vector<bool> m_weapons;
     uint32_t m_life;
 };
 
@@ -29,8 +29,8 @@ public:
     void init();
     void loadLevelEntities(const LevelManager &levelManager);
     bool mainLoop(bool &memGameOver);
-    void playerAttack(uint32_t playerEntity, PlayerConfComponent *playerComp, const pairFloat_t &point,
-               float degreeAngle);
+    void playerAttack(uint32_t playerEntity, PlayerConfComponent *playerComp,
+                      const pairFloat_t &point, float degreeAngle);
     void setUnsetPaused();
     inline bool isGamePaused()
     {
