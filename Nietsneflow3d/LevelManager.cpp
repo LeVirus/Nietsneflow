@@ -481,7 +481,7 @@ void LevelManager::loadDisplayData(const INIReader &reader, std::string_view sec
 void LevelManager::loadWeaponData(const INIReader &reader,
                                   std::string_view sectionName, uint32_t numIt)
 {
-    std::string weaponSpriteSection, spriteWeight, spriteHeight;
+    std::string weaponSpriteSection;
     m_vectWeaponsINIData[numIt].m_maxAmmo =
             std::stoul(reader.Get(sectionName.data(), "MaxAmmo", "1"));
     assert(m_vectWeaponsINIData[numIt].m_maxAmmo != 1);
@@ -490,13 +490,14 @@ void LevelManager::loadWeaponData(const INIReader &reader,
     m_vectWeaponsINIData[numIt].m_attackType = static_cast<AttackType_e>(
                 std::stoul(reader.Get(sectionName.data(), "AttackType", "1")));
     std::string sprites = reader.Get(sectionName.data(), "StaticSprite", "");
+    sprites += " ";
     sprites += reader.Get(sectionName.data(), "AttackSprite", "");
     assert(!sprites.empty() && "Wall sprites cannot be loaded.");
     std::istringstream iss(sprites);
     vectStr_t vectSprites(std::istream_iterator<std::string>{iss},
                           std::istream_iterator<std::string>());
-    std::string resultWeight = reader.Get(sectionName.data(), spriteWeight, ""),
-            resultHeight = reader.Get(sectionName.data(), spriteHeight, "");
+    std::string resultWeight = reader.Get(sectionName.data(), "SpriteWeightGame", ""),
+            resultHeight = reader.Get(sectionName.data(), "SpriteHeightGame", "");
     std::vector<float> vectWeight = convertStrToVectFloat(resultWeight),
             vectHeight = convertStrToVectFloat(resultHeight);
     assert(vectHeight.size() == vectWeight.size());
