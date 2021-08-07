@@ -24,8 +24,7 @@ struct WeaponINIData
 
 struct ShootDisplayData
 {
-    std::vector<WeaponSpriteData> m_active, m_destruct;
-    std::vector<uint8_t> m_impact;
+    std::vector<WeaponSpriteData> m_active, m_destruct, m_impact;
 };
 
 class LevelManager
@@ -64,18 +63,13 @@ public:
     {
         return m_pictureData.getSpriteData();
     }
-    inline const std::vector<uint8_t> &getVisibleShotsData()const
-    {
-        return m_vectVisibleShot;
-    }
-
-    inline const std::vector<uint8_t> &getShotImpact()const
-    {
-        return m_vectShotImpact;
-    }
     inline const std::vector<WeaponINIData> &getWeaponsData()const
     {
         return m_vectWeaponsINIData;
+    }
+    inline const std::vector<ShootDisplayData> &getShootDisplayData()const
+    {
+        return m_vectShootDisplayData;
     }
 private:
     //texture and sprite loading
@@ -131,8 +125,7 @@ private:
     std::map<std::string, EnemyData> m_enemyData;
     //store the sprite number and the screen display size
     std::vector<WeaponINIData> m_vectWeaponsINIData;
-    std::map<uint32_t, ShootDisplayData> m_mapShootDisplayData;
-    std::vector<uint8_t> m_vectVisibleShot, m_vectShotImpact;
+    std::vector<ShootDisplayData> m_vectShootDisplayData;
 };
 
 std::vector<uint32_t> convertStrToVectUI(const std::string &str);

@@ -13,6 +13,7 @@ class FontData;
 struct EnemyData;
 struct EnemyConfComponent;
 struct WeaponComponent;
+struct ShootDisplayData;
 
 struct MemPlayerConf
 {
@@ -64,9 +65,10 @@ private:
     void linkSystemsToGraphicEngine();
     void linkSystemsToPhysicalEngine();
     void loadShotImpactSprite(const std::vector<SpriteData> &vectSpriteData,
-                              const std::vector<uint8_t> &vectSprite,
+                              const std::vector<ShootDisplayData> &shootDisplayData,
                               std::array<uint32_t, SEGMENT_SHOT_NUMBER> &target);
-    void loadPlayerVisibleShotsSprite(const std::vector<SpriteData> &vectSpriteData, const std::vector<uint8_t> &vectSprite,
+    void loadPlayerVisibleShotsSprite(const std::vector<SpriteData> &vectSpriteData,
+                                      const std::vector<ShootDisplayData> &shootDisplayData,
                                       const AmmoContainer_t &ammoEntities);
     void loadPlayerEntity(const LevelManager &levelManager, uint32_t numWeaponEntity);
     void confPlayerEntity(const LevelManager &levelManager,
@@ -87,9 +89,9 @@ private:
     void loadExitElement(const LevelManager &levelManager, const StaticLevelElementData &exit);
     void createAmmosEntities(AmmoContainer_t &ammoCont, CollisionTag_e collTag, bool visibleShot);
     void createShotImpactEntities(const std::vector<SpriteData> &vectSpriteData,
-                                  const std::vector<uint8_t> &vectSprite,
+                                  const std::vector<ShootDisplayData> &shootDisplayData,
                                   std::array<uint32_t, SEGMENT_SHOT_NUMBER> &entitiesContainer, const AmmoContainer_t &segmentShotContainer);
-    uint32_t loadWeaponEntity();
+    uint32_t createWeaponEntity();
     uint32_t createWallEntity(bool multiSprite);
     uint32_t createDoorEntity();
     uint32_t createEnemyEntity();

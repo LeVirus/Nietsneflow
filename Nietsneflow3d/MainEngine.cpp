@@ -435,7 +435,7 @@ void MainEngine::loadLevelEntities(const LevelManager &levelManager)
 //===================================================================
 uint32_t MainEngine::loadWeaponsEntity(const LevelManager &levelManager)
 {
-    uint32_t weaponEntity = loadWeaponEntity();
+    uint32_t weaponEntity = createWeaponEntity();
     const std::vector<SpriteData> &vectSprite = levelManager.getPictureData().getSpriteData();
     const std::vector<WeaponINIData> &vectWeapons = levelManager.getWeaponsData();
     MemSpriteDataComponent *memSprite = m_ecsManager.getComponentManager().
@@ -450,10 +450,8 @@ uint32_t MainEngine::loadWeaponsEntity(const LevelManager &levelManager)
     assert(weaponComp);
     assert(memSprite);
     assert(memPosVertex);
-
-
     weaponComp->m_weaponsData.resize(vectWeapons.size());
-    for(uint32_t i = 0; weaponComp->m_weaponsData.size(); ++i)
+    for(uint32_t i = 0; i < weaponComp->m_weaponsData.size(); ++i)
     {
         weaponComp->m_weaponsData[i].m_ammunationsCount = 0;
         weaponComp->m_weaponsData[i].m_posses = false;
@@ -687,7 +685,7 @@ void MainEngine::createAmmosEntities(AmmoContainer_t &ammoCount, CollisionTag_e 
 
 //===================================================================
 void MainEngine::createShotImpactEntities(const std::vector<SpriteData> &vectSpriteData,
-                                          const std::vector<uint8_t> &vectSprite,
+                                          const std::vector<ShootDisplayData> &shootDisplayData,
                                           std::array<uint32_t, SEGMENT_SHOT_NUMBER> &entitiesContainer,
                                           const AmmoContainer_t &segmentShotContainer)
 {
@@ -716,7 +714,7 @@ void MainEngine::createShotImpactEntities(const std::vector<SpriteData> &vectSpr
         //mem impact entity in shot component
         shotComp->m_impactEntities[i] = entitiesContainer[i];
     }
-    loadShotImpactSprite(vectSpriteData, vectSprite, entitiesContainer);
+    loadShotImpactSprite(vectSpriteData, shootDisplayData, entitiesContainer);
 }
 
 //===================================================================
@@ -853,7 +851,7 @@ void MainEngine::confVisibleAmmo(const AmmoContainer_t &ammoCont)
 }
 
 //===================================================================
-uint32_t MainEngine::loadWeaponEntity()
+uint32_t MainEngine::createWeaponEntity()
 {
     std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComponents;
     bitsetComponents[Components_e::POSITION_VERTEX_COMPONENT] = true;
@@ -1100,6 +1098,7 @@ void MainEngine::confPlayerEntity(const LevelManager &levelManager,
     PlayerConfComponent *playerConf = m_ecsManager.getComponentManager().
             searchComponentByType<PlayerConfComponent>(entityNum,
                                                      Components_e::PLAYER_CONF_COMPONENT);
+    playerConf->m_weaponEntity = numWeaponEntity;
     WeaponComponent *weaponConf = m_ecsManager.getComponentManager().
             searchComponentByType<WeaponComponent>(playerConf->m_weaponEntity,
                                                    Components_e::WEAPON_COMPONENT);
@@ -1118,9 +1117,9 @@ void MainEngine::confPlayerEntity(const LevelManager &levelManager,
     createAmmosEntities(m_playerConf->m_visibleShootEntities, CollisionTag_e::BULLET_PLAYER_CT, true);
     confShotsEntities(m_playerConf->m_shootEntities, 1);
     confShotsEntities(m_playerConf->m_visibleShootEntities, 1);
-    createShotImpactEntities(vectSpriteData, levelManager.getShotImpact(),
+    createShotImpactEntities(vectSpriteData, levelManager.getShootDisplayData(),
                              m_playerConf->m_shotImpact, m_playerConf->m_shootEntities);
-    loadPlayerVisibleShotsSprite(vectSpriteData, levelManager.getVisibleShotsData(),
+    loadPlayerVisibleShotsSprite(vectSpriteData, levelManager.getShootDisplayData(),
                                  m_playerConf->m_visibleShootEntities);
 
     map->m_coord = level.getPlayerDeparture();
@@ -1149,8 +1148,6 @@ void MainEngine::confPlayerEntity(const LevelManager &levelManager,
     circleColl->m_ray = PLAYER_RAY;
     tagColl->m_tag = CollisionTag_e::PLAYER_CT;
     tagColl->m_shape = CollisionShape_e::CIRCLE_C;
-    m_playerConf->m_weaponEntity = numWeaponEntity;
-
     //set standard weapon sprite
     StaticDisplaySystem *staticDisplay = m_ecsManager.getSystemManager().
             searchSystemByType<StaticDisplaySystem>(static_cast<uint32_t>(Systems_e::STATIC_DISPLAY_SYSTEM));
@@ -1237,7 +1234,7 @@ void MainEngine::confShotsEntities(const AmmoContainer_t &ammoEntities, uint32_t
 
 //===================================================================
 void MainEngine::loadShotImpactSprite(const std::vector<SpriteData> &vectSpriteData,
-                                      const std::vector<uint8_t> &vectSprite,
+                                      const std::vector<ShootDisplayData> &shootDisplayData,
                                       std::array<uint32_t, SEGMENT_SHOT_NUMBER> &target)
 {
     for(uint32_t k = 0; k < target.size(); ++k)
@@ -1250,17 +1247,17 @@ void MainEngine::loadShotImpactSprite(const std::vector<SpriteData> &vectSpriteD
                                                               Components_e::SPRITE_TEXTURE_COMPONENT);
         assert(memComp);
         assert(spriteComp);
-        for(uint32_t l = 0; l < vectSprite.size(); ++l)
+        for(uint32_t l = 0; l < shootDisplayData.size(); ++l)
         {
             memComp->m_vectSpriteData.emplace_back(&vectSpriteData[vectSprite[l]]);
         }
-        spriteComp->m_spriteData = &vectSpriteData[vectSprite[0]];
+        spriteComp->m_spriteData = memComp->m_vectSpriteData[0];
     }
 }
 
 //===================================================================
 void MainEngine::loadPlayerVisibleShotsSprite(const std::vector<SpriteData> &vectSpriteData,
-                                              const std::vector<uint8_t> &vectSprite,
+                                              const std::vector<ShootDisplayData> &shootDisplayData,
                                               const AmmoContainer_t &ammoEntities)
 {
     for(uint32_t k = 0; k < ammoEntities.size(); ++k)
@@ -1273,7 +1270,7 @@ void MainEngine::loadPlayerVisibleShotsSprite(const std::vector<SpriteData> &vec
                                                               Components_e::SPRITE_TEXTURE_COMPONENT);
         assert(memComp);
         assert(spriteComp);
-        for(uint32_t l = 0; l < vectSprite.size(); ++l)
+        for(uint32_t l = 0; l < shootDisplayData.size(); ++l)
         {
             memComp->m_vectSpriteData.emplace_back(&vectSpriteData[vectSprite[l]]);
         }

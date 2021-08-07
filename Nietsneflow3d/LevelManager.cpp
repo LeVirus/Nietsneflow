@@ -425,7 +425,7 @@ void LevelManager::loadWeaponsDisplayData(const INIReader &reader)
     std::vector<std::string> vectINISections;
     vectINISections = reader.getSectionNamesContaining("Weapon");
     assert(!vectINISections.empty());
-    m_vectWeaponsINIData.reserve(vectINISections.size());
+    m_vectWeaponsINIData.resize(vectINISections.size());
     for(uint32_t i = 0; i < vectINISections.size(); ++i)
     {
         loadWeaponData(reader, vectINISections[i], i);
@@ -444,7 +444,7 @@ void LevelManager::loadDisplayData(const INIReader &reader, std::string_view sec
     {
         return;
     }
-    m_mapShootDisplayData.insert({numIt, ShootDisplayData()});
+    m_vectShootDisplayData.insert({numIt, ShootDisplayData()});
     std::istringstream iss(sprites);
     vectStr_t vectsprite(std::istream_iterator<std::string>{iss},
                                 std::istream_iterator<std::string>());
@@ -452,19 +452,20 @@ void LevelManager::loadDisplayData(const INIReader &reader, std::string_view sec
     pairFloat_t GLSize{0.5f, 0.5f};
     if(subSectionName == "VisibleShot")
     {
-        vect = &m_mapShootDisplayData[numIt].m_active;
+        vect = &m_vectShootDisplayData[numIt].m_active;
     }
     else if(subSectionName == "VisibleShotDestruct")
     {
-        vect = &m_mapShootDisplayData[numIt].m_destruct;
+        vect = &m_vectShootDisplayData[numIt].m_destruct;
     }
     else if(subSectionName == "ShotImpact")
     {
         GLSize = {0.2f, 0.2f};
-        m_mapShootDisplayData[numIt].m_impact.reserve(vectsprite.size());
+        vect = &m_vectShootDisplayData[numIt].m_impact;
+        m_vectShootDisplayData[numIt].m_impact.reserve(vectsprite.size());
         for(uint32_t i = 0; i < vectsprite.size(); ++i)
         {
-            m_mapShootDisplayData[numIt].m_impact.
+            m_vectShootDisplayData[numIt].m_impact.
                     emplace_back(*(m_pictureData.getIdentifier(vectsprite[i])));
         }
         return;
