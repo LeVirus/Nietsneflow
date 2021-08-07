@@ -33,6 +33,10 @@ void IASystem::execSystem()
     assert(m_playerMapComp);
     assert(m_playerComp);
     System::execSystem();
+    WeaponComponent *weaponComp = m_ecsManager.getComponentManager().
+            searchComponentByType<WeaponComponent>(weaponEntity,
+                                                   Components_e::WEAPON_COMPONENT);
+    assert(weaponComp);
     treatVisibleShot(m_playerComp->m_visibleShootEntities);
     MapCoordComponent *enemyMapComp;
     EnemyConfComponent *enemyConfComp;

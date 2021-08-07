@@ -656,7 +656,8 @@ void MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
 }
 
 //===================================================================
-void MainEngine::createAmmosEntities(AmmoContainer_t &ammoCount, CollisionTag_e collTag,
+void MainEngine::createAmmosEntities(AmmoContainer_t &ammoCount,
+                                     CollisionTag_e collTag,
                                      bool visibleShot)
 {
     for(uint32_t i = 0; i < ammoCount.size(); ++i)
@@ -686,35 +687,36 @@ void MainEngine::createAmmosEntities(AmmoContainer_t &ammoCount, CollisionTag_e 
 //===================================================================
 void MainEngine::createShotImpactEntities(const std::vector<SpriteData> &vectSpriteData,
                                           const std::vector<ShootDisplayData> &shootDisplayData,
-                                          std::array<uint32_t, SEGMENT_SHOT_NUMBER> &entitiesContainer,
-                                          const AmmoContainer_t &segmentShotContainer)
+                                          std::map<uint32_t, std::vector<uint32_t>> &impactsContainer)
 {
-    ShotConfComponent *shotComp = m_ecsManager.getComponentManager().
-            searchComponentByType<ShotConfComponent>(*segmentShotContainer[0],
-                                                     Components_e::SHOT_CONF_COMPONENT);
-    assert(shotComp);
-    pairFloat_t pairSpriteSize = {0.1f, 0.1f};
-    for(uint32_t i = 0; i < entitiesContainer.size(); ++i)
+    for(uint32_t i = 0; i < shootDisplayData.size(); ++i)
     {
-        entitiesContainer[i] = createShotImpactEntity();
-        FPSVisibleStaticElementComponent *fpsStaticComp = m_ecsManager.getComponentManager().
-                searchComponentByType<FPSVisibleStaticElementComponent>(
-                    entitiesContainer[i], Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
-        GeneralCollisionComponent *genComp = m_ecsManager.getComponentManager().
-                searchComponentByType<GeneralCollisionComponent>(entitiesContainer[i],
-                                                              Components_e::GENERAL_COLLISION_COMPONENT);
-        assert(genComp);
-        assert(fpsStaticComp);
-        fpsStaticComp->m_inGameSpriteSize = pairSpriteSize;
-        fpsStaticComp->m_levelElementType = LevelStaticElementType_e::IMPACT;
-        genComp->m_active = false;
-        genComp->m_tag = CollisionTag_e::IMPACT_CT;
-        genComp->m_shape = CollisionShape_e::CIRCLE_C;
-        assert(segmentShotContainer[i]);
-        //mem impact entity in shot component
-        shotComp->m_impactEntities[i] = entitiesContainer[i];
+        if(shootDisplayData[i].m_impact.empty())
+        {
+            continue;
+        }
+        impactsContainer.insert({i, std::vector<uint32_t>()});
+        impactsContainer[i].reserve(4);
+        for(uint32_t j = 0; j < 4; ++j)
+        {
+            impactsContainer[i].emplace_back(createShotImpactEntity());
+            FPSVisibleStaticElementComponent *fpsStaticComp = m_ecsManager.getComponentManager().
+                    searchComponentByType<FPSVisibleStaticElementComponent>(
+                        impactsContainer[i], Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
+            GeneralCollisionComponent *genComp = m_ecsManager.getComponentManager().
+                    searchComponentByType<GeneralCollisionComponent>(impactsContainer[i],
+                                                                     Components_e::GENERAL_COLLISION_COMPONENT);
+            assert(genComp);
+            assert(fpsStaticComp);
+            fpsStaticComp->m_inGameSpriteSize = shootDisplayData[i].m_impact[0].m_GLSize;
+            fpsStaticComp->m_levelElementType = LevelStaticElementType_e::IMPACT;
+            genComp->m_active = false;
+            genComp->m_tag = CollisionTag_e::IMPACT_CT;
+            genComp->m_shape = CollisionShape_e::CIRCLE_C;
+            loadShotImpactSprite(vectSpriteData, shootDisplayData[i].m_impact,
+                                 impactsContainer[i]);
+        }
     }
-    loadShotImpactSprite(vectSpriteData, shootDisplayData, entitiesContainer);
 }
 
 //===================================================================
@@ -1116,9 +1118,8 @@ void MainEngine::confPlayerEntity(const LevelManager &levelManager,
     createAmmosEntities(m_playerConf->m_shootEntities, CollisionTag_e::BULLET_PLAYER_CT, false);
     createAmmosEntities(m_playerConf->m_visibleShootEntities, CollisionTag_e::BULLET_PLAYER_CT, true);
     confShotsEntities(m_playerConf->m_shootEntities, 1);
-    confShotsEntities(m_playerConf->m_visibleShootEntities, 1);
     createShotImpactEntities(vectSpriteData, levelManager.getShootDisplayData(),
-                             m_playerConf->m_shotImpact, m_playerConf->m_shootEntities);
+                             m_playerConf->m_shotImpact);
     loadPlayerVisibleShotsSprite(vectSpriteData, levelManager.getShootDisplayData(),
                                  m_playerConf->m_visibleShootEntities);
 
@@ -1235,7 +1236,7 @@ void MainEngine::confShotsEntities(const AmmoContainer_t &ammoEntities, uint32_t
 //===================================================================
 void MainEngine::loadShotImpactSprite(const std::vector<SpriteData> &vectSpriteData,
                                       const std::vector<ShootDisplayData> &shootDisplayData,
-                                      std::array<uint32_t, SEGMENT_SHOT_NUMBER> &target)
+                                      std::vector<uint32_t> &target)
 {
     for(uint32_t k = 0; k < target.size(); ++k)
     {
@@ -1249,7 +1250,7 @@ void MainEngine::loadShotImpactSprite(const std::vector<SpriteData> &vectSpriteD
         assert(spriteComp);
         for(uint32_t l = 0; l < shootDisplayData.size(); ++l)
         {
-            memComp->m_vectSpriteData.emplace_back(&vectSpriteData[vectSprite[l]]);
+            memComp->m_vectSpriteData.emplace_back(&vectSpriteData[shootDisplayData[l].m_numSprite]);
         }
         spriteComp->m_spriteData = memComp->m_vectSpriteData[0];
     }

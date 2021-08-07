@@ -66,7 +66,7 @@ private:
     void linkSystemsToPhysicalEngine();
     void loadShotImpactSprite(const std::vector<SpriteData> &vectSpriteData,
                               const std::vector<ShootDisplayData> &shootDisplayData,
-                              std::array<uint32_t, SEGMENT_SHOT_NUMBER> &target);
+                              std::vector<uint32_t> &target);
     void loadPlayerVisibleShotsSprite(const std::vector<SpriteData> &vectSpriteData,
                                       const std::vector<ShootDisplayData> &shootDisplayData,
                                       const AmmoContainer_t &ammoEntities);
@@ -90,7 +90,7 @@ private:
     void createAmmosEntities(AmmoContainer_t &ammoCont, CollisionTag_e collTag, bool visibleShot);
     void createShotImpactEntities(const std::vector<SpriteData> &vectSpriteData,
                                   const std::vector<ShootDisplayData> &shootDisplayData,
-                                  std::array<uint32_t, SEGMENT_SHOT_NUMBER> &entitiesContainer, const AmmoContainer_t &segmentShotContainer);
+                                  std::map<uint32_t, std::vector<uint32_t> > &impactsContainer);
     uint32_t createWeaponEntity();
     uint32_t createWallEntity(bool multiSprite);
     uint32_t createDoorEntity();

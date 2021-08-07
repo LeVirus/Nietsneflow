@@ -214,7 +214,6 @@ void CollisionSystem::confImpactShots(uint32_t numBullet)
     MapCoordComponent *mapImpact = stairwayToComponentManager().
             searchComponentByType<MapCoordComponent>(impactEntity,
                                                      Components_e::MAP_COORD_COMPONENT);
-
     TimerComponent *timerImpact = stairwayToComponentManager().
             searchComponentByType<TimerComponent>(impactEntity, Components_e::TIMER_COMPONENT);
     SpriteTextureComponent *spriteComp= stairwayToComponentManager().
