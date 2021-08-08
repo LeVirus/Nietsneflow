@@ -186,24 +186,24 @@ void CollisionSystem::confImpactShots(uint32_t numBullet)
     assert(shotComp);
     //remove warning
     GeneralCollisionComponent *genImpact = nullptr;
-    uint32_t impactEntity, current;
-    for(current = 0; current < shotComp->m_impactEntities.size(); ++current)
-    {
+    uint32_t impactEntity;
+//    for(current = 0; current < shotComp->m_impactEntity.size(); ++current)
+//    {
         genImpact = stairwayToComponentManager().
-                searchComponentByType<GeneralCollisionComponent>(shotComp->m_impactEntities[current],
+                searchComponentByType<GeneralCollisionComponent>(shotComp->m_impactEntity,
                                                                  Components_e::GENERAL_COLLISION_COMPONENT);
         assert(genImpact);
-        if(genImpact->m_active)
-        {
-            if(current == (shotComp->m_impactEntities.size() - 1))
-            {
-                return;
-            }
-            continue;
-        }
-        break;
-    }
-    impactEntity = shotComp->m_impactEntities[current];
+//        if(genImpact->m_active)
+//        {
+//            if(current == (shotComp->m_impactEntity.size() - 1))
+//            {
+//                return;
+//            }
+//            continue;
+//        }
+//        break;
+//    }
+    impactEntity = shotComp->m_impactEntity;
     ImpactShotComponent *impactComp = stairwayToComponentManager().
             searchComponentByType<ImpactShotComponent>(impactEntity, Components_e::IMPACT_CONF_COMPONENT);
     assert(impactComp);

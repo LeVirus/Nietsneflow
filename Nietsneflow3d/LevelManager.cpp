@@ -444,7 +444,7 @@ void LevelManager::loadDisplayData(const INIReader &reader, std::string_view sec
     {
         return;
     }
-    m_vectShootDisplayData.insert({numIt, ShootDisplayData()});
+    m_vectShootDisplayData.emplace_back(ShootDisplayData());
     std::istringstream iss(sprites);
     vectStr_t vectsprite(std::istream_iterator<std::string>{iss},
                                 std::istream_iterator<std::string>());
@@ -466,7 +466,8 @@ void LevelManager::loadDisplayData(const INIReader &reader, std::string_view sec
         for(uint32_t i = 0; i < vectsprite.size(); ++i)
         {
             m_vectShootDisplayData[numIt].m_impact.
-                    emplace_back(*(m_pictureData.getIdentifier(vectsprite[i])));
+                    emplace_back(WeaponSpriteData{*(m_pictureData.getIdentifier(vectsprite[i])),
+                                 GLSize});
         }
         return;
     }
@@ -482,7 +483,6 @@ void LevelManager::loadDisplayData(const INIReader &reader, std::string_view sec
 void LevelManager::loadWeaponData(const INIReader &reader,
                                   std::string_view sectionName, uint32_t numIt)
 {
-    std::string weaponSpriteSection;
     m_vectWeaponsINIData[numIt].m_maxAmmo =
             std::stoul(reader.Get(sectionName.data(), "MaxAmmo", "1"));
     assert(m_vectWeaponsINIData[numIt].m_maxAmmo != 1);

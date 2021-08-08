@@ -6,7 +6,7 @@
 #include <Level.hpp>
 
 using mapEnemySprite_t = std::map<EnemySpriteType_e, pairUI_t>;
-
+using mapUiVectUI_t = std::map<uint32_t, std::vector<uint32_t>>;
 class LevelManager;
 class Level;
 class FontData;
@@ -65,11 +65,11 @@ private:
     void linkSystemsToGraphicEngine();
     void linkSystemsToPhysicalEngine();
     void loadShotImpactSprite(const std::vector<SpriteData> &vectSpriteData,
-                              const std::vector<ShootDisplayData> &shootDisplayData,
-                              std::vector<uint32_t> &target);
+                              const ShootDisplayData &shootDisplayData,
+                              uint32_t impactEntity);
     void loadPlayerVisibleShotsSprite(const std::vector<SpriteData> &vectSpriteData,
                                       const std::vector<ShootDisplayData> &shootDisplayData,
-                                      const AmmoContainer_t &ammoEntities);
+                                      const mapUiVectUI_t &ammoEntities);
     void loadPlayerEntity(const LevelManager &levelManager, uint32_t numWeaponEntity);
     void confPlayerEntity(const LevelManager &levelManager,
                           uint32_t entityNum, const Level &level,
@@ -82,15 +82,17 @@ private:
     void loadWallEntities(const LevelManager &levelManager);
     void loadDoorEntities(const LevelManager &levelManager);
     void loadEnemiesEntities(const LevelManager &levelManager);
-    void confVisibleAmmo(const AmmoContainer_t &ammoCont);
+    void confVisibleAmmo(uint32_t ammoEntity);
     void loadStaticElementEntities(const LevelManager &levelManager);
     void loadStaticElementGroup(const LevelManager &levelManager,
                                 const std::map<std::string, StaticLevelElementData> &staticData, LevelStaticElementType_e elementType);
     void loadExitElement(const LevelManager &levelManager, const StaticLevelElementData &exit);
-    void createAmmosEntities(AmmoContainer_t &ammoCont, CollisionTag_e collTag, bool visibleShot);
+    void createAmmoEntities(AmmoContainer_t &ammoCont, CollisionTag_e collTag, bool visibleShot);
+    void createAmmoEntity(uint32_t &ammoNum, CollisionTag_e collTag, bool visibleShot);
+    void createPlayerVisibleShotEntity(mapUiVectUI_t &visibleShots, WeaponComponent *weaponConf);
     void createShotImpactEntities(const std::vector<SpriteData> &vectSpriteData,
                                   const std::vector<ShootDisplayData> &shootDisplayData,
-                                  std::map<uint32_t, std::vector<uint32_t> > &impactsContainer);
+                                  const AmmoContainer_t &ammoContainer);
     uint32_t createWeaponEntity();
     uint32_t createWallEntity(bool multiSprite);
     uint32_t createDoorEntity();
@@ -113,7 +115,7 @@ private:
                                      const EnemyData &enemyData);
     void memTimerPausedValue();
     void applyTimerPausedValue();
-    void confPlayerVisibleShoot(const AmmoContainer_t &playerVisibleShots, const pairFloat_t &point, float degreeAngle);
+    void confPlayerVisibleShoot(const std::vector<uint32_t> &playerVisibleShots, const pairFloat_t &point, float degreeAngle);
     void confPlayerBullet(PlayerConfComponent *playerComp,
                           const pairFloat_t &point, float degreeAngle, uint32_t numBullet);
     inline void memColorSystemEntity(uint32_t entity)

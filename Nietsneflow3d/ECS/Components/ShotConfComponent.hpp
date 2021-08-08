@@ -12,6 +12,6 @@ struct ShotConfComponent : public ecs::Component
     }
     uint32_t m_damage = 5;
     bool m_destructPhase = false;
-    uint32_t m_spriteShotNum = 0;
+    uint32_t m_spriteShotNum = 0, m_impactEntity;
     virtual ~ShotConfComponent() = default;
 };

@@ -31,8 +31,6 @@
 #include <LevelManager.hpp>
 #include <cassert>
 
-std::array<uint32_t, 4> ShotConfComponent::m_impactEntities;
-
 //===================================================================
 void MainEngine::init()
 {
@@ -145,8 +143,8 @@ void MainEngine::displayTransitionMenu()
 }
 
 //===================================================================
-void MainEngine::confPlayerVisibleShoot(const AmmoContainer_t &playerVisibleShots,
-                                 const pairFloat_t &point, float degreeAngle)
+void MainEngine::confPlayerVisibleShoot(const std::vector<uint32_t> &playerVisibleShots,
+                                        const pairFloat_t &point, float degreeAngle)
 {
     m_physicalEngine.confPlayerVisibleShoot(playerVisibleShots, point, degreeAngle);
 }
@@ -190,7 +188,9 @@ void MainEngine::playerAttack(uint32_t playerEntity, PlayerConfComponent *player
     }
     else if(attackType == AttackType_e::VISIBLE_SHOTS)
     {
-        confPlayerVisibleShoot(playerComp->m_visibleShootEntities, point, degreeAngle);
+        confPlayerVisibleShoot(playerComp->
+                               m_visibleShootEntities[m_weaponComp->m_currentWeapon],
+                point, degreeAngle);
     }
     assert(m_weaponComp->m_weaponsData[m_weaponComp->m_currentWeapon].m_ammunationsCount > 0);
     --m_weaponComp->m_weaponsData[m_weaponComp->m_currentWeapon].m_ammunationsCount;
@@ -638,11 +638,11 @@ void MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
             enemyComp->m_visibleShot = !(it->second.m_visibleShotSprites.empty());
             if(enemyComp->m_visibleShot)
             {
-                createAmmosEntities(enemyComp->m_visibleAmmo, CollisionTag_e::BULLET_ENEMY_CT, enemyComp->m_visibleShot);
+                createAmmoEntities(enemyComp->m_visibleAmmo, CollisionTag_e::BULLET_ENEMY_CT, enemyComp->m_visibleShot);
             }
             else
             {
-                createAmmosEntities(enemyComp->m_stdAmmo, CollisionTag_e::BULLET_ENEMY_CT, enemyComp->m_visibleShot);
+                createAmmoEntities(enemyComp->m_stdAmmo, CollisionTag_e::BULLET_ENEMY_CT, enemyComp->m_visibleShot);
             }
             loadEnemySprites(levelManager.getPictureData().getSpriteData(),
                              it->second, numEntity, enemyComp);
@@ -656,38 +656,64 @@ void MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
 }
 
 //===================================================================
-void MainEngine::createAmmosEntities(AmmoContainer_t &ammoCount,
+void MainEngine::createAmmoEntities(AmmoContainer_t &ammoCount,
                                      CollisionTag_e collTag,
                                      bool visibleShot)
 {
     for(uint32_t i = 0; i < ammoCount.size(); ++i)
     {
-        if(!visibleShot)
-        {
-            ammoCount[i] = createShotEntity();
-        }
-        else
-        {
-            ammoCount[i] = createVisibleShotEntity();
-        }
-        GeneralCollisionComponent *genColl = m_ecsManager.getComponentManager().
-                searchComponentByType<GeneralCollisionComponent>(*ammoCount[i],
-                                                                 Components_e::GENERAL_COLLISION_COMPONENT);
-        assert(genColl);
-        genColl->m_active = false;
-        genColl->m_tag = collTag;
-        genColl->m_shape = (visibleShot) ? CollisionShape_e::CIRCLE_C : CollisionShape_e::SEGMENT_C;
+        createAmmoEntity(*ammoCount[i], collTag, visibleShot);
     }
+}
+
+//===================================================================
+void MainEngine::createAmmoEntity(uint32_t &ammoNum, CollisionTag_e collTag,
+                                  bool visibleShot)
+{
+    if(!visibleShot)
+    {
+        ammoNum = createShotEntity();
+    }
+    else
+    {
+        ammoNum = createVisibleShotEntity();
+    }
+    GeneralCollisionComponent *genColl = m_ecsManager.getComponentManager().
+            searchComponentByType<GeneralCollisionComponent>(ammoNum,
+                                                             Components_e::GENERAL_COLLISION_COMPONENT);
+    assert(genColl);
+    genColl->m_active = false;
+    genColl->m_tag = collTag;
+    genColl->m_shape = (visibleShot) ? CollisionShape_e::CIRCLE_C : CollisionShape_e::SEGMENT_C;
     if(visibleShot)
     {
-        confVisibleAmmo(ammoCount);
+        confVisibleAmmo(ammoNum);
+    }
+}
+
+//===================================================================
+void MainEngine::createPlayerVisibleShotEntity(mapUiVectUI_t &visibleShots,
+                                               WeaponComponent *weaponConf)
+{
+    for(uint32_t i = 0; weaponConf->m_weaponsData.size(); ++i)
+    {
+        if(weaponConf->m_weaponsData[i].m_attackType == AttackType_e::VISIBLE_SHOTS)
+        {
+            visibleShots.insert({i, std::vector<uint32_t>()});
+            visibleShots[i].resize(4);
+            for(uint32_t j = 0; j < 4; ++j)
+            {
+                createAmmoEntity(visibleShots[i][j], CollisionTag_e::BULLET_PLAYER_CT,
+                                 true);
+            }
+        }
     }
 }
 
 //===================================================================
 void MainEngine::createShotImpactEntities(const std::vector<SpriteData> &vectSpriteData,
                                           const std::vector<ShootDisplayData> &shootDisplayData,
-                                          std::map<uint32_t, std::vector<uint32_t>> &impactsContainer)
+                                          const AmmoContainer_t &ammoContainer)
 {
     for(uint32_t i = 0; i < shootDisplayData.size(); ++i)
     {
@@ -695,16 +721,18 @@ void MainEngine::createShotImpactEntities(const std::vector<SpriteData> &vectSpr
         {
             continue;
         }
-        impactsContainer.insert({i, std::vector<uint32_t>()});
-        impactsContainer[i].reserve(4);
-        for(uint32_t j = 0; j < 4; ++j)
+        for(uint32_t j = 0; j < ammoContainer.size(); ++j)
         {
-            impactsContainer[i].emplace_back(createShotImpactEntity());
+            ShotConfComponent *shotComp = m_ecsManager.getComponentManager().
+                    searchComponentByType<ShotConfComponent>(*ammoContainer[j],
+                                                             Components_e::SHOT_CONF_COMPONENT);
+            assert(shotComp);
+            shotComp->m_impactEntity = createShotImpactEntity();
             FPSVisibleStaticElementComponent *fpsStaticComp = m_ecsManager.getComponentManager().
                     searchComponentByType<FPSVisibleStaticElementComponent>(
-                        impactsContainer[i], Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
+                        shotComp->m_impactEntity, Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
             GeneralCollisionComponent *genComp = m_ecsManager.getComponentManager().
-                    searchComponentByType<GeneralCollisionComponent>(impactsContainer[i],
+                    searchComponentByType<GeneralCollisionComponent>(shotComp->m_impactEntity,
                                                                      Components_e::GENERAL_COLLISION_COMPONENT);
             assert(genComp);
             assert(fpsStaticComp);
@@ -713,8 +741,7 @@ void MainEngine::createShotImpactEntities(const std::vector<SpriteData> &vectSpr
             genComp->m_active = false;
             genComp->m_tag = CollisionTag_e::IMPACT_CT;
             genComp->m_shape = CollisionShape_e::CIRCLE_C;
-            loadShotImpactSprite(vectSpriteData, shootDisplayData[i].m_impact,
-                                 impactsContainer[i]);
+            loadShotImpactSprite(vectSpriteData, shootDisplayData[i], shotComp->m_impactEntity);
         }
     }
 }
@@ -828,28 +855,25 @@ void MainEngine::loadVisibleShotEnemySprites(const std::vector<SpriteData> &vect
 }
 
 //===================================================================
-void MainEngine::confVisibleAmmo(const AmmoContainer_t &ammoCont)
+void MainEngine::confVisibleAmmo(uint32_t ammoEntity)
 {
     pairFloat_t pairSpriteSize = {0.2f, 0.3f};
     float collisionRay = pairSpriteSize.first * LEVEL_HALF_TILE_SIZE_PX;
-    for(uint32_t i = 0; i < ammoCont.size(); ++i)
-    {
-        CircleCollisionComponent *circleComp = m_ecsManager.getComponentManager().
-                searchComponentByType<CircleCollisionComponent>(*ammoCont[i],
-                                                                Components_e::CIRCLE_COLLISION_COMPONENT);
-        FPSVisibleStaticElementComponent *fpsStaticComp = m_ecsManager.getComponentManager().
-                searchComponentByType<FPSVisibleStaticElementComponent>(
-                    *ammoCont[i], Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
-        MoveableComponent *moveComp = m_ecsManager.getComponentManager().
-                searchComponentByType<MoveableComponent>(
-                    *ammoCont[i], Components_e::MOVEABLE_COMPONENT);
-        assert(circleComp);
-        assert(fpsStaticComp);
-        assert(moveComp);
-        circleComp->m_ray = collisionRay;
-        fpsStaticComp->m_inGameSpriteSize = pairSpriteSize;
-        moveComp->m_velocity = 5.0f;
-    }
+    CircleCollisionComponent *circleComp = m_ecsManager.getComponentManager().
+            searchComponentByType<CircleCollisionComponent>(ammoEntity,
+                                                            Components_e::CIRCLE_COLLISION_COMPONENT);
+    FPSVisibleStaticElementComponent *fpsStaticComp = m_ecsManager.getComponentManager().
+            searchComponentByType<FPSVisibleStaticElementComponent>(
+                ammoEntity, Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
+    MoveableComponent *moveComp = m_ecsManager.getComponentManager().
+            searchComponentByType<MoveableComponent>(
+                ammoEntity, Components_e::MOVEABLE_COMPONENT);
+    assert(circleComp);
+    assert(fpsStaticComp);
+    assert(moveComp);
+    circleComp->m_ray = collisionRay;
+    fpsStaticComp->m_inGameSpriteSize = pairSpriteSize;
+    moveComp->m_velocity = 5.0f;
 }
 
 //===================================================================
@@ -1115,13 +1139,13 @@ void MainEngine::confPlayerEntity(const LevelManager &levelManager,
     assert(weaponConf);
     m_playerConf = playerConf;
     m_weaponComp = weaponConf;
-    createAmmosEntities(m_playerConf->m_shootEntities, CollisionTag_e::BULLET_PLAYER_CT, false);
-    createAmmosEntities(m_playerConf->m_visibleShootEntities, CollisionTag_e::BULLET_PLAYER_CT, true);
+    createAmmoEntities(m_playerConf->m_shootEntities, CollisionTag_e::BULLET_PLAYER_CT, false);
     confShotsEntities(m_playerConf->m_shootEntities, 1);
-    createShotImpactEntities(vectSpriteData, levelManager.getShootDisplayData(),
-                             m_playerConf->m_shotImpact);
+    createPlayerVisibleShotEntity(m_playerConf->m_visibleShootEntities, weaponConf);
     loadPlayerVisibleShotsSprite(vectSpriteData, levelManager.getShootDisplayData(),
                                  m_playerConf->m_visibleShootEntities);
+    createShotImpactEntities(vectSpriteData, levelManager.getShootDisplayData(),
+                             m_playerConf->m_shootEntities);
 
     map->m_coord = level.getPlayerDeparture();
     Direction_e playerDir = level.getPlayerDepartureDirection();
@@ -1235,47 +1259,53 @@ void MainEngine::confShotsEntities(const AmmoContainer_t &ammoEntities, uint32_t
 
 //===================================================================
 void MainEngine::loadShotImpactSprite(const std::vector<SpriteData> &vectSpriteData,
-                                      const std::vector<ShootDisplayData> &shootDisplayData,
-                                      std::vector<uint32_t> &target)
+                                      const ShootDisplayData &shootDisplayData,
+                                      uint32_t impactEntity)
 {
-    for(uint32_t k = 0; k < target.size(); ++k)
+    MemSpriteDataComponent *memComp = m_ecsManager.getComponentManager().
+            searchComponentByType<MemSpriteDataComponent>(impactEntity,
+                                                          Components_e::MEM_SPRITE_DATA_COMPONENT);
+    SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().
+            searchComponentByType<SpriteTextureComponent>(impactEntity,
+                                                          Components_e::SPRITE_TEXTURE_COMPONENT);
+    assert(memComp);
+    assert(spriteComp);
+    for(uint32_t l = 0; l < shootDisplayData.m_impact.size(); ++l)
     {
-        MemSpriteDataComponent *memComp = m_ecsManager.getComponentManager().
-                searchComponentByType<MemSpriteDataComponent>(target[k],
-                                                              Components_e::MEM_SPRITE_DATA_COMPONENT);
-        SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().
-                searchComponentByType<SpriteTextureComponent>(target[k],
-                                                              Components_e::SPRITE_TEXTURE_COMPONENT);
-        assert(memComp);
-        assert(spriteComp);
-        for(uint32_t l = 0; l < shootDisplayData.size(); ++l)
-        {
-            memComp->m_vectSpriteData.emplace_back(&vectSpriteData[shootDisplayData[l].m_numSprite]);
-        }
-        spriteComp->m_spriteData = memComp->m_vectSpriteData[0];
+        memComp->m_vectSpriteData.emplace_back(
+                    &vectSpriteData[shootDisplayData.m_impact[l].m_numSprite]);
     }
+    spriteComp->m_spriteData = memComp->m_vectSpriteData[0];
 }
 
 //===================================================================
 void MainEngine::loadPlayerVisibleShotsSprite(const std::vector<SpriteData> &vectSpriteData,
                                               const std::vector<ShootDisplayData> &shootDisplayData,
-                                              const AmmoContainer_t &ammoEntities)
+                                              const mapUiVectUI_t &ammoEntities)
 {
-    for(uint32_t k = 0; k < ammoEntities.size(); ++k)
+    mapUiVectUI_t::const_iterator it = ammoEntities.begin();
+    for(; it != ammoEntities.end(); ++it)
     {
-        MemSpriteDataComponent *memComp = m_ecsManager.getComponentManager().
-                searchComponentByType<MemSpriteDataComponent>(*ammoEntities[k],
-                                                              Components_e::MEM_SPRITE_DATA_COMPONENT);
-        SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().
-                searchComponentByType<SpriteTextureComponent>(*ammoEntities[k],
-                                                              Components_e::SPRITE_TEXTURE_COMPONENT);
-        assert(memComp);
-        assert(spriteComp);
-        for(uint32_t l = 0; l < shootDisplayData.size(); ++l)
+        for(uint32_t i = 0; i < (*it).second.size(); ++i)
         {
-            memComp->m_vectSpriteData.emplace_back(&vectSpriteData[vectSprite[l]]);
+            MemSpriteDataComponent *memComp = m_ecsManager.getComponentManager().
+                    searchComponentByType<MemSpriteDataComponent>((*it).second[i],
+                                                                  Components_e::MEM_SPRITE_DATA_COMPONENT);
+            SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().
+                    searchComponentByType<SpriteTextureComponent>((*it).second[i],
+                                                                  Components_e::SPRITE_TEXTURE_COMPONENT);
+            assert(memComp);
+            assert(spriteComp);
+            for(uint32_t l = 0; l < shootDisplayData[i].m_active.size(); ++l)
+            {
+                memComp->m_vectSpriteData.emplace_back(&vectSpriteData[shootDisplayData[i].m_active[l].m_numSprite]);
+            }
+            for(uint32_t l = 0; l < shootDisplayData[i].m_destruct.size(); ++l)
+            {
+                memComp->m_vectSpriteData.emplace_back(&vectSpriteData[shootDisplayData[i].m_destruct[l].m_numSprite]);
+            }
+            spriteComp->m_spriteData = memComp->m_vectSpriteData[0];
         }
-        spriteComp->m_spriteData = &vectSpriteData[vectSprite[0]];
     }
 }
 

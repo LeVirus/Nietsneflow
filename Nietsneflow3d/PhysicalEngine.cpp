@@ -45,8 +45,8 @@ void PhysicalEngine::memPlayerEntity(uint32_t playerEntity)
 }
 
 //===================================================================
-void PhysicalEngine::confPlayerVisibleShoot(const AmmoContainer_t &visibleShots,
-                                      const pairFloat_t &point, float degreeAngle)
+void PhysicalEngine::confPlayerVisibleShoot(const std::vector<uint32_t> &visibleShots,
+                                            const pairFloat_t &point, float degreeAngle)
 {
     m_iaSystem->confVisibleShoot(visibleShots, point, degreeAngle);
 }
