@@ -503,7 +503,7 @@ void LevelManager::loadDisplayData(const INIReader &reader, std::string_view sec
 //===================================================================
 void LevelManager::loadWeaponData(const INIReader &reader, std::string_view sectionName, uint32_t numIt)
 {
-    std::string sprites;
+    std::string sprites, latency;
     m_vectWeaponsINIData[numIt].m_maxAmmo =
             std::stoul(reader.Get(sectionName.data(), "MaxAmmo", "1"));
     assert(m_vectWeaponsINIData[numIt].m_maxAmmo != 1);
@@ -528,6 +528,9 @@ void LevelManager::loadWeaponData(const INIReader &reader, std::string_view sect
     assert(vectHeight.size() == vectWeight.size());
     assert(vectSprites.size() == vectWeight.size());
     m_vectWeaponsINIData[numIt].m_spritesData.reserve(vectSprites.size());
+    latency = reader.Get(sectionName.data(), "AnimationLatency", "");
+    assert(!latency.empty());
+    m_vectWeaponsINIData[numIt].m_animationLatency = std::stof(latency);
     for(uint32_t i = 0; i < vectSprites.size(); ++i)
     {
         m_vectWeaponsINIData[numIt].m_spritesData.emplace_back(

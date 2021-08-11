@@ -422,8 +422,6 @@ void MainEngine::loadLevelEntities(const LevelManager &levelManager)
     loadStaticElementEntities(levelManager);
     uint32_t weaponEntity = loadWeaponsEntity(levelManager);
     loadPlayerEntity(levelManager, weaponEntity);
-//    m_ecsManager.getSystemManager().searchSystemByType<StaticDisplaySystem>(
-//                static_cast<uint32_t>(Systems_e::STATIC_DISPLAY_SYSTEM))->;
     Level::initLevelElementArray();
     loadWallEntities(levelManager);
     loadDoorEntities(levelManager);
@@ -468,6 +466,7 @@ uint32_t MainEngine::loadWeaponsEntity(const LevelManager &levelManager)
     memSprite->m_vectSpriteData.reserve(vectWeapons.size());
     for(uint32_t i = 0; i < vectWeapons.size(); ++i)
     {
+        weaponComp->m_weaponsData[i].m_latency = vectWeapons[i].m_animationLatency;
         weaponComp->m_weaponsData[i].m_visibleShotID = vectWeapons[i].m_visibleShootID;
         weaponComp->m_weaponsData[i].m_maxAmmunations = vectWeapons[i].m_maxAmmo;
         weaponComp->m_weaponsData[i].m_memPosSprite =
@@ -1138,9 +1137,7 @@ void MainEngine::confPlayerEntity(const LevelManager &levelManager,
     confShotsEntities(m_playerConf->m_shootEntities, 1);
     createPlayerVisibleShotEntity(weaponConf);
     confPlayerVisibleShotsSprite(vectSpriteData, levelManager.getVisibleShootDisplayData(), weaponConf);
-    createShotImpactEntities(vectSpriteData, levelManager.getShootDisplayData(),
-                             m_playerConf->m_shootEntities);
-
+    createShotImpactEntities(vectSpriteData, levelManager.getShootDisplayData(), m_playerConf->m_shootEntities);
     map->m_coord = level.getPlayerDeparture();
     Direction_e playerDir = level.getPlayerDepartureDirection();
     switch(playerDir)

@@ -12,6 +12,7 @@ struct WeaponData
     bool m_posses;
     std::optional<ArrayWeaponVisibleShot_t> m_visibleShootEntities;
     std::string m_visibleShotID;
+    float m_latency;
 };
 
 struct WeaponComponent : public ecs::Component

@@ -230,18 +230,19 @@ void StaticDisplaySystem::treatWeaponShootAnimation(float elapsedSeconds,
         //OOOOOOOOOK TMP
         spriteNumLastAnim = currentWeapon.m_memPosSprite.first + 2;
     }
-    //FIST
+    //FIST & GUN
     else
     {
         //OOOOOOOOOK TMP
         spriteNumLastAnim = currentWeapon.m_memPosSprite.first + 1;
     }
-    if(elapsedSeconds > m_weaponsLatences[weaponComp->m_currentWeapon])
+    if(elapsedSeconds > currentWeapon.m_latency)
     {
         if(weaponComp->m_shootFirstPhase)
         {
             if(weaponComp->m_numWeaponSprite == currentWeapon.m_memPosSprite.second)
             {
+                //OOOOOOOK
                 //GUN OR PLASMA
                 if(weaponComp->m_currentWeapon == 1 || weaponComp->m_currentWeapon == 3)
                 {

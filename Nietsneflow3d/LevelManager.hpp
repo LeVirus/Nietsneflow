@@ -22,6 +22,7 @@ struct WeaponINIData
     uint32_t m_maxAmmo, m_simultaneousShots;
     AttackType_e m_attackType;
     std::string m_visibleShootID;
+    float m_animationLatency;
 };
 
 struct ShootDisplayData
