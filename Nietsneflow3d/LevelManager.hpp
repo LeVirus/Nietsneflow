@@ -6,8 +6,8 @@
 #include <set>
 
 class INIReader;
+using SetStr_t = std::set<std::string>;
 
-using setStr = std::set<std::string>;
 struct WeaponSpriteData
 {
     uint8_t m_numSprite;
@@ -19,8 +19,9 @@ using mapVisibleShotData_t = std::map<std::string, std::vector<WeaponSpriteData>
 struct WeaponINIData
 {
     std::vector<WeaponSpriteData> m_spritesData;
-    uint32_t m_maxAmmo, m_simultaneousShots;
+    uint32_t m_maxAmmo, m_simultaneousShots, m_lastAnimNum;
     AttackType_e m_attackType;
+    AnimationMode_e m_animMode;
     std::string m_visibleShootID;
     float m_animationLatency;
 };

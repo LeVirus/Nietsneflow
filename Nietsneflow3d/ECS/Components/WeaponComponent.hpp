@@ -6,8 +6,9 @@
 
 struct WeaponData
 {
-    uint32_t m_ammunationsCount, m_simultaneousShots, m_maxAmmunations;
+    uint32_t m_ammunationsCount, m_simultaneousShots, m_maxAmmunations, m_lastAnimNum;
     AttackType_e m_attackType;
+    AnimationMode_e m_animMode;
     pairUI_t m_memPosSprite;
     bool m_posses;
     std::optional<ArrayWeaponVisibleShot_t> m_visibleShootEntities;

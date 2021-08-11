@@ -466,18 +466,18 @@ uint32_t MainEngine::loadWeaponsEntity(const LevelManager &levelManager)
     memSprite->m_vectSpriteData.reserve(vectWeapons.size());
     for(uint32_t i = 0; i < vectWeapons.size(); ++i)
     {
+        weaponComp->m_weaponsData[i].m_animMode = vectWeapons[i].m_animMode;
         weaponComp->m_weaponsData[i].m_latency = vectWeapons[i].m_animationLatency;
         weaponComp->m_weaponsData[i].m_visibleShotID = vectWeapons[i].m_visibleShootID;
         weaponComp->m_weaponsData[i].m_maxAmmunations = vectWeapons[i].m_maxAmmo;
-        weaponComp->m_weaponsData[i].m_memPosSprite =
-        {memSprite->m_vectSpriteData.size(),
-         memSprite->m_vectSpriteData.size() + vectWeapons[i].m_spritesData.size() - 1};
+        weaponComp->m_weaponsData[i].m_memPosSprite = {memSprite->m_vectSpriteData.size(),
+                                                       memSprite->m_vectSpriteData.size() + vectWeapons[i].m_spritesData.size() - 1};
+        weaponComp->m_weaponsData[i].m_lastAnimNum = memSprite->m_vectSpriteData.size() + vectWeapons[i].m_lastAnimNum;
         weaponComp->m_weaponsData[i].m_attackType = vectWeapons[i].m_attackType;
         weaponComp->m_weaponsData[i].m_simultaneousShots = vectWeapons[i].m_simultaneousShots;
         for(uint32_t j = 0; j < vectWeapons[i].m_spritesData.size(); ++j)
         {
-            memSprite->m_vectSpriteData.emplace_back(
-                        &vectSprite[vectWeapons[i].m_spritesData[j].m_numSprite]);
+            memSprite->m_vectSpriteData.emplace_back(&vectSprite[vectWeapons[i].m_spritesData[j].m_numSprite]);
             posUp = -1.0f + vectWeapons[i].m_spritesData[j].m_GLSize.second;
             diffLateral = vectWeapons[i].m_spritesData[j].m_GLSize.first / 2.0f;
             posLeft = -diffLateral;

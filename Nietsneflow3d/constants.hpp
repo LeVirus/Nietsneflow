@@ -12,6 +12,12 @@ using pairLong_t = std::pair<long, long>;
 using pairFloat_t = std::pair<float, float>;
 using pairDouble_t = std::pair<double, double>;
 
+enum class AnimationMode_e
+{
+    STANDART,
+    RETURN
+};
+
 enum class AttackType_e
 {
     MELEE,

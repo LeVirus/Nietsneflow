@@ -224,29 +224,17 @@ void StaticDisplaySystem::treatWeaponShootAnimation(float elapsedSeconds,
     assert(weaponComp);
     const WeaponData &currentWeapon = weaponComp->m_weaponsData[weaponComp->m_currentWeapon];
     uint32_t spriteFirstAnim = currentWeapon.m_memPosSprite.first, spriteNumLastAnim;
-    //SHOTGUN
-    if(weaponComp->m_currentWeapon == 2)
-    {
-        //OOOOOOOOOK TMP
-        spriteNumLastAnim = currentWeapon.m_memPosSprite.first + 2;
-    }
-    //FIST & GUN
-    else
-    {
-        //OOOOOOOOOK TMP
-        spriteNumLastAnim = currentWeapon.m_memPosSprite.first + 1;
-    }
+    spriteNumLastAnim = currentWeapon.m_lastAnimNum;
     if(elapsedSeconds > currentWeapon.m_latency)
     {
         if(weaponComp->m_shootFirstPhase)
         {
             if(weaponComp->m_numWeaponSprite == currentWeapon.m_memPosSprite.second)
             {
-                //OOOOOOOK
-                //GUN OR PLASMA
-                if(weaponComp->m_currentWeapon == 1 || weaponComp->m_currentWeapon == 3)
+                if(currentWeapon.m_animMode == AnimationMode_e::STANDART)
                 {
                     weaponComp->m_numWeaponSprite = spriteFirstAnim;
+                    weaponComp->m_timerShootActive = false;
                 }
                 else
                 {
@@ -261,14 +249,15 @@ void StaticDisplaySystem::treatWeaponShootAnimation(float elapsedSeconds,
         }
         else
         {
-            if(weaponComp->m_numWeaponSprite == spriteFirstAnim)
+            if(currentWeapon.m_animMode == AnimationMode_e::RETURN && weaponComp->m_numWeaponSprite == spriteNumLastAnim)
+            {
+                weaponComp->m_timerShootActive = false;
+                weaponComp->m_numWeaponSprite = spriteFirstAnim;
+            }
+            else if(currentWeapon.m_animMode == AnimationMode_e::STANDART && weaponComp->m_numWeaponSprite == spriteFirstAnim)
             {
                 weaponComp->m_timerShootActive = false;
                 return;
-            }
-            if(weaponComp->m_numWeaponSprite == spriteNumLastAnim)
-            {
-                weaponComp->m_numWeaponSprite = spriteFirstAnim;
             }
             else
             {
