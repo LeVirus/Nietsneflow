@@ -293,20 +293,21 @@ void InputSystem::treatMainMenu(uint32_t playerEntity)
 //===================================================================
 void changePlayerWeapon(WeaponComponent &weaponComp, bool next)
 {
+    uint32_t weapon = weaponComp.m_currentWeapon;
     if(!next)
     {
         do
         {
             //first weapon
-            if(weaponComp.m_currentWeapon == 0)
+            if(weapon == 0)
             {
-                weaponComp.m_currentWeapon = weaponComp.m_weaponsData.size() - 1;
+                weapon = weaponComp.m_weaponsData.size() - 1;
             }
             else
             {
-                --weaponComp.m_currentWeapon;
+                --weapon;
             }
-            if(weaponComp.m_weaponsData[weaponComp.m_currentWeapon].m_posses)
+            if(weaponComp.m_weaponsData[weapon].m_posses)
             {
                 break;
             }
@@ -317,21 +318,21 @@ void changePlayerWeapon(WeaponComponent &weaponComp, bool next)
         do
         {
             //last weapon
-            if(weaponComp.m_currentWeapon == weaponComp.m_weaponsData.size() - 1)
+            if(weapon == weaponComp.m_weaponsData.size() - 1)
             {
-                weaponComp.m_currentWeapon = 0;
+                weapon = 0;
             }
             else
             {
-                ++weaponComp.m_currentWeapon;
+                ++weapon;
             }
-            if(weaponComp.m_weaponsData[weaponComp.m_currentWeapon].m_posses)
+            if(weaponComp.m_weaponsData[weapon].m_posses)
             {
                 break;
             }
         }while(true);
     }
-    setPlayerWeapon(weaponComp, weaponComp.m_currentWeapon);
+    setPlayerWeapon(weaponComp, weapon);
 }
 
 

@@ -8,23 +8,25 @@
 class INIReader;
 
 using setStr = std::set<std::string>;
-
 struct WeaponSpriteData
 {
     uint8_t m_numSprite;
     pairFloat_t m_GLSize;
 };
 
+using mapVisibleShotData_t = std::map<std::string, std::vector<WeaponSpriteData>>;
+
 struct WeaponINIData
 {
     std::vector<WeaponSpriteData> m_spritesData;
-    uint32_t m_maxAmmo, m_simultaneousShot, m_simultaneousShots;
+    uint32_t m_maxAmmo, m_simultaneousShots;
     AttackType_e m_attackType;
+    std::string m_visibleShootID;
 };
 
 struct ShootDisplayData
 {
-    std::vector<WeaponSpriteData> m_active, m_destruct, m_impact;
+    std::vector<WeaponSpriteData> m_impact;
 };
 
 class LevelManager
@@ -71,6 +73,10 @@ public:
     {
         return m_vectShootDisplayData;
     }
+    inline const mapVisibleShotData_t &getVisibleShootDisplayData()const
+    {
+        return m_visibleShootINIData;
+    }
 private:
     //texture and sprite loading
     void loadTexturePath(const INIReader &reader);
@@ -94,6 +100,7 @@ private:
     void removeWallPositionVect(const INIReader &reader, const std::string &sectionName,
                                 std::set<pairUI_t> &vectPos);
     uint8_t getSpriteId(const INIReader &reader, const std::string &sectionName);
+    void loadVisibleShootDisplayData(const INIReader &reader);
     void loadWeaponsDisplayData(const INIReader &reader);
     void loadExit(const INIReader &reader);
     void loadSpriteData(const INIReader &reader, const std::string &sectionName,
@@ -126,11 +133,14 @@ private:
     //store the sprite number and the screen display size
     std::vector<WeaponINIData> m_vectWeaponsINIData;
     std::vector<ShootDisplayData> m_vectShootDisplayData;
+    //first moving Shot sprite, all other destruct phase sprites
+    mapVisibleShotData_t m_visibleShootINIData;
 };
 
 std::vector<uint32_t> convertStrToVectUI(const std::string &str);
 std::optional<std::vector<uint32_t> > getBrutPositionData(const INIReader &reader, const std::string & sectionName, const std::string &propertyName);
 std::vector<float> convertStrToVectFloat(const std::string &str);
+std::vector<std::string> convertStrToVectStr(const std::string &str);
 void fillPositionVerticalLine(const pairUI_t &origins, uint32_t size,
                               std::set<pairUI_t> &vectPos);
 void fillPositionHorizontalLine(const pairUI_t &origins, uint32_t size,

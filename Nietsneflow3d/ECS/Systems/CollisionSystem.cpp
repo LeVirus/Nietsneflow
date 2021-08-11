@@ -187,22 +187,10 @@ void CollisionSystem::confImpactShots(uint32_t numBullet)
     //remove warning
     GeneralCollisionComponent *genImpact = nullptr;
     uint32_t impactEntity;
-//    for(current = 0; current < shotComp->m_impactEntity.size(); ++current)
-//    {
-        genImpact = stairwayToComponentManager().
-                searchComponentByType<GeneralCollisionComponent>(shotComp->m_impactEntity,
-                                                                 Components_e::GENERAL_COLLISION_COMPONENT);
-        assert(genImpact);
-//        if(genImpact->m_active)
-//        {
-//            if(current == (shotComp->m_impactEntity.size() - 1))
-//            {
-//                return;
-//            }
-//            continue;
-//        }
-//        break;
-//    }
+    genImpact = stairwayToComponentManager().
+            searchComponentByType<GeneralCollisionComponent>(shotComp->m_impactEntity,
+                                                             Components_e::GENERAL_COLLISION_COMPONENT);
+    assert(genImpact);
     impactEntity = shotComp->m_impactEntity;
     ImpactShotComponent *impactComp = stairwayToComponentManager().
             searchComponentByType<ImpactShotComponent>(impactEntity, Components_e::IMPACT_CONF_COMPONENT);
@@ -587,13 +575,13 @@ void CollisionSystem::treatPlayerPickObject(CollisionArgs &args)
     case ObjectType_e::CARD:
         break;
     case ObjectType_e::SHOTGUN:
-        if(!pickUpWeapon(3, weaponComp, objectComp->m_containing))
+        if(!pickUpWeapon(2, weaponComp, objectComp->m_containing))
         {
             return;
         }
         break;
     case ObjectType_e::PLASMA_RIFLE:
-        if(!pickUpWeapon(4, weaponComp, objectComp->m_containing))
+        if(!pickUpWeapon(3, weaponComp, objectComp->m_containing))
         {
             return;
         }

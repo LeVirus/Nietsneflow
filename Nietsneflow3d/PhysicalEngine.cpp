@@ -5,6 +5,7 @@
 #include <ECS/Components/MapCoordComponent.hpp>
 #include <ECS/Components/MoveableComponent.hpp>
 #include <ECS/Components/VisionComponent.hpp>
+#include <ECS/Components/WeaponComponent.hpp>
 #include <ECS/Systems/DoorSystem.hpp>
 #include <ECS/Systems/IASystem.hpp>
 #include <cassert>
@@ -45,7 +46,7 @@ void PhysicalEngine::memPlayerEntity(uint32_t playerEntity)
 }
 
 //===================================================================
-void PhysicalEngine::confPlayerVisibleShoot(const std::vector<uint32_t> &visibleShots,
+void PhysicalEngine::confPlayerVisibleShoot(const ArrayWeaponVisibleShot_t &visibleShots,
                                             const pairFloat_t &point, float degreeAngle)
 {
     m_iaSystem->confVisibleShoot(visibleShots, point, degreeAngle);

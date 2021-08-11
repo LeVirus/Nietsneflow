@@ -14,9 +14,7 @@ public:
     IASystem();
     void execSystem()override;
     void loadPlayerDatas(uint32_t playerEntity);
-    void confVisibleShoot(const std::vector<uint32_t> &visibleShots,
-                          const pairFloat_t &point, float degreeAngle);
-    void confVisibleShoot(const AmmoContainer_t &visibleShots,
+    void confVisibleShoot(const ArrayWeaponVisibleShot_t &visibleShots,
                           const pairFloat_t &point, float degreeAngle);
 private:
     bool checkEnemyTriggerAttackMode(float radiantAngle, float distancePlayer,
@@ -27,8 +25,8 @@ private:
                               MapCoordComponent *enemyMapComp);
     void enemyShoot(EnemyConfComponent *enemyConfComp, MoveableComponent *moveComp,
                     MapCoordComponent *enemyMapComp);
-    void treatVisibleShots(const AmmoContainer_t &stdAmmo);
-    void treatVisibleShots(const std::vector<uint32_t> &stdAmmo);
+    void treatVisibleShots(const std::array<uint32_t, TOTAL_SHOT_NUMBER> &stdAmmo);
+    void treatEnemyVisibleShots(const ArrayWeaponVisibleShot_t &stdAmmo);
     void treatVisibleShot(uint32_t numEntity);
 private:
     uint32_t m_playerEntity;

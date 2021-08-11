@@ -37,11 +37,12 @@ void IASystem::execSystem()
     WeaponComponent *weaponComp = stairwayToComponentManager().
             searchComponentByType<WeaponComponent>(m_playerComp->m_weaponEntity,
                                                    Components_e::WEAPON_COMPONENT);
+    const WeaponData &weaponData = weaponComp->m_weaponsData[weaponComp->m_currentWeapon];
     assert(weaponComp);
-    if(weaponComp->m_weaponsData[weaponComp->m_currentWeapon].m_attackType ==
-            AttackType_e::VISIBLE_SHOTS)
+    if(weaponData.m_attackType == AttackType_e::VISIBLE_SHOTS)
     {
-        treatVisibleShots(m_playerComp->m_visibleShootEntities[weaponComp->m_currentWeapon]);
+        assert(weaponData.m_visibleShootEntities);
+        treatVisibleShots(*weaponData.m_visibleShootEntities);
     }
     MapCoordComponent *enemyMapComp;
     EnemyConfComponent *enemyConfComp;
@@ -54,7 +55,7 @@ void IASystem::execSystem()
         assert(enemyConfComp);
         if(enemyConfComp->m_visibleShot)
         {
-            treatVisibleShots(enemyConfComp->m_visibleAmmo);
+            treatEnemyVisibleShots(enemyConfComp->m_visibleAmmo);
         }
         if(enemyConfComp->m_behaviourMode == EnemyBehaviourMode_e::DEAD ||
                 enemyConfComp->m_behaviourMode == EnemyBehaviourMode_e::DYING)
@@ -102,7 +103,7 @@ bool IASystem::checkEnemyTriggerAttackMode(float radiantAngle, float distancePla
 }
 
 //===================================================================
-void IASystem::treatVisibleShots(const std::vector<uint32_t> &stdAmmo)
+void IASystem::treatVisibleShots(const std::array<uint32_t, TOTAL_SHOT_NUMBER> &stdAmmo)
 {
     for(uint32_t i = 0; i < stdAmmo.size(); ++i)
     {
@@ -111,11 +112,11 @@ void IASystem::treatVisibleShots(const std::vector<uint32_t> &stdAmmo)
 }
 
 //===================================================================
-void IASystem::treatVisibleShots(const AmmoContainer_t &stdAmmo)
+void IASystem::treatEnemyVisibleShots(const ArrayWeaponVisibleShot_t &stdAmmo)
 {
     for(uint32_t i = 0; i < stdAmmo.size(); ++i)
     {
-        treatVisibleShot(*stdAmmo[i]);
+        treatVisibleShot(stdAmmo[i]);
     }
 }
 
@@ -185,17 +186,16 @@ void IASystem::enemyShoot(EnemyConfComponent *enemyConfComp, MoveableComponent *
     GeneralCollisionComponent *genComp;
     if(enemyConfComp->m_visibleShot)
     {
-        confVisibleShoot(enemyConfComp->m_visibleAmmo, enemyMapComp->m_absoluteMapPositionPX,
-                         moveComp->m_degreeOrientation);
+        confVisibleShoot(enemyConfComp->m_visibleAmmo, enemyMapComp->m_absoluteMapPositionPX, moveComp->m_degreeOrientation);
     }
     else
     {
         genComp = stairwayToComponentManager().
                 searchComponentByType<GeneralCollisionComponent>(
-                    *enemyConfComp->m_stdAmmo[0], Components_e::GENERAL_COLLISION_COMPONENT);
+                    enemyConfComp->m_stdAmmo[0], Components_e::GENERAL_COLLISION_COMPONENT);
         SegmentCollisionComponent *segmentComp = stairwayToComponentManager().
                 searchComponentByType<SegmentCollisionComponent>(
-                    *enemyConfComp->m_stdAmmo[0], Components_e::SEGMENT_COLLISION_COMPONENT);
+                    enemyConfComp->m_stdAmmo[0], Components_e::SEGMENT_COLLISION_COMPONENT);
         assert(genComp);
         assert(segmentComp);
         confBullet(genComp, segmentComp, CollisionTag_e::BULLET_ENEMY_CT,
@@ -258,9 +258,9 @@ void IASystem::loadPlayerDatas(uint32_t playerEntity)
     assert(m_playerComp);
 }
 
-//TMP
 //===================================================================
-void IASystem::confVisibleShoot(const std::vector<uint32_t> &visibleShots, const pairFloat_t &point, float degreeAngle)
+void IASystem::confVisibleShoot(const ArrayWeaponVisibleShot_t &visibleShots,
+                                const pairFloat_t &point, float degreeAngle)
 {
     uint32_t currentShot = 0;
     for(; currentShot < visibleShots.size(); ++currentShot)
@@ -293,48 +293,6 @@ void IASystem::confVisibleShoot(const std::vector<uint32_t> &visibleShots, const
     TimerComponent *ammoTimeComp = stairwayToComponentManager().
             searchComponentByType<TimerComponent>(
                 visibleShots[currentShot], Components_e::TIMER_COMPONENT);
-    assert(ammoTimeComp);
-    assert(mapComp);
-    assert(ammoMoveComp);
-    mapComp->m_absoluteMapPositionPX = point;
-    ammoMoveComp->m_degreeOrientation = degreeAngle;
-}
-
-//===================================================================
-void IASystem::confVisibleShoot(const AmmoContainer_t &visibleShots,
-                                const pairFloat_t &point, float degreeAngle)
-{
-    uint32_t currentShot = 0;
-    for(; currentShot < visibleShots.size(); ++currentShot)
-    {
-        GeneralCollisionComponent *genComp = stairwayToComponentManager().searchComponentByType<GeneralCollisionComponent>(
-                    *visibleShots[currentShot], Components_e::GENERAL_COLLISION_COMPONENT);
-        assert(genComp);
-        if(!genComp->m_active)
-        {
-            genComp->m_active = true;
-            TimerComponent *timerComp = stairwayToComponentManager().
-                    searchComponentByType<TimerComponent>(
-                        *visibleShots[currentShot], Components_e::TIMER_COMPONENT);
-            assert(timerComp);
-            timerComp->m_clockA = std::chrono::system_clock::now();
-            break;
-        }
-        //if all shoot active
-        if(currentShot == (visibleShots.size() - 1))
-        {
-            return;
-        }
-    }
-    MapCoordComponent *mapComp = stairwayToComponentManager().
-            searchComponentByType<MapCoordComponent>(
-                *visibleShots[currentShot], Components_e::MAP_COORD_COMPONENT);
-    MoveableComponent *ammoMoveComp = stairwayToComponentManager().
-            searchComponentByType<MoveableComponent>(
-                *visibleShots[currentShot], Components_e::MOVEABLE_COMPONENT);
-    TimerComponent *ammoTimeComp = stairwayToComponentManager().
-            searchComponentByType<TimerComponent>(
-                *visibleShots[currentShot], Components_e::TIMER_COMPONENT);
     assert(ammoTimeComp);
     assert(mapComp);
     assert(ammoMoveComp);

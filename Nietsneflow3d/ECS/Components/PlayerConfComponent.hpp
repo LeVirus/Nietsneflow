@@ -5,7 +5,6 @@
 #include <array>
 #include <optional>
 
-using mapUIVectUI_t = std::map<uint32_t, std::vector<uint32_t>>;
 struct PlayerConfComponent : public ecs::Component
 {
     PlayerConfComponent()
@@ -30,8 +29,7 @@ struct PlayerConfComponent : public ecs::Component
     bool m_playerShoot = false, m_takeDamage = false, m_inMovement = false;
     uint32_t m_weaponEntity, m_ammoWriteEntity, m_menuEntity, m_menuCursorEntity,
     m_actionEntity, m_hitMeleeEntity, m_lifeWriteEntity, m_life = 100;
-    AmmoContainer_t m_shootEntities;
-    mapUIVectUI_t m_visibleShootEntities;
+    ArrayWeaponVisibleShot_t m_shootEntities;
     CurrentMenuCursorPos_e m_currentCursorPos = static_cast<CurrentMenuCursorPos_e>(0);
     virtual ~PlayerConfComponent() = default;
 };
