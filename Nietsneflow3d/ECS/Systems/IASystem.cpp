@@ -112,7 +112,7 @@ void IASystem::treatVisibleShots(const std::array<uint32_t, TOTAL_SHOT_NUMBER> &
 }
 
 //===================================================================
-void IASystem::treatEnemyVisibleShots(const ArrayWeaponVisibleShot_t &stdAmmo)
+void IASystem::treatEnemyVisibleShots(const ArrayVisibleShot_t &stdAmmo)
 {
     for(uint32_t i = 0; i < stdAmmo.size(); ++i)
     {
@@ -259,7 +259,7 @@ void IASystem::loadPlayerDatas(uint32_t playerEntity)
 }
 
 //===================================================================
-void IASystem::confVisibleShoot(const ArrayWeaponVisibleShot_t &visibleShots,
+void IASystem::confVisibleShoot(const ArrayVisibleShot_t &visibleShots,
                                 const pairFloat_t &point, float degreeAngle)
 {
     uint32_t currentShot = 0;

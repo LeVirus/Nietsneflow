@@ -5,7 +5,7 @@
 #include <ECS/Systems/CollisionSystem.hpp>
 #include "constants.hpp"
 
-using ArrayWeaponVisibleShot_t = std::array<uint32_t, TOTAL_SHOT_NUMBER>;
+using ArrayVisibleShot_t = std::array<uint32_t, TOTAL_SHOT_NUMBER>;
 
 struct MoveableComponent;
 struct PositionVertexComponent;
@@ -22,7 +22,7 @@ public:
     void linkSystems(InputSystem *inputSystem, CollisionSystem * collisionSystem,
                      DoorSystem *doorSystem, IASystem *iaSystem);
     void memPlayerEntity(uint32_t playerEntity);
-    void confPlayerVisibleShoot(const ArrayWeaponVisibleShot_t &visibleShots,
+    void confPlayerVisibleShoot(const ArrayVisibleShot_t &visibleShots,
                                 const pairFloat_t &point, float degreeAngle);
     void setModeTransitionMenu(bool transition);
     inline const std::vector<uint32_t> &getObjectEntityToDelete()const

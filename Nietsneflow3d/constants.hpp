@@ -255,4 +255,4 @@ inline const std::map<Shader_e, std::string> SHADER_ID_MAP
     {Shader_e::COLOR_S, "ceilingFloor"},
     {Shader_e::TEXTURE_S, "wall"}
 };
-using ArrayWeaponVisibleShot_t = std::array<uint32_t, TOTAL_SHOT_NUMBER>;
+using ArrayVisibleShot_t = std::array<uint32_t, TOTAL_SHOT_NUMBER>;
