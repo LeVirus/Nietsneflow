@@ -125,9 +125,7 @@ enum class EnemySpriteElementType_e
     STATIC_RIGHT,
     ATTACK,
     DYING,
-    TOUCHED,
-    VISIBLE_SHOOT,
-    VISIBLE_SHOOT_DESTRUCT
+    TOUCHED
 };
 
 enum class EnemySpriteType_e

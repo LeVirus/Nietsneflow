@@ -57,13 +57,12 @@ struct EnemyData
     //contained in m_dyingSprites
     std::vector<uint8_t> m_staticFrontSprites, m_staticFrontLeftSprites, m_staticFrontRightSprites,
     m_staticBackSprites, m_staticBackLeftSprites, m_staticBackRightSprites,
-    m_staticLeftSprites, m_staticRightSprites,
-    m_attackSprites, m_dyingSprites, m_visibleShotSprites, m_visibleShotDestructSprites,
-    m_touched;
+    m_staticLeftSprites, m_staticRightSprites, m_attackSprites, m_dyingSprites, m_touched;
 
     //In Game sprite size in % relative to a tile
     pairDouble_t m_inGameSpriteSize;
     vectPairUI_t m_TileGamePosition;
+    std::string m_visibleShootID;
     bool m_traversable;
 };
 

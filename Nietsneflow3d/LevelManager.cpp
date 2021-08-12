@@ -516,7 +516,6 @@ void LevelManager::loadWeaponData(const INIReader &reader, std::string_view sect
     str = reader.Get(sectionName.data(), "Possess", "false");
     m_vectWeaponsINIData[numIt].m_startingPossess = (str == "true") ? true : false;
     m_vectWeaponsINIData[numIt].m_startingAmmoCount = std::stoul(reader.Get(sectionName.data(), "BaseAmmo", "0"));
-    m_vectWeaponsINIData[numIt].m_order = std::stoul(reader.Get(sectionName.data(), "Order", "100000"));
 
     m_vectWeaponsINIData[numIt].m_attackType = static_cast<AttackType_e>(
                 std::stoul(reader.Get(sectionName.data(), "AttackType", "1")));
@@ -620,39 +619,23 @@ void LevelManager::loadEnemyData(const INIReader &reader)
     for(uint32_t i = 0; i < vectINISections.size(); ++i)
     {
         m_enemyData.insert({vectINISections[i], EnemyData()});
-        m_enemyData[vectINISections[i]].m_traversable = reader.GetBoolean(vectINISections[i],
-                                                       "traversable", false);
-        m_enemyData[vectINISections[i]].m_inGameSpriteSize.first =
-                reader.GetReal(vectINISections[i], "SpriteWeightGame", 1.0);
-        m_enemyData[vectINISections[i]].m_inGameSpriteSize.second =
-                reader.GetReal(vectINISections[i], "SpriteHeightGame", 1.0);
-        loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::STATIC_FRONT,
-                         m_enemyData[vectINISections[i]]);
-        loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::STATIC_FRONT_LEFT,
-                         m_enemyData[vectINISections[i]]);
-        loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::STATIC_FRONT_RIGHT,
-                         m_enemyData[vectINISections[i]]);
-        loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::STATIC_BACK,
-                         m_enemyData[vectINISections[i]]);
-        loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::STATIC_BACK_LEFT,
-                         m_enemyData[vectINISections[i]]);
-        loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::STATIC_BACK_RIGHT,
-                         m_enemyData[vectINISections[i]]);
-        loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::STATIC_LEFT,
-                         m_enemyData[vectINISections[i]]);
-        loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::STATIC_RIGHT,
-                         m_enemyData[vectINISections[i]]);
+        m_enemyData[vectINISections[i]].m_traversable = reader.GetBoolean(vectINISections[i], "traversable", false);
+        m_enemyData[vectINISections[i]].m_inGameSpriteSize.first = reader.GetReal(vectINISections[i], "SpriteWeightGame", 1.0);
+        m_enemyData[vectINISections[i]].m_inGameSpriteSize.second = reader.GetReal(vectINISections[i], "SpriteHeightGame", 1.0);
+        m_enemyData[vectINISections[i]].m_visibleShootID = reader.Get(vectINISections[i], "ShootSpritesID", "");
 
-        loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::ATTACK,
-                         m_enemyData[vectINISections[i]]);
-        loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::DYING,
-                         m_enemyData[vectINISections[i]]);
-        loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::TOUCHED,
-                         m_enemyData[vectINISections[i]]);
-        loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::VISIBLE_SHOOT,
-                         m_enemyData[vectINISections[i]]);
-        loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::VISIBLE_SHOOT_DESTRUCT,
-                         m_enemyData[vectINISections[i]]);
+        loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::STATIC_FRONT, m_enemyData[vectINISections[i]]);
+        loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::STATIC_FRONT_LEFT, m_enemyData[vectINISections[i]]);
+        loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::STATIC_FRONT_RIGHT, m_enemyData[vectINISections[i]]);
+        loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::STATIC_BACK, m_enemyData[vectINISections[i]]);
+        loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::STATIC_BACK_LEFT, m_enemyData[vectINISections[i]]);
+        loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::STATIC_BACK_RIGHT, m_enemyData[vectINISections[i]]);
+        loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::STATIC_LEFT, m_enemyData[vectINISections[i]]);
+        loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::STATIC_RIGHT, m_enemyData[vectINISections[i]]);
+
+        loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::ATTACK, m_enemyData[vectINISections[i]]);
+        loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::DYING, m_enemyData[vectINISections[i]]);
+        loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::TOUCHED, m_enemyData[vectINISections[i]]);
     }
 }
 
@@ -731,23 +714,12 @@ void LevelManager::loadEnemySprites(const INIReader &reader, const std::string &
         spriteType = "Touched";
         vectPtr = &enemyData.m_touched;
         break;
-    case EnemySpriteElementType_e::VISIBLE_SHOOT:
-        spriteType = "VisibleShot";
-        vectPtr = &enemyData.m_visibleShotSprites;
-        break;
-    case EnemySpriteElementType_e::VISIBLE_SHOOT_DESTRUCT:
-        spriteType = "VisibleShotDestruct";
-        vectPtr = &enemyData.m_visibleShotDestructSprites;
-        break;
     }
     assert(vectPtr);
     std::string sprites = reader.Get(sectionName, spriteType, "");
-    assert((spriteTypeEnum != EnemySpriteElementType_e::VISIBLE_SHOOT ||
-            spriteTypeEnum != EnemySpriteElementType_e::VISIBLE_SHOOT_DESTRUCT ||
-            !sprites.empty()) && "Enemy sprites cannot be loaded.");
+    assert((!sprites.empty()) && "Enemy sprites cannot be loaded.");
     std::istringstream iss(sprites);
-    vectStr_t results(std::istream_iterator<std::string>{iss},
-                      std::istream_iterator<std::string>());
+    vectStr_t results(std::istream_iterator<std::string>{iss}, std::istream_iterator<std::string>());
     vectPtr->reserve(results.size());
     for(uint32_t i = 0; i < results.size(); ++i)
     {

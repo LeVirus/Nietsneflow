@@ -112,10 +112,10 @@ private:
                            CollisionTag_e tag);
     void confStaticComponent(uint32_t entityNum, const pairFloat_t &elementSize, LevelStaticElementType_e elementType);
     void loadEnemySprites(const std::vector<SpriteData> &vectSprite,
-                          const EnemyData &enemiesData, uint32_t numEntity, EnemyConfComponent *enemyComp);
+                          const EnemyData &enemiesData, uint32_t numEntity, EnemyConfComponent *enemyComp, const mapVisibleShotData_t &visibleShot);
     void loadVisibleShotEnemySprites(const std::vector<SpriteData> &vectSprite,
                                      const ArrayWeaponVisibleShot_t &visibleAmmo,
-                                     const EnemyData &enemyData);
+                                     const EnemyData &enemyData, const mapVisibleShotData_t &visibleShot);
     void memTimerPausedValue();
     void applyTimerPausedValue();
     void confPlayerVisibleShoot(const ArrayWeaponVisibleShot_t &playerVisibleShots, const pairFloat_t &point, float degreeAngle);
