@@ -24,6 +24,8 @@ struct WeaponINIData
     AnimationMode_e m_animMode;
     std::string m_visibleShootID;
     float m_animationLatency;
+    std::optional<bool> m_startingPossess;
+    std::optional<uint32_t> m_startingAmmoCount;
 };
 
 struct ShootDisplayData

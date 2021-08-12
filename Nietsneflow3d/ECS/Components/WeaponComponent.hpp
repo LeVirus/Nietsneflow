@@ -10,7 +10,7 @@ struct WeaponData
     AttackType_e m_attackType;
     AnimationMode_e m_animMode;
     pairUI_t m_memPosSprite;
-    bool m_posses;
+    bool m_posses = false;
     std::optional<ArrayWeaponVisibleShot_t> m_visibleShootEntities;
     std::string m_visibleShotID;
     float m_latency;

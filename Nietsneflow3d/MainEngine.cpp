@@ -454,13 +454,6 @@ uint32_t MainEngine::loadWeaponsEntity(const LevelManager &levelManager)
         weaponComp->m_weaponsData[i].m_ammunationsCount = 0;
         weaponComp->m_weaponsData[i].m_posses = false;
     }
-    //OOOOOK TMP
-    weaponComp->m_weaponsData[0].m_ammunationsCount = 1;
-    weaponComp->m_weaponsData[1].m_ammunationsCount = 20;
-    weaponComp->m_weaponsData[0].m_posses = true;
-    weaponComp->m_weaponsData[1].m_posses = true;
-    weaponComp->m_currentWeapon = 1;
-    weaponComp->m_previousWeapon = 1;
     uint32_t totalSize = 0;
     for(uint32_t i = 0; i < vectWeapons.size(); ++i)
     {
@@ -472,6 +465,16 @@ uint32_t MainEngine::loadWeaponsEntity(const LevelManager &levelManager)
     for(uint32_t i = 0; i < vectWeapons.size(); ++i)
     {
         weaponToTreat = vectWeapons[i].m_order;
+        if(vectWeapons[i].m_startingPossess && *vectWeapons[i].m_startingPossess)
+        {
+            weaponComp->m_weaponsData[weaponToTreat].m_posses = true;
+            weaponComp->m_currentWeapon = vectWeapons[i].m_order;
+            weaponComp->m_previousWeapon = vectWeapons[i].m_order;
+        }
+        if(vectWeapons[i].m_startingAmmoCount)
+        {
+            weaponComp->m_weaponsData[weaponToTreat].m_ammunationsCount = *vectWeapons[i].m_startingAmmoCount;
+        }
         weaponComp->m_weaponsData[weaponToTreat].m_animMode = vectWeapons[i].m_animMode;
         weaponComp->m_weaponsData[weaponToTreat].m_latency = vectWeapons[i].m_animationLatency;
         weaponComp->m_weaponsData[weaponToTreat].m_visibleShotID = vectWeapons[i].m_visibleShootID;

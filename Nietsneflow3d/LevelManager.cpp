@@ -503,7 +503,7 @@ void LevelManager::loadDisplayData(const INIReader &reader, std::string_view sec
 //===================================================================
 void LevelManager::loadWeaponData(const INIReader &reader, std::string_view sectionName, uint32_t numIt)
 {
-    std::string sprites, latency;
+    std::string sprites, str;
     m_vectWeaponsINIData[numIt].m_maxAmmo =
             std::stoul(reader.Get(sectionName.data(), "MaxAmmo", "1"));
     assert(m_vectWeaponsINIData[numIt].m_maxAmmo != 1);
@@ -513,6 +513,11 @@ void LevelManager::loadWeaponData(const INIReader &reader, std::string_view sect
     m_vectWeaponsINIData[numIt].m_order = std::stoul(reader.Get(sectionName.data(), "Order", "100000"));
     m_vectWeaponsINIData[numIt].m_lastAnimNum = std::stoul(reader.Get(sectionName.data(), "LastAnimNum", "1"));
     m_vectWeaponsINIData[numIt].m_simultaneousShots = std::stoul(reader.Get(sectionName.data(), "NumberOfShots", "1"));
+    str = reader.Get(sectionName.data(), "Possess", "false");
+    m_vectWeaponsINIData[numIt].m_startingPossess = (str == "true") ? true : false;
+    m_vectWeaponsINIData[numIt].m_startingAmmoCount = std::stoul(reader.Get(sectionName.data(), "BaseAmmo", "0"));
+    m_vectWeaponsINIData[numIt].m_order = std::stoul(reader.Get(sectionName.data(), "Order", "100000"));
+
     m_vectWeaponsINIData[numIt].m_attackType = static_cast<AttackType_e>(
                 std::stoul(reader.Get(sectionName.data(), "AttackType", "1")));
     if(m_vectWeaponsINIData[numIt].m_attackType == AttackType_e::VISIBLE_SHOTS)
@@ -532,9 +537,9 @@ void LevelManager::loadWeaponData(const INIReader &reader, std::string_view sect
     assert(vectHeight.size() == vectWeight.size());
     assert(vectSprites.size() == vectWeight.size());
     m_vectWeaponsINIData[numIt].m_spritesData.reserve(vectSprites.size());
-    latency = reader.Get(sectionName.data(), "AnimationLatency", "");
-    assert(!latency.empty());
-    m_vectWeaponsINIData[numIt].m_animationLatency = std::stof(latency);
+    str = reader.Get(sectionName.data(), "AnimationLatency", "");
+    assert(!str.empty());
+    m_vectWeaponsINIData[numIt].m_animationLatency = std::stof(str);
     for(uint32_t i = 0; i < vectSprites.size(); ++i)
     {
         m_vectWeaponsINIData[numIt].m_spritesData.emplace_back(
