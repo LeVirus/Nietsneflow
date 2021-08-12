@@ -510,6 +510,7 @@ void LevelManager::loadWeaponData(const INIReader &reader, std::string_view sect
     m_vectWeaponsINIData[numIt].m_simultaneousShots =
             std::stoul(reader.Get(sectionName.data(), "NumberOfShots", "1"));
     m_vectWeaponsINIData[numIt].m_animMode = static_cast<AnimationMode_e>(std::stoul(reader.Get(sectionName.data(), "AnimationType", "0")));
+    m_vectWeaponsINIData[numIt].m_order = std::stoul(reader.Get(sectionName.data(), "Order", "100000"));
     m_vectWeaponsINIData[numIt].m_lastAnimNum = std::stoul(reader.Get(sectionName.data(), "LastAnimNum", "1"));
     m_vectWeaponsINIData[numIt].m_simultaneousShots = std::stoul(reader.Get(sectionName.data(), "NumberOfShots", "1"));
     m_vectWeaponsINIData[numIt].m_attackType = static_cast<AttackType_e>(

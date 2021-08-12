@@ -19,7 +19,7 @@ using mapVisibleShotData_t = std::map<std::string, std::vector<WeaponSpriteData>
 struct WeaponINIData
 {
     std::vector<WeaponSpriteData> m_spritesData;
-    uint32_t m_maxAmmo, m_simultaneousShots, m_lastAnimNum;
+    uint32_t m_maxAmmo, m_simultaneousShots, m_lastAnimNum, m_order;
     AttackType_e m_attackType;
     AnimationMode_e m_animMode;
     std::string m_visibleShootID;

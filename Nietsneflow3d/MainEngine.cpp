@@ -30,6 +30,7 @@
 #include <ECS/Systems/IASystem.hpp>
 #include <LevelManager.hpp>
 #include <cassert>
+#include <bitset>
 
 //===================================================================
 void MainEngine::init()
@@ -430,7 +431,7 @@ void MainEngine::loadLevelEntities(const LevelManager &levelManager)
 //===================================================================
 uint32_t MainEngine::loadWeaponsEntity(const LevelManager &levelManager)
 {
-    uint32_t weaponEntity = createWeaponEntity();
+    uint32_t weaponEntity = createWeaponEntity(), weaponToTreat;
     const std::vector<SpriteData> &vectSprite = levelManager.getPictureData().getSpriteData();
     const std::vector<WeaponINIData> &vectWeapons = levelManager.getWeaponsData();
     MemSpriteDataComponent *memSprite = m_ecsManager.getComponentManager().
@@ -442,9 +443,14 @@ uint32_t MainEngine::loadWeaponsEntity(const LevelManager &levelManager)
     assert(weaponComp);
     assert(memSprite);
     assert(memPosVertex);
+    std::vector<bool> checkBitset(vectWeapons.size());
+    std::fill(checkBitset.begin(), checkBitset.end(), false);
     weaponComp->m_weaponsData.resize(vectWeapons.size());
     for(uint32_t i = 0; i < weaponComp->m_weaponsData.size(); ++i)
     {
+        assert(vectWeapons[i].m_order < checkBitset.size());
+        assert(!checkBitset[vectWeapons[i].m_order]);
+        checkBitset[vectWeapons[i].m_order] = true;
         weaponComp->m_weaponsData[i].m_ammunationsCount = 0;
         weaponComp->m_weaponsData[i].m_posses = false;
     }
@@ -465,15 +471,16 @@ uint32_t MainEngine::loadWeaponsEntity(const LevelManager &levelManager)
     memSprite->m_vectSpriteData.reserve(vectWeapons.size());
     for(uint32_t i = 0; i < vectWeapons.size(); ++i)
     {
-        weaponComp->m_weaponsData[i].m_animMode = vectWeapons[i].m_animMode;
-        weaponComp->m_weaponsData[i].m_latency = vectWeapons[i].m_animationLatency;
-        weaponComp->m_weaponsData[i].m_visibleShotID = vectWeapons[i].m_visibleShootID;
-        weaponComp->m_weaponsData[i].m_maxAmmunations = vectWeapons[i].m_maxAmmo;
-        weaponComp->m_weaponsData[i].m_memPosSprite = {memSprite->m_vectSpriteData.size(),
+        weaponToTreat = vectWeapons[i].m_order;
+        weaponComp->m_weaponsData[weaponToTreat].m_animMode = vectWeapons[i].m_animMode;
+        weaponComp->m_weaponsData[weaponToTreat].m_latency = vectWeapons[i].m_animationLatency;
+        weaponComp->m_weaponsData[weaponToTreat].m_visibleShotID = vectWeapons[i].m_visibleShootID;
+        weaponComp->m_weaponsData[weaponToTreat].m_maxAmmunations = vectWeapons[i].m_maxAmmo;
+        weaponComp->m_weaponsData[weaponToTreat].m_memPosSprite = {memSprite->m_vectSpriteData.size(),
                                                        memSprite->m_vectSpriteData.size() + vectWeapons[i].m_spritesData.size() - 1};
-        weaponComp->m_weaponsData[i].m_lastAnimNum = memSprite->m_vectSpriteData.size() + vectWeapons[i].m_lastAnimNum;
-        weaponComp->m_weaponsData[i].m_attackType = vectWeapons[i].m_attackType;
-        weaponComp->m_weaponsData[i].m_simultaneousShots = vectWeapons[i].m_simultaneousShots;
+        weaponComp->m_weaponsData[weaponToTreat].m_lastAnimNum = memSprite->m_vectSpriteData.size() + vectWeapons[i].m_lastAnimNum;
+        weaponComp->m_weaponsData[weaponToTreat].m_attackType = vectWeapons[i].m_attackType;
+        weaponComp->m_weaponsData[weaponToTreat].m_simultaneousShots = vectWeapons[i].m_simultaneousShots;
         for(uint32_t j = 0; j < vectWeapons[i].m_spritesData.size(); ++j)
         {
             memSprite->m_vectSpriteData.emplace_back(&vectSprite[vectWeapons[i].m_spritesData[j].m_numSprite]);
