@@ -443,8 +443,7 @@ void StaticDisplaySystem::setShader(Shader &shader)
 }
 
 //===================================================================
-void StaticDisplaySystem::setWeaponSprite(uint32_t weaponEntity,
-                                          uint32_t weaponNumSprite)
+void StaticDisplaySystem::setWeaponSprite(uint32_t weaponEntity, uint32_t weaponNumSprite)
 {
     PositionVertexComponent *pos = stairwayToComponentManager().
             searchComponentByType<PositionVertexComponent>(weaponEntity,

@@ -1168,7 +1168,7 @@ void MainEngine::confPlayerEntity(const LevelManager &levelManager,
     StaticDisplaySystem *staticDisplay = m_ecsManager.getSystemManager().
             searchSystemByType<StaticDisplaySystem>(static_cast<uint32_t>(Systems_e::STATIC_DISPLAY_SYSTEM));
     assert(staticDisplay);
-    staticDisplay->setWeaponSprite(numWeaponEntity, 0);
+    staticDisplay->setWeaponSprite(numWeaponEntity, m_weaponComp->m_weaponsData[m_weaponComp->m_currentWeapon].m_memPosSprite.first);
     confWriteEntities();
     confMenuCursorEntity();
     confActionEntity();
