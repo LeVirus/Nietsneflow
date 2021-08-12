@@ -222,8 +222,7 @@ void confActionShape(MapCoordComponent *mapCompAction, const MapCoordComponent *
 void confBullet(GeneralCollisionComponent *genColl, SegmentCollisionComponent *segmentColl,
                 CollisionTag_e collTag, const pairFloat_t &point, float degreeAngle)
 {
-    assert(collTag == CollisionTag_e::BULLET_ENEMY_CT ||
-           collTag == CollisionTag_e::BULLET_PLAYER_CT);
+    assert(collTag == CollisionTag_e::BULLET_ENEMY_CT || collTag == CollisionTag_e::BULLET_PLAYER_CT);
     genColl->m_tag = collTag;
     genColl->m_shape = CollisionShape_e::SEGMENT_C;
     genColl->m_active = true;

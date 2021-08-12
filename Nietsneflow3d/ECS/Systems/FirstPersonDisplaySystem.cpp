@@ -598,12 +598,13 @@ void FirstPersonDisplaySystem::confNormalEntityVertex(uint32_t numEntity, Vision
     {
         distance = 1.5f;
     }
-    float halfLateralSize = fpsStaticComp->m_inGameSpriteSize.first  / (distance / LEVEL_TILE_SIZE_PX),
+    float distanceFactor = distance / LEVEL_TILE_SIZE_PX;
+    float halfLateralSize = fpsStaticComp->m_inGameSpriteSize.first  / distanceFactor,
             downPos, upPos;
     if(tag == CollisionTag_e::BULLET_ENEMY_CT || tag == CollisionTag_e::BULLET_PLAYER_CT)
     {
-        downPos = -0.3f / (distance / LEVEL_TILE_SIZE_PX);
-        upPos = downPos + fpsStaticComp->m_inGameSpriteSize.second / (distance / LEVEL_TILE_SIZE_PX);
+        downPos = -0.3f / distanceFactor;
+        upPos = downPos + fpsStaticComp->m_inGameSpriteSize.second / distanceFactor;
     }
     else if(fpsStaticComp->m_levelElementType == LevelStaticElementType_e::IMPACT)
     {
@@ -611,18 +612,18 @@ void FirstPersonDisplaySystem::confNormalEntityVertex(uint32_t numEntity, Vision
             searchComponentByType<ImpactShotComponent>(numEntity,
                                                        Components_e::IMPACT_CONF_COMPONENT);
         assert(impactComp);
-        downPos = (-0.3f + impactComp->m_moveUp) / (distance / LEVEL_TILE_SIZE_PX);
-        upPos = downPos + fpsStaticComp->m_inGameSpriteSize.second / (distance / LEVEL_TILE_SIZE_PX);
+        downPos = (-0.3f + impactComp->m_moveUp) / distanceFactor;
+        upPos = downPos + fpsStaticComp->m_inGameSpriteSize.second / distanceFactor;
     }
     else if(fpsStaticComp->m_levelElementType == LevelStaticElementType_e::CEILING)
     {
-        upPos = RAYCAST_VERTICAL_SIZE / (distance / LEVEL_TILE_SIZE_PX);
-        downPos = upPos - fpsStaticComp->m_inGameSpriteSize.second / (distance / LEVEL_TILE_SIZE_PX);
+        upPos = RAYCAST_VERTICAL_SIZE / distanceFactor;
+        downPos = upPos - fpsStaticComp->m_inGameSpriteSize.second / distanceFactor;
     }
     else
     {
-        downPos = -RAYCAST_VERTICAL_SIZE / (distance / LEVEL_TILE_SIZE_PX);
-        upPos = downPos + fpsStaticComp->m_inGameSpriteSize.second / (distance / LEVEL_TILE_SIZE_PX);
+        downPos = -RAYCAST_VERTICAL_SIZE / distanceFactor;
+        upPos = downPos + fpsStaticComp->m_inGameSpriteSize.second / distanceFactor;
     }
     positionComp->m_vertex[0].first = lateralPosGL - halfLateralSize;
     positionComp->m_vertex[0].second = upPos;

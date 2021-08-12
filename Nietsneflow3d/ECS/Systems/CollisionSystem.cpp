@@ -216,6 +216,7 @@ void CollisionSystem::confImpactShots(uint32_t numBullet)
     assert(spriteComp);
     assert(mapImpact);
     impactComp->m_spritePhase = ImpactPhase_e::FIRST;
+    impactComp->m_moveUp = EPSILON_FLOAT;
     spriteComp->m_spriteData = memSpriteComp->m_vectSpriteData[static_cast<uint32_t>(impactComp->m_spritePhase)];
     if(m_memDistCurrentBulletColl.second >= 10000.0f)
     {

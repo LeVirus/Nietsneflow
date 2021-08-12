@@ -25,6 +25,9 @@ assert à CollisionSystem.cpp::89    EnemyConfComponent == nullptr
 assert à CollisionSystem.cpp::726   hyp > distanceX && hyp > distanceY
 assert à CollisionSystem.cpp::770  
 
+-15)
+Segment impact shot display sometime up==========================OK
+
 -16)
 New weapon pick up but does not appear in inventory some times (When pick up 2 weapons at the same time?)=================================OK
 

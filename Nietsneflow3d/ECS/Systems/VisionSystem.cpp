@@ -372,7 +372,6 @@ void VisionSystem::updateImpactSprites(uint32_t entityImpact, MemSpriteDataCompo
         else
         {
             genComp->m_active = false;
-            impactComp->m_moveUp = EPSILON_FLOAT;
         }
     }
 }
