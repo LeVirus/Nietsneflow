@@ -93,7 +93,7 @@ private:
     void createAmmoEntities(ArrayVisibleShot_t &ammoCont, CollisionTag_e collTag, bool visibleShot);
     void createAmmoEntity(uint32_t &ammoNum, CollisionTag_e collTag, bool visibleShot);
     void createPlayerVisibleShotEntity(WeaponComponent *weaponConf);
-    void createShotImpactEntities(const std::vector<SpriteData> &vectSpriteData,
+    void createPlayerWeaponShotImpactEntities(const std::vector<SpriteData> &vectSpriteData,
                                   const std::vector<ShootDisplayData> &shootDisplayData,
                                   const ArrayVisibleShot_t &ammoContainer);
     uint32_t createWeaponEntity();

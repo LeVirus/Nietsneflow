@@ -715,9 +715,9 @@ void MainEngine::createPlayerVisibleShotEntity(WeaponComponent *weaponConf)
 }
 
 //===================================================================
-void MainEngine::createShotImpactEntities(const std::vector<SpriteData> &vectSpriteData,
-                                          const std::vector<ShootDisplayData> &shootDisplayData,
-                                          const ArrayVisibleShot_t &ammoContainer)
+void MainEngine::createPlayerWeaponShotImpactEntities(const std::vector<SpriteData> &vectSpriteData,
+                                                      const std::vector<ShootDisplayData> &shootDisplayData,
+                                                      const ArrayVisibleShot_t &ammoContainer)
 {
     for(uint32_t i = 0; i < shootDisplayData.size(); ++i)
     {
@@ -1147,7 +1147,7 @@ void MainEngine::confPlayerEntity(const LevelManager &levelManager,
     confShotsEntities(m_playerConf->m_shootEntities, 1);
     createPlayerVisibleShotEntity(weaponConf);
     confPlayerVisibleShotsSprite(vectSpriteData, levelManager.getVisibleShootDisplayData(), weaponConf);
-    createShotImpactEntities(vectSpriteData, levelManager.getShootDisplayData(), m_playerConf->m_shootEntities);
+    createPlayerWeaponShotImpactEntities(vectSpriteData, levelManager.getShootDisplayData(), m_playerConf->m_shootEntities);
     map->m_coord = level.getPlayerDeparture();
     Direction_e playerDir = level.getPlayerDepartureDirection();
     switch(playerDir)
