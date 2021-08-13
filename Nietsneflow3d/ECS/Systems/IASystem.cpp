@@ -37,12 +37,15 @@ void IASystem::execSystem()
     WeaponComponent *weaponComp = stairwayToComponentManager().
             searchComponentByType<WeaponComponent>(m_playerComp->m_weaponEntity,
                                                    Components_e::WEAPON_COMPONENT);
-    const WeaponData &weaponData = weaponComp->m_weaponsData[weaponComp->m_currentWeapon];
     assert(weaponComp);
-    if(weaponData.m_attackType == AttackType_e::VISIBLE_SHOTS)
+
+    for(uint32_t i = 0; i < weaponComp->m_weaponsData.size(); ++i)
     {
-        assert(weaponData.m_visibleShootEntities);
-        treatVisibleShots(*weaponData.m_visibleShootEntities);
+        if(weaponComp->m_weaponsData[i].m_attackType == AttackType_e::VISIBLE_SHOTS)
+        {
+            assert(weaponComp->m_weaponsData[i].m_visibleShootEntities);
+            treatVisibleShots(*weaponComp->m_weaponsData[i].m_visibleShootEntities);
+        }
     }
     MapCoordComponent *enemyMapComp;
     EnemyConfComponent *enemyConfComp;
@@ -55,7 +58,7 @@ void IASystem::execSystem()
         assert(enemyConfComp);
         if(enemyConfComp->m_visibleShot)
         {
-            treatEnemyVisibleShots(enemyConfComp->m_visibleAmmo);
+            treatVisibleShots(enemyConfComp->m_visibleAmmo);
         }
         if(enemyConfComp->m_behaviourMode == EnemyBehaviourMode_e::DEAD ||
                 enemyConfComp->m_behaviourMode == EnemyBehaviourMode_e::DYING)
@@ -103,16 +106,7 @@ bool IASystem::checkEnemyTriggerAttackMode(float radiantAngle, float distancePla
 }
 
 //===================================================================
-void IASystem::treatVisibleShots(const std::array<uint32_t, TOTAL_SHOT_NUMBER> &stdAmmo)
-{
-    for(uint32_t i = 0; i < stdAmmo.size(); ++i)
-    {
-        treatVisibleShot(stdAmmo[i]);
-    }
-}
-
-//===================================================================
-void IASystem::treatEnemyVisibleShots(const ArrayVisibleShot_t &stdAmmo)
+void IASystem::treatVisibleShots(const ArrayVisibleShot_t &stdAmmo)
 {
     for(uint32_t i = 0; i < stdAmmo.size(); ++i)
     {

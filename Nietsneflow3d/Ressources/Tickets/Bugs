@@ -1,8 +1,5 @@
 BUGS======================================================================
 
--17)
-When Visible shoot active and changing weapons: visible shot freeze
-
 -14)
 First enemy display can display random texture
 
@@ -27,6 +24,9 @@ If impact are touching wall behind door ISSUE
 assert à CollisionSystem.cpp::89    EnemyConfComponent == nullptr
 assert à CollisionSystem.cpp::726   hyp > distanceX && hyp > distanceY
 assert à CollisionSystem.cpp::770  
+
+-17)
+When Visible shoot active and changing weapons: visible shot freeze================================OK
 
 -15)
 Segment impact shot display sometime up==========================OK
