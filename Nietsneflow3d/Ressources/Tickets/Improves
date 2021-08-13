@@ -1,11 +1,14 @@
 IMPROVE===================================================================================================
 ==========================================================================================================
 
+-6)
+Set segment section in INI
+
 -5)
 Change fix background to moveable background from observer angle
 
 -4)
-WHen no ammo change to best weapon
+WHen no ammo change to best weapon && and if weapon are no ammo switch to other
 
 1)
 Weapon movement on begin and end movement
