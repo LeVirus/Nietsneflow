@@ -14,7 +14,7 @@ struct WeaponSpriteData
     pairFloat_t m_GLSize;
 };
 
-using mapVisibleShotData_t = std::map<std::string, std::vector<WeaponSpriteData>>;
+using mapVisibleData_t = std::map<std::string, std::vector<WeaponSpriteData>>;
 
 struct WeaponINIData
 {
@@ -22,15 +22,10 @@ struct WeaponINIData
     uint32_t m_maxAmmo, m_simultaneousShots, m_lastAnimNum, m_order;
     AttackType_e m_attackType;
     AnimationMode_e m_animMode;
-    std::string m_visibleShootID;
+    std::string m_visibleShootID, m_impactID;
     float m_animationLatency;
     std::optional<bool> m_startingPossess;
     std::optional<uint32_t> m_startingAmmoCount;
-};
-
-struct ShootDisplayData
-{
-    std::vector<WeaponSpriteData> m_impact;
 };
 
 class LevelManager
@@ -73,11 +68,11 @@ public:
     {
         return m_vectWeaponsINIData;
     }
-    inline const std::vector<ShootDisplayData> &getShootDisplayData()const
+    inline const mapVisibleData_t &getImpactDisplayData()const
     {
-        return m_vectShootDisplayData;
+        return m_impactINIData;
     }
-    inline const mapVisibleShotData_t &getVisibleShootDisplayData()const
+    inline const mapVisibleData_t &getVisibleShootDisplayData()const
     {
         return m_visibleShootINIData;
     }
@@ -104,15 +99,16 @@ private:
     void removeWallPositionVect(const INIReader &reader, const std::string &sectionName,
                                 std::set<pairUI_t> &vectPos);
     uint8_t getSpriteId(const INIReader &reader, const std::string &sectionName);
-    void loadVisibleShootDisplayData(const INIReader &reader);
+    void loadVisibleShotDisplayData(const INIReader &reader);
+    void loadImpactDisplayData(const INIReader &reader);
     void loadWeaponsDisplayData(const INIReader &reader);
     void loadExit(const INIReader &reader);
     void loadSpriteData(const INIReader &reader, const std::string &sectionName,
                         StaticLevelElementData &staticElement);
     void loadDisplayData(const INIReader &reader,
-                         std::string_view sectionName, std::string_view subSectionName, uint32_t numIt);
+                         std::string_view sectionName, std::string_view subSectionName);
     void loadWeaponData(const INIReader &reader,
-                         std::string_view sectionName, uint32_t numIt);
+                        std::string_view sectionName, uint32_t numIt);
     void loadWallData(const INIReader &reader);
     void loadPositionWall(const INIReader &reader);
     void loadDoorData(const INIReader &reader);
@@ -136,9 +132,8 @@ private:
     std::map<std::string, EnemyData> m_enemyData;
     //store the sprite number and the screen display size
     std::vector<WeaponINIData> m_vectWeaponsINIData;
-    std::vector<ShootDisplayData> m_vectShootDisplayData;
     //first moving Shot sprite, all other destruct phase sprites
-    mapVisibleShotData_t m_visibleShootINIData;
+    mapVisibleData_t m_visibleShootINIData, m_impactINIData;
 };
 
 std::vector<uint32_t> convertStrToVectUI(const std::string &str);

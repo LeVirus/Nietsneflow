@@ -29,7 +29,6 @@ struct PlayerConfComponent : public ecs::Component
     bool m_playerShoot = false, m_takeDamage = false, m_inMovement = false;
     uint32_t m_weaponEntity, m_ammoWriteEntity, m_menuEntity, m_menuCursorEntity,
     m_actionEntity, m_hitMeleeEntity, m_lifeWriteEntity, m_life = 100;
-    ArrayVisibleShot_t m_shootEntities;
     CurrentMenuCursorPos_e m_currentCursorPos = static_cast<CurrentMenuCursorPos_e>(0);
     virtual ~PlayerConfComponent() = default;
 };
