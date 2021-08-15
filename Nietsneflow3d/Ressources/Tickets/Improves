@@ -1,9 +1,6 @@
 IMPROVE===================================================================================================
 ==========================================================================================================
 
--6)
-Set segment section in INI
-
 -5)
 Change fix background to moveable background from observer angle
 
@@ -19,8 +16,8 @@ Improve Enemy behaviour
 5)
 Set collision behaviour from tag instead of shape
 
-6)
-Ajouter armure
+-6)
+Set segment section in INI============================OK
 
 3)
 Enemy animations========================~
