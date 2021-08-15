@@ -99,8 +99,7 @@ private:
     void removeWallPositionVect(const INIReader &reader, const std::string &sectionName,
                                 std::set<pairUI_t> &vectPos);
     uint8_t getSpriteId(const INIReader &reader, const std::string &sectionName);
-    void loadVisibleShotDisplayData(const INIReader &reader);
-    void loadImpactDisplayData(const INIReader &reader);
+    void loadBaseDisplayData(const INIReader &reader, bool visibleShot);
     void loadWeaponsDisplayData(const INIReader &reader);
     void loadExit(const INIReader &reader);
     void loadSpriteData(const INIReader &reader, const std::string &sectionName,

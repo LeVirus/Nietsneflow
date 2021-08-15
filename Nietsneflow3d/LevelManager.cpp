@@ -419,9 +419,10 @@ uint8_t LevelManager::getSpriteId(const INIReader &reader, const std::string &se
 }
 
 //===================================================================
-void LevelManager::loadVisibleShotDisplayData(const INIReader &reader)
+void LevelManager::loadBaseDisplayData(const INIReader &reader, bool visibleShot)
 {
-    std::string display = "VisibleShoot";
+    std::string display = visibleShot ? "VisibleShoot" : "Impact";
+    mapVisibleData_t &container = visibleShot ? m_visibleShootINIData : m_impactINIData;
     std::vector<std::string> vectINISections = reader.getSectionNamesContaining(display);
     if(vectINISections.empty())
     {
@@ -437,38 +438,10 @@ void LevelManager::loadVisibleShotDisplayData(const INIReader &reader)
         weight = std::stof(reader.Get(vectINISections[i], "SpriteWeightGame", ""));
         height = std::stof(reader.Get(vectINISections[i], "SpriteHeightGame", ""));
         vectSprites = convertStrToVectStr(sprites);
-        m_visibleShootINIData.insert({vectINISections[i], std::vector<WeaponSpriteData>()});
+        container.insert({vectINISections[i], std::vector<WeaponSpriteData>()});
         for(uint32_t j = 0; j < vectSprites.size(); ++j)
         {
-            m_visibleShootINIData[vectINISections[i]].emplace_back(
-                        WeaponSpriteData{*m_pictureData.getIdentifier(vectSprites[j]), {weight, height}});
-        }
-    }
-}
-
-//===================================================================
-void LevelManager::loadImpactDisplayData(const INIReader &reader)
-{
-    std::string display = "Impact";
-    std::vector<std::string> vectINISections = reader.getSectionNamesContaining(display);
-    if(vectINISections.empty())
-    {
-        return;
-    }
-    std::string sprites;
-    float weight, height;
-    vectStr_t vectSprites;
-    for(uint32_t i = 0; i < vectINISections.size(); ++i)
-    {
-        sprites = reader.Get(vectINISections[i], "Sprites", "");
-        assert(!sprites.empty());
-        weight = std::stof(reader.Get(vectINISections[i], "SpriteWeightGame", ""));
-        height = std::stof(reader.Get(vectINISections[i], "SpriteHeightGame", ""));
-        vectSprites = convertStrToVectStr(sprites);
-        m_impactINIData.insert({vectINISections[i], std::vector<WeaponSpriteData>()});
-        for(uint32_t j = 0; j < vectSprites.size(); ++j)
-        {
-            m_impactINIData[vectINISections[i]].emplace_back(
+            container[vectINISections[i]].emplace_back(
                         WeaponSpriteData{*m_pictureData.getIdentifier(vectSprites[j]), {weight, height}});
         }
     }
@@ -786,8 +759,8 @@ void LevelManager::loadStandardData(const std::string &INIFileName)
     loadGeneralStaticElements(reader, LevelStaticElementType_e::OBJECT);
     loadExit(reader);
     loadDoorData(reader);
-    loadVisibleShotDisplayData(reader);
-    loadImpactDisplayData(reader);
+    loadBaseDisplayData(reader, true);
+    loadBaseDisplayData(reader, false);
     loadEnemyData(reader);
     loadUtilsData(reader);
     loadWeaponsDisplayData(reader);
