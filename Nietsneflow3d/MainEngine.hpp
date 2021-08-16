@@ -77,7 +77,7 @@ private:
                           uint32_t entityNum, const Level &level,
                           uint32_t numWeaponEntity);
     void confActionEntity();
-    void confAxeHitEntity();
+    void confFistHitEntity(WeaponComponent *weaponConf);
     uint32_t loadWeaponsEntity(const LevelManager &levelManager);
     uint32_t createBackgroundEntity(GroundCeilingData const *data);
     void loadWallEntities(const LevelManager &levelManager);
@@ -89,7 +89,7 @@ private:
                                 const std::map<std::string, StaticLevelElementData> &staticData, LevelStaticElementType_e elementType);
     void loadExitElement(const LevelManager &levelManager, const StaticLevelElementData &exit);
     void createPlayerAmmoEntities(PlayerConfComponent *playerConf, CollisionTag_e collTag, bool visibleShot);
-    void createAmmoEntities(ArrayVisibleShot_t &ammoEntities, CollisionTag_e collTag, bool visibleShot);
+    void confAmmoEntities(ArrayVisibleShot_t &ammoEntities, CollisionTag_e collTag, bool visibleShot, uint32_t damage = 1);
     void createAmmoEntity(uint32_t &ammoNum, CollisionTag_e collTag, bool visibleShot);
     void createPlayerVisibleShotEntity(WeaponComponent *weaponConf);
     void createPlayerImpactEntities(const std::vector<SpriteData> &vectSpriteData,
@@ -115,9 +115,8 @@ private:
     void confStaticComponent(uint32_t entityNum, const pairFloat_t &elementSize, LevelStaticElementType_e elementType);
     void loadEnemySprites(const std::vector<SpriteData> &vectSprite,
                           const EnemyData &enemiesData, uint32_t numEntity, EnemyConfComponent *enemyComp, const mapVisibleData_t &visibleShot);
-    void loadVisibleShotData(const std::vector<SpriteData> &vectSprite,
-                             const ArrayVisibleShot_t &visibleAmmo,
-                             const std::string &visibleShootID, const mapVisibleData_t &visibleShot);
+    void loadVisibleShotData(const std::vector<SpriteData> &vectSprite, const ArrayVisibleShot_t &visibleAmmo,
+                             const std::string &visibleShootID, const mapVisibleData_t &visibleShot, uint32_t damage = 5);
     void memTimerPausedValue();
     void applyTimerPausedValue();
     void confPlayerVisibleShoot(const ArrayVisibleShot_t &playerVisibleShots, const pairFloat_t &point, float degreeAngle);

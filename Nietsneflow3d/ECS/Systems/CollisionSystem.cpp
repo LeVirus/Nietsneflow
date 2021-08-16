@@ -158,7 +158,10 @@ void CollisionSystem::treatSegmentShots()
         assert(tagCompBullet);
         if(tagCompBullet->m_tag == CollisionTag_e::BULLET_PLAYER_CT)
         {
-            treatEnemyShooted(m_vectMemShots[i].second);
+            ShotConfComponent *shotConfComp = stairwayToComponentManager().
+                    searchComponentByType<ShotConfComponent>(m_vectMemShots[i].first, Components_e::SHOT_CONF_COMPONENT);
+            assert(shotConfComp);
+            treatEnemyShooted(m_vectMemShots[i].second, shotConfComp->m_damage);
             tagCompBullet->m_active = false;
         }
         else if(tagCompBullet->m_tag == CollisionTag_e::BULLET_ENEMY_CT)
@@ -422,8 +425,7 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
     {
         CircleCollisionComponent &circleCompB = getCircleComponent(args.entityNumB);
         collision = checkCircleCircleCollision(args.mapCompA.m_absoluteMapPositionPX, circleCompA.m_ray,
-                                               args.mapCompB.m_absoluteMapPositionPX,
-                                               circleCompB.m_ray);
+                                               args.mapCompB.m_absoluteMapPositionPX, circleCompB.m_ray);
         if(collision)
         {
             if(args.tagCompA->m_tag == CollisionTag_e::PLAYER_CT &&

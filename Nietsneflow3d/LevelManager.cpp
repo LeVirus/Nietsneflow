@@ -496,6 +496,7 @@ void LevelManager::loadWeaponData(const INIReader &reader, std::string_view sect
     str = reader.Get(sectionName.data(), "Possess", "false");
     m_vectWeaponsINIData[numIt].m_startingPossess = (str == "true") ? true : false;
     m_vectWeaponsINIData[numIt].m_startingAmmoCount = std::stoul(reader.Get(sectionName.data(), "BaseAmmo", "0"));
+    m_vectWeaponsINIData[numIt].m_damage = std::stoul(reader.Get(sectionName.data(), "Damage", "1"));
     m_vectWeaponsINIData[numIt].m_impactID = reader.Get(sectionName.data(), "ShotImpactID", "");
     m_vectWeaponsINIData[numIt].m_attackType = static_cast<AttackType_e>(
                 std::stoul(reader.Get(sectionName.data(), "AttackType", "1")));

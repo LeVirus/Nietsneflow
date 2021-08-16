@@ -19,11 +19,11 @@ Improve Enemy behaviour
 5)
 Set collision behaviour from tag instead of shape
 
--6)
-Set segment section in INI============================OK
-
 3)
 Enemy animations========================~
+
+-6)
+Set segment section in INI============================OK
 
 -3)
 Limit shoot intervalle time==========================OK
