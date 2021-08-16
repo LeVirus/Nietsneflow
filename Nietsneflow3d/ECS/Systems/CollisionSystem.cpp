@@ -146,11 +146,11 @@ void CollisionSystem::treatSegmentShots()
                 searchComponentByType<GeneralCollisionComponent>(
                     m_vectMemShots[i].second, Components_e::GENERAL_COLLISION_COMPONENT);
         assert(tagCompTarget);
+        confImpactShots(i);
         if(tagCompTarget->m_tag == CollisionTag_e::WALL_CT ||
                 tagCompTarget->m_tag == CollisionTag_e::DOOR_CT ||
                 tagCompTarget->m_tag == CollisionTag_e::STATIC_SET_CT)
         {
-            confImpactShots(i);
             continue;
         }
         tagCompBullet = stairwayToComponentManager().searchComponentByType<GeneralCollisionComponent>(
@@ -160,7 +160,6 @@ void CollisionSystem::treatSegmentShots()
         {
             treatEnemyShooted(m_vectMemShots[i].second);
             tagCompBullet->m_active = false;
-            confImpactShots(i);
         }
         else if(tagCompBullet->m_tag == CollisionTag_e::BULLET_ENEMY_CT)
         {

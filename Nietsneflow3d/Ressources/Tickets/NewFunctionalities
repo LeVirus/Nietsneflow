@@ -1,8 +1,8 @@
 NEW FUNCTIONALITIES=====================================================================================================
 ========================================================================================================================
 
--3)
-Ennemies Impact for segment shoot
+-9)
+Add melee attack to enemies
 
 -2)
 Display effect while getting items
@@ -25,6 +25,9 @@ Create a visual level designer
 
 6)
 Ajouter armure
+
+-3)
+Ennemies Impact for segment shoot====================================OK
 
 8)
 Pour les balles "segments" ajouter animation sur les elements touchés====================================OK

@@ -603,7 +603,7 @@ void LevelManager::loadEnemyData(const INIReader &reader)
         m_enemyData[vectINISections[i]].m_inGameSpriteSize.first = reader.GetReal(vectINISections[i], "SpriteWeightGame", 1.0);
         m_enemyData[vectINISections[i]].m_inGameSpriteSize.second = reader.GetReal(vectINISections[i], "SpriteHeightGame", 1.0);
         m_enemyData[vectINISections[i]].m_visibleShootID = reader.Get(vectINISections[i], "ShootSpritesID", "");
-        m_enemyData[vectINISections[i]].m_impactID = reader.Get(vectINISections[i], "ShootSpritesID", "");
+        m_enemyData[vectINISections[i]].m_impactID = reader.Get(vectINISections[i], "ShotImpactID", "");
 
         loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::STATIC_FRONT, m_enemyData[vectINISections[i]]);
         loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::STATIC_FRONT_LEFT, m_enemyData[vectINISections[i]]);

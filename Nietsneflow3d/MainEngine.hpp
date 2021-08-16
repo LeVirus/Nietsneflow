@@ -92,10 +92,10 @@ private:
     void createAmmoEntities(ArrayVisibleShot_t &ammoEntities, CollisionTag_e collTag, bool visibleShot);
     void createAmmoEntity(uint32_t &ammoNum, CollisionTag_e collTag, bool visibleShot);
     void createPlayerVisibleShotEntity(WeaponComponent *weaponConf);
-    void createPlayerImpactEntity(const std::vector<SpriteData> &vectSpriteData,
+    void createPlayerImpactEntities(const std::vector<SpriteData> &vectSpriteData,
                                   WeaponComponent *weaponConf,
                                   const mapVisibleData_t &mapImpactData);
-    void createPlayerWeaponShotImpactEntities(const std::vector<SpriteData> &vectSpriteData,
+    void confShotImpactEntity(const std::vector<SpriteData> &vectSpriteData,
                                   const std::vector<WeaponSpriteData> &shootDisplayData,
                                   uint32_t &impactEntity);
     uint32_t createWeaponEntity();
@@ -116,8 +116,8 @@ private:
     void loadEnemySprites(const std::vector<SpriteData> &vectSprite,
                           const EnemyData &enemiesData, uint32_t numEntity, EnemyConfComponent *enemyComp, const mapVisibleData_t &visibleShot);
     void loadVisibleShotData(const std::vector<SpriteData> &vectSprite,
-                                     const ArrayVisibleShot_t &visibleAmmo,
-                                     const std::string &visibleShootID, const mapVisibleData_t &visibleShot);
+                             const ArrayVisibleShot_t &visibleAmmo,
+                             const std::string &visibleShootID, const mapVisibleData_t &visibleShot);
     void memTimerPausedValue();
     void applyTimerPausedValue();
     void confPlayerVisibleShoot(const ArrayVisibleShot_t &playerVisibleShots, const pairFloat_t &point, float degreeAngle);
