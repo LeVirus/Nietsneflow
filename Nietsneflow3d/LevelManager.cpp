@@ -607,6 +607,7 @@ void LevelManager::loadEnemyData(const INIReader &reader)
         m_enemyData[vectINISections[i]].m_impactID = reader.Get(vectINISections[i], "ShotImpactID", "");
         m_enemyData[vectINISections[i]].m_attackPower = std::stoul(reader.Get(vectINISections[i], "Damage", "1"));
         m_enemyData[vectINISections[i]].m_life = std::stoul(reader.Get(vectINISections[i], "Life", "1"));
+        m_enemyData[vectINISections[i]].m_velocity = std::stof(reader.Get(vectINISections[i], "Velocity", "1"));
 
         loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::STATIC_FRONT, m_enemyData[vectINISections[i]]);
         loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::STATIC_FRONT_LEFT, m_enemyData[vectINISections[i]]);

@@ -652,6 +652,7 @@ void MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
                     searchComponentByType<CircleCollisionComponent>(numEntity, Components_e::CIRCLE_COLLISION_COMPONENT);
             assert(circleComp);
             circleComp->m_ray = collisionRay;
+            enemyComp->m_life = it->second.m_life;
             enemyComp->m_visibleShot = !(it->second.m_visibleShootID.empty());
             if(enemyComp->m_visibleShot)
             {
@@ -677,7 +678,7 @@ void MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
             MoveableComponent *moveComp = m_ecsManager.getComponentManager().
                     searchComponentByType<MoveableComponent>(numEntity, Components_e::MOVEABLE_COMPONENT);
             assert(moveComp);
-            moveComp->m_velocity = 1.0f;
+            moveComp->m_velocity = it->second.m_velocity;
         }
     }
 }
