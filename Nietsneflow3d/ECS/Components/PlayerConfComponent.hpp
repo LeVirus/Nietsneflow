@@ -11,19 +11,17 @@ struct PlayerConfComponent : public ecs::Component
     {
         muiTypeComponent = Components_e::PLAYER_CONF_COMPONENT;
     }
-    bool takeDamage(uint32_t damage)
+    void takeDamage(uint32_t damage)
     {
         m_takeDamage = true;
         if(m_life <= damage)
         {
             m_life = 0;
             m_inMovement = false;
-            return false;
         }
         else
         {
             m_life -= damage;
-            return true;
         }
     }
     bool m_playerShoot = false, m_takeDamage = false, m_inMovement = false;

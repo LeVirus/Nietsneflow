@@ -170,11 +170,12 @@ void CollisionSystem::treatSegmentShots()
                     searchComponentByType<PlayerConfComponent>(m_vectMemShots[i].second,
                                                                Components_e::PLAYER_CONF_COMPONENT);
             assert(playerConfCompB);
+            ShotConfComponent *shotConfComp = stairwayToComponentManager().
+                    searchComponentByType<ShotConfComponent>(m_vectMemShots[i].first,
+                                                               Components_e::SHOT_CONF_COMPONENT);
+            assert(shotConfComp);
             //if player is dead
-            if(!playerConfCompB->takeDamage(5))
-            {
-                //player dead
-            }
+            playerConfCompB->takeDamage(shotConfComp->m_damage);
         }
     }
 }
@@ -516,10 +517,7 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
                         searchComponentByType<PlayerConfComponent>(args.entityNumB,
                                               Components_e::PLAYER_CONF_COMPONENT);
                 assert(playerConf);
-                if(!playerConf->takeDamage(shotConfComp->m_damage))
-                {
-                    //player dead
-                }
+                playerConf->takeDamage(shotConfComp->m_damage);
             }
         }
     }

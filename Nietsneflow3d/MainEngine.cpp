@@ -711,7 +711,6 @@ void MainEngine::confAmmoEntities(ArrayVisibleShot_t &ammoEntities, CollisionTag
                                                          Components_e::SHOT_CONF_COMPONENT);
         assert(shotConfComp);
         shotConfComp->m_damage = damage;
-        if(!visibleShot)std::cerr << ammoEntities[j] << "  " << damage << "\n";
     }
 }
 
@@ -1329,15 +1328,10 @@ void MainEngine::confPlayerVisibleShotsSprite(const std::vector<SpriteData> &vec
     {
         if(weaponComp->m_weaponsData[i].m_visibleShootEntities)
         {
-            ArrayVisibleShot_t &visibleShot = *weaponComp->m_weaponsData[i].m_visibleShootEntities;
-            for(uint32_t j = 0; j < visibleShot.size(); ++j)
-            {
-                ShotConfComponent *shotComp = m_ecsManager.getComponentManager().
-                        searchComponentByType<ShotConfComponent>(visibleShot[j], Components_e::SHOT_CONF_COMPONENT);
-                assert(shotComp);
-                shotComp->m_damage = weaponComp->m_weaponsData[i].m_weaponPower;
-            }
-            loadVisibleShotData(vectSpriteData, visibleShot, weaponComp->m_weaponsData[i].m_visibleShotID, shootDisplayData);
+            confAmmoEntities(*weaponComp->m_weaponsData[i].m_visibleShootEntities, CollisionTag_e::BULLET_PLAYER_CT,
+                             true, weaponComp->m_weaponsData[i].m_weaponPower);
+            loadVisibleShotData(vectSpriteData, *weaponComp->m_weaponsData[i].m_visibleShootEntities,
+                                weaponComp->m_weaponsData[i].m_visibleShotID, shootDisplayData);
         }
     }
 }
