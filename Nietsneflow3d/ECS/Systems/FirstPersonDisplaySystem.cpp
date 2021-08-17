@@ -749,24 +749,31 @@ void FirstPersonDisplaySystem::calcVerticalGroundCeilingLineRaycast(const pairFl
                                                                     float currentGLLatPos,
                                                                     float radiantObserverAngle)
 {
+    if(!m_groundCeilingRaycastActive)
+    {
+        return;
+    }
     SpriteTextureComponent *spriteGroundComp = nullptr, *spriteCeilingComp = nullptr;
     pairFloat_t currentGroundGL = {currentGLLatPos, -1.0f}, currentCeilingGL = {currentGLLatPos, 1.0f};
     pairFloat_t currentPoint;
     float totalDistanceTarget;
+    bool treatGround = false, treatCeiling = false;
     float calcAngle = std::abs(radiantObserverAngle - currentRadiantAngle);
-    if(m_groundBackground)
+    if(m_groundBackground && !m_groundBackground->second)
     {
         spriteGroundComp = stairwayToComponentManager().
                 searchComponentByType<SpriteTextureComponent>((*m_groundBackground).first,
                                                               Components_e::SPRITE_TEXTURE_COMPONENT);
         assert(spriteGroundComp);
+        treatGround = true;
     }
-    if(m_ceilingBackground)
+    if(m_ceilingBackground && !m_ceilingBackground->second)
     {
         spriteCeilingComp = stairwayToComponentManager().
                 searchComponentByType<SpriteTextureComponent>((*m_ceilingBackground).first,
                                                               Components_e::SPRITE_TEXTURE_COMPONENT);
         assert(spriteCeilingComp);
+        treatCeiling = true;
     }
     if(!m_memGroundCeilingDistance)
     {
@@ -786,13 +793,13 @@ void FirstPersonDisplaySystem::calcVerticalGroundCeilingLineRaycast(const pairFl
         totalDistanceTarget = (*m_memGroundCeilingDistance)[i] / std::cos(calcAngle);
         currentPoint = observerPos;
         moveElementFromAngle(totalDistanceTarget, currentRadiantAngle, currentPoint);
-        if(m_groundBackground)
+        if(treatGround)
         {
             m_groundVertice.loadPointBackgroundRaycasting(spriteGroundComp,
                                                           currentGroundGL, currentPoint);
             currentGroundGL.second += SCREEN_VERT_BACKGROUND_GL_STEP;
         }
-        if(m_ceilingBackground)
+        if(treatCeiling)
         {
             m_ceilingVertice.loadPointBackgroundRaycasting(spriteCeilingComp,
                                                            currentCeilingGL, currentPoint);
