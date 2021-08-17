@@ -655,11 +655,11 @@ void MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
             enemyComp->m_visibleShot = !(it->second.m_visibleShootID.empty());
             if(enemyComp->m_visibleShot)
             {
-                confAmmoEntities(enemyComp->m_visibleAmmo, CollisionTag_e::BULLET_ENEMY_CT, enemyComp->m_visibleShot);
+                confAmmoEntities(enemyComp->m_visibleAmmo, CollisionTag_e::BULLET_ENEMY_CT, enemyComp->m_visibleShot, (*it).second.m_attackPower);
             }
             else
             {
-                confAmmoEntities(enemyComp->m_stdAmmo, CollisionTag_e::BULLET_ENEMY_CT, enemyComp->m_visibleShot);
+                confAmmoEntities(enemyComp->m_stdAmmo, CollisionTag_e::BULLET_ENEMY_CT, enemyComp->m_visibleShot, (*it).second.m_attackPower);
                 const mapVisibleData_t &map = levelManager.getImpactDisplayData();
                 mapVisibleData_t::const_iterator itt = map.find(it->second.m_impactID);
                 assert(itt != map.end());
@@ -669,8 +669,7 @@ void MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
                             searchComponentByType<ShotConfComponent>(enemyComp->m_stdAmmo[j],
                                                                      Components_e::SHOT_CONF_COMPONENT);
                     assert(shotComp);
-                    confShotImpactEntity(levelManager.getPictureSpriteData(),
-                                         itt->second, shotComp->m_impactEntity);
+                    confShotImpactEntity(levelManager.getPictureSpriteData(), itt->second, shotComp->m_impactEntity);
                 }
             }
             loadEnemySprites(levelManager.getPictureData().getSpriteData(),
@@ -696,7 +695,7 @@ void MainEngine::createPlayerAmmoEntities(PlayerConfComponent *playerConf, Colli
         {
             weaponComp->m_weaponsData[i].m_segmentShootEntities = ArrayVisibleShot_t();
             confAmmoEntities(*weaponComp->m_weaponsData[i].m_segmentShootEntities,
-                               collTag, visibleShot, weaponComp->m_weaponsData[i].m_weaponPower);
+                             collTag, visibleShot, weaponComp->m_weaponsData[i].m_weaponPower);
         }
     }
 }
@@ -712,6 +711,7 @@ void MainEngine::confAmmoEntities(ArrayVisibleShot_t &ammoEntities, CollisionTag
                                                          Components_e::SHOT_CONF_COMPONENT);
         assert(shotConfComp);
         shotConfComp->m_damage = damage;
+        if(!visibleShot)std::cerr << ammoEntities[j] << "  " << damage << "\n";
     }
 }
 
@@ -880,12 +880,10 @@ void insertEnemySpriteFromType(const std::vector<SpriteData> &vectSprite,
 
 //===================================================================
 void MainEngine::loadVisibleShotData(const std::vector<SpriteData> &vectSprite, const ArrayVisibleShot_t &visibleAmmo,
-                                     const std::string &visibleShootID, const mapVisibleData_t &visibleShot, uint32_t damage)
+                                     const std::string &visibleShootID, const mapVisibleData_t &visibleShot)
 {
     for(uint32_t k = 0; k < visibleAmmo.size(); ++k)
     {
-        ShotConfComponent *shotConfComp = m_ecsManager.getComponentManager().
-                searchComponentByType<ShotConfComponent>(visibleAmmo[k], Components_e::SHOT_CONF_COMPONENT);
         SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().
                 searchComponentByType<SpriteTextureComponent>(visibleAmmo[k],
                                                               Components_e::SPRITE_TEXTURE_COMPONENT);
@@ -895,13 +893,11 @@ void MainEngine::loadVisibleShotData(const std::vector<SpriteData> &vectSprite, 
         FPSVisibleStaticElementComponent *fpsStaticComp = m_ecsManager.getComponentManager().
                 searchComponentByType<FPSVisibleStaticElementComponent>(
                     visibleAmmo[k], Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
-        assert(shotConfComp);
         assert(fpsStaticComp);
         assert(spriteComp);
         assert(memSpriteComp);
         mapVisibleData_t::const_iterator it = visibleShot.find(visibleShootID);
         assert(it != visibleShot.end());
-        shotConfComp->m_damage = damage;
         memSpriteComp->m_vectSpriteData.reserve(it->second.size());
         for(uint32_t l = 0; l < it->second.size(); ++l)
         {
@@ -1331,13 +1327,18 @@ void MainEngine::confPlayerVisibleShotsSprite(const std::vector<SpriteData> &vec
 {
     for(uint32_t i = 0; i < weaponComp->m_weaponsData.size(); ++i)
     {
-        if(!weaponComp->m_weaponsData[i].m_visibleShootEntities)
+        if(weaponComp->m_weaponsData[i].m_visibleShootEntities)
         {
-            continue;
+            ArrayVisibleShot_t &visibleShot = *weaponComp->m_weaponsData[i].m_visibleShootEntities;
+            for(uint32_t j = 0; j < visibleShot.size(); ++j)
+            {
+                ShotConfComponent *shotComp = m_ecsManager.getComponentManager().
+                        searchComponentByType<ShotConfComponent>(visibleShot[j], Components_e::SHOT_CONF_COMPONENT);
+                assert(shotComp);
+                shotComp->m_damage = weaponComp->m_weaponsData[i].m_weaponPower;
+            }
+            loadVisibleShotData(vectSpriteData, visibleShot, weaponComp->m_weaponsData[i].m_visibleShotID, shootDisplayData);
         }
-        ArrayVisibleShot_t &visibleShot = *weaponComp->m_weaponsData[i].m_visibleShootEntities;
-        loadVisibleShotData(vectSpriteData, visibleShot, weaponComp->m_weaponsData[i].m_visibleShotID, shootDisplayData,
-                            weaponComp->m_weaponsData[i].m_weaponPower);
     }
 }
 

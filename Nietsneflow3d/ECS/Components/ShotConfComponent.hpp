@@ -10,7 +10,7 @@ struct ShotConfComponent : public ecs::Component
     {
         muiTypeComponent = Components_e::SHOT_CONF_COMPONENT;
     }
-    uint32_t m_damage = 5;
+    uint32_t m_damage;
     bool m_destructPhase = false;
     uint32_t m_spriteShotNum = 0, m_impactEntity;
     virtual ~ShotConfComponent() = default;
