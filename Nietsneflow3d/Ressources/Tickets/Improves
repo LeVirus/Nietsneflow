@@ -1,9 +1,6 @@
 IMPROVE===================================================================================================
 ==========================================================================================================
 
--9)
-Add damage weapon and enemy in INI
-
 -5)
 Change fix background to moveable background from observer angle
 
@@ -21,6 +18,9 @@ Set collision behaviour from tag instead of shape
 
 3)
 Enemy animations========================~
+
+-9)
+Add damage weapon and enemy in INI====================================OK
 
 -6)
 Set segment section in INI============================OK

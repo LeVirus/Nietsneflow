@@ -64,7 +64,7 @@ struct EnemyData
     vectPairUI_t m_TileGamePosition;
     std::string m_visibleShootID, m_impactID;
     uint32_t m_attackPower, m_life;
-    float m_velocity;
+    float m_velocity, m_shotVelocity;
     bool m_traversable;
 };
 

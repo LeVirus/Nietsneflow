@@ -88,8 +88,9 @@ private:
     void loadStaticElementGroup(const LevelManager &levelManager,
                                 const std::map<std::string, StaticLevelElementData> &staticData, LevelStaticElementType_e elementType);
     void loadExitElement(const LevelManager &levelManager, const StaticLevelElementData &exit);
-    void createPlayerAmmoEntities(PlayerConfComponent *playerConf, CollisionTag_e collTag, bool visibleShot);
-    void confAmmoEntities(ArrayVisibleShot_t &ammoEntities, CollisionTag_e collTag, bool visibleShot, uint32_t damage);
+    void createPlayerAmmoEntities(PlayerConfComponent *playerConf, CollisionTag_e collTag);
+    void confAmmoEntities(ArrayVisibleShot_t &ammoEntities, CollisionTag_e collTag,
+                          bool visibleShot, uint32_t damage, float shotVelocity = 0);
     void createAmmoEntity(uint32_t &ammoNum, CollisionTag_e collTag, bool visibleShot);
     void createPlayerVisibleShotEntity(WeaponComponent *weaponConf);
     void createPlayerImpactEntities(const std::vector<SpriteData> &vectSpriteData,
