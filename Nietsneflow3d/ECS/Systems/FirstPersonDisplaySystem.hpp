@@ -58,16 +58,8 @@ public:
     void drawPlayerDamage();
     void setVectTextures(std::vector<Texture> &vectTexture);
     void setShader(Shader &shader);
-    inline void memGroundBackgroundEntity(uint32_t entity, bool simpleTexture)
-    {
-        m_groundBackground = {entity, simpleTexture};
-        m_groundCeilingRaycastActive = true;
-    }
-    inline void memCeilingBackgroundEntity(uint32_t entity, bool simpleTexture)
-    {
-        m_ceilingBackground = {entity, simpleTexture};
-        m_groundCeilingRaycastActive = true;
-    }
+    void memGroundBackgroundEntity(uint32_t entity, bool simpleTexture);
+    void memCeilingBackgroundEntity(uint32_t entity, bool simpleTexture);
     inline void clearBackgroundData()
     {
         m_groundBackground = std::nullopt;
@@ -75,25 +67,19 @@ public:
         m_groundCeilingRaycastActive = false;
     }
     //return target point, texture position and entity num if collision
-    optionalTargetRaycast_t calcLineSegmentRaycast(float radiantAngle,
-                                                   const pairFloat_t &originPoint,
-                                                   bool visual);
+    optionalTargetRaycast_t calcLineSegmentRaycast(float radiantAngle, const pairFloat_t &originPoint, bool visual);
 private:
-    optionalTargetRaycast_t calcDoorSegmentRaycast(float radiantAngle,
-                                                   std::optional<float> lateralLeadCoef,
-                                                   std::optional<float> verticalLeadCoef,
-                                                   pairFloat_t &currentPoint,
+    optionalTargetRaycast_t calcDoorSegmentRaycast(float radiantAngle, std::optional<float> lateralLeadCoef,
+                                                   std::optional<float> verticalLeadCoef, pairFloat_t &currentPoint,
                                                    const ElementRaycast &element);
     bool behindRaycastElement(const MapCoordComponent *mapCompObserver, const MapCoordComponent *mapCompTarget, float distance,
                               float radiantObserverAngle, uint32_t targetEntity);
     void rayCasting();
-    void calcVerticalGroundCeilingLineRaycast(const pairFloat_t &observerPos,
-                                              float currentRadiantAngle,
+    void calcVerticalGroundCeilingLineRaycast(const pairFloat_t &observerPos, float currentRadiantAngle,
                                               float currentGLLatPos, float radiantObserverAngle);
     std::optional<float> treatDoorRaycast(uint32_t numEntity, float currentRadiantAngle,
-                          pairFloat_t &currentPoint, std::optional<float> lateralLeadCoef,
-                          std::optional<float> verticalLeadCoef,
-                          bool &textLateral, bool &textFace);
+                                          pairFloat_t &currentPoint, std::optional<float> lateralLeadCoef,
+                                          std::optional<float> verticalLeadCoef, bool &textLateral, bool &textFace);
     void memDistance(uint32_t numEntity, uint32_t lateralScreenPos, float distance, float texturePos);
     void setUsedComponents();
     void confCompVertexMemEntities();
@@ -101,15 +87,13 @@ private:
     void treatDisplayEntity(GeneralCollisionComponent *genCollComp, MapCoordComponent *mapCompA,
                             MapCoordComponent *mapCompB, VisionComponent *visionComp,
                             uint32_t &toRemove, float degreeObserverAngle, uint32_t numIteration);
-    void confNormalEntityVertex(uint32_t numEntity,
-                                VisionComponent *visionComp, CollisionTag_e tag, float lateralPosGL, float distance);
+    void confNormalEntityVertex(uint32_t numEntity, VisionComponent *visionComp, CollisionTag_e tag, float lateralPosGL, float distance);
     void drawVertex();
     void drawTextureBackground();
-    pairFloat_t getCenterPosition(MapCoordComponent const *mapComp,
-                                  GeneralCollisionComponent *genCollComp, float numEntity);
-    void fillVertexFromEntity(uint32_t numEntity, uint32_t numIteration, float distance,
-                              DisplayMode_e displayMode);
+    pairFloat_t getCenterPosition(MapCoordComponent const *mapComp, GeneralCollisionComponent *genCollComp, float numEntity);
+    void fillVertexFromEntity(uint32_t numEntity, uint32_t numIteration, float distance, DisplayMode_e displayMode);
     VerticesData &getClearedVertice(uint32_t index);
+    void confVertexGroundCeiling(float observerAngle);
     void writeVertexGroundCeiling();
 private:
     Shader *m_shader;
@@ -123,7 +107,7 @@ private:
     float m_stepAngle = getRadiantAngle(CONE_VISION / static_cast<float>(RAYCAST_LINE_NUMBER));
     //second :: false = tiled texture     true = simple texture
     std::optional<std::pair<uint32_t, bool>> m_groundBackground, m_ceilingBackground;
-    bool m_groundCeilingRaycastActive = false;
+    bool m_groundCeilingRaycastActive = false, m_groundCeilingSimpleTextureActive = false;
     std::optional<std::array<float, RAYCAST_GROUND_CEILING_NUMBER>> m_memGroundCeilingDistance;
 };
 
@@ -137,20 +121,16 @@ pairFloat_t getIntersectCoord(const pairFloat_t &observerPoint, const pairFloat_
 bool treatDisplayDoor(float currentRadiantAngle, bool doorVertical, pairFloat_t &currentPoint,
                       const pairFloat_t doorPos[], std::optional<float> verticalLeadCoef,
                       std::optional<float> lateralLeadCoef, bool &textLateral, bool &textFace, bool bull = false);
-bool treatVerticalIntersectDoor(pairFloat_t &currentPoint, const pairFloat_t doorPos[],
-                               float verticalLeadCoef, float radiantAngle);
+bool treatVerticalIntersectDoor(pairFloat_t &currentPoint, const pairFloat_t doorPos[], float verticalLeadCoef, float radiantAngle);
 //return true if door collision
-bool treatLateralIntersectDoor(pairFloat_t &currentPoint, const pairFloat_t doorPos[],
-                                float lateralLeadCoef, float radiantAngle);
+bool treatLateralIntersectDoor(pairFloat_t &currentPoint, const pairFloat_t doorPos[], float lateralLeadCoef, float radiantAngle);
 void treatLimitAngle(float &degreeAngleA, float &degreeAngleB);
 void removeSecondRect(pairFloat_t absolPos[], float distance[], uint32_t &distanceToTreat);
-float getDoorDistance(const MapCoordComponent *mapCompCamera, const MapCoordComponent *mapCompDoor,
-                      const DoorComponent *doorComp);
+float getDoorDistance(const MapCoordComponent *mapCompCamera, const MapCoordComponent *mapCompDoor, const DoorComponent *doorComp);
 float getMiddleDoorDistance(const pairFloat_t &camera, const pairFloat_t &element, bool vertical);
 std::optional<float> getModulo(float sinCosAngle, float position, float modulo, bool lateral);
 //lateral == false vertical
 std::optional<float> getLeadCoef(float radiantAngle, bool lateral);
 pairFloat_t getLimitPointRayCasting(const pairFloat_t &cameraPoint, float radiantAngle, std::optional<float> lateralLeadCoef, std::optional<float> verticalLeadCoef, bool &lateral);
 int32_t getCoord(float value, float tileSize);
-std::optional<pairUI_t> getCorrectedCoord(const pairFloat_t &currentPoint, bool lateral,
-                                          float radiantAngle);
+std::optional<pairUI_t> getCorrectedCoord(const pairFloat_t &currentPoint, bool lateral, float radiantAngle);

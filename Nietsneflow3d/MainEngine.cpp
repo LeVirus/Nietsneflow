@@ -1498,9 +1498,7 @@ void MainEngine::loadStaticElementGroup(const LevelManager &levelManager,
 }
 
 //===================================================================
-void MainEngine::confGroundComponents(uint32_t entityNum,
-                                      const GroundCeilingData &groundData,
-                                      const std::vector<SpriteData> &vectSprite)
+void MainEngine::confGroundComponents(uint32_t entityNum, const GroundCeilingData &groundData, const std::vector<SpriteData> &vectSprite)
 {
     if(groundData.m_apparence == DisplayType_e::COLOR)
     {
@@ -1538,11 +1536,13 @@ void MainEngine::confGroundComponents(uint32_t entityNum,
             PositionVertexComponent *posComp = m_ecsManager.getComponentManager().
                     searchComponentByType<PositionVertexComponent>(entityNum, Components_e::POSITION_VERTEX_COMPONENT);
             assert(posComp);
-            posComp->m_vertex.reserve(4);
+            posComp->m_vertex.reserve(6);
             posComp->m_vertex.emplace_back(-1.0f, 0.0f);
             posComp->m_vertex.emplace_back(1.0f, 0.0f);
             posComp->m_vertex.emplace_back(1.0f, -1.0f);
             posComp->m_vertex.emplace_back(-1.0f, -1.0f);
+            posComp->m_vertex.emplace_back(3.0f, 0.0f);
+            posComp->m_vertex.emplace_back(3.0f, -1.0f);
         }
         SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().
                 searchComponentByType<SpriteTextureComponent>(entityNum, Components_e::SPRITE_TEXTURE_COMPONENT);
@@ -1594,17 +1594,19 @@ void MainEngine::confCeilingComponents(uint32_t entityNum, const
             PositionVertexComponent *posComp = m_ecsManager.getComponentManager().
                     searchComponentByType<PositionVertexComponent>(entityNum, Components_e::POSITION_VERTEX_COMPONENT);
             assert(posComp);
-            posComp->m_vertex.reserve(4);
+            posComp->m_vertex.reserve(6);
             posComp->m_vertex.emplace_back(-1.0f, 1.0f);
             posComp->m_vertex.emplace_back(1.0f, 1.0f);
             posComp->m_vertex.emplace_back(1.0f, 0.0f);
             posComp->m_vertex.emplace_back(-1.0f, 0.0f);
+            posComp->m_vertex.emplace_back(2.0f, 1.0f);
+            posComp->m_vertex.emplace_back(2.0f, 0.0f);
         }
-            SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().
-                    searchComponentByType<SpriteTextureComponent>(entityNum, Components_e::SPRITE_TEXTURE_COMPONENT);
-            assert(spriteComp);
-            spriteComp->m_spriteData = &vectSprite[ceilingData.m_spriteNum];
-            memCeilingBackgroundFPSSystemEntity(entityNum, simpleTexture);
+        SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().
+                searchComponentByType<SpriteTextureComponent>(entityNum, Components_e::SPRITE_TEXTURE_COMPONENT);
+        assert(spriteComp);
+        spriteComp->m_spriteData = &vectSprite[ceilingData.m_spriteNum];
+        memCeilingBackgroundFPSSystemEntity(entityNum, simpleTexture);
     }
 }
 

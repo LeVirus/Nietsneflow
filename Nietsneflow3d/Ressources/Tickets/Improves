@@ -1,8 +1,8 @@
 IMPROVE===================================================================================================
 ==========================================================================================================
 
--5)
-Change fix background to moveable background from observer angle
+-8)
+Cumulate simple texture and textured tile (alpha) for background
 
 -4)
 WHen no ammo change to best weapon && and if weapon are no ammo switch to other
@@ -18,6 +18,9 @@ Set collision behaviour from tag instead of shape
 
 3)
 Enemy animations========================~
+
+-5)
+Change fix background to moveable background from observer angle===================================OK
 
 -9)
 Add damage weapon and enemy in INI====================================OK

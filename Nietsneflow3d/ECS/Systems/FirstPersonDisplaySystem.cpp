@@ -98,14 +98,17 @@ void FirstPersonDisplaySystem::confCompVertexMemEntities()
             assert(genCollComp);
             if(genCollComp->m_active)
             {
-                treatDisplayEntity(genCollComp, mapCompA, mapCompB, visionComp,
-                                   toRemove, moveComp->m_degreeOrientation, numIteration);
+                treatDisplayEntity(genCollComp, mapCompA, mapCompB, visionComp, toRemove, moveComp->m_degreeOrientation, numIteration);
             }
         }
         m_numVertexToDraw[i] -= toRemove;
         ++numIteration;
         rayCasting();
-        writeVertexGroundCeiling();
+        if(m_groundCeilingSimpleTextureActive)
+        {
+            confVertexGroundCeiling(moveComp->m_degreeOrientation);
+            writeVertexGroundCeiling();
+        }
         //draw wall and door
         for(mapRayCastingData_t::const_iterator it = m_raycastingData.begin();
             it != m_raycastingData.end(); ++it, ++numIteration)
@@ -116,35 +119,63 @@ void FirstPersonDisplaySystem::confCompVertexMemEntities()
 }
 
 //===================================================================
+void FirstPersonDisplaySystem::confVertexGroundCeiling(float observerAngle)
+{
+    float midPos = std::fmod(observerAngle, 180.0f) / 90.0f - 1.0f,
+            leftPos = midPos - 2.0f, rightPos = midPos + 2.0f;
+    if(m_groundBackground && (*m_groundBackground).second)
+    {
+        PositionVertexComponent *posComp = stairwayToComponentManager().
+                searchComponentByType<PositionVertexComponent>((*m_groundBackground).first, Components_e::POSITION_VERTEX_COMPONENT);
+        assert(posComp);
+        posComp->m_vertex[0].first = leftPos;
+        posComp->m_vertex[3].first = leftPos;
+        posComp->m_vertex[1].first = midPos;
+        posComp->m_vertex[2].first = midPos;
+        posComp->m_vertex[4].first = rightPos;
+        posComp->m_vertex[5].first = rightPos;
+    }
+    if(m_ceilingBackground && (*m_ceilingBackground).second)
+    {
+        PositionVertexComponent *posComp = stairwayToComponentManager().
+                searchComponentByType<PositionVertexComponent>((*m_ceilingBackground).first, Components_e::POSITION_VERTEX_COMPONENT);
+        assert(posComp);
+        posComp->m_vertex[0].first = leftPos;
+        posComp->m_vertex[3].first = leftPos;
+        posComp->m_vertex[1].first = midPos;
+        posComp->m_vertex[2].first = midPos;
+        posComp->m_vertex[4].first = rightPos;
+        posComp->m_vertex[5].first = rightPos;
+    }
+}
+
+//===================================================================
 void FirstPersonDisplaySystem::writeVertexGroundCeiling()
 {
-    for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
+    if(m_groundBackground && (*m_groundBackground).second)
     {
-        if(m_groundBackground && (*m_groundBackground).second)
+        PositionVertexComponent *posComp = stairwayToComponentManager().
+                searchComponentByType<PositionVertexComponent>((*m_groundBackground).first, Components_e::POSITION_VERTEX_COMPONENT);
+        assert(posComp);
+        SpriteTextureComponent *spriteComp = stairwayToComponentManager().
+                searchComponentByType<SpriteTextureComponent>((*m_groundBackground).first, Components_e::SPRITE_TEXTURE_COMPONENT);
+        assert(spriteComp);
+        if(m_groundVertice.empty())
         {
-            PositionVertexComponent *posComp = stairwayToComponentManager().
-                    searchComponentByType<PositionVertexComponent>((*m_groundBackground).first, Components_e::POSITION_VERTEX_COMPONENT);
-            assert(posComp);
-            SpriteTextureComponent *spriteComp = stairwayToComponentManager().
-                    searchComponentByType<SpriteTextureComponent>((*m_groundBackground).first, Components_e::SPRITE_TEXTURE_COMPONENT);
-            assert(spriteComp);
-            if(m_groundVertice.empty())
-            {
-                m_groundVertice.loadVertexStandartTextureComponent(*posComp, *spriteComp);
-            }
+            m_groundVertice.loadVertexStandartTextureComponent(*posComp, *spriteComp);
         }
-        if(m_ceilingBackground && (*m_ceilingBackground).second)
+    }
+    if(m_ceilingBackground && (*m_ceilingBackground).second)
+    {
+        PositionVertexComponent *posComp = stairwayToComponentManager().
+                searchComponentByType<PositionVertexComponent>((*m_ceilingBackground).first, Components_e::POSITION_VERTEX_COMPONENT);
+        assert(posComp);
+        SpriteTextureComponent *spriteComp = stairwayToComponentManager().
+                searchComponentByType<SpriteTextureComponent>((*m_ceilingBackground).first, Components_e::SPRITE_TEXTURE_COMPONENT);
+        assert(spriteComp);
+        if(m_ceilingVertice.empty())
         {
-            PositionVertexComponent *posComp = stairwayToComponentManager().
-                    searchComponentByType<PositionVertexComponent>((*m_ceilingBackground).first, Components_e::POSITION_VERTEX_COMPONENT);
-            assert(posComp);
-            SpriteTextureComponent *spriteComp = stairwayToComponentManager().
-                    searchComponentByType<SpriteTextureComponent>((*m_ceilingBackground).first, Components_e::SPRITE_TEXTURE_COMPONENT);
-            assert(spriteComp);
-            if(m_ceilingVertice.empty())
-            {
-                m_ceilingVertice.loadVertexStandartTextureComponent(*posComp, *spriteComp);
-            }
+            m_ceilingVertice.loadVertexStandartTextureComponent(*posComp, *spriteComp);
         }
     }
 }
@@ -644,8 +675,7 @@ void FirstPersonDisplaySystem::drawVertex()
     for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
     {
         uint32_t numIteration;
-        for(std::multiset<EntityData>::const_iterator it = m_entitiesNumMem.begin();
-            it != m_entitiesNumMem.end(); ++it)
+        for(std::multiset<EntityData>::const_iterator it = m_entitiesNumMem.begin(); it != m_entitiesNumMem.end(); ++it)
         {
             numIteration = it->m_iterationNum;
             assert(numIteration < m_vectWallDoorVerticesData.size());
@@ -664,8 +694,7 @@ void FirstPersonDisplaySystem::drawTextureBackground()
         SpriteTextureComponent *spriteComp = stairwayToComponentManager().
                 searchComponentByType<SpriteTextureComponent>((*m_groundBackground).first, Components_e::SPRITE_TEXTURE_COMPONENT);
         assert(spriteComp);
-        m_ptrVectTexture->operator[](static_cast<uint32_t>(spriteComp->m_spriteData->
-                                                           m_textureNum)).bind();
+        m_ptrVectTexture->operator[](static_cast<uint32_t>(spriteComp->m_spriteData->m_textureNum)).bind();
         m_groundVertice.confVertexBuffer();
         m_groundVertice.drawElement();
     }
@@ -685,6 +714,34 @@ void FirstPersonDisplaySystem::drawTextureBackground()
 void FirstPersonDisplaySystem::setShader(Shader &shader)
 {
     m_shader = &shader;
+}
+
+//===================================================================
+void FirstPersonDisplaySystem::memGroundBackgroundEntity(uint32_t entity, bool simpleTexture)
+{
+    m_groundBackground = {entity, simpleTexture};
+    if(!simpleTexture)
+    {
+        m_groundCeilingRaycastActive = true;
+    }
+    else
+    {
+        m_groundCeilingSimpleTextureActive = true;
+    }
+}
+
+//===================================================================
+void FirstPersonDisplaySystem::memCeilingBackgroundEntity(uint32_t entity, bool simpleTexture)
+{
+    m_ceilingBackground = {entity, simpleTexture};
+    if(!simpleTexture)
+    {
+        m_groundCeilingRaycastActive = true;
+    }
+    else
+    {
+        m_groundCeilingSimpleTextureActive = true;
+    }
 }
 
 //===================================================================
@@ -749,10 +806,6 @@ void FirstPersonDisplaySystem::calcVerticalGroundCeilingLineRaycast(const pairFl
                                                                     float currentGLLatPos,
                                                                     float radiantObserverAngle)
 {
-    if(!m_groundCeilingRaycastActive)
-    {
-        return;
-    }
     SpriteTextureComponent *spriteGroundComp = nullptr, *spriteCeilingComp = nullptr;
     pairFloat_t currentGroundGL = {currentGLLatPos, -1.0f}, currentCeilingGL = {currentGLLatPos, 1.0f};
     pairFloat_t currentPoint;
@@ -762,16 +815,14 @@ void FirstPersonDisplaySystem::calcVerticalGroundCeilingLineRaycast(const pairFl
     if(m_groundBackground && !m_groundBackground->second)
     {
         spriteGroundComp = stairwayToComponentManager().
-                searchComponentByType<SpriteTextureComponent>((*m_groundBackground).first,
-                                                              Components_e::SPRITE_TEXTURE_COMPONENT);
+                searchComponentByType<SpriteTextureComponent>((*m_groundBackground).first, Components_e::SPRITE_TEXTURE_COMPONENT);
         assert(spriteGroundComp);
         treatGround = true;
     }
     if(m_ceilingBackground && !m_ceilingBackground->second)
     {
         spriteCeilingComp = stairwayToComponentManager().
-                searchComponentByType<SpriteTextureComponent>((*m_ceilingBackground).first,
-                                                              Components_e::SPRITE_TEXTURE_COMPONENT);
+                searchComponentByType<SpriteTextureComponent>((*m_ceilingBackground).first, Components_e::SPRITE_TEXTURE_COMPONENT);
         assert(spriteCeilingComp);
         treatCeiling = true;
     }
