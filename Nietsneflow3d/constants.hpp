@@ -90,7 +90,8 @@ enum class DisplayType_e
 {
     COLOR,
     SIMPLE_TEXTURE,
-    TEXTURED_TILE
+    TEXTURED_TILE,
+    TEXTURED_SIMPLE_AND_TILE
 };
 
 enum class Direction_e

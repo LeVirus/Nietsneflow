@@ -18,9 +18,18 @@ using vectStr_t = std::vector<std::string>;
  */
 struct GroundCeilingData
 {
-    DisplayType_e m_apparence /*= E_DISPLAY_TYPE::COLOR*/;
-    uint8_t m_spriteNum;
+    DisplayType_e m_apparence;
+    uint8_t m_spriteSimpleTextNum, m_spriteTiledTextNum;
     std::array<tupleFloat_t, 4> m_color;
+    GroundCeilingData operator=(const GroundCeilingData &other)
+    {
+        GroundCeilingData ret;
+        ret.m_apparence = other.m_apparence;
+        ret.m_spriteSimpleTextNum = other.m_spriteSimpleTextNum;
+        ret.m_spriteTiledTextNum = other.m_spriteTiledTextNum;
+        ret.m_color = other.m_color;
+        return ret;
+    }
 };
 
 /**
@@ -50,7 +59,7 @@ class PictureData
 public:
     PictureData();
     void setTexturePath(const vectStr_t &vectTextures);
-    void setGroundAndCeilingData(const std::array<GroundCeilingData, 2> &arrayGAndCData);
+    void setBackgroundData(const GroundCeilingData &ground, const GroundCeilingData &ceiling);
     void setSpriteData(const SpriteData &spriteData, const std::string &identifier);
     std::optional<uint8_t> getIdentifier(const std::string &spriteName)const;
     void display();

@@ -56,12 +56,12 @@ private:
     void confUnifiedColorEntity(uint32_t entityNum, const tupleFloat_t &color);
     uint32_t createColorEntity();
     uint32_t createTextureEntity();
-    void loadGroundAndCeilingEntities(const GroundCeilingData &groundData,
-                                      const GroundCeilingData &ceilingData, const LevelManager &levelManager);
-    void confCeilingComponents(uint32_t entityNum, const GroundCeilingData &ceilingData,
-                               const std::vector<SpriteData> &vectSprite);
-    void confGroundComponents(uint32_t entityNum, const GroundCeilingData &groundData,
-                              const std::vector<SpriteData> &vectSprite);
+    void loadBackgroundEntities(const GroundCeilingData &groundData,
+                                      const GroundCeilingData &backgroundData, const LevelManager &levelManager);
+    void confColorBackgroundComponents(uint32_t entity, const GroundCeilingData &groundData);
+    void confGroundSimpleTextBackgroundComponents(uint32_t entity, const GroundCeilingData &groundData, const std::vector<SpriteData> &vectSprite);
+    void confCeilingSimpleTextBackgroundComponents(uint32_t entity, const GroundCeilingData &groundData, const std::vector<SpriteData> &vectSprite);
+    void confTiledTextBackgroundComponents(uint32_t entity, const GroundCeilingData &backgroundData, const std::vector<SpriteData> &vectSprite);
     void confMenuCursorEntity();
     void confWriteEntities();
     void linkSystemsToGraphicEngine();
@@ -79,7 +79,7 @@ private:
     void confActionEntity();
     void confFistHitEntity(WeaponComponent *weaponConf);
     uint32_t loadWeaponsEntity(const LevelManager &levelManager);
-    uint32_t createBackgroundEntity(GroundCeilingData const *data);
+    uint32_t createBackgroundEntity(bool color);
     void loadWallEntities(const LevelManager &levelManager);
     void loadDoorEntities(const LevelManager &levelManager);
     void loadEnemiesEntities(const LevelManager &levelManager);

@@ -62,9 +62,9 @@ public:
     void memCeilingBackgroundEntity(uint32_t entity, bool simpleTexture);
     inline void clearBackgroundData()
     {
-        m_groundBackground = std::nullopt;
-        m_ceilingBackground = std::nullopt;
-        m_groundCeilingRaycastActive = false;
+        m_groundSimpleTextBackground = std::nullopt;
+        m_ceilingSimpleTextBackground = std::nullopt;
+        m_backgroundRaycastActive = false;
     }
     //return target point, texture position and entity num if collision
     optionalTargetRaycast_t calcLineSegmentRaycast(float radiantAngle, const pairFloat_t &originPoint, bool visual);
@@ -75,7 +75,7 @@ private:
     bool behindRaycastElement(const MapCoordComponent *mapCompObserver, const MapCoordComponent *mapCompTarget, float distance,
                               float radiantObserverAngle, uint32_t targetEntity);
     void rayCasting();
-    void calcVerticalGroundCeilingLineRaycast(const pairFloat_t &observerPos, float currentRadiantAngle,
+    void calcVerticalBackgroundLineRaycast(const pairFloat_t &observerPos, float currentRadiantAngle,
                                               float currentGLLatPos, float radiantObserverAngle);
     std::optional<float> treatDoorRaycast(uint32_t numEntity, float currentRadiantAngle,
                                           pairFloat_t &currentPoint, std::optional<float> lateralLeadCoef,
@@ -93,22 +93,23 @@ private:
     pairFloat_t getCenterPosition(MapCoordComponent const *mapComp, GeneralCollisionComponent *genCollComp, float numEntity);
     void fillVertexFromEntity(uint32_t numEntity, uint32_t numIteration, float distance, DisplayMode_e displayMode);
     VerticesData &getClearedVertice(uint32_t index);
-    void confVertexGroundCeiling(float observerAngle);
-    void writeVertexGroundCeiling();
+    void confSimpleTextVertexGroundCeiling(float observerAngle);
+    void writeSimpleTextVertexGroundCeiling();
 private:
     Shader *m_shader;
     std::multiset<EntityData> m_entitiesNumMem;
     std::vector<VerticesData> m_vectWallDoorVerticesData;
-    VerticesData m_groundVertice, m_ceilingVertice;
+    VerticesData m_groundSimpleTextVertice, m_groundTiledTextVertice, m_ceilingSimpleVertice, m_ceilingTiledVertice;
     std::vector<Texture> *m_ptrVectTexture = nullptr;
     mapRayCastingData_t m_raycastingData;
     //number of entity to draw per player
     vectUI_t m_numVertexToDraw;
     float m_stepAngle = getRadiantAngle(CONE_VISION / static_cast<float>(RAYCAST_LINE_NUMBER));
     //second :: false = tiled texture     true = simple texture
-    std::optional<std::pair<uint32_t, bool>> m_groundBackground, m_ceilingBackground;
-    bool m_groundCeilingRaycastActive = false, m_groundCeilingSimpleTextureActive = false;
-    std::optional<std::array<float, RAYCAST_GROUND_CEILING_NUMBER>> m_memGroundCeilingDistance;
+    std::optional<uint32_t> m_groundSimpleTextBackground, m_groundTiledTextBackground,
+    m_ceilingSimpleTextBackground, m_ceilingTiledTextBackground;
+    bool m_backgroundRaycastActive = false, m_groundCeilingSimpleTextureActive = false;
+    std::optional<std::array<float, RAYCAST_GROUND_CEILING_NUMBER>> m_memBackgroundDistance;
 };
 
 float getQuarterAngle(float angle);

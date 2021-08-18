@@ -62,36 +62,98 @@ void LevelManager::loadSpriteData(const INIReader &reader, const std::string &se
 //===================================================================
 void LevelManager::loadBackgroundData(const INIReader &reader)
 {
-    std::array<GroundCeilingData, 2> arrayGAndCData;
-    //first ground
-    std::string current = "Ground";
-    for(uint32_t i = 0; i < 2 ; ++i)
+    std::vector<std::string> sections = reader.getSectionNamesContaining("GroundBackground");
+    GroundCeilingData groundData, ceilingData;
+    groundData.m_apparence = DisplayType_e::COLOR;
+    ceilingData.m_apparence = DisplayType_e::COLOR;
+    for(uint32_t i = 0; i < sections.size() ; ++i)
     {
-        arrayGAndCData[i].m_apparence =
-                static_cast<DisplayType_e>(reader.GetInteger(current, "displayType", 0));
-        if(arrayGAndCData[i].m_apparence == DisplayType_e::COLOR)
+        if(sections[i] == "ColorGroundBackground")
         {
             std::vector<float> colorR, colorG, colorB;
-
-            colorR = convertStrToVectFloat(reader.Get(current, "colorR", ""));
-            colorG = convertStrToVectFloat(reader.Get(current, "colorG", ""));
-            colorB = convertStrToVectFloat(reader.Get(current, "colorB", ""));
+            colorR = convertStrToVectFloat(reader.Get(sections[i], "colorR", ""));
+            colorG = convertStrToVectFloat(reader.Get(sections[i], "colorG", ""));
+            colorB = convertStrToVectFloat(reader.Get(sections[i], "colorB", ""));
             for(uint32_t j = 0; j < 4 ; ++j)
             {
-                arrayGAndCData[i].m_color[j] = tupleFloat_t{colorR[j], colorG[j], colorB[j]};
+                groundData.m_color[j] = tupleFloat_t{colorR[j], colorG[j], colorB[j]};
             }
+            break;
         }
-        else
+        else if(sections[i] == "SimpleTextureGroundBackground")
         {
-            std::optional<uint8_t> id = m_pictureData.getIdentifier(
-                        reader.Get(current, "sprite", ""));
-            assert(id && "Cannot get tegetIdentifierier.");
-            arrayGAndCData[i].m_spriteNum = *id;
+            if(groundData.m_apparence == DisplayType_e::COLOR)
+            {
+                groundData.m_apparence = DisplayType_e::SIMPLE_TEXTURE;
+            }
+            else
+            {
+                groundData.m_apparence = DisplayType_e::TEXTURED_SIMPLE_AND_TILE;
+            }
+            std::optional<uint8_t> picNum = m_pictureData.getIdentifier(reader.Get(sections[i], "sprite", ""));
+            assert(picNum);
+            groundData.m_spriteSimpleTextNum = *picNum;
         }
-        //second ceiling
-        current = "Ceiling";
+        else if(sections[i] == "TiledTextureGroundBackground")
+        {
+            if(groundData.m_apparence == DisplayType_e::COLOR)
+            {
+                groundData.m_apparence = DisplayType_e::TEXTURED_TILE;
+            }
+            else
+            {
+                groundData.m_apparence = DisplayType_e::TEXTURED_SIMPLE_AND_TILE;
+            }
+            std::optional<uint8_t> picNum = m_pictureData.getIdentifier(reader.Get(sections[i], "sprite", ""));
+            assert(picNum);
+            groundData.m_spriteTiledTextNum = *picNum;
+        }
     }
-    m_pictureData.setGroundAndCeilingData(arrayGAndCData);
+    sections = reader.getSectionNamesContaining("CeilingBackground");
+    for(uint32_t i = 0; i < sections.size() ; ++i)
+    {
+        if(sections[i] == "ColorCeilingBackground")
+        {
+            std::vector<float> colorR, colorG, colorB;
+            colorR = convertStrToVectFloat(reader.Get(sections[i], "colorR", ""));
+            colorG = convertStrToVectFloat(reader.Get(sections[i], "colorG", ""));
+            colorB = convertStrToVectFloat(reader.Get(sections[i], "colorB", ""));
+            for(uint32_t j = 0; j < 4 ; ++j)
+            {
+                ceilingData.m_color[j] = tupleFloat_t{colorR[j], colorG[j], colorB[j]};
+            }
+            break;
+        }
+        else if(sections[i] == "SimpleTextureCeilingBackground")
+        {
+            if(ceilingData.m_apparence == DisplayType_e::COLOR)
+            {
+                ceilingData.m_apparence = DisplayType_e::SIMPLE_TEXTURE;
+            }
+            else
+            {
+                ceilingData.m_apparence = DisplayType_e::TEXTURED_SIMPLE_AND_TILE;
+            }
+            std::optional<uint8_t> picNum = m_pictureData.getIdentifier(reader.Get(sections[i], "sprite", ""));
+            assert(picNum);
+            ceilingData.m_spriteSimpleTextNum = *picNum;
+        }
+        else if(sections[i] == "TiledTextureCeilingBackground")
+        {
+            if(ceilingData.m_apparence == DisplayType_e::COLOR)
+            {
+                ceilingData.m_apparence = DisplayType_e::TEXTURED_TILE;
+            }
+            else
+            {
+                ceilingData.m_apparence = DisplayType_e::TEXTURED_SIMPLE_AND_TILE;
+            }
+            std::optional<uint8_t> picNum = m_pictureData.getIdentifier(reader.Get(sections[i], "sprite", ""));
+            assert(picNum);
+            ceilingData.m_spriteTiledTextNum = *picNum;
+        }
+    }
+    m_pictureData.setBackgroundData(groundData, ceilingData);
 }
 
 //===================================================================
