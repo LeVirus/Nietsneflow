@@ -20,6 +20,7 @@ struct StaticLevelElementData
     vectPairUI_t m_TileGamePosition;
     pairDouble_t m_inGameSpriteSize;
     ObjectType_e m_type;
+    std::optional<uint32_t> m_weaponID, m_cardID;
     uint32_t m_containing;
     bool m_traversable = true;
 };

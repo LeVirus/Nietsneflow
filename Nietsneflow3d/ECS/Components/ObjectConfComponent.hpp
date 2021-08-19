@@ -5,14 +5,10 @@
 
 enum class ObjectType_e
 {
-    GUN_AMMO,
-    SHOTGUN_AMMO,
-    LITTLE_HEAL,
-    BIG_HEAL,
+    WEAPON,
+    AMMO_WEAPON,
+    HEAL,
     CARD,
-    SHOTGUN,
-    PLASMA_RIFLE,
-    PLASMA_RIFLE_AMMO,
     TOTAL
 };
 
@@ -24,5 +20,6 @@ struct ObjectConfComponent : public ecs::Component
     }
     ObjectType_e m_type;
     uint32_t m_containing;
+    std::optional<uint32_t> m_weaponID, m_cardID;
     virtual ~ObjectConfComponent() = default;
 };

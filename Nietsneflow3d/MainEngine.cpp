@@ -1506,11 +1506,19 @@ void MainEngine::loadStaticElementGroup(const LevelManager &levelManager,
                 tag = CollisionTag_e::OBJECT_CT;
                 entityNum = createObjectEntity();
                 ObjectConfComponent *objComp = m_ecsManager.getComponentManager().
-                        searchComponentByType<ObjectConfComponent>(entityNum,
-                                                                   Components_e::OBJECT_CONF_COMPONENT);
+                        searchComponentByType<ObjectConfComponent>(entityNum, Components_e::OBJECT_CONF_COMPONENT);
                 assert(objComp);
-                objComp->m_containing = it->second.m_containing;
                 objComp->m_type = it->second.m_type;
+                if(objComp->m_type == ObjectType_e::AMMO_WEAPON || objComp->m_type == ObjectType_e::WEAPON ||
+                        objComp->m_type == ObjectType_e::HEAL)
+                {
+                    objComp->m_containing = it->second.m_containing;
+                    objComp->m_weaponID = it->second.m_weaponID;
+                }
+                else if(objComp->m_type == ObjectType_e::CARD)
+                {
+                    objComp->m_cardID = it->second.m_cardID;
+                }
             }
             else
             {

@@ -537,28 +537,20 @@ void CollisionSystem::treatPlayerPickObject(CollisionArgs &args)
     assert(objectComp);
     switch (objectComp->m_type)
     {
-    case ObjectType_e::GUN_AMMO:
-        if(!pickUpAmmo(1, weaponComp, objectComp->m_containing))
+    case ObjectType_e::AMMO_WEAPON:
+        if(!pickUpAmmo(*objectComp->m_weaponID, weaponComp, objectComp->m_containing))
         {
             return;
         }
         break;
-    case ObjectType_e::SHOTGUN_AMMO:
-        if(!pickUpAmmo(2, weaponComp, objectComp->m_containing))
+    case ObjectType_e::WEAPON:
+        if(!pickUpWeapon(*objectComp->m_weaponID, weaponComp, objectComp->m_containing))
         {
             return;
         }
         break;
-    case ObjectType_e::PLASMA_RIFLE_AMMO:
+    case ObjectType_e::HEAL:
     {
-        if(!pickUpAmmo(3, weaponComp, objectComp->m_containing))
-        {
-            return;
-        }
-        break;
-    }
-    case ObjectType_e::BIG_HEAL:
-    case ObjectType_e::LITTLE_HEAL:
         if(playerComp->m_life == 100)
         {
             return;
@@ -568,22 +560,10 @@ void CollisionSystem::treatPlayerPickObject(CollisionArgs &args)
         {
             playerComp->m_life = 100;
         }
-        m_vectEntitiesToDelete.push_back(args.entityNumB);
-        return;
         break;
+    }
     case ObjectType_e::CARD:
-        break;
-    case ObjectType_e::SHOTGUN:
-        if(!pickUpWeapon(2, weaponComp, objectComp->m_containing))
-        {
-            return;
-        }
-        break;
-    case ObjectType_e::PLASMA_RIFLE:
-        if(!pickUpWeapon(3, weaponComp, objectComp->m_containing))
-        {
-            return;
-        }
+        //OOOOOK CARD
         break;
     case ObjectType_e::TOTAL:
         assert(false);

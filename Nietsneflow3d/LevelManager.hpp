@@ -126,6 +126,7 @@ private:
     std::string m_spriteCursorName;
     StaticLevelElementData m_exitStaticElement;
     std::map<std::string, WallData> m_wallData;
+    std::map<std::string, uint32_t> m_weaponINIAssociated;
     std::map<std::string, StaticLevelElementData> m_groundElement, m_ceilingElement, m_objectElement;
     std::map<std::string, DoorData> m_doorData;
     std::map<std::string, EnemyData> m_enemyData;

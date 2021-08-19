@@ -240,15 +240,26 @@ void LevelManager::loadSpriteData(const INIReader &reader, const std::string &se
 
 //===================================================================
 void LevelManager::readStandardStaticElement(const INIReader &reader, StaticLevelElementData &staticElement,
-                                             const std::string & sectionName, LevelStaticElementType_e elementType)
+                                             const std::string &sectionName, LevelStaticElementType_e elementType)
 {
     loadSpriteData(reader, sectionName, staticElement);
     if(elementType == LevelStaticElementType_e::OBJECT)
     {
         staticElement.m_containing = reader.GetInteger(sectionName, "Containing", 1);
-        uint32_t type = reader.GetInteger(sectionName, "Type", 1);
+        uint32_t type = reader.GetInteger(sectionName, "Type", 4);
         assert(type < static_cast<uint32_t>(ObjectType_e::TOTAL));
         staticElement.m_type = static_cast<ObjectType_e>(type);
+        if(staticElement.m_type == ObjectType_e::AMMO_WEAPON || staticElement.m_type == ObjectType_e::WEAPON)
+        {
+            std::map<std::string, uint32_t>::const_iterator it = m_weaponINIAssociated.find(reader.Get(sectionName, "WeaponID", ""));
+            assert(it != m_weaponINIAssociated.end());
+            staticElement.m_weaponID = it->second;
+        }
+        else if(staticElement.m_type == ObjectType_e::CARD)
+        {
+            //OOOOK CARD
+//            staticElement.m_weaponID = it->second;
+        }
     }
     if(elementType != LevelStaticElementType_e::OBJECT)
     {
@@ -567,6 +578,7 @@ void LevelManager::loadWeaponData(const INIReader &reader, std::string_view sect
         m_vectWeaponsINIData[numIt].m_visibleShootID = reader.Get(sectionName.data(), "ShootSpritesID", "");
         assert(!m_vectWeaponsINIData[numIt].m_visibleShootID.empty());
     }
+    m_weaponINIAssociated.insert({sectionName.data(), m_vectWeaponsINIData[numIt].m_order});
     sprites = reader.Get(sectionName.data(), "StaticSprite", "");
     sprites += " ";
     sprites += reader.Get(sectionName.data(), "AttackSprite", "");
@@ -831,6 +843,7 @@ void LevelManager::loadStandardData(const std::string &INIFileName)
     loadBaseDisplayData(reader, false);
     loadEnemyData(reader);
     loadUtilsData(reader);
+    m_weaponINIAssociated.clear();
 }
 
 //===================================================================

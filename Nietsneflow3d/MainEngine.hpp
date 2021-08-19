@@ -10,6 +10,7 @@ struct WeaponSpriteData;
 using mapVisibleData_t = std::map<std::string, std::vector<WeaponSpriteData>>;
 using mapEnemySprite_t = std::map<EnemySpriteType_e, pairUI_t>;
 using mapUiVectUI_t = std::map<uint32_t, std::vector<uint32_t>>;
+
 class LevelManager;
 class Level;
 class FontData;
@@ -85,20 +86,18 @@ private:
     void loadEnemiesEntities(const LevelManager &levelManager);
     void confVisibleAmmo(uint32_t ammoEntity);
     void loadStaticElementEntities(const LevelManager &levelManager);
-    void loadStaticElementGroup(const LevelManager &levelManager,
-                                const std::map<std::string, StaticLevelElementData> &staticData, LevelStaticElementType_e elementType);
+    void loadStaticElementGroup(const LevelManager &levelManager, const std::map<std::string, StaticLevelElementData> &staticData,
+                                LevelStaticElementType_e elementType);
     void loadExitElement(const LevelManager &levelManager, const StaticLevelElementData &exit);
     void createPlayerAmmoEntities(PlayerConfComponent *playerConf, CollisionTag_e collTag);
     void confAmmoEntities(ArrayVisibleShot_t &ammoEntities, CollisionTag_e collTag,
                           bool visibleShot, uint32_t damage, float shotVelocity = 0);
     void createAmmoEntity(uint32_t &ammoNum, CollisionTag_e collTag, bool visibleShot);
     void createPlayerVisibleShotEntity(WeaponComponent *weaponConf);
-    void createPlayerImpactEntities(const std::vector<SpriteData> &vectSpriteData,
-                                  WeaponComponent *weaponConf,
-                                  const mapVisibleData_t &mapImpactData);
-    void confShotImpactEntity(const std::vector<SpriteData> &vectSpriteData,
-                                  const std::vector<WeaponSpriteData> &shootDisplayData,
-                                  uint32_t &impactEntity);
+    void createPlayerImpactEntities(const std::vector<SpriteData> &vectSpriteData, WeaponComponent *weaponConf,
+                                    const mapVisibleData_t &mapImpactData);
+    void confShotImpactEntity(const std::vector<SpriteData> &vectSpriteData, const std::vector<WeaponSpriteData> &shootDisplayData,
+                              uint32_t &impactEntity);
     uint32_t createWeaponEntity();
     uint32_t createWallEntity(bool multiSprite);
     uint32_t createDoorEntity();
@@ -110,12 +109,11 @@ private:
     uint32_t createSimpleSpriteEntity();
     uint32_t createStaticEntity();
     uint32_t createObjectEntity();
-    void confBaseComponent(uint32_t entityNum, const SpriteData &memSpriteData,
-                           const pairUI_t &coordLevel, CollisionShape_e collisionShape,
-                           CollisionTag_e tag);
+    void confBaseComponent(uint32_t entityNum, const SpriteData &memSpriteData, const pairUI_t &coordLevel,
+                           CollisionShape_e collisionShape, CollisionTag_e tag);
     void confStaticComponent(uint32_t entityNum, const pairFloat_t &elementSize, LevelStaticElementType_e elementType);
-    void loadEnemySprites(const std::vector<SpriteData> &vectSprite,
-                          const EnemyData &enemiesData, uint32_t numEntity, EnemyConfComponent *enemyComp, const mapVisibleData_t &visibleShot);
+    void loadEnemySprites(const std::vector<SpriteData> &vectSprite, const EnemyData &enemiesData,
+                          uint32_t numEntity, EnemyConfComponent *enemyComp, const mapVisibleData_t &visibleShot);
     void loadVisibleShotData(const std::vector<SpriteData> &vectSprite, const ArrayVisibleShot_t &visibleAmmo,
                              const std::string &visibleShootID, const mapVisibleData_t &visibleShot);
     void memTimerPausedValue();
@@ -150,10 +148,9 @@ private:
     MemPlayerConf m_memPlayerConf;
 };
 
-void insertEnemySpriteFromType(const std::vector<SpriteData> &vectSprite,
-                               mapEnemySprite_t &mapSpriteAssociate,
-                               std::vector<SpriteData const *> &vectSpriteData,
-                               const std::vector<uint8_t> &enemyMemArray, EnemySpriteType_e type);
+void insertEnemySpriteFromType(const std::vector<SpriteData> &vectSprite, mapEnemySprite_t &mapSpriteAssociate,
+                               std::vector<SpriteData const *> &vectSpriteData, const std::vector<uint8_t> &enemyMemArray,
+                               EnemySpriteType_e type);
 void confBullet(GeneralCollisionComponent *genColl, SegmentCollisionComponent *segmentColl,
                 CollisionTag_e collTag, const pairFloat_t &point, float degreeAngle);
 void setWeaponPlayer();
