@@ -90,14 +90,5 @@ void PictureData::setBackgroundData(const GroundCeilingData &ground, const Groun
 {
     m_groundData = ground;
     m_ceilingData = ceiling;
-    m_groundData.m_apparence = ground.m_apparence;
-    m_groundData.m_spriteSimpleTextNum = ground.m_spriteSimpleTextNum;
-    m_groundData.m_spriteTiledTextNum = ground.m_spriteTiledTextNum;
-    m_groundData.m_color = ground.m_color;
-
-    m_ceilingData.m_apparence = ceiling.m_apparence;
-    m_ceilingData.m_spriteSimpleTextNum = ceiling.m_spriteSimpleTextNum;
-    m_ceilingData.m_spriteTiledTextNum = ceiling.m_spriteTiledTextNum;
-    m_ceilingData.m_color = ceiling.m_color;
 }
 

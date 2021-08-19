@@ -198,8 +198,7 @@ void LevelManager::loadGeneralStaticElements(const INIReader &reader,
     for(uint32_t i = 0; i < vectINISections.size(); ++i)
     {
         memMap->insert({vectINISections[i], StaticLevelElementData()});
-        readStandardStaticElement(reader, memMap->operator[](vectINISections[i]),
-                vectINISections[i], elementType);
+        readStandardStaticElement(reader, memMap->operator[](vectINISections[i]), vectINISections[i], elementType);
     }
 }
 
@@ -822,6 +821,7 @@ void LevelManager::loadStandardData(const std::string &INIFileName)
         assert("Error while reading INI file.");
     }
     loadWallData(reader);
+    loadWeaponsDisplayData(reader);
     loadGeneralStaticElements(reader, LevelStaticElementType_e::GROUND);
     loadGeneralStaticElements(reader, LevelStaticElementType_e::CEILING);
     loadGeneralStaticElements(reader, LevelStaticElementType_e::OBJECT);
@@ -831,7 +831,6 @@ void LevelManager::loadStandardData(const std::string &INIFileName)
     loadBaseDisplayData(reader, false);
     loadEnemyData(reader);
     loadUtilsData(reader);
-    loadWeaponsDisplayData(reader);
 }
 
 //===================================================================

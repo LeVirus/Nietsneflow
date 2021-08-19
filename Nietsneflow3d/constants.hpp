@@ -164,7 +164,6 @@ enum class Shader_e
 {
     COLOR_S,
     TEXTURE_S,
-//    TEXTURED_WALL_S,
     TOTAL_SHADER_S
 };
 

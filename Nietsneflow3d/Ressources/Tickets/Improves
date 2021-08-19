@@ -4,9 +4,6 @@ IMPROVE=========================================================================
 -9)
 Animation move while shooting??
 
--8)
-Cumulate simple texture and textured tile (alpha) for background
-
 -4)
 WHen no ammo change to best weapon && and if weapon are no ammo switch to other
 
@@ -21,6 +18,9 @@ Set collision behaviour from tag instead of shape
 
 3)
 Enemy animations========================~
+
+-8)
+Cumulate simple texture and textured tile (alpha) for background=====================================OK
 
 -5)
 Change fix background to moveable background from observer angle===================================OK
