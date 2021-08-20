@@ -45,28 +45,22 @@ void InputSystem::treatPlayerInput()
             m_keyEspapePressed = false;
         }
         MapCoordComponent *mapComp = stairwayToComponentManager().
-                searchComponentByType<MapCoordComponent>(mVectNumEntity[i],
-                                                         Components_e::MAP_COORD_COMPONENT);
+                searchComponentByType<MapCoordComponent>(mVectNumEntity[i], Components_e::MAP_COORD_COMPONENT);
         assert(mapComp);
         MoveableComponent *moveComp = stairwayToComponentManager().
-                searchComponentByType<MoveableComponent>(mVectNumEntity[i],
-                                                         Components_e::MOVEABLE_COMPONENT);
+                searchComponentByType<MoveableComponent>(mVectNumEntity[i], Components_e::MOVEABLE_COMPONENT);
         assert(moveComp);
         PositionVertexComponent *posComp = stairwayToComponentManager().
-                searchComponentByType<PositionVertexComponent>(mVectNumEntity[i],
-                                                         Components_e::POSITION_VERTEX_COMPONENT);
+                searchComponentByType<PositionVertexComponent>(mVectNumEntity[i], Components_e::POSITION_VERTEX_COMPONENT);
         assert(posComp);
         VisionComponent *visionComp = stairwayToComponentManager().
-                searchComponentByType<VisionComponent>(mVectNumEntity[i],
-                                                         Components_e::VISION_COMPONENT);
+                searchComponentByType<VisionComponent>(mVectNumEntity[i], Components_e::VISION_COMPONENT);
         assert(visionComp);
         PlayerConfComponent *playerComp = stairwayToComponentManager().
-                searchComponentByType<PlayerConfComponent>(mVectNumEntity[i],
-                                                         Components_e::PLAYER_CONF_COMPONENT);
+                searchComponentByType<PlayerConfComponent>(mVectNumEntity[i], Components_e::PLAYER_CONF_COMPONENT);
         assert(playerComp);
         WeaponComponent *weaponComp = stairwayToComponentManager().
-                searchComponentByType<WeaponComponent>(playerComp->m_weaponEntity,
-                                                       Components_e::WEAPON_COMPONENT);
+                searchComponentByType<WeaponComponent>(playerComp->m_weaponEntity, Components_e::WEAPON_COMPONENT);
         assert(weaponComp);
         treatPlayerMove(playerComp, moveComp, mapComp);
         if(glfwGetKey(m_window, GLFW_KEY_RIGHT) == GLFW_PRESS)
@@ -90,12 +84,10 @@ void InputSystem::treatPlayerInput()
         if(glfwGetKey(m_window, GLFW_KEY_SPACE) == GLFW_PRESS)
         {
             MapCoordComponent *mapCompAction = stairwayToComponentManager().
-                    searchComponentByType<MapCoordComponent>(playerComp->m_actionEntity,
-                                                             Components_e::MAP_COORD_COMPONENT);
+                    searchComponentByType<MapCoordComponent>(playerComp->m_actionEntity, Components_e::MAP_COORD_COMPONENT);
             assert(mapCompAction);
             GeneralCollisionComponent *genCompAction = stairwayToComponentManager().
-                    searchComponentByType<GeneralCollisionComponent>(playerComp->m_actionEntity,
-                                                                     Components_e::GENERAL_COLLISION_COMPONENT);
+                    searchComponentByType<GeneralCollisionComponent>(playerComp->m_actionEntity, Components_e::GENERAL_COLLISION_COMPONENT);
             assert(genCompAction);
             confActionShape(mapCompAction, mapComp, moveComp, genCompAction);
         }
@@ -125,7 +117,7 @@ void InputSystem::treatPlayerInput()
                                                moveComp->m_degreeOrientation);
                     if(weaponComp->m_weaponsData[weaponComp->m_currentWeapon].m_ammunationsCount == 0)
                     {
-                        changePlayerWeapon(*weaponComp, true);
+                        changeToTopPlayerWeapon(*weaponComp);
                         playerComp->m_playerShoot = false;
                     }
                 }
@@ -307,7 +299,8 @@ void changePlayerWeapon(WeaponComponent &weaponComp, bool next)
             {
                 --weapon;
             }
-            if(weaponComp.m_weaponsData[weapon].m_posses)
+            if(weaponComp.m_weaponsData[weapon].m_posses && (weaponComp.m_weaponsData[weapon].m_attackType == AttackType_e::MELEE ||
+                                                             weaponComp.m_weaponsData[weapon].m_ammunationsCount > 0))
             {
                 break;
             }
@@ -326,7 +319,8 @@ void changePlayerWeapon(WeaponComponent &weaponComp, bool next)
             {
                 ++weapon;
             }
-            if(weaponComp.m_weaponsData[weapon].m_posses)
+            if(weaponComp.m_weaponsData[weapon].m_posses && (weaponComp.m_weaponsData[weapon].m_attackType == AttackType_e::MELEE ||
+                                                             weaponComp.m_weaponsData[weapon].m_ammunationsCount > 0))
             {
                 break;
             }
@@ -335,6 +329,20 @@ void changePlayerWeapon(WeaponComponent &weaponComp, bool next)
     setPlayerWeapon(weaponComp, weapon);
 }
 
+//===================================================================
+void changeToTopPlayerWeapon(WeaponComponent &weaponComp)
+{
+    uint32_t max;
+    for(uint32_t i = 0; i < weaponComp.m_weaponsData.size(); ++i)
+    {
+        if(weaponComp.m_weaponsData[i].m_posses && (weaponComp.m_weaponsData[i].m_attackType == AttackType_e::MELEE ||
+                                                    weaponComp.m_weaponsData[i].m_ammunationsCount > 0))
+        {
+            max = i;
+        }
+    }
+    setPlayerWeapon(weaponComp, max);
+}
 
 //===================================================================
 void setPlayerWeapon(WeaponComponent &weaponComp, uint32_t weapon)

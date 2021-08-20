@@ -42,4 +42,5 @@ private:
 };
 
 void changePlayerWeapon(WeaponComponent &weaponComp, bool next);
+void changeToTopPlayerWeapon(WeaponComponent &weaponComp);
 void setPlayerWeapon(WeaponComponent &weaponComp, uint32_t weapon);
