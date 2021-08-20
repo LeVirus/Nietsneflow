@@ -42,7 +42,8 @@ void PhysicalEngine::linkSystems(InputSystem *inputSystem, CollisionSystem *coll
 void PhysicalEngine::memPlayerEntity(uint32_t playerEntity)
 {
     assert(m_iaSystem);
-    m_iaSystem->loadPlayerDatas(playerEntity);
+    m_iaSystem->memPlayerDatas(playerEntity);
+    m_collisionSystem->memPlayerDatas(playerEntity);
 }
 
 //===================================================================

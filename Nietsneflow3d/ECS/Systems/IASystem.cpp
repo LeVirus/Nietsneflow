@@ -240,7 +240,7 @@ void IASystem::treatEnemyBehaviourAttack(uint32_t enemyEntity, MapCoordComponent
 }
 
 //===================================================================
-void IASystem::loadPlayerDatas(uint32_t playerEntity)
+void IASystem::memPlayerDatas(uint32_t playerEntity)
 {
     m_playerEntity = playerEntity;
     m_playerMapComp = stairwayToComponentManager().searchComponentByType<MapCoordComponent>(

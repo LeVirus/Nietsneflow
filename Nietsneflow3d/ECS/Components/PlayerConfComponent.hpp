@@ -3,6 +3,7 @@
 #include <BaseECS/component.hpp>
 #include <constants.hpp>
 #include <array>
+#include <set>
 #include <optional>
 
 struct PlayerConfComponent : public ecs::Component
@@ -25,6 +26,7 @@ struct PlayerConfComponent : public ecs::Component
         }
     }
     bool m_playerShoot = false, m_takeDamage = false, m_inMovement = false;
+    std::set<uint32_t> m_card;
     uint32_t m_weaponEntity, m_ammoWriteEntity, m_menuEntity, m_menuCursorEntity,
     m_actionEntity, m_hitMeleeEntity, m_lifeWriteEntity, m_life = 100;
     CurrentMenuCursorPos_e m_currentCursorPos = static_cast<CurrentMenuCursorPos_e>(0);

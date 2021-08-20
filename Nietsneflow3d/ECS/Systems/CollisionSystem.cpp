@@ -281,7 +281,17 @@ void CollisionSystem::initArrayTag()
     m_tagArray.insert({CollisionTag_e::BULLET_PLAYER_CT, CollisionTag_e::WALL_CT});
     m_tagArray.insert({CollisionTag_e::BULLET_PLAYER_CT, CollisionTag_e::DOOR_CT});
 
-//    m_tagArray.insert({CollisionTag_e::OBJECT_CT, CollisionTag_e::PLAYER_CT});
+    //    m_tagArray.insert({CollisionTag_e::OBJECT_CT, CollisionTag_e::PLAYER_CT});
+}
+
+//===================================================================
+void CollisionSystem::memPlayerDatas(uint32_t playerEntity)
+{
+    m_playerComp = stairwayToComponentManager().
+            searchComponentByType<PlayerConfComponent>(playerEntity,
+                                                       Components_e::PLAYER_CONF_COMPONENT);
+    assert(m_playerComp);
+
 }
 
 //===================================================================
@@ -377,11 +387,15 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
                 if(args.tagCompB->m_tag == CollisionTag_e::DOOR_CT)
                 {
                     DoorComponent *doorComp = stairwayToComponentManager().
-                            searchComponentByType<DoorComponent>(args.entityNumB,
-                                                                 Components_e::DOOR_COMPONENT);
+                            searchComponentByType<DoorComponent>(args.entityNumB, Components_e::DOOR_COMPONENT);
                     assert(doorComp);
-                    if(doorComp->m_currentState == DoorState_e::STATIC_CLOSED ||
-                            doorComp->m_currentState == DoorState_e::MOVE_CLOSE)
+                    //if card door
+                    if(doorComp->m_cardID != std::nullopt &&
+                            (m_playerComp->m_card.find(*doorComp->m_cardID) == m_playerComp->m_card.end()))
+                    {
+                        return;
+                    }
+                    if(doorComp->m_currentState == DoorState_e::STATIC_CLOSED || doorComp->m_currentState == DoorState_e::MOVE_CLOSE)
                     {
                         doorComp->m_currentState = DoorState_e::MOVE_OPEN;
                     }
@@ -416,7 +430,10 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
                     DoorComponent *doorComp = stairwayToComponentManager().
                             searchComponentByType<DoorComponent>(args.entityNumB, Components_e::DOOR_COMPONENT);
                     assert(doorComp);
-                    doorComp->m_currentState = DoorState_e::MOVE_OPEN;
+                    if(!doorComp->m_cardID)
+                    {
+                        doorComp->m_currentState = DoorState_e::MOVE_OPEN;
+                    }
                 }
             }
         }
@@ -563,7 +580,7 @@ void CollisionSystem::treatPlayerPickObject(CollisionArgs &args)
         break;
     }
     case ObjectType_e::CARD:
-        //OOOOOK CARD
+        playerComp->m_card.insert(*objectComp->m_cardID);
         break;
     case ObjectType_e::TOTAL:
         assert(false);

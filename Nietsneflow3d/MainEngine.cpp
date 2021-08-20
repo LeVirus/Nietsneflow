@@ -649,6 +649,14 @@ void MainEngine::loadDoorEntities(const LevelManager &levelManager)
                 rectComp->m_size = {LEVEL_TILE_SIZE_PX, WIDTH_DOOR_SIZE_PX};
             }
             doorComp->m_vertical = it->second.m_vertical;
+            if(it->second.m_cardID == std::nullopt)
+            {
+                doorComp->m_cardID = std::nullopt;
+            }
+            else
+            {
+                doorComp->m_cardID = it->second.m_cardID;
+            }
             memSpriteComp = m_ecsManager.getComponentManager().
                     searchComponentByType<MemSpriteDataComponent>(numEntity,
                                                                   Components_e::MEM_SPRITE_DATA_COMPONENT);
@@ -1496,8 +1504,7 @@ void MainEngine::loadStaticElementGroup(const LevelManager &levelManager,
     for(; it != staticData.end(); ++it)
     {
         collisionRay = it->second.m_inGameSpriteSize.first * LEVEL_HALF_TILE_SIZE_PX;
-        const SpriteData &memSpriteData = levelManager.getPictureData().
-                getSpriteData()[it->second.m_numSprite];
+        const SpriteData &memSpriteData = levelManager.getPictureData().getSpriteData()[it->second.m_numSprite];
         for(uint32_t j = 0; j < it->second.m_TileGamePosition.size(); ++j)
         {
             uint32_t entityNum;

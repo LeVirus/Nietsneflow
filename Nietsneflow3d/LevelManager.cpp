@@ -245,10 +245,14 @@ void LevelManager::readStandardStaticElement(const INIReader &reader, StaticLeve
     loadSpriteData(reader, sectionName, staticElement);
     if(elementType == LevelStaticElementType_e::OBJECT)
     {
-        staticElement.m_containing = reader.GetInteger(sectionName, "Containing", 1);
         uint32_t type = reader.GetInteger(sectionName, "Type", 4);
         assert(type < static_cast<uint32_t>(ObjectType_e::TOTAL));
         staticElement.m_type = static_cast<ObjectType_e>(type);
+        if(staticElement.m_type == ObjectType_e::AMMO_WEAPON || staticElement.m_type == ObjectType_e::WEAPON ||
+                staticElement.m_type == ObjectType_e::HEAL)
+        {
+            staticElement.m_containing = reader.GetInteger(sectionName, "Containing", 1);
+        }
         if(staticElement.m_type == ObjectType_e::AMMO_WEAPON || staticElement.m_type == ObjectType_e::WEAPON)
         {
             std::map<std::string, uint32_t>::const_iterator it = m_weaponINIAssociated.find(reader.Get(sectionName, "WeaponID", ""));
@@ -258,7 +262,8 @@ void LevelManager::readStandardStaticElement(const INIReader &reader, StaticLeve
         else if(staticElement.m_type == ObjectType_e::CARD)
         {
             //OOOOK CARD
-//            staticElement.m_weaponID = it->second;
+            staticElement.m_cardID = reader.GetInteger(sectionName, "CardID", 4);
+            m_cardINIAssociated.insert({sectionName, *staticElement.m_cardID});
         }
     }
     if(elementType != LevelStaticElementType_e::OBJECT)
@@ -268,8 +273,7 @@ void LevelManager::readStandardStaticElement(const INIReader &reader, StaticLeve
 }
 
 //===================================================================
-std::optional<std::vector<uint32_t>> getBrutPositionData(const INIReader &reader,
-                                                         const std::string &sectionName,
+std::optional<std::vector<uint32_t>> getBrutPositionData(const INIReader &reader, const std::string &sectionName,
                                                          const std::string &propertyName)
 {
     std::string gamePositions = reader.Get(sectionName, propertyName, "");
@@ -281,9 +285,7 @@ std::optional<std::vector<uint32_t>> getBrutPositionData(const INIReader &reader
 }
 
 //===================================================================
-void LevelManager::fillStandartPositionVect(const INIReader &reader,
-                                            const std::string &sectionName,
-                                            vectPairUI_t &vectPos)
+void LevelManager::fillStandartPositionVect(const INIReader &reader, const std::string &sectionName, vectPairUI_t &vectPos)
 {
     std::optional<std::vector<uint32_t>> results = getBrutPositionData(reader, sectionName, "GamePosition");
     if(!results)
@@ -649,6 +651,17 @@ void LevelManager::loadDoorData(const INIReader &reader)
         m_doorData.insert({vectINISections[i], DoorData()});
         m_doorData[vectINISections[i]].m_numSprite = getSpriteId(reader, vectINISections[i]);
         m_doorData[vectINISections[i]].m_vertical = reader.GetBoolean(vectINISections[i], "Vertical", false);
+        std::string cardStr = reader.Get(vectINISections[i], "CardID", "");
+        if(!cardStr.empty())
+        {
+            std::map<std::string, uint32_t>::const_iterator it = m_cardINIAssociated.find(cardStr);
+            assert(it != m_cardINIAssociated.end());
+            m_doorData[vectINISections[i]].m_cardID = it->second;
+        }
+        else
+        {
+            m_doorData[vectINISections[i]].m_cardID = std::nullopt;
+        }
     }
 }
 
@@ -844,6 +857,7 @@ void LevelManager::loadStandardData(const std::string &INIFileName)
     loadEnemyData(reader);
     loadUtilsData(reader);
     m_weaponINIAssociated.clear();
+    m_cardINIAssociated.clear();
 }
 
 //===================================================================

@@ -28,6 +28,7 @@ public:
     {
         m_vectEntitiesToDelete.clear();
     }
+    void memPlayerDatas(uint32_t playerEntity);
 private:
     void treatSegmentShots();
     void confImpactShots(uint32_t numBullet);
@@ -74,6 +75,7 @@ private:
     //first bullet second target
     std::vector<pairUI_t> m_vectMemShots;
     std::vector<uint32_t> m_vectEntitiesToDelete;
+    PlayerConfComponent *m_playerComp = nullptr;
 };
 
 bool pickUpWeapon(uint32_t numWeapon, WeaponComponent *weaponComp,

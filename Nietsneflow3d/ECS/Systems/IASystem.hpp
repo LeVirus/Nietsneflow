@@ -13,7 +13,7 @@ class IASystem : public ecs::System
 public:
     IASystem();
     void execSystem()override;
-    void loadPlayerDatas(uint32_t playerEntity);
+    void memPlayerDatas(uint32_t playerEntity);
     void confVisibleShoot(const ArrayVisibleShot_t &visibleShots,
                           const pairFloat_t &point, float degreeAngle);
 private:

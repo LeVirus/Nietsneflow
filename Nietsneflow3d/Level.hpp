@@ -20,7 +20,7 @@ struct StaticLevelElementData
     vectPairUI_t m_TileGamePosition;
     pairDouble_t m_inGameSpriteSize;
     ObjectType_e m_type;
-    std::optional<uint32_t> m_weaponID, m_cardID;
+    std::optional<uint32_t> m_weaponID, m_cardID = std::nullopt;
     uint32_t m_containing;
     bool m_traversable = true;
 };
@@ -35,6 +35,7 @@ struct DoorData
 {
     uint8_t m_numSprite;
     vectPairUI_t m_TileGamePosition;
+    std::optional<uint32_t> m_cardID = std::nullopt;
     //Position of axe true = vertical false = horizontal
     bool m_vertical;
 };
