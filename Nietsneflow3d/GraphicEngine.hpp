@@ -67,8 +67,7 @@ private:
     void initGLShader();
     void initGLTexture(const vectStr_t &texturePath);
     void setShaderToLocalSystems();
-    void loadSprites(const std::vector<SpriteData> &vectSprites,
-                     const FontData &fontData);
+    void loadSprites(const std::vector<SpriteData> &vectSprites, const FontData &fontData);
 private:
     GLFWwindow* m_window = nullptr;
     pairI_t m_screenSize = {800, 600};

@@ -332,7 +332,7 @@ void changePlayerWeapon(WeaponComponent &weaponComp, bool next)
 //===================================================================
 void changeToTopPlayerWeapon(WeaponComponent &weaponComp)
 {
-    uint32_t max;
+    uint32_t max = 0;
     for(uint32_t i = 0; i < weaponComp.m_weaponsData.size(); ++i)
     {
         if(weaponComp.m_weaponsData[i].m_posses && (weaponComp.m_weaponsData[i].m_attackType == AttackType_e::MELEE ||

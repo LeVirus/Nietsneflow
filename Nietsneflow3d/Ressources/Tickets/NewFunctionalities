@@ -7,9 +7,6 @@ Set wall moveable
 -9)
 Add melee attack to enemies
 
--2)
-Display effect while getting items
-
 -1)
 Some enemies drop object
 
@@ -27,6 +24,9 @@ Create a visual level designer
 
 6)
 Ajouter armure
+
+-2)
+Display effect while getting items=====================================OK
 
 9)
 Créer un système de carte pour ouvrir certaines portes========================================OK

@@ -16,6 +16,7 @@
 #include <ECS/Components/SpriteTextureComponent.hpp>
 #include <ECS/Components/WeaponComponent.hpp>
 #include <ECS/Systems/FirstPersonDisplaySystem.hpp>
+#include <ECS/Systems/ColorDisplaySystem.hpp>
 #include <BaseECS/engine.hpp>
 #include <CollisionUtils.hpp>
 #include <PhysicalEngine.hpp>
@@ -586,6 +587,7 @@ void CollisionSystem::treatPlayerPickObject(CollisionArgs &args)
         assert(false);
         break;
     }
+    playerComp->m_pickItem = true;
     m_vectEntitiesToDelete.push_back(args.entityNumB);
 }
 

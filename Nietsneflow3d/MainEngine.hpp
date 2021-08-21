@@ -52,8 +52,7 @@ private:
     void savePlayerGear();
     void loadPlayerGear();
     void displayTransitionMenu();
-    void loadDamageEntity();
-    void loadTransitionEntity();
+    void loadColorEntities();
     void confUnifiedColorEntity(uint32_t entityNum, const tupleFloat_t &color);
     uint32_t createColorEntity();
     uint32_t createTextureEntity();

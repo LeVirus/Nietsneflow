@@ -114,10 +114,8 @@ bool GraphicEngine::windowShouldClose()
 }
 
 //===================================================================
-void GraphicEngine::linkSystems(ColorDisplaySystem *colorSystem,
-                                MapDisplaySystem *mapSystem,
-                                FirstPersonDisplaySystem *firstPersonSystem,
-                                VisionSystem *visionSystem,
+void GraphicEngine::linkSystems(ColorDisplaySystem *colorSystem, MapDisplaySystem *mapSystem,
+                                FirstPersonDisplaySystem *firstPersonSystem, VisionSystem *visionSystem,
                                 StaticDisplaySystem *staticDisplaySystem)
 {
     m_colorSystem = colorSystem;
@@ -227,8 +225,8 @@ void GraphicEngine::initGLShader()
     }
     //take texture transparency into account
     glEnable(GL_BLEND);
-//    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+//    glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 //===================================================================

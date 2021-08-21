@@ -55,6 +55,12 @@ void FirstPersonDisplaySystem::drawPlayerDamage()
                         static_cast<uint32_t>(Systems_e::COLOR_DISPLAY_SYSTEM))->drawVisibleDamage();
             playerComp->m_takeDamage = false;
         }
+        if(playerComp->m_pickItem)
+        {
+            mptrSystemManager->searchSystemByType<ColorDisplaySystem>(
+                        static_cast<uint32_t>(Systems_e::COLOR_DISPLAY_SYSTEM))->drawVisiblePickUpObject();
+            playerComp->m_pickItem = false;
+        }
     }
 }
 

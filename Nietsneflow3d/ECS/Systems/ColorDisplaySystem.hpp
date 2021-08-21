@@ -14,10 +14,10 @@ public:
     void execSystem()override;
     void setShader(Shader &shader);
     void addColorSystemEntity(uint32_t entity);
-    void loadDamageEntity(uint32_t damage);
-    void loadTransitionEntity(uint32_t transition);
+    void loadColorEntities(uint32_t damage, uint32_t getObject, uint32_t transition);
     void drawEntity(const PositionVertexComponent *posComp, const ColorVertexComponent *colorComp);
     void drawVisibleDamage();
+    void drawVisiblePickUpObject();
     void setTransition(uint32_t current, uint32_t total);
     void display()const;
 private:
@@ -30,9 +30,9 @@ private:
      */
     void setUsedComponents();
 private:
-    uint32_t m_damage, m_transition;
     Shader *m_shader;
     VerticesData m_verticesData;
     PairCompPosColor_t m_transitionMemComponents = {nullptr, nullptr},
-    m_damageMemComponents = {nullptr, nullptr};
+    m_damageMemComponents = {nullptr, nullptr},
+    m_getObjectMemComponents = {nullptr, nullptr};
 };

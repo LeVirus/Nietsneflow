@@ -317,21 +317,19 @@ void MainEngine::applyTimerPausedValue()
 }
 
 //===================================================================
-void MainEngine::loadDamageEntity()
+void MainEngine::loadColorEntities()
 {
-    uint32_t entityNum = createColorEntity();
-    confUnifiedColorEntity(entityNum, {0.7f, 0.2f, 0.1f});
+    uint32_t damageEntity = createColorEntity(),
+            getObjectEntity = createColorEntity(),
+            transitionEntity = createColorEntity();
+    confUnifiedColorEntity(transitionEntity, {0.0f, 0.0f, 0.0f});
+    confUnifiedColorEntity(damageEntity, {0.7f, 0.2f, 0.1f});
+    confUnifiedColorEntity(getObjectEntity, {0.1f, 0.7f, 0.5f});
     m_ecsManager.getSystemManager().searchSystemByType<ColorDisplaySystem>(
-                static_cast<uint32_t>(Systems_e::COLOR_DISPLAY_SYSTEM))->loadDamageEntity(entityNum);}
-
-//===================================================================
-void MainEngine::loadTransitionEntity()
-{
-    uint32_t entityNum = createColorEntity();
-    confUnifiedColorEntity(entityNum, {0.0f, 0.0f, 0.0f});
-    m_ecsManager.getSystemManager().searchSystemByType<ColorDisplaySystem>(
-                static_cast<uint32_t>(Systems_e::COLOR_DISPLAY_SYSTEM))->loadTransitionEntity(entityNum);
+                static_cast<uint32_t>(Systems_e::COLOR_DISPLAY_SYSTEM))->
+            loadColorEntities(damageEntity, getObjectEntity, transitionEntity);
 }
+
 
 //===================================================================
 void MainEngine::confUnifiedColorEntity(uint32_t entityNum, const tupleFloat_t &color)
@@ -357,13 +355,13 @@ void MainEngine::confUnifiedColorEntity(uint32_t entityNum, const tupleFloat_t &
     }
     colorComp->m_vertex.reserve(4);
     colorComp->m_vertex.emplace_back(std::get<0>(color), std::get<1>(color),
-                                     std::get<2>(color), 1.0f);
+                                     std::get<2>(color), 0.4f);
     colorComp->m_vertex.emplace_back(std::get<0>(color), std::get<1>(color),
-                                     std::get<2>(color), 1.0f);
+                                     std::get<2>(color), 0.4f);
     colorComp->m_vertex.emplace_back(std::get<0>(color), std::get<1>(color),
-                                     std::get<2>(color), 1.0f);
+                                     std::get<2>(color), 0.4f);
     colorComp->m_vertex.emplace_back(std::get<0>(color), std::get<1>(color),
-                                     std::get<2>(color), 1.0f);
+                                     std::get<2>(color), 0.4f);
 }
 
 //===================================================================
@@ -467,8 +465,7 @@ void MainEngine::loadLevelEntities(const LevelManager &levelManager)
     loadBackgroundEntities(levelManager.getPictureData().getGroundData(),
                                  levelManager.getPictureData().getCeilingData(), 
                                  levelManager);
-    loadDamageEntity();
-    loadTransitionEntity();
+    loadColorEntities();
     loadStaticElementEntities(levelManager);
     uint32_t weaponEntity = loadWeaponsEntity(levelManager);
     loadPlayerEntity(levelManager, weaponEntity);

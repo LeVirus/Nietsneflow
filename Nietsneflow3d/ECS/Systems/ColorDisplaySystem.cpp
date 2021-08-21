@@ -66,36 +66,32 @@ void ColorDisplaySystem::addColorSystemEntity(uint32_t entity)
 }
 
 //===================================================================
-void ColorDisplaySystem::loadDamageEntity(uint32_t damage)
+void ColorDisplaySystem::loadColorEntities(uint32_t damage, uint32_t getObject, uint32_t transition)
 {
-    m_damage = damage;
     m_damageMemComponents.first = stairwayToComponentManager().
-            searchComponentByType<PositionVertexComponent>(m_damage,
-                                                           Components_e::POSITION_VERTEX_COMPONENT);
+            searchComponentByType<PositionVertexComponent>(damage, Components_e::POSITION_VERTEX_COMPONENT);
     m_damageMemComponents.second = stairwayToComponentManager().
-            searchComponentByType<ColorVertexComponent>(m_damage,
-                                                        Components_e::COLOR_VERTEX_COMPONENT);
+            searchComponentByType<ColorVertexComponent>(damage, Components_e::COLOR_VERTEX_COMPONENT);
     assert(m_damageMemComponents.first);
     assert(m_damageMemComponents.second);
-}
 
-//===================================================================
-void ColorDisplaySystem::loadTransitionEntity(uint32_t transition)
-{
-    m_transition = transition;
+    m_getObjectMemComponents.first = stairwayToComponentManager().
+            searchComponentByType<PositionVertexComponent>(getObject, Components_e::POSITION_VERTEX_COMPONENT);
+    m_getObjectMemComponents.second = stairwayToComponentManager().
+            searchComponentByType<ColorVertexComponent>(getObject, Components_e::COLOR_VERTEX_COMPONENT);
+    assert(m_getObjectMemComponents.first);
+    assert(m_getObjectMemComponents.second);
+
     m_transitionMemComponents.first = stairwayToComponentManager().
-            searchComponentByType<PositionVertexComponent>(m_transition,
-                                                           Components_e::POSITION_VERTEX_COMPONENT);
+            searchComponentByType<PositionVertexComponent>(transition, Components_e::POSITION_VERTEX_COMPONENT);
     m_transitionMemComponents.second = stairwayToComponentManager().
-            searchComponentByType<ColorVertexComponent>(m_transition,
-                                                        Components_e::COLOR_VERTEX_COMPONENT);
+            searchComponentByType<ColorVertexComponent>(transition, Components_e::COLOR_VERTEX_COMPONENT);
     assert(m_transitionMemComponents.first);
     assert(m_transitionMemComponents.second);
 }
 
 //===================================================================
-void ColorDisplaySystem::drawEntity(const PositionVertexComponent *posComp,
-                                    const ColorVertexComponent *colorComp)
+void ColorDisplaySystem::drawEntity(const PositionVertexComponent *posComp, const ColorVertexComponent *colorComp)
 {
     m_verticesData.clear();
     m_verticesData.loadVertexColorComponent(posComp, colorComp);
@@ -106,6 +102,11 @@ void ColorDisplaySystem::drawEntity(const PositionVertexComponent *posComp,
 void ColorDisplaySystem::drawVisibleDamage()
 {
     drawEntity(m_damageMemComponents.first, m_damageMemComponents.second);
+}
+
+void ColorDisplaySystem::drawVisiblePickUpObject()
+{
+    drawEntity(m_getObjectMemComponents.first, m_getObjectMemComponents.second);
 }
 
 //===================================================================

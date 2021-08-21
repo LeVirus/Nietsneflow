@@ -69,8 +69,7 @@ bool VerticesData::loadVertexColorComponent(const PositionVertexComponent *posCo
         m_vertexBuffer.emplace_back(std::get<2>(colorComp->m_vertex[j]));
         m_vertexBuffer.emplace_back(std::get<3>(colorComp->m_vertex[j]));
     }
-    BaseShapeTypeGL_e shapeType = (sizeVertex == 3 ? BaseShapeTypeGL_e::TRIANGLE :
-                                                     BaseShapeTypeGL_e::RECTANGLE);
+    BaseShapeTypeGL_e shapeType = (sizeVertex == 3 ? BaseShapeTypeGL_e::TRIANGLE : BaseShapeTypeGL_e::RECTANGLE);
     addIndices(shapeType);
     return true;
 }
