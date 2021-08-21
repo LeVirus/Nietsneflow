@@ -391,7 +391,7 @@ void MainEngine::loadBackgroundEntities(const GroundCeilingData &groundData, con
     if(groundData.m_apparence == DisplayType_e::COLOR)
     {
         entity = createBackgroundEntity(true);
-        confColorBackgroundComponents(entity, groundData);
+        confColorBackgroundComponents(entity, groundData, true);
         memColorSystemEntity(entity);
     }
     else
@@ -415,7 +415,7 @@ void MainEngine::loadBackgroundEntities(const GroundCeilingData &groundData, con
     if(ceilingData.m_apparence == DisplayType_e::COLOR)
     {
         entity = createBackgroundEntity(true);
-        confColorBackgroundComponents(entity, ceilingData);
+        confColorBackgroundComponents(entity, ceilingData, false);
         memColorSystemEntity(entity);
     }
     else
@@ -1575,32 +1575,38 @@ uint32_t MainEngine::createStaticElementEntity(LevelStaticElementType_e elementT
 }
 
 //===================================================================
-void MainEngine::confColorBackgroundComponents(uint32_t entity, const GroundCeilingData &groundData)
+void MainEngine::confColorBackgroundComponents(uint32_t entity, const GroundCeilingData &groundData, bool ground)
 {
     PositionVertexComponent *posComp = m_ecsManager.getComponentManager().
             searchComponentByType<PositionVertexComponent>(entity, Components_e::POSITION_VERTEX_COMPONENT);
     assert(posComp);
     posComp->m_vertex.reserve(4);
-    posComp->m_vertex.emplace_back(-1.0f, 0.0f);
-    posComp->m_vertex.emplace_back(1.0f, 0.0f);
-    posComp->m_vertex.emplace_back(1.0f, -1.0f);
-    posComp->m_vertex.emplace_back(-1.0f, -1.0f);
+    if(ground)
+    {
+        posComp->m_vertex.emplace_back(-1.0f, 0.0f);
+        posComp->m_vertex.emplace_back(1.0f, 0.0f);
+        posComp->m_vertex.emplace_back(1.0f, -1.0f);
+        posComp->m_vertex.emplace_back(-1.0f, -1.0f);
+    }
+    else
+    {
+        posComp->m_vertex.emplace_back(-1.0f, 1.0f);
+        posComp->m_vertex.emplace_back(1.0f, 1.0f);
+        posComp->m_vertex.emplace_back(1.0f, 0.0f);
+        posComp->m_vertex.emplace_back(-1.0f, 0.0f);
+    }
     ColorVertexComponent *colorComp = m_ecsManager.getComponentManager().
             searchComponentByType<ColorVertexComponent>(entity, Components_e::COLOR_VERTEX_COMPONENT);
     assert(colorComp);
     colorComp->m_vertex.reserve(4);
-    colorComp->m_vertex.emplace_back(std::get<0>(groundData.m_color[0]),
-            std::get<1>(groundData.m_color[0]), std::get<2>(groundData.m_color[0]),
-            1.0);
-    colorComp->m_vertex.emplace_back(std::get<0>(groundData.m_color[1]),
-            std::get<1>(groundData.m_color[1]), std::get<2>(groundData.m_color[1]),
-            1.0);
-    colorComp->m_vertex.emplace_back(std::get<0>(groundData.m_color[2]),
-            std::get<1>(groundData.m_color[2]), std::get<2>(groundData.m_color[2]),
-            1.0);
-    colorComp->m_vertex.emplace_back(std::get<0>(groundData.m_color[3]),
-            std::get<1>(groundData.m_color[3]), std::get<2>(groundData.m_color[3]),
-            1.0);
+    colorComp->m_vertex.emplace_back(std::get<0>(groundData.m_color[0]), std::get<1>(groundData.m_color[0]),
+            std::get<2>(groundData.m_color[0]), 1.0);
+    colorComp->m_vertex.emplace_back(std::get<0>(groundData.m_color[1]), std::get<1>(groundData.m_color[1]),
+            std::get<2>(groundData.m_color[1]), 1.0);
+    colorComp->m_vertex.emplace_back(std::get<0>(groundData.m_color[2]), std::get<1>(groundData.m_color[2]),
+            std::get<2>(groundData.m_color[2]), 1.0);
+    colorComp->m_vertex.emplace_back(std::get<0>(groundData.m_color[3]), std::get<1>(groundData.m_color[3]),
+            std::get<2>(groundData.m_color[3]), 1.0);
 }
 
 //===================================================================

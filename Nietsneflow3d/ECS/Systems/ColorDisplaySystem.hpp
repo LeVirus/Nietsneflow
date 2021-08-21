@@ -20,6 +20,7 @@ public:
     void drawVisiblePickUpObject();
     void setTransition(uint32_t current, uint32_t total);
     void display()const;
+    void clearEntities();
 private:
     void fillVertexFromEntities();
     void drawVertex();

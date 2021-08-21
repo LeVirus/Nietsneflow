@@ -58,7 +58,7 @@ private:
     uint32_t createTextureEntity();
     void loadBackgroundEntities(const GroundCeilingData &groundData,
                                       const GroundCeilingData &backgroundData, const LevelManager &levelManager);
-    void confColorBackgroundComponents(uint32_t entity, const GroundCeilingData &groundData);
+    void confColorBackgroundComponents(uint32_t entity, const GroundCeilingData &groundData, bool ground);
     void confGroundSimpleTextBackgroundComponents(uint32_t entity, const GroundCeilingData &groundData, const std::vector<SpriteData> &vectSprite);
     void confCeilingSimpleTextBackgroundComponents(uint32_t entity, const GroundCeilingData &groundData, const std::vector<SpriteData> &vectSprite);
     void confTiledTextBackgroundComponents(uint32_t entity, const GroundCeilingData &backgroundData, const std::vector<SpriteData> &vectSprite);

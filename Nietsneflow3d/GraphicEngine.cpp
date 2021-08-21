@@ -154,6 +154,7 @@ void GraphicEngine::fillMenuWrite(WriteComponent *writeComp, const std::string &
 void GraphicEngine::clearSystems()
 {
     m_firstPersonSystem->clearBackgroundData();
+    m_colorSystem->clearEntities();
     m_visionSystem->clearMemMultiSpritesWall();
 }
 

@@ -126,3 +126,9 @@ void ColorDisplaySystem::display()const
     m_shader->display();
 }
 
+//===================================================================
+void ColorDisplaySystem::clearEntities()
+{
+    mVectNumEntity.clear();
+}
+
