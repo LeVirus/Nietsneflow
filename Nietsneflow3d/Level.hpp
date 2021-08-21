@@ -67,6 +67,7 @@ struct EnemyData
     std::string m_visibleShootID, m_impactID;
     uint32_t m_attackPower, m_life;
     float m_velocity, m_shotVelocity;
+    std::string m_dropedObjectID;
     bool m_traversable;
 };
 

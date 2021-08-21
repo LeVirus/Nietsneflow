@@ -54,12 +54,12 @@ struct EnemyConfComponent : public ecs::Component
         }
     }
     bool m_prevWall = false, m_touched = false, m_visibleShot;
-    uint32_t m_weaponEntity, m_life, m_countPlayerInvisibility = 0;
+    uint32_t m_weaponEntity, m_life, m_countPlayerInvisibility = 0, m_currentSprite;
     ArrayVisibleShot_t m_stdAmmo, m_visibleAmmo;
     EnemyDisplayMode_e m_displayMode = EnemyDisplayMode_e::NORMAL;
     //give first and last emplacement of sprite from type
     mapEnemySprite_t m_mapSpriteAssociate;
-    uint32_t m_currentSprite;
+    std::optional<uint32_t> m_dropedObjectEntity;
     EnemyBehaviourMode_e m_behaviourMode = EnemyBehaviourMode_e::PASSIVE;
     EnemyAttackPhase_e m_attackPhase;
     float m_dyingInterval = 0.15f, m_attackInterval = 0.15f;

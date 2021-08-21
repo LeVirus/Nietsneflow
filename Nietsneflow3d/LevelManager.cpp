@@ -173,8 +173,7 @@ void LevelManager::loadPositionPlayerData(const INIReader &reader)
 }
 
 //===================================================================
-void LevelManager::loadGeneralStaticElements(const INIReader &reader,
-                                             LevelStaticElementType_e elementType)
+void LevelManager::loadGeneralStaticElements(const INIReader &reader, LevelStaticElementType_e elementType)
 {
     std::map<std::string, StaticLevelElementData> *memMap;
     std::vector<std::string> vectINISections;
@@ -261,7 +260,6 @@ void LevelManager::readStandardStaticElement(const INIReader &reader, StaticLeve
         }
         else if(staticElement.m_type == ObjectType_e::CARD)
         {
-            //OOOOK CARD
             staticElement.m_cardID = reader.GetInteger(sectionName, "CardID", 4);
             m_cardINIAssociated.insert({sectionName, *staticElement.m_cardID});
         }
@@ -684,6 +682,7 @@ void LevelManager::loadEnemyData(const INIReader &reader)
 {
     std::vector<std::string> vectINISections;
     vectINISections = reader.getSectionNamesContaining("Enemy");
+    std::string objID;
     for(uint32_t i = 0; i < vectINISections.size(); ++i)
     {
         m_enemyData.insert({vectINISections[i], EnemyData()});
@@ -696,6 +695,7 @@ void LevelManager::loadEnemyData(const INIReader &reader)
         m_enemyData[vectINISections[i]].m_life = std::stoul(reader.Get(vectINISections[i], "Life", "1"));
         m_enemyData[vectINISections[i]].m_velocity = std::stof(reader.Get(vectINISections[i], "Velocity", "1"));
         m_enemyData[vectINISections[i]].m_shotVelocity = std::stof(reader.Get(vectINISections[i], "ShotVelocity", "1"));
+        m_enemyData[vectINISections[i]].m_dropedObjectID = reader.Get(vectINISections[i], "DropedObjectID", "");
 
         loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::STATIC_FRONT, m_enemyData[vectINISections[i]]);
         loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::STATIC_FRONT_LEFT, m_enemyData[vectINISections[i]]);

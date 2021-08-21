@@ -134,7 +134,28 @@ void CollisionSystem::treatEnemyShooted(uint32_t enemyEntityNum, uint32_t damage
         enemyConfCompB->m_behaviourMode = EnemyBehaviourMode_e::DYING;
         enemyConfCompB->m_touched = false;
         rmCollisionMaskEntity(enemyEntityNum);
+        if(enemyConfCompB->m_dropedObjectEntity)
+        {
+            confDropedObject(*enemyConfCompB->m_dropedObjectEntity, enemyEntityNum);
+        }
     }
+}
+
+//===================================================================
+void CollisionSystem::confDropedObject(uint32_t objectEntity, uint32_t enemyEntity)
+{
+    GeneralCollisionComponent *genComp = stairwayToComponentManager().
+            searchComponentByType<GeneralCollisionComponent>(objectEntity, Components_e::GENERAL_COLLISION_COMPONENT);
+    assert(genComp);
+    MapCoordComponent *objectMapComp = stairwayToComponentManager().
+            searchComponentByType<MapCoordComponent>(objectEntity, Components_e::MAP_COORD_COMPONENT);
+    assert(objectMapComp);
+    MapCoordComponent *enemyMapComp = stairwayToComponentManager().
+            searchComponentByType<MapCoordComponent>(enemyEntity, Components_e::MAP_COORD_COMPONENT);
+    assert(enemyMapComp);
+    genComp->m_active = true;
+    objectMapComp->m_coord = enemyMapComp->m_coord;
+    objectMapComp->m_absoluteMapPositionPX = enemyMapComp->m_absoluteMapPositionPX;
 }
 
 //===================================================================

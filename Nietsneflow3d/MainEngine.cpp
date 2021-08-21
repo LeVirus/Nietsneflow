@@ -703,6 +703,10 @@ void MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
             circleComp->m_ray = collisionRay;
             enemyComp->m_life = it->second.m_life;
             enemyComp->m_visibleShot = !(it->second.m_visibleShootID.empty());
+            if(!it->second.m_dropedObjectID.empty())
+            {
+                enemyComp->m_dropedObjectEntity = createEnemyDropObject(levelManager, it->second, it->second.m_TileGamePosition[j]);
+            }
             if(enemyComp->m_visibleShot)
             {
                 confAmmoEntities(enemyComp->m_visibleAmmo, CollisionTag_e::BULLET_ENEMY_CT,
@@ -710,7 +714,8 @@ void MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
             }
             else
             {
-                confAmmoEntities(enemyComp->m_stdAmmo, CollisionTag_e::BULLET_ENEMY_CT, enemyComp->m_visibleShot, (*it).second.m_attackPower);
+                confAmmoEntities(enemyComp->m_stdAmmo, CollisionTag_e::BULLET_ENEMY_CT, enemyComp->m_visibleShot,
+                                 (*it).second.m_attackPower);
                 const mapVisibleData_t &map = levelManager.getImpactDisplayData();
                 mapVisibleData_t::const_iterator itt = map.find(it->second.m_impactID);
                 assert(itt != map.end());
@@ -731,6 +736,20 @@ void MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
             moveComp->m_velocity = it->second.m_velocity;
         }
     }
+}
+
+//===================================================================
+uint32_t MainEngine::createEnemyDropObject(const LevelManager &levelManager, const EnemyData &enemyData, const pairUI_t &coord)
+{
+    std::map<std::string, StaticLevelElementData>::const_iterator itt = levelManager.getObjectData().find(enemyData.m_dropedObjectID);
+    assert(itt != levelManager.getObjectData().end());
+    uint32_t objectEntity = createStaticElementEntity(LevelStaticElementType_e::OBJECT, itt->second,
+                                                      levelManager.getPictureSpriteData(), coord);
+    GeneralCollisionComponent *genComp = m_ecsManager.getComponentManager().
+            searchComponentByType<GeneralCollisionComponent>(objectEntity, Components_e::GENERAL_COLLISION_COMPONENT);
+    assert(genComp);
+    genComp->m_active = false;
+    return objectEntity;
 }
 
 //===================================================================
@@ -1458,13 +1477,11 @@ void MainEngine::loadStaticElementEntities(const LevelManager &levelManager)
     //LOAD CURSOR MENU
     uint8_t cursorSpriteId = *levelManager.getPictureData().
             getIdentifier(levelManager.getCursorSpriteName());
-    m_memCursorSpriteData = &levelManager.getPictureData().getSpriteData()[cursorSpriteId];
-    loadStaticElementGroup(levelManager, levelManager.getGroundData(),
-                           LevelStaticElementType_e::GROUND);
-    loadStaticElementGroup(levelManager, levelManager.getCeilingData(),
-                           LevelStaticElementType_e::CEILING);
-    loadStaticElementGroup(levelManager, levelManager.getObjectData(),
-                           LevelStaticElementType_e::OBJECT);
+    const std::vector<SpriteData> &vectSprite = levelManager.getPictureData().getSpriteData();
+    m_memCursorSpriteData = &vectSprite[cursorSpriteId];
+    loadStaticElementGroup(vectSprite, levelManager.getGroundData(), LevelStaticElementType_e::GROUND);
+    loadStaticElementGroup(vectSprite, levelManager.getCeilingData(), LevelStaticElementType_e::CEILING);
+    loadStaticElementGroup(vectSprite, levelManager.getObjectData(), LevelStaticElementType_e::OBJECT);
     loadExitElement(levelManager, levelManager.getExitElementData());
 }
 
@@ -1491,65 +1508,70 @@ void MainEngine::loadExitElement(const LevelManager &levelManager,
 }
 
 //===================================================================
-void MainEngine::loadStaticElementGroup(const LevelManager &levelManager,
+void MainEngine::loadStaticElementGroup(const std::vector<SpriteData> &vectSpriteData,
                                         const std::map<std::string, StaticLevelElementData> &staticData,
                                         LevelStaticElementType_e elementType)
 {
-    CollisionTag_e tag;
     std::map<std::string, StaticLevelElementData>::const_iterator it = staticData.begin();
-    float collisionRay;
     for(; it != staticData.end(); ++it)
     {
-        collisionRay = it->second.m_inGameSpriteSize.first * LEVEL_HALF_TILE_SIZE_PX;
-        const SpriteData &memSpriteData = levelManager.getPictureData().getSpriteData()[it->second.m_numSprite];
         for(uint32_t j = 0; j < it->second.m_TileGamePosition.size(); ++j)
         {
-            uint32_t entityNum;
-            if(elementType == LevelStaticElementType_e::OBJECT)
-            {
-                tag = CollisionTag_e::OBJECT_CT;
-                entityNum = createObjectEntity();
-                ObjectConfComponent *objComp = m_ecsManager.getComponentManager().
-                        searchComponentByType<ObjectConfComponent>(entityNum, Components_e::OBJECT_CONF_COMPONENT);
-                assert(objComp);
-                objComp->m_type = it->second.m_type;
-                if(objComp->m_type == ObjectType_e::AMMO_WEAPON || objComp->m_type == ObjectType_e::WEAPON ||
-                        objComp->m_type == ObjectType_e::HEAL)
-                {
-                    objComp->m_containing = it->second.m_containing;
-                    objComp->m_weaponID = it->second.m_weaponID;
-                }
-                else if(objComp->m_type == ObjectType_e::CARD)
-                {
-                    objComp->m_cardID = it->second.m_cardID;
-                }
-            }
-            else
-            {
-                if(it->second.m_traversable)
-                {
-                    tag = CollisionTag_e::GHOST_CT;
-                }
-                else
-                {
-                    tag = CollisionTag_e::STATIC_SET_CT;
-                }
-                entityNum = createStaticEntity();
-            }
-            FPSVisibleStaticElementComponent *fpsStaticComp = m_ecsManager.getComponentManager().
-                    searchComponentByType<FPSVisibleStaticElementComponent>(
-                        entityNum, Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
-            assert(fpsStaticComp);
-            fpsStaticComp->m_inGameSpriteSize = it->second.m_inGameSpriteSize;
-            confBaseComponent(entityNum, memSpriteData, it->second.m_TileGamePosition[j],
-                    CollisionShape_e::CIRCLE_C, tag);
-            CircleCollisionComponent *circleComp = m_ecsManager.getComponentManager().
-                    searchComponentByType<CircleCollisionComponent>(entityNum, Components_e::CIRCLE_COLLISION_COMPONENT);
-            assert(circleComp);
-            circleComp->m_ray = collisionRay;
-            confStaticComponent(entityNum, it->second.m_inGameSpriteSize, elementType);
+            createStaticElementEntity(elementType, it->second, vectSpriteData, it->second.m_TileGamePosition[j]);
         }
     }
+}
+
+//===================================================================
+uint32_t MainEngine::createStaticElementEntity(LevelStaticElementType_e elementType, const StaticLevelElementData &staticElementData,
+                                               const std::vector<SpriteData> &vectSpriteData, const pairUI_t &coord)
+{
+    CollisionTag_e tag;
+    uint32_t entityNum;
+    const SpriteData &memSpriteData = vectSpriteData[staticElementData.m_numSprite];
+    float collisionRay = staticElementData.m_inGameSpriteSize.first * LEVEL_HALF_TILE_SIZE_PX;
+    if(elementType == LevelStaticElementType_e::OBJECT)
+    {
+        tag = CollisionTag_e::OBJECT_CT;
+        entityNum = createObjectEntity();
+        ObjectConfComponent *objComp = m_ecsManager.getComponentManager().
+                searchComponentByType<ObjectConfComponent>(entityNum, Components_e::OBJECT_CONF_COMPONENT);
+        assert(objComp);
+        objComp->m_type = staticElementData.m_type;
+        if(objComp->m_type == ObjectType_e::AMMO_WEAPON || objComp->m_type == ObjectType_e::WEAPON ||
+                objComp->m_type == ObjectType_e::HEAL)
+        {
+            objComp->m_containing = staticElementData.m_containing;
+            objComp->m_weaponID = staticElementData.m_weaponID;
+        }
+        else if(objComp->m_type == ObjectType_e::CARD)
+        {
+            objComp->m_cardID = staticElementData.m_cardID;
+        }
+    }
+    else
+    {
+        if(staticElementData.m_traversable)
+        {
+            tag = CollisionTag_e::GHOST_CT;
+        }
+        else
+        {
+            tag = CollisionTag_e::STATIC_SET_CT;
+        }
+        entityNum = createStaticEntity();
+    }
+    FPSVisibleStaticElementComponent *fpsStaticComp = m_ecsManager.getComponentManager().
+            searchComponentByType<FPSVisibleStaticElementComponent>(entityNum, Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
+    assert(fpsStaticComp);
+    fpsStaticComp->m_inGameSpriteSize = staticElementData.m_inGameSpriteSize;
+    confBaseComponent(entityNum, memSpriteData, coord, CollisionShape_e::CIRCLE_C, tag);
+    CircleCollisionComponent *circleComp = m_ecsManager.getComponentManager().
+            searchComponentByType<CircleCollisionComponent>(entityNum, Components_e::CIRCLE_COLLISION_COMPONENT);
+    assert(circleComp);
+    circleComp->m_ray = collisionRay;
+    confStaticComponent(entityNum, staticElementData.m_inGameSpriteSize, elementType);
+    return entityNum;
 }
 
 //===================================================================

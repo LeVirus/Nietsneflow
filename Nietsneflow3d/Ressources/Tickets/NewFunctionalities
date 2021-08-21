@@ -4,17 +4,14 @@ NEW FUNCTIONALITIES=============================================================
 -10)
 Set wall moveable
 
+22)
+Optional (level design), create switch to interact with something
+
 -9)
 Add melee attack to enemies
 
--1)
-Some enemies drop object
-
 3)
 Create Start menu, game over menu 
-
-22)
-Optional (level design), create switch to interact with something
 
 10)
 Optionnel :: afficher l'inventaire dans le menu
@@ -24,6 +21,9 @@ Create a visual level designer
 
 6)
 Ajouter armure
+
+-1)
+Some enemies drop object=============================OK
 
 -2)
 Display effect while getting items=====================================OK

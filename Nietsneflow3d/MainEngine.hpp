@@ -83,10 +83,13 @@ private:
     void loadWallEntities(const LevelManager &levelManager);
     void loadDoorEntities(const LevelManager &levelManager);
     void loadEnemiesEntities(const LevelManager &levelManager);
+    uint32_t createEnemyDropObject(const LevelManager &levelManager, const EnemyData &enemyData, const pairUI_t &coord);
     void confVisibleAmmo(uint32_t ammoEntity);
     void loadStaticElementEntities(const LevelManager &levelManager);
-    void loadStaticElementGroup(const LevelManager &levelManager, const std::map<std::string, StaticLevelElementData> &staticData,
+    void loadStaticElementGroup(const std::vector<SpriteData> &vectSpriteData, const std::map<std::string, StaticLevelElementData> &staticData,
                                 LevelStaticElementType_e elementType);
+    uint32_t createStaticElementEntity(LevelStaticElementType_e elementType, const StaticLevelElementData &staticElementData,
+                                   const std::vector<SpriteData> &vectSpriteData, const pairUI_t &coord);
     void loadExitElement(const LevelManager &levelManager, const StaticLevelElementData &exit);
     void createPlayerAmmoEntities(PlayerConfComponent *playerConf, CollisionTag_e collTag);
     void confAmmoEntities(ArrayVisibleShot_t &ammoEntities, CollisionTag_e collTag,
