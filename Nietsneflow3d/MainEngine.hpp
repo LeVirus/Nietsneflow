@@ -77,7 +77,8 @@ private:
                           uint32_t entityNum, const Level &level,
                           uint32_t numWeaponEntity);
     void confActionEntity();
-    void confFistHitEntity(WeaponComponent *weaponConf);
+    uint32_t createMeleeAttackEntity();
+    uint32_t createAttackMeleeEntity(uint32_t damage, CollisionTag_e tag);
     uint32_t loadWeaponsEntity(const LevelManager &levelManager);
     uint32_t createBackgroundEntity(bool color);
     void loadWallEntities(const LevelManager &levelManager);
@@ -156,5 +157,5 @@ void insertEnemySpriteFromType(const std::vector<SpriteData> &vectSprite, mapEne
 void confBullet(GeneralCollisionComponent *genColl, SegmentCollisionComponent *segmentColl,
                 CollisionTag_e collTag, const pairFloat_t &point, float degreeAngle);
 void setWeaponPlayer();
-void confActionShape(MapCoordComponent *mapCompAction, const MapCoordComponent *playerMapComp,
-                     const MoveableComponent *playerMoveComp, GeneralCollisionComponent *genCompAction);
+void confActionShape(MapCoordComponent *mapCompAction, GeneralCollisionComponent *genCompAction, const MapCoordComponent *attackerMapComp,
+                     const MoveableComponent *attackerMoveComp);

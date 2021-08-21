@@ -7,9 +7,6 @@ Set wall moveable
 22)
 Optional (level design), create switch to interact with something
 
--9)
-Add melee attack to enemies
-
 3)
 Create Start menu, game over menu 
 
@@ -21,6 +18,9 @@ Create a visual level designer
 
 6)
 Ajouter armure
+
+-9)
+Add melee attack to enemies============================OK
 
 -1)
 Some enemies drop object=============================OK

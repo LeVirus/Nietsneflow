@@ -62,6 +62,7 @@ struct EnemyConfComponent : public ecs::Component
     std::optional<uint32_t> m_dropedObjectEntity;
     EnemyBehaviourMode_e m_behaviourMode = EnemyBehaviourMode_e::PASSIVE;
     EnemyAttackPhase_e m_attackPhase;
+    std::optional<uint32_t> m_meleeAttackDamage;
     float m_dyingInterval = 0.15f, m_attackInterval = 0.15f;
     virtual ~EnemyConfComponent() = default;
 };

@@ -31,13 +31,11 @@ bool checkCircleRectCollision(const pairFloat_t &cicleCenter,
 }
 
 //===================================================================
-bool checkCircleCircleCollision(const pairFloat_t &circleCenterA,
-                                const float rayCircleA,
-                                const pairFloat_t &circleCenterB,
-                                const float rayCircleB)
+bool checkCircleCircleCollision(const pairFloat_t &circleCenterA, const float rayCircleA,
+                                const pairFloat_t &circleCenterB, const float rayCircleB)
 {
-    float circleDiameterA = rayCircleA * 2.0f,
-    circleDiameterB = rayCircleB * 2.0f;
+
+    float circleDiameterA = rayCircleA * 2.0f, circleDiameterB = rayCircleB * 2.0f;
     if(!checkRectRectCollision(
         {circleCenterA.first - rayCircleA, circleCenterA.second - rayCircleA},
         {circleDiameterA, circleDiameterA},
@@ -66,10 +64,8 @@ bool checkRectRectCollision(const pairFloat_t &rectOriginA,
 }
 
 //===================================================================
-bool checkSegmentRectCollision(const pairFloat_t &lineFirstPoint,
-                               const pairFloat_t &lineSecondPoint,
-                               const pairFloat_t &rectOrigin,
-                               const pairFloat_t &rectSize)
+bool checkSegmentRectCollision(const pairFloat_t &lineFirstPoint, const pairFloat_t &lineSecondPoint,
+                               const pairFloat_t &rectOrigin, const pairFloat_t &rectSize)
 {
     float minX = std::min(lineFirstPoint.first, lineSecondPoint.first);
     float maxX = std::max(lineFirstPoint.first, lineSecondPoint.first);

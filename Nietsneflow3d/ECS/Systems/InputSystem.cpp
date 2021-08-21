@@ -89,7 +89,7 @@ void InputSystem::treatPlayerInput()
             GeneralCollisionComponent *genCompAction = stairwayToComponentManager().
                     searchComponentByType<GeneralCollisionComponent>(playerComp->m_actionEntity, Components_e::GENERAL_COLLISION_COMPONENT);
             assert(genCompAction);
-            confActionShape(mapCompAction, mapComp, moveComp, genCompAction);
+            confActionShape(mapCompAction, genCompAction, mapComp, moveComp);
         }
         if(glfwGetKey(m_window, GLFW_KEY_M) == GLFW_PRESS)
         {

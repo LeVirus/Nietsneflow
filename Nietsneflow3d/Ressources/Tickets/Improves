@@ -1,6 +1,9 @@
 IMPROVE===================================================================================================
 ==========================================================================================================
 
+-10)
+Add text message if needed card door 
+
 -8)
 Change impact segment when enemy or player is touched
 
@@ -12,9 +15,6 @@ Improve Enemy behaviour
 
 5)
 Set collision behaviour from tag instead of shape
-
--10)
-Add text message if needed card door 
 
 -9)
 Animation move while shooting===========================~

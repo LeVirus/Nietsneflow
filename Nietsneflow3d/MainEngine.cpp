@@ -174,7 +174,7 @@ void MainEngine::playerAttack(uint32_t playerEntity, PlayerConfComponent *player
         assert(playerMapComp);
         assert(actionGenColl);
         assert(playerMapComp);
-        confActionShape(actionMapComp, playerMapComp, playerMoveComp, actionGenColl);
+        confActionShape(actionMapComp, actionGenColl, playerMapComp, playerMoveComp);
         return;
     }
     else if(attackType == AttackType_e::BULLETS)
@@ -216,11 +216,11 @@ void MainEngine::confPlayerBullet(PlayerConfComponent *playerComp,
 }
 
 //===================================================================
-void confActionShape(MapCoordComponent *mapCompAction, const MapCoordComponent *playerMapComp,
-                     const MoveableComponent *playerMoveComp, GeneralCollisionComponent *genCompAction)
+void confActionShape(MapCoordComponent *mapCompAction, GeneralCollisionComponent *genCompAction,
+                     const MapCoordComponent *attackerMapComp, const MoveableComponent *attackerMoveComp)
 {
-    mapCompAction->m_absoluteMapPositionPX = playerMapComp->m_absoluteMapPositionPX;
-    moveElementFromAngle(LEVEL_HALF_TILE_SIZE_PX, getRadiantAngle(playerMoveComp->m_degreeOrientation),
+    mapCompAction->m_absoluteMapPositionPX = attackerMapComp->m_absoluteMapPositionPX;
+    moveElementFromAngle(LEVEL_HALF_TILE_SIZE_PX, getRadiantAngle(attackerMoveComp->m_degreeOrientation),
                          mapCompAction->m_absoluteMapPositionPX);
     genCompAction->m_active = true;
 }
@@ -676,8 +676,8 @@ void MainEngine::loadDoorEntities(const LevelManager &levelManager)
 void MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
 {
     const std::map<std::string, EnemyData> &enemiesData = levelManager.getEnemiesData();
-    std::map<std::string, EnemyData>::const_iterator it = enemiesData.begin();
     float collisionRay;
+    std::map<std::string, EnemyData>::const_iterator it = enemiesData.begin();
     for(; it != enemiesData.end(); ++it)
     {
         collisionRay = it->second.m_inGameSpriteSize.first * LEVEL_HALF_TILE_SIZE_PX;
@@ -703,6 +703,10 @@ void MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
             circleComp->m_ray = collisionRay;
             enemyComp->m_life = it->second.m_life;
             enemyComp->m_visibleShot = !(it->second.m_visibleShootID.empty());
+            if(it->second.m_meleeDamage)
+            {
+                enemyComp->m_meleeAttackDamage = *it->second.m_meleeDamage;
+            }
             if(!it->second.m_dropedObjectID.empty())
             {
                 enemyComp->m_dropedObjectEntity = createEnemyDropObject(levelManager, it->second, it->second.m_TileGamePosition[j]);
@@ -1306,7 +1310,15 @@ void MainEngine::confPlayerEntity(const LevelManager &levelManager,
     confWriteEntities();
     confMenuCursorEntity();
     confActionEntity();
-    confFistHitEntity(weaponConf);
+    for(uint32_t i = 0; i < weaponConf->m_weaponsData.size(); ++i)
+    {
+        if(weaponConf->m_weaponsData[i].m_attackType == AttackType_e::MELEE)
+        {
+            m_playerConf->m_hitMeleeEntity = createAttackMeleeEntity(weaponConf->m_weaponsData[i].m_weaponPower,
+                                                                   CollisionTag_e::HIT_PLAYER_CT);
+            break;
+        }
+    }
 }
 
 //===================================================================
@@ -1337,42 +1349,35 @@ void MainEngine::confActionEntity()
 }
 
 //===================================================================
-void MainEngine::confFistHitEntity(WeaponComponent *weaponConf)
+uint32_t MainEngine::createMeleeAttackEntity()
 {
     std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComponents;
     bitsetComponents[Components_e::GENERAL_COLLISION_COMPONENT] = true;
     bitsetComponents[Components_e::MAP_COORD_COMPONENT] = true;
     bitsetComponents[Components_e::CIRCLE_COLLISION_COMPONENT] = true;
     bitsetComponents[Components_e::SHOT_CONF_COMPONENT] = true;
-    uint32_t entityNum = m_ecsManager.addEntity(bitsetComponents);
+    return m_ecsManager.addEntity(bitsetComponents);
+}
+
+//===================================================================
+uint32_t MainEngine::createAttackMeleeEntity(uint32_t damage, CollisionTag_e tag)
+{
+    uint32_t entityNum = createMeleeAttackEntity();
     GeneralCollisionComponent *genCollComp = m_ecsManager.getComponentManager().
-            searchComponentByType<GeneralCollisionComponent>(entityNum,
-                                                             Components_e::GENERAL_COLLISION_COMPONENT);
-    MapCoordComponent *mapComp = m_ecsManager.getComponentManager().
-            searchComponentByType<MapCoordComponent>(entityNum,
-                                                     Components_e::MAP_COORD_COMPONENT);
+            searchComponentByType<GeneralCollisionComponent>(entityNum, Components_e::GENERAL_COLLISION_COMPONENT);
     CircleCollisionComponent *circleColl = m_ecsManager.getComponentManager().
-            searchComponentByType<CircleCollisionComponent>(entityNum,
-                                                     Components_e::CIRCLE_COLLISION_COMPONENT);
+            searchComponentByType<CircleCollisionComponent>(entityNum, Components_e::CIRCLE_COLLISION_COMPONENT);
     ShotConfComponent *shotComp = m_ecsManager.getComponentManager().
-            searchComponentByType<ShotConfComponent>(entityNum,
-                                                     Components_e::SHOT_CONF_COMPONENT);
+            searchComponentByType<ShotConfComponent>(entityNum, Components_e::SHOT_CONF_COMPONENT);
     assert(shotComp);
     assert(genCollComp);
-    assert(mapComp);
     assert(circleColl);
     genCollComp->m_active = false;
     genCollComp->m_shape = CollisionShape_e::CIRCLE_C;
-    genCollComp->m_tag = CollisionTag_e::HIT_PLAYER_CT;
+    genCollComp->m_tag = tag;
     circleColl->m_ray = 10.0f;
-    for(uint32_t i = 0; i < weaponConf->m_weaponsData.size(); ++i)
-    {
-        if(weaponConf->m_weaponsData[i].m_attackType == AttackType_e::MELEE)
-        {
-            shotComp->m_damage = weaponConf->m_weaponsData[i].m_weaponPower;
-        }
-    }
-    m_playerConf->m_hitMeleeEntity = entityNum;
+    shotComp->m_damage = damage;
+    return entityNum;
 }
 
 //===================================================================

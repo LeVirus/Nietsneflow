@@ -682,7 +682,7 @@ void LevelManager::loadEnemyData(const INIReader &reader)
 {
     std::vector<std::string> vectINISections;
     vectINISections = reader.getSectionNamesContaining("Enemy");
-    std::string objID;
+    std::string str;
     for(uint32_t i = 0; i < vectINISections.size(); ++i)
     {
         m_enemyData.insert({vectINISections[i], EnemyData()});
@@ -696,6 +696,11 @@ void LevelManager::loadEnemyData(const INIReader &reader)
         m_enemyData[vectINISections[i]].m_velocity = std::stof(reader.Get(vectINISections[i], "Velocity", "1"));
         m_enemyData[vectINISections[i]].m_shotVelocity = std::stof(reader.Get(vectINISections[i], "ShotVelocity", "1"));
         m_enemyData[vectINISections[i]].m_dropedObjectID = reader.Get(vectINISections[i], "DropedObjectID", "");
+        str = reader.Get(vectINISections[i], "MeleeDamage", "");
+        if(!str.empty())
+        {
+            m_enemyData[vectINISections[i]].m_meleeDamage = std::stoul(str);
+        }
 
         loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::STATIC_FRONT, m_enemyData[vectINISections[i]]);
         loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::STATIC_FRONT_LEFT, m_enemyData[vectINISections[i]]);

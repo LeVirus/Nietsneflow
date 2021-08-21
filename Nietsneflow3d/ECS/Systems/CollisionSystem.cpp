@@ -196,7 +196,6 @@ void CollisionSystem::treatSegmentShots()
                     searchComponentByType<ShotConfComponent>(m_vectMemShots[i].first,
                                                                Components_e::SHOT_CONF_COMPONENT);
             assert(shotConfComp);
-            //if player is dead
             playerConfCompB->takeDamage(shotConfComp->m_damage);
         }
     }
@@ -331,8 +330,7 @@ bool CollisionSystem::checkTag(CollisionTag_e entityTagA, CollisionTag_e entityT
 
 //===================================================================
 void CollisionSystem::treatCollision(uint32_t entityNumA, uint32_t entityNumB,
-                                     GeneralCollisionComponent *tagCompA,
-                                     GeneralCollisionComponent *tagCompB)
+                                     GeneralCollisionComponent *tagCompA, GeneralCollisionComponent *tagCompB)
 {
 
 //    if(tagCompA->m_shape == CollisionShape_e::RECTANGLE_C)
@@ -341,15 +339,12 @@ void CollisionSystem::treatCollision(uint32_t entityNumA, uint32_t entityNumB,
 //    }
     if(tagCompA->m_shape == CollisionShape_e::CIRCLE_C)
     {
-        CollisionArgs args = {entityNumA, entityNumB,
-                              tagCompA, tagCompB,
-                              getMapComponent(entityNumA), getMapComponent(entityNumB)};
+        CollisionArgs args = {entityNumA, entityNumB, tagCompA, tagCompB, getMapComponent(entityNumA), getMapComponent(entityNumB)};
         treatCollisionFirstCircle(args);
     }
     else if(tagCompA->m_shape == CollisionShape_e::SEGMENT_C)
     {
-        assert(tagCompA->m_tag == CollisionTag_e::BULLET_PLAYER_CT ||
-               tagCompA->m_tag == CollisionTag_e::BULLET_ENEMY_CT);
+        assert(tagCompA->m_tag == CollisionTag_e::BULLET_PLAYER_CT || tagCompA->m_tag == CollisionTag_e::BULLET_ENEMY_CT);
         checkCollisionFirstSegment(entityNumA, entityNumB, tagCompB, getMapComponent(entityNumB));
     }
 }
@@ -475,12 +470,11 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
             }
             else if(args.tagCompA->m_tag == CollisionTag_e::HIT_PLAYER_CT)
             {
+                ShotConfComponent *shotConfComp = stairwayToComponentManager().
+                        searchComponentByType<ShotConfComponent>(args.entityNumA, Components_e::SHOT_CONF_COMPONENT);
+                assert(shotConfComp);
                 if(args.tagCompB->m_tag == CollisionTag_e::ENEMY_CT)
                 {
-                    ShotConfComponent *shotConfComp = stairwayToComponentManager().
-                            searchComponentByType<ShotConfComponent>(args.entityNumA,
-                                                                       Components_e::SHOT_CONF_COMPONENT);
-                    assert(shotConfComp);
                     treatEnemyShooted(args.entityNumB, shotConfComp->m_damage);
                 }
             }

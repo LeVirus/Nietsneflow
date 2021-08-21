@@ -174,11 +174,14 @@ void IASystem::updateEnemyDirection(EnemyConfComponent *enemyConfComp, MoveableC
 }
 
 //===================================================================
-void IASystem::enemyShoot(EnemyConfComponent *enemyConfComp, MoveableComponent *moveComp,
-                          MapCoordComponent *enemyMapComp)
+void IASystem::enemyShoot(EnemyConfComponent *enemyConfComp, MoveableComponent *moveComp, MapCoordComponent *enemyMapComp)
 {
     GeneralCollisionComponent *genComp;
-    if(enemyConfComp->m_visibleShot)
+    if(enemyConfComp->m_meleeAttackDamage)
+    {
+        m_playerComp->takeDamage(*enemyConfComp->m_meleeAttackDamage);
+    }
+    else if(enemyConfComp->m_visibleShot)
     {
         confVisibleShoot(enemyConfComp->m_visibleAmmo, enemyMapComp->m_absoluteMapPositionPX, moveComp->m_degreeOrientation);
     }
@@ -199,8 +202,7 @@ void IASystem::enemyShoot(EnemyConfComponent *enemyConfComp, MoveableComponent *
 
 //===================================================================
 void IASystem::treatEnemyBehaviourAttack(uint32_t enemyEntity, MapCoordComponent *enemyMapComp,
-                                         float radiantAnglePlayerDirection,
-                                         EnemyConfComponent *enemyConfComp, float distancePlayer)
+                                         float radiantAnglePlayerDirection, EnemyConfComponent *enemyConfComp, float distancePlayer)
 {
     MoveableComponent *moveComp = stairwayToComponentManager().
             searchComponentByType<MoveableComponent>(enemyEntity,
@@ -214,8 +216,7 @@ void IASystem::treatEnemyBehaviourAttack(uint32_t enemyEntity, MapCoordComponent
     if(elapsed_seconds.count() > 0.4)
     {
         enemyConfComp->m_prevWall = false;
-        enemyConfComp->m_attackPhase =
-                static_cast<EnemyAttackPhase_e>(std::rand() / ((RAND_MAX + 1u) / 4));
+        enemyConfComp->m_attackPhase = static_cast<EnemyAttackPhase_e>(std::rand() / ((RAND_MAX + 1u) / 4));
         timerComp->m_clockB = std::chrono::system_clock::now();
         updateEnemyDirection(enemyConfComp, moveComp, enemyMapComp);
         if(enemyConfComp->m_attackPhase == EnemyAttackPhase_e::SHOOT)
