@@ -8,17 +8,19 @@
 class INIReader;
 using SetStr_t = std::set<std::string>;
 
-struct WeaponSpriteData
+struct MemSpriteData
 {
     uint8_t m_numSprite;
     pairFloat_t m_GLSize;
 };
 
-using mapVisibleData_t = std::map<std::string, std::vector<WeaponSpriteData>>;
+using MapVisibleShotData_t = std::map<std::string, std::vector<MemSpriteData>>;
+using PairImpactData_t = std::pair<std::vector<MemSpriteData>, MemSpriteData>;
+using MapImpactData_t = std::map<std::string, PairImpactData_t>;
 
 struct WeaponINIData
 {
-    std::vector<WeaponSpriteData> m_spritesData;
+    std::vector<MemSpriteData> m_spritesData;
     uint32_t m_maxAmmo, m_simultaneousShots, m_lastAnimNum, m_order, m_damage;
     AttackType_e m_attackType;
     AnimationMode_e m_animMode;
@@ -68,11 +70,11 @@ public:
     {
         return m_vectWeaponsINIData;
     }
-    inline const mapVisibleData_t &getImpactDisplayData()const
+    inline const MapImpactData_t &getImpactDisplayData()const
     {
         return m_impactINIData;
     }
-    inline const mapVisibleData_t &getVisibleShootDisplayData()const
+    inline const MapVisibleShotData_t &getVisibleShootDisplayData()const
     {
         return m_visibleShootINIData;
     }
@@ -99,7 +101,8 @@ private:
     void removeWallPositionVect(const INIReader &reader, const std::string &sectionName,
                                 std::set<pairUI_t> &vectPos);
     uint8_t getSpriteId(const INIReader &reader, const std::string &sectionName);
-    void loadBaseDisplayData(const INIReader &reader, bool visibleShot);
+    void loadVisibleShotDisplayData(const INIReader &reader);
+    void loadShotImpactDisplayData(const INIReader &reader);
     void loadWeaponsDisplayData(const INIReader &reader);
     void loadExit(const INIReader &reader);
     void loadSpriteData(const INIReader &reader, const std::string &sectionName,
@@ -133,7 +136,8 @@ private:
     //store the sprite number and the screen display size
     std::vector<WeaponINIData> m_vectWeaponsINIData;
     //first moving Shot sprite, all other destruct phase sprites
-    mapVisibleData_t m_visibleShootINIData, m_impactINIData;
+    MapVisibleShotData_t m_visibleShootINIData;
+    MapImpactData_t m_impactINIData;
 };
 
 std::vector<uint32_t> convertStrToVectUI(const std::string &str);

@@ -5,11 +5,13 @@
 #include <ECS/ECSManager.hpp>
 #include <Level.hpp>
 
-struct WeaponSpriteData;
+struct MemSpriteData;
 
-using mapVisibleData_t = std::map<std::string, std::vector<WeaponSpriteData>>;
+using MapVisibleShotData_t = std::map<std::string, std::vector<MemSpriteData>>;
 using mapEnemySprite_t = std::map<EnemySpriteType_e, pairUI_t>;
 using mapUiVectUI_t = std::map<uint32_t, std::vector<uint32_t>>;
+using PairImpactData_t = std::pair<std::vector<MemSpriteData>, MemSpriteData>;
+using MapImpactData_t = std::map<std::string, PairImpactData_t>;
 
 class LevelManager;
 class Level;
@@ -67,10 +69,10 @@ private:
     void linkSystemsToGraphicEngine();
     void linkSystemsToPhysicalEngine();
     void loadShotImpactSprite(const std::vector<SpriteData> &vectSpriteData,
-                              const std::vector<WeaponSpriteData> &shootDisplayData,
+                              const PairImpactData_t &shootDisplayData,
                               uint32_t impactEntity);
     void confPlayerVisibleShotsSprite(const std::vector<SpriteData> &vectSpriteData,
-                                      const mapVisibleData_t &shootDisplayData,
+                                      const MapVisibleShotData_t &shootDisplayData,
                                       WeaponComponent *weaponComp);
     void loadPlayerEntity(const LevelManager &levelManager, uint32_t numWeaponEntity);
     void confPlayerEntity(const LevelManager &levelManager,
@@ -98,8 +100,8 @@ private:
     void createAmmoEntity(uint32_t &ammoNum, CollisionTag_e collTag, bool visibleShot);
     void createPlayerVisibleShotEntity(WeaponComponent *weaponConf);
     void createPlayerImpactEntities(const std::vector<SpriteData> &vectSpriteData, WeaponComponent *weaponConf,
-                                    const mapVisibleData_t &mapImpactData);
-    void confShotImpactEntity(const std::vector<SpriteData> &vectSpriteData, const std::vector<WeaponSpriteData> &shootDisplayData,
+                                    const MapImpactData_t &mapImpactData);
+    void confShotImpactEntity(const std::vector<SpriteData> &vectSpriteData, const PairImpactData_t &shootDisplayData,
                               uint32_t &impactEntity);
     uint32_t createWeaponEntity();
     uint32_t createWallEntity(bool multiSprite);
@@ -116,9 +118,9 @@ private:
                            CollisionShape_e collisionShape, CollisionTag_e tag);
     void confStaticComponent(uint32_t entityNum, const pairFloat_t &elementSize, LevelStaticElementType_e elementType);
     void loadEnemySprites(const std::vector<SpriteData> &vectSprite, const EnemyData &enemiesData,
-                          uint32_t numEntity, EnemyConfComponent *enemyComp, const mapVisibleData_t &visibleShot);
+                          uint32_t numEntity, EnemyConfComponent *enemyComp, const MapVisibleShotData_t &visibleShot);
     void loadVisibleShotData(const std::vector<SpriteData> &vectSprite, const ArrayVisibleShot_t &visibleAmmo,
-                             const std::string &visibleShootID, const mapVisibleData_t &visibleShot);
+                             const std::string &visibleShootID, const MapVisibleShotData_t &visibleShot);
     void memTimerPausedValue();
     void applyTimerPausedValue();
     void confPlayerVisibleShoot(const ArrayVisibleShot_t &playerVisibleShots, const pairFloat_t &point, float degreeAngle);

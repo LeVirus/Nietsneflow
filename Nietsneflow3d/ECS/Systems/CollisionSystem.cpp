@@ -168,7 +168,7 @@ void CollisionSystem::treatSegmentShots()
                 searchComponentByType<GeneralCollisionComponent>(
                     m_vectMemShots[i].second, Components_e::GENERAL_COLLISION_COMPONENT);
         assert(tagCompTarget);
-        confImpactShots(i);
+        confImpactShots(i, tagCompTarget->m_tag);
         if(tagCompTarget->m_tag == CollisionTag_e::WALL_CT ||
                 tagCompTarget->m_tag == CollisionTag_e::DOOR_CT ||
                 tagCompTarget->m_tag == CollisionTag_e::STATIC_SET_CT)
@@ -202,7 +202,7 @@ void CollisionSystem::treatSegmentShots()
 }
 
 //===================================================================
-void CollisionSystem::confImpactShots(uint32_t numBullet)
+void CollisionSystem::confImpactShots(uint32_t numBullet, CollisionTag_e targetTag)
 {
     ShotConfComponent *shotComp = stairwayToComponentManager().
             searchComponentByType<ShotConfComponent>(m_vectMemShots[numBullet].first,
@@ -238,8 +238,17 @@ void CollisionSystem::confImpactShots(uint32_t numBullet)
     assert(memSpriteComp);
     assert(spriteComp);
     assert(mapImpact);
-    impactComp->m_spritePhase = ImpactPhase_e::FIRST;
     impactComp->m_moveUp = EPSILON_FLOAT;
+    impactComp->m_touched = (targetTag == CollisionTag_e::ENEMY_CT ||
+                             targetTag == CollisionTag_e::PLAYER_CT);
+    if(impactComp->m_touched)
+    {
+        impactComp->m_spritePhase = ImpactPhase_e::TOUCHED;
+    }
+    else
+    {
+        impactComp->m_spritePhase = ImpactPhase_e::FIRST;
+    }
     spriteComp->m_spriteData = memSpriteComp->m_vectSpriteData[static_cast<uint32_t>(impactComp->m_spritePhase)];
     if(m_memDistCurrentBulletColl.second >= 10000.0f)
     {

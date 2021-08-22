@@ -4,9 +4,6 @@ IMPROVE=========================================================================
 -10)
 Add text message if needed card door 
 
--8)
-Change impact segment when enemy or player is touched
-
 1)
 Weapon movement on begin and end movement
 
@@ -21,6 +18,9 @@ Animation move while shooting===========================~
 
 3)
 Enemy animations========================~
+
+-8)
+Change impact segment when enemy or player is touched=================================OK
 
 -4)
 WHen no ammo change to best weapon && and if weapon are no ammo switch to other======================================OK

@@ -6,7 +6,8 @@
 enum class ImpactPhase_e
 {
     FIRST,
-    SECOND
+    SECOND,
+    TOUCHED
 };
 
 struct ImpactShotComponent : public ecs::Component
@@ -15,6 +16,7 @@ struct ImpactShotComponent : public ecs::Component
     {
         muiTypeComponent = Components_e::IMPACT_CONF_COMPONENT;
     }
+    bool m_touched;
     ImpactPhase_e m_spritePhase = ImpactPhase_e::FIRST;
     float m_moveUp = EPSILON_FLOAT;
     virtual ~ImpactShotComponent() = default;

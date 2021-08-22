@@ -720,8 +720,8 @@ void MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
             {
                 confAmmoEntities(enemyComp->m_stdAmmo, CollisionTag_e::BULLET_ENEMY_CT, enemyComp->m_visibleShot,
                                  (*it).second.m_attackPower);
-                const mapVisibleData_t &map = levelManager.getImpactDisplayData();
-                mapVisibleData_t::const_iterator itt = map.find(it->second.m_impactID);
+                const MapImpactData_t &map = levelManager.getImpactDisplayData();
+                MapImpactData_t::const_iterator itt = map.find(it->second.m_impactID);
                 assert(itt != map.end());
                 for(uint32_t j = 0; j < enemyComp->m_stdAmmo.size(); ++j)
                 {
@@ -838,13 +838,13 @@ void MainEngine::createPlayerVisibleShotEntity(WeaponComponent *weaponConf)
 //===================================================================
 void MainEngine::createPlayerImpactEntities(const std::vector<SpriteData> &vectSpriteData,
                                             WeaponComponent *weaponConf,
-                                            const mapVisibleData_t &mapImpactData)
+                                            const MapImpactData_t &mapImpactData)
 {
     for(uint32_t i = 0; i < weaponConf->m_weaponsData.size(); ++i)
     {
         if(weaponConf->m_weaponsData[i].m_attackType == AttackType_e::BULLETS)
         {
-            mapVisibleData_t::const_iterator it =
+            MapImpactData_t::const_iterator it =
                     mapImpactData.find(weaponConf->m_weaponsData[i].m_impactID);
             assert(it != mapImpactData.end());
             assert(weaponConf->m_weaponsData[i].m_segmentShootEntities);
@@ -863,7 +863,7 @@ void MainEngine::createPlayerImpactEntities(const std::vector<SpriteData> &vectS
 
 //===================================================================
 void MainEngine::confShotImpactEntity(const std::vector<SpriteData> &vectSpriteData,
-                                      const std::vector<WeaponSpriteData> &shootDisplayData,
+                                      const PairImpactData_t &shootDisplayData,
                                       uint32_t &impactEntity)
 {
     impactEntity = createShotImpactEntity();
@@ -875,7 +875,7 @@ void MainEngine::confShotImpactEntity(const std::vector<SpriteData> &vectSpriteD
                                                              Components_e::GENERAL_COLLISION_COMPONENT);
     assert(genComp);
     assert(fpsStaticComp);
-    fpsStaticComp->m_inGameSpriteSize = shootDisplayData[0].m_GLSize;
+    fpsStaticComp->m_inGameSpriteSize = shootDisplayData.first[0].m_GLSize;
     fpsStaticComp->m_levelElementType = LevelStaticElementType_e::IMPACT;
     genComp->m_active = false;
     genComp->m_tag = CollisionTag_e::IMPACT_CT;
@@ -886,7 +886,7 @@ void MainEngine::confShotImpactEntity(const std::vector<SpriteData> &vectSpriteD
 //===================================================================
 void MainEngine::loadEnemySprites(const std::vector<SpriteData> &vectSprite,
                                   const EnemyData &enemiesData, uint32_t numEntity,
-                                  EnemyConfComponent *enemyComp, const mapVisibleData_t &visibleShot)
+                                  EnemyConfComponent *enemyComp, const MapVisibleShotData_t &visibleShot)
 {
     MemSpriteDataComponent *memSpriteComp = m_ecsManager.getComponentManager().
             searchComponentByType<MemSpriteDataComponent>(numEntity,
@@ -960,7 +960,7 @@ void insertEnemySpriteFromType(const std::vector<SpriteData> &vectSprite,
 
 //===================================================================
 void MainEngine::loadVisibleShotData(const std::vector<SpriteData> &vectSprite, const ArrayVisibleShot_t &visibleAmmo,
-                                     const std::string &visibleShootID, const mapVisibleData_t &visibleShot)
+                                     const std::string &visibleShootID, const MapVisibleShotData_t &visibleShot)
 {
     for(uint32_t k = 0; k < visibleAmmo.size(); ++k)
     {
@@ -976,7 +976,7 @@ void MainEngine::loadVisibleShotData(const std::vector<SpriteData> &vectSprite, 
         assert(fpsStaticComp);
         assert(spriteComp);
         assert(memSpriteComp);
-        mapVisibleData_t::const_iterator it = visibleShot.find(visibleShootID);
+        MapVisibleShotData_t::const_iterator it = visibleShot.find(visibleShootID);
         assert(it != visibleShot.end());
         memSpriteComp->m_vectSpriteData.reserve(it->second.size());
         for(uint32_t l = 0; l < it->second.size(); ++l)
@@ -1382,7 +1382,7 @@ uint32_t MainEngine::createAttackMeleeEntity(uint32_t damage, CollisionTag_e tag
 
 //===================================================================
 void MainEngine::loadShotImpactSprite(const std::vector<SpriteData> &vectSpriteData,
-                                      const std::vector<WeaponSpriteData> &shootDisplayData,
+                                      const PairImpactData_t &shootDisplayData,
                                       uint32_t impactEntity)
 {
     MemSpriteDataComponent *memComp = m_ecsManager.getComponentManager().
@@ -1393,17 +1393,19 @@ void MainEngine::loadShotImpactSprite(const std::vector<SpriteData> &vectSpriteD
                                                           Components_e::SPRITE_TEXTURE_COMPONENT);
     assert(memComp);
     assert(spriteComp);
-    for(uint32_t l = 0; l < shootDisplayData.size(); ++l)
+    for(uint32_t l = 0; l < shootDisplayData.first.size(); ++l)
     {
         memComp->m_vectSpriteData.emplace_back(
-                    &vectSpriteData[shootDisplayData[l].m_numSprite]);
+                    &vectSpriteData[shootDisplayData.first[l].m_numSprite]);
     }
+    memComp->m_vectSpriteData.emplace_back(
+                &vectSpriteData[shootDisplayData.second.m_numSprite]);
     spriteComp->m_spriteData = memComp->m_vectSpriteData[0];
 }
 
 //===================================================================
 void MainEngine::confPlayerVisibleShotsSprite(const std::vector<SpriteData> &vectSpriteData,
-                                              const mapVisibleData_t &shootDisplayData,
+                                              const MapVisibleShotData_t &shootDisplayData,
                                               WeaponComponent *weaponComp)
 {
     for(uint32_t i = 0; i < weaponComp->m_weaponsData.size(); ++i)

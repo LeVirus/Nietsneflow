@@ -31,7 +31,7 @@ public:
     void memPlayerDatas(uint32_t playerEntity);
 private:
     void treatSegmentShots();
-    void confImpactShots(uint32_t numBullet);
+    void confImpactShots(uint32_t numBullet, CollisionTag_e targetTag);
     void rmCollisionMaskEntity(uint32_t numEntity);
     void setUsedComponents();
     void initArrayTag();
