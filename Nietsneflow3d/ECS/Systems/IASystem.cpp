@@ -174,10 +174,11 @@ void IASystem::updateEnemyDirection(EnemyConfComponent *enemyConfComp, MoveableC
 }
 
 //===================================================================
-void IASystem::enemyShoot(EnemyConfComponent *enemyConfComp, MoveableComponent *moveComp, MapCoordComponent *enemyMapComp)
+void IASystem::enemyShoot(EnemyConfComponent *enemyConfComp, MoveableComponent *moveComp,
+                          MapCoordComponent *enemyMapComp, float distancePlayer)
 {
     GeneralCollisionComponent *genComp;
-    if(enemyConfComp->m_meleeAttackDamage)
+    if(enemyConfComp->m_meleeAttackDamage && distancePlayer < 25.0f)
     {
         m_playerComp->takeDamage(*enemyConfComp->m_meleeAttackDamage);
     }
@@ -221,7 +222,7 @@ void IASystem::treatEnemyBehaviourAttack(uint32_t enemyEntity, MapCoordComponent
         updateEnemyDirection(enemyConfComp, moveComp, enemyMapComp);
         if(enemyConfComp->m_attackPhase == EnemyAttackPhase_e::SHOOT)
         {
-            enemyShoot(enemyConfComp, moveComp, enemyMapComp);
+            enemyShoot(enemyConfComp, moveComp, enemyMapComp, distancePlayer);
         }
         if(!checkEnemyTriggerAttackMode(radiantAnglePlayerDirection, distancePlayer, enemyMapComp))
         {
