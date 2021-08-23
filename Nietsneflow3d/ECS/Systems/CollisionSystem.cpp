@@ -419,6 +419,11 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
                     if(doorComp->m_cardID != std::nullopt &&
                             (m_playerComp->m_card.find(*doorComp->m_cardID) == m_playerComp->m_card.end()))
                     {
+                        TimerComponent *timerComp = stairwayToComponentManager().
+                                searchComponentByType<TimerComponent>(m_playerComp->muiGetIdEntityAssociated(), Components_e::TIMER_COMPONENT);
+                        assert(timerComp);
+                        timerComp->m_clockA = std::chrono::system_clock::now();
+                        m_playerComp->writeInfo("CARD NEEDED");
                         return;
                     }
                     if(doorComp->m_currentState == DoorState_e::STATIC_CLOSED || doorComp->m_currentState == DoorState_e::MOVE_CLOSE)

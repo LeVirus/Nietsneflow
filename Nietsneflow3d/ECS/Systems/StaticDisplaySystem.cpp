@@ -82,6 +82,18 @@ void StaticDisplaySystem::execSystem()
         treatWriteVertex(playerComp->m_ammoWriteEntity, VertexID_e::AMMO_WRITE, strAmmoDisplay);
         treatWriteVertex(playerComp->m_lifeWriteEntity, VertexID_e::LIFE_WRITE, STR_PLAYER_LIFE +
                          std::to_string(playerComp->m_life));
+        if(playerComp->m_infoWriteData.first)
+        {
+            TimerComponent *timerComp = stairwayToComponentManager().
+                    searchComponentByType<TimerComponent>(mVectNumEntity[i], Components_e::TIMER_COMPONENT);
+            assert(timerComp);
+            std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() - timerComp->m_clockA;
+            treatWriteVertex(playerComp->m_numInfoWriteEntity, VertexID_e::INFO, playerComp->m_infoWriteData.second);
+            if(elapsed_seconds.count() > 1.5)
+            {
+                playerComp->m_infoWriteData.first = false;
+            }
+        }
     }
 }
 
@@ -136,8 +148,7 @@ void StaticDisplaySystem::drawVertex(uint32_t numTexture, VertexID_e type)
 }
 
 //===================================================================
-void StaticDisplaySystem::treatWriteVertex(uint32_t numEntity, VertexID_e type,
-                                           const std::string &value)
+void StaticDisplaySystem::treatWriteVertex(uint32_t numEntity, VertexID_e type, const std::string &value)
 {
     WriteComponent *writeComp = stairwayToComponentManager().
                 searchComponentByType<WriteComponent>(numEntity,
@@ -151,8 +162,7 @@ void StaticDisplaySystem::treatWriteVertex(uint32_t numEntity, VertexID_e type,
     {
         if(value != writeComp->m_str)
         {
-            writeComp->m_fontSpriteData = m_fontDataPtr->getWriteData(value,
-                                                                      writeComp->m_numTexture);
+            writeComp->m_fontSpriteData = m_fontDataPtr->getWriteData(value, writeComp->m_numTexture);
         }
         writeComp->m_str = value;
     }

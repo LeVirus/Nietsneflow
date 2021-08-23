@@ -23,6 +23,7 @@ enum class VertexID_e
     AMMO_WRITE,
     MENU_WRITE,
     MENU_CURSOR,
+    INFO,
     TOTAL
 };
 

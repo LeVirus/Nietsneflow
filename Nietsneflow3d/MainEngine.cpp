@@ -1219,6 +1219,7 @@ void MainEngine::loadPlayerEntity(const LevelManager &levelManager,
     bitsetComponents[Components_e::GENERAL_COLLISION_COMPONENT] = true;
     bitsetComponents[Components_e::VISION_COMPONENT] = true;
     bitsetComponents[Components_e::PLAYER_CONF_COMPONENT] = true;
+    bitsetComponents[Components_e::TIMER_COMPONENT] = true;
     uint32_t entityNum = m_ecsManager.addEntity(bitsetComponents);
     confPlayerEntity(levelManager, entityNum, levelManager.getLevel(), numWeaponEntity);
     //notify player entity number
@@ -1258,6 +1259,7 @@ void MainEngine::confPlayerEntity(const LevelManager &levelManager,
             searchComponentByType<PlayerConfComponent>(entityNum,
                                                      Components_e::PLAYER_CONF_COMPONENT);
     playerConf->m_weaponEntity = numWeaponEntity;
+    playerConf->setIDEntityAssociated(entityNum);
     WeaponComponent *weaponConf = m_ecsManager.getComponentManager().
             searchComponentByType<WeaponComponent>(playerConf->m_weaponEntity,
                                                    Components_e::WEAPON_COMPONENT);
@@ -1423,10 +1425,16 @@ void MainEngine::confPlayerVisibleShotsSprite(const std::vector<SpriteData> &vec
 //===================================================================
 void MainEngine::confWriteEntities()
 {
-    uint32_t numAmmoWrite = createWriteEntity(),
+    uint32_t numAmmoWrite = createWriteEntity(), numInfoWrite = createWriteEntity(),
             numLifeWrite = createWriteEntity(), numMenuWrite = createWriteEntity();
-    //AMMO
+    //INFO
     WriteComponent *writeConf = m_ecsManager.getComponentManager().
+            searchComponentByType<WriteComponent>(numInfoWrite, Components_e::WRITE_COMPONENT);
+    assert(writeConf);
+    writeConf->m_upLeftPositionGL = {-0.95f, 0.9f};
+    writeConf->m_fontSize = STD_FONT_SIZE;
+    //AMMO
+    writeConf = m_ecsManager.getComponentManager().
             searchComponentByType<WriteComponent>(numAmmoWrite, Components_e::WRITE_COMPONENT);
     assert(writeConf);
     writeConf->m_upLeftPositionGL = {-0.95f, -0.9f};
@@ -1450,6 +1458,7 @@ void MainEngine::confWriteEntities()
     m_playerConf->m_menuEntity = numMenuWrite;
     m_playerConf->m_ammoWriteEntity = numAmmoWrite;
     m_playerConf->m_lifeWriteEntity = numLifeWrite;
+    m_playerConf->m_numInfoWriteEntity = numInfoWrite;
 }
 
 //===================================================================

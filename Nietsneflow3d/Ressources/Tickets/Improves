@@ -1,8 +1,8 @@
 IMPROVE===================================================================================================
 ==========================================================================================================
 
--10)
-Add text message if needed card door 
+))
+Add info message with named object
 
 1)
 Weapon movement on begin and end movement
@@ -18,6 +18,9 @@ Animation move while shooting===========================~
 
 3)
 Enemy animations========================~
+
+-10)
+Add text message if needed card door=============================OK 
 
 -8)
 Change impact segment when enemy or player is touched=================================OK

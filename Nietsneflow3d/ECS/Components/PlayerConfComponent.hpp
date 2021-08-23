@@ -12,6 +12,10 @@ struct PlayerConfComponent : public ecs::Component
     {
         muiTypeComponent = Components_e::PLAYER_CONF_COMPONENT;
     }
+    void writeInfo(const std::string &info)
+    {
+        m_infoWriteData = {true, info};
+    }
     void takeDamage(uint32_t damage)
     {
         m_takeDamage = true;
@@ -26,9 +30,10 @@ struct PlayerConfComponent : public ecs::Component
         }
     }
     bool m_playerShoot = false, m_takeDamage = false, m_inMovement = false, m_pickItem = false;
+    std::pair<bool, std::string> m_infoWriteData = {false, ""};
     std::set<uint32_t> m_card;
     uint32_t m_weaponEntity, m_ammoWriteEntity, m_menuEntity, m_menuCursorEntity,
-    m_actionEntity, m_hitMeleeEntity, m_lifeWriteEntity, m_life = 100;
+    m_actionEntity, m_hitMeleeEntity, m_lifeWriteEntity, m_numInfoWriteEntity, m_life = 100;
     CurrentMenuCursorPos_e m_currentCursorPos = static_cast<CurrentMenuCursorPos_e>(0);
     virtual ~PlayerConfComponent() = default;
 };
