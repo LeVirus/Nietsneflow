@@ -12,10 +12,6 @@ struct PlayerConfComponent : public ecs::Component
     {
         muiTypeComponent = Components_e::PLAYER_CONF_COMPONENT;
     }
-    void writeInfo(const std::string &info)
-    {
-        m_infoWriteData = {true, info};
-    }
     void takeDamage(uint32_t damage)
     {
         m_takeDamage = true;

@@ -2,7 +2,7 @@ IMPROVE=========================================================================
 ==========================================================================================================
 
 ))
-Add info message with named object
+Add possibility to cumulate color and texture for background
 
 1)
 Weapon movement on begin and end movement
@@ -18,6 +18,9 @@ Animation move while shooting===========================~
 
 3)
 Enemy animations========================~
+
+))
+Add info message with named object=============================OK
 
 -10)
 Add text message if needed card door=============================OK 

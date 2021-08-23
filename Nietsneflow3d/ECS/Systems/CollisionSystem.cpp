@@ -390,6 +390,16 @@ void CollisionSystem::treatCollision(uint32_t entityNumA, uint32_t entityNumB,
 //}
 
 //===================================================================
+void CollisionSystem::writePlayerInfo(const std::string &info)
+{
+    TimerComponent *timerComp = stairwayToComponentManager().
+            searchComponentByType<TimerComponent>(m_playerComp->muiGetIdEntityAssociated(), Components_e::TIMER_COMPONENT);
+    assert(timerComp);
+    timerComp->m_clockA = std::chrono::system_clock::now();
+    m_playerComp->m_infoWriteData = {true, info};
+}
+
+//===================================================================
 void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
 {
     if(args.tagCompA->m_tag == CollisionTag_e::PLAYER_ACTION_CT ||
@@ -416,15 +426,17 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
                             searchComponentByType<DoorComponent>(args.entityNumB, Components_e::DOOR_COMPONENT);
                     assert(doorComp);
                     //if card door
-                    if(doorComp->m_cardID != std::nullopt &&
-                            (m_playerComp->m_card.find(*doorComp->m_cardID) == m_playerComp->m_card.end()))
+                    if(doorComp->m_cardID != std::nullopt)
                     {
-                        TimerComponent *timerComp = stairwayToComponentManager().
-                                searchComponentByType<TimerComponent>(m_playerComp->muiGetIdEntityAssociated(), Components_e::TIMER_COMPONENT);
-                        assert(timerComp);
-                        timerComp->m_clockA = std::chrono::system_clock::now();
-                        m_playerComp->writeInfo("CARD NEEDED");
-                        return;
+                        if((m_playerComp->m_card.find((*doorComp->m_cardID).first) == m_playerComp->m_card.end()))
+                        {
+                            writePlayerInfo((*doorComp->m_cardID).second + " NEEDED");
+                            return;
+                        }
+                        else
+                        {
+                            writePlayerInfo((*doorComp->m_cardID).second + " USED");
+                        }
                     }
                     if(doorComp->m_currentState == DoorState_e::STATIC_CLOSED || doorComp->m_currentState == DoorState_e::MOVE_CLOSE)
                     {

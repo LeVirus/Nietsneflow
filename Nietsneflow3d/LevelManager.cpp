@@ -682,7 +682,7 @@ void LevelManager::loadDoorData(const INIReader &reader)
         {
             std::map<std::string, uint32_t>::const_iterator it = m_cardINIAssociated.find(cardStr);
             assert(it != m_cardINIAssociated.end());
-            m_doorData[vectINISections[i]].m_cardID = it->second;
+            m_doorData[vectINISections[i]].m_cardID = {it->second, it->first};
         }
         else
         {

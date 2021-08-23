@@ -652,7 +652,19 @@ void MainEngine::loadDoorEntities(const LevelManager &levelManager)
             }
             else
             {
-                doorComp->m_cardID = it->second.m_cardID;
+                std::string str = (*it->second.m_cardID).second;
+                str.replace(0, 6, "");
+                for(uint32_t k = 0; k < str.size(); ++k)
+                {
+                    //if char upper case add space
+                    if(k != 0 && (str[k] >= 'A' && str[k] <= 'Z'))
+                    {
+                        str.insert(k, " ");
+                        ++k;
+                    }
+                    str[k] = std::toupper(str[k]);
+                }
+                doorComp->m_cardID = {(*it->second.m_cardID).first, str};
             }
             memSpriteComp = m_ecsManager.getComponentManager().
                     searchComponentByType<MemSpriteDataComponent>(numEntity,

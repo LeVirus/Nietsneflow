@@ -29,6 +29,7 @@ public:
         m_vectEntitiesToDelete.clear();
     }
     void memPlayerDatas(uint32_t playerEntity);
+    void writePlayerInfo(const std::string &info);
 private:
     void treatSegmentShots();
     void confImpactShots(uint32_t numBullet, CollisionTag_e targetTag);

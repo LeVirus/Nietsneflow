@@ -20,7 +20,7 @@ struct DoorComponent : public ecs::Component
     DoorState_e m_currentState = DoorState_e::STATIC_CLOSED;
     bool m_vertical;
     double m_speedMove = 0.01;
-    std::optional<uint32_t> m_cardID = std::nullopt;
+    std::optional<std::pair<uint32_t, std::string>> m_cardID = std::nullopt;
     std::pair<bool, bool> m_verticalPosDisplay;
     float m_posBorderDoorText = 3.0f;
     virtual ~DoorComponent() = default;

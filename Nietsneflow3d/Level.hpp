@@ -35,7 +35,7 @@ struct DoorData
 {
     uint8_t m_numSprite;
     vectPairUI_t m_TileGamePosition;
-    std::optional<uint32_t> m_cardID = std::nullopt;
+    std::optional<std::pair<uint32_t, std::string>> m_cardID = std::nullopt;
     //Position of axe true = vertical false = horizontal
     bool m_vertical;
 };
