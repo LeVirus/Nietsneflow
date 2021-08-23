@@ -1,9 +1,6 @@
 IMPROVE===================================================================================================
 ==========================================================================================================
 
-))
-Add possibility to cumulate color and texture for background
-
 1)
 Weapon movement on begin and end movement
 
@@ -18,6 +15,9 @@ Animation move while shooting===========================~
 
 3)
 Enemy animations========================~
+
+))
+Add possibility to cumulate color and texture for background=========================OK
 
 ))
 Add info message with named object=============================OK

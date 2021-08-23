@@ -386,54 +386,46 @@ void MainEngine::loadBackgroundEntities(const GroundCeilingData &groundData, con
                                         const LevelManager &levelManager)
 {
 
-    uint32_t entity;
+    uint32_t entity, colorIndex = static_cast<uint32_t>(DisplayType_e::COLOR),
+            simpleTextIndex = static_cast<uint32_t>(DisplayType_e::SIMPLE_TEXTURE),
+            tiledTextIndex = static_cast<uint32_t>(DisplayType_e::TEXTURED_TILE);
     m_graphicEngine.clearSystems();
-    if(groundData.m_apparence == DisplayType_e::COLOR)
+    if(groundData.m_apparence[simpleTextIndex])
+    {
+        entity = createBackgroundEntity(false);
+        confGroundSimpleTextBackgroundComponents(entity, groundData, levelManager.getPictureSpriteData());
+        memGroundBackgroundFPSSystemEntity(entity, true);
+    }
+    else if(groundData.m_apparence[colorIndex])
     {
         entity = createBackgroundEntity(true);
         confColorBackgroundComponents(entity, groundData, true);
         memColorSystemEntity(entity);
     }
-    else
+    if(groundData.m_apparence[tiledTextIndex])
     {
-        if(groundData.m_apparence == DisplayType_e::SIMPLE_TEXTURE ||
-                groundData.m_apparence == DisplayType_e::TEXTURED_SIMPLE_AND_TILE)
-        {
-            entity = createBackgroundEntity(false);
-            confGroundSimpleTextBackgroundComponents(entity, groundData, levelManager.getPictureSpriteData());
-            memGroundBackgroundFPSSystemEntity(entity, true);
-        }
-        if(groundData.m_apparence == DisplayType_e::TEXTURED_TILE||
-                groundData.m_apparence == DisplayType_e::TEXTURED_SIMPLE_AND_TILE)
-        {
-            entity = createBackgroundEntity(false);
-            confTiledTextBackgroundComponents(entity, groundData, levelManager.getPictureSpriteData());
-            memGroundBackgroundFPSSystemEntity(entity, false);
-        }
+        entity = createBackgroundEntity(false);
+        confTiledTextBackgroundComponents(entity, groundData, levelManager.getPictureSpriteData());
+        memGroundBackgroundFPSSystemEntity(entity, false);
     }
 
-    if(ceilingData.m_apparence == DisplayType_e::COLOR)
+    if(ceilingData.m_apparence[simpleTextIndex])
+    {
+        entity = createBackgroundEntity(false);
+        confCeilingSimpleTextBackgroundComponents(entity, ceilingData, levelManager.getPictureSpriteData());
+        memCeilingBackgroundFPSSystemEntity(entity, true);
+    }
+    else if(ceilingData.m_apparence[colorIndex])
     {
         entity = createBackgroundEntity(true);
         confColorBackgroundComponents(entity, ceilingData, false);
         memColorSystemEntity(entity);
     }
-    else
+    if(ceilingData.m_apparence[tiledTextIndex])
     {
-        if(ceilingData.m_apparence == DisplayType_e::SIMPLE_TEXTURE ||
-                ceilingData.m_apparence == DisplayType_e::TEXTURED_SIMPLE_AND_TILE)
-        {
-            entity = createBackgroundEntity(false);
-            confCeilingSimpleTextBackgroundComponents(entity, ceilingData, levelManager.getPictureSpriteData());
-            memCeilingBackgroundFPSSystemEntity(entity, true);
-        }
-        if(ceilingData.m_apparence == DisplayType_e::TEXTURED_TILE||
-                ceilingData.m_apparence == DisplayType_e::TEXTURED_SIMPLE_AND_TILE)
-        {
-            entity = createBackgroundEntity(false);
-            confTiledTextBackgroundComponents(entity, ceilingData, levelManager.getPictureSpriteData());
-            memCeilingBackgroundFPSSystemEntity(entity, false);
-        }
+        entity = createBackgroundEntity(false);
+        confTiledTextBackgroundComponents(entity, ceilingData, levelManager.getPictureSpriteData());
+        memCeilingBackgroundFPSSystemEntity(entity, false);
     }
 }
 
@@ -646,11 +638,7 @@ void MainEngine::loadDoorEntities(const LevelManager &levelManager)
                 rectComp->m_size = {LEVEL_TILE_SIZE_PX, WIDTH_DOOR_SIZE_PX};
             }
             doorComp->m_vertical = it->second.m_vertical;
-            if(it->second.m_cardID == std::nullopt)
-            {
-                doorComp->m_cardID = std::nullopt;
-            }
-            else
+            if(it->second.m_cardID)
             {
                 std::string str = (*it->second.m_cardID).second;
                 str.replace(0, 6, "");

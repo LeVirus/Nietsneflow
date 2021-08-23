@@ -5,6 +5,7 @@
 #include <array>
 #include <string>
 #include <tuple>
+#include <bitset>
 #include <constants.hpp>
 #include <stdint.h>
 
@@ -18,7 +19,7 @@ using vectStr_t = std::vector<std::string>;
  */
 struct GroundCeilingData
 {
-    DisplayType_e m_apparence;
+    std::bitset<static_cast<uint32_t>(DisplayType_e::TOTAL)> m_apparence;
     uint8_t m_spriteSimpleTextNum, m_spriteTiledTextNum;
     std::array<tupleFloat_t, 4> m_color;
 };

@@ -64,8 +64,11 @@ void LevelManager::loadBackgroundData(const INIReader &reader)
 {
     std::vector<std::string> sections = reader.getSectionNamesContaining("GroundBackground");
     GroundCeilingData groundData, ceilingData;
-    groundData.m_apparence = DisplayType_e::COLOR;
-    ceilingData.m_apparence = DisplayType_e::COLOR;
+    uint32_t colorIndex = static_cast<uint32_t>(DisplayType_e::COLOR),
+            simpleTextureIndex = static_cast<uint32_t>(DisplayType_e::SIMPLE_TEXTURE),
+            tiledTextureIndex = static_cast<uint32_t>(DisplayType_e::TEXTURED_TILE);
+    groundData.m_apparence.reset();
+    ceilingData.m_apparence.reset();
     for(uint32_t i = 0; i < sections.size() ; ++i)
     {
         if(sections[i] == "ColorGroundBackground")
@@ -78,35 +81,21 @@ void LevelManager::loadBackgroundData(const INIReader &reader)
             {
                 groundData.m_color[j] = tupleFloat_t{colorR[j], colorG[j], colorB[j]};
             }
-            break;
+            groundData.m_apparence[colorIndex] = true;
         }
         else if(sections[i] == "SimpleTextureGroundBackground")
         {
-            if(groundData.m_apparence == DisplayType_e::COLOR)
-            {
-                groundData.m_apparence = DisplayType_e::SIMPLE_TEXTURE;
-            }
-            else
-            {
-                groundData.m_apparence = DisplayType_e::TEXTURED_SIMPLE_AND_TILE;
-            }
             std::optional<uint8_t> picNum = m_pictureData.getIdentifier(reader.Get(sections[i], "sprite", ""));
             assert(picNum);
             groundData.m_spriteSimpleTextNum = *picNum;
+            groundData.m_apparence[simpleTextureIndex] = true;
         }
         else if(sections[i] == "TiledTextureGroundBackground")
         {
-            if(groundData.m_apparence == DisplayType_e::COLOR)
-            {
-                groundData.m_apparence = DisplayType_e::TEXTURED_TILE;
-            }
-            else
-            {
-                groundData.m_apparence = DisplayType_e::TEXTURED_SIMPLE_AND_TILE;
-            }
             std::optional<uint8_t> picNum = m_pictureData.getIdentifier(reader.Get(sections[i], "sprite", ""));
             assert(picNum);
             groundData.m_spriteTiledTextNum = *picNum;
+            groundData.m_apparence[tiledTextureIndex] = true;
         }
     }
     sections = reader.getSectionNamesContaining("CeilingBackground");
@@ -122,35 +111,21 @@ void LevelManager::loadBackgroundData(const INIReader &reader)
             {
                 ceilingData.m_color[j] = tupleFloat_t{colorR[j], colorG[j], colorB[j]};
             }
-            break;
+            ceilingData.m_apparence[colorIndex] = true;
         }
         else if(sections[i] == "SimpleTextureCeilingBackground")
         {
-            if(ceilingData.m_apparence == DisplayType_e::COLOR)
-            {
-                ceilingData.m_apparence = DisplayType_e::SIMPLE_TEXTURE;
-            }
-            else
-            {
-                ceilingData.m_apparence = DisplayType_e::TEXTURED_SIMPLE_AND_TILE;
-            }
             std::optional<uint8_t> picNum = m_pictureData.getIdentifier(reader.Get(sections[i], "sprite", ""));
             assert(picNum);
             ceilingData.m_spriteSimpleTextNum = *picNum;
+            ceilingData.m_apparence[simpleTextureIndex] = true;
         }
         else if(sections[i] == "TiledTextureCeilingBackground")
         {
-            if(ceilingData.m_apparence == DisplayType_e::COLOR)
-            {
-                ceilingData.m_apparence = DisplayType_e::TEXTURED_TILE;
-            }
-            else
-            {
-                ceilingData.m_apparence = DisplayType_e::TEXTURED_SIMPLE_AND_TILE;
-            }
             std::optional<uint8_t> picNum = m_pictureData.getIdentifier(reader.Get(sections[i], "sprite", ""));
             assert(picNum);
             ceilingData.m_spriteTiledTextNum = *picNum;
+            ceilingData.m_apparence[tiledTextureIndex] = true;
         }
     }
     m_pictureData.setBackgroundData(groundData, ceilingData);

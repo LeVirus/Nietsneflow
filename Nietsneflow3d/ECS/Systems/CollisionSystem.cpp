@@ -426,7 +426,7 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
                             searchComponentByType<DoorComponent>(args.entityNumB, Components_e::DOOR_COMPONENT);
                     assert(doorComp);
                     //if card door
-                    if(doorComp->m_cardID != std::nullopt)
+                    if(doorComp->m_cardID)
                     {
                         if((m_playerComp->m_card.find((*doorComp->m_cardID).first) == m_playerComp->m_card.end()))
                         {
