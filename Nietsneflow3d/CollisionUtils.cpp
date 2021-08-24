@@ -162,10 +162,8 @@ bool checkPointPosition(const pairFloat_t &firstPoint,
 }
 
 //===================================================================
-bool checkCircleSegmentCollision(const pairFloat_t &circleCenter,
-                                 const float circleRay,
-                                 const pairFloat_t &lineFirstPoint,
-                                 const pairFloat_t &lineSecondPoint)
+bool checkCircleSegmentCollision(const pairFloat_t &circleCenter, const float circleRay,
+                                 const pairFloat_t &lineFirstPoint, const pairFloat_t &lineSecondPoint)
 {
     float segmentAngle = std::fmod(getTrigoAngle(lineFirstPoint, lineSecondPoint, false), PI_DOUBLE),
             limitAngleA, limitAngleB;
@@ -174,26 +172,29 @@ bool checkCircleSegmentCollision(const pairFloat_t &circleCenter,
     moveElementFromAngle(circleRay, segmentAngle + PI_HALF, limitPointB);
     limitAngleA = std::fmod(getTrigoAngle(lineFirstPoint, limitPointA, false), PI_DOUBLE);
     limitAngleB = std::fmod(getTrigoAngle(lineFirstPoint, limitPointB, false), PI_DOUBLE);
-    if(std::abs(limitAngleA - segmentAngle) > PI)
+    if(std::abs(limitAngleA - limitAngleB) > PI)
     {
-        if(limitAngleA < segmentAngle)
+        if(segmentAngle < PI)
         {
-            limitAngleA += PI_DOUBLE;
+            if(limitAngleA > limitAngleB)
+            {
+                limitAngleA -= PI_DOUBLE;
+            }
+            else
+            {
+                limitAngleB -= PI_DOUBLE;
+            }
         }
         else
         {
-            limitAngleA -= PI_DOUBLE;
-        }
-    }
-    if(std::abs(limitAngleB - segmentAngle) > PI)
-    {
-        if(limitAngleB < segmentAngle)
-        {
-            limitAngleB += PI_DOUBLE;
-        }
-        else
-        {
-            limitAngleB -= PI_DOUBLE;
+            if(limitAngleA < limitAngleB)
+            {
+                limitAngleA += PI_DOUBLE;
+            }
+            else
+            {
+                limitAngleB += PI_DOUBLE;
+            }
         }
     }
     if(segmentAngle < limitAngleA || segmentAngle > limitAngleB)
