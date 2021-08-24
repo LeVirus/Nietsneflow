@@ -49,6 +49,7 @@ public:
         m_graphicEngine.clearSystems();
     }
     void confSystems();
+    uint32_t createAmmoEntity(CollisionTag_e collTag, bool visibleShot);
 private:
     void clearObjectToDelete();
     void savePlayerGear();
@@ -95,9 +96,8 @@ private:
                                    const std::vector<SpriteData> &vectSpriteData, const pairUI_t &coord);
     void loadExitElement(const LevelManager &levelManager, const StaticLevelElementData &exit);
     void createPlayerAmmoEntities(PlayerConfComponent *playerConf, CollisionTag_e collTag);
-    void confAmmoEntities(ArrayVisibleShot_t &ammoEntities, CollisionTag_e collTag,
+    void confAmmoEntities(std::vector<uint32_t> &ammoEntities, CollisionTag_e collTag,
                           bool visibleShot, uint32_t damage, float shotVelocity = 0);
-    void createAmmoEntity(uint32_t &ammoNum, CollisionTag_e collTag, bool visibleShot);
     void createPlayerVisibleShotEntity(WeaponComponent *weaponConf);
     void createPlayerImpactEntities(const std::vector<SpriteData> &vectSpriteData, WeaponComponent *weaponConf,
                                     const MapImpactData_t &mapImpactData);
@@ -108,9 +108,9 @@ private:
     uint32_t createDoorEntity();
     uint32_t createEnemyEntity();
     uint32_t createShotEntity();
-    uint32_t createVisibleShotEntity();
     uint32_t createShotImpactEntity();
     uint32_t createWriteEntity();
+    uint32_t createVisibleShotEntity();
     uint32_t createSimpleSpriteEntity();
     uint32_t createStaticEntity();
     uint32_t createObjectEntity();
@@ -119,11 +119,12 @@ private:
     void confStaticComponent(uint32_t entityNum, const pairFloat_t &elementSize, LevelStaticElementType_e elementType);
     void loadEnemySprites(const std::vector<SpriteData> &vectSprite, const EnemyData &enemiesData,
                           uint32_t numEntity, EnemyConfComponent *enemyComp, const MapVisibleShotData_t &visibleShot);
-    void loadVisibleShotData(const std::vector<SpriteData> &vectSprite, const ArrayVisibleShot_t &visibleAmmo,
+    void loadVisibleShotData(const std::vector<SpriteData> &vectSprite, const std::vector<uint32_t> &visibleAmmo,
                              const std::string &visibleShootID, const MapVisibleShotData_t &visibleShot);
     void memTimerPausedValue();
     void applyTimerPausedValue();
-    void confPlayerVisibleShoot(const ArrayVisibleShot_t &playerVisibleShots, const pairFloat_t &point, float degreeAngle);
+    void confPlayerVisibleShoot(std::vector<uint32_t> &playerVisibleShots,
+                                const pairFloat_t &point, float degreeAngle);
     void confPlayerBullet(PlayerConfComponent *playerComp,
                           const pairFloat_t &point, float degreeAngle, uint32_t numBullet);
     inline void memColorSystemEntity(uint32_t entity)

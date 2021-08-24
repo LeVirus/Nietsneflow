@@ -239,7 +239,7 @@ inline const float CONE_VISION = 60.0f;
 inline const float HALF_CONE_VISION = CONE_VISION / 2.0f;
 inline const float DOUBLE_CONE_VISION = CONE_VISION * 2.0f;
 
-inline const uint32_t RAYCAST_LINE_NUMBER = 200, RAYCAST_DEPTH = 20, TOTAL_SHOT_NUMBER = 10,
+inline const uint32_t RAYCAST_LINE_NUMBER = 200, RAYCAST_DEPTH = 20, MAX_SHOTS = 5,
 RAYCAST_GROUND_CEILING_NUMBER = RAYCAST_LINE_NUMBER / 2.0f;
 inline const float SCREEN_VERT_BACKGROUND_GL_STEP = 1.0f / RAYCAST_GROUND_CEILING_NUMBER;
 inline const float SCREEN_HORIZ_BACKGROUND_GL_STEP = 2.0f / RAYCAST_LINE_NUMBER;
@@ -255,4 +255,3 @@ inline const std::map<Shader_e, std::string> SHADER_ID_MAP
     {Shader_e::COLOR_S, "ceilingFloor"},
     {Shader_e::TEXTURE_S, "wall"}
 };
-using ArrayVisibleShot_t = std::array<uint32_t, TOTAL_SHOT_NUMBER>;

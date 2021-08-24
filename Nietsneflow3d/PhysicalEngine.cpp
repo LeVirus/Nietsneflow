@@ -47,10 +47,10 @@ void PhysicalEngine::memPlayerEntity(uint32_t playerEntity)
 }
 
 //===================================================================
-void PhysicalEngine::confPlayerVisibleShoot(const ArrayVisibleShot_t &visibleShots,
+void PhysicalEngine::confPlayerVisibleShoot(std::vector<uint32_t> &visibleShots,
                                             const pairFloat_t &point, float degreeAngle)
 {
-    m_iaSystem->confVisibleShoot(visibleShots, point, degreeAngle);
+    m_iaSystem->confVisibleShoot(visibleShots, point, degreeAngle, CollisionTag_e::BULLET_PLAYER_CT);
 }
 
 //===================================================================

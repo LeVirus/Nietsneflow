@@ -12,6 +12,9 @@
 #include <ECS/Components/MapCoordComponent.hpp>
 #include <ECS/Components/RectangleCollisionComponent.hpp>
 #include <ECS/Components/WeaponComponent.hpp>
+#include <ECS/Components/MemSpriteDataComponent.hpp>
+#include <ECS/Components/SpriteTextureComponent.hpp>
+#include <ECS/Components/FPSVisibleStaticElementComponent.hpp>
 #include <cassert>
 #include <random>
 #include <iostream>
@@ -106,7 +109,7 @@ bool IASystem::checkEnemyTriggerAttackMode(float radiantAngle, float distancePla
 }
 
 //===================================================================
-void IASystem::treatVisibleShots(const ArrayVisibleShot_t &stdAmmo)
+void IASystem::treatVisibleShots(const std::vector<uint32_t> &stdAmmo)
 {
     for(uint32_t i = 0; i < stdAmmo.size(); ++i)
     {
@@ -184,7 +187,8 @@ void IASystem::enemyShoot(EnemyConfComponent *enemyConfComp, MoveableComponent *
     }
     else if(enemyConfComp->m_visibleShot)
     {
-        confVisibleShoot(enemyConfComp->m_visibleAmmo, enemyMapComp->m_absoluteMapPositionPX, moveComp->m_degreeOrientation);
+        confVisibleShoot(enemyConfComp->m_visibleAmmo, enemyMapComp->m_absoluteMapPositionPX,
+                         moveComp->m_degreeOrientation, CollisionTag_e::BULLET_ENEMY_CT);
     }
     else
     {
@@ -255,29 +259,30 @@ void IASystem::memPlayerDatas(uint32_t playerEntity)
 }
 
 //===================================================================
-void IASystem::confVisibleShoot(const ArrayVisibleShot_t &visibleShots,
-                                const pairFloat_t &point, float degreeAngle)
+void IASystem::confVisibleShoot(std::vector<uint32_t> &visibleShots, const pairFloat_t &point,
+                                float degreeAngle, CollisionTag_e tag)
 {
+    GeneralCollisionComponent *genComp = nullptr;
     uint32_t currentShot = 0;
+    assert(!visibleShots.empty());
     for(; currentShot < visibleShots.size(); ++currentShot)
     {
-        GeneralCollisionComponent *genComp = stairwayToComponentManager().searchComponentByType<GeneralCollisionComponent>(
+        genComp = stairwayToComponentManager().searchComponentByType<GeneralCollisionComponent>(
                     visibleShots[currentShot], Components_e::GENERAL_COLLISION_COMPONENT);
         assert(genComp);
         if(!genComp->m_active)
         {
-            genComp->m_active = true;
-            TimerComponent *timerComp = stairwayToComponentManager().
-                    searchComponentByType<TimerComponent>(
-                        visibleShots[currentShot], Components_e::TIMER_COMPONENT);
-            assert(timerComp);
-            timerComp->m_clockA = std::chrono::system_clock::now();
             break;
         }
-        //if all shoot active
-        if(currentShot == (visibleShots.size() - 1))
+        //if all shoot active create a new one
+        else if(currentShot == (visibleShots.size() - 1))
         {
-            return;
+            visibleShots.push_back(m_mainEngine->createAmmoEntity(tag, true));
+            confNewVisibleShot(visibleShots);
+            ++currentShot;
+            genComp = stairwayToComponentManager().searchComponentByType<GeneralCollisionComponent>(
+                                visibleShots[currentShot], Components_e::GENERAL_COLLISION_COMPONENT);
+            break;
         }
     }
     MapCoordComponent *mapComp = stairwayToComponentManager().
@@ -289,9 +294,67 @@ void IASystem::confVisibleShoot(const ArrayVisibleShot_t &visibleShots,
     TimerComponent *ammoTimeComp = stairwayToComponentManager().
             searchComponentByType<TimerComponent>(
                 visibleShots[currentShot], Components_e::TIMER_COMPONENT);
+    assert(genComp);
     assert(ammoTimeComp);
     assert(mapComp);
     assert(ammoMoveComp);
+    genComp->m_active = true;
+    ammoTimeComp->m_clockA = std::chrono::system_clock::now();
     mapComp->m_absoluteMapPositionPX = point;
     ammoMoveComp->m_degreeOrientation = degreeAngle;
+}
+
+//===================================================================
+void IASystem::confNewVisibleShot(const std::vector<uint32_t> &visibleShots)
+{
+    assert(visibleShots.size() > 1);
+    uint32_t targetIndex = visibleShots.size() - 1, baseIndex = targetIndex - 1;
+    SpriteTextureComponent *baseSpriteComp = stairwayToComponentManager().
+            searchComponentByType<SpriteTextureComponent>(visibleShots[baseIndex],
+                                                          Components_e::SPRITE_TEXTURE_COMPONENT);
+    MemSpriteDataComponent *baseMemSpriteComp = stairwayToComponentManager().
+            searchComponentByType<MemSpriteDataComponent>(visibleShots[baseIndex],
+                                                          Components_e::MEM_SPRITE_DATA_COMPONENT);
+    FPSVisibleStaticElementComponent *baseFpsStaticComp = stairwayToComponentManager().
+            searchComponentByType<FPSVisibleStaticElementComponent>(visibleShots[baseIndex],
+                                                                    Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
+    SpriteTextureComponent *targetSpriteComp = stairwayToComponentManager().
+            searchComponentByType<SpriteTextureComponent>(visibleShots[targetIndex],
+                                                          Components_e::SPRITE_TEXTURE_COMPONENT);
+    MemSpriteDataComponent *targetMemSpriteComp = stairwayToComponentManager().
+            searchComponentByType<MemSpriteDataComponent>(visibleShots[targetIndex],
+                                                          Components_e::MEM_SPRITE_DATA_COMPONENT);
+    FPSVisibleStaticElementComponent *targetFpsStaticComp = stairwayToComponentManager().
+            searchComponentByType<FPSVisibleStaticElementComponent>(visibleShots[targetIndex],
+                                                                    Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
+
+    ShotConfComponent *baseShotConfComp = stairwayToComponentManager().
+            searchComponentByType<ShotConfComponent>(visibleShots[baseIndex],
+                                                     Components_e::SHOT_CONF_COMPONENT);
+    MoveableComponent *baseMoveComp = stairwayToComponentManager().
+            searchComponentByType<MoveableComponent>(visibleShots[baseIndex],
+                                                     Components_e::MOVEABLE_COMPONENT);
+    ShotConfComponent *targetShotConfComp = stairwayToComponentManager().
+            searchComponentByType<ShotConfComponent>(visibleShots[targetIndex],
+                                                     Components_e::SHOT_CONF_COMPONENT);
+    MoveableComponent *targetMoveComp = stairwayToComponentManager().
+            searchComponentByType<MoveableComponent>(visibleShots[targetIndex],
+                                                     Components_e::MOVEABLE_COMPONENT);
+    assert(baseShotConfComp);
+    assert(baseMoveComp);
+    assert(targetShotConfComp);
+    assert(targetMoveComp);
+
+    assert(baseSpriteComp);
+    assert(baseMemSpriteComp);
+    assert(baseFpsStaticComp);
+    assert(targetSpriteComp);
+    assert(targetMemSpriteComp);
+    assert(targetFpsStaticComp);
+    targetMemSpriteComp->m_vectSpriteData = baseMemSpriteComp->m_vectSpriteData;
+    targetSpriteComp->m_spriteData = targetMemSpriteComp->m_vectSpriteData[0];
+    targetFpsStaticComp->m_levelElementType = baseFpsStaticComp->m_levelElementType;
+    targetFpsStaticComp->m_inGameSpriteSize = baseFpsStaticComp->m_inGameSpriteSize;
+    targetMoveComp->m_velocity = baseMoveComp->m_velocity;
+    targetShotConfComp->m_damage = baseShotConfComp->m_damage;
 }

@@ -55,7 +55,7 @@ struct EnemyConfComponent : public ecs::Component
     }
     bool m_prevWall = false, m_touched = false, m_visibleShot;
     uint32_t m_weaponEntity, m_life, m_countPlayerInvisibility = 0, m_currentSprite;
-    ArrayVisibleShot_t m_stdAmmo, m_visibleAmmo;
+    std::vector<uint32_t> m_stdAmmo, m_visibleAmmo;
     EnemyDisplayMode_e m_displayMode = EnemyDisplayMode_e::NORMAL;
     //give first and last emplacement of sprite from type
     mapEnemySprite_t m_mapSpriteAssociate;
