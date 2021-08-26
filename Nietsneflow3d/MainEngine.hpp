@@ -110,7 +110,7 @@ private:
     void confShotImpactEntity(const std::vector<SpriteData> &vectSpriteData, const PairImpactData_t &shootDisplayData,
                               uint32_t &impactEntity);
     uint32_t createWeaponEntity();
-    uint32_t createWallEntity(bool multiSprite);
+    uint32_t createWallEntity(bool multiSprite, bool moveable = false);
     uint32_t createDoorEntity();
     uint32_t createEnemyEntity();
     uint32_t createShotEntity();

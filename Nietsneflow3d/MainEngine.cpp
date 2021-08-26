@@ -1065,7 +1065,7 @@ uint32_t MainEngine::createWeaponEntity()
 }
 
 //===================================================================
-uint32_t MainEngine::createWallEntity(bool multiSprite)
+uint32_t MainEngine::createWallEntity(bool multiSprite, bool moveable)
 {
     std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComponents;
     bitsetComponents[Components_e::POSITION_VERTEX_COMPONENT] = true;
@@ -1077,6 +1077,10 @@ uint32_t MainEngine::createWallEntity(bool multiSprite)
     {
         bitsetComponents[Components_e::MEM_SPRITE_DATA_COMPONENT] = true;
         bitsetComponents[Components_e::TIMER_COMPONENT] = true;
+    }
+    if(moveable)
+    {
+        bitsetComponents[Components_e::MOVEABLE_COMPONENT] = true;
     }
     return m_ecsManager.addEntity(bitsetComponents);
 }
