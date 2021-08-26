@@ -6,6 +6,8 @@
 #include <Level.hpp>
 
 struct MemSpriteData;
+struct WallData;
+struct MoveableWallData;
 
 using MapVisibleShotData_t = std::map<std::string, std::vector<MemSpriteData>>;
 using mapEnemySprite_t = std::map<EnemySpriteType_e, pairUI_t>;
@@ -84,7 +86,11 @@ private:
     uint32_t createAttackMeleeEntity(uint32_t damage, CollisionTag_e tag);
     uint32_t loadWeaponsEntity(const LevelManager &levelManager);
     uint32_t createBackgroundEntity(bool color);
-    void loadWallEntities(const LevelManager &levelManager);
+    void loadWallEntities(const std::map<std::string, WallData> &wallData,
+                          const std::vector<SpriteData> &vectSprite);
+    void loadMoveableWallEntities(const std::map<std::string, MoveableWallData> &wallData,
+                                  const std::vector<SpriteData> &vectSprite);
+    void confBaseWallData(uint32_t wallEntity, const SpriteData &memSpriteData, const pairUI_t &coordLevel, const std::vector<uint8_t> &numWallSprites, const std::vector<SpriteData> &vectSprite);
     void loadDoorEntities(const LevelManager &levelManager);
     void loadEnemiesEntities(const LevelManager &levelManager);
     uint32_t createEnemyDropObject(const LevelManager &levelManager, const EnemyData &enemyData, const pairUI_t &coord);
@@ -152,6 +158,7 @@ private:
     PlayerConfComponent *m_playerConf = nullptr;
     WeaponComponent *m_weaponComp;
     MemPlayerConf m_memPlayerConf;
+    std::set<pairUI_t> m_memWall;
 };
 
 void insertEnemySpriteFromType(const std::vector<SpriteData> &vectSprite, mapEnemySprite_t &mapSpriteAssociate,

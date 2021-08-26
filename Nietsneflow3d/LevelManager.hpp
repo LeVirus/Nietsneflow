@@ -30,6 +30,22 @@ struct WeaponINIData
     std::optional<uint32_t> m_startingAmmoCount;
 };
 
+struct WallData
+{
+    std::vector<uint8_t> m_sprites;
+    std::set<pairUI_t> m_TileGamePosition;
+};
+
+struct MoveableWallData
+{
+    std::vector<uint8_t> m_sprites;
+    std::set<pairUI_t> m_TileGamePosition;
+    Direction_e m_direction;
+    TriggerType_e m_triggerType;
+    uint32_t m_moveNumber;
+    bool m_ghost, m_reversableMove;
+};
+
 class LevelManager
 {
 public:
@@ -44,6 +60,10 @@ public:
     inline const FontData &getFontData()const {return m_fontData;}
     inline std::string getCursorSpriteName()const {return m_spriteCursorName;}
     inline const std::map<std::string, WallData> getWallData()const{return m_wallData;}
+    inline const std::map<std::string, MoveableWallData> getMoveableWallData()const
+    {
+        return m_moveableWallData;
+    }
     inline const std::map<std::string, StaticLevelElementData> &getGroundData()const
     {return m_groundElement;}
     inline const std::map<std::string, StaticLevelElementData> &getCeilingData()const
@@ -97,7 +117,7 @@ private:
     void fillStandartPositionVect(const INIReader &reader, const std::string &sectionName,
                                   vectPairUI_t &vectPos);
     bool fillWallPositionVect(const INIReader &reader, const std::string &sectionName, const std::string &propertyName,
-                              std::set<pairUI_t> &vectPos);
+                              std::set<pairUI_t> &setPos);
     void removeWallPositionVect(const INIReader &reader, const std::string &sectionName,
                                 std::set<pairUI_t> &vectPos);
     uint8_t getSpriteId(const INIReader &reader, const std::string &sectionName);
@@ -129,6 +149,7 @@ private:
     std::string m_spriteCursorName;
     StaticLevelElementData m_exitStaticElement;
     std::map<std::string, WallData> m_wallData;
+    std::map<std::string, MoveableWallData> m_moveableWallData;
     std::map<std::string, uint32_t> m_weaponINIAssociated, m_cardINIAssociated;
     std::map<std::string, StaticLevelElementData> m_groundElement, m_ceilingElement, m_objectElement;
     std::map<std::string, DoorData> m_doorData;

@@ -298,7 +298,6 @@ bool LevelManager::fillWallPositionVect(const INIReader &reader,
                                         std::set<pairUI_t> &vectPos)
 {
     std::optional<std::vector<uint32_t>> results = getBrutPositionData(reader, sectionName, propertyName);
-
     if(!results || (*results).empty())
     {
         return false;
@@ -632,13 +631,33 @@ void LevelManager::loadPositionWall(const INIReader &reader)
     std::map<std::string, WallData>::iterator it;
     for(uint32_t i = 0; i < vectINISections.size(); ++i)
     {
-        it = m_wallData.find(vectINISections[i]);
-        assert(it != m_wallData.end());
-        if(!fillWallPositionVect(reader, vectINISections[i], "GamePosition", it->second.m_TileGamePosition))
+        //Classic wall
+        if(vectINISections[i].find("MoveableWall") == std::string::npos)
         {
-            assert(false);
+            it = m_wallData.find(vectINISections[i]);
+            assert(it != m_wallData.end());
+            fillWallPositionVect(reader, vectINISections[i], "GamePosition", it->second.m_TileGamePosition);
+            removeWallPositionVect(reader, vectINISections[i], it->second.m_TileGamePosition);
         }
-        removeWallPositionVect(reader, vectINISections[i], it->second.m_TileGamePosition);
+        //Moveable wall
+        else
+        {
+            std::string str = vectINISections[i];
+            str.erase(0, 8);
+            it = m_wallData.find(str);
+            assert(it != m_wallData.end());
+            m_moveableWallData.insert({vectINISections[i], MoveableWallData()});
+            m_moveableWallData[vectINISections[i]].m_sprites = it->second.m_sprites;
+            fillWallPositionVect(reader, vectINISections[i], "GamePosition",
+                                 m_moveableWallData[vectINISections[i]].m_TileGamePosition);
+            m_moveableWallData[vectINISections[i]].m_direction =
+                    static_cast<Direction_e>(reader.GetInteger(vectINISections[i], "Direction", 0));
+            m_moveableWallData[vectINISections[i]].m_moveNumber = reader.GetInteger(vectINISections[i], "NumberOfMove", 1);
+            m_moveableWallData[vectINISections[i]].m_triggerType =
+                    static_cast<TriggerType_e>(reader.GetInteger(vectINISections[i], "TriggerType", 0));
+            m_moveableWallData[vectINISections[i]].m_ghost = reader.GetBoolean(vectINISections[i], "Ghost", true);
+            m_moveableWallData[vectINISections[i]].m_reversableMove = reader.GetBoolean(vectINISections[i], "ReversableMove", false);
+        }
     }
 }
 
@@ -821,7 +840,7 @@ std::vector<float> convertStrToVectFloat(const std::string &str)
 {
     std::istringstream iss(str);
     return std::vector<float>(std::istream_iterator<float>{iss},
-                      std::istream_iterator<float>());
+                              std::istream_iterator<float>());
 }
 
 //======================================================

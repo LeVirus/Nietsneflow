@@ -464,7 +464,9 @@ void MainEngine::loadLevelEntities(const LevelManager &levelManager)
     uint32_t weaponEntity = loadWeaponsEntity(levelManager);
     loadPlayerEntity(levelManager, weaponEntity);
     Level::initLevelElementArray();
-    loadWallEntities(levelManager);
+    m_memWall.clear();
+    loadWallEntities(levelManager.getWallData(), levelManager.getPictureData().getSpriteData());
+    loadMoveableWallEntities(levelManager.getMoveableWallData(), levelManager.getPictureData().getSpriteData());
     loadDoorEntities(levelManager);
     loadEnemiesEntities(levelManager);
 }
@@ -550,59 +552,90 @@ uint32_t MainEngine::loadWeaponsEntity(const LevelManager &levelManager)
 }
 
 //===================================================================
-void MainEngine::loadWallEntities(const LevelManager &levelManager)
+void MainEngine::loadWallEntities(const std::map<std::string, WallData> &wallData,
+                                  const std::vector<SpriteData> &vectSprite)
 {
-    const std::map<std::string, WallData> &wallData = levelManager.getWallData();
-    MemSpriteDataComponent *memSpriteComp;
-    SpriteTextureComponent *spriteComp;
-    TimerComponent *timerComp;
-    const std::vector<SpriteData> &vectSprite = levelManager.getPictureData().getSpriteData();
     assert(!Level::getLevelCaseType().empty());
-    std::set<pairUI_t> memWall;
     std::pair<std::set<pairUI_t>::const_iterator, bool> itt;
     std::map<std::string, WallData>::const_iterator iter = wallData.begin();
-    bool multiSprite;
     for(; iter != wallData.end(); ++iter)
     {
         assert(!iter->second.m_sprites.empty());
         assert(iter->second.m_sprites[0] < vectSprite.size());
         const SpriteData &memSpriteData = vectSprite[iter->second.m_sprites[0]];
-        multiSprite = (iter->second.m_sprites.size() > 1);
         for(std::set<pairUI_t>::const_iterator it = iter->second.m_TileGamePosition.begin();
             it != iter->second.m_TileGamePosition.end(); ++it)
         {
-            itt = memWall.insert(*it);
+            itt = m_memWall.insert(*it);
             if(!itt.second)
             {
                 continue;
             }
-            uint32_t numEntity = createWallEntity(multiSprite);
-            confBaseComponent(numEntity, memSpriteData, (*it),
-                              CollisionShape_e::RECTANGLE_C, CollisionTag_e::WALL_CT);
-            spriteComp = m_ecsManager.getComponentManager().
-                    searchComponentByType<SpriteTextureComponent>(numEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
-            assert(spriteComp);
-            Level::addElementCase(spriteComp, (*it), LevelCaseType_e::WALL_LC, numEntity);
-            if(!multiSprite)
+            uint32_t numEntity = createWallEntity(iter->second.m_sprites.size() > 1);
+            confBaseWallData(numEntity, memSpriteData, *it, iter->second.m_sprites, vectSprite);
+        }
+    }
+}
+
+//===================================================================
+void MainEngine::loadMoveableWallEntities(const std::map<std::string, MoveableWallData> &wallData,
+                                          const std::vector<SpriteData> &vectSprite)
+{
+    assert(!Level::getLevelCaseType().empty());
+    std::pair<std::set<pairUI_t>::const_iterator, bool> itt;
+    std::map<std::string, MoveableWallData>::const_iterator iter = wallData.begin();
+    for(; iter != wallData.end(); ++iter)
+    {
+        assert(!iter->second.m_sprites.empty());
+        assert(iter->second.m_sprites[0] < vectSprite.size());
+        const SpriteData &memSpriteData = vectSprite[iter->second.m_sprites[0]];
+        for(std::set<pairUI_t>::const_iterator it = iter->second.m_TileGamePosition.begin();
+            it != iter->second.m_TileGamePosition.end(); ++it)
+        {
+            itt = m_memWall.insert(*it);
+            if(!itt.second)
             {
                 continue;
             }
-            memSpriteComp = m_ecsManager.getComponentManager().
-                    searchComponentByType<MemSpriteDataComponent>(numEntity,
-                                                                  Components_e::MEM_SPRITE_DATA_COMPONENT);
-            assert(memSpriteComp);
-            uint32_t vectSize = iter->second.m_sprites.size();
-            memSpriteComp->m_vectSpriteData.reserve(static_cast<uint32_t>(WallSpriteType_e::TOTAL_SPRITE));
-            for(uint32_t j = 0; j < vectSize; ++j)
-            {
-                memSpriteComp->m_vectSpriteData.emplace_back(&vectSprite[iter->second.m_sprites[j]]);
-            }
-            timerComp = m_ecsManager.getComponentManager().
-                    searchComponentByType<TimerComponent>(numEntity, Components_e::TIMER_COMPONENT);
-            assert(timerComp);
-            timerComp->m_clockA = std::chrono::system_clock::now();
+            uint32_t numEntity = createWallEntity(iter->second.m_sprites.size() > 1);
+            confBaseWallData(numEntity, memSpriteData, *it, iter->second.m_sprites, vectSprite);
         }
     }
+}
+
+//===================================================================
+void MainEngine::confBaseWallData(uint32_t wallEntity, const SpriteData &memSpriteData,
+                                  const pairUI_t& coordLevel,
+                                  const std::vector<uint8_t> &numWallSprites,
+                                  const std::vector<SpriteData> &vectSprite)
+{
+    MemSpriteDataComponent *memSpriteComp;
+    SpriteTextureComponent *spriteComp;
+    TimerComponent *timerComp;
+    confBaseComponent(wallEntity, memSpriteData, coordLevel,
+                      CollisionShape_e::RECTANGLE_C, CollisionTag_e::WALL_CT);
+    spriteComp = m_ecsManager.getComponentManager().
+            searchComponentByType<SpriteTextureComponent>(wallEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
+    assert(spriteComp);
+    Level::addElementCase(spriteComp, coordLevel, LevelCaseType_e::WALL_LC, wallEntity);
+    if(numWallSprites.size() == 1)
+    {
+        return;
+    }
+    memSpriteComp = m_ecsManager.getComponentManager().
+            searchComponentByType<MemSpriteDataComponent>(wallEntity,
+                                                          Components_e::MEM_SPRITE_DATA_COMPONENT);
+    assert(memSpriteComp);
+    uint32_t vectSize = numWallSprites.size();
+    memSpriteComp->m_vectSpriteData.reserve(static_cast<uint32_t>(WallSpriteType_e::TOTAL_SPRITE));
+    for(uint32_t j = 0; j < vectSize; ++j)
+    {
+        memSpriteComp->m_vectSpriteData.emplace_back(&vectSprite[numWallSprites[j]]);
+    }
+    timerComp = m_ecsManager.getComponentManager().
+            searchComponentByType<TimerComponent>(wallEntity, Components_e::TIMER_COMPONENT);
+    assert(timerComp);
+    timerComp->m_clockA = std::chrono::system_clock::now();
 }
 
 //===================================================================

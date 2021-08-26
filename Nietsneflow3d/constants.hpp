@@ -102,6 +102,14 @@ enum class Direction_e
     EAST
 };
 
+enum class TriggerType_e
+{
+    WALL,
+    BUTTON,
+    GROUND,
+    AUTO
+};
+
 enum class MoveOrientation_e
 {
     FORWARD,

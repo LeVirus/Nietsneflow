@@ -25,12 +25,6 @@ struct StaticLevelElementData
     bool m_traversable = true;
 };
 
-struct WallData
-{
-    std::vector<uint8_t> m_sprites;
-    std::set<pairUI_t> m_TileGamePosition;
-};
-
 struct DoorData
 {
     uint8_t m_numSprite;

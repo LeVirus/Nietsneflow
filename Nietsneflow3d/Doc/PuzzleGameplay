@@ -1,0 +1,23 @@
+Wall moveable 
+	1 direction 
+		optional multi direction path
+	1 or several case
+
+Moveable from :
+	wall directly
+	trigger (move reversable)
+	walk on a specific ground case
+	shoot on a trigger target OR a wall with a specific gun (like portal))
+		Optional a gun with multi mode relative to multi target type
+
+Some Wall move automatically from a loop
+
+Constraints 
+	Some Wall won't move if an other wall is on his way
+	Some wall will stop moving when colliding with an other
+		Maybe return to initial value
+
+Effect :
+	If player take damage or die if he is crush between 2 walls
+
+Add teleporter
