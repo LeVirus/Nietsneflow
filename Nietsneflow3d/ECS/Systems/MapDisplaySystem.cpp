@@ -71,8 +71,8 @@ void MapDisplaySystem::confPositionVertexEntities()
         GeneralCollisionComponent *genCollComp = stairwayToComponentManager().
                 searchComponentByType<GeneralCollisionComponent>(mVectNumEntity[i],
                                                                  Components_e::GENERAL_COLLISION_COMPONENT);
-        if(genCollComp && (genCollComp->m_tag == CollisionTag_e::BULLET_ENEMY_CT ||
-                           genCollComp->m_tag == CollisionTag_e::BULLET_PLAYER_CT) &&
+        if(genCollComp && (genCollComp->m_tagA == CollisionTag_e::BULLET_ENEMY_CT ||
+                           genCollComp->m_tagA == CollisionTag_e::BULLET_PLAYER_CT) &&
                 !genCollComp->m_active)
         {
             continue;

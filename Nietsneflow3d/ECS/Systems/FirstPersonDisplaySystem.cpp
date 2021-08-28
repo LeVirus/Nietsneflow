@@ -212,8 +212,8 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
     }
     simpleDistance = getDistance(mapCompA->m_absoluteMapPositionPX,
                                  mapCompB->m_absoluteMapPositionPX);
-    if(genCollComp->m_tag == CollisionTag_e::BULLET_PLAYER_CT ||
-            genCollComp->m_tag == CollisionTag_e::BULLET_ENEMY_CT)
+    if(genCollComp->m_tagA == CollisionTag_e::BULLET_PLAYER_CT ||
+            genCollComp->m_tagA == CollisionTag_e::BULLET_ENEMY_CT)
     {
         MoveableComponent *moveComp = stairwayToComponentManager().
                 searchComponentByType<MoveableComponent>(numEntity,
@@ -225,7 +225,7 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
             simpleDistance -= 5.0f;
         }
     }
-    if(genCollComp->m_tag == CollisionTag_e::IMPACT_CT ||
+    if(genCollComp->m_tagA == CollisionTag_e::IMPACT_CT ||
             !behindRaycastElement(mapCompA, mapCompB, simpleDistance, radiantObserverAngle,
                                   visionComp->m_vectVisibleEntities[numIteration]))
     {
@@ -234,7 +234,7 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
     float trigoAngle = getTrigoAngle(mapCompA->m_absoluteMapPositionPX, centerPosB);
     //get lateral pos from angle
     float lateralPos = getLateralAngle(degreeObserverAngle, trigoAngle);
-    confNormalEntityVertex(numEntity, visionComp, genCollComp->m_tag, lateralPos, cameraDistance);
+    confNormalEntityVertex(numEntity, visionComp, genCollComp->m_tagA, lateralPos, cameraDistance);
     fillVertexFromEntity(numEntity, numIteration, displayDistance, DisplayMode_e::STANDART_DM);
 }
 
@@ -921,6 +921,15 @@ optionalTargetRaycast_t FirstPersonDisplaySystem::calcLineSegmentRaycast(float r
                     return result;
                 }
             }
+            else if(element->m_type == LevelCaseType_e::WALL_MOVE_LC)
+            {
+                result = calcMovingWallSegmentRaycast(radiantAngle, lateralLeadCoef,
+                                                      verticalLeadCoef, currentPoint, *element);
+                if(result)
+                {
+                    return result;
+                }
+            }
         }
     }
     if(visual)
@@ -931,6 +940,16 @@ optionalTargetRaycast_t FirstPersonDisplaySystem::calcLineSegmentRaycast(float r
     {
         return tupleTargetRaycast_t{currentPoint, EPSILON_FLOAT, {}};
     }
+}
+
+//===================================================================
+optionalTargetRaycast_t FirstPersonDisplaySystem::calcMovingWallSegmentRaycast(float radiantAngle,
+                                                                               std::optional<float> lateralLeadCoef,
+                                                                               std::optional<float> verticalLeadCoef,
+                                                                               pairFloat_t &currentPoint,
+                                                                               const ElementRaycast &element)
+{
+    return {};
 }
 
 //===================================================================

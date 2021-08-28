@@ -20,12 +20,13 @@
 #include <ECS/Components/EnemyConfComponent.hpp>
 #include <ECS/Components/ShotConfComponent.hpp>
 #include <ECS/Components/WeaponComponent.hpp>
+#include <ECS/Components/MoveableWallConfComponent.hpp>
 #include <ECS/Systems/ColorDisplaySystem.hpp>
 #include <ECS/Systems/MapDisplaySystem.hpp>
 #include <ECS/Systems/CollisionSystem.hpp>
 #include <ECS/Systems/FirstPersonDisplaySystem.hpp>
 #include <ECS/Systems/VisionSystem.hpp>
-#include <ECS/Systems/DoorSystem.hpp>
+#include <ECS/Systems/DoorWallSystem.hpp>
 #include <ECS/Systems/StaticDisplaySystem.hpp>
 #include <ECS/Systems/IASystem.hpp>
 #include <LevelManager.hpp>
@@ -233,7 +234,7 @@ void confBullet(GeneralCollisionComponent *genColl, SegmentCollisionComponent *s
 {
     assert(collTag == CollisionTag_e::BULLET_ENEMY_CT ||
            collTag == CollisionTag_e::BULLET_PLAYER_CT);
-    genColl->m_tag = collTag;
+    genColl->m_tagA = collTag;
     genColl->m_shape = CollisionShape_e::SEGMENT_C;
     genColl->m_active = true;
     float diff = std::rand() / ((RAND_MAX + 1u) / 9) - 4.0f;
@@ -286,7 +287,7 @@ void MainEngine::memTimerPausedValue()
     TimerComponent *timerComp;
     std::bitset<Components_e::TOTAL_COMPONENTS> bitset;
     bitset[Components_e::TIMER_COMPONENT] = true;
-    std::vector<uint32_t> vectEntities = m_ecsManager.getEntityContainingComponents(bitset);
+    std::vector<uint32_t> vectEntities = m_ecsManager.getEntitiesContainingComponents(bitset);
     assert(m_vectMemPausedTimer.empty());
     m_vectMemPausedTimer.reserve(vectEntities.size());
     for(uint32_t i = 0; i < vectEntities.size(); ++i)
@@ -391,7 +392,6 @@ void MainEngine::loadBackgroundEntities(const GroundCeilingData &groundData, con
     uint32_t entity, colorIndex = static_cast<uint32_t>(DisplayType_e::COLOR),
             simpleTextIndex = static_cast<uint32_t>(DisplayType_e::SIMPLE_TEXTURE),
             tiledTextIndex = static_cast<uint32_t>(DisplayType_e::TEXTURED_TILE);
-    m_graphicEngine.clearSystems();
     if(groundData.m_apparence[simpleTextIndex])
     {
         entity = createBackgroundEntity(false);
@@ -456,9 +456,11 @@ void MainEngine::loadGraphicPicture(const PictureData &picData, const FontData &
 //===================================================================
 void MainEngine::loadLevelEntities(const LevelManager &levelManager)
 {
+    m_physicalEngine.clearSystems();
+    m_graphicEngine.clearSystems();
     loadBackgroundEntities(levelManager.getPictureData().getGroundData(),
-                                 levelManager.getPictureData().getCeilingData(), 
-                                 levelManager);
+                           levelManager.getPictureData().getCeilingData(),
+                           levelManager);
     loadColorEntities();
     loadStaticElementEntities(levelManager);
     uint32_t weaponEntity = loadWeaponsEntity(levelManager);
@@ -597,8 +599,26 @@ void MainEngine::loadMoveableWallEntities(const std::map<std::string, MoveableWa
             {
                 continue;
             }
-            uint32_t numEntity = createWallEntity(iter->second.m_sprites.size() > 1);
+            uint32_t numEntity = createWallEntity(iter->second.m_sprites.size() > 1, true);
             confBaseWallData(numEntity, memSpriteData, *it, iter->second.m_sprites, vectSprite);
+            MoveableComponent *moveComp = m_ecsManager.getComponentManager().
+                    searchComponentByType<MoveableComponent>(numEntity, Components_e::MOVEABLE_COMPONENT);
+            assert(moveComp);
+            moveComp->m_velocity = iter->second.m_velocity;
+            MoveableWallConfComponent *moveWallConfComp = m_ecsManager.getComponentManager().
+                    searchComponentByType<MoveableWallConfComponent>(numEntity, Components_e::MOVEABLE_WALL_CONF_COMPONENT);
+            assert(moveWallConfComp);
+            moveWallConfComp->m_directionMove = iter->second.m_directionMove;
+            moveWallConfComp->m_ghost = iter->second.m_ghost;
+            moveWallConfComp->m_triggerType = iter->second.m_triggerType;
+            if(moveWallConfComp->m_triggerType == TriggerWallMoveType_e::WALL)
+            {
+                GeneralCollisionComponent *genCollComp = m_ecsManager.getComponentManager().
+                        searchComponentByType<GeneralCollisionComponent>(numEntity, Components_e::GENERAL_COLLISION_COMPONENT);
+                assert(genCollComp);
+                genCollComp->m_tagB = CollisionTag_e::WALL_TRIGGER_CT;
+            }
+            moveWallConfComp->m_reversableMove = iter->second.m_reversableMove;
         }
     }
 }
@@ -850,7 +870,7 @@ uint32_t MainEngine::createAmmoEntity(CollisionTag_e collTag, bool visibleShot)
                                                              Components_e::GENERAL_COLLISION_COMPONENT);
     assert(genColl);
     genColl->m_active = false;
-    genColl->m_tag = collTag;
+    genColl->m_tagA = collTag;
     genColl->m_shape = (visibleShot) ? CollisionShape_e::CIRCLE_C : CollisionShape_e::SEGMENT_C;
     if(visibleShot)
     {
@@ -920,7 +940,7 @@ void MainEngine::confShotImpactEntity(const std::vector<SpriteData> &vectSpriteD
     fpsStaticComp->m_inGameSpriteSize = shootDisplayData.first[0].m_GLSize;
     fpsStaticComp->m_levelElementType = LevelStaticElementType_e::IMPACT;
     genComp->m_active = false;
-    genComp->m_tag = CollisionTag_e::IMPACT_CT;
+    genComp->m_tagA = CollisionTag_e::IMPACT_CT;
     genComp->m_shape = CollisionShape_e::CIRCLE_C;
     loadShotImpactSprite(vectSpriteData, shootDisplayData, impactEntity);
 }
@@ -1081,6 +1101,7 @@ uint32_t MainEngine::createWallEntity(bool multiSprite, bool moveable)
     if(moveable)
     {
         bitsetComponents[Components_e::MOVEABLE_COMPONENT] = true;
+        bitsetComponents[Components_e::MOVEABLE_WALL_CONF_COMPONENT] = true;
     }
     return m_ecsManager.addEntity(bitsetComponents);
 }
@@ -1237,7 +1258,7 @@ void MainEngine::confBaseComponent(uint32_t entityNum, const SpriteData &memSpri
         assert(rectComp);
         rectComp->m_size = {LEVEL_TILE_SIZE_PX, LEVEL_TILE_SIZE_PX};
     }
-    tagComp->m_tag = tag;
+    tagComp->m_tagA = tag;
 }
 
 //===================================================================
@@ -1348,7 +1369,7 @@ void MainEngine::confPlayerEntity(const LevelManager &levelManager,
     color->m_vertex.emplace_back(tupleTetraFloat{0.9f, 0.00f, 0.00f, 1.0f});
     color->m_vertex.emplace_back(tupleTetraFloat{0.9f, 0.00f, 0.00f, 1.0f});
     circleColl->m_ray = PLAYER_RAY;
-    tagColl->m_tag = CollisionTag_e::PLAYER_CT;
+    tagColl->m_tagA = CollisionTag_e::PLAYER_CT;
     tagColl->m_shape = CollisionShape_e::CIRCLE_C;
     //set standard weapon sprite
     StaticDisplaySystem *staticDisplay = m_ecsManager.getSystemManager().
@@ -1391,7 +1412,7 @@ void MainEngine::confActionEntity()
     assert(circleColl);
     genCollComp->m_active = false;
     genCollComp->m_shape = CollisionShape_e::CIRCLE_C;
-    genCollComp->m_tag = CollisionTag_e::PLAYER_ACTION_CT;
+    genCollComp->m_tagA = CollisionTag_e::PLAYER_ACTION_CT;
     circleColl->m_ray = 15.0f;
     m_playerConf->m_actionEntity = entityNum;
 }
@@ -1422,7 +1443,7 @@ uint32_t MainEngine::createAttackMeleeEntity(uint32_t damage, CollisionTag_e tag
     assert(circleColl);
     genCollComp->m_active = false;
     genCollComp->m_shape = CollisionShape_e::CIRCLE_C;
-    genCollComp->m_tag = tag;
+    genCollComp->m_tagA = tag;
     circleColl->m_ray = 10.0f;
     shotComp->m_damage = damage;
     return entityNum;
@@ -1747,8 +1768,8 @@ void MainEngine::linkSystemsToPhysicalEngine()
             searchSystemByType<InputSystem>(static_cast<uint32_t>(Systems_e::INPUT_SYSTEM));
     CollisionSystem *coll = m_ecsManager.getSystemManager().
             searchSystemByType<CollisionSystem>(static_cast<uint32_t>(Systems_e::COLLISION_SYSTEM));
-    DoorSystem *door = m_ecsManager.getSystemManager().
-            searchSystemByType<DoorSystem>(static_cast<uint32_t>(Systems_e::DOOR_SYSTEM));
+    DoorWallSystem *door = m_ecsManager.getSystemManager().
+            searchSystemByType<DoorWallSystem>(static_cast<uint32_t>(Systems_e::DOOR_SYSTEM));
     IASystem *iaSystem = m_ecsManager.getSystemManager().
             searchSystemByType<IASystem>(static_cast<uint32_t>(Systems_e::IA_SYSTEM));
     input->setGLWindow(m_graphicEngine.getGLWindow());

@@ -5,6 +5,7 @@
 #include <ECS/Components/MapCoordComponent.hpp>
 #include <ECS/Components/FPSVisibleStaticElementComponent.hpp>
 #include <ECS/Components/MoveableComponent.hpp>
+#include <ECS/Components/MoveableWallConfComponent.hpp>
 #include <ECS/Components/InputComponent.hpp>
 #include <ECS/Components/WeaponComponent.hpp>
 #include <ECS/Components/GeneralCollisionComponent.hpp>
@@ -28,7 +29,7 @@
 #include <ECS/Systems/CollisionSystem.hpp>
 #include <ECS/Systems/FirstPersonDisplaySystem.hpp>
 #include <ECS/Systems/VisionSystem.hpp>
-#include <ECS/Systems/DoorSystem.hpp>
+#include <ECS/Systems/DoorWallSystem.hpp>
 #include <ECS/Systems/StaticDisplaySystem.hpp>
 #include <ECS/Systems/IASystem.hpp>
 #include <constants.hpp>
@@ -58,7 +59,7 @@ void ECSManager::initSystems()
     m_systemManager->bAddExternSystem(std::make_unique<CollisionSystem>());
     m_systemManager->bAddExternSystem(std::make_unique<FirstPersonDisplaySystem>());
     m_systemManager->bAddExternSystem(std::make_unique<VisionSystem>(this));
-    m_systemManager->bAddExternSystem(std::make_unique<DoorSystem>());
+    m_systemManager->bAddExternSystem(std::make_unique<DoorWallSystem>(this));
     m_systemManager->bAddExternSystem(std::make_unique<StaticDisplaySystem>());
     m_systemManager->bAddExternSystem(std::make_unique<IASystem>());
 }
@@ -90,7 +91,7 @@ uint32_t ECSManager::addEntity(const std::bitset<Components_e::TOTAL_COMPONENTS>
 }
 
 //===================================================================
-std::vector<uint32_t> ECSManager::getEntityContainingComponents(const std::bitset<TOTAL_COMPONENTS> &bitsetComponents) const
+std::vector<uint32_t> ECSManager::getEntitiesContainingComponents(const std::bitset<TOTAL_COMPONENTS> &bitsetComponents) const
 {
     std::vector<uint32_t> vectReturn;
     const std::vector<ecs::Entity> &vectEntity = m_ecsEngine.getVectEntity();
@@ -269,6 +270,12 @@ void ECSManager::syncComponentsFromEntities(uint32_t numEntity,
         {
             m_componentManager->instanciateExternComponent(numEntity,
                                                            std::make_unique<WeaponComponent>());
+        }
+            break;
+        case Components_e::MOVEABLE_WALL_CONF_COMPONENT:
+        {
+            m_componentManager->instanciateExternComponent(numEntity,
+                                                           std::make_unique<MoveableWallConfComponent>());
         }
             break;
         case Components_e::TOTAL_COMPONENTS:

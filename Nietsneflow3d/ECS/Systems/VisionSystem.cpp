@@ -45,7 +45,7 @@ void VisionSystem::execSystem()
     bitsetComp[Components_e::MAP_COORD_COMPONENT] = true;
     bitsetComp[Components_e::SPRITE_TEXTURE_COMPONENT] = true;
     bitsetComp[Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT] = true;
-    std::vector<uint32_t> vectEntities = m_memECSManager->getEntityContainingComponents(bitsetComp);
+    std::vector<uint32_t> vectEntities = m_memECSManager->getEntitiesContainingComponents(bitsetComp);
     for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
     {
         visionCompA = stairwayToComponentManager().
@@ -105,13 +105,13 @@ void VisionSystem::updateSprites(uint32_t observerEntity,
                 searchComponentByType<TimerComponent>(vectEntities[i], Components_e::TIMER_COMPONENT);
         assert(spriteComp);
         assert(timerComp);
-        if(genComp->m_tag == CollisionTag_e::BULLET_ENEMY_CT ||
-                genComp->m_tag == CollisionTag_e::BULLET_PLAYER_CT)
+        if(genComp->m_tagA == CollisionTag_e::BULLET_ENEMY_CT ||
+                genComp->m_tagA == CollisionTag_e::BULLET_PLAYER_CT)
         {
             updateVisibleShotSprite(vectEntities[i], memSpriteComp, spriteComp, timerComp, genComp);
         }
-        else if(genComp->m_tag == CollisionTag_e::ENEMY_CT ||
-                genComp->m_tag == CollisionTag_e::GHOST_CT)
+        else if(genComp->m_tagA == CollisionTag_e::ENEMY_CT ||
+                genComp->m_tagA == CollisionTag_e::GHOST_CT)
         {
             EnemyConfComponent *enemyConfComp = stairwayToComponentManager().
                     searchComponentByType<EnemyConfComponent>(vectEntities[i],
@@ -122,7 +122,7 @@ void VisionSystem::updateSprites(uint32_t observerEntity,
                                    memSpriteComp, spriteComp, timerComp, enemyConfComp);
             }
         }
-        else if(genComp->m_tag == CollisionTag_e::IMPACT_CT)
+        else if(genComp->m_tagA == CollisionTag_e::IMPACT_CT)
         {
             updateImpactSprites(vectEntities[i], memSpriteComp, spriteComp, timerComp, genComp);
         }
@@ -176,14 +176,14 @@ void VisionSystem::memMultiSpritesWallEntities()
     bitsetComp[Components_e::MEM_SPRITE_DATA_COMPONENT] = true;
     bitsetComp[Components_e::TIMER_COMPONENT] = true;
     std::vector<uint32_t> vectEntities = m_memECSManager->
-            getEntityContainingComponents(bitsetComp);
+            getEntitiesContainingComponents(bitsetComp);
     GeneralCollisionComponent *genComp;
     for(uint32_t i = 0; i < vectEntities.size(); ++i)
     {
         genComp = stairwayToComponentManager().
                 searchComponentByType<GeneralCollisionComponent>(vectEntities[i], Components_e::GENERAL_COLLISION_COMPONENT);
         assert(genComp);
-        if(genComp->m_tag == CollisionTag_e::WALL_CT)
+        if(genComp->m_tagA == CollisionTag_e::WALL_CT)
         {
             m_memMultiSpritesWallEntities.push_back(vectEntities[i]);
         }

@@ -9,7 +9,7 @@ struct MoveableComponent;
 struct PositionVertexComponent;
 struct MapCoordComponent;
 struct VisionComponent;
-class DoorSystem;
+class DoorWallSystem;
 class IASystem;
 
 class PhysicalEngine
@@ -18,11 +18,12 @@ public:
     PhysicalEngine();
     void runIteration(bool gamePaused);
     void linkSystems(InputSystem *inputSystem, CollisionSystem * collisionSystem,
-                     DoorSystem *doorSystem, IASystem *iaSystem);
+                     DoorWallSystem *doorSystem, IASystem *iaSystem);
     void memPlayerEntity(uint32_t playerEntity);
     void confPlayerVisibleShoot(std::vector<uint32_t> &visibleShots,
                                 const pairFloat_t &point, float degreeAngle);
     void setModeTransitionMenu(bool transition);
+    void clearSystems();
     inline const std::vector<uint32_t> &getObjectEntityToDelete()const
     {
         return m_collisionSystem->getObjectEntityToDelete();
@@ -34,7 +35,7 @@ public:
 private:
     InputSystem *m_inputSystem = nullptr;
     CollisionSystem *m_collisionSystem = nullptr;
-    DoorSystem *m_doorSystem = nullptr;
+    DoorWallSystem *m_doorSystem = nullptr;
     IASystem *m_iaSystem = nullptr;
 };
 

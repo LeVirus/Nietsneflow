@@ -8,6 +8,7 @@
 #include <ECS/Components/ObjectConfComponent.hpp>
 
 using vectPairUI_t = std::vector<pairUI_t>;
+using PairMemMoveableWall_t = std::pair<LevelCaseType_e, std::vector<uint32_t>>;
 
 struct MoveableComponent;
 struct PositionVertexComponent;
@@ -36,6 +37,8 @@ struct DoorData
 
 struct ElementRaycast
 {
+    //first mem origin case type second moveable wall entities which on the case
+    std::optional<PairMemMoveableWall_t> m_memMoveWall;
     uint32_t m_numEntity;
     LevelCaseType_e m_type;
     pairUI_t m_tileGamePosition;
@@ -80,6 +83,10 @@ public:
     static void addElementCase(SpriteTextureComponent *spriteComp, const pairUI_t &tilePosition,
                                LevelCaseType_e type, uint32_t numEntity);
     static std::optional<ElementRaycast> getElementCase(const pairUI_t &tilePosition);
+    static void memMoveWallEntity(const pairUI_t &tilePosition, uint32_t entity);
+    static bool setElementCase(const pairUI_t &tilePosition, LevelCaseType_e type);
+    //in the case of moveable wall reset case
+    static void resetElementCase(const pairUI_t &tilePosition);
 
     static uint32_t getLevelCaseIndex(const pairUI_t &tilePosition);
 

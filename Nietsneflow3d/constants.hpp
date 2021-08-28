@@ -50,6 +50,7 @@ enum Components_e
     OBJECT_CONF_COMPONENT,
     IMPACT_CONF_COMPONENT,
     WEAPON_COMPONENT,
+    MOVEABLE_WALL_CONF_COMPONENT,
     TOTAL_COMPONENTS
 };
 
@@ -102,7 +103,7 @@ enum class Direction_e
     EAST
 };
 
-enum class TriggerType_e
+enum class TriggerWallMoveType_e
 {
     WALL,
     BUTTON,
@@ -205,6 +206,7 @@ enum class CollisionTag_e
     OBJECT_CT,
     EXIT_CT,
     STATIC_SET_CT,
+    WALL_TRIGGER_CT,
     IMPACT_CT
 };
 
@@ -219,7 +221,8 @@ enum class LevelCaseType_e
 {
     WALL_LC,
     DOOR_LC,
-    EMPTY_LC
+    EMPTY_LC,
+    WALL_MOVE_LC
 };
 
 inline const float RAYCAST_VERTICAL_SIZE = 1.0f;

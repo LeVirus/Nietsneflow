@@ -75,6 +75,9 @@ private:
     optionalTargetRaycast_t calcDoorSegmentRaycast(float radiantAngle, std::optional<float> lateralLeadCoef,
                                                    std::optional<float> verticalLeadCoef, pairFloat_t &currentPoint,
                                                    const ElementRaycast &element);
+    optionalTargetRaycast_t calcMovingWallSegmentRaycast(float radiantAngle, std::optional<float> lateralLeadCoef,
+                                                         std::optional<float> verticalLeadCoef, pairFloat_t &currentPoint,
+                                                         const ElementRaycast &element);
     bool behindRaycastElement(const MapCoordComponent *mapCompObserver, const MapCoordComponent *mapCompTarget, float distance,
                               float radiantObserverAngle, uint32_t targetEntity);
     void rayCasting();

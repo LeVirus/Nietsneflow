@@ -6,7 +6,7 @@
 #include <ECS/Components/MoveableComponent.hpp>
 #include <ECS/Components/VisionComponent.hpp>
 #include <ECS/Components/WeaponComponent.hpp>
-#include <ECS/Systems/DoorSystem.hpp>
+#include <ECS/Systems/DoorWallSystem.hpp>
 #include <ECS/Systems/IASystem.hpp>
 #include <cassert>
 
@@ -30,7 +30,7 @@ void PhysicalEngine::runIteration(bool gamePaused)
 
 //===================================================================
 void PhysicalEngine::linkSystems(InputSystem *inputSystem, CollisionSystem *collisionSystem,
-                                 DoorSystem *doorSystem, IASystem *iaSystem)
+                                 DoorWallSystem *doorSystem, IASystem *iaSystem)
 {
     m_inputSystem = inputSystem;
     m_collisionSystem = collisionSystem;
@@ -57,6 +57,12 @@ void PhysicalEngine::confPlayerVisibleShoot(std::vector<uint32_t> &visibleShots,
 void PhysicalEngine::setModeTransitionMenu(bool transition)
 {
     m_inputSystem->setModeTransitionMenu(transition);
+}
+
+//===================================================================
+void PhysicalEngine::clearSystems()
+{
+    m_doorSystem->clearSystem();
 }
 
 //===================================================================

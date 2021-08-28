@@ -8,6 +8,7 @@ INCLUDEPATH += includesLib
 LIBS += -L../Nietsneflow3d/lib  -lECS -lglad -ldl -lglfw -lX11 -lXxf86vm -lXrandr -pthread -lXi
 
 SOURCES += main.cpp \
+    ECS/Systems/DoorWallSystem.cpp \
     ECS/Systems/IASystem.cpp \
     ECS/Systems/VisionSystem.cpp \
     FontData.cpp \
@@ -28,19 +29,20 @@ SOURCES += main.cpp \
     ECS/Systems/CollisionSystem.cpp \
     CollisionUtils.cpp \
     ECS/Systems/FirstPersonDisplaySystem.cpp \
-    ECS/Systems/DoorSystem.cpp \
     ECS/Systems/StaticDisplaySystem.cpp
 
 HEADERS += \
     ECS/Components/EnemyConfComponent.hpp \
     ECS/Components/FPSVisibleStaticElementComponent.hpp \
     ECS/Components/MemSpriteDataComponent.hpp \
+    ECS/Components/MoveableWallConfComponent.hpp \
     ECS/Components/SegmentCollisionComponent.hpp \
     ECS/Components/ShotConfComponent.hpp \
     ECS/Components/TimerComponent.hpp \
     ECS/Components/VisionComponent.hpp \
     ECS/Components/WeaponComponent.hpp \
     ECS/Components/WriteComponent.hpp \
+    ECS/Systems/DoorWallSystem.hpp \
     ECS/Systems/IASystem.hpp \
     ECS/Systems/VisionSystem.hpp \
     FontData.hpp \
@@ -89,7 +91,6 @@ HEADERS += \
     ECS/Components/GeneralCollisionComponent.hpp \
     ECS/Systems/FirstPersonDisplaySystem.hpp \
     ECS/Components/DoorComponent.hpp \
-    ECS/Systems/DoorSystem.hpp \
     ECS/Components/PlayerConfComponent.hpp \
     ECS/Systems/StaticDisplaySystem.hpp \
     ECS/Components/MemPositionsVertexComponents.hpp \

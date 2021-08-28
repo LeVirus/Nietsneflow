@@ -8,6 +8,7 @@
 #include <ECS/Components/MoveableComponent.hpp>
 #include <ECS/Components/DoorComponent.hpp>
 #include <ECS/Components/PlayerConfComponent.hpp>
+#include <ECS/Components/MoveableWallConfComponent.hpp>
 #include <ECS/Components/EnemyConfComponent.hpp>
 #include <ECS/Components/TimerComponent.hpp>
 #include <ECS/Components/ShotConfComponent.hpp>
@@ -54,15 +55,15 @@ void CollisionSystem::execSystem()
         {
             continue;
         }
-        if(tagCompA->m_tag == CollisionTag_e::WALL_CT ||
-                tagCompA->m_tag == CollisionTag_e::OBJECT_CT ||
-                tagCompA->m_tag == CollisionTag_e::DOOR_CT)
+        if(tagCompA->m_tagA == CollisionTag_e::WALL_CT ||
+                tagCompA->m_tagA == CollisionTag_e::OBJECT_CT ||
+                tagCompA->m_tagA == CollisionTag_e::DOOR_CT)
         {
             continue;
         }
         if(tagCompA->m_shape == CollisionShape_e::SEGMENT_C &&
-                (tagCompA->m_tag == CollisionTag_e::BULLET_PLAYER_CT ||
-                 tagCompA->m_tag == CollisionTag_e::BULLET_ENEMY_CT))
+                (tagCompA->m_tagA == CollisionTag_e::BULLET_PLAYER_CT ||
+                 tagCompA->m_tagA == CollisionTag_e::BULLET_ENEMY_CT))
         {
             m_memDistCurrentBulletColl.second = EPSILON_FLOAT;
             segmentCompA = stairwayToComponentManager().
@@ -90,13 +91,14 @@ void CollisionSystem::execSystem()
             {
                 continue;
             }
-            if(!checkTag(tagCompA->m_tag, tagCompB->m_tag))
+            if(!checkTag(tagCompA->m_tagA, tagCompB->m_tagA) &&
+                    !checkTag(tagCompA->m_tagA, tagCompB->m_tagB))
             {
                 continue;
             }
             treatCollision(mVectNumEntity[i], mVectNumEntity[j], tagCompA, tagCompB);
         }
-        if(tagCompA->m_tag == CollisionTag_e::PLAYER_ACTION_CT)
+        if(tagCompA->m_tagA == CollisionTag_e::PLAYER_ACTION_CT)
         {
             tagCompA->m_active = false;
         }
@@ -168,17 +170,17 @@ void CollisionSystem::treatSegmentShots()
                 searchComponentByType<GeneralCollisionComponent>(
                     m_vectMemShots[i].second, Components_e::GENERAL_COLLISION_COMPONENT);
         assert(tagCompTarget);
-        confImpactShots(i, tagCompTarget->m_tag);
-        if(tagCompTarget->m_tag == CollisionTag_e::WALL_CT ||
-                tagCompTarget->m_tag == CollisionTag_e::DOOR_CT ||
-                tagCompTarget->m_tag == CollisionTag_e::STATIC_SET_CT)
+        confImpactShots(i, tagCompTarget->m_tagA);
+        if(tagCompTarget->m_tagA == CollisionTag_e::WALL_CT ||
+                tagCompTarget->m_tagA == CollisionTag_e::DOOR_CT ||
+                tagCompTarget->m_tagA == CollisionTag_e::STATIC_SET_CT)
         {
             continue;
         }
         tagCompBullet = stairwayToComponentManager().searchComponentByType<GeneralCollisionComponent>(
                     m_vectMemShots[i].first, Components_e::GENERAL_COLLISION_COMPONENT);
         assert(tagCompBullet);
-        if(tagCompBullet->m_tag == CollisionTag_e::BULLET_PLAYER_CT)
+        if(tagCompBullet->m_tagA == CollisionTag_e::BULLET_PLAYER_CT)
         {
             ShotConfComponent *shotConfComp = stairwayToComponentManager().
                     searchComponentByType<ShotConfComponent>(m_vectMemShots[i].first, Components_e::SHOT_CONF_COMPONENT);
@@ -186,7 +188,7 @@ void CollisionSystem::treatSegmentShots()
             treatEnemyShooted(m_vectMemShots[i].second, shotConfComp->m_damage);
             tagCompBullet->m_active = false;
         }
-        else if(tagCompBullet->m_tag == CollisionTag_e::BULLET_ENEMY_CT)
+        else if(tagCompBullet->m_tagA == CollisionTag_e::BULLET_ENEMY_CT)
         {
             PlayerConfComponent *playerConfCompB = stairwayToComponentManager().
                     searchComponentByType<PlayerConfComponent>(m_vectMemShots[i].second,
@@ -272,7 +274,7 @@ void CollisionSystem::rmCollisionMaskEntity(uint32_t numEntity)
             searchComponentByType<GeneralCollisionComponent>(numEntity,
                                                              Components_e::GENERAL_COLLISION_COMPONENT);
     assert(tagComp);
-    tagComp->m_tag = CollisionTag_e::GHOST_CT;
+    tagComp->m_tagA = CollisionTag_e::GHOST_CT;
 }
 
 //===================================================================
@@ -286,6 +288,7 @@ void CollisionSystem::initArrayTag()
 
     m_tagArray.insert({CollisionTag_e::PLAYER_ACTION_CT, CollisionTag_e::DOOR_CT});
     m_tagArray.insert({CollisionTag_e::PLAYER_ACTION_CT, CollisionTag_e::EXIT_CT});
+    m_tagArray.insert({CollisionTag_e::PLAYER_ACTION_CT, CollisionTag_e::WALL_TRIGGER_CT});
     m_tagArray.insert({CollisionTag_e::HIT_PLAYER_CT, CollisionTag_e::ENEMY_CT});
 
     m_tagArray.insert({CollisionTag_e::ENEMY_CT, CollisionTag_e::PLAYER_CT});
@@ -353,7 +356,7 @@ void CollisionSystem::treatCollision(uint32_t entityNumA, uint32_t entityNumB,
     }
     else if(tagCompA->m_shape == CollisionShape_e::SEGMENT_C)
     {
-        assert(tagCompA->m_tag == CollisionTag_e::BULLET_PLAYER_CT || tagCompA->m_tag == CollisionTag_e::BULLET_ENEMY_CT);
+        assert(tagCompA->m_tagA == CollisionTag_e::BULLET_PLAYER_CT || tagCompA->m_tagA == CollisionTag_e::BULLET_ENEMY_CT);
         checkCollisionFirstSegment(entityNumA, entityNumB, tagCompB, getMapComponent(entityNumB));
     }
 }
@@ -402,8 +405,8 @@ void CollisionSystem::writePlayerInfo(const std::string &info)
 //===================================================================
 void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
 {
-    if(args.tagCompA->m_tag == CollisionTag_e::PLAYER_ACTION_CT ||
-            args.tagCompA->m_tag == CollisionTag_e::HIT_PLAYER_CT)
+    if(args.tagCompA->m_tagA == CollisionTag_e::PLAYER_ACTION_CT ||
+            args.tagCompA->m_tagA == CollisionTag_e::HIT_PLAYER_CT)
     {
         args.tagCompA->m_active = false;
     }
@@ -418,35 +421,13 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
                                  args.mapCompB.m_absoluteMapPositionPX, rectCompB.m_size);
         if(collision)
         {
-            if(args.tagCompA->m_tag == CollisionTag_e::PLAYER_ACTION_CT)
+            if(args.tagCompA->m_tagA == CollisionTag_e::PLAYER_ACTION_CT)
             {
-                if(args.tagCompB->m_tag == CollisionTag_e::DOOR_CT)
-                {
-                    DoorComponent *doorComp = stairwayToComponentManager().
-                            searchComponentByType<DoorComponent>(args.entityNumB, Components_e::DOOR_COMPONENT);
-                    assert(doorComp);
-                    //if card door
-                    if(doorComp->m_cardID)
-                    {
-                        if((m_playerComp->m_card.find((*doorComp->m_cardID).first) == m_playerComp->m_card.end()))
-                        {
-                            writePlayerInfo((*doorComp->m_cardID).second + " NEEDED");
-                            return;
-                        }
-                        else
-                        {
-                            writePlayerInfo((*doorComp->m_cardID).second + " USED");
-                        }
-                    }
-                    if(doorComp->m_currentState == DoorState_e::STATIC_CLOSED || doorComp->m_currentState == DoorState_e::MOVE_CLOSE)
-                    {
-                        doorComp->m_currentState = DoorState_e::MOVE_OPEN;
-                    }
-                }
+                treatActionPlayer(args);
             }
-            else if(args.tagCompA->m_tag == CollisionTag_e::PLAYER_CT)
+            else if(args.tagCompA->m_tagA == CollisionTag_e::PLAYER_CT)
             {
-                if(args.tagCompB->m_tag == CollisionTag_e::DOOR_CT)
+                if(args.tagCompB->m_tagA == CollisionTag_e::DOOR_CT)
                 {
                     DoorComponent *doorComp = stairwayToComponentManager().
                             searchComponentByType<DoorComponent>(args.entityNumB, Components_e::DOOR_COMPONENT);
@@ -465,10 +446,10 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
                     collisionCircleRectEject(args, circleCompA, rectCompB);
                 }
             }
-            else if(args.tagCompA->m_tag == CollisionTag_e::ENEMY_CT)
+            else if(args.tagCompA->m_tagA == CollisionTag_e::ENEMY_CT)
             {
                 collisionCircleRectEject(args, circleCompA, rectCompB);
-                if(args.tagCompB->m_tag == CollisionTag_e::DOOR_CT)
+                if(args.tagCompB->m_tagA == CollisionTag_e::DOOR_CT)
                 {
                     DoorComponent *doorComp = stairwayToComponentManager().
                             searchComponentByType<DoorComponent>(args.entityNumB, Components_e::DOOR_COMPONENT);
@@ -489,32 +470,32 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
                                                args.mapCompB.m_absoluteMapPositionPX, circleCompB.m_ray);
         if(collision)
         {
-            if(args.tagCompA->m_tag == CollisionTag_e::PLAYER_CT &&
-                    args.tagCompB->m_tag == CollisionTag_e::OBJECT_CT)
+            if(args.tagCompA->m_tagA == CollisionTag_e::PLAYER_CT &&
+                    args.tagCompB->m_tagA == CollisionTag_e::OBJECT_CT)
             {
                 treatPlayerPickObject(args);
             }
-            else if(args.tagCompA->m_tag == CollisionTag_e::HIT_PLAYER_CT)
+            else if(args.tagCompA->m_tagA == CollisionTag_e::HIT_PLAYER_CT)
             {
                 ShotConfComponent *shotConfComp = stairwayToComponentManager().
                         searchComponentByType<ShotConfComponent>(args.entityNumA, Components_e::SHOT_CONF_COMPONENT);
                 assert(shotConfComp);
-                if(args.tagCompB->m_tag == CollisionTag_e::ENEMY_CT)
+                if(args.tagCompB->m_tagA == CollisionTag_e::ENEMY_CT)
                 {
                     treatEnemyShooted(args.entityNumB, shotConfComp->m_damage);
                 }
             }
-            else if((args.tagCompA->m_tag == CollisionTag_e::PLAYER_CT ||
-                    args.tagCompA->m_tag == CollisionTag_e::ENEMY_CT) &&
-                    (args.tagCompB->m_tag == CollisionTag_e::WALL_CT ||
-                     args.tagCompB->m_tag == CollisionTag_e::PLAYER_CT ||
-                     args.tagCompB->m_tag == CollisionTag_e::ENEMY_CT ||
-                     args.tagCompB->m_tag == CollisionTag_e::STATIC_SET_CT))
+            else if((args.tagCompA->m_tagA == CollisionTag_e::PLAYER_CT ||
+                    args.tagCompA->m_tagA == CollisionTag_e::ENEMY_CT) &&
+                    (args.tagCompB->m_tagA == CollisionTag_e::WALL_CT ||
+                     args.tagCompB->m_tagA == CollisionTag_e::PLAYER_CT ||
+                     args.tagCompB->m_tagA == CollisionTag_e::ENEMY_CT ||
+                     args.tagCompB->m_tagA == CollisionTag_e::STATIC_SET_CT))
             {
                 collisionCircleCircleEject(args, circleCompA, circleCompB);
             }
-            else if(args.tagCompA->m_tag == CollisionTag_e::PLAYER_ACTION_CT &&
-                    args.tagCompB->m_tag == CollisionTag_e::EXIT_CT)
+            else if(args.tagCompA->m_tagA == CollisionTag_e::PLAYER_ACTION_CT &&
+                    args.tagCompB->m_tagA == CollisionTag_e::EXIT_CT)
             {
                 args.tagCompB->m_active = false;
             }
@@ -534,8 +515,8 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
         break;
     }
     //TREAT VISIBLE SHOT
-    if((args.tagCompA->m_tag == CollisionTag_e::BULLET_ENEMY_CT) ||
-            (args.tagCompA->m_tag == CollisionTag_e::BULLET_PLAYER_CT))
+    if((args.tagCompA->m_tagA == CollisionTag_e::BULLET_ENEMY_CT) ||
+            (args.tagCompA->m_tagA == CollisionTag_e::BULLET_PLAYER_CT))
     {
         bool destruct = false;
         //limit level case
@@ -564,13 +545,13 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
             {
                 return;
             }
-            if(args.tagCompA->m_tag == CollisionTag_e::BULLET_PLAYER_CT &&
-                    args.tagCompB->m_tag == CollisionTag_e::ENEMY_CT)
+            if(args.tagCompA->m_tagA == CollisionTag_e::BULLET_PLAYER_CT &&
+                    args.tagCompB->m_tagA == CollisionTag_e::ENEMY_CT)
             {
                 treatEnemyShooted(args.entityNumB, shotConfComp->m_damage);
             }
-            else if(args.tagCompA->m_tag == CollisionTag_e::BULLET_ENEMY_CT &&
-                    args.tagCompB->m_tag == CollisionTag_e::PLAYER_CT)
+            else if(args.tagCompA->m_tagA == CollisionTag_e::BULLET_ENEMY_CT &&
+                    args.tagCompB->m_tagA == CollisionTag_e::PLAYER_CT)
             {
                 PlayerConfComponent * playerConf = stairwayToComponentManager().
                         searchComponentByType<PlayerConfComponent>(args.entityNumB,
@@ -578,6 +559,54 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
                 assert(playerConf);
                 playerConf->takeDamage(shotConfComp->m_damage);
             }
+        }
+    }
+}
+
+//===================================================================
+void CollisionSystem::treatActionPlayer(CollisionArgs &args)
+{
+    if(args.tagCompB->m_tagA == CollisionTag_e::DOOR_CT)
+    {
+        DoorComponent *doorComp = stairwayToComponentManager().
+                searchComponentByType<DoorComponent>(args.entityNumB, Components_e::DOOR_COMPONENT);
+        assert(doorComp);
+        //if card door
+        if(doorComp->m_cardID)
+        {
+            if((m_playerComp->m_card.find((*doorComp->m_cardID).first) == m_playerComp->m_card.end()))
+            {
+                writePlayerInfo((*doorComp->m_cardID).second + " NEEDED");
+                return;
+            }
+            else
+            {
+                writePlayerInfo((*doorComp->m_cardID).second + " USED");
+            }
+        }
+        if(doorComp->m_currentState == DoorState_e::STATIC_CLOSED || doorComp->m_currentState == DoorState_e::MOVE_CLOSE)
+        {
+            doorComp->m_currentState = DoorState_e::MOVE_OPEN;
+        }
+    }
+    else if(args.tagCompB->m_tagB == CollisionTag_e::WALL_TRIGGER_CT)
+    {
+        //TREAT MOVEABLE WALL
+        if(args.tagCompB->m_tagA == CollisionTag_e::WALL_CT)
+        {
+            MoveableWallConfComponent *moveableWallComp = stairwayToComponentManager().
+                    searchComponentByType<MoveableWallConfComponent>(args.entityNumB, Components_e::MOVEABLE_WALL_CONF_COMPONENT);
+            assert(moveableWallComp);
+            if(moveableWallComp->m_inMovement)
+            {
+               return;
+            }
+            Level::setElementCase(args.mapCompB.m_coord, LevelCaseType_e::EMPTY_LC);
+            Level::memMoveWallEntity(args.mapCompB.m_coord, args.entityNumB);
+            moveableWallComp->m_inMovement = true;
+            moveableWallComp->m_initPos = true;
+            moveableWallComp->m_currentPhase = 0;
+            moveableWallComp->m_currentMove = 0;
         }
     }
 }
@@ -883,8 +912,8 @@ void CollisionSystem::collisionCircleCircleEject(CollisionArgs &args,
                                                  const CircleCollisionComponent &circleCollA,
                                                  const CircleCollisionComponent &circleCollB)
 {
-    if(args.tagCompA->m_tag == CollisionTag_e::PLAYER_CT ||
-            args.tagCompA->m_tag == CollisionTag_e::ENEMY_CT)
+    if(args.tagCompA->m_tagA == CollisionTag_e::PLAYER_CT ||
+            args.tagCompA->m_tagA == CollisionTag_e::ENEMY_CT)
     {
         MoveableComponent *moveCompA = stairwayToComponentManager().
                 searchComponentByType<MoveableComponent>(args.entityNumA,

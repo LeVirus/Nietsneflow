@@ -40,9 +40,9 @@ struct MoveableWallData
 {
     std::vector<uint8_t> m_sprites;
     std::set<pairUI_t> m_TileGamePosition;
-    Direction_e m_direction;
-    TriggerType_e m_triggerType;
-    uint32_t m_moveNumber;
+    std::vector<std::pair<Direction_e, uint32_t>> m_directionMove;
+    TriggerWallMoveType_e m_triggerType;
+    float m_velocity;
     bool m_ghost, m_reversableMove;
 };
 

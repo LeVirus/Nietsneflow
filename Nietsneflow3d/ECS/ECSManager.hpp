@@ -15,7 +15,7 @@ public:
     {
         return m_ecsEngine.bRmEntity(numEntity);
     }
-    std::vector<uint32_t> getEntityContainingComponents(const std::bitset<Components_e::TOTAL_COMPONENTS> &bitsetComponents)const;
+    std::vector<uint32_t> getEntitiesContainingComponents(const std::bitset<Components_e::TOTAL_COMPONENTS> &bitsetComponents)const;
     inline ecs::Engine &getEngine(){return m_ecsEngine;}
     inline ecs::ComponentManager &getComponentManager(){return *m_componentManager;}
     inline ecs::SystemManager &getSystemManager(){return *m_systemManager;}

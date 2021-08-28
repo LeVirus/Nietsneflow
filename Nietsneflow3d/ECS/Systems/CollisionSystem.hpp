@@ -43,6 +43,7 @@ private:
     //Collisions detection
     void treatCollisionFirstRect(CollisionArgs &args);
     void treatCollisionFirstCircle(CollisionArgs &args);
+    void treatActionPlayer(CollisionArgs &args);
     void treatPlayerPickObject(CollisionArgs &args);
     void treatCollisionFirstSegment(CollisionArgs &args);
 

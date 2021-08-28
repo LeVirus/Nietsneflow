@@ -642,7 +642,7 @@ void LevelManager::loadPositionWall(const INIReader &reader)
         //Moveable wall
         else
         {
-            std::string str = vectINISections[i];
+            std::string str = vectINISections[i], direction, moveNumber;
             str.erase(0, 8);
             it = m_wallData.find(str);
             assert(it != m_wallData.end());
@@ -650,11 +650,22 @@ void LevelManager::loadPositionWall(const INIReader &reader)
             m_moveableWallData[vectINISections[i]].m_sprites = it->second.m_sprites;
             fillWallPositionVect(reader, vectINISections[i], "GamePosition",
                                  m_moveableWallData[vectINISections[i]].m_TileGamePosition);
-            m_moveableWallData[vectINISections[i]].m_direction =
-                    static_cast<Direction_e>(reader.GetInteger(vectINISections[i], "Direction", 0));
-            m_moveableWallData[vectINISections[i]].m_moveNumber = reader.GetInteger(vectINISections[i], "NumberOfMove", 1);
+            direction = reader.Get(vectINISections[i], "Direction", "");
+            moveNumber = reader.Get(vectINISections[i], "NumberOfMove", "");
+            assert(!direction.empty());
+            assert(!moveNumber.empty());
+            std::vector<uint32_t> vectDir = convertStrToVectUI(direction);
+            std::vector<uint32_t> vectMov = convertStrToVectUI(moveNumber);
+            assert(vectDir.size() == vectMov.size());
+            m_moveableWallData[vectINISections[i]].m_velocity = reader.GetReal(vectINISections[i], "Velocity", 1.0f);
+            m_moveableWallData[vectINISections[i]].m_directionMove.reserve(vectDir.size());
+            for(uint32_t j = 0; j < vectDir.size(); ++j)
+            {
+                m_moveableWallData[vectINISections[i]].m_directionMove.emplace_back(
+                            std::pair<Direction_e, uint32_t>{static_cast<Direction_e>(vectDir[j]), vectMov[j]});
+            }
             m_moveableWallData[vectINISections[i]].m_triggerType =
-                    static_cast<TriggerType_e>(reader.GetInteger(vectINISections[i], "TriggerType", 0));
+                    static_cast<TriggerWallMoveType_e>(reader.GetInteger(vectINISections[i], "TriggerType", 0));
             m_moveableWallData[vectINISections[i]].m_ghost = reader.GetBoolean(vectINISections[i], "Ghost", true);
             m_moveableWallData[vectINISections[i]].m_reversableMove = reader.GetBoolean(vectINISections[i], "ReversableMove", false);
         }

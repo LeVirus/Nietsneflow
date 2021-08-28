@@ -55,6 +55,36 @@ std::optional<ElementRaycast> Level::getElementCase(const pairUI_t &tilePosition
 }
 
 //===================================================================
+void Level::memMoveWallEntity(const pairUI_t &tilePosition, uint32_t entity)
+{
+    ElementRaycast &element = m_levelCaseType[getLevelCaseIndex(tilePosition)];
+    if(!element.m_memMoveWall)
+    {
+        element.m_memMoveWall = PairMemMoveableWall_t();
+        element.m_memMoveWall->first = element.m_type;
+    }
+    element.m_memMoveWall->second.push_back(entity);
+}
+
+//===================================================================
+bool Level::setElementCase(const pairUI_t &tilePosition, LevelCaseType_e type)
+{
+    m_levelCaseType[getLevelCaseIndex(tilePosition)].m_type = type;
+    return true;
+}
+
+//===================================================================
+void Level::resetElementCase(const pairUI_t &tilePosition)
+{
+    ElementRaycast &element = m_levelCaseType[getLevelCaseIndex(tilePosition)];
+    if(element.m_memMoveWall)
+    {
+        element.m_type = element.m_memMoveWall->first;
+        element.m_memMoveWall.reset();
+    }
+}
+
+//===================================================================
 uint32_t Level::getLevelCaseIndex(const pairUI_t &tilePosition)
 {
     uint32_t index = (tilePosition.second * m_size.first + tilePosition.first);
