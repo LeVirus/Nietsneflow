@@ -86,6 +86,9 @@ private:
     std::optional<float> treatDoorRaycast(uint32_t numEntity, float currentRadiantAngle,
                                           pairFloat_t &currentPoint, std::optional<float> lateralLeadCoef,
                                           std::optional<float> verticalLeadCoef, bool &textLateral, bool &textFace);
+    bool treatMovingWallRaycast(const std::vector<uint32_t> &vectEntities, float currentRadiantAngle, bool &lateralColl,
+                                                pairFloat_t &currentPoint, std::optional<float> lateralLeadCoef,
+                                                std::optional<float> verticalLeadCoef);
     void memDistance(uint32_t numEntity, uint32_t lateralScreenPos, float distance, float texturePos);
     void setUsedComponents();
     void confCompVertexMemEntities();

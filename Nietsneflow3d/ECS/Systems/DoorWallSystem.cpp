@@ -85,62 +85,63 @@ void DoorWallSystem::treatWalls()
                 searchComponentByType<MoveableWallConfComponent>(m_vectMoveableWall[i],
                                                      Components_e::MOVEABLE_WALL_CONF_COMPONENT);
         assert(moveWallComp);
-        if(moveWallComp->m_inMovement)
+        if(!moveWallComp->m_inMovement)
         {
-            next = false;
-            MapCoordComponent *mapComp = stairwayToComponentManager().
-                    searchComponentByType<MapCoordComponent>(m_vectMoveableWall[i],
-                                                             Components_e::MAP_COORD_COMPONENT);
-            assert(mapComp);
-            Direction_e currentDir = moveWallComp->m_directionMove[moveWallComp->m_currentPhase].first;
-            if(moveWallComp->m_initPos)
+            continue;
+        }
+        next = false;
+        MapCoordComponent *mapComp = stairwayToComponentManager().
+                searchComponentByType<MapCoordComponent>(m_vectMoveableWall[i],
+                                                         Components_e::MAP_COORD_COMPONENT);
+        assert(mapComp);
+        Direction_e currentDir = moveWallComp->m_directionMove[moveWallComp->m_currentPhase].first;
+        if(moveWallComp->m_initPos)
+        {
+            setInitPhaseMoveWall(mapComp, moveWallComp, currentDir, m_vectMoveableWall[i]);
+        }
+        MoveableComponent *moveComp = stairwayToComponentManager().
+                searchComponentByType<MoveableComponent>(m_vectMoveableWall[i],
+                                                         Components_e::MOVEABLE_COMPONENT);
+        assert(moveComp);
+        memPreviousPos = mapComp->m_coord;
+        switch(currentDir)
+        {
+        case Direction_e::EAST:
+            mapComp->m_absoluteMapPositionPX.first += moveComp->m_velocity;
+            if(mapComp->m_absoluteMapPositionPX.first >= moveWallComp->m_nextPhasePos.first)
             {
-                setInitPhaseMoveWall(mapComp, moveWallComp, currentDir, m_vectMoveableWall[i]);
+                ++mapComp->m_coord.first;
+                next = true;
             }
-            MoveableComponent *moveComp = stairwayToComponentManager().
-                    searchComponentByType<MoveableComponent>(m_vectMoveableWall[i],
-                                                             Components_e::MOVEABLE_COMPONENT);
-            assert(moveComp);
-            memPreviousPos = mapComp->m_coord;
-            switch(currentDir)
+            break;
+        case Direction_e::WEST:
+            mapComp->m_absoluteMapPositionPX.first -= moveComp->m_velocity;
+            if(mapComp->m_absoluteMapPositionPX.first <= moveWallComp->m_nextPhasePos.first)
             {
-            case Direction_e::EAST:
-                mapComp->m_absoluteMapPositionPX.first += moveComp->m_velocity;
-                if(mapComp->m_absoluteMapPositionPX.first >= moveWallComp->m_nextPhasePos.first)
-                {
-                    ++mapComp->m_coord.first;
-                    next = true;
-                }
-                break;
-            case Direction_e::WEST:
-                mapComp->m_absoluteMapPositionPX.first -= moveComp->m_velocity;
-                if(mapComp->m_absoluteMapPositionPX.first <= moveWallComp->m_nextPhasePos.first)
-                {
-                    --mapComp->m_coord.first;
-                    next = true;
-                }
-                break;
-            case Direction_e::NORTH:
-                mapComp->m_absoluteMapPositionPX.second -= moveComp->m_velocity;
-                if(mapComp->m_absoluteMapPositionPX.second <= moveWallComp->m_nextPhasePos.second)
-                {
-                    --mapComp->m_coord.second;
-                    next = true;
-                }
-                break;
-            case Direction_e::SOUTH:
-                mapComp->m_absoluteMapPositionPX.second += moveComp->m_velocity;
-                if(mapComp->m_absoluteMapPositionPX.second >= moveWallComp->m_nextPhasePos.second)
-                {
-                    ++mapComp->m_coord.second;
-                    next = true;
-                }
-                break;
+                --mapComp->m_coord.first;
+                next = true;
             }
-            if(next)
+            break;
+        case Direction_e::NORTH:
+            mapComp->m_absoluteMapPositionPX.second -= moveComp->m_velocity;
+            if(mapComp->m_absoluteMapPositionPX.second <= moveWallComp->m_nextPhasePos.second)
             {
-                switchToNextPhaseMoveWall(mapComp, moveWallComp, memPreviousPos);
+                --mapComp->m_coord.second;
+                next = true;
             }
+            break;
+        case Direction_e::SOUTH:
+            mapComp->m_absoluteMapPositionPX.second += moveComp->m_velocity;
+            if(mapComp->m_absoluteMapPositionPX.second >= moveWallComp->m_nextPhasePos.second)
+            {
+                ++mapComp->m_coord.second;
+                next = true;
+            }
+            break;
+        }
+        if(next)
+        {
+            switchToNextPhaseMoveWall(mapComp, moveWallComp, memPreviousPos);
         }
     }
 }
@@ -179,9 +180,10 @@ void setInitPhaseMoveWall(MapCoordComponent *mapComp, MoveableWallConfComponent 
         nextCase = {mapComp->m_coord.first, mapComp->m_coord.second + 1};
         break;
     }
-    if(Level::getElementCase(nextCase)->m_type != LevelCaseType_e::WALL_LC)
+    LevelCaseType_e type = Level::getElementCase(nextCase)->m_type;
+    Level::memMoveWallEntity(nextCase, type, wallEntity);
+    if(type != LevelCaseType_e::WALL_LC)
     {
-        Level::memMoveWallEntity(nextCase, wallEntity);
         Level::setElementCase(nextCase, LevelCaseType_e::WALL_MOVE_LC);
     }
 }
@@ -196,10 +198,14 @@ void switchToNextPhaseMoveWall(MapCoordComponent *mapComp,
     if(++moveWallComp->m_currentMove >=
             moveWallComp->m_directionMove[moveWallComp->m_currentPhase].second)
     {
+        //IF CYCLE END
         if(++moveWallComp->m_currentPhase == moveWallComp->m_directionMove.size())
         {
-            //STOP MOVING
-            Level::resetElementCase(mapComp->m_coord);
+            if(Level::getElementCase(mapComp->m_coord)->m_type !=
+                    LevelCaseType_e::WALL_LC)
+            {
+                Level::setElementCase(mapComp->m_coord, LevelCaseType_e::WALL_LC);
+            }
             moveWallComp->m_inMovement = false;
         }
     }

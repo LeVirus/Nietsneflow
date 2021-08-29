@@ -55,13 +55,14 @@ std::optional<ElementRaycast> Level::getElementCase(const pairUI_t &tilePosition
 }
 
 //===================================================================
-void Level::memMoveWallEntity(const pairUI_t &tilePosition, uint32_t entity)
+void Level::memMoveWallEntity(const pairUI_t &tilePosition, LevelCaseType_e type,
+                              uint32_t entity)
 {
     ElementRaycast &element = m_levelCaseType[getLevelCaseIndex(tilePosition)];
     if(!element.m_memMoveWall)
     {
         element.m_memMoveWall = PairMemMoveableWall_t();
-        element.m_memMoveWall->first = element.m_type;
+        element.m_memMoveWall->first = type;
     }
     element.m_memMoveWall->second.push_back(entity);
 }
@@ -92,8 +93,6 @@ uint32_t Level::getLevelCaseIndex(const pairUI_t &tilePosition)
     assert(tilePosition.second < m_size.second);
     return index;
 }
-
-
 
 //===================================================================
 pairFloat_t getAbsolutePosition(const pairUI_t &coord)

@@ -83,7 +83,7 @@ public:
     static void addElementCase(SpriteTextureComponent *spriteComp, const pairUI_t &tilePosition,
                                LevelCaseType_e type, uint32_t numEntity);
     static std::optional<ElementRaycast> getElementCase(const pairUI_t &tilePosition);
-    static void memMoveWallEntity(const pairUI_t &tilePosition, uint32_t entity);
+    static void memMoveWallEntity(const pairUI_t &tilePosition, LevelCaseType_e type, uint32_t entity);
     static bool setElementCase(const pairUI_t &tilePosition, LevelCaseType_e type);
     //in the case of moveable wall reset case
     static void resetElementCase(const pairUI_t &tilePosition);

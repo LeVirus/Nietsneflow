@@ -601,8 +601,18 @@ void CollisionSystem::treatActionPlayer(CollisionArgs &args)
             {
                return;
             }
-            Level::setElementCase(args.mapCompB.m_coord, LevelCaseType_e::EMPTY_LC);
-            Level::memMoveWallEntity(args.mapCompB.m_coord, args.entityNumB);
+            std::optional<ElementRaycast> element = Level::getElementCase(args.mapCompB.m_coord);
+            //init move wall case
+            if(element->m_type == LevelCaseType_e::WALL_LC && !element->m_memMoveWall)
+            {
+                //if first phase for moveable wall set empty for reset
+                Level::memMoveWallEntity(args.mapCompB.m_coord, LevelCaseType_e::EMPTY_LC, args.entityNumB);
+                Level::setElementCase(args.mapCompB.m_coord, LevelCaseType_e::WALL_MOVE_LC);
+            }
+            else if(element->m_memMoveWall && element->m_memMoveWall->first == LevelCaseType_e::EMPTY_LC)
+            {
+                Level::setElementCase(args.mapCompB.m_coord, LevelCaseType_e::WALL_MOVE_LC);
+            }
             moveableWallComp->m_inMovement = true;
             moveableWallComp->m_initPos = true;
             moveableWallComp->m_currentPhase = 0;
