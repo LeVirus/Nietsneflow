@@ -68,10 +68,14 @@ void Level::memMoveWallEntity(const pairUI_t &tilePosition, LevelCaseType_e type
 }
 
 //===================================================================
-bool Level::setElementCase(const pairUI_t &tilePosition, LevelCaseType_e type)
+void Level::setElementTypeCase(const pairUI_t &tilePosition, LevelCaseType_e type)
 {
     m_levelCaseType[getLevelCaseIndex(tilePosition)].m_type = type;
-    return true;
+}
+
+void Level::setElementEntityCase(const pairUI_t &tilePosition, uint32_t entity)
+{
+    m_levelCaseType[getLevelCaseIndex(tilePosition)].m_numEntity = entity;
 }
 
 //===================================================================

@@ -154,7 +154,7 @@ void setInitPhaseMoveWall(MapCoordComponent *mapComp, MoveableWallConfComponent 
     pairUI_t nextCase;
     if(Level::getElementCase(mapComp->m_coord)->m_type != LevelCaseType_e::WALL_LC)
     {
-        Level::setElementCase(mapComp->m_coord, LevelCaseType_e::WALL_MOVE_LC);
+        Level::setElementTypeCase(mapComp->m_coord, LevelCaseType_e::WALL_MOVE_LC);
     }
     moveWallComp->m_initPos = false;
     switch(currentDir)
@@ -184,7 +184,7 @@ void setInitPhaseMoveWall(MapCoordComponent *mapComp, MoveableWallConfComponent 
     Level::memMoveWallEntity(nextCase, type, wallEntity);
     if(type != LevelCaseType_e::WALL_LC)
     {
-        Level::setElementCase(nextCase, LevelCaseType_e::WALL_MOVE_LC);
+        Level::setElementTypeCase(nextCase, LevelCaseType_e::WALL_MOVE_LC);
     }
 }
 
@@ -201,10 +201,11 @@ void switchToNextPhaseMoveWall(MapCoordComponent *mapComp,
         //IF CYCLE END
         if(++moveWallComp->m_currentPhase == moveWallComp->m_directionMove.size())
         {
-            if(Level::getElementCase(mapComp->m_coord)->m_type !=
-                    LevelCaseType_e::WALL_LC)
+            std::optional<ElementRaycast> element = Level::getElementCase(mapComp->m_coord);
+            if(element->m_type != LevelCaseType_e::WALL_LC)
             {
-                Level::setElementCase(mapComp->m_coord, LevelCaseType_e::WALL_LC);
+                Level::setElementTypeCase(mapComp->m_coord, LevelCaseType_e::WALL_LC);
+                Level::setElementEntityCase(mapComp->m_coord, element->m_memMoveWall->second[0]);
             }
             moveWallComp->m_inMovement = false;
         }

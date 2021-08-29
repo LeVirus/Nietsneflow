@@ -84,7 +84,8 @@ public:
                                LevelCaseType_e type, uint32_t numEntity);
     static std::optional<ElementRaycast> getElementCase(const pairUI_t &tilePosition);
     static void memMoveWallEntity(const pairUI_t &tilePosition, LevelCaseType_e type, uint32_t entity);
-    static bool setElementCase(const pairUI_t &tilePosition, LevelCaseType_e type);
+    static void setElementTypeCase(const pairUI_t &tilePosition, LevelCaseType_e type);
+    static void setElementEntityCase(const pairUI_t &tilePosition, uint32_t entity);
     //in the case of moveable wall reset case
     static void resetElementCase(const pairUI_t &tilePosition);
 

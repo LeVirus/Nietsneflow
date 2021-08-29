@@ -957,7 +957,8 @@ optionalTargetRaycast_t FirstPersonDisplaySystem::calcMovingWallSegmentRaycast(f
     {
         float textPosWall = lateralColl ? currentPoint.first : currentPoint.second;
         textPosWall = std::fmod(textPosWall, LEVEL_TILE_SIZE_PX)/* + textPosWall*/;//??
-        return tupleTargetRaycast_t{currentPoint, textPosWall, element.m_numEntity};
+        //OOOOOOK
+        return tupleTargetRaycast_t{currentPoint, textPosWall, element.m_memMoveWall->second[0]};
     }
     return {};
 }
