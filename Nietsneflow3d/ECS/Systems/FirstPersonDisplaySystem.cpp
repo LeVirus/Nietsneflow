@@ -950,15 +950,52 @@ optionalTargetRaycast_t FirstPersonDisplaySystem::calcMovingWallSegmentRaycast(f
                                                                                const ElementRaycast &element)
 {
     assert(element.m_memMoveWall);
-    bool lateralColl, textPosWall = treatMovingWallRaycast(element.m_memMoveWall->second, radiantAngle,
-                                                           lateralColl, currentPoint, lateralLeadCoef,
-                                                           verticalLeadCoef);
-    if(textPosWall)
+    bool lateralColl, textPosWall = false;
+    assert(element.m_memMoveWall->second.size());
+    for(uint32_t i = 0; i < element.m_memMoveWall->second.size(); ++i)
     {
-        float textPosWall = lateralColl ? currentPoint.first : currentPoint.second;
-        textPosWall = std::fmod(textPosWall, LEVEL_TILE_SIZE_PX)/* + textPosWall*/;//??
-        //OOOOOOK
-        return tupleTargetRaycast_t{currentPoint, textPosWall, element.m_memMoveWall->second[0]};
+        RectangleCollisionComponent *rectComp = stairwayToComponentManager().
+                searchComponentByType<RectangleCollisionComponent>(element.m_memMoveWall->second[i], Components_e::RECTANGLE_COLLISION_COMPONENT);
+        assert(rectComp);
+        MapCoordComponent *mapComp = stairwayToComponentManager().
+                searchComponentByType<MapCoordComponent>(element.m_memMoveWall->second[i], Components_e::MAP_COORD_COMPONENT);
+        assert(mapComp);
+        //first case x pos limit second y pos limit
+        pairFloat_t wallPos[2] = {{mapComp->m_absoluteMapPositionPX.first,
+                                   mapComp->m_absoluteMapPositionPX.first +
+                                   rectComp->m_size.first},
+                                  {mapComp->m_absoluteMapPositionPX.second,
+                                   mapComp->m_absoluteMapPositionPX.second +
+                                   rectComp->m_size.second}};
+        //exclude case
+        if((std::cos(radiantAngle) < 0.0f && currentPoint.first < wallPos[0].first) ||
+                (std::cos(radiantAngle) > 0.0f && currentPoint.first > wallPos[0].second))
+        {
+            textPosWall = false;
+        }
+        else if((std::sin(radiantAngle) > 0.0f && currentPoint.second < wallPos[1].first) ||
+                (std::sin(radiantAngle) < 0.0f && currentPoint.second > wallPos[1].second))
+        {
+            textPosWall = false;
+        }
+        else if(lateralLeadCoef && treatLateralIntersectRect(currentPoint, wallPos, *lateralLeadCoef, radiantAngle))
+        {
+            lateralColl = true;
+            textPosWall = true;
+        }
+        else if(verticalLeadCoef && treatVerticalIntersectRect(currentPoint, wallPos, *verticalLeadCoef, radiantAngle))
+        {
+            lateralColl = false;
+            textPosWall = true;
+        }
+        if(textPosWall)
+        {
+            float textPosWall = lateralColl ?
+                        std::abs(wallPos[0].first - currentPoint.first) :
+                std::abs(wallPos[1].first - currentPoint.second);
+            //OOOOOOK
+            return tupleTargetRaycast_t{currentPoint, textPosWall, element.m_memMoveWall->second[0]};
+        }
     }
     return {};
 }
@@ -1037,56 +1074,6 @@ std::optional<float> FirstPersonDisplaySystem::treatDoorRaycast(uint32_t numEnti
         }
     }
     return {};
-}
-
-//===================================================================
-bool FirstPersonDisplaySystem::treatMovingWallRaycast(const std::vector<uint32_t> &vectEntities,
-                                                      float currentRadiantAngle,
-                                                      bool &lateralColl,
-                                                      pairFloat_t &currentPoint,
-                                                      std::optional<float> lateralLeadCoef,
-                                                      std::optional<float> verticalLeadCoef)
-{
-    assert(vectEntities.size());
-    for(uint32_t i = 0; i < vectEntities.size(); ++i)
-    {
-        RectangleCollisionComponent *rectComp = stairwayToComponentManager().
-                searchComponentByType<RectangleCollisionComponent>(vectEntities[i], Components_e::RECTANGLE_COLLISION_COMPONENT);
-        assert(rectComp);
-        MapCoordComponent *mapComp = stairwayToComponentManager().
-                searchComponentByType<MapCoordComponent>(vectEntities[i], Components_e::MAP_COORD_COMPONENT);
-        assert(mapComp);
-        //first case x pos limit second y pos limit
-        pairFloat_t wallPos[2] = {{mapComp->m_absoluteMapPositionPX.first,
-                                   mapComp->m_absoluteMapPositionPX.first +
-                                   rectComp->m_size.first},
-                                  {mapComp->m_absoluteMapPositionPX.second,
-                                   mapComp->m_absoluteMapPositionPX.second +
-                                   rectComp->m_size.second}};
-        //exclude case
-        if((std::cos(currentRadiantAngle) < 0.0f && currentPoint.first < wallPos[0].first) ||
-                (std::cos(currentRadiantAngle) > 0.0f && currentPoint.first > wallPos[0].second))
-        {
-            return false;
-        }
-        if((std::sin(currentRadiantAngle) > 0.0f && currentPoint.second < wallPos[1].first) ||
-                (std::sin(currentRadiantAngle) < 0.0f && currentPoint.second > wallPos[1].second))
-        {
-            return false;
-        }
-
-        if(lateralLeadCoef && treatLateralIntersectRect(currentPoint, wallPos, *lateralLeadCoef, currentRadiantAngle))
-        {
-            lateralColl = true;
-            return true;
-        }
-        if(verticalLeadCoef && treatVerticalIntersectRect(currentPoint, wallPos, *verticalLeadCoef, currentRadiantAngle))
-        {
-            lateralColl = false;
-            return true;
-        }
-    }
-    return false;
 }
 
 //===================================================================
