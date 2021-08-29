@@ -1,5 +1,8 @@
 BUGS======================================================================
 
+))
+When a wall is moving in the direction of the player and the player is touching this wall the wall does not appear 
+
 -12)
 Static element  table desapear at limit vision
 

@@ -62,9 +62,9 @@ void Level::memMoveWallEntity(const pairUI_t &tilePosition, LevelCaseType_e type
     if(!element.m_memMoveWall)
     {
         element.m_memMoveWall = PairMemMoveableWall_t();
-        element.m_memMoveWall->first = type;
     }
-    element.m_memMoveWall->second.push_back(entity);
+    element.m_memMoveWall->first = type;
+    element.m_memMoveWall->second = entity;
 }
 
 //===================================================================

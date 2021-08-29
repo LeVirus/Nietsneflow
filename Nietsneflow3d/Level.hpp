@@ -8,7 +8,7 @@
 #include <ECS/Components/ObjectConfComponent.hpp>
 
 using vectPairUI_t = std::vector<pairUI_t>;
-using PairMemMoveableWall_t = std::pair<LevelCaseType_e, std::vector<uint32_t>>;
+using PairMemMoveableWall_t = std::pair<LevelCaseType_e, uint32_t>;
 
 struct MoveableComponent;
 struct PositionVertexComponent;

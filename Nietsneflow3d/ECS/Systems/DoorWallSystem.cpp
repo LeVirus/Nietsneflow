@@ -205,7 +205,7 @@ void switchToNextPhaseMoveWall(MapCoordComponent *mapComp,
             if(element->m_type != LevelCaseType_e::WALL_LC)
             {
                 Level::setElementTypeCase(mapComp->m_coord, LevelCaseType_e::WALL_LC);
-                Level::setElementEntityCase(mapComp->m_coord, element->m_memMoveWall->second[0]);
+                Level::setElementEntityCase(mapComp->m_coord, element->m_memMoveWall->second);
             }
             moveWallComp->m_inMovement = false;
         }
