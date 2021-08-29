@@ -131,9 +131,9 @@ pairFloat_t getIntersectCoord(const pairFloat_t &observerPoint, const pairFloat_
 bool treatDisplayDoor(float currentRadiantAngle, bool doorVertical, pairFloat_t &currentPoint,
                       const pairFloat_t doorPos[], std::optional<float> verticalLeadCoef,
                       std::optional<float> lateralLeadCoef, bool &textLateral, bool &textFace, bool bull = false);
-bool treatVerticalIntersectDoor(pairFloat_t &currentPoint, const pairFloat_t doorPos[], float verticalLeadCoef, float radiantAngle);
+bool treatVerticalIntersectRect(pairFloat_t &currentPoint, const pairFloat_t rectPos[], float verticalLeadCoef, float radiantAngle);
 //return true if door collision
-bool treatLateralIntersectDoor(pairFloat_t &currentPoint, const pairFloat_t doorPos[], float lateralLeadCoef, float radiantAngle);
+bool treatLateralIntersectRect(pairFloat_t &currentPoint, const pairFloat_t rectPos[], float lateralLeadCoef, float radiantAngle);
 void treatLimitAngle(float &degreeAngleA, float &degreeAngleB);
 void removeSecondRect(pairFloat_t absolPos[], float distance[], uint32_t &distanceToTreat);
 float getDoorDistance(const MapCoordComponent *mapCompCamera, const MapCoordComponent *mapCompDoor, const DoorComponent *doorComp);
