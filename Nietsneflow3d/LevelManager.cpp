@@ -186,6 +186,30 @@ void LevelManager::loadExit(const INIReader &reader)
 }
 
 //===================================================================
+void LevelManager::loadTriggerElements(const INIReader &reader)
+{
+    std::vector<std::string> vectINISections;
+    vectINISections = reader.getSectionNamesContaining("Trigger");
+    if(vectINISections.empty())
+    {
+        return;
+    }
+    std::string spriteID;
+    for(uint32_t i = 0; i < vectINISections.size(); ++i)
+    {
+        spriteID = reader.Get(vectINISections[i], "Sprite", "");
+        assert(!spriteID.empty());
+        m_triggerDisplayData.insert({vectINISections[i], MemSpriteData()});
+        m_triggerDisplayData[vectINISections[i]].m_numSprite = *m_pictureData.getIdentifier(spriteID);
+        //getSpriteId(reader, spriteID);
+        m_triggerDisplayData[vectINISections[i]].m_GLSize.first =
+                reader.GetReal(vectINISections[i], "SpriteWeightGame", 1.0);
+        m_triggerDisplayData[vectINISections[i]].m_GLSize.second =
+                reader.GetReal(vectINISections[i], "SpriteHeightGame", 1.0);
+    }
+}
+
+//===================================================================
 void LevelManager::loadPositionExit(const INIReader &reader)
 {
     std::vector<std::string> vectINISections;
@@ -673,6 +697,26 @@ void LevelManager::loadPositionWall(const INIReader &reader)
 }
 
 //===================================================================
+void LevelManager::loadTriggerLevelData(const INIReader &reader)
+{
+    std::vector<std::string> vectINISections;
+    std::string triggerID;
+    std::map<std::string, MemSpriteData>::iterator it;
+    vectINISections = reader.getSectionNamesContaining("Trigger");
+    for(uint32_t i = 0; i < vectINISections.size(); ++i)
+    {
+        m_triggerData.insert({vectINISections[i], TriggerLevelElementData()});
+        triggerID = reader.Get(vectINISections[i], "DisplayData", "");
+        it = m_triggerDisplayData.find(triggerID);
+        assert(it != m_triggerDisplayData.end());
+        m_triggerData[vectINISections[i]].m_spriteData = it->second;
+        fillStandartPositionVect(reader, vectINISections[i],
+                                 m_triggerData[vectINISections[i]].m_TileGamePosition);
+        m_triggerData[vectINISections[i]].m_once = reader.GetBoolean(vectINISections[i], "ActivableOnce", false);
+    }
+}
+
+//===================================================================
 void LevelManager::loadDoorData(const INIReader &reader)
 {
     std::vector<std::string> vectINISections;
@@ -889,6 +933,7 @@ void LevelManager::loadStandardData(const std::string &INIFileName)
     loadGeneralStaticElements(reader, LevelStaticElementType_e::CEILING);
     loadGeneralStaticElements(reader, LevelStaticElementType_e::OBJECT);
     loadExit(reader);
+    loadTriggerElements(reader);
     loadDoorData(reader);
     loadVisibleShotDisplayData(reader);
     loadShotImpactDisplayData(reader);
@@ -939,6 +984,7 @@ void LevelManager::loadLevel(const std::string &INIFileName, uint32_t levelNum)
     loadLevelData(reader);
     loadPositionPlayerData(reader);
     loadPositionWall(reader);
+    loadTriggerLevelData(reader);
     loadPositionStaticElements(reader);
     loadPositionExit(reader);
     loadPositionDoorData(reader);

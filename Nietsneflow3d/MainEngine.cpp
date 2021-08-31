@@ -15,6 +15,7 @@
 #include <ECS/Components/PlayerConfComponent.hpp>
 #include <ECS/Components/MemPositionsVertexComponents.hpp>
 #include <ECS/Components/SegmentCollisionComponent.hpp>
+#include <ECS/Components/TriggerComponent.hpp>
 #include <ECS/Components/WriteComponent.hpp>
 #include <ECS/Components/TimerComponent.hpp>
 #include <ECS/Components/EnemyConfComponent.hpp>
@@ -471,6 +472,7 @@ void MainEngine::loadLevelEntities(const LevelManager &levelManager)
     loadMoveableWallEntities(levelManager.getMoveableWallData(), levelManager.getPictureData().getSpriteData());
     loadDoorEntities(levelManager);
     loadEnemiesEntities(levelManager);
+    loadTriggerEntities(levelManager, levelManager.getPictureData().getSpriteData());
 }
 
 //===================================================================
@@ -795,6 +797,47 @@ void MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
                     searchComponentByType<MoveableComponent>(numEntity, Components_e::MOVEABLE_COMPONENT);
             assert(moveComp);
             moveComp->m_velocity = it->second.m_velocity;
+        }
+    }
+}
+
+//===================================================================
+void MainEngine::loadTriggerEntities(const LevelManager &levelManager, const std::vector<SpriteData> &vectSprite)
+{
+    const std::map<std::string, TriggerLevelElementData> triggerContainer =
+            levelManager.getTriggerDisplayData();
+    std::map<std::string, TriggerLevelElementData>::const_iterator it;
+    for(it = triggerContainer.begin(); it != triggerContainer.end(); ++it)
+    {
+        for(uint32_t j = 0; j < it->second.m_TileGamePosition.size(); ++j)
+        {
+            uint32_t numEntity = createTriggerEntity();
+            SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().
+                    searchComponentByType<SpriteTextureComponent>(numEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
+            GeneralCollisionComponent *genComp = m_ecsManager.getComponentManager().
+                    searchComponentByType<GeneralCollisionComponent>(numEntity, Components_e::GENERAL_COLLISION_COMPONENT);
+            TriggerComponent *triggerComp = m_ecsManager.getComponentManager().
+                    searchComponentByType<TriggerComponent>(numEntity, Components_e::GENERAL_COLLISION_COMPONENT);
+            MapCoordComponent *mapComp = m_ecsManager.getComponentManager().
+                    searchComponentByType<MapCoordComponent>(numEntity, Components_e::MAP_COORD_COMPONENT);
+            CircleCollisionComponent *circleComp = m_ecsManager.getComponentManager().
+                    searchComponentByType<CircleCollisionComponent>(numEntity, Components_e::CIRCLE_COLLISION_COMPONENT);
+            FPSVisibleStaticElementComponent *fpsComp = m_ecsManager.getComponentManager().
+                    searchComponentByType<FPSVisibleStaticElementComponent>(numEntity, Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
+            assert(fpsComp);
+            assert(circleComp);
+            assert(triggerComp);
+            assert(mapComp);
+            assert(spriteComp);
+            assert(genComp);
+            fpsComp->m_levelElementType = LevelStaticElementType_e::GROUND;
+            fpsComp->m_inGameSpriteSize = it->second.m_spriteData.m_GLSize;
+            circleComp->m_ray = 10.0f;
+            mapComp->m_coord = it->second.m_TileGamePosition[j];
+            mapComp->m_absoluteMapPositionPX = getCenteredAbsolutePosition(mapComp->m_coord);
+            genComp->m_tagA = CollisionTag_e::WALL_CT;
+            spriteComp->m_spriteData = &vectSprite[it->second.m_spriteData.m_numSprite];
+            triggerComp->m_once = it->second.m_once;
         }
     }
 }
@@ -1144,6 +1187,20 @@ uint32_t MainEngine::createShotEntity()
     bitsetComponents[Components_e::SEGMENT_COLLISION_COMPONENT] = true;
     bitsetComponents[Components_e::GENERAL_COLLISION_COMPONENT] = true;
     bitsetComponents[Components_e::SHOT_CONF_COMPONENT] = true;
+    return m_ecsManager.addEntity(bitsetComponents);
+}
+
+//===================================================================
+uint32_t MainEngine::createTriggerEntity()
+{
+    std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComponents;
+    bitsetComponents[Components_e::POSITION_VERTEX_COMPONENT] = true;
+    bitsetComponents[Components_e::SPRITE_TEXTURE_COMPONENT] = true;
+    bitsetComponents[Components_e::MAP_COORD_COMPONENT] = true;
+    bitsetComponents[Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT] = true;
+    bitsetComponents[Components_e::GENERAL_COLLISION_COMPONENT] = true;
+    bitsetComponents[Components_e::CIRCLE_COLLISION_COMPONENT] = true;
+    bitsetComponents[Components_e::TRIGGER_COMPONENT] = true;
     return m_ecsManager.addEntity(bitsetComponents);
 }
 

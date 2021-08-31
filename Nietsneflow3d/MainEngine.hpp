@@ -59,8 +59,6 @@ private:
     void displayTransitionMenu();
     void loadColorEntities();
     void confUnifiedColorEntity(uint32_t entityNum, const tupleFloat_t &color);
-    uint32_t createColorEntity();
-    uint32_t createTextureEntity();
     void loadBackgroundEntities(const GroundCeilingData &groundData,
                                       const GroundCeilingData &backgroundData, const LevelManager &levelManager);
     void confColorBackgroundComponents(uint32_t entity, const GroundCeilingData &groundData, bool ground);
@@ -82,10 +80,6 @@ private:
                           uint32_t entityNum, const Level &level,
                           uint32_t numWeaponEntity);
     void confActionEntity();
-    uint32_t createMeleeAttackEntity();
-    uint32_t createAttackMeleeEntity(uint32_t damage, CollisionTag_e tag);
-    uint32_t loadWeaponsEntity(const LevelManager &levelManager);
-    uint32_t createBackgroundEntity(bool color);
     void loadWallEntities(const std::map<std::string, WallData> &wallData,
                           const std::vector<SpriteData> &vectSprite);
     void loadMoveableWallEntities(const std::map<std::string, MoveableWallData> &wallData,
@@ -93,13 +87,11 @@ private:
     void confBaseWallData(uint32_t wallEntity, const SpriteData &memSpriteData, const pairUI_t &coordLevel, const std::vector<uint8_t> &numWallSprites, const std::vector<SpriteData> &vectSprite);
     void loadDoorEntities(const LevelManager &levelManager);
     void loadEnemiesEntities(const LevelManager &levelManager);
-    uint32_t createEnemyDropObject(const LevelManager &levelManager, const EnemyData &enemyData, const pairUI_t &coord);
+    void loadTriggerEntities(const LevelManager &levelManager, const std::vector<SpriteData> &vectSprite);
     void confVisibleAmmo(uint32_t ammoEntity);
     void loadStaticElementEntities(const LevelManager &levelManager);
     void loadStaticElementGroup(const std::vector<SpriteData> &vectSpriteData, const std::map<std::string, StaticLevelElementData> &staticData,
                                 LevelStaticElementType_e elementType);
-    uint32_t createStaticElementEntity(LevelStaticElementType_e elementType, const StaticLevelElementData &staticElementData,
-                                   const std::vector<SpriteData> &vectSpriteData, const pairUI_t &coord);
     void loadExitElement(const LevelManager &levelManager, const StaticLevelElementData &exit);
     void createPlayerAmmoEntities(PlayerConfComponent *playerConf, CollisionTag_e collTag);
     void confAmmoEntities(std::vector<uint32_t> &ammoEntities, CollisionTag_e collTag,
@@ -109,6 +101,16 @@ private:
                                     const MapImpactData_t &mapImpactData);
     void confShotImpactEntity(const std::vector<SpriteData> &vectSpriteData, const PairImpactData_t &shootDisplayData,
                               uint32_t &impactEntity);
+    uint32_t createTriggerEntity();
+    uint32_t createColorEntity();
+    uint32_t createTextureEntity();
+    uint32_t createEnemyDropObject(const LevelManager &levelManager, const EnemyData &enemyData, const pairUI_t &coord);
+    uint32_t createStaticElementEntity(LevelStaticElementType_e elementType, const StaticLevelElementData &staticElementData,
+                                   const std::vector<SpriteData> &vectSpriteData, const pairUI_t &coord);
+    uint32_t createMeleeAttackEntity();
+    uint32_t createAttackMeleeEntity(uint32_t damage, CollisionTag_e tag);
+    uint32_t loadWeaponsEntity(const LevelManager &levelManager);
+    uint32_t createBackgroundEntity(bool color);
     uint32_t createWeaponEntity();
     uint32_t createWallEntity(bool multiSprite, bool moveable = false);
     uint32_t createDoorEntity();

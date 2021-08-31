@@ -39,6 +39,7 @@ HEADERS += \
     ECS/Components/SegmentCollisionComponent.hpp \
     ECS/Components/ShotConfComponent.hpp \
     ECS/Components/TimerComponent.hpp \
+    ECS/Components/TriggerComponent.hpp \
     ECS/Components/VisionComponent.hpp \
     ECS/Components/WeaponComponent.hpp \
     ECS/Components/WriteComponent.hpp \

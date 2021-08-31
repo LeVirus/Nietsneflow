@@ -5,8 +5,6 @@
 #include <array>
 #include <functional>
 
-using pairFloat_t = std::pair<float, float>;
-
 /**
  * @brief The VertexComponent struct
  * Coordinated data for OpenGL displaying.

@@ -23,6 +23,7 @@
 #include <ECS/Components/ShotConfComponent.hpp>
 #include <ECS/Components/ObjectConfComponent.hpp>
 #include <ECS/Components/ImpactShotComponent.hpp>
+#include <ECS/Components/TriggerComponent.hpp>
 #include <ECS/Systems/ColorDisplaySystem.hpp>
 #include <ECS/Systems/MapDisplaySystem.hpp>
 #include <ECS/Systems/InputSystem.hpp>
@@ -216,6 +217,12 @@ void ECSManager::syncComponentsFromEntities(uint32_t numEntity,
         {
             m_componentManager->instanciateExternComponent(numEntity,
                         std::make_unique<TimerComponent>());
+        }
+            break;
+        case Components_e::TRIGGER_COMPONENT:
+        {
+            m_componentManager->instanciateExternComponent(numEntity,
+                        std::make_unique<TriggerComponent>());
         }
             break;
         case Components_e::DOOR_COMPONENT:

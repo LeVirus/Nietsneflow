@@ -14,6 +14,13 @@ struct MemSpriteData
     pairFloat_t m_GLSize;
 };
 
+struct TriggerLevelElementData
+{
+    MemSpriteData m_spriteData;
+    vectPairUI_t m_TileGamePosition;
+    bool m_once;
+};
+
 using MapVisibleShotData_t = std::map<std::string, std::vector<MemSpriteData>>;
 using PairImpactData_t = std::pair<std::vector<MemSpriteData>, MemSpriteData>;
 using MapImpactData_t = std::map<std::string, PairImpactData_t>;
@@ -98,6 +105,10 @@ public:
     {
         return m_visibleShootINIData;
     }
+    inline const std::map<std::string, TriggerLevelElementData> &getTriggerDisplayData()const
+    {
+        return m_triggerData;
+    }
 private:
     //texture and sprite loading
     void loadTexturePath(const INIReader &reader);
@@ -125,6 +136,7 @@ private:
     void loadShotImpactDisplayData(const INIReader &reader);
     void loadWeaponsDisplayData(const INIReader &reader);
     void loadExit(const INIReader &reader);
+    void loadTriggerElements(const INIReader &reader);
     void loadSpriteData(const INIReader &reader, const std::string &sectionName,
                         StaticLevelElementData &staticElement);
     void loadDisplayData(const INIReader &reader,
@@ -133,6 +145,7 @@ private:
                         std::string_view sectionName, uint32_t numIt);
     void loadWallData(const INIReader &reader);
     void loadPositionWall(const INIReader &reader);
+    void loadTriggerLevelData(const INIReader &reader);
     void loadDoorData(const INIReader &reader);
     void loadPositionDoorData(const INIReader &reader);
     void loadEnemyData(const INIReader &reader);
@@ -154,6 +167,8 @@ private:
     std::map<std::string, StaticLevelElementData> m_groundElement, m_ceilingElement, m_objectElement;
     std::map<std::string, DoorData> m_doorData;
     std::map<std::string, EnemyData> m_enemyData;
+    std::map<std::string, TriggerLevelElementData> m_triggerData;
+    std::map<std::string, MemSpriteData> m_triggerDisplayData;
     //store the sprite number and the screen display size
     std::vector<WeaponINIData> m_vectWeaponsINIData;
     //first moving Shot sprite, all other destruct phase sprites
