@@ -13,6 +13,7 @@ struct MoveableWallConfComponent : public ecs::Component
     uint32_t m_currentPhase = 0, m_currentMove;
     pairFloat_t m_nextPhasePos;
     TriggerWallMoveType_e m_triggerType;
-    bool m_ghost = true, m_reversableMove, m_inMovement = false, m_initPos = false;
+    TriggerBehaviourType_e m_triggerBehaviour;
+    bool m_inMovement = false, m_initPos = false;
     virtual ~MoveableWallConfComponent() = default;
 };

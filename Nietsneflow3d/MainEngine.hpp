@@ -8,6 +8,7 @@
 struct MemSpriteData;
 struct WallData;
 struct MoveableWallData;
+struct AssociatedTriggerData;
 
 using MapVisibleShotData_t = std::map<std::string, std::vector<MemSpriteData>>;
 using mapEnemySprite_t = std::map<EnemySpriteType_e, pairUI_t>;
@@ -87,7 +88,7 @@ private:
     void confBaseWallData(uint32_t wallEntity, const SpriteData &memSpriteData, const pairUI_t &coordLevel, const std::vector<uint8_t> &numWallSprites, const std::vector<SpriteData> &vectSprite);
     void loadDoorEntities(const LevelManager &levelManager);
     void loadEnemiesEntities(const LevelManager &levelManager);
-    void loadTriggerEntities(const LevelManager &levelManager, const std::vector<SpriteData> &vectSprite);
+    void loadTriggerEntityData(const AssociatedTriggerData &triggerData, const std::vector<uint32_t> &vectPosition, const std::vector<SpriteData> &vectSprite);
     void confVisibleAmmo(uint32_t ammoEntity);
     void loadStaticElementEntities(const LevelManager &levelManager);
     void loadStaticElementGroup(const std::vector<SpriteData> &vectSpriteData, const std::map<std::string, StaticLevelElementData> &staticData,
@@ -161,6 +162,7 @@ private:
     WeaponComponent *m_weaponComp;
     MemPlayerConf m_memPlayerConf;
     std::set<pairUI_t> m_memWall;
+    std::map<pairUI_t, uint32_t> m_memTriggerCreated;
 };
 
 void insertEnemySpriteFromType(const std::vector<SpriteData> &vectSprite, mapEnemySprite_t &mapSpriteAssociate,

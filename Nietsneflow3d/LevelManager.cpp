@@ -201,7 +201,6 @@ void LevelManager::loadTriggerElements(const INIReader &reader)
         assert(!spriteID.empty());
         m_triggerDisplayData.insert({vectINISections[i], MemSpriteData()});
         m_triggerDisplayData[vectINISections[i]].m_numSprite = *m_pictureData.getIdentifier(spriteID);
-        //getSpriteId(reader, spriteID);
         m_triggerDisplayData[vectINISections[i]].m_GLSize.first =
                 reader.GetReal(vectINISections[i], "SpriteWeightGame", 1.0);
         m_triggerDisplayData[vectINISections[i]].m_GLSize.second =
@@ -298,6 +297,18 @@ void LevelManager::fillStandartPositionVect(const INIReader &reader, const std::
         vectPos.emplace_back(pairUI_t{(*results)[j], (*results)[j + 1]});
         deleteWall(vectPos.back());
     }
+}
+
+//===================================================================
+std::optional<pairUI_t> LevelManager::getPosition(const INIReader &reader,
+                                                  const std::string_view sectionName, const std::string_view propertyName)
+{
+    std::optional<std::vector<uint32_t>> results = getBrutPositionData(reader, sectionName.data(), propertyName.data());
+    if(!results || results->size() != 2)
+    {
+        return {};
+    }
+    return pairUI_t{(*results)[0], (*results)[1]};
 }
 
 //===================================================================
@@ -655,16 +666,8 @@ void LevelManager::loadPositionWall(const INIReader &reader)
     std::map<std::string, WallData>::iterator it;
     for(uint32_t i = 0; i < vectINISections.size(); ++i)
     {
-        //Classic wall
-        if(vectINISections[i].find("MoveableWall") == std::string::npos)
-        {
-            it = m_wallData.find(vectINISections[i]);
-            assert(it != m_wallData.end());
-            fillWallPositionVect(reader, vectINISections[i], "GamePosition", it->second.m_TileGamePosition);
-            removeWallPositionVect(reader, vectINISections[i], it->second.m_TileGamePosition);
-        }
         //Moveable wall
-        else
+        if(vectINISections[i].find("MoveableWall") != std::string::npos)
         {
             std::string str = vectINISections[i], direction, moveNumber;
             str.erase(0, 8);
@@ -681,39 +684,45 @@ void LevelManager::loadPositionWall(const INIReader &reader)
             std::vector<uint32_t> vectDir = convertStrToVectUI(direction);
             std::vector<uint32_t> vectMov = convertStrToVectUI(moveNumber);
             assert(vectDir.size() == vectMov.size());
-            m_moveableWallData[vectINISections[i]].m_velocity = reader.GetReal(vectINISections[i], "Velocity", 1.0f);
             m_moveableWallData[vectINISections[i]].m_directionMove.reserve(vectDir.size());
             for(uint32_t j = 0; j < vectDir.size(); ++j)
             {
                 m_moveableWallData[vectINISections[i]].m_directionMove.emplace_back(
                             std::pair<Direction_e, uint32_t>{static_cast<Direction_e>(vectDir[j]), vectMov[j]});
             }
+            m_moveableWallData[vectINISections[i]].m_velocity = reader.GetReal(vectINISections[i], "Velocity", 1.0f);
             m_moveableWallData[vectINISections[i]].m_triggerType =
                     static_cast<TriggerWallMoveType_e>(reader.GetInteger(vectINISections[i], "TriggerType", 0));
-            m_moveableWallData[vectINISections[i]].m_ghost = reader.GetBoolean(vectINISections[i], "Ghost", true);
-            m_moveableWallData[vectINISections[i]].m_reversableMove = reader.GetBoolean(vectINISections[i], "ReversableMove", false);
+            m_moveableWallData[vectINISections[i]].m_triggerBehaviourType =
+                    static_cast<TriggerBehaviourType_e>(reader.GetInteger(vectINISections[i], "TriggerBehaviourType", 0));
+            if(m_moveableWallData[vectINISections[i]].m_triggerType == TriggerWallMoveType_e::BUTTON)
+            {
+                loadTriggerLevelData(reader, vectINISections[i]);
+            }
+        }
+        //Normal wall
+        else
+        {
+            it = m_wallData.find(vectINISections[i]);
+            assert(it != m_wallData.end());
+            fillWallPositionVect(reader, vectINISections[i], "GamePosition", it->second.m_TileGamePosition);
+            removeWallPositionVect(reader, vectINISections[i], it->second.m_TileGamePosition);
         }
     }
 }
 
 //===================================================================
-void LevelManager::loadTriggerLevelData(const INIReader &reader)
+void LevelManager::loadTriggerLevelData(const INIReader &reader, const std::string &sectionName)
 {
-    std::vector<std::string> vectINISections;
-    std::string triggerID;
+    std::string str;
     std::map<std::string, MemSpriteData>::iterator it;
-    vectINISections = reader.getSectionNamesContaining("Trigger");
-    for(uint32_t i = 0; i < vectINISections.size(); ++i)
-    {
-        m_triggerData.insert({vectINISections[i], TriggerLevelElementData()});
-        triggerID = reader.Get(vectINISections[i], "DisplayData", "");
-        it = m_triggerDisplayData.find(triggerID);
-        assert(it != m_triggerDisplayData.end());
-        m_triggerData[vectINISections[i]].m_spriteData = it->second;
-        fillStandartPositionVect(reader, vectINISections[i],
-                                 m_triggerData[vectINISections[i]].m_TileGamePosition);
-        m_triggerData[vectINISections[i]].m_once = reader.GetBoolean(vectINISections[i], "ActivableOnce", false);
-    }
+    m_moveableWallData[sectionName].m_associatedTriggerData = AssociatedTriggerData();
+    str = reader.Get(sectionName, "TriggerDisplayID", "");
+    it = m_triggerDisplayData.find(str);
+    assert(it != m_triggerDisplayData.end());
+    m_moveableWallData[sectionName].m_associatedTriggerData->m_displayData = it->second;
+    m_moveableWallData[sectionName].m_associatedTriggerData->m_pos =
+            *getPosition(reader,  sectionName, "TriggerGamePosition");
 }
 
 //===================================================================
@@ -984,7 +993,6 @@ void LevelManager::loadLevel(const std::string &INIFileName, uint32_t levelNum)
     loadLevelData(reader);
     loadPositionPlayerData(reader);
     loadPositionWall(reader);
-    loadTriggerLevelData(reader);
     loadPositionStaticElements(reader);
     loadPositionExit(reader);
     loadPositionDoorData(reader);

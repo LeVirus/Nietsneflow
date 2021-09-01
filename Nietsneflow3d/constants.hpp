@@ -104,6 +104,13 @@ enum class Direction_e
     EAST
 };
 
+enum class TriggerBehaviourType_e
+{
+    ONCE,
+    REVERSABLE,
+    MULTI
+};
+
 enum class TriggerWallMoveType_e
 {
     WALL,

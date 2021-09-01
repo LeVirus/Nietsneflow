@@ -14,13 +14,6 @@ struct MemSpriteData
     pairFloat_t m_GLSize;
 };
 
-struct TriggerLevelElementData
-{
-    MemSpriteData m_spriteData;
-    vectPairUI_t m_TileGamePosition;
-    bool m_once;
-};
-
 using MapVisibleShotData_t = std::map<std::string, std::vector<MemSpriteData>>;
 using PairImpactData_t = std::pair<std::vector<MemSpriteData>, MemSpriteData>;
 using MapImpactData_t = std::map<std::string, PairImpactData_t>;
@@ -43,14 +36,21 @@ struct WallData
     std::set<pairUI_t> m_TileGamePosition;
 };
 
+struct AssociatedTriggerData
+{
+    pairUI_t m_pos;
+    MemSpriteData m_displayData;
+};
+
 struct MoveableWallData
 {
     std::vector<uint8_t> m_sprites;
     std::set<pairUI_t> m_TileGamePosition;
     std::vector<std::pair<Direction_e, uint32_t>> m_directionMove;
     TriggerWallMoveType_e m_triggerType;
+    TriggerBehaviourType_e m_triggerBehaviourType;
     float m_velocity;
-    bool m_ghost, m_reversableMove;
+    std::optional<AssociatedTriggerData> m_associatedTriggerData;
 };
 
 class LevelManager
@@ -105,10 +105,6 @@ public:
     {
         return m_visibleShootINIData;
     }
-    inline const std::map<std::string, TriggerLevelElementData> &getTriggerDisplayData()const
-    {
-        return m_triggerData;
-    }
 private:
     //texture and sprite loading
     void loadTexturePath(const INIReader &reader);
@@ -127,6 +123,7 @@ private:
                                    LevelStaticElementType_e elementType);
     void fillStandartPositionVect(const INIReader &reader, const std::string &sectionName,
                                   vectPairUI_t &vectPos);
+    std::optional<pairUI_t> getPosition(const INIReader &reader, const std::string_view sectionName, const std::string_view propertyName);
     bool fillWallPositionVect(const INIReader &reader, const std::string &sectionName, const std::string &propertyName,
                               std::set<pairUI_t> &setPos);
     void removeWallPositionVect(const INIReader &reader, const std::string &sectionName,
@@ -145,7 +142,7 @@ private:
                         std::string_view sectionName, uint32_t numIt);
     void loadWallData(const INIReader &reader);
     void loadPositionWall(const INIReader &reader);
-    void loadTriggerLevelData(const INIReader &reader);
+    void loadTriggerLevelData(const INIReader &reader, const std::string &sectionName);
     void loadDoorData(const INIReader &reader);
     void loadPositionDoorData(const INIReader &reader);
     void loadEnemyData(const INIReader &reader);
@@ -167,7 +164,6 @@ private:
     std::map<std::string, StaticLevelElementData> m_groundElement, m_ceilingElement, m_objectElement;
     std::map<std::string, DoorData> m_doorData;
     std::map<std::string, EnemyData> m_enemyData;
-    std::map<std::string, TriggerLevelElementData> m_triggerData;
     std::map<std::string, MemSpriteData> m_triggerDisplayData;
     //store the sprite number and the screen display size
     std::vector<WeaponINIData> m_vectWeaponsINIData;

@@ -11,9 +11,8 @@ struct TriggerComponent : public ecs::Component
 {
     TriggerComponent()
     {
-        muiTypeComponent = Components_e::POSITION_VERTEX_COMPONENT;
+        muiTypeComponent = Components_e::TRIGGER_COMPONENT;
     }
     std::vector<uint32_t> m_vectElementEntities;
-    bool m_once;
     virtual ~TriggerComponent() = default;
 };
