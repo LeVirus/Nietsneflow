@@ -669,9 +669,8 @@ void LevelManager::loadPositionWall(const INIReader &reader)
         //Moveable wall
         if(vectINISections[i].find("MoveableWall") != std::string::npos)
         {
-            std::string str = vectINISections[i], direction, moveNumber;
-            str.erase(0, 8);
-            it = m_wallData.find(str);
+            std::string direction, moveNumber;
+            it = m_wallData.find(reader.Get(vectINISections[i], "WallDisplayID", ""));
             assert(it != m_wallData.end());
             m_moveableWallData.insert({vectINISections[i], MoveableWallData()});
             m_moveableWallData[vectINISections[i]].m_sprites = it->second.m_sprites;
