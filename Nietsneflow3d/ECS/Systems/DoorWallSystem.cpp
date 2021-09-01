@@ -95,12 +95,15 @@ void DoorWallSystem::treatWalls()
                                                          Components_e::MAP_COORD_COMPONENT);
         assert(mapComp);
         Direction_e currentDir = moveWallComp->m_directionMove[moveWallComp->m_currentPhase].first;
+        if((currentDir == Direction_e::WEST && mapComp->m_coord.first == 0) ||
+                (currentDir == Direction_e::NORTH && mapComp->m_coord.second == 0))
+        {
+            stopMoveWallLevelLimitCase(mapComp, moveWallComp);
+            continue;
+        }
         if(moveWallComp->m_initPos)
         {
-            if(!setInitPhaseMoveWall(mapComp, moveWallComp, currentDir, m_vectMoveableWall[i]))
-            {
-                continue;
-            }
+            setInitPhaseMoveWall(mapComp, moveWallComp, currentDir, m_vectMoveableWall[i]);
         }
         MoveableComponent *moveComp = stairwayToComponentManager().
                 searchComponentByType<MoveableComponent>(m_vectMoveableWall[i],
@@ -151,7 +154,7 @@ void DoorWallSystem::treatWalls()
 
 
 //===================================================================
-bool setInitPhaseMoveWall(MapCoordComponent *mapComp, MoveableWallConfComponent *moveWallComp,
+void setInitPhaseMoveWall(MapCoordComponent *mapComp, MoveableWallConfComponent *moveWallComp,
                           Direction_e currentDir, uint32_t wallEntity)
 {
     pairUI_t nextCase;
@@ -159,7 +162,6 @@ bool setInitPhaseMoveWall(MapCoordComponent *mapComp, MoveableWallConfComponent 
     {
         Level::setElementTypeCase(mapComp->m_coord, LevelCaseType_e::WALL_MOVE_LC);
     }
-    bool stop = false;
     moveWallComp->m_initPos = false;
     switch(currentDir)
     {
@@ -169,21 +171,11 @@ bool setInitPhaseMoveWall(MapCoordComponent *mapComp, MoveableWallConfComponent 
         nextCase = {mapComp->m_coord.first + 1, mapComp->m_coord.second};
         break;
     case Direction_e::WEST:
-        if(mapComp->m_coord.first == 0)
-        {
-            stop = true;
-            break;
-        }
         moveWallComp->m_nextPhasePos = {mapComp->m_absoluteMapPositionPX.first - LEVEL_TILE_SIZE_PX,
                                         mapComp->m_absoluteMapPositionPX.second};
         nextCase = {mapComp->m_coord.first - 1, mapComp->m_coord.second};
         break;
     case Direction_e::NORTH:
-        if(mapComp->m_coord.second == 0)
-        {
-            stop = true;
-            break;
-        }
         moveWallComp->m_nextPhasePos = {mapComp->m_absoluteMapPositionPX.first,
                                         mapComp->m_absoluteMapPositionPX.second - LEVEL_TILE_SIZE_PX};
         nextCase = {mapComp->m_coord.first, mapComp->m_coord.second - 1};
@@ -194,20 +186,21 @@ bool setInitPhaseMoveWall(MapCoordComponent *mapComp, MoveableWallConfComponent 
         nextCase = {mapComp->m_coord.first, mapComp->m_coord.second + 1};
         break;
     }
-    //unactive the wall
-    if(stop)
-    {
-        moveWallComp->m_actionned = true;
-        moveWallComp->m_triggerBehaviour = TriggerBehaviourType_e::ONCE;
-        return false;
-    }
     LevelCaseType_e type = Level::getElementCase(nextCase)->m_type;
     Level::memMoveWallEntity(nextCase, type, wallEntity);
     if(type != LevelCaseType_e::WALL_LC)
     {
         Level::setElementTypeCase(nextCase, LevelCaseType_e::WALL_MOVE_LC);
     }
-    return true;
+}
+
+//===================================================================
+void stopMoveWallLevelLimitCase(MapCoordComponent *mapComp, MoveableWallConfComponent *moveWallComp)
+{
+    Level::setElementTypeCase(mapComp->m_coord, LevelCaseType_e::WALL_LC);
+    Level::resetElementCase(mapComp->m_coord);
+    moveWallComp->m_actionned = true;
+    moveWallComp->m_triggerBehaviour = TriggerBehaviourType_e::ONCE;
 }
 
 //===================================================================
