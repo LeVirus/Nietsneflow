@@ -25,6 +25,6 @@ private:
     ECSManager const *m_ECSManager;
 };
 
-void setInitPhaseMoveWall(MapCoordComponent *mapComp, MoveableWallConfComponent *moveWallComp,
+bool setInitPhaseMoveWall(MapCoordComponent *mapComp, MoveableWallConfComponent *moveWallComp,
                           Direction_e currentDir, uint32_t wallEntity);
 void switchToNextPhaseMoveWall(MapCoordComponent *mapComp, MoveableWallConfComponent *moveWallComp, const pairUI_t &previousPos);
