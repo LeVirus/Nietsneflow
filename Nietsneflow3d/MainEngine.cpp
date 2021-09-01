@@ -856,7 +856,7 @@ void MainEngine::loadTriggerEntityData(const AssociatedTriggerData &triggerData,
     else
     {
         TriggerComponent *triggerComp = m_ecsManager.getComponentManager().
-                searchComponentByType<TriggerComponent>(it->second, Components_e::GENERAL_COLLISION_COMPONENT);
+                searchComponentByType<TriggerComponent>(it->second, Components_e::TRIGGER_COMPONENT);
         assert(triggerComp);
         for(uint32_t i = 0; i < vectPosition.size(); ++i)
         {

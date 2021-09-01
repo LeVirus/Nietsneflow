@@ -499,11 +499,6 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
             {
                 collisionCircleCircleEject(args, circleCompA, circleCompB);
             }
-            else if(args.tagCompA->m_tagA == CollisionTag_e::PLAYER_ACTION_CT &&
-                    args.tagCompB->m_tagA == CollisionTag_e::EXIT_CT)
-            {
-                args.tagCompB->m_active = false;
-            }
         }
     }
         break;
@@ -607,7 +602,11 @@ void CollisionSystem::treatActionPlayerRect(CollisionArgs &args)
 //===================================================================
 void CollisionSystem::treatActionPlayerCircle(CollisionArgs &args)
 {
-    if(args.tagCompB->m_tagB == CollisionTag_e::WALL_TRIGGER_CT)
+    if(args.tagCompB->m_tagA == CollisionTag_e::EXIT_CT)
+    {
+        args.tagCompB->m_active = false;
+    }
+    else if(args.tagCompB->m_tagB == CollisionTag_e::WALL_TRIGGER_CT)
     {
 
         TriggerComponent *triggerComp = stairwayToComponentManager().

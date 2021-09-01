@@ -990,6 +990,7 @@ void LevelManager::loadLevel(const std::string &INIFileName, uint32_t levelNum)
     {
         assert("Error while reading INI file.");
     }
+    m_moveableWallData.clear();
     loadLevelData(reader);
     loadPositionPlayerData(reader);
     loadPositionWall(reader);
