@@ -618,6 +618,7 @@ void MainEngine::loadMoveableWallEntities(const std::map<std::string, MoveableWa
             assert(moveWallConfComp);
             moveWallConfComp->m_directionMove = iter->second.m_directionMove;
             moveWallConfComp->m_triggerType = iter->second.m_triggerType;
+            moveWallConfComp->m_triggerBehaviour = iter->second.m_triggerBehaviourType;
             if(moveWallConfComp->m_triggerType == TriggerWallMoveType_e::WALL)
             {
                 GeneralCollisionComponent *genCollComp = m_ecsManager.getComponentManager().

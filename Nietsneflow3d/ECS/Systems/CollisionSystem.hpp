@@ -14,7 +14,7 @@ struct EjectYArgs;
 struct EjectXArgs;
 struct PlayerConfComponent;
 struct WeaponComponent;
-
+struct MoveableWallConfComponent;
 class CollisionSystem : public ecs::System
 {
 public:
@@ -43,7 +43,8 @@ private:
     //Collisions detection
     void treatCollisionFirstRect(CollisionArgs &args);
     void treatCollisionFirstCircle(CollisionArgs &args);
-    void treatActionPlayer(CollisionArgs &args);
+    void treatActionPlayerRect(CollisionArgs &args);
+    void treatActionPlayerCircle(CollisionArgs &args);
     void treatPlayerPickObject(CollisionArgs &args);
     void treatCollisionFirstSegment(CollisionArgs &args);
 
@@ -72,6 +73,8 @@ private:
     void calcBulletSegment(SegmentCollisionComponent &segmentCompA);
     void treatEnemyShooted(uint32_t enemyEntityNum, uint32_t damage = 1);
     void confDropedObject(uint32_t objectEntity, uint32_t enemyEntity);
+    //return true if target trigger behaviour == ONCE
+    bool triggerMoveableWall(uint32_t wallEntity);
 private:
     std::multimap<CollisionTag_e, CollisionTag_e> m_tagArray;
     std::pair<std::optional<uint32_t>, float> m_memDistCurrentBulletColl;

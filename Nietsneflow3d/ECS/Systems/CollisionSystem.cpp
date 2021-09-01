@@ -16,6 +16,7 @@
 #include <ECS/Components/MemSpriteDataComponent.hpp>
 #include <ECS/Components/SpriteTextureComponent.hpp>
 #include <ECS/Components/WeaponComponent.hpp>
+#include <ECS/Components/TriggerComponent.hpp>
 #include <ECS/Systems/FirstPersonDisplaySystem.hpp>
 #include <ECS/Systems/ColorDisplaySystem.hpp>
 #include <BaseECS/engine.hpp>
@@ -423,7 +424,7 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
         {
             if(args.tagCompA->m_tagA == CollisionTag_e::PLAYER_ACTION_CT)
             {
-                treatActionPlayer(args);
+                treatActionPlayerRect(args);
             }
             else if(args.tagCompA->m_tagA == CollisionTag_e::PLAYER_CT)
             {
@@ -474,6 +475,10 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
                     args.tagCompB->m_tagA == CollisionTag_e::OBJECT_CT)
             {
                 treatPlayerPickObject(args);
+            }
+            else if(args.tagCompA->m_tagA == CollisionTag_e::PLAYER_ACTION_CT)
+            {
+                treatActionPlayerCircle(args);
             }
             else if(args.tagCompA->m_tagA == CollisionTag_e::HIT_PLAYER_CT)
             {
@@ -564,7 +569,7 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
 }
 
 //===================================================================
-void CollisionSystem::treatActionPlayer(CollisionArgs &args)
+void CollisionSystem::treatActionPlayerRect(CollisionArgs &args)
 {
     if(args.tagCompB->m_tagA == CollisionTag_e::DOOR_CT)
     {
@@ -594,29 +599,30 @@ void CollisionSystem::treatActionPlayer(CollisionArgs &args)
         //TREAT MOVEABLE WALL
         if(args.tagCompB->m_tagA == CollisionTag_e::WALL_CT)
         {
-            MoveableWallConfComponent *moveableWallComp = stairwayToComponentManager().
-                    searchComponentByType<MoveableWallConfComponent>(args.entityNumB, Components_e::MOVEABLE_WALL_CONF_COMPONENT);
-            assert(moveableWallComp);
-            if(moveableWallComp->m_inMovement)
+            triggerMoveableWall(args.entityNumB);
+        }
+    }
+}
+
+//===================================================================
+void CollisionSystem::treatActionPlayerCircle(CollisionArgs &args)
+{
+    if(args.tagCompB->m_tagB == CollisionTag_e::WALL_TRIGGER_CT)
+    {
+
+        TriggerComponent *triggerComp = stairwayToComponentManager().
+                searchComponentByType<TriggerComponent>(args.entityNumB, Components_e::TRIGGER_COMPONENT);
+        assert(triggerComp);
+        for(uint32_t i = 0; i < triggerComp->m_vectElementEntities.size();)
+        {
+            if(triggerMoveableWall(triggerComp->m_vectElementEntities[i]))
             {
-               return;
+                triggerComp->m_vectElementEntities.erase(triggerComp->m_vectElementEntities.begin() + i);
             }
-            std::optional<ElementRaycast> element = Level::getElementCase(args.mapCompB.m_coord);
-            //init move wall case
-            if(element->m_type == LevelCaseType_e::WALL_LC && !element->m_memMoveWall)
+            else
             {
-                //if first phase for moveable wall set empty for reset
-                Level::memMoveWallEntity(args.mapCompB.m_coord, LevelCaseType_e::EMPTY_LC, args.entityNumB);
-                Level::setElementTypeCase(args.mapCompB.m_coord, LevelCaseType_e::WALL_MOVE_LC);
+                ++i;
             }
-            else if(element->m_memMoveWall && element->m_memMoveWall->first == LevelCaseType_e::EMPTY_LC)
-            {
-                Level::setElementTypeCase(args.mapCompB.m_coord, LevelCaseType_e::WALL_MOVE_LC);
-            }
-            moveableWallComp->m_inMovement = true;
-            moveableWallComp->m_initPos = true;
-            moveableWallComp->m_currentPhase = 0;
-            moveableWallComp->m_currentMove = 0;
         }
     }
 }
@@ -1002,4 +1008,38 @@ MapCoordComponent &CollisionSystem::getMapComponent(uint32_t entityNum)
                                   Components_e::MAP_COORD_COMPONENT);
     assert(mapComp);
     return *mapComp;
+}
+
+//===================================================================
+bool CollisionSystem::triggerMoveableWall(uint32_t wallEntity)
+{
+    MoveableWallConfComponent *moveableWallComp = stairwayToComponentManager().
+            searchComponentByType<MoveableWallConfComponent>(wallEntity, Components_e::MOVEABLE_WALL_CONF_COMPONENT);
+    MapCoordComponent *mapComp = stairwayToComponentManager().
+            searchComponentByType<MapCoordComponent>(wallEntity, Components_e::MAP_COORD_COMPONENT);
+    assert(moveableWallComp);
+    assert(mapComp);
+    bool once = (moveableWallComp->m_triggerBehaviour == TriggerBehaviourType_e::ONCE);
+    if(moveableWallComp->m_inMovement || (once && moveableWallComp->m_actionned))
+    {
+       return false;
+    }
+    moveableWallComp->m_actionned = true;
+    std::optional<ElementRaycast> element = Level::getElementCase(mapComp->m_coord);
+    //init move wall case
+    if(element->m_type == LevelCaseType_e::WALL_LC && !element->m_memMoveWall)
+    {
+        //if first phase for moveable wall set empty for reset
+        Level::memMoveWallEntity(mapComp->m_coord, LevelCaseType_e::EMPTY_LC, wallEntity);
+        Level::setElementTypeCase(mapComp->m_coord, LevelCaseType_e::WALL_MOVE_LC);
+    }
+    else if(element->m_memMoveWall && element->m_memMoveWall->first == LevelCaseType_e::EMPTY_LC)
+    {
+        Level::setElementTypeCase(mapComp->m_coord, LevelCaseType_e::WALL_MOVE_LC);
+    }
+    moveableWallComp->m_inMovement = true;
+    moveableWallComp->m_initPos = true;
+    moveableWallComp->m_currentPhase = 0;
+    moveableWallComp->m_currentMove = 0;
+    return once;
 }
