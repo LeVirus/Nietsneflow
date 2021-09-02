@@ -104,7 +104,10 @@ void Level::setElementEntityCase(const pairUI_t &tilePosition, uint32_t entity)
 void Level::resetMoveWallElementCase(const pairUI_t &tilePosition, uint32_t numEntity)
 {
     ElementRaycast &element = m_levelCaseType[getLevelCaseIndex(tilePosition)];
-    assert(element.m_memMoveWall);
+    if(!element.m_memMoveWall)
+    {
+        return;
+    }
     std::set<uint32_t>::iterator it = element.m_memMoveWall->find(numEntity);
     if(it == element.m_memMoveWall->end())
     {

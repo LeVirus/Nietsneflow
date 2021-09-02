@@ -1021,7 +1021,7 @@ bool CollisionSystem::triggerMoveableWall(uint32_t wallEntity)
     bool once = (moveableWallComp->m_triggerBehaviour == TriggerBehaviourType_e::ONCE);
     if(moveableWallComp->m_inMovement || (once && moveableWallComp->m_actionned))
     {
-       return false;
+       return once;
     }
     moveableWallComp->m_actionned = true;
     std::optional<ElementRaycast> element = Level::getElementCase(mapComp->m_coord);
