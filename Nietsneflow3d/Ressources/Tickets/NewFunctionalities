@@ -4,9 +4,6 @@ NEW FUNCTIONALITIES=============================================================
 ))
 Add teleporter
 
--10)
-Set wall moveable
-
 22)
 Optional (level design), create switch to interact with something
 
@@ -27,6 +24,9 @@ Create a visual level designer
 
 6)
 Ajouter armure
+
+-10)
+Set wall moveable================================OK
 
 -9)
 Add melee attack to enemies============================OK

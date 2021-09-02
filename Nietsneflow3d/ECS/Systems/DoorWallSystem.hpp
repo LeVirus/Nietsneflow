@@ -25,7 +25,9 @@ private:
     ECSManager const *m_ECSManager;
 };
 
+Direction_e getReverseDirection(Direction_e dir);
 void stopMoveWallLevelLimitCase(MapCoordComponent *mapComp, MoveableWallConfComponent *moveWallComp);
 void setInitPhaseMoveWall(MapCoordComponent *mapComp, MoveableWallConfComponent *moveWallComp,
                           Direction_e currentDir, uint32_t wallEntity);
 void switchToNextPhaseMoveWall(MapCoordComponent *mapComp, MoveableWallConfComponent *moveWallComp, const pairUI_t &previousPos);
+void reverseDirection(MoveableWallConfComponent *moveWallComp);

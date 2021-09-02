@@ -612,6 +612,7 @@ void CollisionSystem::treatActionPlayerCircle(CollisionArgs &args)
         TriggerComponent *triggerComp = stairwayToComponentManager().
                 searchComponentByType<TriggerComponent>(args.entityNumB, Components_e::TRIGGER_COMPONENT);
         assert(triggerComp);
+        //OOOOK move that to DoorWallSystem
         for(uint32_t i = 0; i < triggerComp->m_vectElementEntities.size();)
         {
             if(triggerMoveableWall(triggerComp->m_vectElementEntities[i]))

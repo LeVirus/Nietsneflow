@@ -212,9 +212,10 @@ void switchToNextPhaseMoveWall(MapCoordComponent *mapComp,
 {
     Level::resetMoveWallElementCase(previousPos, moveWallComp->muiGetIdEntityAssociated());
     moveWallComp->m_initPos = true;
-    if(++moveWallComp->m_currentMove >=
-            moveWallComp->m_directionMove[moveWallComp->m_currentPhase].second)
+    std::cerr << moveWallComp->m_directionMove[moveWallComp->m_currentPhase].second << "\n";
+    if(++moveWallComp->m_currentMove == moveWallComp->m_directionMove[moveWallComp->m_currentPhase].second)
     {
+        moveWallComp->m_currentMove = 0;
         //IF CYCLE END
         if(++moveWallComp->m_currentPhase == moveWallComp->m_directionMove.size())
         {
@@ -227,8 +228,66 @@ void switchToNextPhaseMoveWall(MapCoordComponent *mapComp,
                 Level::setElementTypeCase(mapComp->m_coord, LevelCaseType_e::WALL_LC);
                 Level::setMoveableWallStopped(mapComp->m_coord, true);
             }
+            if(moveWallComp->m_triggerBehaviour == TriggerBehaviourType_e::REVERSABLE)
+            {
+                reverseDirection(moveWallComp);
+            }
             moveWallComp->m_inMovement = false;
         }
+    }
+}
+
+//===================================================================
+void reverseDirection(MoveableWallConfComponent *moveWallComp)
+{
+    assert(!moveWallComp->m_directionMove.empty());
+    if(moveWallComp->m_directionMove.size() == 1)
+    {
+        moveWallComp->m_directionMove[0].first =
+                getReverseDirection(moveWallComp->m_directionMove[0].first);
+    }
+    else
+    {
+        uint32_t size = moveWallComp->m_directionMove.size(), mirrorCase;
+        for(uint32_t i = 0; i < size; ++i)
+        {
+            mirrorCase = size - (i + 1);
+            if(i < mirrorCase)
+            {
+                moveWallComp->m_directionMove[i].first =
+                        getReverseDirection(moveWallComp->m_directionMove[i].first);
+                moveWallComp->m_directionMove[mirrorCase].first =
+                        getReverseDirection(moveWallComp->m_directionMove[mirrorCase].first);
+                std::swap(moveWallComp->m_directionMove[i], moveWallComp->m_directionMove[mirrorCase]);
+            }
+            else if(i == mirrorCase)
+            {
+                moveWallComp->m_directionMove[i].first =
+                        getReverseDirection(moveWallComp->m_directionMove[i].first);
+            }
+            else
+            {
+                break;
+            }
+        }
+    }
+}
+
+//===================================================================
+Direction_e getReverseDirection(Direction_e dir)
+{
+    switch(dir)
+    {
+    case Direction_e::EAST:
+        return Direction_e::WEST;
+    case Direction_e::WEST:
+        return Direction_e::EAST;
+    case Direction_e::NORTH:
+        return Direction_e::SOUTH;
+    case Direction_e::SOUTH:
+        return Direction_e::NORTH;
+    default:
+        assert(false);//avoid warning
     }
 }
 
