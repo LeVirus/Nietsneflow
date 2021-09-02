@@ -952,10 +952,10 @@ optionalTargetRaycast_t FirstPersonDisplaySystem::calcMovingWallSegmentRaycast(f
     assert(element.m_memMoveWall);
     pairFloat_t memBase = currentPoint;
     float memDistance;
-    std::set<uint32_t>::const_iterator it = element.m_memMoveWall->second.begin();
+    std::set<uint32_t>::const_iterator it = element.m_memMoveWall->begin();
     //first raycast result second distance
     std::optional<std::pair<tupleTargetRaycast_t, float>> resultMem;
-    for(; it != element.m_memMoveWall->second.end(); ++it)
+    for(; it != element.m_memMoveWall->end(); ++it)
     {
         bool lateralColl, textPosWall = false;
         RectangleCollisionComponent *rectComp = stairwayToComponentManager().
@@ -997,7 +997,7 @@ optionalTargetRaycast_t FirstPersonDisplaySystem::calcMovingWallSegmentRaycast(f
             float textPosWall = lateralColl ?
                         std::abs(wallPos[0].first - currentPoint.first) :
                 std::abs(wallPos[1].first - currentPoint.second);
-            if(element.m_memMoveWall->second.size() > 1)
+            if(element.m_memMoveWall->size() > 1)
             {
                 memDistance = getDistance(currentPoint, memBase);
                 if(!resultMem || memDistance < resultMem->second)

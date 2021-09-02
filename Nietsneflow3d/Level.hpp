@@ -8,7 +8,6 @@
 #include <ECS/Components/ObjectConfComponent.hpp>
 
 using vectPairUI_t = std::vector<pairUI_t>;
-using PairMemMoveableWall_t = std::pair<LevelCaseType_e, std::set<uint32_t>>;
 
 struct MoveableComponent;
 struct PositionVertexComponent;
@@ -38,7 +37,7 @@ struct DoorData
 struct ElementRaycast
 {
     //first mem origin case type second moveable wall entities which on the case
-    std::optional<PairMemMoveableWall_t> m_memMoveWall;
+    std::optional<std::set<uint32_t>> m_memMoveWall;
     bool m_moveableWallStopped = false;
     uint32_t m_numEntity;
     LevelCaseType_e m_type;

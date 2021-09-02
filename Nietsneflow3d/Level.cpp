@@ -70,11 +70,11 @@ void Level::memMoveWallEntity(const pairUI_t &tilePosition, uint32_t entity)
     ElementRaycast &element = m_levelCaseType[getLevelCaseIndex(tilePosition)];
     if(!element.m_memMoveWall)
     {
-        element.m_memMoveWall = PairMemMoveableWall_t();
+        element.m_memMoveWall = std::set<uint32_t>();
     }
     element.m_moveableWallStopped = false;
     element.m_type = LevelCaseType_e::WALL_MOVE_LC;
-    element.m_memMoveWall->second.insert(entity);
+    element.m_memMoveWall->insert(entity);
 }
 
 //===================================================================
@@ -99,13 +99,13 @@ void Level::resetMoveWallElementCase(const pairUI_t &tilePosition, uint32_t numE
 {
     ElementRaycast &element = m_levelCaseType[getLevelCaseIndex(tilePosition)];
     assert(element.m_memMoveWall);
-    std::set<uint32_t>::iterator it = element.m_memMoveWall->second.find(numEntity);
-    if(it == element.m_memMoveWall->second.end())
+    std::set<uint32_t>::iterator it = element.m_memMoveWall->find(numEntity);
+    if(it == element.m_memMoveWall->end())
     {
         return;
     }
-    element.m_memMoveWall->second.erase(*it);
-    if(element.m_memMoveWall->second.empty())
+    element.m_memMoveWall->erase(*it);
+    if(element.m_memMoveWall->empty())
     {
         if(!element.m_moveableWallStopped)
         {
