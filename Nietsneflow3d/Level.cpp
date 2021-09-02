@@ -84,6 +84,12 @@ void Level::setElementTypeCase(const pairUI_t &tilePosition, LevelCaseType_e typ
 }
 
 //===================================================================
+void Level::setStandardElementTypeCase(const pairUI_t &tilePosition, LevelCaseType_e type)
+{
+    m_levelCaseType[getLevelCaseIndex(tilePosition)].m_typeStd = type;
+}
+
+//===================================================================
 void Level::setMoveableWallStopped(const pairUI_t &tilePosition, bool stopped)
 {
     m_levelCaseType[getLevelCaseIndex(tilePosition)].m_moveableWallStopped = stopped;

@@ -587,9 +587,9 @@ void MainEngine::loadMoveableWallEntities(const std::map<std::string, MoveableWa
 {
     assert(!Level::getLevelCaseType().empty());
     std::pair<std::set<pairUI_t>::const_iterator, bool> itt;
-    std::map<std::string, MoveableWallData>::const_iterator iter = wallData.begin();
     TriggerWallMoveType_e memTriggerType;
     std::vector<uint32_t> vectMemEntities;
+    std::map<std::string, MoveableWallData>::const_iterator iter = wallData.begin();
     for(; iter != wallData.end(); ++iter)
     {
         assert(!iter->second.m_sprites.empty());

@@ -98,6 +98,7 @@ public:
     {
         return m_playerDeparture;
     }
+    static void setStandardElementTypeCase(const pairUI_t &tilePosition, LevelCaseType_e type);
 
     static inline pairUI_t &getSize()
     {

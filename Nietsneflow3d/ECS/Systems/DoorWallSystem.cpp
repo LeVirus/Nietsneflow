@@ -195,6 +195,8 @@ void stopMoveWallLevelLimitCase(MapCoordComponent *mapComp, MoveableWallConfComp
 {
     Level::resetMoveWallElementCase(mapComp->m_coord, moveWallComp->muiGetIdEntityAssociated());
     Level::setElementTypeCase(mapComp->m_coord, LevelCaseType_e::WALL_LC);
+    Level::setStandardElementTypeCase(mapComp->m_coord, LevelCaseType_e::WALL_LC);
+    Level::setElementEntityCase(mapComp->m_coord, moveWallComp->muiGetIdEntityAssociated());
     moveWallComp->m_actionned = true;
     moveWallComp->m_inMovement = false;
     moveWallComp->m_triggerBehaviour = TriggerBehaviourType_e::ONCE;
