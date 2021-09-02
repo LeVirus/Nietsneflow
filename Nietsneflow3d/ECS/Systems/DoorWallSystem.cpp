@@ -35,7 +35,7 @@ void DoorWallSystem::execSystem()
         updateEntities();
     }
     treatDoors();
-    treatWalls();
+    treatMoveableWalls();
 }
 
 //===================================================================
@@ -75,7 +75,7 @@ void DoorWallSystem::treatDoors()
 }
 
 //===================================================================
-void DoorWallSystem::treatWalls()
+void DoorWallSystem::treatMoveableWalls()
 {
     bool next;
     pairUI_t memPreviousPos;
@@ -186,20 +186,17 @@ void setInitPhaseMoveWall(MapCoordComponent *mapComp, MoveableWallConfComponent 
         nextCase = {mapComp->m_coord.first, mapComp->m_coord.second + 1};
         break;
     }
-    LevelCaseType_e type = Level::getElementCase(nextCase)->m_type;
-    Level::memMoveWallEntity(nextCase, type, wallEntity);
-    if(type != LevelCaseType_e::WALL_LC)
-    {
-        Level::setElementTypeCase(nextCase, LevelCaseType_e::WALL_MOVE_LC);
-    }
+    Level::memMoveWallEntity(nextCase, wallEntity);
+    Level::setElementTypeCase(nextCase, LevelCaseType_e::WALL_MOVE_LC);
 }
 
 //===================================================================
 void stopMoveWallLevelLimitCase(MapCoordComponent *mapComp, MoveableWallConfComponent *moveWallComp)
 {
+    Level::resetMoveWallElementCase(mapComp->m_coord, moveWallComp->muiGetIdEntityAssociated());
     Level::setElementTypeCase(mapComp->m_coord, LevelCaseType_e::WALL_LC);
-    Level::resetElementCase(mapComp->m_coord);
     moveWallComp->m_actionned = true;
+    moveWallComp->m_inMovement = false;
     moveWallComp->m_triggerBehaviour = TriggerBehaviourType_e::ONCE;
 }
 
@@ -208,7 +205,7 @@ void switchToNextPhaseMoveWall(MapCoordComponent *mapComp,
                                MoveableWallConfComponent *moveWallComp,
                                const pairUI_t &previousPos)
 {
-    Level::resetElementCase(previousPos);
+    Level::resetMoveWallElementCase(previousPos, moveWallComp->muiGetIdEntityAssociated());
     moveWallComp->m_initPos = true;
     if(++moveWallComp->m_currentMove >=
             moveWallComp->m_directionMove[moveWallComp->m_currentPhase].second)
@@ -217,10 +214,13 @@ void switchToNextPhaseMoveWall(MapCoordComponent *mapComp,
         if(++moveWallComp->m_currentPhase == moveWallComp->m_directionMove.size())
         {
             std::optional<ElementRaycast> element = Level::getElementCase(mapComp->m_coord);
+            //put element case to static wall
             if(element->m_type != LevelCaseType_e::WALL_LC)
             {
+                Level::setElementEntityCase(mapComp->m_coord, moveWallComp->muiGetIdEntityAssociated());
+                Level::resetMoveWallElementCase(mapComp->m_coord, moveWallComp->muiGetIdEntityAssociated());
                 Level::setElementTypeCase(mapComp->m_coord, LevelCaseType_e::WALL_LC);
-                Level::setElementEntityCase(mapComp->m_coord, element->m_memMoveWall->second);
+                Level::setMoveableWallStopped(mapComp->m_coord, true);
             }
             moveWallComp->m_inMovement = false;
         }

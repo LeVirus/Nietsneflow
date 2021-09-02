@@ -1,9 +1,5 @@
 BUGS======================================================================
 
-
-))
-When several wall move under the same line bad display
-
 ))
 Some weapons displays a bit too high
 
@@ -30,6 +26,9 @@ assert à CollisionSystem.cpp::770
 
 -14)
 First enemy display can display random texture=====================??
+
+))
+When several wall move under the same line bad display=============================OK
 
 ))
 When a wall move at the limit of the level and the observer look at it crash==================OK

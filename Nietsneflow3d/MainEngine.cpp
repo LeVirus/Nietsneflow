@@ -608,7 +608,7 @@ void MainEngine::loadMoveableWallEntities(const std::map<std::string, MoveableWa
             }
             uint32_t numEntity = createWallEntity(iter->second.m_sprites.size() > 1, true);
             vectMemEntities.emplace_back(numEntity);
-            confBaseWallData(numEntity, memSpriteData, *it, iter->second.m_sprites, vectSprite);
+            confBaseWallData(numEntity, memSpriteData, *it, iter->second.m_sprites, vectSprite, true);
             MoveableComponent *moveComp = m_ecsManager.getComponentManager().
                     searchComponentByType<MoveableComponent>(numEntity, Components_e::MOVEABLE_COMPONENT);
             assert(moveComp);
@@ -616,6 +616,7 @@ void MainEngine::loadMoveableWallEntities(const std::map<std::string, MoveableWa
             MoveableWallConfComponent *moveWallConfComp = m_ecsManager.getComponentManager().
                     searchComponentByType<MoveableWallConfComponent>(numEntity, Components_e::MOVEABLE_WALL_CONF_COMPONENT);
             assert(moveWallConfComp);
+            moveWallConfComp->setIDEntityAssociated(numEntity);
             moveWallConfComp->m_directionMove = iter->second.m_directionMove;
             moveWallConfComp->m_triggerType = iter->second.m_triggerType;
             moveWallConfComp->m_triggerBehaviour = iter->second.m_triggerBehaviourType;
@@ -640,7 +641,7 @@ void MainEngine::loadMoveableWallEntities(const std::map<std::string, MoveableWa
 void MainEngine::confBaseWallData(uint32_t wallEntity, const SpriteData &memSpriteData,
                                   const pairUI_t& coordLevel,
                                   const std::vector<uint8_t> &numWallSprites,
-                                  const std::vector<SpriteData> &vectSprite)
+                                  const std::vector<SpriteData> &vectSprite, bool moveable)
 {
     MemSpriteDataComponent *memSpriteComp;
     SpriteTextureComponent *spriteComp;
@@ -650,7 +651,8 @@ void MainEngine::confBaseWallData(uint32_t wallEntity, const SpriteData &memSpri
     spriteComp = m_ecsManager.getComponentManager().
             searchComponentByType<SpriteTextureComponent>(wallEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
     assert(spriteComp);
-    Level::addElementCase(spriteComp, coordLevel, LevelCaseType_e::WALL_LC, wallEntity);
+    LevelCaseType_e type = moveable ? LevelCaseType_e::WALL_MOVE_LC : LevelCaseType_e::WALL_LC;
+    Level::addElementCase(spriteComp, coordLevel, type, wallEntity);
     if(numWallSprites.size() == 1)
     {
         return;

@@ -8,7 +8,7 @@
 #include <ECS/Components/ObjectConfComponent.hpp>
 
 using vectPairUI_t = std::vector<pairUI_t>;
-using PairMemMoveableWall_t = std::pair<LevelCaseType_e, uint32_t>;
+using PairMemMoveableWall_t = std::pair<LevelCaseType_e, std::set<uint32_t>>;
 
 struct MoveableComponent;
 struct PositionVertexComponent;
@@ -39,8 +39,11 @@ struct ElementRaycast
 {
     //first mem origin case type second moveable wall entities which on the case
     std::optional<PairMemMoveableWall_t> m_memMoveWall;
+    bool m_moveableWallStopped = false;
     uint32_t m_numEntity;
     LevelCaseType_e m_type;
+    //Base level Type without moveable wall
+    LevelCaseType_e m_typeStd;
     pairUI_t m_tileGamePosition;
     SpriteTextureComponent const *m_spriteComp;
 };
@@ -83,11 +86,12 @@ public:
     static void addElementCase(SpriteTextureComponent *spriteComp, const pairUI_t &tilePosition,
                                LevelCaseType_e type, uint32_t numEntity);
     static std::optional<ElementRaycast> getElementCase(const pairUI_t &tilePosition);
-    static void memMoveWallEntity(const pairUI_t &tilePosition, LevelCaseType_e type, uint32_t entity);
+    static void memMoveWallEntity(const pairUI_t &tilePosition, uint32_t entity);
     static void setElementTypeCase(const pairUI_t &tilePosition, LevelCaseType_e type);
+    static void setMoveableWallStopped(const pairUI_t &tilePosition, bool stopped);
     static void setElementEntityCase(const pairUI_t &tilePosition, uint32_t entity);
     //in the case of moveable wall reset case
-    static void resetElementCase(const pairUI_t &tilePosition);
+    static void resetMoveWallElementCase(const pairUI_t &tilePosition, uint32_t numEntity);
 
     static uint32_t getLevelCaseIndex(const pairUI_t &tilePosition);
 

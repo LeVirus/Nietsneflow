@@ -85,7 +85,10 @@ private:
                           const std::vector<SpriteData> &vectSprite);
     void loadMoveableWallEntities(const std::map<std::string, MoveableWallData> &wallData,
                                   const std::vector<SpriteData> &vectSprite);
-    void confBaseWallData(uint32_t wallEntity, const SpriteData &memSpriteData, const pairUI_t &coordLevel, const std::vector<uint8_t> &numWallSprites, const std::vector<SpriteData> &vectSprite);
+    void confBaseWallData(uint32_t wallEntity, const SpriteData &memSpriteData, const pairUI_t &coordLevel,
+                          const std::vector<uint8_t> &numWallSprites,
+                          const std::vector<SpriteData> &vectSprite,
+                          bool moveable = false);
     void loadDoorEntities(const LevelManager &levelManager);
     void loadEnemiesEntities(const LevelManager &levelManager);
     void loadTriggerEntityData(const AssociatedTriggerData &triggerData, const std::vector<uint32_t> &vectPosition, const std::vector<SpriteData> &vectSprite);

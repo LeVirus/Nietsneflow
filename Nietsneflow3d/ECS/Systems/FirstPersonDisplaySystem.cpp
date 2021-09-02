@@ -950,49 +950,71 @@ optionalTargetRaycast_t FirstPersonDisplaySystem::calcMovingWallSegmentRaycast(f
                                                                                const ElementRaycast &element)
 {
     assert(element.m_memMoveWall);
-    bool lateralColl, textPosWall = false;
-    RectangleCollisionComponent *rectComp = stairwayToComponentManager().
-            searchComponentByType<RectangleCollisionComponent>(element.m_memMoveWall->second,
-                                                               Components_e::RECTANGLE_COLLISION_COMPONENT);
-    assert(rectComp);
-    MapCoordComponent *mapComp = stairwayToComponentManager().
-            searchComponentByType<MapCoordComponent>(element.m_memMoveWall->second, Components_e::MAP_COORD_COMPONENT);
-    assert(mapComp);
-    //first case x pos limit second y pos limit
-    pairFloat_t wallPos[2] = {{mapComp->m_absoluteMapPositionPX.first,
-                               mapComp->m_absoluteMapPositionPX.first +
-                               rectComp->m_size.first},
-                              {mapComp->m_absoluteMapPositionPX.second,
-                               mapComp->m_absoluteMapPositionPX.second +
-                               rectComp->m_size.second}};
-    //exclude case
-    if((std::cos(radiantAngle) < 0.0f && currentPoint.first < wallPos[0].first) ||
-            (std::cos(radiantAngle) > 0.0f && currentPoint.first > wallPos[0].second))
+    pairFloat_t memBase = currentPoint;
+    float memDistance;
+    std::set<uint32_t>::const_iterator it = element.m_memMoveWall->second.begin();
+    //first raycast result second distance
+    std::optional<std::pair<tupleTargetRaycast_t, float>> resultMem;
+    for(; it != element.m_memMoveWall->second.end(); ++it)
     {
-        textPosWall = false;
+        bool lateralColl, textPosWall = false;
+        RectangleCollisionComponent *rectComp = stairwayToComponentManager().
+                searchComponentByType<RectangleCollisionComponent>(*it, Components_e::RECTANGLE_COLLISION_COMPONENT);
+        assert(rectComp);
+        MapCoordComponent *mapComp = stairwayToComponentManager().
+                searchComponentByType<MapCoordComponent>(*it, Components_e::MAP_COORD_COMPONENT);
+        assert(mapComp);
+        //first case x pos limit second y pos limit
+        pairFloat_t wallPos[2] = {{mapComp->m_absoluteMapPositionPX.first,
+                                   mapComp->m_absoluteMapPositionPX.first +
+                                   rectComp->m_size.first},
+                                  {mapComp->m_absoluteMapPositionPX.second,
+                                   mapComp->m_absoluteMapPositionPX.second +
+                                   rectComp->m_size.second}};
+        //exclude case
+        if((std::cos(radiantAngle) < 0.0f && currentPoint.first < wallPos[0].first) ||
+                (std::cos(radiantAngle) > 0.0f && currentPoint.first > wallPos[0].second))
+        {
+            textPosWall = false;
+        }
+        else if((std::sin(radiantAngle) > 0.0f && currentPoint.second < wallPos[1].first) ||
+                (std::sin(radiantAngle) < 0.0f && currentPoint.second > wallPos[1].second))
+        {
+            textPosWall = false;
+        }
+        else if(lateralLeadCoef && treatLateralIntersectRect(currentPoint, wallPos, *lateralLeadCoef, radiantAngle))
+        {
+            lateralColl = true;
+            textPosWall = true;
+        }
+        else if(verticalLeadCoef && treatVerticalIntersectRect(currentPoint, wallPos, *verticalLeadCoef, radiantAngle))
+        {
+            lateralColl = false;
+            textPosWall = true;
+        }
+        if(textPosWall)
+        {
+            float textPosWall = lateralColl ?
+                        std::abs(wallPos[0].first - currentPoint.first) :
+                std::abs(wallPos[1].first - currentPoint.second);
+            if(element.m_memMoveWall->second.size() > 1)
+            {
+                memDistance = getDistance(currentPoint, memBase);
+                if(!resultMem || memDistance < resultMem->second)
+                {
+                    resultMem = {{currentPoint, textPosWall, *it}, memDistance};
+                }
+            }
+            else
+            {
+                return tupleTargetRaycast_t{currentPoint, textPosWall, *it};
+            }
+        }
+        currentPoint = memBase;
     }
-    else if((std::sin(radiantAngle) > 0.0f && currentPoint.second < wallPos[1].first) ||
-            (std::sin(radiantAngle) < 0.0f && currentPoint.second > wallPos[1].second))
+    if(resultMem)
     {
-        textPosWall = false;
-    }
-    else if(lateralLeadCoef && treatLateralIntersectRect(currentPoint, wallPos, *lateralLeadCoef, radiantAngle))
-    {
-        lateralColl = true;
-        textPosWall = true;
-    }
-    else if(verticalLeadCoef && treatVerticalIntersectRect(currentPoint, wallPos, *verticalLeadCoef, radiantAngle))
-    {
-        lateralColl = false;
-        textPosWall = true;
-    }
-    if(textPosWall)
-    {
-        float textPosWall = lateralColl ?
-                    std::abs(wallPos[0].first - currentPoint.first) :
-            std::abs(wallPos[1].first - currentPoint.second);
-        //OOOOOOK
-        return tupleTargetRaycast_t{currentPoint, textPosWall, element.m_memMoveWall->second};
+        return resultMem->first;
     }
     return {};
 }

@@ -18,7 +18,7 @@ private:
     void treatDoorMovementSize(DoorComponent *doorComp, uint32_t entityNum);
     void updateEntities();
     void treatDoors();
-    void treatWalls();
+    void treatMoveableWalls();
 private:
     double m_timeDoorClosed = 0.6;
     std::vector<uint32_t> m_vectMoveableWall;

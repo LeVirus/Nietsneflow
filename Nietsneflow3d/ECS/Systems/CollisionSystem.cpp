@@ -1026,16 +1026,7 @@ bool CollisionSystem::triggerMoveableWall(uint32_t wallEntity)
     moveableWallComp->m_actionned = true;
     std::optional<ElementRaycast> element = Level::getElementCase(mapComp->m_coord);
     //init move wall case
-    if(element->m_type == LevelCaseType_e::WALL_LC && !element->m_memMoveWall)
-    {
-        //if first phase for moveable wall set empty for reset
-        Level::memMoveWallEntity(mapComp->m_coord, LevelCaseType_e::EMPTY_LC, wallEntity);
-        Level::setElementTypeCase(mapComp->m_coord, LevelCaseType_e::WALL_MOVE_LC);
-    }
-    else if(element->m_memMoveWall && element->m_memMoveWall->first == LevelCaseType_e::EMPTY_LC)
-    {
-        Level::setElementTypeCase(mapComp->m_coord, LevelCaseType_e::WALL_MOVE_LC);
-    }
+    Level::memMoveWallEntity(mapComp->m_coord, wallEntity);
     moveableWallComp->m_inMovement = true;
     moveableWallComp->m_initPos = true;
     moveableWallComp->m_currentPhase = 0;
