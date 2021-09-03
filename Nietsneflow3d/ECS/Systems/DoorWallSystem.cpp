@@ -8,6 +8,7 @@
 #include <ECS/Components/RectangleCollisionComponent.hpp>
 #include <ECS/Components/MoveableWallConfComponent.hpp>
 #include <ECS/Components/MoveableComponent.hpp>
+#include <ECS/Components/TriggerComponent.hpp>
 #include <cassert>
 
 //===================================================================
@@ -24,6 +25,9 @@ void DoorWallSystem::updateEntities()
     std::bitset<TOTAL_COMPONENTS> bitset;
     bitset[MOVEABLE_WALL_CONF_COMPONENT] = true;
     m_vectMoveableWall = m_ECSManager->getEntitiesContainingComponents(bitset);
+    bitset[MOVEABLE_WALL_CONF_COMPONENT] = false;
+    bitset[TRIGGER_COMPONENT] = true;
+    m_vectTrigger = m_ECSManager->getEntitiesContainingComponents(bitset);
 }
 
 
@@ -34,6 +38,7 @@ void DoorWallSystem::execSystem()
     {
         updateEntities();
     }
+    treatTriggers();
     treatDoors();
     treatMoveableWalls();
 }
@@ -87,7 +92,15 @@ void DoorWallSystem::treatMoveableWalls()
         assert(moveWallComp);
         if(!moveWallComp->m_inMovement)
         {
-            continue;
+            if(!moveWallComp->m_manualTrigger)
+            {
+                continue;
+            }
+            else
+            {
+                moveWallComp->m_manualTrigger = false;
+                triggerMoveableWall(m_vectMoveableWall[i]);
+            }
         }
         next = false;
         MapCoordComponent *mapComp = stairwayToComponentManager().
@@ -152,6 +165,59 @@ void DoorWallSystem::treatMoveableWalls()
     }
 }
 
+//===================================================================
+void DoorWallSystem::treatTriggers()
+{
+    for(uint32_t i = 0; i < m_vectTrigger.size(); ++i)
+    {
+        TriggerComponent *triggerComp = stairwayToComponentManager().
+                searchComponentByType<TriggerComponent>(m_vectTrigger[i],
+                                                        Components_e::TRIGGER_COMPONENT);
+        assert(triggerComp);
+        if(!triggerComp->m_actionned)
+        {
+            continue;
+        }
+        triggerComp->m_actionned = false;
+        for(uint32_t j = 0; j < triggerComp->m_vectElementEntities.size();)
+        {
+            if(triggerMoveableWall(triggerComp->m_vectElementEntities[j]))
+            {
+                triggerComp->m_vectElementEntities.erase(triggerComp->m_vectElementEntities.begin() + j);
+            }
+            else
+            {
+                ++j;
+            }
+        }
+    }
+}
+
+//===================================================================
+bool DoorWallSystem::triggerMoveableWall(uint32_t wallEntity)
+{
+    MoveableWallConfComponent *moveableWallComp = stairwayToComponentManager().
+            searchComponentByType<MoveableWallConfComponent>(wallEntity, Components_e::MOVEABLE_WALL_CONF_COMPONENT);
+    MapCoordComponent *mapComp = stairwayToComponentManager().
+            searchComponentByType<MapCoordComponent>(wallEntity, Components_e::MAP_COORD_COMPONENT);
+    assert(moveableWallComp);
+    assert(mapComp);
+    bool once = (moveableWallComp->m_triggerBehaviour == TriggerBehaviourType_e::ONCE);
+    if(moveableWallComp->m_inMovement || (once && moveableWallComp->m_actionned))
+    {
+       return once;
+    }
+    moveableWallComp->m_actionned = true;
+    std::optional<ElementRaycast> element = Level::getElementCase(mapComp->m_coord);
+    //init move wall case
+    Level::memMoveWallEntity(mapComp->m_coord, wallEntity);
+    moveableWallComp->m_inMovement = true;
+    moveableWallComp->m_initPos = true;
+    moveableWallComp->m_currentPhase = 0;
+    moveableWallComp->m_currentMove = 0;
+    return once;
+}
+
 
 //===================================================================
 void setInitPhaseMoveWall(MapCoordComponent *mapComp, MoveableWallConfComponent *moveWallComp,
@@ -212,7 +278,6 @@ void switchToNextPhaseMoveWall(MapCoordComponent *mapComp,
 {
     Level::resetMoveWallElementCase(previousPos, moveWallComp->muiGetIdEntityAssociated());
     moveWallComp->m_initPos = true;
-    std::cerr << moveWallComp->m_directionMove[moveWallComp->m_currentPhase].second << "\n";
     if(++moveWallComp->m_currentMove == moveWallComp->m_directionMove[moveWallComp->m_currentPhase].second)
     {
         moveWallComp->m_currentMove = 0;
@@ -233,6 +298,8 @@ void switchToNextPhaseMoveWall(MapCoordComponent *mapComp,
                 reverseDirection(moveWallComp);
             }
             moveWallComp->m_inMovement = false;
+            moveWallComp->m_actionned = false;
+            moveWallComp->m_manualTrigger = false;
         }
     }
 }
@@ -296,6 +363,7 @@ void DoorWallSystem::clearSystem()
 {
     mVectNumEntity.clear();
     m_vectMoveableWall.clear();
+    m_vectTrigger.clear();
 }
 
 //===================================================================

@@ -594,7 +594,10 @@ void CollisionSystem::treatActionPlayerRect(CollisionArgs &args)
         //TREAT MOVEABLE WALL
         if(args.tagCompB->m_tagA == CollisionTag_e::WALL_CT)
         {
-            triggerMoveableWall(args.entityNumB);
+            MoveableWallConfComponent *moveWallComp = stairwayToComponentManager().
+                    searchComponentByType<MoveableWallConfComponent>(args.entityNumB, Components_e::MOVEABLE_WALL_CONF_COMPONENT);
+            assert(moveWallComp);
+            moveWallComp->m_manualTrigger = true;
         }
     }
 }
@@ -612,18 +615,7 @@ void CollisionSystem::treatActionPlayerCircle(CollisionArgs &args)
         TriggerComponent *triggerComp = stairwayToComponentManager().
                 searchComponentByType<TriggerComponent>(args.entityNumB, Components_e::TRIGGER_COMPONENT);
         assert(triggerComp);
-        //OOOOK move that to DoorWallSystem
-        for(uint32_t i = 0; i < triggerComp->m_vectElementEntities.size();)
-        {
-            if(triggerMoveableWall(triggerComp->m_vectElementEntities[i]))
-            {
-                triggerComp->m_vectElementEntities.erase(triggerComp->m_vectElementEntities.begin() + i);
-            }
-            else
-            {
-                ++i;
-            }
-        }
+        triggerComp->m_actionned = true;
     }
 }
 
@@ -1008,29 +1000,4 @@ MapCoordComponent &CollisionSystem::getMapComponent(uint32_t entityNum)
                                   Components_e::MAP_COORD_COMPONENT);
     assert(mapComp);
     return *mapComp;
-}
-
-//===================================================================
-bool CollisionSystem::triggerMoveableWall(uint32_t wallEntity)
-{
-    MoveableWallConfComponent *moveableWallComp = stairwayToComponentManager().
-            searchComponentByType<MoveableWallConfComponent>(wallEntity, Components_e::MOVEABLE_WALL_CONF_COMPONENT);
-    MapCoordComponent *mapComp = stairwayToComponentManager().
-            searchComponentByType<MapCoordComponent>(wallEntity, Components_e::MAP_COORD_COMPONENT);
-    assert(moveableWallComp);
-    assert(mapComp);
-    bool once = (moveableWallComp->m_triggerBehaviour == TriggerBehaviourType_e::ONCE);
-    if(moveableWallComp->m_inMovement || (once && moveableWallComp->m_actionned))
-    {
-       return once;
-    }
-    moveableWallComp->m_actionned = true;
-    std::optional<ElementRaycast> element = Level::getElementCase(mapComp->m_coord);
-    //init move wall case
-    Level::memMoveWallEntity(mapComp->m_coord, wallEntity);
-    moveableWallComp->m_inMovement = true;
-    moveableWallComp->m_initPos = true;
-    moveableWallComp->m_currentPhase = 0;
-    moveableWallComp->m_currentMove = 0;
-    return once;
 }

@@ -19,9 +19,11 @@ private:
     void updateEntities();
     void treatDoors();
     void treatMoveableWalls();
+    void treatTriggers();
+    bool triggerMoveableWall(uint32_t wallEntity);
 private:
     double m_timeDoorClosed = 0.6;
-    std::vector<uint32_t> m_vectMoveableWall;
+    std::vector<uint32_t> m_vectMoveableWall, m_vectTrigger;
     ECSManager const *m_ECSManager;
 };
 
