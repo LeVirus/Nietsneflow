@@ -625,14 +625,14 @@ void MainEngine::loadMoveableWallEntities(const std::map<std::string, MoveableWa
                 GeneralCollisionComponent *genCollComp = m_ecsManager.getComponentManager().
                         searchComponentByType<GeneralCollisionComponent>(numEntity, Components_e::GENERAL_COLLISION_COMPONENT);
                 assert(genCollComp);
-                genCollComp->m_tagB = CollisionTag_e::WALL_TRIGGER_CT;
+                genCollComp->m_tagB = CollisionTag_e::TRIGGER_CT;
             }
         }
-        if(memTriggerType == TriggerWallMoveType_e::BUTTON)
+        if(memTriggerType == TriggerWallMoveType_e::BUTTON ||
+                memTriggerType == TriggerWallMoveType_e::GROUND)
         {
-            assert(iter->second.m_associatedTriggerData);
-            loadTriggerEntityData(*iter->second.m_associatedTriggerData,
-                                  vectMemEntities, vectSprite);
+            loadTriggerEntityData(iter->second, vectMemEntities,
+                                  vectSprite, memTriggerType);
         }
     }
 }
@@ -815,43 +815,65 @@ void MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
 }
 
 //===================================================================
-void MainEngine::loadTriggerEntityData(const AssociatedTriggerData &triggerData,
+void MainEngine::loadTriggerEntityData(const MoveableWallData &moveWallData,
                                        const std::vector<uint32_t> &vectPosition,
-                                       const std::vector<SpriteData> &vectSprite)
+                                       const std::vector<SpriteData> &vectSprite,
+                                       TriggerWallMoveType_e type)
 {
-    std::map<pairUI_t, uint32_t>::const_iterator it = m_memTriggerCreated.find(triggerData.m_pos);
+    bool button = (type == TriggerWallMoveType_e::BUTTON);
+    std::map<pairUI_t, uint32_t>::const_iterator it;
+    pairUI_t pos;
+    if(button)
+    {
+        assert(moveWallData.m_associatedTriggerData);
+        pos = moveWallData.m_associatedTriggerData->m_pos;
+        it = m_memTriggerCreated.find(pos);
+    }
+    else
+    {
+        assert(moveWallData.m_groundTriggerPos);
+        pos = *moveWallData.m_groundTriggerPos;
+        it = m_memTriggerCreated.find(pos);
+    }
     //if trigger does not exist
     if(it == m_memTriggerCreated.end())
     {
-        uint32_t numEntity = createTriggerEntity();
-        m_memTriggerCreated.insert({triggerData.m_pos, numEntity});
-        SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().
-                searchComponentByType<SpriteTextureComponent>(numEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
+        uint32_t numEntity = createTriggerEntity(button);
+        m_memTriggerCreated.insert({pos, numEntity});
         GeneralCollisionComponent *genComp = m_ecsManager.getComponentManager().
                 searchComponentByType<GeneralCollisionComponent>(numEntity, Components_e::GENERAL_COLLISION_COMPONENT);
         MapCoordComponent *mapComp = m_ecsManager.getComponentManager().
                 searchComponentByType<MapCoordComponent>(numEntity, Components_e::MAP_COORD_COMPONENT);
         CircleCollisionComponent *circleComp = m_ecsManager.getComponentManager().
                 searchComponentByType<CircleCollisionComponent>(numEntity, Components_e::CIRCLE_COLLISION_COMPONENT);
-        FPSVisibleStaticElementComponent *fpsComp = m_ecsManager.getComponentManager().
-                searchComponentByType<FPSVisibleStaticElementComponent>(numEntity, Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
         TriggerComponent *triggerComp = m_ecsManager.getComponentManager().
                 searchComponentByType<TriggerComponent>(numEntity, Components_e::TRIGGER_COMPONENT);
         assert(triggerComp);
-        assert(fpsComp);
         assert(circleComp);
         assert(mapComp);
-        assert(spriteComp);
         assert(genComp);
-        fpsComp->m_levelElementType = LevelStaticElementType_e::GROUND;
-        fpsComp->m_inGameSpriteSize = triggerData.m_displayData.m_GLSize;
-        circleComp->m_ray = 10.0f;
-        mapComp->m_coord = triggerData.m_pos;
-        mapComp->m_absoluteMapPositionPX = getCenteredAbsolutePosition(mapComp->m_coord);
-        genComp->m_tagA = CollisionTag_e::WALL_CT;
-        genComp->m_tagB = CollisionTag_e::WALL_TRIGGER_CT;
+        if(button)
+        {
+            SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().
+                    searchComponentByType<SpriteTextureComponent>(numEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
+            FPSVisibleStaticElementComponent *fpsComp = m_ecsManager.getComponentManager().
+                    searchComponentByType<FPSVisibleStaticElementComponent>(numEntity, Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
+            assert(fpsComp);
+            assert(spriteComp);
+            spriteComp->m_spriteData = &vectSprite[moveWallData.m_associatedTriggerData->m_displayData.m_numSprite];
+            fpsComp->m_levelElementType = LevelStaticElementType_e::GROUND;
+            fpsComp->m_inGameSpriteSize = moveWallData.m_associatedTriggerData->m_displayData.m_GLSize;
+            genComp->m_tagA = CollisionTag_e::WALL_CT;
+            genComp->m_tagB = CollisionTag_e::TRIGGER_CT;
+        }
+        else
+        {
+            genComp->m_tagA = CollisionTag_e::TRIGGER_CT;
+        }
         genComp->m_shape = CollisionShape_e::CIRCLE_C;
-        spriteComp->m_spriteData = &vectSprite[triggerData.m_displayData.m_numSprite];
+        circleComp->m_ray = 10.0f;
+        mapComp->m_coord = pos;
+        mapComp->m_absoluteMapPositionPX = getCenteredAbsolutePosition(mapComp->m_coord);
         triggerComp->m_vectElementEntities = vectPosition;
     }
     //else add new entity num to trigger
@@ -1216,13 +1238,16 @@ uint32_t MainEngine::createShotEntity()
 }
 
 //===================================================================
-uint32_t MainEngine::createTriggerEntity()
+uint32_t MainEngine::createTriggerEntity(bool visible)
 {
     std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComponents;
     bitsetComponents[Components_e::POSITION_VERTEX_COMPONENT] = true;
-    bitsetComponents[Components_e::SPRITE_TEXTURE_COMPONENT] = true;
+    if(visible)
+    {
+        bitsetComponents[Components_e::SPRITE_TEXTURE_COMPONENT] = true;
+        bitsetComponents[Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT] = true;
+    }
     bitsetComponents[Components_e::MAP_COORD_COMPONENT] = true;
-    bitsetComponents[Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT] = true;
     bitsetComponents[Components_e::GENERAL_COLLISION_COMPONENT] = true;
     bitsetComponents[Components_e::CIRCLE_COLLISION_COMPONENT] = true;
     bitsetComponents[Components_e::TRIGGER_COMPONENT] = true;

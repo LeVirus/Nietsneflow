@@ -698,6 +698,12 @@ void LevelManager::loadPositionWall(const INIReader &reader)
             {
                 loadTriggerLevelData(reader, vectINISections[i]);
             }
+            else if(m_moveableWallData[vectINISections[i]].m_triggerType == TriggerWallMoveType_e::GROUND)
+            {
+                m_moveableWallData[vectINISections[i]].m_groundTriggerPos = pairUI_t();
+                m_moveableWallData[vectINISections[i]].m_groundTriggerPos =
+                        *getPosition(reader,  vectINISections[i], "TriggerGamePosition");
+            }
         }
         //Normal wall
         else

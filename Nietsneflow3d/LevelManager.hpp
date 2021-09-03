@@ -51,6 +51,7 @@ struct MoveableWallData
     TriggerBehaviourType_e m_triggerBehaviourType;
     float m_velocity;
     std::optional<AssociatedTriggerData> m_associatedTriggerData;
+    std::optional<pairUI_t> m_groundTriggerPos;
 };
 
 class LevelManager

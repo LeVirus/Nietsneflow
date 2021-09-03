@@ -91,7 +91,7 @@ private:
                           bool moveable = false);
     void loadDoorEntities(const LevelManager &levelManager);
     void loadEnemiesEntities(const LevelManager &levelManager);
-    void loadTriggerEntityData(const AssociatedTriggerData &triggerData, const std::vector<uint32_t> &vectPosition, const std::vector<SpriteData> &vectSprite);
+    void loadTriggerEntityData(const MoveableWallData &moveWallData, const std::vector<uint32_t> &vectPosition, const std::vector<SpriteData> &vectSprite, TriggerWallMoveType_e type);
     void confVisibleAmmo(uint32_t ammoEntity);
     void loadStaticElementEntities(const LevelManager &levelManager);
     void loadStaticElementGroup(const std::vector<SpriteData> &vectSpriteData, const std::map<std::string, StaticLevelElementData> &staticData,
@@ -105,7 +105,7 @@ private:
                                     const MapImpactData_t &mapImpactData);
     void confShotImpactEntity(const std::vector<SpriteData> &vectSpriteData, const PairImpactData_t &shootDisplayData,
                               uint32_t &impactEntity);
-    uint32_t createTriggerEntity();
+    uint32_t createTriggerEntity(bool visible);
     uint32_t createColorEntity();
     uint32_t createTextureEntity();
     uint32_t createEnemyDropObject(const LevelManager &levelManager, const EnemyData &enemyData, const pairUI_t &coord);

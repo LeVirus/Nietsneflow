@@ -275,8 +275,7 @@ void stopMoveWallLevelLimitCase(MapCoordComponent *mapComp, MoveableWallConfComp
 }
 
 //===================================================================
-void switchToNextPhaseMoveWall(MapCoordComponent *mapComp,
-                               MoveableWallConfComponent *moveWallComp,
+void switchToNextPhaseMoveWall(MapCoordComponent *mapComp, MoveableWallConfComponent *moveWallComp,
                                const pairUI_t &previousPos)
 {
     Level::resetMoveWallElementCase(previousPos, moveWallComp->muiGetIdEntityAssociated());

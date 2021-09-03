@@ -214,7 +214,7 @@ enum class CollisionTag_e
     OBJECT_CT,
     EXIT_CT,
     STATIC_SET_CT,
-    WALL_TRIGGER_CT,
+    TRIGGER_CT,
     IMPACT_CT
 };
 

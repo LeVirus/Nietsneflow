@@ -286,10 +286,11 @@ void CollisionSystem::initArrayTag()
     m_tagArray.insert({CollisionTag_e::PLAYER_CT, CollisionTag_e::ENEMY_CT});
     m_tagArray.insert({CollisionTag_e::PLAYER_CT, CollisionTag_e::OBJECT_CT});
     m_tagArray.insert({CollisionTag_e::PLAYER_CT, CollisionTag_e::STATIC_SET_CT});
+    m_tagArray.insert({CollisionTag_e::PLAYER_CT, CollisionTag_e::TRIGGER_CT});
 
     m_tagArray.insert({CollisionTag_e::PLAYER_ACTION_CT, CollisionTag_e::DOOR_CT});
     m_tagArray.insert({CollisionTag_e::PLAYER_ACTION_CT, CollisionTag_e::EXIT_CT});
-    m_tagArray.insert({CollisionTag_e::PLAYER_ACTION_CT, CollisionTag_e::WALL_TRIGGER_CT});
+    m_tagArray.insert({CollisionTag_e::PLAYER_ACTION_CT, CollisionTag_e::TRIGGER_CT});
     m_tagArray.insert({CollisionTag_e::HIT_PLAYER_CT, CollisionTag_e::ENEMY_CT});
 
     m_tagArray.insert({CollisionTag_e::ENEMY_CT, CollisionTag_e::PLAYER_CT});
@@ -471,12 +472,7 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
                                                args.mapCompB.m_absoluteMapPositionPX, circleCompB.m_ray);
         if(collision)
         {
-            if(args.tagCompA->m_tagA == CollisionTag_e::PLAYER_CT &&
-                    args.tagCompB->m_tagA == CollisionTag_e::OBJECT_CT)
-            {
-                treatPlayerPickObject(args);
-            }
-            else if(args.tagCompA->m_tagA == CollisionTag_e::PLAYER_ACTION_CT)
+            if(args.tagCompA->m_tagA == CollisionTag_e::PLAYER_ACTION_CT)
             {
                 treatActionPlayerCircle(args);
             }
@@ -498,6 +494,20 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
                      args.tagCompB->m_tagA == CollisionTag_e::STATIC_SET_CT))
             {
                 collisionCircleCircleEject(args, circleCompA, circleCompB);
+            }
+            else if(args.tagCompA->m_tagA == CollisionTag_e::PLAYER_CT)
+            {
+                if(args.tagCompB->m_tagA == CollisionTag_e::OBJECT_CT)
+                {
+                    treatPlayerPickObject(args);
+                }
+                if(args.tagCompB->m_tagA == CollisionTag_e::TRIGGER_CT)
+                {
+                    TriggerComponent *triggerComp = stairwayToComponentManager().
+                            searchComponentByType<TriggerComponent>(args.entityNumB, Components_e::TRIGGER_COMPONENT);
+                    assert(triggerComp);
+                    triggerComp->m_actionned = true;
+                }
             }
         }
     }
@@ -589,7 +599,7 @@ void CollisionSystem::treatActionPlayerRect(CollisionArgs &args)
             doorComp->m_currentState = DoorState_e::MOVE_OPEN;
         }
     }
-    else if(args.tagCompB->m_tagB == CollisionTag_e::WALL_TRIGGER_CT)
+    else if(args.tagCompB->m_tagB == CollisionTag_e::TRIGGER_CT)
     {
         //TREAT MOVEABLE WALL
         if(args.tagCompB->m_tagA == CollisionTag_e::WALL_CT)
@@ -609,7 +619,7 @@ void CollisionSystem::treatActionPlayerCircle(CollisionArgs &args)
     {
         args.tagCompB->m_active = false;
     }
-    else if(args.tagCompB->m_tagB == CollisionTag_e::WALL_TRIGGER_CT)
+    else if(args.tagCompB->m_tagB == CollisionTag_e::TRIGGER_CT)
     {
 
         TriggerComponent *triggerComp = stairwayToComponentManager().
