@@ -210,7 +210,10 @@ bool DoorWallSystem::triggerMoveableWall(uint32_t wallEntity)
     moveableWallComp->m_actionned = true;
     std::optional<ElementRaycast> element = Level::getElementCase(mapComp->m_coord);
     //init move wall case
-    Level::memMoveWallEntity(mapComp->m_coord, wallEntity);
+    if(Level::getElementCase(mapComp->m_coord)->m_typeStd != LevelCaseType_e::WALL_LC)
+    {
+        Level::memMoveWallEntity(mapComp->m_coord, wallEntity);
+    }
     moveableWallComp->m_inMovement = true;
     moveableWallComp->m_initPos = true;
     moveableWallComp->m_currentPhase = 0;
