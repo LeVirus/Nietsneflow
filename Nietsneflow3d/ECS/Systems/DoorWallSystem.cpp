@@ -295,13 +295,15 @@ void switchToNextPhaseMoveWall(MapCoordComponent *mapComp, MoveableWallConfCompo
                 Level::setElementTypeCase(mapComp->m_coord, LevelCaseType_e::WALL_LC);
                 Level::setMoveableWallStopped(mapComp->m_coord, true);
             }
-            if(moveWallComp->m_triggerBehaviour == TriggerBehaviourType_e::REVERSABLE)
+            if(moveWallComp->m_triggerBehaviour == TriggerBehaviourType_e::REVERSABLE ||
+                    moveWallComp->m_triggerBehaviour == TriggerBehaviourType_e::AUTO)
             {
                 reverseDirection(moveWallComp);
             }
+            moveWallComp->m_manualTrigger =
+                    (moveWallComp->m_triggerBehaviour == TriggerBehaviourType_e::AUTO);
             moveWallComp->m_inMovement = false;
             moveWallComp->m_actionned = false;
-            moveWallComp->m_manualTrigger = false;
         }
     }
 }

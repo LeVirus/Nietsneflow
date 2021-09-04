@@ -108,15 +108,15 @@ enum class TriggerBehaviourType_e
 {
     ONCE,
     REVERSABLE,
-    MULTI
+    MULTI,
+    AUTO
 };
 
 enum class TriggerWallMoveType_e
 {
     WALL,
     BUTTON,
-    GROUND,
-    AUTO
+    GROUND
 };
 
 enum class MoveOrientation_e
