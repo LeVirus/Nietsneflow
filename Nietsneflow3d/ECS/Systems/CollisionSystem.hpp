@@ -15,6 +15,7 @@ struct EjectXArgs;
 struct PlayerConfComponent;
 struct WeaponComponent;
 struct MoveableWallConfComponent;
+
 class CollisionSystem : public ecs::System
 {
 public:

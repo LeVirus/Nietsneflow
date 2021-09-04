@@ -21,6 +21,7 @@ private:
     void treatMoveableWalls();
     void treatTriggers();
     bool triggerMoveableWall(uint32_t wallEntity);
+    void switchToNextPhaseMoveWall(uint32_t wallEntity, MapCoordComponent *mapComp, MoveableWallConfComponent *moveWallComp, const pairUI_t &previousPos);
 private:
     double m_timeDoorClosed = 0.6;
     std::vector<uint32_t> m_vectMoveableWall, m_vectTrigger;
@@ -31,5 +32,4 @@ Direction_e getReverseDirection(Direction_e dir);
 void stopMoveWallLevelLimitCase(MapCoordComponent *mapComp, MoveableWallConfComponent *moveWallComp);
 void setInitPhaseMoveWall(MapCoordComponent *mapComp, MoveableWallConfComponent *moveWallComp,
                           Direction_e currentDir, uint32_t wallEntity);
-void switchToNextPhaseMoveWall(MapCoordComponent *mapComp, MoveableWallConfComponent *moveWallComp, const pairUI_t &previousPos);
 void reverseDirection(MoveableWallConfComponent *moveWallComp);

@@ -9,6 +9,7 @@
 #include <ECS/Components/MoveableWallConfComponent.hpp>
 #include <ECS/Components/MoveableComponent.hpp>
 #include <ECS/Components/TriggerComponent.hpp>
+#include <ECS/Components/GeneralCollisionComponent.hpp>
 #include <cassert>
 
 //===================================================================
@@ -160,7 +161,7 @@ void DoorWallSystem::treatMoveableWalls()
         }
         if(next)
         {
-            switchToNextPhaseMoveWall(mapComp, moveWallComp, memPreviousPos);
+            switchToNextPhaseMoveWall(m_vectMoveableWall[i], mapComp, moveWallComp, memPreviousPos);
         }
     }
 }
@@ -275,8 +276,8 @@ void stopMoveWallLevelLimitCase(MapCoordComponent *mapComp, MoveableWallConfComp
 }
 
 //===================================================================
-void switchToNextPhaseMoveWall(MapCoordComponent *mapComp, MoveableWallConfComponent *moveWallComp,
-                               const pairUI_t &previousPos)
+void DoorWallSystem::switchToNextPhaseMoveWall(uint32_t wallEntity, MapCoordComponent *mapComp, MoveableWallConfComponent *moveWallComp,
+                                               const pairUI_t &previousPos)
 {
     Level::resetMoveWallElementCase(previousPos, moveWallComp->muiGetIdEntityAssociated());
     moveWallComp->m_initPos = true;
@@ -295,10 +296,21 @@ void switchToNextPhaseMoveWall(MapCoordComponent *mapComp, MoveableWallConfCompo
                 Level::setElementTypeCase(mapComp->m_coord, LevelCaseType_e::WALL_LC);
                 Level::setMoveableWallStopped(mapComp->m_coord, true);
             }
-            if(moveWallComp->m_triggerBehaviour == TriggerBehaviourType_e::REVERSABLE ||
-                    moveWallComp->m_triggerBehaviour == TriggerBehaviourType_e::AUTO)
+            if(moveWallComp->m_triggerBehaviour == TriggerBehaviourType_e::ONCE)
             {
-                reverseDirection(moveWallComp);
+                GeneralCollisionComponent *genComp = stairwayToComponentManager().
+                        searchComponentByType<GeneralCollisionComponent>(wallEntity,
+                                                                         Components_e::GENERAL_COLLISION_COMPONENT);
+                assert(genComp);
+                genComp->m_tagB = CollisionTag_e::WALL_CT;
+            }
+            else
+            {
+                if(moveWallComp->m_triggerBehaviour == TriggerBehaviourType_e::REVERSABLE ||
+                        moveWallComp->m_triggerBehaviour == TriggerBehaviourType_e::AUTO)
+                {
+                    reverseDirection(moveWallComp);
+                }
             }
             moveWallComp->m_manualTrigger =
                     (moveWallComp->m_triggerBehaviour == TriggerBehaviourType_e::AUTO);
