@@ -3,9 +3,6 @@ BUGS======================================================================
 ))
 Some weapons displays a bit too high
 
-))
-When a wall is moving in the direction of the player and the player is touching this wall the wall does not appear 
-
 -12)
 Static element  table desapear at limit vision
 
@@ -26,6 +23,9 @@ assert à CollisionSystem.cpp::770
 
 -14)
 First enemy display can display random texture=====================??
+
+))
+When a wall is moving in the direction of the player and the player is touching this wall the wall does not appear=================================OK
 
 ))
 When several wall move under the same line bad display=============================OK

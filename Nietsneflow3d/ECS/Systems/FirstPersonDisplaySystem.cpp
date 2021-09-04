@@ -894,6 +894,15 @@ optionalTargetRaycast_t FirstPersonDisplaySystem::calcLineSegmentRaycast(float r
             return result;
         }
     }
+    else if(element && (*element).m_type == LevelCaseType_e::WALL_MOVE_LC)
+    {
+        result = calcMovingWallSegmentRaycast(radiantAngle, lateralLeadCoef,
+                                              verticalLeadCoef, currentPoint, *element);
+        if(result)
+        {
+            return result;
+        }
+    }
     for(uint32_t k = 0; k < RAYCAST_DEPTH; ++k)//limit distance
     {
         currentPoint = getLimitPointRayCasting(currentPoint, radiantAngle,

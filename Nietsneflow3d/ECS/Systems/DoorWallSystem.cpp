@@ -287,6 +287,7 @@ void DoorWallSystem::switchToNextPhaseMoveWall(uint32_t wallEntity, MapCoordComp
         //IF CYCLE END
         if(++moveWallComp->m_currentPhase == moveWallComp->m_directionMove.size())
         {
+            bool autoMode = (moveWallComp->m_triggerBehaviour == TriggerBehaviourType_e::AUTO);
             std::optional<ElementRaycast> element = Level::getElementCase(mapComp->m_coord);
             //put element case to static wall
             if(element->m_type != LevelCaseType_e::WALL_LC)
@@ -307,13 +308,12 @@ void DoorWallSystem::switchToNextPhaseMoveWall(uint32_t wallEntity, MapCoordComp
             else
             {
                 if(moveWallComp->m_triggerBehaviour == TriggerBehaviourType_e::REVERSABLE ||
-                        moveWallComp->m_triggerBehaviour == TriggerBehaviourType_e::AUTO)
+                        autoMode)
                 {
                     reverseDirection(moveWallComp);
                 }
             }
-            moveWallComp->m_manualTrigger =
-                    (moveWallComp->m_triggerBehaviour == TriggerBehaviourType_e::AUTO);
+            moveWallComp->m_manualTrigger = autoMode;
             moveWallComp->m_inMovement = false;
             moveWallComp->m_actionned = false;
         }
