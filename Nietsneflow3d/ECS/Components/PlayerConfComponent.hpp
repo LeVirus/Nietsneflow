@@ -25,7 +25,9 @@ struct PlayerConfComponent : public ecs::Component
             m_life -= damage;
         }
     }
-    bool m_playerShoot = false, m_takeDamage = false, m_inMovement = false, m_pickItem = false;
+    std::pair<bool, Direction_e> m_crushMem = {false, Direction_e::NORTH};
+    bool m_playerShoot = false, m_takeDamage = false, m_inMovement = false,
+    m_pickItem = false, m_crush = false, m_frozen = false;
     std::pair<bool, std::string> m_infoWriteData = {false, ""};
     std::set<uint32_t> m_card;
     uint32_t m_weaponEntity, m_ammoWriteEntity, m_menuEntity, m_menuCursorEntity,

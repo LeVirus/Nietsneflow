@@ -17,6 +17,7 @@
 #include <ECS/Components/SpriteTextureComponent.hpp>
 #include <ECS/Components/WeaponComponent.hpp>
 #include <ECS/Components/TriggerComponent.hpp>
+#include <ECS/Components/MoveableWallConfComponent.hpp>
 #include <ECS/Systems/FirstPersonDisplaySystem.hpp>
 #include <ECS/Systems/ColorDisplaySystem.hpp>
 #include <BaseECS/engine.hpp>
@@ -46,6 +47,7 @@ void CollisionSystem::execSystem()
 {
     SegmentCollisionComponent *segmentCompA;
     System::execSystem();
+    m_pair = !m_pair;
     for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
     {
         GeneralCollisionComponent *tagCompA = stairwayToComponentManager().
@@ -77,6 +79,22 @@ void CollisionSystem::execSystem()
         else
         {
             segmentCompA = nullptr;
+        }
+        if(m_pair && tagCompA->m_tagA == CollisionTag_e::PLAYER_CT)
+        {
+            PlayerConfComponent *playerComp = stairwayToComponentManager().
+                    searchComponentByType<PlayerConfComponent>(mVectNumEntity[i],
+                                                               Components_e::PLAYER_CONF_COMPONENT);
+            assert(playerComp);
+            playerComp->m_crushMem.first = false;
+            if(!playerComp->m_crush)
+            {
+                playerComp->m_frozen = false;
+            }
+            else
+            {
+                playerComp->m_crush = false;
+            }
         }
         for(uint32_t j = 0; j < mVectNumEntity.size(); ++j)
         {
@@ -680,6 +698,47 @@ void CollisionSystem::treatPlayerPickObject(CollisionArgs &args)
 }
 
 //===================================================================
+bool CollisionSystem::treatCrushing(const CollisionArgs &args, float diffX, float diffY)
+{
+    PlayerConfComponent *playerComp = stairwayToComponentManager().
+            searchComponentByType<PlayerConfComponent>(args.entityNumA, Components_e::PLAYER_CONF_COMPONENT);
+    if(playerComp && !playerComp->m_crush)
+    {
+        //mem crush if player is eject from a moveable wall
+        if(!playerComp->m_crushMem.first)
+        {
+            if(args.tagCompB->m_tagA == CollisionTag_e::WALL_CT)
+            {
+                playerComp->m_crushMem = {true, getDirection(diffX, diffY)};
+            }
+        }
+        //if crush
+        else
+        {
+            if(args.tagCompB->m_tagA == CollisionTag_e::WALL_CT)
+            {
+                Direction_e dir = getDirection(diffX, diffY);
+                if((playerComp->m_crushMem.second == Direction_e::EAST &&
+                    dir == Direction_e::WEST) ||
+                        (playerComp->m_crushMem.second == Direction_e::WEST &&
+                         dir == Direction_e::EAST) ||
+                        (playerComp->m_crushMem.second == Direction_e::NORTH &&
+                         dir == Direction_e::SOUTH) ||
+                        (playerComp->m_crushMem.second == Direction_e::SOUTH &&
+                         dir == Direction_e::NORTH))
+                {
+                    playerComp->m_crush = true;
+                    playerComp->m_frozen = true;
+                    playerComp->takeDamage(1);
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+}
+
+//===================================================================
 bool pickUpAmmo(uint32_t numWeapon, WeaponComponent *weaponComp,
                 uint32_t objectContaining)
 {
@@ -810,6 +869,7 @@ void CollisionSystem::collisionCircleRectEject(CollisionArgs &args,
                                               circleCollA.m_ray, radiantObserverAngle,
                                               angleBehavior}, limitEjectX);
     }
+    treatCrushing(args, diffX, diffY);
     collisionEject(mapComp, diffX, diffY, limitEjectY, limitEjectX);
 }
 
@@ -1010,4 +1070,12 @@ MapCoordComponent &CollisionSystem::getMapComponent(uint32_t entityNum)
                                   Components_e::MAP_COORD_COMPONENT);
     assert(mapComp);
     return *mapComp;
+}
+
+//===================================================================
+Direction_e getDirection(float diffX, float diffY)
+{
+    bool vert = (std::abs(diffX) > std::abs(diffY)) ? true : false;
+    return vert ? ((diffY < EPSILON_FLOAT) ? Direction_e::SOUTH : Direction_e::NORTH) :
+                  ((diffX < EPSILON_FLOAT) ? Direction_e::WEST : Direction_e::EAST);
 }
