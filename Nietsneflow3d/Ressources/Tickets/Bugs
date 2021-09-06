@@ -1,7 +1,5 @@
 BUGS======================================================================
 
-))
-When a wall is moving in the direction of the player and the player is touching this wall the wall does not appear=================================~
 
 ))
 Some weapons displays a bit too high
@@ -26,6 +24,12 @@ assert à CollisionSystem.cpp::770
 
 -14)
 First enemy display can display random texture=====================??
+
+))
+Damage on moveable wall angle=============================OK
+
+))
+When a wall is moving in the direction of the player and the player is touching this wall the wall does not appear=================================OK
 
 ))
 When several wall move under the same line bad display=============================OK

@@ -713,7 +713,7 @@ bool CollisionSystem::treatCrushing(const CollisionArgs &args, float diffX, floa
                         searchComponentByType<MoveableWallConfComponent>(args.entityNumA,
                                                                          Components_e::MOVEABLE_WALL_CONF_COMPONENT);
                 playerComp->m_crushMem = {true, moveWallComp,
-                                          getDirection(diffX, diffY), args.entityNumA};
+                                          getDirection(diffX, diffY), args.entityNumB};
             }
         }
         //if crush

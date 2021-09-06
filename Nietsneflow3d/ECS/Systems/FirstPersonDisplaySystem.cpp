@@ -880,15 +880,7 @@ optionalTargetRaycast_t FirstPersonDisplaySystem::calcLineSegmentRaycast(float r
     std::optional<pairUI_t> currentCoord;
     std::optional<float> lateralLeadCoef, verticalLeadCoef;
     verticalLeadCoef = getLeadCoef(radiantAngle, false);
-    if(verticalLeadCoef)
-    {
-        lateral = true;
-    }
     lateralLeadCoef = getLeadCoef(radiantAngle, true);
-    if(lateralLeadCoef)
-    {
-        lateral = false;
-    }
     pairFloat_t currentPoint = originPoint;
     optionalTargetRaycast_t result;
     lateral = raycastPointLateral(radiantAngle, originPoint);
