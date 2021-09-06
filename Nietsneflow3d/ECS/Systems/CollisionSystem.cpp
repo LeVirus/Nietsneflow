@@ -713,7 +713,7 @@ bool CollisionSystem::treatCrushing(const CollisionArgs &args, float diffX, floa
                         searchComponentByType<MoveableWallConfComponent>(args.entityNumA,
                                                                          Components_e::MOVEABLE_WALL_CONF_COMPONENT);
                 playerComp->m_crushMem = {true, moveWallComp,
-                                          getDirection(diffX, diffY)};
+                                          getDirection(diffX, diffY), args.entityNumA};
             }
         }
         //if crush
@@ -722,8 +722,10 @@ bool CollisionSystem::treatCrushing(const CollisionArgs &args, float diffX, floa
             MoveableWallConfComponent *moveWallComp = stairwayToComponentManager().
                     searchComponentByType<MoveableWallConfComponent>(args.entityNumB,
                                                                      Components_e::MOVEABLE_WALL_CONF_COMPONENT);
+            //check if at least one wall is moveable and 2 distinct walls
             if(args.tagCompB->m_tagA == CollisionTag_e::WALL_CT &&
-                    (moveWallComp || args.tagCompB->m_tagB == CollisionTag_e::WALL_CT))
+                    (moveWallComp || args.tagCompB->m_tagB == CollisionTag_e::WALL_CT) &&
+                    args.entityNumB != std::get<3>(playerComp->m_crushMem))
             {
                 Direction_e dir = getDirection(diffX, diffY);
                 if((std::get<2>(playerComp->m_crushMem) == Direction_e::EAST &&

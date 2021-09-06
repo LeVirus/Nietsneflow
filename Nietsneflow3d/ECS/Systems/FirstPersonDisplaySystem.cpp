@@ -880,10 +880,19 @@ optionalTargetRaycast_t FirstPersonDisplaySystem::calcLineSegmentRaycast(float r
     std::optional<pairUI_t> currentCoord;
     std::optional<float> lateralLeadCoef, verticalLeadCoef;
     verticalLeadCoef = getLeadCoef(radiantAngle, false);
+    if(verticalLeadCoef)
+    {
+        lateral = true;
+    }
     lateralLeadCoef = getLeadCoef(radiantAngle, true);
+    if(lateralLeadCoef)
+    {
+        lateral = false;
+    }
     pairFloat_t currentPoint = originPoint;
     optionalTargetRaycast_t result;
-    currentCoord = getLevelCoord(currentPoint);
+    lateral = raycastPointLateral(radiantAngle, originPoint);
+    currentCoord = getCorrectedCoord(currentPoint, lateral, radiantAngle);
     element = Level::getElementCase(*currentCoord);
     if(element && (*element).m_type == LevelCaseType_e::DOOR_LC)
     {
@@ -1283,6 +1292,25 @@ std::optional<float> getModulo(float sinCosAngle, float position, float modulo, 
 }
 
 //===================================================================
+bool raycastPointLateral(float radiantAngle, const pairFloat_t &cameraPoint)
+{
+    bool lateral;
+    if(!getLeadCoef(radiantAngle, false))
+    {
+        lateral = true;
+    }
+    else if(!getLeadCoef(radiantAngle, true))
+    {
+        lateral = false;
+    }
+    else
+    {
+        lateral = (static_cast<int32_t>(std::fmod(cameraPoint.first, LEVEL_TILE_SIZE_PX)) != 0);
+    }
+    return lateral;
+}
+
+//===================================================================
 pairFloat_t getLimitPointRayCasting(const pairFloat_t &cameraPoint, float radiantAngle,
                                     std::optional<float> lateralLeadCoef,
                                     std::optional<float> verticalLeadCoef, bool &lateral)
@@ -1440,8 +1468,6 @@ pairFloat_t FirstPersonDisplaySystem::getCenterPosition(const MapCoordComponent 
     }
     return mapComp->m_absoluteMapPositionPX;
 }
-
-
 
 uint32_t getMinValueFromEntries(const float distance[])
 {

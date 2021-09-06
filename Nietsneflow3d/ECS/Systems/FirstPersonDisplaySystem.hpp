@@ -138,6 +138,7 @@ float getMiddleDoorDistance(const pairFloat_t &camera, const pairFloat_t &elemen
 std::optional<float> getModulo(float sinCosAngle, float position, float modulo, bool lateral);
 //lateral == false vertical
 std::optional<float> getLeadCoef(float radiantAngle, bool lateral);
+bool raycastPointLateral(float radiantAngle, const pairFloat_t &cameraPoint);
 pairFloat_t getLimitPointRayCasting(const pairFloat_t &cameraPoint, float radiantAngle, std::optional<float> lateralLeadCoef, std::optional<float> verticalLeadCoef, bool &lateral);
 int32_t getCoord(float value, float tileSize);
 std::optional<pairUI_t> getCorrectedCoord(const pairFloat_t &currentPoint, bool lateral, float radiantAngle);
