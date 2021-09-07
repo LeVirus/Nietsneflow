@@ -78,6 +78,10 @@ public:
     {return m_ceilingElement;}
     inline const std::map<std::string, StaticLevelElementData> &getObjectData()const
     {return m_objectElement;}
+    inline const std::map<std::string, StaticLevelElementData> &getTeleportData()const
+    {
+        return m_teleportElement;
+    }
     inline const StaticLevelElementData &getExitElementData()const
     {
         return m_exitStaticElement;
@@ -124,6 +128,7 @@ private:
                                    LevelStaticElementType_e elementType);
     void fillStandartPositionVect(const INIReader &reader, const std::string &sectionName,
                                   vectPairUI_t &vectPos);
+    void fillTeleportPositions(const INIReader &reader, const std::string &sectionName);
     std::optional<pairUI_t> getPosition(const INIReader &reader, const std::string_view sectionName, const std::string_view propertyName);
     bool fillWallPositionVect(const INIReader &reader, const std::string &sectionName, const std::string &propertyName,
                               std::set<pairUI_t> &setPos);
@@ -162,7 +167,7 @@ private:
     std::map<std::string, WallData> m_wallData;
     std::map<std::string, MoveableWallData> m_moveableWallData;
     std::map<std::string, uint32_t> m_weaponINIAssociated, m_cardINIAssociated;
-    std::map<std::string, StaticLevelElementData> m_groundElement, m_ceilingElement, m_objectElement;
+    std::map<std::string, StaticLevelElementData> m_groundElement, m_ceilingElement, m_objectElement, m_teleportElement;
     std::map<std::string, DoorData> m_doorData;
     std::map<std::string, EnemyData> m_enemyData;
     std::map<std::string, MemSpriteData> m_triggerDisplayData;
@@ -176,6 +181,7 @@ private:
 std::vector<uint32_t> convertStrToVectUI(const std::string &str);
 std::optional<std::vector<uint32_t> > getBrutPositionData(const INIReader &reader, const std::string & sectionName, const std::string &propertyName);
 std::vector<float> convertStrToVectFloat(const std::string &str);
+std::vector<bool> convertStrToVectBool(const std::string &str);
 std::vector<std::string> convertStrToVectStr(const std::string &str);
 void fillPositionVerticalLine(const pairUI_t &origins, uint32_t size,
                               std::set<pairUI_t> &vectPos);

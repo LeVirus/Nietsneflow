@@ -906,6 +906,7 @@ optionalTargetRaycast_t FirstPersonDisplaySystem::calcLineSegmentRaycast(float r
     }
     for(uint32_t k = 0; k < RAYCAST_DEPTH; ++k)//limit distance
     {
+        //OOOOK get lateral dirty
         currentPoint = getLimitPointRayCasting(currentPoint, radiantAngle,
                                                lateralLeadCoef, verticalLeadCoef, lateral);
         currentCoord = getCorrectedCoord(currentPoint, lateral, radiantAngle);

@@ -52,6 +52,7 @@ enum Components_e
     WEAPON_COMPONENT,
     MOVEABLE_WALL_CONF_COMPONENT,
     TRIGGER_COMPONENT,
+    TELEPORT_COMPONENT,
     TOTAL_COMPONENTS
 };
 
@@ -174,7 +175,8 @@ enum class LevelStaticElementType_e
     GROUND,
     CEILING,
     OBJECT,
-    IMPACT
+    IMPACT,
+    TELEPORT
 };
 
 enum class Shader_e
@@ -215,6 +217,7 @@ enum class CollisionTag_e
     EXIT_CT,
     STATIC_SET_CT,
     TRIGGER_CT,
+    TELEPORT_CT,
     IMPACT_CT
 };
 

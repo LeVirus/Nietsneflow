@@ -12,6 +12,7 @@
 #include <ECS/Components/MemSpriteDataComponent.hpp>
 #include <ECS/Components/VisionComponent.hpp>
 #include <ECS/Components/DoorComponent.hpp>
+#include <ECS/Components/TeleportComponent.hpp>
 #include <ECS/Components/PlayerConfComponent.hpp>
 #include <ECS/Components/MemPositionsVertexComponents.hpp>
 #include <ECS/Components/SegmentCollisionComponent.hpp>
@@ -781,7 +782,7 @@ void MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
             }
             if(!it->second.m_dropedObjectID.empty())
             {
-                enemyComp->m_dropedObjectEntity = createEnemyDropObject(levelManager, it->second, it->second.m_TileGamePosition[j]);
+                enemyComp->m_dropedObjectEntity = createEnemyDropObject(levelManager, it->second, j);
             }
             if(enemyComp->m_visibleShot)
             {
@@ -892,12 +893,12 @@ void MainEngine::loadTriggerEntityData(const MoveableWallData &moveWallData,
 }
 
 //===================================================================
-uint32_t MainEngine::createEnemyDropObject(const LevelManager &levelManager, const EnemyData &enemyData, const pairUI_t &coord)
+uint32_t MainEngine::createEnemyDropObject(const LevelManager &levelManager, const EnemyData &enemyData, uint32_t iterationNum)
 {
     std::map<std::string, StaticLevelElementData>::const_iterator itt = levelManager.getObjectData().find(enemyData.m_dropedObjectID);
     assert(itt != levelManager.getObjectData().end());
     uint32_t objectEntity = createStaticElementEntity(LevelStaticElementType_e::OBJECT, itt->second,
-                                                      levelManager.getPictureSpriteData(), coord);
+                                                      levelManager.getPictureSpriteData(), iterationNum);
     GeneralCollisionComponent *genComp = m_ecsManager.getComponentManager().
             searchComponentByType<GeneralCollisionComponent>(objectEntity, Components_e::GENERAL_COLLISION_COMPONENT);
     assert(genComp);
@@ -1321,6 +1322,20 @@ uint32_t MainEngine::createStaticEntity()
 }
 
 //===================================================================
+uint32_t MainEngine::createTeleportEntity()
+{
+    std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComponents;
+    bitsetComponents[Components_e::POSITION_VERTEX_COMPONENT] = true;
+    bitsetComponents[Components_e::SPRITE_TEXTURE_COMPONENT] = true;
+    bitsetComponents[Components_e::MAP_COORD_COMPONENT] = true;
+    bitsetComponents[Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT] = true;
+    bitsetComponents[Components_e::GENERAL_COLLISION_COMPONENT] = true;
+    bitsetComponents[Components_e::CIRCLE_COLLISION_COMPONENT] = true;
+    bitsetComponents[Components_e::TELEPORT_COMPONENT] = true;
+    return m_ecsManager.addEntity(bitsetComponents);
+}
+
+//===================================================================
 uint32_t MainEngine::createObjectEntity()
 {
     std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComponents;
@@ -1674,6 +1689,7 @@ void MainEngine::loadStaticElementEntities(const LevelManager &levelManager)
     loadStaticElementGroup(vectSprite, levelManager.getGroundData(), LevelStaticElementType_e::GROUND);
     loadStaticElementGroup(vectSprite, levelManager.getCeilingData(), LevelStaticElementType_e::CEILING);
     loadStaticElementGroup(vectSprite, levelManager.getObjectData(), LevelStaticElementType_e::OBJECT);
+    loadStaticElementGroup(vectSprite, levelManager.getTeleportData(), LevelStaticElementType_e::TELEPORT);
     loadExitElement(levelManager, levelManager.getExitElementData());
 }
 
@@ -1709,14 +1725,14 @@ void MainEngine::loadStaticElementGroup(const std::vector<SpriteData> &vectSprit
     {
         for(uint32_t j = 0; j < it->second.m_TileGamePosition.size(); ++j)
         {
-            createStaticElementEntity(elementType, it->second, vectSpriteData, it->second.m_TileGamePosition[j]);
+            createStaticElementEntity(elementType, it->second, vectSpriteData, j);
         }
     }
 }
 
 //===================================================================
 uint32_t MainEngine::createStaticElementEntity(LevelStaticElementType_e elementType, const StaticLevelElementData &staticElementData,
-                                               const std::vector<SpriteData> &vectSpriteData, const pairUI_t &coord)
+                                               const std::vector<SpriteData> &vectSpriteData, uint32_t iterationNum)
 {
     CollisionTag_e tag;
     uint32_t entityNum;
@@ -1725,21 +1741,12 @@ uint32_t MainEngine::createStaticElementEntity(LevelStaticElementType_e elementT
     if(elementType == LevelStaticElementType_e::OBJECT)
     {
         tag = CollisionTag_e::OBJECT_CT;
-        entityNum = createObjectEntity();
-        ObjectConfComponent *objComp = m_ecsManager.getComponentManager().
-                searchComponentByType<ObjectConfComponent>(entityNum, Components_e::OBJECT_CONF_COMPONENT);
-        assert(objComp);
-        objComp->m_type = staticElementData.m_type;
-        if(objComp->m_type == ObjectType_e::AMMO_WEAPON || objComp->m_type == ObjectType_e::WEAPON ||
-                objComp->m_type == ObjectType_e::HEAL)
-        {
-            objComp->m_containing = staticElementData.m_containing;
-            objComp->m_weaponID = staticElementData.m_weaponID;
-        }
-        else if(objComp->m_type == ObjectType_e::CARD)
-        {
-            objComp->m_cardID = staticElementData.m_cardID;
-        }
+        entityNum = confObjectEntity(staticElementData);
+    }
+    else if(elementType == LevelStaticElementType_e::TELEPORT)
+    {
+        tag = CollisionTag_e::TELEPORT_CT;
+        entityNum = confTeleportEntity(staticElementData, iterationNum);
     }
     else
     {
@@ -1757,7 +1764,7 @@ uint32_t MainEngine::createStaticElementEntity(LevelStaticElementType_e elementT
             searchComponentByType<FPSVisibleStaticElementComponent>(entityNum, Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
     assert(fpsStaticComp);
     fpsStaticComp->m_inGameSpriteSize = staticElementData.m_inGameSpriteSize;
-    confBaseComponent(entityNum, memSpriteData, coord, CollisionShape_e::CIRCLE_C, tag);
+    confBaseComponent(entityNum, memSpriteData, staticElementData.m_TileGamePosition[iterationNum], CollisionShape_e::CIRCLE_C, tag);
     CircleCollisionComponent *circleComp = m_ecsManager.getComponentManager().
             searchComponentByType<CircleCollisionComponent>(entityNum, Components_e::CIRCLE_COLLISION_COMPONENT);
     assert(circleComp);
@@ -1765,6 +1772,39 @@ uint32_t MainEngine::createStaticElementEntity(LevelStaticElementType_e elementT
     confStaticComponent(entityNum, staticElementData.m_inGameSpriteSize, elementType);
     return entityNum;
 }
+
+//===================================================================
+uint32_t MainEngine::confTeleportEntity(const StaticLevelElementData &teleportData, uint32_t iterationNum)
+{
+    uint32_t entityNum = createTeleportEntity();
+    TeleportComponent *teleportComp = m_ecsManager.getComponentManager().
+            searchComponentByType<TeleportComponent>(entityNum, Components_e::TELEPORT_COMPONENT);
+    assert(teleportComp);
+    teleportComp->m_targetPos = teleportData.m_teleportData->m_targetTeleport[iterationNum];
+    return entityNum;
+}
+
+//===================================================================
+uint32_t MainEngine::confObjectEntity(const StaticLevelElementData &objectData)
+{
+    uint32_t entityNum = createObjectEntity();
+    ObjectConfComponent *objComp = m_ecsManager.getComponentManager().
+            searchComponentByType<ObjectConfComponent>(entityNum, Components_e::OBJECT_CONF_COMPONENT);
+    assert(objComp);
+    objComp->m_type = objectData.m_type;
+    if(objComp->m_type == ObjectType_e::AMMO_WEAPON || objComp->m_type == ObjectType_e::WEAPON ||
+            objComp->m_type == ObjectType_e::HEAL)
+    {
+        objComp->m_containing = objectData.m_containing;
+        objComp->m_weaponID = objectData.m_weaponID;
+    }
+    else if(objComp->m_type == ObjectType_e::CARD)
+    {
+        objComp->m_cardID = objectData.m_cardID;
+    }
+    return entityNum;
+}
+
 
 //===================================================================
 void MainEngine::confColorBackgroundComponents(uint32_t entity, const GroundCeilingData &groundData, bool ground)

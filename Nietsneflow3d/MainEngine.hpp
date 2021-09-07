@@ -108,9 +108,11 @@ private:
     uint32_t createTriggerEntity(bool visible);
     uint32_t createColorEntity();
     uint32_t createTextureEntity();
-    uint32_t createEnemyDropObject(const LevelManager &levelManager, const EnemyData &enemyData, const pairUI_t &coord);
+    uint32_t createEnemyDropObject(const LevelManager &levelManager, const EnemyData &enemyData, uint32_t iterationNum);
     uint32_t createStaticElementEntity(LevelStaticElementType_e elementType, const StaticLevelElementData &staticElementData,
-                                   const std::vector<SpriteData> &vectSpriteData, const pairUI_t &coord);
+                                   const std::vector<SpriteData> &vectSpriteData, uint32_t iterationNum);
+    uint32_t confObjectEntity(const StaticLevelElementData &objectData);
+    uint32_t confTeleportEntity(const StaticLevelElementData &teleportData, uint32_t iterationNum);
     uint32_t createMeleeAttackEntity();
     uint32_t createAttackMeleeEntity(uint32_t damage, CollisionTag_e tag);
     uint32_t loadWeaponsEntity(const LevelManager &levelManager);
@@ -125,6 +127,7 @@ private:
     uint32_t createVisibleShotEntity();
     uint32_t createSimpleSpriteEntity();
     uint32_t createStaticEntity();
+    uint32_t createTeleportEntity();
     uint32_t createObjectEntity();
     void confBaseComponent(uint32_t entityNum, const SpriteData &memSpriteData, const pairUI_t &coordLevel,
                            CollisionShape_e collisionShape, CollisionTag_e tag);

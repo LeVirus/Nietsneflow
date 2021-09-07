@@ -7,6 +7,7 @@
 #include <ECS/Components/MoveableComponent.hpp>
 #include <ECS/Components/MoveableWallConfComponent.hpp>
 #include <ECS/Components/InputComponent.hpp>
+#include <ECS/Components/TeleportComponent.hpp>
 #include <ECS/Components/WeaponComponent.hpp>
 #include <ECS/Components/GeneralCollisionComponent.hpp>
 #include <ECS/Components/CircleCollisionComponent.hpp>
@@ -283,6 +284,12 @@ void ECSManager::syncComponentsFromEntities(uint32_t numEntity,
         {
             m_componentManager->instanciateExternComponent(numEntity,
                                                            std::make_unique<MoveableWallConfComponent>());
+        }
+            break;
+        case Components_e::TELEPORT_COMPONENT:
+        {
+            m_componentManager->instanciateExternComponent(numEntity,
+                                                           std::make_unique<TeleportComponent>());
         }
             break;
         case Components_e::TOTAL_COMPONENTS:

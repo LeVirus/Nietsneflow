@@ -166,13 +166,18 @@ void LevelManager::loadGeneralStaticElements(const INIReader &reader, LevelStati
         vectINISections = reader.getSectionNamesContaining("Object");
         memMap = &m_objectElement;
         break;
+    case LevelStaticElementType_e::TELEPORT:
+        vectINISections = reader.getSectionNamesContaining("Teleport");
+        memMap = &m_teleportElement;
+        break;
     case LevelStaticElementType_e::IMPACT:
         break;
     }
     for(uint32_t i = 0; i < vectINISections.size(); ++i)
     {
         memMap->insert({vectINISections[i], StaticLevelElementData()});
-        readStandardStaticElement(reader, memMap->operator[](vectINISections[i]), vectINISections[i], elementType);
+        readStandardStaticElement(reader, memMap->operator[](vectINISections[i]),
+                vectINISections[i], elementType);
     }
 }
 
@@ -296,6 +301,43 @@ void LevelManager::fillStandartPositionVect(const INIReader &reader, const std::
     {
         vectPos.emplace_back(pairUI_t{(*results)[j], (*results)[j + 1]});
         deleteWall(vectPos.back());
+    }
+}
+
+//===================================================================
+void LevelManager::fillTeleportPositions(const INIReader &reader, const std::string &sectionName)
+{
+    std::optional<std::vector<uint32_t>> resultsPosA = getBrutPositionData(reader, sectionName, "PosA"),
+            resultsPosB = getBrutPositionData(reader, sectionName, "PosB");
+    if(!resultsPosA)
+    {
+        return;
+    }
+    assert(resultsPosB);
+    assert((*resultsPosA).size() % 2 == 0);
+    assert((*resultsPosB).size() % 2 == 0);
+    assert((*resultsPosB).size() == (*resultsPosA).size());
+    uint32_t vectSize = (*resultsPosA).size() / 2;
+    m_teleportElement[sectionName].m_teleportData = TeleportData();
+    m_teleportElement[sectionName].m_teleportData->m_biDirection =
+            convertStrToVectBool(reader.Get(sectionName, "BiDirection", ""));
+    assert(m_teleportElement[sectionName].m_teleportData->m_biDirection.size() == vectSize);
+    vectPairUI_t &vect = m_teleportElement[sectionName].m_teleportData->m_targetTeleport;
+    vect.reserve(vectSize);
+    m_teleportElement[sectionName].m_TileGamePosition.reserve(vectSize);
+    for(uint32_t j = 0; j < (*resultsPosA).size(); j += 2)
+    {
+        //Origin
+        m_teleportElement[sectionName].m_TileGamePosition.emplace_back(pairUI_t{(*resultsPosA)[j], (*resultsPosA)[j + 1]});
+        //Target
+        vect.emplace_back(pairUI_t{(*resultsPosB)[j], (*resultsPosB)[j + 1]});
+        if(m_teleportElement[sectionName].m_teleportData->m_biDirection[j / 2])
+        {
+            //Origin
+            m_teleportElement[sectionName].m_TileGamePosition.emplace_back(pairUI_t{(*resultsPosB)[j], (*resultsPosB)[j + 1]});
+            //Target
+            vect.emplace_back(pairUI_t{(*resultsPosA)[j], (*resultsPosA)[j + 1]});
+        }
     }
 }
 
@@ -905,6 +947,14 @@ std::vector<uint32_t> convertStrToVectUI(const std::string &str)
 }
 
 //======================================================
+std::vector<bool> convertStrToVectBool(const std::string &str)
+{
+    std::istringstream iss(str);
+    return std::vector<bool>(std::istream_iterator<bool>{iss},
+                              std::istream_iterator<bool>());
+}
+
+//======================================================
 std::vector<float> convertStrToVectFloat(const std::string &str)
 {
     std::istringstream iss(str);
@@ -946,6 +996,7 @@ void LevelManager::loadStandardData(const std::string &INIFileName)
     loadGeneralStaticElements(reader, LevelStaticElementType_e::GROUND);
     loadGeneralStaticElements(reader, LevelStaticElementType_e::CEILING);
     loadGeneralStaticElements(reader, LevelStaticElementType_e::OBJECT);
+    loadGeneralStaticElements(reader, LevelStaticElementType_e::TELEPORT);
     loadExit(reader);
     loadTriggerElements(reader);
     loadDoorData(reader);
@@ -983,6 +1034,10 @@ void LevelManager::loadPositionStaticElements(const INIReader &reader)
     for(it = m_objectElement.begin(); it != m_objectElement.end(); ++it)
     {
         fillStandartPositionVect(reader, it->first, it->second.m_TileGamePosition);
+    }
+    for(it = m_teleportElement.begin(); it != m_teleportElement.end(); ++it)
+    {
+        fillTeleportPositions(reader, it->first);
     }
 }
 

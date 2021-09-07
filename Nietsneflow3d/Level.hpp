@@ -13,16 +13,26 @@ struct MoveableComponent;
 struct PositionVertexComponent;
 struct SpriteTextureComponent;
 
+struct TeleportData
+{
+    vectPairUI_t m_targetTeleport;
+    std::vector<bool> m_biDirection;
+};
+
 struct StaticLevelElementData
 {
+    //GLOBAL
     uint8_t m_numSprite;
     //In Game sprite size in % relative to a tile
     vectPairUI_t m_TileGamePosition;
     pairDouble_t m_inGameSpriteSize;
     ObjectType_e m_type;
+    bool m_traversable = true;
+    //OBJECT
     std::optional<uint32_t> m_weaponID, m_cardID = std::nullopt;
     uint32_t m_containing;
-    bool m_traversable = true;
+    //TELEPORT
+    std::optional<TeleportData> m_teleportData;
 };
 
 struct DoorData

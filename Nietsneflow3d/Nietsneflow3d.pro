@@ -38,6 +38,7 @@ HEADERS += \
     ECS/Components/MoveableWallConfComponent.hpp \
     ECS/Components/SegmentCollisionComponent.hpp \
     ECS/Components/ShotConfComponent.hpp \
+    ECS/Components/TeleportComponent.hpp \
     ECS/Components/TimerComponent.hpp \
     ECS/Components/TriggerComponent.hpp \
     ECS/Components/VisionComponent.hpp \
