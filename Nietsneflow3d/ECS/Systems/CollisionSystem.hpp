@@ -47,6 +47,7 @@ private:
     void treatActionPlayerRect(CollisionArgs &args);
     void treatActionPlayerCircle(CollisionArgs &args);
     void treatPlayerPickObject(CollisionArgs &args);
+    void treatPlayerTeleport(CollisionArgs &args);
     void treatCollisionFirstSegment(CollisionArgs &args);
     bool treatCrushing(const CollisionArgs &args, float diffX, float diffY);
     //Collisions treatment
@@ -81,7 +82,7 @@ private:
     std::vector<pairUI_t> m_vectMemShots;
     std::vector<uint32_t> m_vectEntitiesToDelete;
     PlayerConfComponent *m_playerComp = nullptr;
-    bool m_pair = true;
+    bool m_pair = true, m_memPlayerTeleport;
 };
 
 bool pickUpWeapon(uint32_t numWeapon, WeaponComponent *weaponComp,

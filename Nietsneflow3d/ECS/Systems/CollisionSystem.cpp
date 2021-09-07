@@ -12,6 +12,7 @@
 #include <ECS/Components/EnemyConfComponent.hpp>
 #include <ECS/Components/TimerComponent.hpp>
 #include <ECS/Components/ShotConfComponent.hpp>
+#include <ECS/Components/TeleportComponent.hpp>
 #include <ECS/Components/ImpactShotComponent.hpp>
 #include <ECS/Components/MemSpriteDataComponent.hpp>
 #include <ECS/Components/SpriteTextureComponent.hpp>
@@ -48,6 +49,7 @@ void CollisionSystem::execSystem()
     SegmentCollisionComponent *segmentCompA;
     System::execSystem();
     m_pair = !m_pair;
+    m_memPlayerTeleport = false;
     for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
     {
         GeneralCollisionComponent *tagCompA = stairwayToComponentManager().
@@ -131,6 +133,10 @@ void CollisionSystem::execSystem()
         }
         treatSegmentShots();
         m_vectMemShots.clear();
+    }
+    if(!m_memPlayerTeleport)
+    {
+        m_playerComp->m_teleported = false;
     }
 }
 
@@ -305,6 +311,7 @@ void CollisionSystem::initArrayTag()
     m_tagArray.insert({CollisionTag_e::PLAYER_CT, CollisionTag_e::OBJECT_CT});
     m_tagArray.insert({CollisionTag_e::PLAYER_CT, CollisionTag_e::STATIC_SET_CT});
     m_tagArray.insert({CollisionTag_e::PLAYER_CT, CollisionTag_e::TRIGGER_CT});
+    m_tagArray.insert({CollisionTag_e::PLAYER_CT, CollisionTag_e::TELEPORT_CT});
 
     m_tagArray.insert({CollisionTag_e::PLAYER_ACTION_CT, CollisionTag_e::DOOR_CT});
     m_tagArray.insert({CollisionTag_e::PLAYER_ACTION_CT, CollisionTag_e::EXIT_CT});
@@ -519,12 +526,17 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
                 {
                     treatPlayerPickObject(args);
                 }
-                if(args.tagCompB->m_tagA == CollisionTag_e::TRIGGER_CT)
+                else if(args.tagCompB->m_tagA == CollisionTag_e::TRIGGER_CT)
                 {
                     TriggerComponent *triggerComp = stairwayToComponentManager().
                             searchComponentByType<TriggerComponent>(args.entityNumB, Components_e::TRIGGER_COMPONENT);
                     assert(triggerComp);
                     triggerComp->m_actionned = true;
+                }
+                else if(args.tagCompB->m_tagA == CollisionTag_e::TELEPORT_CT)
+                {
+                    treatPlayerTeleport(args);
+                    m_memPlayerTeleport = true;
                 }
             }
         }
@@ -695,6 +707,29 @@ void CollisionSystem::treatPlayerPickObject(CollisionArgs &args)
     }
     playerComp->m_pickItem = true;
     m_vectEntitiesToDelete.push_back(args.entityNumB);
+}
+
+//===================================================================
+void CollisionSystem::treatPlayerTeleport(CollisionArgs &args)
+{
+
+    PlayerConfComponent *playerComp = stairwayToComponentManager().
+            searchComponentByType<PlayerConfComponent>(args.entityNumA, Components_e::PLAYER_CONF_COMPONENT);
+    MapCoordComponent *mapPlayerComp = stairwayToComponentManager().
+            searchComponentByType<MapCoordComponent>(args.entityNumA, Components_e::MAP_COORD_COMPONENT);
+    TeleportComponent *teleportComp = stairwayToComponentManager().
+            searchComponentByType<TeleportComponent>(args.entityNumB, Components_e::TELEPORT_COMPONENT);
+    assert(mapPlayerComp);
+    assert(playerComp);
+    assert(teleportComp);
+    if(playerComp->m_teleported)
+    {
+        return;
+    }
+    std::cerr << "TELEP\n";
+    playerComp->m_teleported = true;
+    mapPlayerComp->m_coord = teleportComp->m_targetPos;
+    mapPlayerComp->m_absoluteMapPositionPX = getCenteredAbsolutePosition(mapPlayerComp->m_coord);
 }
 
 //===================================================================
