@@ -1373,12 +1373,12 @@ void MainEngine::confBaseComponent(uint32_t entityNum, const SpriteData &memSpri
 {
     SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().
             searchComponentByType<SpriteTextureComponent>(entityNum, Components_e::SPRITE_TEXTURE_COMPONENT);
-    assert(spriteComp);
-    spriteComp->m_spriteData = &memSpriteData;
     MapCoordComponent *mapComp = m_ecsManager.getComponentManager().
             searchComponentByType<MapCoordComponent>(entityNum, Components_e::MAP_COORD_COMPONENT);
+    assert(spriteComp);
     assert(mapComp);
     mapComp->m_coord = coordLevel;
+    spriteComp->m_spriteData = &memSpriteData;
     if(tag == CollisionTag_e::WALL_CT || tag == CollisionTag_e::DOOR_CT)
     {
         mapComp->m_absoluteMapPositionPX = getAbsolutePosition(coordLevel);
