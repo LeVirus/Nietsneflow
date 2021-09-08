@@ -7,6 +7,7 @@
 #include <ECS/Components/MoveableComponent.hpp>
 #include <ECS/Components/MoveableWallConfComponent.hpp>
 #include <ECS/Components/InputComponent.hpp>
+#include <ECS/Components/MemFPSGLSizeComponent.hpp>
 #include <ECS/Components/TeleportComponent.hpp>
 #include <ECS/Components/WeaponComponent.hpp>
 #include <ECS/Components/GeneralCollisionComponent.hpp>
@@ -292,6 +293,13 @@ void ECSManager::syncComponentsFromEntities(uint32_t numEntity,
                                                            std::make_unique<TeleportComponent>());
         }
             break;
+        case Components_e::MEM_FPS_GLSIZE_COMPONENT:
+        {
+            m_componentManager->instanciateExternComponent(numEntity,
+                                                           std::make_unique<MemFPSGLSizeComponent>());
+        }
+            break;
+
         case Components_e::TOTAL_COMPONENTS:
             assert("Bad enum.");
             break;

@@ -11,6 +11,7 @@
 #include <ECS/Components/GeneralCollisionComponent.hpp>
 #include <ECS/Components/MemSpriteDataComponent.hpp>
 #include <ECS/Components/VisionComponent.hpp>
+#include <ECS/Components/MemFPSGLSizeComponent.hpp>
 #include <ECS/Components/DoorComponent.hpp>
 #include <ECS/Components/TeleportComponent.hpp>
 #include <ECS/Components/PlayerConfComponent.hpp>
@@ -1129,15 +1130,21 @@ void MainEngine::loadVisibleShotData(const std::vector<SpriteData> &vectSprite, 
         FPSVisibleStaticElementComponent *fpsStaticComp = m_ecsManager.getComponentManager().
                 searchComponentByType<FPSVisibleStaticElementComponent>(
                     visibleAmmo[k], Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
+        MemFPSGLSizeComponent *memFPSGLSizeComp = m_ecsManager.getComponentManager().
+                searchComponentByType<MemFPSGLSizeComponent>(
+                    visibleAmmo[k], Components_e::MEM_FPS_GLSIZE_COMPONENT);
+        assert(memFPSGLSizeComp);
         assert(fpsStaticComp);
         assert(spriteComp);
         assert(memSpriteComp);
         MapVisibleShotData_t::const_iterator it = visibleShot.find(visibleShootID);
         assert(it != visibleShot.end());
         memSpriteComp->m_vectSpriteData.reserve(it->second.size());
+        memFPSGLSizeComp->m_memGLSizeData.reserve(it->second.size());
         for(uint32_t l = 0; l < it->second.size(); ++l)
         {
             memSpriteComp->m_vectSpriteData.emplace_back(&vectSprite[it->second[l].m_numSprite]);
+            memFPSGLSizeComp->m_memGLSizeData.emplace_back(it->second[l].m_GLSize);
         }
         fpsStaticComp->m_inGameSpriteSize = it->second[0].m_GLSize;
         spriteComp->m_spriteData = memSpriteComp->m_vectSpriteData[0];
@@ -1288,6 +1295,7 @@ uint32_t MainEngine::createVisibleShotEntity()
     bitsetComponents[Components_e::TIMER_COMPONENT] = true;
     bitsetComponents[Components_e::SHOT_CONF_COMPONENT] = true;
     bitsetComponents[Components_e::MEM_SPRITE_DATA_COMPONENT] = true;
+    bitsetComponents[Components_e::MEM_FPS_GLSIZE_COMPONENT] = true;
     return m_ecsManager.addEntity(bitsetComponents);
 }
 

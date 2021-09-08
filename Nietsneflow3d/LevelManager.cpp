@@ -572,21 +572,24 @@ void LevelManager::loadVisibleShotDisplayData(const INIReader &reader)
     {
         return;
     }
-    std::string sprites;
-    float weight, height;
+    std::string sprites, weight, height;
     vectStr_t vectSprites;
+    std::vector<float> vectWeight, vectHeight;
     for(uint32_t i = 0; i < vectINISections.size(); ++i)
     {
         sprites = reader.Get(vectINISections[i], "Sprites", "");
-        assert(!sprites.empty());
-        weight = std::stof(reader.Get(vectINISections[i], "SpriteWeightGame", ""));
-        height = std::stof(reader.Get(vectINISections[i], "SpriteHeightGame", ""));
+        weight = reader.Get(vectINISections[i], "SpriteWeightGame", "");
+        height = reader.Get(vectINISections[i], "SpriteHeightGame", "");
+        vectWeight = convertStrToVectFloat(weight);
+        vectHeight = convertStrToVectFloat(height);
         vectSprites = convertStrToVectStr(sprites);
+        assert(vectWeight.size() == vectHeight.size());
+        assert(vectSprites.size() == vectHeight.size());
         m_visibleShootINIData.insert({vectINISections[i], std::vector<MemSpriteData>()});
         for(uint32_t j = 0; j < vectSprites.size(); ++j)
         {
             m_visibleShootINIData[vectINISections[i]].emplace_back(
-                        MemSpriteData{*m_pictureData.getIdentifier(vectSprites[j]), {weight, height}});
+                        MemSpriteData{*m_pictureData.getIdentifier(vectSprites[j]), {vectWeight[j], vectHeight[j]}});
         }
     }
 }

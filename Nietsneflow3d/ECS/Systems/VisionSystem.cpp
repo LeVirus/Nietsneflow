@@ -11,9 +11,11 @@
 #include <ECS/Components/VisionComponent.hpp>
 #include <ECS/Components/CircleCollisionComponent.hpp>
 #include <ECS/Components/RectangleCollisionComponent.hpp>
+#include <ECS/Components/FPSVisibleStaticElementComponent.hpp>
 #include <ECS/Components/PositionVertexComponent.hpp>
 #include <ECS/Components/MoveableComponent.hpp>
 #include <ECS/Components/MemSpriteDataComponent.hpp>
+#include <ECS/Components/MemFPSGLSizeComponent.hpp>
 #include <ECS/Components/SpriteTextureComponent.hpp>
 #include <ECS/Components/EnemyConfComponent.hpp>
 #include <ECS/Components/TimerComponent.hpp>
@@ -203,9 +205,17 @@ void VisionSystem::updateVisibleShotSprite(uint32_t shotEntity,
                                            GeneralCollisionComponent *genComp)
 {
     ShotConfComponent *shotComp = stairwayToComponentManager().
-            searchComponentByType<ShotConfComponent>(shotEntity,
-                                                             Components_e::SHOT_CONF_COMPONENT);
+            searchComponentByType<ShotConfComponent>(
+                shotEntity, Components_e::SHOT_CONF_COMPONENT);
+    MemFPSGLSizeComponent *memGLSizeComp = stairwayToComponentManager().
+            searchComponentByType<MemFPSGLSizeComponent>(
+                shotEntity, Components_e::MEM_FPS_GLSIZE_COMPONENT);
+    FPSVisibleStaticElementComponent *fpsStaticComp = stairwayToComponentManager().
+            searchComponentByType<FPSVisibleStaticElementComponent>(
+                shotEntity, Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
+    assert(fpsStaticComp);
     assert(shotComp);
+    assert(memGLSizeComp);
     if(!shotComp->m_destructPhase)
     {
         return;
@@ -226,6 +236,7 @@ void VisionSystem::updateVisibleShotSprite(uint32_t shotEntity,
             shotComp->m_spriteShotNum = 0;
         }
     }
+    fpsStaticComp->m_inGameSpriteSize = memGLSizeComp->m_memGLSizeData[shotComp->m_spriteShotNum];
     spriteComp->m_spriteData = memSpriteComp->m_vectSpriteData[shotComp->m_spriteShotNum];
 }
 
