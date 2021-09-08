@@ -1379,14 +1379,13 @@ void MainEngine::confBaseComponent(uint32_t entityNum, const SpriteData &memSpri
             searchComponentByType<MapCoordComponent>(entityNum, Components_e::MAP_COORD_COMPONENT);
     assert(mapComp);
     mapComp->m_coord = coordLevel;
-    if(tag == CollisionTag_e::EXIT_CT || tag == CollisionTag_e::OBJECT_CT ||
-            tag == CollisionTag_e::ENEMY_CT || tag == CollisionTag_e::STATIC_SET_CT)
+    if(tag == CollisionTag_e::WALL_CT || tag == CollisionTag_e::DOOR_CT)
     {
-        mapComp->m_absoluteMapPositionPX = getCenteredAbsolutePosition(coordLevel);
+        mapComp->m_absoluteMapPositionPX = getAbsolutePosition(coordLevel);
     }
     else
     {
-        mapComp->m_absoluteMapPositionPX = getAbsolutePosition(coordLevel);
+        mapComp->m_absoluteMapPositionPX = getCenteredAbsolutePosition(coordLevel);
     }
     GeneralCollisionComponent *tagComp = m_ecsManager.getComponentManager().
             searchComponentByType<GeneralCollisionComponent>(entityNum, Components_e::GENERAL_COLLISION_COMPONENT);
