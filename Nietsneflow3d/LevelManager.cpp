@@ -191,6 +191,29 @@ void LevelManager::loadExit(const INIReader &reader)
 }
 
 //===================================================================
+void LevelManager::loadVisualTeleportData(const INIReader &reader)
+{
+    std::vector<std::string> vectINISections;
+    vectINISections = reader.getSectionNamesContaining("TelepAnim");
+    assert(!vectINISections.empty());
+    std::string str = reader.Get(vectINISections[0], "Sprite", "");
+    assert(!str.empty());
+    vectStr_t vectSprite = convertStrToVectStr(str);
+    str = reader.Get(vectINISections[0], "SpriteWeightGame", "");
+    assert(!str.empty());
+    std::vector<float> vectWeight = convertStrToVectFloat(str);
+    str = reader.Get(vectINISections[0], "SpriteHeightGame", "");
+    assert(!str.empty());
+    std::vector<float> vectHeight = convertStrToVectFloat(str);
+    m_displayTeleportData.resize(vectSprite.size());
+    for(uint32_t i = 0; i < vectSprite.size(); ++i)
+    {
+        m_displayTeleportData[i].m_numSprite = *m_pictureData.getIdentifier(vectSprite[i]);
+        m_displayTeleportData[i].m_GLSize = {vectWeight[i], vectHeight[i]};
+    }
+}
+
+//===================================================================
 void LevelManager::loadTriggerElements(const INIReader &reader)
 {
     std::vector<std::string> vectINISections;
@@ -997,6 +1020,7 @@ void LevelManager::loadStandardData(const std::string &INIFileName)
     loadGeneralStaticElements(reader, LevelStaticElementType_e::CEILING);
     loadGeneralStaticElements(reader, LevelStaticElementType_e::OBJECT);
     loadGeneralStaticElements(reader, LevelStaticElementType_e::TELEPORT);
+    loadVisualTeleportData(reader);
     loadExit(reader);
     loadTriggerElements(reader);
     loadDoorData(reader);

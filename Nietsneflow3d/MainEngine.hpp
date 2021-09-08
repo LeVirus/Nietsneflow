@@ -76,10 +76,10 @@ private:
     void confPlayerVisibleShotsSprite(const std::vector<SpriteData> &vectSpriteData,
                                       const MapVisibleShotData_t &shootDisplayData,
                                       WeaponComponent *weaponComp);
-    void loadPlayerEntity(const LevelManager &levelManager, uint32_t numWeaponEntity);
+    void loadPlayerEntity(const LevelManager &levelManager, uint32_t numWeaponEntity, uint32_t numDisplayTeleportEntity);
     void confPlayerEntity(const LevelManager &levelManager,
                           uint32_t entityNum, const Level &level,
-                          uint32_t numWeaponEntity);
+                          uint32_t numWeaponEntity, uint32_t numDisplayTeleportEntity);
     void confActionEntity();
     void loadWallEntities(const std::map<std::string, WallData> &wallData,
                           const std::vector<SpriteData> &vectSprite);
@@ -94,6 +94,7 @@ private:
     void loadTriggerEntityData(const MoveableWallData &moveWallData, const std::vector<uint32_t> &vectPosition, const std::vector<SpriteData> &vectSprite, TriggerWallMoveType_e type);
     void confVisibleAmmo(uint32_t ammoEntity);
     void loadStaticElementEntities(const LevelManager &levelManager);
+    uint32_t loadDisplayTeleportEntity(const LevelManager &levelManager);
     void loadStaticElementGroup(const std::vector<SpriteData> &vectSpriteData, const std::map<std::string, StaticLevelElementData> &staticData,
                                 LevelStaticElementType_e elementType);
     void loadExitElement(const LevelManager &levelManager, const StaticLevelElementData &exit);
@@ -129,6 +130,7 @@ private:
     uint32_t createStaticEntity();
     uint32_t createTeleportEntity();
     uint32_t createObjectEntity();
+    uint32_t createDisplayTeleportEntity();
     void confBaseComponent(uint32_t entityNum, const SpriteData &memSpriteData, const pairUI_t &coordLevel,
                            CollisionShape_e collisionShape, CollisionTag_e tag);
     void confStaticComponent(uint32_t entityNum, const pairFloat_t &elementSize, LevelStaticElementType_e elementType);

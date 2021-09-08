@@ -466,8 +466,9 @@ void MainEngine::loadLevelEntities(const LevelManager &levelManager)
                            levelManager);
     loadColorEntities();
     loadStaticElementEntities(levelManager);
+    uint32_t displayTeleportEntity = loadDisplayTeleportEntity(levelManager);
     uint32_t weaponEntity = loadWeaponsEntity(levelManager);
-    loadPlayerEntity(levelManager, weaponEntity);
+    loadPlayerEntity(levelManager, weaponEntity, displayTeleportEntity);
     Level::initLevelElementArray();
     m_memWall.clear();
     loadWallEntities(levelManager.getWallData(), levelManager.getPictureData().getSpriteData());
@@ -1165,6 +1166,22 @@ void MainEngine::confVisibleAmmo(uint32_t ammoEntity)
 }
 
 //===================================================================
+uint32_t MainEngine::createDisplayTeleportEntity()
+{
+    std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComponents;
+    bitsetComponents[Components_e::POSITION_VERTEX_COMPONENT] = true;
+    bitsetComponents[Components_e::SPRITE_TEXTURE_COMPONENT] = true;
+    bitsetComponents[Components_e::MAP_COORD_COMPONENT] = true;
+    bitsetComponents[Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT] = true;
+    bitsetComponents[Components_e::MEM_SPRITE_DATA_COMPONENT] = true;
+    bitsetComponents[Components_e::TIMER_COMPONENT] = true;
+    bitsetComponents[Components_e::GENERAL_COLLISION_COMPONENT] = true;
+    bitsetComponents[Components_e::CIRCLE_COLLISION_COMPONENT] = true;
+    bitsetComponents[Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT] = true;
+    return m_ecsManager.addEntity(bitsetComponents);
+}
+
+//===================================================================
 uint32_t MainEngine::createWeaponEntity()
 {
     std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComponents;
@@ -1398,7 +1415,8 @@ void MainEngine::confStaticComponent(uint32_t entityNum, const pairFloat_t& elem
 
 //===================================================================
 void MainEngine::loadPlayerEntity(const LevelManager &levelManager,
-                                  uint32_t numWeaponEntity)
+                                  uint32_t numWeaponEntity,
+                                  uint32_t numDisplayTeleportEntity)
 {
     std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComponents;
     bitsetComponents[Components_e::POSITION_VERTEX_COMPONENT] = true;
@@ -1412,7 +1430,8 @@ void MainEngine::loadPlayerEntity(const LevelManager &levelManager,
     bitsetComponents[Components_e::PLAYER_CONF_COMPONENT] = true;
     bitsetComponents[Components_e::TIMER_COMPONENT] = true;
     uint32_t entityNum = m_ecsManager.addEntity(bitsetComponents);
-    confPlayerEntity(levelManager, entityNum, levelManager.getLevel(), numWeaponEntity);
+    confPlayerEntity(levelManager, entityNum, levelManager.getLevel(),
+                     numWeaponEntity, numDisplayTeleportEntity);
     //notify player entity number
     m_graphicEngine.getMapSystem().confPlayerComp(entityNum);
     m_physicalEngine.memPlayerEntity(entityNum);
@@ -1421,7 +1440,7 @@ void MainEngine::loadPlayerEntity(const LevelManager &levelManager,
 //===================================================================
 void MainEngine::confPlayerEntity(const LevelManager &levelManager,
                                   uint32_t entityNum, const Level &level,
-                                  uint32_t numWeaponEntity)
+                                  uint32_t numWeaponEntity, uint32_t numDisplayTeleportEntity)
 {
     const std::vector<SpriteData> &vectSpriteData =
             levelManager.getPictureData().getSpriteData();
@@ -1451,6 +1470,7 @@ void MainEngine::confPlayerEntity(const LevelManager &levelManager,
                                                      Components_e::PLAYER_CONF_COMPONENT);
     playerConf->m_weaponEntity = numWeaponEntity;
     playerConf->setIDEntityAssociated(entityNum);
+    playerConf->m_displayTeleportEntity = numDisplayTeleportEntity;
     WeaponComponent *weaponConf = m_ecsManager.getComponentManager().
             searchComponentByType<WeaponComponent>(playerConf->m_weaponEntity,
                                                    Components_e::WEAPON_COMPONENT);
@@ -1691,6 +1711,49 @@ void MainEngine::loadStaticElementEntities(const LevelManager &levelManager)
     loadStaticElementGroup(vectSprite, levelManager.getObjectData(), LevelStaticElementType_e::OBJECT);
     loadStaticElementGroup(vectSprite, levelManager.getTeleportData(), LevelStaticElementType_e::TELEPORT);
     loadExitElement(levelManager, levelManager.getExitElementData());
+}
+
+//===================================================================
+uint32_t MainEngine::loadDisplayTeleportEntity(const LevelManager &levelManager)
+{
+    uint32_t numEntity = createDisplayTeleportEntity();
+    SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().
+            searchComponentByType<SpriteTextureComponent>(numEntity,
+                                                          Components_e::SPRITE_TEXTURE_COMPONENT);
+    MemSpriteDataComponent *memSpriteComp = m_ecsManager.getComponentManager().
+            searchComponentByType<MemSpriteDataComponent>(numEntity,
+                                                          Components_e::MEM_SPRITE_DATA_COMPONENT);
+    GeneralCollisionComponent *genComp = m_ecsManager.getComponentManager().
+            searchComponentByType<GeneralCollisionComponent>(numEntity,
+                                                             Components_e::GENERAL_COLLISION_COMPONENT);
+    assert(genComp);
+    CircleCollisionComponent *circleComp = m_ecsManager.getComponentManager().
+            searchComponentByType<CircleCollisionComponent>(numEntity,
+                                                            Components_e::CIRCLE_COLLISION_COMPONENT);
+    FPSVisibleStaticElementComponent *fpsComp = m_ecsManager.getComponentManager().
+            searchComponentByType<FPSVisibleStaticElementComponent>(numEntity,
+                                                                    Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
+    assert(fpsComp);
+    assert(circleComp);
+    assert(memSpriteComp);
+    assert(spriteComp);
+    circleComp->m_ray = 10.0f;
+    genComp->m_tagA = CollisionTag_e::GHOST_CT;
+    genComp->m_tagB = CollisionTag_e::TELEPORT_ANIM_CT;
+    genComp->m_shape = CollisionShape_e::CIRCLE_C;
+    genComp->m_active = false;
+    const std::vector<SpriteData> &vectSprite = levelManager.getPictureData().getSpriteData();
+    const std::vector<MemSpriteData> &visibleTeleportData = levelManager.getVisibleTeleportData();
+    memSpriteComp->m_vectSpriteData.reserve(visibleTeleportData.size());
+    fpsComp->m_inGameSpriteSize = visibleTeleportData[0].m_GLSize;
+    fpsComp->m_levelElementType = LevelStaticElementType_e::GROUND;
+    for(uint32_t j = 0; j < visibleTeleportData.size(); ++j)
+    {
+        memSpriteComp->m_current = 0;
+        memSpriteComp->m_vectSpriteData.emplace_back(&vectSprite[visibleTeleportData[j].m_numSprite]);
+    }
+    spriteComp->m_spriteData = memSpriteComp->m_vectSpriteData[0];
+    return numEntity;
 }
 
 //===================================================================

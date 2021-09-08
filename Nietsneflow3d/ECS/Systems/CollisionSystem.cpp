@@ -715,21 +715,42 @@ void CollisionSystem::treatPlayerTeleport(CollisionArgs &args)
 
     PlayerConfComponent *playerComp = stairwayToComponentManager().
             searchComponentByType<PlayerConfComponent>(args.entityNumA, Components_e::PLAYER_CONF_COMPONENT);
-    MapCoordComponent *mapPlayerComp = stairwayToComponentManager().
-            searchComponentByType<MapCoordComponent>(args.entityNumA, Components_e::MAP_COORD_COMPONENT);
-    TeleportComponent *teleportComp = stairwayToComponentManager().
-            searchComponentByType<TeleportComponent>(args.entityNumB, Components_e::TELEPORT_COMPONENT);
-    assert(mapPlayerComp);
     assert(playerComp);
-    assert(teleportComp);
     if(playerComp->m_teleported)
     {
         return;
     }
-    std::cerr << "TELEP\n";
-    playerComp->m_teleported = true;
+    MapCoordComponent *mapPlayerComp = stairwayToComponentManager().
+            searchComponentByType<MapCoordComponent>(args.entityNumA, Components_e::MAP_COORD_COMPONENT);
+    TeleportComponent *teleportComp = stairwayToComponentManager().
+            searchComponentByType<TeleportComponent>(args.entityNumB, Components_e::TELEPORT_COMPONENT);
+    GeneralCollisionComponent *genTeleportComp = stairwayToComponentManager().
+            searchComponentByType<GeneralCollisionComponent>(playerComp->m_displayTeleportEntity,
+                                                             Components_e::GENERAL_COLLISION_COMPONENT);
+    MapCoordComponent *mapTeleportComp = stairwayToComponentManager().
+            searchComponentByType<MapCoordComponent>(playerComp->m_displayTeleportEntity,
+                                                     Components_e::MAP_COORD_COMPONENT);
+    TimerComponent *timerComp = stairwayToComponentManager().
+            searchComponentByType<TimerComponent>(playerComp->m_displayTeleportEntity,
+                                                  Components_e::TIMER_COMPONENT);
+    MoveableComponent *moveComp = stairwayToComponentManager().
+            searchComponentByType<MoveableComponent>(args.entityNumA,
+                                                     Components_e::MOVEABLE_COMPONENT);
+    assert(moveComp);
+    assert(timerComp);
+    assert(genTeleportComp);
+    assert(mapTeleportComp);
+    assert(mapPlayerComp);
+    assert(teleportComp);
+    timerComp->m_clockA = std::chrono::system_clock::now();
+    timerComp->m_clockB = std::chrono::system_clock::now();
     mapPlayerComp->m_coord = teleportComp->m_targetPos;
     mapPlayerComp->m_absoluteMapPositionPX = getCenteredAbsolutePosition(mapPlayerComp->m_coord);
+    mapTeleportComp->m_absoluteMapPositionPX = mapPlayerComp->m_absoluteMapPositionPX;
+    moveElementFromAngle(LEVEL_TILE_SIZE_PX, getRadiantAngle(moveComp->m_degreeOrientation),
+                         mapTeleportComp->m_absoluteMapPositionPX);
+    playerComp->m_teleported = true;
+    genTeleportComp->m_active = true;
 }
 
 //===================================================================

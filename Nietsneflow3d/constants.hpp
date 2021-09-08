@@ -218,7 +218,8 @@ enum class CollisionTag_e
     STATIC_SET_CT,
     TRIGGER_CT,
     TELEPORT_CT,
-    IMPACT_CT
+    IMPACT_CT,
+    TELEPORT_ANIM_CT
 };
 
 enum class CollisionShape_e

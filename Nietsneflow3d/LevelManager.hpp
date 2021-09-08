@@ -110,6 +110,10 @@ public:
     {
         return m_visibleShootINIData;
     }
+    inline const std::vector<MemSpriteData> &getVisibleTeleportData()const
+    {
+        return m_displayTeleportData;
+    }
 private:
     //texture and sprite loading
     void loadTexturePath(const INIReader &reader);
@@ -139,6 +143,7 @@ private:
     void loadShotImpactDisplayData(const INIReader &reader);
     void loadWeaponsDisplayData(const INIReader &reader);
     void loadExit(const INIReader &reader);
+    void loadVisualTeleportData(const INIReader &reader);
     void loadTriggerElements(const INIReader &reader);
     void loadSpriteData(const INIReader &reader, const std::string &sectionName,
                         StaticLevelElementData &staticElement);
@@ -171,6 +176,7 @@ private:
     std::map<std::string, DoorData> m_doorData;
     std::map<std::string, EnemyData> m_enemyData;
     std::map<std::string, MemSpriteData> m_triggerDisplayData;
+    std::vector<MemSpriteData> m_displayTeleportData;
     //store the sprite number and the screen display size
     std::vector<WeaponINIData> m_vectWeaponsINIData;
     //first moving Shot sprite, all other destruct phase sprites

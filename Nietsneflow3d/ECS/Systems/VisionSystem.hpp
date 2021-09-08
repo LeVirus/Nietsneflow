@@ -48,6 +48,9 @@ private:
     void updateImpactSprites(uint32_t entityImpact, MemSpriteDataComponent *memSpriteComp,
                              SpriteTextureComponent *spriteComp,
                              TimerComponent *timerComp, GeneralCollisionComponent *genComp);
+    void updateTeleportDisplaySprite(MemSpriteDataComponent *memSpriteComp,
+                                     SpriteTextureComponent *spriteComp,
+                                     TimerComponent *timerComp, GeneralCollisionComponent *genComp);
 private:
     const ECSManager* m_memECSManager;
     std::vector<uint32_t> m_memMultiSpritesWallEntities;

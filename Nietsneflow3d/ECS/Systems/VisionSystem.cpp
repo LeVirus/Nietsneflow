@@ -110,6 +110,11 @@ void VisionSystem::updateSprites(uint32_t observerEntity,
         {
             updateVisibleShotSprite(vectEntities[i], memSpriteComp, spriteComp, timerComp, genComp);
         }
+        else if(genComp->m_tagB == CollisionTag_e::TELEPORT_ANIM_CT)
+        {
+            updateTeleportDisplaySprite(memSpriteComp, spriteComp, timerComp, genComp);
+        }
+        //OOOOK put enemy tag to tagB
         else if(genComp->m_tagA == CollisionTag_e::ENEMY_CT ||
                 genComp->m_tagA == CollisionTag_e::GHOST_CT)
         {
@@ -379,6 +384,33 @@ void VisionSystem::updateImpactSprites(uint32_t entityImpact, MemSpriteDataCompo
         {
             genComp->m_active = false;
         }
+    }
+}
+
+//===========================================================================
+void VisionSystem::updateTeleportDisplaySprite(MemSpriteDataComponent *memSpriteComp,
+                                               SpriteTextureComponent *spriteComp,
+                                               TimerComponent *timerComp,
+                                               GeneralCollisionComponent *genComp)
+{
+    std::chrono::duration<double> elapsed_secondsA = std::chrono::system_clock::now() - timerComp->m_clockA,
+            elapsed_secondsB = std::chrono::system_clock::now() - timerComp->m_clockB;
+    if(elapsed_secondsA.count() > 0.40)
+    {
+        genComp->m_active = false;
+    }
+    else if(elapsed_secondsB.count() > 0.10)
+    {
+        timerComp->m_clockB = std::chrono::system_clock::now();
+        if(memSpriteComp->m_current < memSpriteComp->m_vectSpriteData.size() - 1)
+        {
+            ++memSpriteComp->m_current;
+        }
+        else
+        {
+            memSpriteComp->m_current = 0;
+        }
+        spriteComp->m_spriteData = memSpriteComp->m_vectSpriteData[memSpriteComp->m_current];
     }
 }
 
