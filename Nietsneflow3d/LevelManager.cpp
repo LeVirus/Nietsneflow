@@ -610,8 +610,8 @@ void LevelManager::loadShotImpactDisplayData(const INIReader &reader)
         spritesStd = reader.Get(vectINISections[i], "SpritesStd", "");
         spritesImpact = reader.Get(vectINISections[i], "SpriteTouched", "");
         assert(!spritesStd.empty());
-        weight = std::stof(reader.Get(vectINISections[i], "SpriteWeightGame", ""));
-        height = std::stof(reader.Get(vectINISections[i], "SpriteHeightGame", ""));
+        weight = reader.GetReal(vectINISections[i], "SpriteWeightGame", 1.0f);
+        height = reader.GetReal(vectINISections[i], "SpriteHeightGame", 1.0f);
         vectSprites = convertStrToVectStr(spritesStd);
         m_impactINIData.insert({vectINISections[i], PairImpactData_t()});
         for(uint32_t j = 0; j < vectSprites.size(); ++j)
@@ -625,7 +625,7 @@ void LevelManager::loadShotImpactDisplayData(const INIReader &reader)
 }
 
 //===================================================================
-void LevelManager::loadWeaponsDisplayData(const INIReader &reader)
+void LevelManager::loadWeaponsData(const INIReader &reader)
 {
     std::vector<std::string> vectINISections;
     vectINISections = reader.getSectionNamesContaining("Weapon");
@@ -661,23 +661,20 @@ void LevelManager::loadDisplayData(const INIReader &reader, std::string_view sec
 void LevelManager::loadWeaponData(const INIReader &reader, std::string_view sectionName, uint32_t numIt)
 {
     std::string sprites, str;
-    m_vectWeaponsINIData[numIt].m_maxAmmo =
-            std::stoul(reader.Get(sectionName.data(), "MaxAmmo", "1"));
+    m_vectWeaponsINIData[numIt].m_maxAmmo = reader.GetInteger(sectionName.data(), "MaxAmmo", 1);
     assert(m_vectWeaponsINIData[numIt].m_maxAmmo != 1);
-    m_vectWeaponsINIData[numIt].m_simultaneousShots =
-            std::stoul(reader.Get(sectionName.data(), "NumberOfShots", "1"));
-    m_vectWeaponsINIData[numIt].m_animMode = static_cast<AnimationMode_e>(std::stoul(reader.Get(sectionName.data(), "AnimationType", "0")));
-    m_vectWeaponsINIData[numIt].m_order = std::stoul(reader.Get(sectionName.data(), "Order", "100000"));
-    m_vectWeaponsINIData[numIt].m_lastAnimNum = std::stoul(reader.Get(sectionName.data(), "LastAnimNum", "1"));
-    m_vectWeaponsINIData[numIt].m_simultaneousShots = std::stoul(reader.Get(sectionName.data(), "NumberOfShots", "1"));
-    str = reader.Get(sectionName.data(), "Possess", "false");
-    m_vectWeaponsINIData[numIt].m_startingPossess = (str == "true") ? true : false;
-    m_vectWeaponsINIData[numIt].m_startingAmmoCount = std::stoul(reader.Get(sectionName.data(), "BaseAmmo", "0"));
-    m_vectWeaponsINIData[numIt].m_damage = std::stoul(reader.Get(sectionName.data(), "Damage", "1"));
+    m_vectWeaponsINIData[numIt].m_simultaneousShots = reader.GetInteger(sectionName.data(), "NumberOfShots", 1);
+    m_vectWeaponsINIData[numIt].m_animMode = static_cast<AnimationMode_e>(reader.GetInteger(sectionName.data(), "AnimationType", 0));
+    m_vectWeaponsINIData[numIt].m_order = reader.GetInteger(sectionName.data(), "Order", 100000);
+    m_vectWeaponsINIData[numIt].m_lastAnimNum = reader.GetInteger(sectionName.data(), "LastAnimNum", 1);
+    m_vectWeaponsINIData[numIt].m_simultaneousShots = reader.GetInteger(sectionName.data(), "NumberOfShots", 1);
+    m_vectWeaponsINIData[numIt].m_startingPossess = reader.GetBoolean(sectionName.data(), "Possess", false);
+    m_vectWeaponsINIData[numIt].m_startingAmmoCount = reader.GetInteger(sectionName.data(), "BaseAmmo", 0);
+    m_vectWeaponsINIData[numIt].m_damage = reader.GetInteger(sectionName.data(), "Damage", 1);
     m_vectWeaponsINIData[numIt].m_impactID = reader.Get(sectionName.data(), "ShotImpactID", "");
-    m_vectWeaponsINIData[numIt].m_shotVelocity = std::stof(reader.Get(sectionName.data(), "ShotVelocity", "1"));
+    m_vectWeaponsINIData[numIt].m_shotVelocity = reader.GetReal(sectionName.data(), "ShotVelocity", 1.0f);
     m_vectWeaponsINIData[numIt].m_attackType = static_cast<AttackType_e>(
-                std::stoul(reader.Get(sectionName.data(), "AttackType", "1")));
+                reader.GetInteger(sectionName.data(), "AttackType", 1));
     if(m_vectWeaponsINIData[numIt].m_attackType == AttackType_e::VISIBLE_SHOTS)
     {
         m_vectWeaponsINIData[numIt].m_visibleShootID = reader.Get(sectionName.data(), "ShootSpritesID", "");
@@ -696,9 +693,13 @@ void LevelManager::loadWeaponData(const INIReader &reader, std::string_view sect
     assert(vectHeight.size() == vectWeight.size());
     assert(vectSprites.size() == vectWeight.size());
     m_vectWeaponsINIData[numIt].m_spritesData.reserve(vectSprites.size());
-    str = reader.Get(sectionName.data(), "AnimationLatency", "");
-    assert(!str.empty());
-    m_vectWeaponsINIData[numIt].m_animationLatency = std::stof(str);
+    m_vectWeaponsINIData[numIt].m_animationLatency = reader.GetReal(sectionName.data(), "AnimationLatency", -1.0f);
+    assert(m_vectWeaponsINIData[numIt].m_animationLatency > 0.00f);
+    m_vectWeaponsINIData[numIt].m_damageCircleRay = reader.GetReal(sectionName.data(), "DamageZoneRay", -1.0f);
+    if(m_vectWeaponsINIData[numIt].m_damageCircleRay < 0.0f)
+    {
+        m_vectWeaponsINIData[numIt].m_damageCircleRay = std::nullopt;
+    }
     for(uint32_t i = 0; i < vectSprites.size(); ++i)
     {
         m_vectWeaponsINIData[numIt].m_spritesData.emplace_back(
@@ -850,17 +851,12 @@ void LevelManager::loadEnemyData(const INIReader &reader)
         m_enemyData[vectINISections[i]].m_inGameSpriteSize.second = reader.GetReal(vectINISections[i], "SpriteHeightGame", 1.0);
         m_enemyData[vectINISections[i]].m_visibleShootID = reader.Get(vectINISections[i], "ShootSpritesID", "");
         m_enemyData[vectINISections[i]].m_impactID = reader.Get(vectINISections[i], "ShotImpactID", "");
-        m_enemyData[vectINISections[i]].m_attackPower = std::stoul(reader.Get(vectINISections[i], "Damage", "1"));
-        m_enemyData[vectINISections[i]].m_life = std::stoul(reader.Get(vectINISections[i], "Life", "1"));
-        m_enemyData[vectINISections[i]].m_velocity = std::stof(reader.Get(vectINISections[i], "Velocity", "1"));
-        m_enemyData[vectINISections[i]].m_shotVelocity = std::stof(reader.Get(vectINISections[i], "ShotVelocity", "1"));
+        m_enemyData[vectINISections[i]].m_attackPower = reader.GetInteger(vectINISections[i], "Damage", 1);
+        m_enemyData[vectINISections[i]].m_life = reader.GetInteger(vectINISections[i], "Life", 1);
+        m_enemyData[vectINISections[i]].m_velocity = reader.GetReal(vectINISections[i], "Velocity", 1.0f);
+        m_enemyData[vectINISections[i]].m_shotVelocity = reader.GetReal(vectINISections[i], "ShotVelocity", 1.0f);
         m_enemyData[vectINISections[i]].m_dropedObjectID = reader.Get(vectINISections[i], "DropedObjectID", "");
-        str = reader.Get(vectINISections[i], "MeleeDamage", "");
-        if(!str.empty())
-        {
-            m_enemyData[vectINISections[i]].m_meleeDamage = std::stoul(str);
-        }
-
+        m_enemyData[vectINISections[i]].m_meleeDamage = reader.GetInteger(vectINISections[i], "MeleeDamage", 0);
         loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::STATIC_FRONT, m_enemyData[vectINISections[i]]);
         loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::STATIC_FRONT_LEFT, m_enemyData[vectINISections[i]]);
         loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::STATIC_FRONT_RIGHT, m_enemyData[vectINISections[i]]);
@@ -1018,7 +1014,7 @@ void LevelManager::loadStandardData(const std::string &INIFileName)
         assert("Error while reading INI file.");
     }
     loadWallData(reader);
-    loadWeaponsDisplayData(reader);
+    loadWeaponsData(reader);
     loadGeneralStaticElements(reader, LevelStaticElementType_e::GROUND);
     loadGeneralStaticElements(reader, LevelStaticElementType_e::CEILING);
     loadGeneralStaticElements(reader, LevelStaticElementType_e::OBJECT);

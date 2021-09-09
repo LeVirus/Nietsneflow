@@ -515,7 +515,7 @@ uint32_t MainEngine::loadWeaponsEntity(const LevelManager &levelManager)
     for(uint32_t i = 0; i < vectWeapons.size(); ++i)
     {
         weaponToTreat = vectWeapons[i].m_order;
-        if(vectWeapons[i].m_startingPossess && *vectWeapons[i].m_startingPossess)
+        if(vectWeapons[i].m_startingPossess)
         {
             weaponComp->m_weaponsData[weaponToTreat].m_posses = true;
             weaponComp->m_currentWeapon = vectWeapons[i].m_order;

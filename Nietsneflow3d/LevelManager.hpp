@@ -26,7 +26,8 @@ struct WeaponINIData
     AnimationMode_e m_animMode;
     std::string m_visibleShootID, m_impactID;
     float m_animationLatency, m_shotVelocity;
-    std::optional<bool> m_startingPossess;
+    bool m_startingPossess;
+    std::optional<float> m_damageCircleRay;
     std::optional<uint32_t> m_startingAmmoCount;
 };
 
@@ -141,7 +142,7 @@ private:
     uint8_t getSpriteId(const INIReader &reader, const std::string &sectionName);
     void loadVisibleShotDisplayData(const INIReader &reader);
     void loadShotImpactDisplayData(const INIReader &reader);
-    void loadWeaponsDisplayData(const INIReader &reader);
+    void loadWeaponsData(const INIReader &reader);
     void loadExit(const INIReader &reader);
     void loadVisualTeleportData(const INIReader &reader);
     void loadTriggerElements(const INIReader &reader);
