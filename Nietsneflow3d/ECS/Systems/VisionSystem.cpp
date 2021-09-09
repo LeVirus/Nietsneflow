@@ -236,6 +236,7 @@ void VisionSystem::updateVisibleShotSprite(uint32_t shotEntity,
             shotComp->m_spriteShotNum = 0;
         }
     }
+    assert(shotComp->m_spriteShotNum < memGLSizeComp->m_memGLSizeData.size());
     fpsStaticComp->m_inGameSpriteSize = memGLSizeComp->m_memGLSizeData[shotComp->m_spriteShotNum];
     spriteComp->m_spriteData = memSpriteComp->m_vectSpriteData[shotComp->m_spriteShotNum];
 }

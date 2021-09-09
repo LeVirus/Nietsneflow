@@ -13,6 +13,7 @@
 #include <ECS/Components/RectangleCollisionComponent.hpp>
 #include <ECS/Components/WeaponComponent.hpp>
 #include <ECS/Components/MemSpriteDataComponent.hpp>
+#include <ECS/Components/MemFPSGLSizeComponent.hpp>
 #include <ECS/Components/SpriteTextureComponent.hpp>
 #include <ECS/Components/FPSVisibleStaticElementComponent.hpp>
 #include <cassert>
@@ -340,7 +341,15 @@ void IASystem::confNewVisibleShot(const std::vector<uint32_t> &visibleShots)
     MoveableComponent *targetMoveComp = stairwayToComponentManager().
             searchComponentByType<MoveableComponent>(visibleShots[targetIndex],
                                                      Components_e::MOVEABLE_COMPONENT);
+    MemFPSGLSizeComponent *memFPSGLSizeCompBase = stairwayToComponentManager().
+            searchComponentByType<MemFPSGLSizeComponent>(visibleShots[baseIndex],
+                                                     Components_e::MEM_FPS_GLSIZE_COMPONENT);
     assert(baseShotConfComp);
+    MemFPSGLSizeComponent *memFPSGLSizeCompTarget = stairwayToComponentManager().
+            searchComponentByType<MemFPSGLSizeComponent>(visibleShots[targetIndex],
+                                                     Components_e::MEM_FPS_GLSIZE_COMPONENT);
+    assert(memFPSGLSizeCompBase);
+    assert(memFPSGLSizeCompTarget);
     assert(baseMoveComp);
     assert(targetShotConfComp);
     assert(targetMoveComp);
@@ -351,10 +360,11 @@ void IASystem::confNewVisibleShot(const std::vector<uint32_t> &visibleShots)
     assert(targetSpriteComp);
     assert(targetMemSpriteComp);
     assert(targetFpsStaticComp);
+    memFPSGLSizeCompTarget->m_memGLSizeData = memFPSGLSizeCompBase->m_memGLSizeData;
     targetMemSpriteComp->m_vectSpriteData = baseMemSpriteComp->m_vectSpriteData;
     targetSpriteComp->m_spriteData = targetMemSpriteComp->m_vectSpriteData[0];
     targetFpsStaticComp->m_levelElementType = baseFpsStaticComp->m_levelElementType;
-    targetFpsStaticComp->m_inGameSpriteSize = baseFpsStaticComp->m_inGameSpriteSize;
+    targetFpsStaticComp->m_inGameSpriteSize = memFPSGLSizeCompBase->m_memGLSizeData[0];
     targetMoveComp->m_velocity = baseMoveComp->m_velocity;
     targetShotConfComp->m_damage = baseShotConfComp->m_damage;
 }
