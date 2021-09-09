@@ -14,6 +14,7 @@
 #include <ECS/Components/DoorComponent.hpp>
 #include <ECS/Components/PlayerConfComponent.hpp>
 #include <ECS/Components/ImpactShotComponent.hpp>
+#include <ECS/Components/ShotConfComponent.hpp>
 #include <ECS/Components/MapCoordComponent.hpp>
 #include <ECS/Systems/ColorDisplaySystem.hpp>
 #include <PictureData.hpp>
@@ -634,7 +635,17 @@ void FirstPersonDisplaySystem::confNormalEntityVertex(uint32_t numEntity, Vision
             downPos, upPos;
     if(tag == CollisionTag_e::BULLET_ENEMY_CT || tag == CollisionTag_e::BULLET_PLAYER_CT)
     {
-        downPos = -0.3f / distanceFactor;
+        ShotConfComponent *shotComp = stairwayToComponentManager().
+                searchComponentByType<ShotConfComponent>(numEntity, Components_e::SHOT_CONF_COMPONENT);
+        assert(shotComp);
+        if(!shotComp->m_destructPhase)
+        {
+            downPos = -0.3f / distanceFactor;
+        }
+        else
+        {
+            downPos = -(fpsStaticComp->m_inGameSpriteSize.second / distanceFactor) / 1.6f;
+        }
         upPos = downPos + fpsStaticComp->m_inGameSpriteSize.second / distanceFactor;
     }
     else if(fpsStaticComp->m_levelElementType == LevelStaticElementType_e::IMPACT)
