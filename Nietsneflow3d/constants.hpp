@@ -211,6 +211,7 @@ enum class CollisionTag_e
     DOOR_CT,
     ENEMY_CT,
     BULLET_PLAYER_CT,
+    EXPLOSION_CT,
     HIT_PLAYER_CT,
     BULLET_ENEMY_CT,
     GHOST_CT,

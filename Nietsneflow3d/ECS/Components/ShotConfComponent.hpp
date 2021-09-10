@@ -13,6 +13,6 @@ struct ShotConfComponent : public ecs::Component
     uint32_t m_damage;
     bool m_destructPhase = false;
     uint32_t m_spriteShotNum = 0, m_impactEntity;
-    std::optional<std::pair<bool, float>> m_damageCircleRayData;
+    std::optional<uint32_t> m_damageCircleRayData;
     virtual ~ShotConfComponent() = default;
 };

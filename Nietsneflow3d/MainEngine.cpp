@@ -939,14 +939,14 @@ void MainEngine::confAmmoEntities(std::vector<uint32_t> &ammoEntities, Collision
         ShotConfComponent *shotConfComp = m_ecsManager.getComponentManager().
                 searchComponentByType<ShotConfComponent>(ammoEntities[j], Components_e::SHOT_CONF_COMPONENT);
         assert(shotConfComp);
+        shotConfComp->m_damage = damage;
         if(damageRay)
         {
             CircleCollisionComponent *circleComp = m_ecsManager.getComponentManager().
                     searchComponentByType<CircleCollisionComponent>(ammoEntities[j], Components_e::CIRCLE_COLLISION_COMPONENT);
             assert(circleComp);
-            shotConfComp->m_damageCircleRayData = {false, *damageRay};
+            shotConfComp->m_damageCircleRayData = createDamageZoneEntity(damage, CollisionTag_e::EXPLOSION_CT, LEVEL_TILE_SIZE_PX);
         }
-        shotConfComp->m_damage = damage;
         if(visibleShot)
         {
             MoveableComponent *moveComp = m_ecsManager.getComponentManager().
@@ -1543,7 +1543,7 @@ void MainEngine::confPlayerEntity(const LevelManager &levelManager,
     {
         if(weaponConf->m_weaponsData[i].m_attackType == AttackType_e::MELEE)
         {
-            m_playerConf->m_hitMeleeEntity = createAttackMeleeEntity(weaponConf->m_weaponsData[i].m_weaponPower,
+            m_playerConf->m_hitMeleeEntity = createDamageZoneEntity(weaponConf->m_weaponsData[i].m_weaponPower,
                                                                    CollisionTag_e::HIT_PLAYER_CT);
             break;
         }
@@ -1589,7 +1589,7 @@ uint32_t MainEngine::createMeleeAttackEntity()
 }
 
 //===================================================================
-uint32_t MainEngine::createAttackMeleeEntity(uint32_t damage, CollisionTag_e tag)
+uint32_t MainEngine::createDamageZoneEntity(uint32_t damage, CollisionTag_e tag, float ray)
 {
     uint32_t entityNum = createMeleeAttackEntity();
     GeneralCollisionComponent *genCollComp = m_ecsManager.getComponentManager().
@@ -1604,7 +1604,7 @@ uint32_t MainEngine::createAttackMeleeEntity(uint32_t damage, CollisionTag_e tag
     genCollComp->m_active = false;
     genCollComp->m_shape = CollisionShape_e::CIRCLE_C;
     genCollComp->m_tagA = tag;
-    circleColl->m_ray = 10.0f;
+    circleColl->m_ray = ray;
     shotComp->m_damage = damage;
     return entityNum;
 }

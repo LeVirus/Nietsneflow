@@ -117,22 +117,11 @@ void CollisionSystem::execSystem()
             {
                 continue;
             }
-            if(!treatCollision(mVectNumEntity[i], mVectNumEntity[j], tagCompA, tagCompB))
-            {
-                break;
-            }
+            treatCollision(mVectNumEntity[i], mVectNumEntity[j], tagCompA, tagCompB);
         }
-        if(tagCompA->m_tagA == CollisionTag_e::BULLET_PLAYER_CT)
+        if(tagCompA->m_tagA == CollisionTag_e::EXPLOSION_CT)
         {
-            ShotConfComponent *shotComp = stairwayToComponentManager().
-                    searchComponentByType<ShotConfComponent>(mVectNumEntity[i],
-                                                             Components_e::SHOT_CONF_COMPONENT);
-            assert(shotComp);
-            if(shotComp->m_damageCircleRayData)
-            {
-//                std::cerr << (int)args.tagCompA->m_tagA << " RESET\n";
-                setDamageCircle(mVectNumEntity[i], shotComp, false);
-            }
+            setDamageCircle(mVectNumEntity[i], false);
         }
         if(tagCompA->m_tagA == CollisionTag_e::PLAYER_ACTION_CT)
         {
@@ -333,6 +322,9 @@ void CollisionSystem::initArrayTag()
     m_tagArray.insert({CollisionTag_e::PLAYER_ACTION_CT, CollisionTag_e::TRIGGER_CT});
     m_tagArray.insert({CollisionTag_e::HIT_PLAYER_CT, CollisionTag_e::ENEMY_CT});
 
+    m_tagArray.insert({CollisionTag_e::EXPLOSION_CT, CollisionTag_e::PLAYER_CT});
+    m_tagArray.insert({CollisionTag_e::EXPLOSION_CT, CollisionTag_e::ENEMY_CT});
+
     m_tagArray.insert({CollisionTag_e::ENEMY_CT, CollisionTag_e::PLAYER_CT});
     m_tagArray.insert({CollisionTag_e::ENEMY_CT, CollisionTag_e::WALL_CT});
     m_tagArray.insert({CollisionTag_e::ENEMY_CT, CollisionTag_e::DOOR_CT});
@@ -383,7 +375,7 @@ bool CollisionSystem::checkTag(CollisionTag_e entityTagA, CollisionTag_e entityT
 }
 
 //===================================================================
-bool CollisionSystem::treatCollision(uint32_t entityNumA, uint32_t entityNumB,
+void CollisionSystem::treatCollision(uint32_t entityNumA, uint32_t entityNumB,
                                      GeneralCollisionComponent *tagCompA, GeneralCollisionComponent *tagCompB)
 {
 
@@ -394,14 +386,13 @@ bool CollisionSystem::treatCollision(uint32_t entityNumA, uint32_t entityNumB,
     if(tagCompA->m_shape == CollisionShape_e::CIRCLE_C)
     {
         CollisionArgs args = {entityNumA, entityNumB, tagCompA, tagCompB, getMapComponent(entityNumA), getMapComponent(entityNumB)};
-        return treatCollisionFirstCircle(args);
+        treatCollisionFirstCircle(args);
     }
     else if(tagCompA->m_shape == CollisionShape_e::SEGMENT_C)
     {
         assert(tagCompA->m_tagA == CollisionTag_e::BULLET_PLAYER_CT || tagCompA->m_tagA == CollisionTag_e::BULLET_ENEMY_CT);
         checkCollisionFirstSegment(entityNumA, entityNumB, tagCompB, getMapComponent(entityNumB));
     }
-    return true;
 }
 
 //===================================================================
@@ -446,7 +437,7 @@ void CollisionSystem::writePlayerInfo(const std::string &info)
 }
 
 //===================================================================
-bool CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
+void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
 {
     if(args.tagCompA->m_tagA == CollisionTag_e::PLAYER_ACTION_CT ||
             args.tagCompA->m_tagA == CollisionTag_e::HIT_PLAYER_CT)
@@ -555,6 +546,25 @@ bool CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
                     m_memPlayerTeleport = true;
                 }
             }
+            else if(args.tagCompA->m_tagA == CollisionTag_e::EXPLOSION_CT)
+            {
+                ShotConfComponent *shotConfComp = stairwayToComponentManager().
+                        searchComponentByType<ShotConfComponent>(args.entityNumA, Components_e::SHOT_CONF_COMPONENT);
+                assert(shotConfComp);
+                if(args.tagCompB->m_tagA == CollisionTag_e::PLAYER_CT)
+                {
+                    //OOOOOK factor
+                    PlayerConfComponent * playerConf = stairwayToComponentManager().
+                            searchComponentByType<PlayerConfComponent>(args.entityNumB,
+                                                  Components_e::PLAYER_CONF_COMPONENT);
+                    assert(playerConf);
+                    playerConf->takeDamage(shotConfComp->m_damage);
+                }
+                if(args.tagCompB->m_tagA == CollisionTag_e::ENEMY_CT)
+                {
+                    treatEnemyShooted(args.entityNumB, shotConfComp->m_damage);
+                }
+            }
         }
     }
         break;
@@ -589,17 +599,11 @@ bool CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
             assert(shotConfComp);
             if(shotConfComp->m_destructPhase)
             {
-                return true;
+                return;
             }
             if(shotConfComp->m_damageCircleRayData)
             {
-                std::cerr << (int)args.tagCompA->m_tagA <<
-                             (int)args.tagCompB->m_tagA << " SET\n";
-                if(setDamageCircle(args.entityNumA, shotConfComp, true))
-                {
-                    return false;
-                }
-                std::cerr << (int)args.tagCompA->m_tagA << " SOKKO\n";
+                setDamageCircle(*shotConfComp->m_damageCircleRayData, true, args.entityNumA);
             }
             TimerComponent *timerComp = stairwayToComponentManager().
                     searchComponentByType<TimerComponent>(args.entityNumA, Components_e::TIMER_COMPONENT);
@@ -607,15 +611,13 @@ bool CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
             timerComp->m_clockB = std::chrono::system_clock::now();
             shotConfComp->m_destructPhase = true;
             shotConfComp->m_spriteShotNum = 1;
-            if(limitLevelDestruct)
+            if(limitLevelDestruct || shotConfComp->m_damageCircleRayData)
             {
-                return true;
+                return;
             }
             if(args.tagCompA->m_tagA == CollisionTag_e::BULLET_PLAYER_CT &&
                     args.tagCompB->m_tagA == CollisionTag_e::ENEMY_CT)
             {
-                if(shotConfComp->m_damageCircleRayData)
-                    std::cerr << shotConfComp->m_damage << " DAM\n";
                 treatEnemyShooted(args.entityNumB, shotConfComp->m_damage);
             }
             else if(args.tagCompA->m_tagA == CollisionTag_e::BULLET_ENEMY_CT &&
@@ -629,23 +631,28 @@ bool CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
             }
         }
     }
-    return true;
 }
 
 //===================================================================
-bool CollisionSystem::setDamageCircle(uint32_t entityNum, ShotConfComponent *shotConfComp, bool active)
+void CollisionSystem::setDamageCircle(uint32_t damageEntity, bool active, uint32_t baseEntity)
 {
-    bool ret = (active != shotConfComp->m_damageCircleRayData->first);
-    if(ret)
+    GeneralCollisionComponent *genDam = stairwayToComponentManager().
+            searchComponentByType<GeneralCollisionComponent>(damageEntity,
+                                                             Components_e::GENERAL_COLLISION_COMPONENT);
+    assert(genDam);
+    genDam->m_active = active;
+    if(active)
     {
-        CircleCollisionComponent *circleComp = stairwayToComponentManager().
-                searchComponentByType<CircleCollisionComponent>(entityNum,
-                                                                Components_e::CIRCLE_COLLISION_COMPONENT);
-        assert(circleComp);
-        shotConfComp->m_damageCircleRayData->first = active;
-        std::swap(shotConfComp->m_damageCircleRayData->second, circleComp->m_ray);
+        MapCoordComponent *mapCompDam = stairwayToComponentManager().
+                searchComponentByType<MapCoordComponent>(damageEntity,
+                                                         Components_e::MAP_COORD_COMPONENT);
+        MapCoordComponent *mapComp = stairwayToComponentManager().
+                searchComponentByType<MapCoordComponent>(baseEntity,
+                                                         Components_e::MAP_COORD_COMPONENT);
+        assert(mapCompDam);
+        assert(mapComp);
+        mapCompDam->m_absoluteMapPositionPX = mapComp->m_absoluteMapPositionPX;
     }
-    return ret;
 }
 
 //===================================================================
