@@ -15,6 +15,7 @@ struct EjectXArgs;
 struct PlayerConfComponent;
 struct WeaponComponent;
 struct MoveableWallConfComponent;
+struct ShotConfComponent;
 
 class CollisionSystem : public ecs::System
 {
@@ -45,6 +46,7 @@ private:
     void treatCollisionFirstRect(CollisionArgs &args);
     void treatCollisionFirstCircle(CollisionArgs &args);
     void treatActionPlayerRect(CollisionArgs &args);
+    bool setDamageCircle(uint32_t entityNum, ShotConfComponent *shotConfComp, bool active);
     void treatActionPlayerCircle(CollisionArgs &args);
     void treatPlayerPickObject(CollisionArgs &args);
     void treatPlayerTeleport(CollisionArgs &args);

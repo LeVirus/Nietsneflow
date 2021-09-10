@@ -100,7 +100,8 @@ private:
     void loadExitElement(const LevelManager &levelManager, const StaticLevelElementData &exit);
     void createPlayerAmmoEntities(PlayerConfComponent *playerConf, CollisionTag_e collTag);
     void confAmmoEntities(std::vector<uint32_t> &ammoEntities, CollisionTag_e collTag,
-                          bool visibleShot, uint32_t damage, float shotVelocity = 0);
+                          bool visibleShot, uint32_t damage, float shotVelocity = 0,
+                          std::optional<float> damageRay = std::nullopt);
     void createPlayerVisibleShotEntity(WeaponComponent *weaponConf);
     void createPlayerImpactEntities(const std::vector<SpriteData> &vectSpriteData, WeaponComponent *weaponConf,
                                     const MapImpactData_t &mapImpactData);
