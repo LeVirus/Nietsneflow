@@ -1060,50 +1060,28 @@ void MainEngine::loadEnemySprites(const std::vector<SpriteData> &vectSprite,
             searchComponentByType<MemSpriteDataComponent>(numEntity,
                                                           Components_e::MEM_SPRITE_DATA_COMPONENT);
     assert(memSpriteComp);
-    insertEnemySpriteFromType(vectSprite, enemyComp->m_mapSpriteAssociate,
-                              memSpriteComp->m_vectSpriteData,
-                              enemiesData.m_staticFrontSprites,
-                              EnemySpriteType_e::STATIC_FRONT);
-    insertEnemySpriteFromType(vectSprite, enemyComp->m_mapSpriteAssociate,
-                              memSpriteComp->m_vectSpriteData,
-                              enemiesData.m_staticFrontLeftSprites,
-                              EnemySpriteType_e::STATIC_FRONT_LEFT);
-    insertEnemySpriteFromType(vectSprite, enemyComp->m_mapSpriteAssociate,
-                              memSpriteComp->m_vectSpriteData,
-                              enemiesData.m_staticFrontRightSprites,
-                              EnemySpriteType_e::STATIC_FRONT_RIGHT);
-    insertEnemySpriteFromType(vectSprite, enemyComp->m_mapSpriteAssociate,
-                              memSpriteComp->m_vectSpriteData,
-                              enemiesData.m_staticBackSprites,
-                              EnemySpriteType_e::STATIC_BACK);
-    insertEnemySpriteFromType(vectSprite, enemyComp->m_mapSpriteAssociate,
-                              memSpriteComp->m_vectSpriteData,
-                              enemiesData.m_staticBackLeftSprites,
-                              EnemySpriteType_e::STATIC_BACK_LEFT);
-    insertEnemySpriteFromType(vectSprite, enemyComp->m_mapSpriteAssociate,
-                              memSpriteComp->m_vectSpriteData,
-                              enemiesData.m_staticBackRightSprites,
-                              EnemySpriteType_e::STATIC_BACK_RIGHT);
-    insertEnemySpriteFromType(vectSprite, enemyComp->m_mapSpriteAssociate,
-                              memSpriteComp->m_vectSpriteData,
-                              enemiesData.m_staticLeftSprites,
-                              EnemySpriteType_e::STATIC_LEFT);
-    insertEnemySpriteFromType(vectSprite, enemyComp->m_mapSpriteAssociate,
-                              memSpriteComp->m_vectSpriteData,
-                              enemiesData.m_staticRightSprites,
-                              EnemySpriteType_e::STATIC_RIGHT);
-    insertEnemySpriteFromType(vectSprite, enemyComp->m_mapSpriteAssociate,
-                              memSpriteComp->m_vectSpriteData,
-                              enemiesData.m_attackSprites,
-                              EnemySpriteType_e::ATTACK);
-    insertEnemySpriteFromType(vectSprite, enemyComp->m_mapSpriteAssociate,
-                              memSpriteComp->m_vectSpriteData,
-                              enemiesData.m_dyingSprites,
-                              EnemySpriteType_e::DYING);
-    insertEnemySpriteFromType(vectSprite, enemyComp->m_mapSpriteAssociate,
-                              memSpriteComp->m_vectSpriteData,
-                              enemiesData.m_touched,
-                              EnemySpriteType_e::TOUCHED);
+    insertEnemySpriteFromType(vectSprite, enemyComp->m_mapSpriteAssociate, memSpriteComp->m_vectSpriteData,
+                              enemiesData.m_staticFrontSprites, EnemySpriteType_e::STATIC_FRONT);
+    insertEnemySpriteFromType(vectSprite, enemyComp->m_mapSpriteAssociate, memSpriteComp->m_vectSpriteData,
+                              enemiesData.m_staticFrontLeftSprites, EnemySpriteType_e::STATIC_FRONT_LEFT);
+    insertEnemySpriteFromType(vectSprite, enemyComp->m_mapSpriteAssociate, memSpriteComp->m_vectSpriteData,
+                              enemiesData.m_staticFrontRightSprites, EnemySpriteType_e::STATIC_FRONT_RIGHT);
+    insertEnemySpriteFromType(vectSprite, enemyComp->m_mapSpriteAssociate, memSpriteComp->m_vectSpriteData,
+                              enemiesData.m_staticBackSprites, EnemySpriteType_e::STATIC_BACK);
+    insertEnemySpriteFromType(vectSprite, enemyComp->m_mapSpriteAssociate, memSpriteComp->m_vectSpriteData,
+                              enemiesData.m_staticBackLeftSprites, EnemySpriteType_e::STATIC_BACK_LEFT);
+    insertEnemySpriteFromType(vectSprite, enemyComp->m_mapSpriteAssociate, memSpriteComp->m_vectSpriteData,
+                              enemiesData.m_staticBackRightSprites, EnemySpriteType_e::STATIC_BACK_RIGHT);
+    insertEnemySpriteFromType(vectSprite, enemyComp->m_mapSpriteAssociate, memSpriteComp->m_vectSpriteData,
+                              enemiesData.m_staticLeftSprites, EnemySpriteType_e::STATIC_LEFT);
+    insertEnemySpriteFromType(vectSprite, enemyComp->m_mapSpriteAssociate, memSpriteComp->m_vectSpriteData,
+                              enemiesData.m_staticRightSprites, EnemySpriteType_e::STATIC_RIGHT);
+    insertEnemySpriteFromType(vectSprite, enemyComp->m_mapSpriteAssociate, memSpriteComp->m_vectSpriteData,
+                              enemiesData.m_attackSprites, EnemySpriteType_e::ATTACK);
+    insertEnemySpriteFromType(vectSprite, enemyComp->m_mapSpriteAssociate, memSpriteComp->m_vectSpriteData,
+                              enemiesData.m_dyingSprites, EnemySpriteType_e::DYING);
+    insertEnemySpriteFromType(vectSprite, enemyComp->m_mapSpriteAssociate, memSpriteComp->m_vectSpriteData,
+                              enemiesData.m_touched, EnemySpriteType_e::TOUCHED);
     if(enemyComp->m_visibleShot)
     {
         loadVisibleShotData(vectSprite, enemyComp->m_visibleAmmo, enemiesData.m_visibleShootID, visibleShot);
@@ -1773,6 +1751,9 @@ void MainEngine::loadBarrelElementEntities(const LevelManager &levelManager)
                 searchComponentByType<MemFPSGLSizeComponent>(barrelEntity, Components_e::MEM_FPS_GLSIZE_COMPONENT);
         MapCoordComponent *mapComp = m_ecsManager.getComponentManager().
                 searchComponentByType<MapCoordComponent>(barrelEntity, Components_e::MAP_COORD_COMPONENT);
+        TimerComponent *timerComp = m_ecsManager.getComponentManager().
+                searchComponentByType<TimerComponent>(barrelEntity, Components_e::TIMER_COMPONENT);
+        assert(timerComp);
         assert(mapComp);
         assert(memGLSizeComp);
         assert(barrelComp);
@@ -1784,8 +1765,7 @@ void MainEngine::loadBarrelElementEntities(const LevelManager &levelManager)
         mapComp->m_coord = barrelData.m_TileGamePosition[i];
         mapComp->m_absoluteMapPositionPX = getCenteredAbsolutePosition(mapComp->m_coord);
         circleComp->m_ray = 10.0f;
-        genComp->m_tagA = CollisionTag_e::STATIC_SET_CT;
-        genComp->m_tagB = CollisionTag_e::BARREL_CT;
+        genComp->m_tagA = CollisionTag_e::BARREL_CT;
         genComp->m_shape = CollisionShape_e::CIRCLE_C;
         uint32_t totalSize = barrelData.m_staticSprite.size() + barrelData.m_explosionSprite.size();
         memGLSizeComp->m_memGLSizeData.reserve(totalSize);
@@ -1805,6 +1785,10 @@ void MainEngine::loadBarrelElementEntities(const LevelManager &levelManager)
         spriteComp->m_spriteData = memSpriteComp->m_vectSpriteData[0];
         fpsComp->m_inGameSpriteSize = memGLSizeComp->m_memGLSizeData[0];
         fpsComp->m_levelElementType = LevelStaticElementType_e::GROUND;
+        barrelComp->m_life = 3;
+        barrelComp->m_memPosExplosionSprite = barrelData.m_staticSprite.size() - 1;
+        barrelComp->m_damageZoneEntity = createDamageZoneEntity(15, CollisionTag_e::EXPLOSION_CT, 30.0f);
+        timerComp->m_clockA = std::chrono::system_clock::now();
     }
 }
 

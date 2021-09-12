@@ -39,6 +39,8 @@ private:
     void updateVisibleShotSprite(uint32_t shotEntity, MemSpriteDataComponent *memSpriteComp,
                                  SpriteTextureComponent *spriteComp,
                                  TimerComponent *timerComp, GeneralCollisionComponent *genComp);
+    void updateBarrelSprite(uint32_t barrelEntity, MemSpriteDataComponent *memSpriteComp, SpriteTextureComponent *spriteComp,
+                            TimerComponent *timerComp, GeneralCollisionComponent *genComp);
     void updateEnemySprites(uint32_t enemyEntity, uint32_t observerEntity,
                             MemSpriteDataComponent *memSpriteComp,
                             SpriteTextureComponent *spriteComp,

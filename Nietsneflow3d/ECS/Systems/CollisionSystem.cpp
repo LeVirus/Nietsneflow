@@ -17,6 +17,7 @@
 #include <ECS/Components/MemSpriteDataComponent.hpp>
 #include <ECS/Components/SpriteTextureComponent.hpp>
 #include <ECS/Components/WeaponComponent.hpp>
+#include <ECS/Components/BarrelComponent.hpp>
 #include <ECS/Components/TriggerComponent.hpp>
 #include <ECS/Components/MoveableWallConfComponent.hpp>
 #include <ECS/Systems/FirstPersonDisplaySystem.hpp>
@@ -201,8 +202,7 @@ void CollisionSystem::treatSegmentShots()
         assert(tagCompTarget);
         confImpactShots(i, tagCompTarget->m_tagA);
         if(tagCompTarget->m_tagA == CollisionTag_e::WALL_CT ||
-                tagCompTarget->m_tagA == CollisionTag_e::DOOR_CT ||
-                tagCompTarget->m_tagA == CollisionTag_e::STATIC_SET_CT)
+                tagCompTarget->m_tagA == CollisionTag_e::DOOR_CT)
         {
             continue;
         }
@@ -214,21 +214,54 @@ void CollisionSystem::treatSegmentShots()
             ShotConfComponent *shotConfComp = stairwayToComponentManager().
                     searchComponentByType<ShotConfComponent>(m_vectMemShots[i].first, Components_e::SHOT_CONF_COMPONENT);
             assert(shotConfComp);
-            treatEnemyShooted(m_vectMemShots[i].second, shotConfComp->m_damage);
+            if(tagCompTarget->m_tagA == CollisionTag_e::ENEMY_CT)
+            {
+                treatEnemyShooted(m_vectMemShots[i].second, shotConfComp->m_damage);
+            }
+            else if(tagCompTarget->m_tagA == CollisionTag_e::BARREL_CT)
+            {
+                treatBarrelShots(m_vectMemShots[i].second, shotConfComp->m_damage);
+            }
             tagCompBullet->m_active = false;
         }
         else if(tagCompBullet->m_tagA == CollisionTag_e::BULLET_ENEMY_CT)
         {
             PlayerConfComponent *playerConfCompB = stairwayToComponentManager().
-                    searchComponentByType<PlayerConfComponent>(m_vectMemShots[i].second,
-                                                               Components_e::PLAYER_CONF_COMPONENT);
+                    searchComponentByType<PlayerConfComponent>(m_vectMemShots[i].second, Components_e::PLAYER_CONF_COMPONENT);
             assert(playerConfCompB);
             ShotConfComponent *shotConfComp = stairwayToComponentManager().
-                    searchComponentByType<ShotConfComponent>(m_vectMemShots[i].first,
-                                                               Components_e::SHOT_CONF_COMPONENT);
+                    searchComponentByType<ShotConfComponent>(m_vectMemShots[i].first, Components_e::SHOT_CONF_COMPONENT);
             assert(shotConfComp);
             playerConfCompB->takeDamage(shotConfComp->m_damage);
         }
+    }
+}
+
+//===================================================================
+void CollisionSystem::treatBarrelShots(uint32_t entityNum, uint32_t damage)
+{
+    BarrelComponent *barrelComp = stairwayToComponentManager().
+            searchComponentByType<BarrelComponent>(entityNum, Components_e::BARREL_COMPONENT);
+    assert(barrelComp);
+    if(damage > barrelComp->m_life)
+    {
+        barrelComp->m_life = 0;
+        barrelComp->m_destructPhase = true;
+        GeneralCollisionComponent *genComp = stairwayToComponentManager().
+                searchComponentByType<GeneralCollisionComponent>(barrelComp->m_damageZoneEntity, Components_e::GENERAL_COLLISION_COMPONENT);
+        assert(genComp);
+        MapCoordComponent *mapCompA = stairwayToComponentManager().
+                searchComponentByType<MapCoordComponent>(entityNum, Components_e::MAP_COORD_COMPONENT);
+        assert(mapCompA);
+        MapCoordComponent *mapCompB = stairwayToComponentManager().
+                searchComponentByType<MapCoordComponent>(barrelComp->m_damageZoneEntity, Components_e::MAP_COORD_COMPONENT);
+        assert(mapCompB);
+        mapCompB->m_absoluteMapPositionPX = mapCompA->m_absoluteMapPositionPX;
+        genComp->m_active = true;
+    }
+    else
+    {
+        barrelComp->m_life -= damage;
     }
 }
 
@@ -316,6 +349,7 @@ void CollisionSystem::initArrayTag()
     m_tagArray.insert({CollisionTag_e::PLAYER_CT, CollisionTag_e::STATIC_SET_CT});
     m_tagArray.insert({CollisionTag_e::PLAYER_CT, CollisionTag_e::TRIGGER_CT});
     m_tagArray.insert({CollisionTag_e::PLAYER_CT, CollisionTag_e::TELEPORT_CT});
+    m_tagArray.insert({CollisionTag_e::PLAYER_CT, CollisionTag_e::BARREL_CT});
 
     m_tagArray.insert({CollisionTag_e::PLAYER_ACTION_CT, CollisionTag_e::DOOR_CT});
     m_tagArray.insert({CollisionTag_e::PLAYER_ACTION_CT, CollisionTag_e::EXIT_CT});
@@ -324,12 +358,14 @@ void CollisionSystem::initArrayTag()
 
     m_tagArray.insert({CollisionTag_e::EXPLOSION_CT, CollisionTag_e::PLAYER_CT});
     m_tagArray.insert({CollisionTag_e::EXPLOSION_CT, CollisionTag_e::ENEMY_CT});
+    m_tagArray.insert({CollisionTag_e::EXPLOSION_CT, CollisionTag_e::BARREL_CT});
 
     m_tagArray.insert({CollisionTag_e::ENEMY_CT, CollisionTag_e::PLAYER_CT});
     m_tagArray.insert({CollisionTag_e::ENEMY_CT, CollisionTag_e::WALL_CT});
     m_tagArray.insert({CollisionTag_e::ENEMY_CT, CollisionTag_e::DOOR_CT});
     m_tagArray.insert({CollisionTag_e::ENEMY_CT, CollisionTag_e::DOOR_CT});
     m_tagArray.insert({CollisionTag_e::ENEMY_CT, CollisionTag_e::STATIC_SET_CT});
+    m_tagArray.insert({CollisionTag_e::ENEMY_CT, CollisionTag_e::BARREL_CT});
 //    m_tagArray.insert({CollisionTag_e::ENEMY_CT, CollisionTag_e::ENEMY_CT});
 
     m_tagArray.insert({CollisionTag_e::WALL_CT, CollisionTag_e::PLAYER_CT});
@@ -342,11 +378,13 @@ void CollisionSystem::initArrayTag()
     m_tagArray.insert({CollisionTag_e::BULLET_ENEMY_CT, CollisionTag_e::PLAYER_CT});
     m_tagArray.insert({CollisionTag_e::BULLET_ENEMY_CT, CollisionTag_e::WALL_CT});
     m_tagArray.insert({CollisionTag_e::BULLET_ENEMY_CT, CollisionTag_e::DOOR_CT});
+    m_tagArray.insert({CollisionTag_e::BULLET_ENEMY_CT, CollisionTag_e::BARREL_CT});
 //    m_tagArray.insert({CollisionTag_e::BULLET_ENEMY_CT, CollisionTag_e::ENEMY_CT});
 
     m_tagArray.insert({CollisionTag_e::BULLET_PLAYER_CT, CollisionTag_e::ENEMY_CT});
     m_tagArray.insert({CollisionTag_e::BULLET_PLAYER_CT, CollisionTag_e::WALL_CT});
     m_tagArray.insert({CollisionTag_e::BULLET_PLAYER_CT, CollisionTag_e::DOOR_CT});
+    m_tagArray.insert({CollisionTag_e::BULLET_PLAYER_CT, CollisionTag_e::BARREL_CT});
 
     //    m_tagArray.insert({CollisionTag_e::OBJECT_CT, CollisionTag_e::PLAYER_CT});
 }
@@ -523,7 +561,8 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
                     (args.tagCompB->m_tagA == CollisionTag_e::WALL_CT ||
                      args.tagCompB->m_tagA == CollisionTag_e::PLAYER_CT ||
                      args.tagCompB->m_tagA == CollisionTag_e::ENEMY_CT ||
-                     args.tagCompB->m_tagA == CollisionTag_e::STATIC_SET_CT))
+                     args.tagCompB->m_tagA == CollisionTag_e::STATIC_SET_CT ||
+                     args.tagCompB->m_tagA == CollisionTag_e::BARREL_CT))
             {
                 collisionCircleCircleEject(args, circleCompA, circleCompB);
             }
@@ -560,9 +599,13 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
                     assert(playerConf);
                     playerConf->takeDamage(shotConfComp->m_damage);
                 }
-                if(args.tagCompB->m_tagA == CollisionTag_e::ENEMY_CT)
+                else if(args.tagCompB->m_tagA == CollisionTag_e::ENEMY_CT)
                 {
                     treatEnemyShooted(args.entityNumB, shotConfComp->m_damage);
+                }
+                else if(args.tagCompB->m_tagA == CollisionTag_e::BARREL_CT)
+                {
+                    treatBarrelShots(args.entityNumB, shotConfComp->m_damage);
                 }
             }
         }
@@ -624,10 +667,13 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
                     args.tagCompB->m_tagA == CollisionTag_e::PLAYER_CT)
             {
                 PlayerConfComponent * playerConf = stairwayToComponentManager().
-                        searchComponentByType<PlayerConfComponent>(args.entityNumB,
-                                              Components_e::PLAYER_CONF_COMPONENT);
+                        searchComponentByType<PlayerConfComponent>(args.entityNumB, Components_e::PLAYER_CONF_COMPONENT);
                 assert(playerConf);
                 playerConf->takeDamage(shotConfComp->m_damage);
+            }
+            else if(args.tagCompB->m_tagA == CollisionTag_e::BARREL_CT)
+            {
+                treatBarrelShots(args.entityNumB, shotConfComp->m_damage);
             }
         }
     }

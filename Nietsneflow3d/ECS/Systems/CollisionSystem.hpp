@@ -34,6 +34,7 @@ public:
     void writePlayerInfo(const std::string &info);
 private:
     void treatSegmentShots();
+    void treatBarrelShots(uint32_t entityNum, uint32_t damage);
     void confImpactShots(uint32_t numBullet, CollisionTag_e targetTag);
     void rmCollisionMaskEntity(uint32_t numEntity);
     void setUsedComponents();

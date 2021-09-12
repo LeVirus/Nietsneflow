@@ -18,6 +18,7 @@
 #include <ECS/Components/MemFPSGLSizeComponent.hpp>
 #include <ECS/Components/SpriteTextureComponent.hpp>
 #include <ECS/Components/EnemyConfComponent.hpp>
+#include <ECS/Components/BarrelComponent.hpp>
 #include <ECS/Components/TimerComponent.hpp>
 #include <ECS/Components/ShotConfComponent.hpp>
 #include <ECS/Components/ImpactShotComponent.hpp>
@@ -112,6 +113,10 @@ void VisionSystem::updateSprites(uint32_t observerEntity,
         {
             updateVisibleShotSprite(vectEntities[i], memSpriteComp, spriteComp, timerComp, genComp);
         }
+        else if(genComp->m_tagA == CollisionTag_e::BARREL_CT)
+        {
+            updateBarrelSprite(vectEntities[i], memSpriteComp, spriteComp, timerComp, genComp);
+        }
         else if(genComp->m_tagB == CollisionTag_e::TELEPORT_ANIM_CT)
         {
             updateTeleportDisplaySprite(memSpriteComp, spriteComp, timerComp, genComp);
@@ -198,11 +203,8 @@ void VisionSystem::memMultiSpritesWallEntities()
 }
 
 //===========================================================================
-void VisionSystem::updateVisibleShotSprite(uint32_t shotEntity,
-                                           MemSpriteDataComponent *memSpriteComp,
-                                           SpriteTextureComponent *spriteComp,
-                                           TimerComponent *timerComp,
-                                           GeneralCollisionComponent *genComp)
+void VisionSystem::updateVisibleShotSprite(uint32_t shotEntity, MemSpriteDataComponent *memSpriteComp, SpriteTextureComponent *spriteComp,
+                                           TimerComponent *timerComp, GeneralCollisionComponent *genComp)
 {
     ShotConfComponent *shotComp = stairwayToComponentManager().
             searchComponentByType<ShotConfComponent>(
@@ -211,8 +213,7 @@ void VisionSystem::updateVisibleShotSprite(uint32_t shotEntity,
             searchComponentByType<MemFPSGLSizeComponent>(
                 shotEntity, Components_e::MEM_FPS_GLSIZE_COMPONENT);
     FPSVisibleStaticElementComponent *fpsStaticComp = stairwayToComponentManager().
-            searchComponentByType<FPSVisibleStaticElementComponent>(
-                shotEntity, Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
+            searchComponentByType<FPSVisibleStaticElementComponent>(shotEntity, Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
     assert(fpsStaticComp);
     assert(shotComp);
     assert(memGLSizeComp);
@@ -239,6 +240,66 @@ void VisionSystem::updateVisibleShotSprite(uint32_t shotEntity,
     assert(shotComp->m_spriteShotNum < memGLSizeComp->m_memGLSizeData.size());
     fpsStaticComp->m_inGameSpriteSize = memGLSizeComp->m_memGLSizeData[shotComp->m_spriteShotNum];
     spriteComp->m_spriteData = memSpriteComp->m_vectSpriteData[shotComp->m_spriteShotNum];
+}
+
+//===========================================================================
+void VisionSystem::updateBarrelSprite(uint32_t barrelEntity, MemSpriteDataComponent *memSpriteComp,
+                                      SpriteTextureComponent *spriteComp, TimerComponent *timerComp, GeneralCollisionComponent *genComp)
+{
+    BarrelComponent *barrelComp = stairwayToComponentManager().
+            searchComponentByType<BarrelComponent>(barrelEntity, Components_e::BARREL_COMPONENT);
+    assert(barrelComp);
+    MemFPSGLSizeComponent *glSizeComp = stairwayToComponentManager().
+            searchComponentByType<MemFPSGLSizeComponent>(barrelEntity, Components_e::MEM_FPS_GLSIZE_COMPONENT);
+    assert(glSizeComp);
+    FPSVisibleStaticElementComponent *fpsComp = stairwayToComponentManager().
+            searchComponentByType<FPSVisibleStaticElementComponent>(barrelEntity, Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
+    assert(fpsComp);
+    std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() -
+            timerComp->m_clockA;
+    if(!barrelComp->m_destructPhase)
+    {
+        if(elapsed_seconds.count() > 0.2)
+        {
+            timerComp->m_clockA = std::chrono::system_clock::now();
+            if(memSpriteComp->m_current < barrelComp->m_memPosExplosionSprite)
+            {
+                ++memSpriteComp->m_current;
+            }
+            else
+            {
+                memSpriteComp->m_current = 0;
+            }
+            spriteComp->m_spriteData = memSpriteComp->m_vectSpriteData[memSpriteComp->m_current];
+        }
+    }
+    else
+    {
+        //first sprite destruct
+        if(memSpriteComp->m_current <= barrelComp->m_memPosExplosionSprite)
+        {
+            timerComp->m_clockA = std::chrono::system_clock::now();
+            memSpriteComp->m_current = barrelComp->m_memPosExplosionSprite + 1;
+            spriteComp->m_spriteData = memSpriteComp->m_vectSpriteData[memSpriteComp->m_current];
+            fpsComp->m_inGameSpriteSize = glSizeComp->m_memGLSizeData[memSpriteComp->m_current];
+            return;
+        }
+        if(elapsed_seconds.count() > 0.12)
+        {
+            timerComp->m_clockA = std::chrono::system_clock::now();
+            if(memSpriteComp->m_current <= memSpriteComp->m_vectSpriteData.size() - 2)
+            {
+                ++memSpriteComp->m_current;
+                spriteComp->m_spriteData = memSpriteComp->m_vectSpriteData[memSpriteComp->m_current];
+                fpsComp->m_inGameSpriteSize = glSizeComp->m_memGLSizeData[memSpriteComp->m_current];
+            }
+            //remove entity
+            else
+            {
+                genComp->m_active = false;
+            }
+        }
+    }
 }
 
 //===========================================================================

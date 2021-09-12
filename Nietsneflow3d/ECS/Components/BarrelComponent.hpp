@@ -9,7 +9,7 @@ struct BarrelComponent : public ecs::Component
     {
         muiTypeComponent = Components_e::BARREL_COMPONENT;
     }
-    uint32_t m_life, m_damageZoneEntity;
-    PairUI_t m_memPosSprite;
+    uint32_t m_life, m_damageZoneEntity, m_memPosExplosionSprite;
+    bool m_destructPhase = false;
     virtual ~BarrelComponent() = default;
 };
