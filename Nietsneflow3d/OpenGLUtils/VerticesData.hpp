@@ -39,12 +39,12 @@ public:
                                        const std::vector<RayCastingIntersect> &raycastingData,
                                        uint32_t totalLateralLine);
     void loadPointBackgroundRaycasting(const SpriteTextureComponent *spriteComp,
-                                       const pairFloat_t &observerPoint, const pairFloat_t &currentPoint);
+                                       const PairFloat_t &observerPoint, const PairFloat_t &currentPoint);
     void loadVertexTextureDrawByLineComponent(const PositionVertexComponent &posComp,
                                               const SpriteTextureComponent &spriteComp,
                                               uint32_t lineDrawNumber, DoorComponent *doorComp = nullptr);
-    void loadVertexTextureDrawByLineRect(const pairFloat_t &firstPos,
-                                         const pairFloat_t &secondPos,
+    void loadVertexTextureDrawByLineRect(const PairFloat_t &firstPos,
+                                         const PairFloat_t &secondPos,
                                          const SpriteTextureComponent &spriteComp,
                                          uint32_t lineDrawNumber, DoorComponent *doorComp, bool doorPosBound);
 private:
@@ -54,7 +54,7 @@ private:
     void setVectGLPointer();
     void bindGLBuffers();
     void attribGLVertexPointer();
-    void addTexturePoint(const pairFloat_t &pos, const pairFloat_t &tex);
+    void addTexturePoint(const PairFloat_t &pos, const PairFloat_t &tex);
 private:
     std::vector<float> m_vertexBuffer;
     std::vector<uint32_t> m_indices, m_shaderInterpretData;
@@ -63,7 +63,7 @@ private:
     uint32_t m_ebo, m_vao, m_vbo;
 };
 
-pairFloat_t getTexturePixelFromCoord(const pairFloat_t &pointA, const std::array<pairFloat_t, 4> &texturePosVertex);
-pairFloat_t getPointTextureCoord(const pairFloat_t &point,
-                            const std::array<pairFloat_t, 4> &texturePosVertex,
-                            const pairFloat_t &textureSize);
+PairFloat_t getTexturePixelFromCoord(const PairFloat_t &pointA, const std::array<PairFloat_t, 4> &texturePosVertex);
+PairFloat_t getPointTextureCoord(const PairFloat_t &point,
+                            const std::array<PairFloat_t, 4> &texturePosVertex,
+                            const PairFloat_t &textureSize);

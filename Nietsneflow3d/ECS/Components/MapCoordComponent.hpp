@@ -10,6 +10,6 @@ struct MapCoordComponent : public ecs::Component
     {
         muiTypeComponent = Components_e::MAP_COORD_COMPONENT;
     }
-    pairUI_t m_coord;
-    pairFloat_t m_absoluteMapPositionPX;
+    PairUI_t m_coord;
+    PairFloat_t m_absoluteMapPositionPX;
 };

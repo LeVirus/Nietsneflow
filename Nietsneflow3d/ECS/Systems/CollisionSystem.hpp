@@ -81,7 +81,7 @@ private:
     std::multimap<CollisionTag_e, CollisionTag_e> m_tagArray;
     std::pair<std::optional<uint32_t>, float> m_memDistCurrentBulletColl;
     //first bullet second target
-    std::vector<pairUI_t> m_vectMemShots;
+    std::vector<PairUI_t> m_vectMemShots;
     std::vector<uint32_t> m_vectEntitiesToDelete;
     PlayerConfComponent *m_playerComp = nullptr;
     bool m_pair = true, m_memPlayerTeleport;

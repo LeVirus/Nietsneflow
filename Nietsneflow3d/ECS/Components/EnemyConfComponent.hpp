@@ -5,8 +5,8 @@
 #include <cassert>
 #include <constants.hpp>
 
-using pairEnemySprite_t = std::pair<EnemySpriteType_e, pairUI_t>;
-using mapEnemySprite_t = std::map<EnemySpriteType_e, pairUI_t>;
+using pairEnemySprite_t = std::pair<EnemySpriteType_e, PairUI_t>;
+using mapEnemySprite_t = std::map<EnemySpriteType_e, PairUI_t>;
 
 enum class EnemyDisplayMode_e
 {

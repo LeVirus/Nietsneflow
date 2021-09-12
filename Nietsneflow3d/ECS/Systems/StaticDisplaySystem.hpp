@@ -70,7 +70,7 @@ private:
     std::array<VerticesData, static_cast<uint32_t>(VertexID_e::TOTAL)> m_vertices;
     std::vector<Texture> *m_ptrVectTexture = nullptr;
     float m_speedMoveWeaponChange = 0.05f;
-    pairFloat_t m_forkWeaponMovementX = {-0.4f, 0.1f}, m_forkWeaponMovementY = {-0.8f, -0.6f};
+    PairFloat_t m_forkWeaponMovementX = {-0.4f, 0.1f}, m_forkWeaponMovementY = {-0.8f, -0.6f};
     float m_diffTotalDistanceMoveWeaponX = std::abs(m_forkWeaponMovementX.first -
                                                     m_forkWeaponMovementX.second);
     float m_middleWeaponMovementX = m_forkWeaponMovementX.first + (m_forkWeaponMovementX.second -
@@ -79,4 +79,4 @@ private:
     CurrentMenuCursorPos_e m_currentCursorPos = CurrentMenuCursorPos_e::TOTAL;
 };
 
-void modVertexPos(PositionVertexComponent *posComp, const pairFloat_t &mod);
+void modVertexPos(PositionVertexComponent *posComp, const PairFloat_t &mod);

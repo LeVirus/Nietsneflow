@@ -15,6 +15,6 @@ struct MemPositionsVertexComponents : public ecs::Component
     {
         muiTypeComponent = Components_e::MEM_POSITIONS_VERTEX_COMPONENT;
     }
-    std::vector<std::array<pairFloat_t, 4>> m_vectSpriteData;
+    std::vector<std::array<PairFloat_t, 4>> m_vectSpriteData;
     virtual ~MemPositionsVertexComponents() = default;
 };

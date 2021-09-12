@@ -16,7 +16,7 @@ public:
     void execSystem()override;
     void memPlayerDatas(uint32_t playerEntity);
     void confVisibleShoot(std::vector<uint32_t> &visibleShots,
-                          const pairFloat_t &point, float degreeAngle, CollisionTag_e tag);
+                          const PairFloat_t &point, float degreeAngle, CollisionTag_e tag);
     inline void linkMainEngine(MainEngine *mainEngine)
     {
         m_mainEngine = mainEngine;

@@ -24,6 +24,7 @@
 #include <ECS/Components/ShotConfComponent.hpp>
 #include <ECS/Components/WeaponComponent.hpp>
 #include <ECS/Components/MoveableWallConfComponent.hpp>
+#include <ECS/Components/BarrelComponent.hpp>
 #include <ECS/Systems/ColorDisplaySystem.hpp>
 #include <ECS/Systems/MapDisplaySystem.hpp>
 #include <ECS/Systems/CollisionSystem.hpp>
@@ -147,13 +148,13 @@ void MainEngine::displayTransitionMenu()
 
 //===================================================================
 void MainEngine::confPlayerVisibleShoot(std::vector<uint32_t> &playerVisibleShots,
-                                        const pairFloat_t &point, float degreeAngle)
+                                        const PairFloat_t &point, float degreeAngle)
 {
     m_physicalEngine.confPlayerVisibleShoot(playerVisibleShots, point, degreeAngle);
 }
 
 //===================================================================
-void MainEngine::playerAttack(uint32_t playerEntity, PlayerConfComponent *playerComp, const pairFloat_t &point,
+void MainEngine::playerAttack(uint32_t playerEntity, PlayerConfComponent *playerComp, const PairFloat_t &point,
                               float degreeAngle)
 {
 
@@ -200,7 +201,7 @@ void MainEngine::playerAttack(uint32_t playerEntity, PlayerConfComponent *player
 
 //===================================================================
 void MainEngine::confPlayerBullet(PlayerConfComponent *playerComp,
-                                  const pairFloat_t &point, float degreeAngle,
+                                  const PairFloat_t &point, float degreeAngle,
                                   uint32_t numBullet)
 {
     assert(numBullet < MAX_SHOTS);
@@ -233,7 +234,7 @@ void confActionShape(MapCoordComponent *mapCompAction, GeneralCollisionComponent
 
 //===================================================================
 void confBullet(GeneralCollisionComponent *genColl, SegmentCollisionComponent *segmentColl,
-                CollisionTag_e collTag, const pairFloat_t &point, float degreeAngle)
+                CollisionTag_e collTag, const PairFloat_t &point, float degreeAngle)
 {
     assert(collTag == CollisionTag_e::BULLET_ENEMY_CT ||
            collTag == CollisionTag_e::BULLET_PLAYER_CT);
@@ -467,6 +468,7 @@ void MainEngine::loadLevelEntities(const LevelManager &levelManager)
                            levelManager);
     loadColorEntities();
     loadStaticElementEntities(levelManager);
+    loadBarrelElementEntities(levelManager);
     uint32_t displayTeleportEntity = loadDisplayTeleportEntity(levelManager);
     uint32_t weaponEntity = loadWeaponsEntity(levelManager);
     loadPlayerEntity(levelManager, weaponEntity, displayTeleportEntity);
@@ -546,7 +548,7 @@ uint32_t MainEngine::loadWeaponsEntity(const LevelManager &levelManager)
             diffLateral = vectWeapons[i].m_spritesData[j].m_GLSize.first / 2.0f;
             posLeft = -diffLateral;
             posRight = diffLateral;
-            memPosVertex->m_vectSpriteData.emplace_back(std::array<pairFloat_t, 4>{
+            memPosVertex->m_vectSpriteData.emplace_back(std::array<PairFloat_t, 4>{
                                                             {
                                                                 {posLeft, posUp},
                                                                 {posRight, posUp},
@@ -565,14 +567,14 @@ void MainEngine::loadWallEntities(const std::map<std::string, WallData> &wallDat
                                   const std::vector<SpriteData> &vectSprite)
 {
     assert(!Level::getLevelCaseType().empty());
-    std::pair<std::set<pairUI_t>::const_iterator, bool> itt;
+    std::pair<std::set<PairUI_t>::const_iterator, bool> itt;
     std::map<std::string, WallData>::const_iterator iter = wallData.begin();
     for(; iter != wallData.end(); ++iter)
     {
         assert(!iter->second.m_sprites.empty());
         assert(iter->second.m_sprites[0] < vectSprite.size());
         const SpriteData &memSpriteData = vectSprite[iter->second.m_sprites[0]];
-        for(std::set<pairUI_t>::const_iterator it = iter->second.m_TileGamePosition.begin();
+        for(std::set<PairUI_t>::const_iterator it = iter->second.m_TileGamePosition.begin();
             it != iter->second.m_TileGamePosition.end(); ++it)
         {
             itt = m_memWall.insert(*it);
@@ -591,7 +593,7 @@ void MainEngine::loadMoveableWallEntities(const std::map<std::string, MoveableWa
                                           const std::vector<SpriteData> &vectSprite)
 {
     assert(!Level::getLevelCaseType().empty());
-    std::pair<std::set<pairUI_t>::const_iterator, bool> itt;
+    std::pair<std::set<PairUI_t>::const_iterator, bool> itt;
     TriggerWallMoveType_e memTriggerType;
     std::vector<uint32_t> vectMemEntities;
     std::map<std::string, MoveableWallData>::const_iterator iter = wallData.begin();
@@ -603,7 +605,7 @@ void MainEngine::loadMoveableWallEntities(const std::map<std::string, MoveableWa
         memTriggerType = iter->second.m_triggerType;
         vectMemEntities.clear();
         vectMemEntities.reserve(iter->second.m_TileGamePosition.size());
-        for(std::set<pairUI_t>::const_iterator it = iter->second.m_TileGamePosition.begin();
+        for(std::set<PairUI_t>::const_iterator it = iter->second.m_TileGamePosition.begin();
             it != iter->second.m_TileGamePosition.end(); ++it)
         {
             itt = m_memWall.insert(*it);
@@ -646,7 +648,7 @@ void MainEngine::loadMoveableWallEntities(const std::map<std::string, MoveableWa
 
 //===================================================================
 void MainEngine::confBaseWallData(uint32_t wallEntity, const SpriteData &memSpriteData,
-                                  const pairUI_t& coordLevel,
+                                  const PairUI_t& coordLevel,
                                   const std::vector<uint8_t> &numWallSprites,
                                   const std::vector<SpriteData> &vectSprite, bool moveable)
 {
@@ -828,8 +830,8 @@ void MainEngine::loadTriggerEntityData(const MoveableWallData &moveWallData,
                                        TriggerWallMoveType_e type)
 {
     bool button = (type == TriggerWallMoveType_e::BUTTON);
-    std::map<pairUI_t, uint32_t>::const_iterator it;
-    pairUI_t pos;
+    std::map<PairUI_t, uint32_t>::const_iterator it;
+    PairUI_t pos;
     if(button)
     {
         assert(moveWallData.m_associatedTriggerData);
@@ -1163,7 +1165,7 @@ void MainEngine::loadVisibleShotData(const std::vector<SpriteData> &vectSprite, 
 //===================================================================
 void MainEngine::confVisibleAmmo(uint32_t ammoEntity)
 {
-    pairFloat_t pairSpriteSize = {0.2f, 0.3f};
+    PairFloat_t pairSpriteSize = {0.2f, 0.3f};
     float collisionRay = pairSpriteSize.first * LEVEL_HALF_TILE_SIZE_PX;
     CircleCollisionComponent *circleComp = m_ecsManager.getComponentManager().
             searchComponentByType<CircleCollisionComponent>(ammoEntity, Components_e::CIRCLE_COLLISION_COMPONENT);
@@ -1370,6 +1372,24 @@ uint32_t MainEngine::createTeleportEntity()
 }
 
 //===================================================================
+uint32_t MainEngine::createBarrelEntity()
+{
+    std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComponents;
+    bitsetComponents[Components_e::CIRCLE_COLLISION_COMPONENT] = true;
+    bitsetComponents[Components_e::GENERAL_COLLISION_COMPONENT] = true;
+    bitsetComponents[Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT] = true;
+    bitsetComponents[Components_e::SPRITE_TEXTURE_COMPONENT] = true;
+    bitsetComponents[Components_e::MOVEABLE_COMPONENT] = true;
+    bitsetComponents[Components_e::MAP_COORD_COMPONENT] = true;
+    bitsetComponents[Components_e::POSITION_VERTEX_COMPONENT] = true;
+    bitsetComponents[Components_e::TIMER_COMPONENT] = true;
+    bitsetComponents[Components_e::MEM_SPRITE_DATA_COMPONENT] = true;
+    bitsetComponents[Components_e::MEM_FPS_GLSIZE_COMPONENT] = true;
+    bitsetComponents[Components_e::BARREL_COMPONENT] = true;
+    return m_ecsManager.addEntity(bitsetComponents);
+}
+
+//===================================================================
 uint32_t MainEngine::createObjectEntity()
 {
     std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComponents;
@@ -1385,7 +1405,7 @@ uint32_t MainEngine::createObjectEntity()
 
 //===================================================================
 void MainEngine::confBaseComponent(uint32_t entityNum, const SpriteData &memSpriteData,
-                                   const pairUI_t& coordLevel, CollisionShape_e collisionShape,
+                                   const PairUI_t& coordLevel, CollisionShape_e collisionShape,
                                    CollisionTag_e tag)
 {
     SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().
@@ -1419,7 +1439,7 @@ void MainEngine::confBaseComponent(uint32_t entityNum, const SpriteData &memSpri
 }
 
 //===================================================================
-void MainEngine::confStaticComponent(uint32_t entityNum, const pairFloat_t& elementSize,
+void MainEngine::confStaticComponent(uint32_t entityNum, const PairFloat_t& elementSize,
                                      LevelStaticElementType_e elementType)
 {
     FPSVisibleStaticElementComponent *staticComp = m_ecsManager.getComponentManager().
@@ -1709,10 +1729,10 @@ void MainEngine::confMenuCursorEntity()
             rightPos = m_menuCornerUpLeft.first - 0.05f,
             upPos = m_menuCornerUpLeft.second,
             downPos = m_menuCornerUpLeft.second - 0.25f;
-    posCursor->m_vertex.emplace_back(pairFloat_t{leftPos, upPos});
-    posCursor->m_vertex.emplace_back(pairFloat_t{rightPos, upPos});
-    posCursor->m_vertex.emplace_back(pairFloat_t{rightPos, downPos});
-    posCursor->m_vertex.emplace_back(pairFloat_t{leftPos, downPos});
+    posCursor->m_vertex.emplace_back(PairFloat_t{leftPos, upPos});
+    posCursor->m_vertex.emplace_back(PairFloat_t{rightPos, upPos});
+    posCursor->m_vertex.emplace_back(PairFloat_t{rightPos, downPos});
+    posCursor->m_vertex.emplace_back(PairFloat_t{leftPos, downPos});
 }
 
 //===================================================================
@@ -1728,6 +1748,64 @@ void MainEngine::loadStaticElementEntities(const LevelManager &levelManager)
     loadStaticElementGroup(vectSprite, levelManager.getObjectData(), LevelStaticElementType_e::OBJECT);
     loadStaticElementGroup(vectSprite, levelManager.getTeleportData(), LevelStaticElementType_e::TELEPORT);
     loadExitElement(levelManager, levelManager.getExitElementData());
+}
+
+//===================================================================
+void MainEngine::loadBarrelElementEntities(const LevelManager &levelManager)
+{
+    const BarrelData &barrelData = levelManager.getBarrelData();
+    for(uint32_t i = 0; i < barrelData.m_TileGamePosition.size(); ++i)
+    {
+        uint32_t barrelEntity = createBarrelEntity();
+        SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().
+                searchComponentByType<SpriteTextureComponent>(barrelEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
+        MemSpriteDataComponent *memSpriteComp = m_ecsManager.getComponentManager().
+                searchComponentByType<MemSpriteDataComponent>(barrelEntity, Components_e::MEM_SPRITE_DATA_COMPONENT);
+        GeneralCollisionComponent *genComp = m_ecsManager.getComponentManager().
+                searchComponentByType<GeneralCollisionComponent>(barrelEntity, Components_e::GENERAL_COLLISION_COMPONENT);
+        CircleCollisionComponent *circleComp = m_ecsManager.getComponentManager().
+                searchComponentByType<CircleCollisionComponent>(barrelEntity, Components_e::CIRCLE_COLLISION_COMPONENT);
+        FPSVisibleStaticElementComponent *fpsComp = m_ecsManager.getComponentManager().
+                searchComponentByType<FPSVisibleStaticElementComponent>(barrelEntity, Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
+        BarrelComponent *barrelComp = m_ecsManager.getComponentManager().
+                searchComponentByType<BarrelComponent>(barrelEntity, Components_e::BARREL_COMPONENT);
+        MemFPSGLSizeComponent *memGLSizeComp = m_ecsManager.getComponentManager().
+                searchComponentByType<MemFPSGLSizeComponent>(barrelEntity, Components_e::MEM_FPS_GLSIZE_COMPONENT);
+        MapCoordComponent *mapComp = m_ecsManager.getComponentManager().
+                searchComponentByType<MapCoordComponent>(barrelEntity, Components_e::MAP_COORD_COMPONENT);
+        assert(mapComp);
+        assert(memGLSizeComp);
+        assert(barrelComp);
+        assert(genComp);
+        assert(fpsComp);
+        assert(circleComp);
+        assert(memSpriteComp);
+        assert(spriteComp);
+        mapComp->m_coord = barrelData.m_TileGamePosition[i];
+        mapComp->m_absoluteMapPositionPX = getCenteredAbsolutePosition(mapComp->m_coord);
+        circleComp->m_ray = 10.0f;
+        genComp->m_tagA = CollisionTag_e::STATIC_SET_CT;
+        genComp->m_tagB = CollisionTag_e::BARREL_CT;
+        genComp->m_shape = CollisionShape_e::CIRCLE_C;
+        uint32_t totalSize = barrelData.m_staticSprite.size() + barrelData.m_explosionSprite.size();
+        memGLSizeComp->m_memGLSizeData.reserve(totalSize);
+        memSpriteComp->m_vectSpriteData.reserve(totalSize);
+        memSpriteComp->m_current = 0;
+        const std::vector<SpriteData> &spriteData = levelManager.getPictureData().getSpriteData();
+        for(uint32_t j = 0; j < barrelData.m_staticSprite.size(); ++j)
+        {
+            memSpriteComp->m_vectSpriteData.emplace_back(&spriteData[barrelData.m_staticSprite[j]]);
+            memGLSizeComp->m_memGLSizeData.emplace_back(barrelData.m_inGameStaticSpriteSize);
+        }
+        for(uint32_t j = 0; j < barrelData.m_explosionSprite.size(); ++j)
+        {
+            memSpriteComp->m_vectSpriteData.emplace_back(&spriteData[barrelData.m_explosionSprite[j]]);
+            memGLSizeComp->m_memGLSizeData.emplace_back(barrelData.m_vectinGameExplosionSpriteSize[j]);
+        }
+        spriteComp->m_spriteData = memSpriteComp->m_vectSpriteData[0];
+        fpsComp->m_inGameSpriteSize = memGLSizeComp->m_memGLSizeData[0];
+        fpsComp->m_levelElementType = LevelStaticElementType_e::GROUND;
+    }
 }
 
 //===================================================================

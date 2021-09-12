@@ -48,7 +48,7 @@ void PhysicalEngine::memPlayerEntity(uint32_t playerEntity)
 
 //===================================================================
 void PhysicalEngine::confPlayerVisibleShoot(std::vector<uint32_t> &visibleShots,
-                                            const pairFloat_t &point, float degreeAngle)
+                                            const PairFloat_t &point, float degreeAngle)
 {
     m_iaSystem->confVisibleShoot(visibleShots, point, degreeAngle, CollisionTag_e::BULLET_PLAYER_CT);
 }
@@ -67,7 +67,7 @@ void PhysicalEngine::clearSystems()
 
 //===================================================================
 void moveElementFromAngle(float distanceMove, float radiantAngle,
-                          pairFloat_t &point, bool playerMove)
+                          PairFloat_t &point, bool playerMove)
 {
     point.first += std::cos(radiantAngle) * distanceMove;
     //limit case

@@ -260,7 +260,7 @@ void IASystem::memPlayerDatas(uint32_t playerEntity)
 }
 
 //===================================================================
-void IASystem::confVisibleShoot(std::vector<uint32_t> &visibleShots, const pairFloat_t &point,
+void IASystem::confVisibleShoot(std::vector<uint32_t> &visibleShots, const PairFloat_t &point,
                                 float degreeAngle, CollisionTag_e tag)
 {
     GeneralCollisionComponent *genComp = nullptr;

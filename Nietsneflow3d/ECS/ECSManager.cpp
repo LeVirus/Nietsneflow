@@ -19,6 +19,7 @@
 #include <ECS/Components/PlayerConfComponent.hpp>
 #include <ECS/Components/MemPositionsVertexComponents.hpp>
 #include <ECS/Components/MemSpriteDataComponent.hpp>
+#include <ECS/Components/BarrelComponent.hpp>
 #include <ECS/Components/TimerComponent.hpp>
 #include <ECS/Components/EnemyConfComponent.hpp>
 #include <ECS/Components/WriteComponent.hpp>
@@ -299,6 +300,13 @@ void ECSManager::syncComponentsFromEntities(uint32_t numEntity,
                                                            std::make_unique<MemFPSGLSizeComponent>());
         }
             break;
+        case Components_e::BARREL_COMPONENT:
+        {
+            m_componentManager->instanciateExternComponent(numEntity,
+                                                           std::make_unique<BarrelComponent>());
+        }
+            break;
+
 
         case Components_e::TOTAL_COMPONENTS:
             assert("Bad enum.");

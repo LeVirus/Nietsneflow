@@ -9,6 +9,6 @@ struct MemFPSGLSizeComponent : public ecs::Component
     {
         muiTypeComponent = Components_e::MEM_FPS_GLSIZE_COMPONENT;
     }
-    std::vector<pairFloat_t> m_memGLSizeData;
+    std::vector<PairFloat_t> m_memGLSizeData;
     virtual ~MemFPSGLSizeComponent() = default;
 };

@@ -16,7 +16,7 @@ struct VisionComponent : public ecs::Component
     float m_distanceVisibility = 500.0f;
     std::vector<uint32_t> m_vectVisibleEntities;
     //absolute position
-    std::array<pairFloat_t, 3> m_triangleVision;
+    std::array<PairFloat_t, 3> m_triangleVision;
     //relative position (map)
     PositionVertexComponent m_positionVertexComp;
     ColorVertexComponent m_colorVertexComp;

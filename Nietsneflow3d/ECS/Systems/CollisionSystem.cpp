@@ -131,7 +131,7 @@ void CollisionSystem::execSystem()
         {
             if(m_memDistCurrentBulletColl.first)
             {
-                m_vectMemShots.emplace_back(pairUI_t{mVectNumEntity[i],
+                m_vectMemShots.emplace_back(PairUI_t{mVectNumEntity[i],
                                                      (*m_memDistCurrentBulletColl.first)});
             }
         }

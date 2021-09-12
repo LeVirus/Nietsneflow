@@ -21,7 +21,7 @@ public:
                      DoorWallSystem *doorSystem, IASystem *iaSystem);
     void memPlayerEntity(uint32_t playerEntity);
     void confPlayerVisibleShoot(std::vector<uint32_t> &visibleShots,
-                                const pairFloat_t &point, float degreeAngle);
+                                const PairFloat_t &point, float degreeAngle);
     void setModeTransitionMenu(bool transition);
     void clearSystems();
     inline const std::vector<uint32_t> &getObjectEntityToDelete()const
@@ -40,7 +40,7 @@ private:
 };
 
 void moveElementFromAngle(float distanceMove, float radiantAngle,
-                          pairFloat_t &point, bool playerMove = false);
+                          PairFloat_t &point, bool playerMove = false);
 void updatePlayerOrientation(const MoveableComponent &moveComp,
                              PositionVertexComponent &posComp, VisionComponent &visionComp);
 void updatePlayerArrow(const MoveableComponent &moveComp,

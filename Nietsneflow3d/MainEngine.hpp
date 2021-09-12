@@ -11,7 +11,7 @@ struct MoveableWallData;
 struct AssociatedTriggerData;
 
 using MapVisibleShotData_t = std::map<std::string, std::vector<MemSpriteData>>;
-using mapEnemySprite_t = std::map<EnemySpriteType_e, pairUI_t>;
+using mapEnemySprite_t = std::map<EnemySpriteType_e, PairUI_t>;
 using mapUiVectUI_t = std::map<uint32_t, std::vector<uint32_t>>;
 using PairImpactData_t = std::pair<std::vector<MemSpriteData>, MemSpriteData>;
 using MapImpactData_t = std::map<std::string, PairImpactData_t>;
@@ -40,7 +40,7 @@ public:
     void loadLevelEntities(const LevelManager &levelManager);
     bool mainLoop(bool &memGameOver);
     void playerAttack(uint32_t playerEntity, PlayerConfComponent *playerComp,
-                      const pairFloat_t &point, float degreeAngle);
+                      const PairFloat_t &point, float degreeAngle);
     void setUnsetPaused();
     inline bool isGamePaused()
     {
@@ -61,7 +61,7 @@ private:
     void loadColorEntities();
     void confUnifiedColorEntity(uint32_t entityNum, const tupleFloat_t &color);
     void loadBackgroundEntities(const GroundCeilingData &groundData,
-                                      const GroundCeilingData &backgroundData, const LevelManager &levelManager);
+                                const GroundCeilingData &backgroundData, const LevelManager &levelManager);
     void confColorBackgroundComponents(uint32_t entity, const GroundCeilingData &groundData, bool ground);
     void confGroundSimpleTextBackgroundComponents(uint32_t entity, const GroundCeilingData &groundData, const std::vector<SpriteData> &vectSprite);
     void confCeilingSimpleTextBackgroundComponents(uint32_t entity, const GroundCeilingData &groundData, const std::vector<SpriteData> &vectSprite);
@@ -85,7 +85,7 @@ private:
                           const std::vector<SpriteData> &vectSprite);
     void loadMoveableWallEntities(const std::map<std::string, MoveableWallData> &wallData,
                                   const std::vector<SpriteData> &vectSprite);
-    void confBaseWallData(uint32_t wallEntity, const SpriteData &memSpriteData, const pairUI_t &coordLevel,
+    void confBaseWallData(uint32_t wallEntity, const SpriteData &memSpriteData, const PairUI_t &coordLevel,
                           const std::vector<uint8_t> &numWallSprites,
                           const std::vector<SpriteData> &vectSprite,
                           bool moveable = false);
@@ -94,6 +94,7 @@ private:
     void loadTriggerEntityData(const MoveableWallData &moveWallData, const std::vector<uint32_t> &vectPosition, const std::vector<SpriteData> &vectSprite, TriggerWallMoveType_e type);
     void confVisibleAmmo(uint32_t ammoEntity);
     void loadStaticElementEntities(const LevelManager &levelManager);
+    void loadBarrelElementEntities(const LevelManager &levelManager);
     uint32_t loadDisplayTeleportEntity(const LevelManager &levelManager);
     void loadStaticElementGroup(const std::vector<SpriteData> &vectSpriteData, const std::map<std::string, StaticLevelElementData> &staticData,
                                 LevelStaticElementType_e elementType);
@@ -130,11 +131,12 @@ private:
     uint32_t createSimpleSpriteEntity();
     uint32_t createStaticEntity();
     uint32_t createTeleportEntity();
+    uint32_t createBarrelEntity();
     uint32_t createObjectEntity();
     uint32_t createDisplayTeleportEntity();
-    void confBaseComponent(uint32_t entityNum, const SpriteData &memSpriteData, const pairUI_t &coordLevel,
+    void confBaseComponent(uint32_t entityNum, const SpriteData &memSpriteData, const PairUI_t &coordLevel,
                            CollisionShape_e collisionShape, CollisionTag_e tag);
-    void confStaticComponent(uint32_t entityNum, const pairFloat_t &elementSize, LevelStaticElementType_e elementType);
+    void confStaticComponent(uint32_t entityNum, const PairFloat_t &elementSize, LevelStaticElementType_e elementType);
     void loadEnemySprites(const std::vector<SpriteData> &vectSprite, const EnemyData &enemiesData,
                           uint32_t numEntity, EnemyConfComponent *enemyComp, const MapVisibleShotData_t &visibleShot);
     void loadVisibleShotData(const std::vector<SpriteData> &vectSprite, const std::vector<uint32_t> &visibleAmmo,
@@ -142,9 +144,9 @@ private:
     void memTimerPausedValue();
     void applyTimerPausedValue();
     void confPlayerVisibleShoot(std::vector<uint32_t> &playerVisibleShots,
-                                const pairFloat_t &point, float degreeAngle);
+                                const PairFloat_t &point, float degreeAngle);
     void confPlayerBullet(PlayerConfComponent *playerComp,
-                          const pairFloat_t &point, float degreeAngle, uint32_t numBullet);
+                          const PairFloat_t &point, float degreeAngle, uint32_t numBullet);
     inline void memColorSystemEntity(uint32_t entity)
     {
         m_graphicEngine.memColorSystemEntity(entity);
@@ -164,21 +166,21 @@ private:
     std::vector<std::pair<uint32_t, time_t>> m_vectMemPausedTimer;
     bool m_gamePaused = false, m_playerMem = false;
     SpriteData const *m_memCursorSpriteData = nullptr, *m_memVisibleShotA = nullptr;
-    pairFloat_t m_menuCornerUpLeft = {-0.5f, 0.5f};
+    PairFloat_t m_menuCornerUpLeft = {-0.5f, 0.5f};
     GeneralCollisionComponent *m_exitColl = nullptr;
     WriteComponent *m_writeConf = nullptr;
     PlayerConfComponent *m_playerConf = nullptr;
     WeaponComponent *m_weaponComp;
     MemPlayerConf m_memPlayerConf;
-    std::set<pairUI_t> m_memWall;
-    std::map<pairUI_t, uint32_t> m_memTriggerCreated;
+    std::set<PairUI_t> m_memWall;
+    std::map<PairUI_t, uint32_t> m_memTriggerCreated;
 };
 
 void insertEnemySpriteFromType(const std::vector<SpriteData> &vectSprite, mapEnemySprite_t &mapSpriteAssociate,
                                std::vector<SpriteData const *> &vectSpriteData, const std::vector<uint8_t> &enemyMemArray,
                                EnemySpriteType_e type);
 void confBullet(GeneralCollisionComponent *genColl, SegmentCollisionComponent *segmentColl,
-                CollisionTag_e collTag, const pairFloat_t &point, float degreeAngle);
+                CollisionTag_e collTag, const PairFloat_t &point, float degreeAngle);
 void setWeaponPlayer();
 void confActionShape(MapCoordComponent *mapCompAction, GeneralCollisionComponent *genCompAction, const MapCoordComponent *attackerMapComp,
                      const MoveableComponent *attackerMoveComp);

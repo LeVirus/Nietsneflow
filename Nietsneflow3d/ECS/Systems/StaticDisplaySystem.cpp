@@ -400,7 +400,7 @@ void StaticDisplaySystem::setDisplayWeaponChange(PositionVertexComponent *posCom
 }
 
 //===================================================================
-void modVertexPos(PositionVertexComponent *posComp, const pairFloat_t &mod)
+void modVertexPos(PositionVertexComponent *posComp, const PairFloat_t &mod)
 {
     for(uint32_t i = 0; i < posComp->m_vertex.size(); ++i)
     {
@@ -418,7 +418,7 @@ void StaticDisplaySystem::drawLineWriteVertex(PositionVertexComponent *posComp,
     posComp->m_vertex.reserve(writeComp->m_fontSpriteData.size() * 4);
     float currentX = writeComp->m_upLeftPositionGL.first, diffX,
             currentY = writeComp->m_upLeftPositionGL.second, diffY = writeComp->m_fontSize;
-    std::array<pairFloat_t, 4> *memArray = &(writeComp->m_fontSpriteData[0].get().m_texturePosVertex);
+    std::array<PairFloat_t, 4> *memArray = &(writeComp->m_fontSpriteData[0].get().m_texturePosVertex);
     float cohef = ((*memArray)[2].second - (*memArray)[0].second) / writeComp->m_fontSize;
     uint32_t cmptSpriteData = 0;
     for(uint32_t i = 0; i < writeComp->m_str.size(); ++i)
@@ -437,10 +437,10 @@ void StaticDisplaySystem::drawLineWriteVertex(PositionVertexComponent *posComp,
         assert(cmptSpriteData < writeComp->m_fontSpriteData.size());
         memArray = &(writeComp->m_fontSpriteData[cmptSpriteData].get().m_texturePosVertex);
         diffX = ((*memArray)[1].first - (*memArray)[0].first) / cohef;
-        posComp->m_vertex.emplace_back(pairFloat_t{currentX, currentY});
-        posComp->m_vertex.emplace_back(pairFloat_t{currentX + diffX, currentY});
-        posComp->m_vertex.emplace_back(pairFloat_t{currentX + diffX, currentY - diffY});
-        posComp->m_vertex.emplace_back(pairFloat_t{currentX, currentY - diffY});
+        posComp->m_vertex.emplace_back(PairFloat_t{currentX, currentY});
+        posComp->m_vertex.emplace_back(PairFloat_t{currentX + diffX, currentY});
+        posComp->m_vertex.emplace_back(PairFloat_t{currentX + diffX, currentY - diffY});
+        posComp->m_vertex.emplace_back(PairFloat_t{currentX, currentY - diffY});
         currentX += diffX;
         ++cmptSpriteData;
     }

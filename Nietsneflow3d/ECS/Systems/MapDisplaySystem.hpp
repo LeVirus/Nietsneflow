@@ -34,11 +34,11 @@ private:
     void drawPlayerVision();
     void drawPlayerOnMap();
     void confPositionVertexEntities();
-    void confVertexElement(const pairFloat_t &glPosition, uint32_t entityNum);
+    void confVertexElement(const PairFloat_t &glPosition, uint32_t entityNum);
     void setVertexStaticElementPosition(uint32_t entityNum);
-    bool checkBoundEntityMap(const MapCoordComponent &mapCoordComp, const pairUI_t &minBound, const pairUI_t &maxBound);
-    void getMapDisplayLimit(pairFloat_t &playerPos, pairUI_t &min, pairUI_t &max);
-    pairFloat_t getUpLeftCorner(const MapCoordComponent *mapCoordComp, uint32_t entityNum);
+    bool checkBoundEntityMap(const MapCoordComponent &mapCoordComp, const PairUI_t &minBound, const PairUI_t &maxBound);
+    void getMapDisplayLimit(PairFloat_t &playerPos, PairUI_t &min, PairUI_t &max);
+    PairFloat_t getUpLeftCorner(const MapCoordComponent *mapCoordComp, uint32_t entityNum);
 private:
     Shader *m_shader;
     std::vector<VerticesData> m_vectVerticesData;

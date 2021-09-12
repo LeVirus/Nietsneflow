@@ -84,7 +84,7 @@ void DoorWallSystem::treatDoors()
 void DoorWallSystem::treatMoveableWalls()
 {
     bool next;
-    pairUI_t memPreviousPos;
+    PairUI_t memPreviousPos;
     for(uint32_t i = 0; i < m_vectMoveableWall.size(); ++i)
     {
         MoveableWallConfComponent *moveWallComp = stairwayToComponentManager().
@@ -227,7 +227,7 @@ bool DoorWallSystem::triggerMoveableWall(uint32_t wallEntity)
 void setInitPhaseMoveWall(MapCoordComponent *mapComp, MoveableWallConfComponent *moveWallComp,
                           Direction_e currentDir, uint32_t wallEntity)
 {
-    pairUI_t nextCase;
+    PairUI_t nextCase;
     if(Level::getElementCase(mapComp->m_coord)->m_type != LevelCaseType_e::WALL_LC)
     {
         Level::setElementTypeCase(mapComp->m_coord, LevelCaseType_e::WALL_MOVE_LC);
@@ -277,7 +277,7 @@ void stopMoveWallLevelLimitCase(MapCoordComponent *mapComp, MoveableWallConfComp
 
 //===================================================================
 void DoorWallSystem::switchToNextPhaseMoveWall(uint32_t wallEntity, MapCoordComponent *mapComp, MoveableWallConfComponent *moveWallComp,
-                                               const pairUI_t &previousPos)
+                                               const PairUI_t &previousPos)
 {
     Level::resetMoveWallElementCase(previousPos, moveWallComp->muiGetIdEntityAssociated());
     moveWallComp->m_initPos = true;

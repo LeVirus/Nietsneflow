@@ -6,10 +6,10 @@
 #include <iostream>
 
 //===================================================================
-bool checkCircleRectCollision(const pairFloat_t &cicleCenter,
+bool checkCircleRectCollision(const PairFloat_t &cicleCenter,
                               const float circleRay,
-                              const pairFloat_t &rectOrigin,
-                              const pairFloat_t &rectSize)
+                              const PairFloat_t &rectOrigin,
+                              const PairFloat_t &rectSize)
 {
     float circleDiameter = circleRay * 2.0f;
     if(!checkRectRectCollision({cicleCenter.first - circleRay, cicleCenter.second - circleRay},
@@ -18,7 +18,7 @@ bool checkCircleRectCollision(const pairFloat_t &cicleCenter,
         return false;
     }
 
-    pairFloat_t rectCenterPoint = {rectOrigin.first + rectSize.first / 2,
+    PairFloat_t rectCenterPoint = {rectOrigin.first + rectSize.first / 2,
         rectOrigin.second + rectSize.second / 2};
     float rectDiagonal = getDistance(rectOrigin, rectCenterPoint);
     //Add test
@@ -31,8 +31,8 @@ bool checkCircleRectCollision(const pairFloat_t &cicleCenter,
 }
 
 //===================================================================
-bool checkCircleCircleCollision(const pairFloat_t &circleCenterA, const float rayCircleA,
-                                const pairFloat_t &circleCenterB, const float rayCircleB)
+bool checkCircleCircleCollision(const PairFloat_t &circleCenterA, const float rayCircleA,
+                                const PairFloat_t &circleCenterB, const float rayCircleB)
 {
 
     float circleDiameterA = rayCircleA * 2.0f, circleDiameterB = rayCircleB * 2.0f;
@@ -52,10 +52,10 @@ bool checkCircleCircleCollision(const pairFloat_t &circleCenterA, const float ra
 }
 
 //===================================================================
-bool checkRectRectCollision(const pairFloat_t &rectOriginA,
-        const pairFloat_t &rectSizeA,
-        const pairFloat_t &rectOriginB,
-        const pairFloat_t &rectSizeB)
+bool checkRectRectCollision(const PairFloat_t &rectOriginA,
+        const PairFloat_t &rectSizeA,
+        const PairFloat_t &rectOriginB,
+        const PairFloat_t &rectSizeB)
 {
     return !(rectOriginA.first + rectSizeA.first <= rectOriginB.first ||
             rectOriginB.first + rectSizeB.first <= rectOriginA.first ||
@@ -64,8 +64,8 @@ bool checkRectRectCollision(const pairFloat_t &rectOriginA,
 }
 
 //===================================================================
-bool checkSegmentRectCollision(const pairFloat_t &lineFirstPoint, const pairFloat_t &lineSecondPoint,
-                               const pairFloat_t &rectOrigin, const pairFloat_t &rectSize)
+bool checkSegmentRectCollision(const PairFloat_t &lineFirstPoint, const PairFloat_t &lineSecondPoint,
+                               const PairFloat_t &rectOrigin, const PairFloat_t &rectSize)
 {
     float minX = std::min(lineFirstPoint.first, lineSecondPoint.first);
     float maxX = std::max(lineFirstPoint.first, lineSecondPoint.first);
@@ -80,8 +80,8 @@ bool checkSegmentRectCollision(const pairFloat_t &lineFirstPoint, const pairFloa
     {
         return true;
     }
-    pairFloat_t secondRectPoint = {rectOrigin.first, rectOrigin.second + rectSize.second};
-    pairFloat_t thirdRectPoint = {rectOrigin.first + rectSize.first, rectOrigin.second};
+    PairFloat_t secondRectPoint = {rectOrigin.first, rectOrigin.second + rectSize.second};
+    PairFloat_t thirdRectPoint = {rectOrigin.first + rectSize.first, rectOrigin.second};
     if(checkSegmentSegmentCollision(lineFirstPoint, lineSecondPoint, rectOrigin, secondRectPoint))
     {
         return true;
@@ -90,7 +90,7 @@ bool checkSegmentRectCollision(const pairFloat_t &lineFirstPoint, const pairFloa
     {
         return true;
     }
-    pairFloat_t fourthRectPoint = {rectOrigin.first + rectSize.first, rectOrigin.second + rectSize.second};
+    PairFloat_t fourthRectPoint = {rectOrigin.first + rectSize.first, rectOrigin.second + rectSize.second};
     if(checkSegmentSegmentCollision(lineFirstPoint, lineSecondPoint, fourthRectPoint, secondRectPoint))
     {
         return true;
@@ -103,8 +103,8 @@ bool checkSegmentRectCollision(const pairFloat_t &lineFirstPoint, const pairFloa
 }
 
 //===================================================================
-bool checkSegmentSegmentCollision(const pairFloat_t &firstPointSegmentA, const pairFloat_t &secondPointSegmentA,
-                                  const pairFloat_t &firstPointSegmentB, const pairFloat_t &secondPointSegmentB)
+bool checkSegmentSegmentCollision(const PairFloat_t &firstPointSegmentA, const PairFloat_t &secondPointSegmentA,
+                                  const PairFloat_t &firstPointSegmentB, const PairFloat_t &secondPointSegmentB)
 {
     float distXA = secondPointSegmentA.first - firstPointSegmentA.first;
     float distYA = secondPointSegmentA.second - firstPointSegmentA.second;
@@ -135,9 +135,9 @@ bool checkSegmentSegmentCollision(const pairFloat_t &firstPointSegmentA, const p
 }
 
 //===================================================================
-bool checkPointPosition(const pairFloat_t &firstPoint,
-                        const pairFloat_t &secondPoint,
-                        const pairFloat_t &currentPoint)
+bool checkPointPosition(const PairFloat_t &firstPoint,
+                        const PairFloat_t &secondPoint,
+                        const PairFloat_t &currentPoint)
 {
     if(!checkFloatEquals(firstPoint.first, secondPoint.first))
     {
@@ -162,12 +162,12 @@ bool checkPointPosition(const pairFloat_t &firstPoint,
 }
 
 //===================================================================
-bool checkCircleSegmentCollision(const pairFloat_t &circleCenter, const float circleRay,
-                                 const pairFloat_t &lineFirstPoint, const pairFloat_t &lineSecondPoint)
+bool checkCircleSegmentCollision(const PairFloat_t &circleCenter, const float circleRay,
+                                 const PairFloat_t &lineFirstPoint, const PairFloat_t &lineSecondPoint)
 {
     float segmentAngle = std::fmod(getTrigoAngle(lineFirstPoint, lineSecondPoint, false), PI_DOUBLE),
             limitAngleA, limitAngleB;
-    pairFloat_t limitPointA = circleCenter, limitPointB = circleCenter;
+    PairFloat_t limitPointA = circleCenter, limitPointB = circleCenter;
     moveElementFromAngle(circleRay, segmentAngle - PI_HALF, limitPointA);
     moveElementFromAngle(circleRay, segmentAngle + PI_HALF, limitPointB);
     limitAngleA = std::fmod(getTrigoAngle(lineFirstPoint, limitPointA, false), PI_DOUBLE);
@@ -210,9 +210,9 @@ bool checkCircleSegmentCollision(const pairFloat_t &circleCenter, const float ci
 }
 
 //===================================================================
-bool checkPointSegmentCollision(const pairFloat_t &point,
-        const pairFloat_t &firstSegmentPoint,
-        const pairFloat_t &secondSegmentPoint)
+bool checkPointSegmentCollision(const PairFloat_t &point,
+        const PairFloat_t &firstSegmentPoint,
+        const PairFloat_t &secondSegmentPoint)
 {
     float minX = std::min(firstSegmentPoint.first, secondSegmentPoint.first);
     float maxX = std::max(firstSegmentPoint.first, secondSegmentPoint.first);
@@ -238,15 +238,15 @@ bool checkFloatEquals(float a, float b)
 }
 
 //===================================================================
-bool checkPointCircleCollision(const pairFloat_t &point,
-        const pairFloat_t &cicleCenter,
+bool checkPointCircleCollision(const PairFloat_t &point,
+        const PairFloat_t &cicleCenter,
         const float circleRay)
 {
     return getDistance(point, cicleCenter) <= circleRay;
 }
 
 //===================================================================
-float getDistance(const pairFloat_t &pointA, const pairFloat_t &pointB)
+float getDistance(const PairFloat_t &pointA, const PairFloat_t &pointB)
 {
     float distanceX = std::abs(pointA.first - pointB.first),
             distanceY = std::abs(pointA.second - pointB.second);
@@ -263,7 +263,7 @@ float getDistance(const pairFloat_t &pointA, const pairFloat_t &pointB)
 }
 
 //===================================================================
-float getCameraDistance(const pairFloat_t &observerPoint, const pairFloat_t &targetPoint,
+float getCameraDistance(const PairFloat_t &observerPoint, const PairFloat_t &targetPoint,
                         float observerAngleRadiant, bool limit)
 {
     float angleCalc;
@@ -280,7 +280,7 @@ float getCameraDistance(const pairFloat_t &observerPoint, const pairFloat_t &tar
 }
 
 //===================================================================
-float getTrigoAngle(const pairFloat_t &pointA, const pairFloat_t &pointB, bool degree)
+float getTrigoAngle(const PairFloat_t &pointA, const PairFloat_t &pointB, bool degree)
 {
     float X = std::abs(pointB.first - pointA.first);
     float Y = std::abs(pointB.second - pointA.second);
@@ -320,9 +320,9 @@ float getRectTriangleSide(float adj, float hyp)
 }
 
 //===================================================================
-bool checkPointRectCollision(const pairFloat_t &point,
-        const pairFloat_t &rectOrigin,
-        const pairFloat_t &rectSize)
+bool checkPointRectCollision(const PairFloat_t &point,
+        const PairFloat_t &rectOrigin,
+        const PairFloat_t &rectSize)
 {
     return !(point.first < rectOrigin.first ||
             point.first > rectOrigin.first + rectSize.first ||
@@ -332,7 +332,7 @@ bool checkPointRectCollision(const pairFloat_t &point,
 
 //===================================================================
 bool checkTriangleCircleCollision(const array3PairFloat_t &trianglePoints,
-                                  const pairFloat_t &cicleCenter, const float circleRay)
+                                  const PairFloat_t &cicleCenter, const float circleRay)
 {
     float circleDiameter = circleRay * 2;
     pairPairFloat_t rectShapeTriangle = getRectShapeFromTriangle(trianglePoints);
@@ -403,12 +403,12 @@ bool checkTriangleRectCollision(const array3PairFloat_t &trianglePoints,
 
 //===================================================================
 bool checkTrianglePointCollision(const array3PairFloat_t &trianglePoints,
-                                 const pairFloat_t &point)
+                                 const PairFloat_t &point)
 {
 //    d = Dx ∗ Ty − Dy ∗ Tx
     float determinant, j;
     bool memPrevious = true;//remove warning
-    pairFloat_t vectA, vectB;
+    PairFloat_t vectA, vectB;
     for(uint32_t i = 0; i < 3; ++i)
     {
         j = (i == 2) ?  0 : (i + 1);
@@ -464,7 +464,7 @@ bool checkFloatEqualsZero(float valueA, float valueB)
 }
 
 //===================================================================
-pairFloat_t getCircleUpLeftCorner(const pairFloat_t &point, float ray)
+PairFloat_t getCircleUpLeftCorner(const PairFloat_t &point, float ray)
 {
     return {point.first - ray, point.second - ray};
 }

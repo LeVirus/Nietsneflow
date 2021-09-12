@@ -176,9 +176,63 @@ void LevelManager::loadGeneralStaticElements(const INIReader &reader, LevelStati
     for(uint32_t i = 0; i < vectINISections.size(); ++i)
     {
         memMap->insert({vectINISections[i], StaticLevelElementData()});
-        readStandardStaticElement(reader, memMap->operator[](vectINISections[i]),
-                vectINISections[i], elementType);
+        readStandardStaticElement(reader, memMap->operator[](vectINISections[i]), vectINISections[i], elementType);
     }
+}
+
+//===================================================================
+void LevelManager::loadBarrelsData(const INIReader &reader)
+{
+    std::vector<std::string> vectINISections;
+    vectINISections = reader.getSectionNamesContaining("Barrel");
+    assert(!vectINISections.empty());
+    //Static
+    m_barrelElement.m_staticSprite = getVectSpriteNum(reader, vectINISections[0], "StaticSprite");
+    m_barrelElement.m_inGameStaticSpriteSize.first = reader.GetReal(vectINISections[0], "StaticSpriteWeightGame", 0.0f);
+    m_barrelElement.m_inGameStaticSpriteSize.second = reader.GetReal(vectINISections[0], "StaticSpriteHeightGame", 0.0f);
+    //Explosion
+    m_barrelElement.m_explosionSprite = getVectSpriteNum(reader, vectINISections[0], "ExplosionSprite");
+    m_barrelElement.m_vectinGameExplosionSpriteSize = getVectSpriteGLSize(reader, vectINISections[0],
+            "ExplosionSpriteWeightGame", "ExplosionSpriteHeightGame");
+    assert(m_barrelElement.m_vectinGameExplosionSpriteSize.size() == m_barrelElement.m_explosionSprite.size());
+}
+
+//===================================================================
+std::vector<uint8_t> LevelManager::getVectSpriteNum(const INIReader &reader, const std::string_view section, const std::string_view param)
+{
+    std::string str = reader.Get(section.data(), param.data(), "");
+    assert(!str.empty());
+    vectStr_t vectSprite = convertStrToVectStr(str);
+    std::vector<uint8_t> retVect;
+    retVect.reserve(vectSprite.size());
+    for(uint32_t i = 0; i < vectSprite.size(); ++i)
+    {
+        std::optional<uint8_t> id = m_pictureData.getIdentifier(vectSprite[i]);
+        assert(id);
+        retVect.emplace_back(*id);
+    }
+    return retVect;
+}
+
+//===================================================================
+std::vector<PairFloat_t> LevelManager::getVectSpriteGLSize(const INIReader &reader, const std::string_view section,
+                                                           const std::string_view weightParam, const std::string_view heightParam)
+{
+    std::vector<PairFloat_t> retVect;
+    std::string str = reader.Get(section.data(), weightParam.data(), "");
+    assert(!str.empty());
+    std::vector<float> vectWeight = convertStrToVectFloat(str);
+
+    str = reader.Get(section.data(), heightParam.data(), "");
+    assert(!str.empty());
+    std::vector<float> vectHeight = convertStrToVectFloat(str);
+    assert(vectHeight.size() == vectWeight.size());
+    retVect.reserve(vectHeight.size());
+    for(uint32_t i = 0; i < vectHeight.size(); ++i)
+    {
+        retVect.emplace_back(PairFloat_t{vectWeight[i], vectHeight[i]});
+    }
+    return retVect;
 }
 
 //===================================================================
@@ -309,7 +363,7 @@ std::optional<std::vector<uint32_t>> getBrutPositionData(const INIReader &reader
 }
 
 //===================================================================
-void LevelManager::fillStandartPositionVect(const INIReader &reader, const std::string &sectionName, vectPairUI_t &vectPos)
+void LevelManager::fillStandartPositionVect(const INIReader &reader, const std::string &sectionName, VectPairUI_t &vectPos)
 {
     std::optional<std::vector<uint32_t>> results = getBrutPositionData(reader, sectionName, "GamePosition");
     if(!results)
@@ -322,7 +376,7 @@ void LevelManager::fillStandartPositionVect(const INIReader &reader, const std::
     vectPos.reserve(finalSize);
     for(uint32_t j = 0; j < (*results).size(); j += 2)
     {
-        vectPos.emplace_back(pairUI_t{(*results)[j], (*results)[j + 1]});
+        vectPos.emplace_back(PairUI_t{(*results)[j], (*results)[j + 1]});
         deleteWall(vectPos.back());
     }
 }
@@ -345,27 +399,27 @@ void LevelManager::fillTeleportPositions(const INIReader &reader, const std::str
     m_teleportElement[sectionName].m_teleportData->m_biDirection =
             convertStrToVectBool(reader.Get(sectionName, "BiDirection", ""));
     assert(m_teleportElement[sectionName].m_teleportData->m_biDirection.size() == vectSize);
-    vectPairUI_t &vect = m_teleportElement[sectionName].m_teleportData->m_targetTeleport;
+    VectPairUI_t &vect = m_teleportElement[sectionName].m_teleportData->m_targetTeleport;
     vect.reserve(vectSize);
     m_teleportElement[sectionName].m_TileGamePosition.reserve(vectSize);
     for(uint32_t j = 0; j < (*resultsPosA).size(); j += 2)
     {
         //Origin
-        m_teleportElement[sectionName].m_TileGamePosition.emplace_back(pairUI_t{(*resultsPosA)[j], (*resultsPosA)[j + 1]});
+        m_teleportElement[sectionName].m_TileGamePosition.emplace_back(PairUI_t{(*resultsPosA)[j], (*resultsPosA)[j + 1]});
         //Target
-        vect.emplace_back(pairUI_t{(*resultsPosB)[j], (*resultsPosB)[j + 1]});
+        vect.emplace_back(PairUI_t{(*resultsPosB)[j], (*resultsPosB)[j + 1]});
         if(m_teleportElement[sectionName].m_teleportData->m_biDirection[j / 2])
         {
             //Origin
-            m_teleportElement[sectionName].m_TileGamePosition.emplace_back(pairUI_t{(*resultsPosB)[j], (*resultsPosB)[j + 1]});
+            m_teleportElement[sectionName].m_TileGamePosition.emplace_back(PairUI_t{(*resultsPosB)[j], (*resultsPosB)[j + 1]});
             //Target
-            vect.emplace_back(pairUI_t{(*resultsPosA)[j], (*resultsPosA)[j + 1]});
+            vect.emplace_back(PairUI_t{(*resultsPosA)[j], (*resultsPosA)[j + 1]});
         }
     }
 }
 
 //===================================================================
-std::optional<pairUI_t> LevelManager::getPosition(const INIReader &reader,
+std::optional<PairUI_t> LevelManager::getPosition(const INIReader &reader,
                                                   const std::string_view sectionName, const std::string_view propertyName)
 {
     std::optional<std::vector<uint32_t>> results = getBrutPositionData(reader, sectionName.data(), propertyName.data());
@@ -373,13 +427,13 @@ std::optional<pairUI_t> LevelManager::getPosition(const INIReader &reader,
     {
         return {};
     }
-    return pairUI_t{(*results)[0], (*results)[1]};
+    return PairUI_t{(*results)[0], (*results)[1]};
 }
 
 //===================================================================
-void LevelManager::deleteWall(const pairUI_t &coord)
+void LevelManager::deleteWall(const PairUI_t &coord)
 {
-    std::set<pairUI_t>::iterator itt;
+    std::set<PairUI_t>::iterator itt;
     std::map<std::string, WallData>::iterator it = m_wallData.begin();
     for(; it != m_wallData.end(); ++it)
     {
@@ -395,14 +449,14 @@ void LevelManager::deleteWall(const pairUI_t &coord)
 bool LevelManager::fillWallPositionVect(const INIReader &reader,
                                         const std::string &sectionName,
                                         const std::string &propertyName,
-                                        std::set<pairUI_t> &vectPos)
+                                        std::set<PairUI_t> &vectPos)
 {
     std::optional<std::vector<uint32_t>> results = getBrutPositionData(reader, sectionName, propertyName);
     if(!results || (*results).empty())
     {
         return false;
     }
-    pairUI_t origins;
+    PairUI_t origins;
     uint32_t j = 0;
     while(j < (*results).size())
     {
@@ -456,15 +510,15 @@ bool LevelManager::fillWallPositionVect(const INIReader &reader,
 //===================================================================
 void LevelManager::removeWallPositionVect(const INIReader &reader,
                                           const std::string &sectionName,
-                                          std::set<pairUI_t> &vectPos)
+                                          std::set<PairUI_t> &vectPos)
 {
-    std::set<pairUI_t> wallToRemove;
+    std::set<PairUI_t> wallToRemove;
     if(!fillWallPositionVect(reader, sectionName, "RemovePosition", wallToRemove))
     {
         return;
     }
-    std::set<pairUI_t>::iterator itt;
-    for(std::set<pairUI_t>::const_iterator it = wallToRemove.begin(); it != wallToRemove.end(); ++it)
+    std::set<PairUI_t>::iterator itt;
+    for(std::set<PairUI_t>::const_iterator it = wallToRemove.begin(); it != wallToRemove.end(); ++it)
     {
         itt = vectPos.find(*it);
         if(itt != vectPos.end())
@@ -476,10 +530,10 @@ void LevelManager::removeWallPositionVect(const INIReader &reader,
 
 
 //===================================================================
-void fillPositionVerticalLine(const pairUI_t &origins, uint32_t size,
-                              std::set<pairUI_t> &vectPos)
+void fillPositionVerticalLine(const PairUI_t &origins, uint32_t size,
+                              std::set<PairUI_t> &vectPos)
 {
-    pairUI_t current = origins;
+    PairUI_t current = origins;
     for(uint32_t j = 0; j < size; ++j, ++current.second)
     {
         vectPos.insert(current);
@@ -487,10 +541,10 @@ void fillPositionVerticalLine(const pairUI_t &origins, uint32_t size,
 }
 
 //===================================================================
-void fillPositionHorizontalLine(const pairUI_t &origins, uint32_t size,
-                                std::set<pairUI_t> &vectPos)
+void fillPositionHorizontalLine(const PairUI_t &origins, uint32_t size,
+                                std::set<PairUI_t> &vectPos)
 {
-    pairUI_t current = origins;
+    PairUI_t current = origins;
     for(uint32_t j = 0; j < size; ++j, ++current.first)
     {
         vectPos.insert(current);
@@ -498,8 +552,8 @@ void fillPositionHorizontalLine(const pairUI_t &origins, uint32_t size,
 }
 
 //===================================================================
-void fillPositionRectangle(const pairUI_t &origins, const pairUI_t &size,
-                           std::set<pairUI_t> &vectPos)
+void fillPositionRectangle(const PairUI_t &origins, const PairUI_t &size,
+                           std::set<PairUI_t> &vectPos)
 {
     fillPositionHorizontalLine(origins, size.first, vectPos);
     fillPositionHorizontalLine({origins.first, origins.second + size.second - 1},
@@ -511,10 +565,10 @@ void fillPositionRectangle(const pairUI_t &origins, const pairUI_t &size,
 }
 
 //===================================================================
-void fillPositionDiagLineUpLeft(const pairUI_t &origins, uint32_t size,
-                                std::set<pairUI_t> &vectPos)
+void fillPositionDiagLineUpLeft(const PairUI_t &origins, uint32_t size,
+                                std::set<PairUI_t> &vectPos)
 {
-    pairUI_t current = origins;
+    PairUI_t current = origins;
     for(uint32_t j = 0; j < size; ++j, ++current.first, ++current.second)
     {
         vectPos.insert(current);
@@ -522,10 +576,10 @@ void fillPositionDiagLineUpLeft(const pairUI_t &origins, uint32_t size,
 }
 
 //===================================================================
-void fillPositionDiagLineDownLeft(const pairUI_t &origins, uint32_t size,
-                                  std::set<pairUI_t> &vectPos)
+void fillPositionDiagLineDownLeft(const PairUI_t &origins, uint32_t size,
+                                  std::set<PairUI_t> &vectPos)
 {
-    pairUI_t current = origins;
+    PairUI_t current = origins;
     for(uint32_t j = 0; j < size; ++j, ++current.first, --current.second)
     {
         vectPos.insert(current);
@@ -537,8 +591,8 @@ void fillPositionDiagLineDownLeft(const pairUI_t &origins, uint32_t size,
 }
 
 //===================================================================
-void fillPositionDiagRectangle(const pairUI_t &origins, uint32_t size,
-                               std::set<pairUI_t> &vectPos)
+void fillPositionDiagRectangle(const PairUI_t &origins, uint32_t size,
+                               std::set<PairUI_t> &vectPos)
 {
     if(size % 2 == 0)
     {
@@ -769,7 +823,7 @@ void LevelManager::loadPositionWall(const INIReader &reader)
             }
             else if(m_moveableWallData[vectINISections[i]].m_triggerType == TriggerWallMoveType_e::GROUND)
             {
-                m_moveableWallData[vectINISections[i]].m_groundTriggerPos = pairUI_t();
+                m_moveableWallData[vectINISections[i]].m_groundTriggerPos = PairUI_t();
                 m_moveableWallData[vectINISections[i]].m_groundTriggerPos =
                         *getPosition(reader,  vectINISections[i], "TriggerGamePosition");
             }
@@ -1020,6 +1074,7 @@ void LevelManager::loadStandardData(const std::string &INIFileName)
     loadGeneralStaticElements(reader, LevelStaticElementType_e::OBJECT);
     loadGeneralStaticElements(reader, LevelStaticElementType_e::TELEPORT);
     loadVisualTeleportData(reader);
+    loadBarrelsData(reader);
     loadExit(reader);
     loadTriggerElements(reader);
     loadDoorData(reader);
@@ -1058,10 +1113,36 @@ void LevelManager::loadPositionStaticElements(const INIReader &reader)
     {
         fillStandartPositionVect(reader, it->first, it->second.m_TileGamePosition);
     }
+    //OOOOK only one teleport element
     for(it = m_teleportElement.begin(); it != m_teleportElement.end(); ++it)
     {
         fillTeleportPositions(reader, it->first);
     }
+}
+
+//===================================================================
+void LevelManager::loadBarrelElements(const INIReader &reader)
+{
+    //OOOOK refact pos
+    m_barrelElement.m_TileGamePosition = getPositionData(reader, "Barrel", "GamePosition");
+}
+
+//===================================================================
+VectPairUI_t getPositionData(const INIReader &reader, const std::string &sectionName, const std::string &propertyName)
+{
+    VectPairUI_t vectRet;
+    std::optional<std::vector<uint32_t>> resultsPos = getBrutPositionData(reader, sectionName.data(), propertyName.data());
+    if(!resultsPos)
+    {
+        return {};
+    }
+    assert((*resultsPos).size() % 2 == 0);
+    vectRet.reserve((*resultsPos).size() / 2);
+    for(uint32_t i = 0; i < (*resultsPos).size(); ++i)
+    {
+        vectRet.emplace_back(PairUI_t{(*resultsPos)[i], (*resultsPos)[i + 1]});
+    }
+    return vectRet;
 }
 
 //===================================================================
@@ -1078,6 +1159,7 @@ void LevelManager::loadLevel(const std::string &INIFileName, uint32_t levelNum)
     loadPositionPlayerData(reader);
     loadPositionWall(reader);
     loadPositionStaticElements(reader);
+    loadBarrelElements(reader);
     loadPositionExit(reader);
     loadPositionDoorData(reader);
     loadPositionEnemyData(reader);
@@ -1112,4 +1194,9 @@ void LevelManager::clearExistingPositionsElement()
     {
         it->second.m_TileGamePosition.clear();
     }
+    for(std::map<std::string, StaticLevelElementData>::iterator it = m_teleportElement.begin(); it != m_teleportElement.end(); ++it)
+    {
+        it->second.m_TileGamePosition.clear();
+    }
+    m_barrelElement.m_TileGamePosition.clear();
 }

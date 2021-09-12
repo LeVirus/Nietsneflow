@@ -5,7 +5,7 @@
 #include <array>
 #include <functional>
 
-using pairFloat_t = std::pair<float, float>;
+using PairFloat_t = std::pair<float, float>;
 
 struct TriggerComponent : public ecs::Component
 {

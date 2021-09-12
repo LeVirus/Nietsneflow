@@ -32,6 +32,7 @@ SOURCES += main.cpp \
     ECS/Systems/StaticDisplaySystem.cpp
 
 HEADERS += \
+    ECS/Components/BarrelComponent.hpp \
     ECS/Components/EnemyConfComponent.hpp \
     ECS/Components/FPSVisibleStaticElementComponent.hpp \
     ECS/Components/MemFPSGLSizeComponent.hpp \

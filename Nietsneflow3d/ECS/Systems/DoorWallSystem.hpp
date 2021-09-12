@@ -21,7 +21,7 @@ private:
     void treatMoveableWalls();
     void treatTriggers();
     bool triggerMoveableWall(uint32_t wallEntity);
-    void switchToNextPhaseMoveWall(uint32_t wallEntity, MapCoordComponent *mapComp, MoveableWallConfComponent *moveWallComp, const pairUI_t &previousPos);
+    void switchToNextPhaseMoveWall(uint32_t wallEntity, MapCoordComponent *mapComp, MoveableWallConfComponent *moveWallComp, const PairUI_t &previousPos);
 private:
     double m_timeDoorClosed = 0.6;
     std::vector<uint32_t> m_vectMoveableWall, m_vectTrigger;

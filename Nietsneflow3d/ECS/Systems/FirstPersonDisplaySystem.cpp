@@ -201,7 +201,7 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
                                                   uint32_t &toRemove, float degreeObserverAngle, uint32_t numIteration)
 {
     uint32_t numEntity = visionComp->m_vectVisibleEntities[numIteration];
-    pairFloat_t centerPosB = getCenterPosition(mapCompB, genCollComp, numEntity);
+    PairFloat_t centerPosB = getCenterPosition(mapCompB, genCollComp, numEntity);
     float simpleDistance, radiantObserverAngle = getRadiantAngle(degreeObserverAngle),
             cameraDistance = getCameraDistance(mapCompA->m_absoluteMapPositionPX,
                                              mapCompB->m_absoluteMapPositionPX, radiantObserverAngle);
@@ -248,12 +248,12 @@ bool FirstPersonDisplaySystem::behindRaycastElement(const MapCoordComponent *map
     bool door = false;
     float targetlimitRadiantAngle;
     optionalTargetRaycast_t resultRaycast;
-    pairFloat_t refPoint = mapCompTarget->m_absoluteMapPositionPX;
+    PairFloat_t refPoint = mapCompTarget->m_absoluteMapPositionPX;
     CircleCollisionComponent *circleComp = stairwayToComponentManager().
             searchComponentByType<CircleCollisionComponent>(targetEntity,
                                                             Components_e::CIRCLE_COLLISION_COMPONENT);
     assert(circleComp);
-    std::optional<pairUI_t> caseUI = getLevelCoord(mapCompTarget->m_absoluteMapPositionPX);
+    std::optional<PairUI_t> caseUI = getLevelCoord(mapCompTarget->m_absoluteMapPositionPX);
     if(caseUI)
     {
         if((*Level::getElementCase(*caseUI)).m_type == LevelCaseType_e::DOOR_LC)
@@ -301,7 +301,7 @@ bool FirstPersonDisplaySystem::behindRaycastElement(const MapCoordComponent *map
 float getDoorDistance(const MapCoordComponent *mapCompCamera, const MapCoordComponent *mapCompDoor,
                       const DoorComponent *doorComp)
 {
-    pairFloat_t refPointA = getAbsolutePosition(mapCompDoor->m_coord);
+    PairFloat_t refPointA = getAbsolutePosition(mapCompDoor->m_coord);
     float latPosDoor = refPointA.first,
             vertPosDoor = refPointA.second,
             latPosCamera = mapCompCamera->m_absoluteMapPositionPX.first,
@@ -393,9 +393,9 @@ float getDoorDistance(const MapCoordComponent *mapCompCamera, const MapCoordComp
 }
 
 //===================================================================
-float getMiddleDoorDistance(const pairFloat_t &camera, const pairFloat_t &element, bool vertical)
+float getMiddleDoorDistance(const PairFloat_t &camera, const PairFloat_t &element, bool vertical)
 {
-    pairFloat_t refPointB = element;
+    PairFloat_t refPointB = element;
     if(vertical)
     {
         refPointB.second += LEVEL_TILE_SIZE_PX;
@@ -425,7 +425,7 @@ float getLateralAngle(float centerAngleVision, float trigoAngle)
 }
 
 //===================================================================
-pairFloat_t getIntersectCoord(const pairFloat_t &observerPoint, const pairFloat_t &targetPoint,
+PairFloat_t getIntersectCoord(const PairFloat_t &observerPoint, const PairFloat_t &targetPoint,
                               float centerAngleVision, bool outLeft, bool YIntersect)
 {
     float angle, adj, diffAngle;
@@ -484,7 +484,7 @@ pairFloat_t getIntersectCoord(const pairFloat_t &observerPoint, const pairFloat_
 }
 
 //===================================================================
-void removeSecondRect(pairFloat_t absolPos[], float distance[], uint32_t &distanceToTreat)
+void removeSecondRect(PairFloat_t absolPos[], float distance[], uint32_t &distanceToTreat)
 {
     std::swap(distance[0], distance[1]);
     std::swap(absolPos[0], absolPos[1]);
@@ -830,12 +830,12 @@ void FirstPersonDisplaySystem::rayCasting()
 }
 
 //===================================================================
-void FirstPersonDisplaySystem::calcVerticalBackgroundLineRaycast(const pairFloat_t &observerPos, float currentRadiantAngle,
+void FirstPersonDisplaySystem::calcVerticalBackgroundLineRaycast(const PairFloat_t &observerPos, float currentRadiantAngle,
                                                                  float currentGLLatPos, float radiantObserverAngle)
 {
     SpriteTextureComponent *spriteGroundComp = nullptr, *spriteCeilingComp = nullptr;
-    pairFloat_t currentGroundGL = {currentGLLatPos, -1.0f}, currentCeilingGL = {currentGLLatPos, 1.0f};
-    pairFloat_t currentPoint;
+    PairFloat_t currentGroundGL = {currentGLLatPos, -1.0f}, currentCeilingGL = {currentGLLatPos, 1.0f};
+    PairFloat_t currentPoint;
     float totalDistanceTarget;
     float calcAngle = std::abs(radiantObserverAngle - currentRadiantAngle);
     if(m_groundTiledTextBackground)
@@ -882,17 +882,17 @@ void FirstPersonDisplaySystem::calcVerticalBackgroundLineRaycast(const pairFloat
 
 //===================================================================
 optionalTargetRaycast_t FirstPersonDisplaySystem::calcLineSegmentRaycast(float radiantAngle,
-                                                                         const pairFloat_t &originPoint,
+                                                                         const PairFloat_t &originPoint,
                                                                          bool visual)
 {
     std::optional<ElementRaycast> element;
     float textPos;
     bool lateral;
-    std::optional<pairUI_t> currentCoord;
+    std::optional<PairUI_t> currentCoord;
     std::optional<float> lateralLeadCoef, verticalLeadCoef;
     verticalLeadCoef = getLeadCoef(radiantAngle, false);
     lateralLeadCoef = getLeadCoef(radiantAngle, true);
-    pairFloat_t currentPoint = originPoint;
+    PairFloat_t currentPoint = originPoint;
     optionalTargetRaycast_t result;
     lateral = raycastPointLateral(radiantAngle, originPoint);
     currentCoord = getCorrectedCoord(currentPoint, lateral, radiantAngle);
@@ -968,11 +968,11 @@ optionalTargetRaycast_t FirstPersonDisplaySystem::calcLineSegmentRaycast(float r
 optionalTargetRaycast_t FirstPersonDisplaySystem::calcMovingWallSegmentRaycast(float radiantAngle,
                                                                                std::optional<float> lateralLeadCoef,
                                                                                std::optional<float> verticalLeadCoef,
-                                                                               pairFloat_t &currentPoint,
+                                                                               PairFloat_t &currentPoint,
                                                                                const ElementRaycast &element)
 {
     assert(element.m_memMoveWall);
-    pairFloat_t memBase = currentPoint;
+    PairFloat_t memBase = currentPoint;
     float memDistance;
     std::set<uint32_t>::const_iterator it = element.m_memMoveWall->begin();
     //first raycast result second distance
@@ -987,7 +987,7 @@ optionalTargetRaycast_t FirstPersonDisplaySystem::calcMovingWallSegmentRaycast(f
                 searchComponentByType<MapCoordComponent>(*it, Components_e::MAP_COORD_COMPONENT);
         assert(mapComp);
         //first case x pos limit second y pos limit
-        pairFloat_t wallPos[2] = {{mapComp->m_absoluteMapPositionPX.first,
+        PairFloat_t wallPos[2] = {{mapComp->m_absoluteMapPositionPX.first,
                                    mapComp->m_absoluteMapPositionPX.first +
                                    rectComp->m_size.first},
                                   {mapComp->m_absoluteMapPositionPX.second,
@@ -1045,7 +1045,7 @@ optionalTargetRaycast_t FirstPersonDisplaySystem::calcMovingWallSegmentRaycast(f
 optionalTargetRaycast_t FirstPersonDisplaySystem::calcDoorSegmentRaycast(float radiantAngle,
                                                                          std::optional<float> lateralLeadCoef,
                                                                          std::optional<float> verticalLeadCoef,
-                                                                         pairFloat_t &currentPoint,
+                                                                         PairFloat_t &currentPoint,
                                                                          const ElementRaycast &element)
 {
     bool textFace, textLateral;
@@ -1073,7 +1073,7 @@ optionalTargetRaycast_t FirstPersonDisplaySystem::calcDoorSegmentRaycast(float r
 
 //===================================================================
 std::optional<float> FirstPersonDisplaySystem::treatDoorRaycast(uint32_t numEntity, float currentRadiantAngle,
-                                                                pairFloat_t &currentPoint,
+                                                                PairFloat_t &currentPoint,
                                                                 std::optional<float> lateralLeadCoef,
                                                                 std::optional<float> verticalLeadCoef,
                                                                 bool &textLateral, bool &textFace)
@@ -1089,7 +1089,7 @@ std::optional<float> FirstPersonDisplaySystem::treatDoorRaycast(uint32_t numEnti
             searchComponentByType<MapCoordComponent>(numEntity, Components_e::MAP_COORD_COMPONENT);
     assert(mapComp);
     //first case x pos limit second y pos limit
-    pairFloat_t doorPos[2] = {{mapComp->m_absoluteMapPositionPX.first,
+    PairFloat_t doorPos[2] = {{mapComp->m_absoluteMapPositionPX.first,
                                mapComp->m_absoluteMapPositionPX.first +
                                rectComp->m_size.first},
                               {mapComp->m_absoluteMapPositionPX.second,
@@ -1118,8 +1118,8 @@ std::optional<float> FirstPersonDisplaySystem::treatDoorRaycast(uint32_t numEnti
 }
 
 //===================================================================
-bool treatDisplayDoor(float currentRadiantAngle, bool doorVertical, pairFloat_t &currentPoint,
-                      const pairFloat_t doorPos[], std::optional<float> verticalLeadCoef,
+bool treatDisplayDoor(float currentRadiantAngle, bool doorVertical, PairFloat_t &currentPoint,
+                      const PairFloat_t doorPos[], std::optional<float> verticalLeadCoef,
                       std::optional<float> lateralLeadCoef, bool &textLateral, bool &textFace,
                       bool bull)
 {
@@ -1167,7 +1167,7 @@ bool treatDisplayDoor(float currentRadiantAngle, bool doorVertical, pairFloat_t 
 }
 
 //===================================================================
-bool treatLateralIntersectRect(pairFloat_t &currentPoint, const pairFloat_t rectPos[],
+bool treatLateralIntersectRect(PairFloat_t &currentPoint, const PairFloat_t rectPos[],
                                float lateralLeadCoef, float radiantAngle)
 {
     bool upCase;
@@ -1184,7 +1184,7 @@ bool treatLateralIntersectRect(pairFloat_t &currentPoint, const pairFloat_t rect
         return false;
     }
     float diffLat;
-    pairFloat_t tmpPos = currentPoint;
+    PairFloat_t tmpPos = currentPoint;
     tmpPos.second = (upCase) ? rectPos[1].first : rectPos[1].second;
     if(std::abs(std::cos(radiantAngle)) > 0.0001f)
     {
@@ -1201,7 +1201,7 @@ bool treatLateralIntersectRect(pairFloat_t &currentPoint, const pairFloat_t rect
 }
 
 //===================================================================
-bool treatVerticalIntersectRect(pairFloat_t &currentPoint, const pairFloat_t rectPos[],
+bool treatVerticalIntersectRect(PairFloat_t &currentPoint, const PairFloat_t rectPos[],
                                 float verticalLeadCoef, float radiantAngle)
 {
     bool leftCase;
@@ -1218,7 +1218,7 @@ bool treatVerticalIntersectRect(pairFloat_t &currentPoint, const pairFloat_t rec
         return false;
     }
     float diffVert;
-    pairFloat_t tmpPos = currentPoint;
+    PairFloat_t tmpPos = currentPoint;
     tmpPos.first = (leftCase) ? rectPos[0].first : rectPos[0].second;
     if(std::abs(std::sin(radiantAngle)) > 0.001f)
     {
@@ -1235,10 +1235,10 @@ bool treatVerticalIntersectRect(pairFloat_t &currentPoint, const pairFloat_t rec
 }
 
 //===================================================================
-std::optional<pairUI_t> getCorrectedCoord(const pairFloat_t &currentPoint,
+std::optional<PairUI_t> getCorrectedCoord(const PairFloat_t &currentPoint,
                                           bool lateral, float radiantAngle)
 {
-    pairFloat_t point = currentPoint;
+    PairFloat_t point = currentPoint;
     //treat limit angle cube case
     //raycast on angle case
     if(std::fmod(point.second, LEVEL_TILE_SIZE_PX) <= 0.01f &&
@@ -1296,7 +1296,7 @@ std::optional<float> getModulo(float sinCosAngle, float position, float modulo, 
 }
 
 //===================================================================
-bool raycastPointLateral(float radiantAngle, const pairFloat_t &cameraPoint)
+bool raycastPointLateral(float radiantAngle, const PairFloat_t &cameraPoint)
 {
     bool lateral;
     if(!getLeadCoef(radiantAngle, false))
@@ -1315,14 +1315,14 @@ bool raycastPointLateral(float radiantAngle, const pairFloat_t &cameraPoint)
 }
 
 //===================================================================
-pairFloat_t getLimitPointRayCasting(const pairFloat_t &cameraPoint, float radiantAngle,
+PairFloat_t getLimitPointRayCasting(const PairFloat_t &cameraPoint, float radiantAngle,
                                     std::optional<float> lateralLeadCoef,
                                     std::optional<float> verticalLeadCoef, bool &lateral)
 {
     float currentCos = std::cos(radiantAngle),
             currentSin = std::sin(radiantAngle);
     std::optional<float> modulo;
-    pairFloat_t prevLimitPoint = cameraPoint;
+    PairFloat_t prevLimitPoint = cameraPoint;
     int32_t coordX;
     if(currentCos < 0.0f)
     {
@@ -1453,7 +1453,7 @@ std::optional<float> getLeadCoef(float radiantAngle, bool lateral)
 }
 
 //===================================================================
-pairFloat_t FirstPersonDisplaySystem::getCenterPosition(const MapCoordComponent *mapComp,
+PairFloat_t FirstPersonDisplaySystem::getCenterPosition(const MapCoordComponent *mapComp,
                                                         GeneralCollisionComponent *genCollComp, float numEntity)
 {
     assert(mapComp);

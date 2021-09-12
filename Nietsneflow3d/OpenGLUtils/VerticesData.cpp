@@ -175,11 +175,11 @@ float VerticesData::loadWallDoorRaycastingEntity(const SpriteTextureComponent &s
 
 //===================================================================
 void VerticesData::loadPointBackgroundRaycasting(const SpriteTextureComponent *spriteComp,
-                                                 const pairFloat_t &GLPos,
-                                                 const pairFloat_t &currentPoint)
+                                                 const PairFloat_t &GLPos,
+                                                 const PairFloat_t &currentPoint)
 {
-    pairFloat_t texturePoint;
-    pairFloat_t textureSize = {spriteComp->m_spriteData->m_texturePosVertex[1].first -
+    PairFloat_t texturePoint;
+    PairFloat_t textureSize = {spriteComp->m_spriteData->m_texturePosVertex[1].first -
                                spriteComp->m_spriteData->m_texturePosVertex[0].first,
                                spriteComp->m_spriteData->m_texturePosVertex[3].second -
                                spriteComp->m_spriteData->m_texturePosVertex[0].second};
@@ -201,11 +201,11 @@ void VerticesData::loadPointBackgroundRaycasting(const SpriteTextureComponent *s
 }
 
 //===================================================================
-pairFloat_t getPointTextureCoord(const pairFloat_t &point,
-                                 const std::array<pairFloat_t, 4> &texturePosVertex,
-                                 const pairFloat_t &textureSize)
+PairFloat_t getPointTextureCoord(const PairFloat_t &point,
+                                 const std::array<PairFloat_t, 4> &texturePosVertex,
+                                 const PairFloat_t &textureSize)
 {
-    pairFloat_t textCoord;
+    PairFloat_t textCoord;
     float mod = std::abs(std::fmod(point.first, LEVEL_TILE_SIZE_PX));
         textCoord.first = texturePosVertex[0].first +
                 (mod / LEVEL_TILE_SIZE_PX) * textureSize.first;
@@ -237,18 +237,18 @@ void VerticesData::loadVertexTextureDrawByLineComponent(const PositionVertexComp
 }
 
 //===================================================================
-void VerticesData::loadVertexTextureDrawByLineRect(const pairFloat_t &firstPos,
-                                                   const pairFloat_t &secondPos,
+void VerticesData::loadVertexTextureDrawByLineRect(const PairFloat_t &firstPos,
+                                                   const PairFloat_t &secondPos,
                                                    const SpriteTextureComponent &spriteComp,
                                                    uint32_t lineDrawNumber, DoorComponent *doorComp,
                                                    bool doorPosBound)
 {
     float lineDrawNumberFloat = static_cast<float>(lineDrawNumber);
-    pairFloat_t stepPos;
+    PairFloat_t stepPos;
     stepPos.first = (secondPos.first - firstPos.first) / lineDrawNumberFloat;
     stepPos.second = (secondPos.second - firstPos.second) / lineDrawNumberFloat;
     float stepTex;
-    pairFloat_t posLateralText;
+    PairFloat_t posLateralText;
     if(doorComp && doorPosBound)
     {
         posLateralText.first = spriteComp.m_spriteData->m_texturePosVertex[0].first;
@@ -260,11 +260,11 @@ void VerticesData::loadVertexTextureDrawByLineRect(const pairFloat_t &firstPos,
                           spriteComp.m_spriteData->m_texturePosVertex[1].first};
     }
 
-    pairFloat_t currentTexPos = {posLateralText.first, spriteComp.m_spriteData->m_texturePosVertex[0].second};
+    PairFloat_t currentTexPos = {posLateralText.first, spriteComp.m_spriteData->m_texturePosVertex[0].second};
     stepTex = (posLateralText.second - posLateralText.first) /
             lineDrawNumberFloat;
     float memDownTexture = spriteComp.m_spriteData->m_texturePosVertex[2].second;
-    pairFloat_t currentPos = firstPos, currentPreviousPos, currentPreviousTexPos;
+    PairFloat_t currentPos = firstPos, currentPreviousPos, currentPreviousTexPos;
     while(currentTexPos.first < posLateralText.second &&
           currentPos.first < 1.0f)
     {
@@ -288,7 +288,7 @@ void VerticesData::loadVertexTextureDrawByLineRect(const pairFloat_t &firstPos,
 }
 
 //===================================================================
-void VerticesData::addTexturePoint(const pairFloat_t &pos, const pairFloat_t &tex)
+void VerticesData::addTexturePoint(const PairFloat_t &pos, const PairFloat_t &tex)
 {
     m_vertexBuffer.emplace_back(pos.first);
     m_vertexBuffer.emplace_back(pos.second);

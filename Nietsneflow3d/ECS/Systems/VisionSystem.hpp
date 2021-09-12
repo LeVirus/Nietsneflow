@@ -15,7 +15,7 @@ struct GeneralCollisionComponent;
 struct TimerComponent;
 struct TimerComponent;
 
-using mapEnemySprite_t = std::map<EnemySpriteType_e, pairUI_t>;
+using mapEnemySprite_t = std::map<EnemySpriteType_e, PairUI_t>;
 
 class VisionSystem : public ecs::System
 {

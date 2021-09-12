@@ -7,7 +7,7 @@
 #include <constants.hpp>
 #include <ECS/Components/ObjectConfComponent.hpp>
 
-using vectPairUI_t = std::vector<pairUI_t>;
+using VectPairUI_t = std::vector<PairUI_t>;
 
 struct MoveableComponent;
 struct PositionVertexComponent;
@@ -15,8 +15,16 @@ struct SpriteTextureComponent;
 
 struct TeleportData
 {
-    vectPairUI_t m_targetTeleport;
+    VectPairUI_t m_targetTeleport;
     std::vector<bool> m_biDirection;
+};
+
+struct BarrelData
+{
+    VectPairUI_t m_TileGamePosition;
+    std::vector<uint8_t> m_staticSprite, m_explosionSprite;
+    PairDouble_t m_inGameStaticSpriteSize;
+    std::vector<PairFloat_t> m_vectinGameExplosionSpriteSize;
 };
 
 struct StaticLevelElementData
@@ -24,8 +32,8 @@ struct StaticLevelElementData
     //GLOBAL
     uint8_t m_numSprite;
     //In Game sprite size in % relative to a tile
-    vectPairUI_t m_TileGamePosition;
-    pairDouble_t m_inGameSpriteSize;
+    PairDouble_t m_inGameSpriteSize;
+    VectPairUI_t m_TileGamePosition;
     ObjectType_e m_type;
     bool m_traversable = true;
     //OBJECT
@@ -38,7 +46,7 @@ struct StaticLevelElementData
 struct DoorData
 {
     uint8_t m_numSprite;
-    vectPairUI_t m_TileGamePosition;
+    VectPairUI_t m_TileGamePosition;
     std::optional<std::pair<uint32_t, std::string>> m_cardID = std::nullopt;
     //Position of axe true = vertical false = horizontal
     bool m_vertical;
@@ -53,7 +61,7 @@ struct ElementRaycast
     LevelCaseType_e m_type;
     //Base level Type without moveable wall
     LevelCaseType_e m_typeStd;
-    pairUI_t m_tileGamePosition;
+    PairUI_t m_tileGamePosition;
     SpriteTextureComponent const *m_spriteComp;
 };
 
@@ -71,8 +79,8 @@ struct EnemyData
     m_staticLeftSprites, m_staticRightSprites, m_attackSprites, m_dyingSprites, m_touched;
 
     //In Game sprite size in % relative to a tile
-    pairDouble_t m_inGameSpriteSize;
-    vectPairUI_t m_TileGamePosition;
+    PairDouble_t m_inGameSpriteSize;
+    VectPairUI_t m_TileGamePosition;
     std::string m_visibleShootID, m_impactID;
     uint32_t m_attackPower, m_life;
     std::optional<uint32_t> m_meleeDamage;
@@ -85,32 +93,32 @@ class Level
 {
 public:
     Level();
-    void setPlayerInitData(const pairFloat_t &pairInitPlayerPos,
+    void setPlayerInitData(const PairFloat_t &pairInitPlayerPos,
                            Direction_e playerDir);
     static void initLevelElementArray();
     static const std::vector<ElementRaycast> &getLevelCaseType()
     {
         return m_levelCaseType;
     }
-    static void addElementCase(SpriteTextureComponent *spriteComp, const pairUI_t &tilePosition,
+    static void addElementCase(SpriteTextureComponent *spriteComp, const PairUI_t &tilePosition,
                                LevelCaseType_e type, uint32_t numEntity);
-    static std::optional<ElementRaycast> getElementCase(const pairUI_t &tilePosition);
-    static void memMoveWallEntity(const pairUI_t &tilePosition, uint32_t entity);
-    static void setElementTypeCase(const pairUI_t &tilePosition, LevelCaseType_e type);
-    static void setMoveableWallStopped(const pairUI_t &tilePosition, bool stopped);
-    static void setElementEntityCase(const pairUI_t &tilePosition, uint32_t entity);
+    static std::optional<ElementRaycast> getElementCase(const PairUI_t &tilePosition);
+    static void memMoveWallEntity(const PairUI_t &tilePosition, uint32_t entity);
+    static void setElementTypeCase(const PairUI_t &tilePosition, LevelCaseType_e type);
+    static void setMoveableWallStopped(const PairUI_t &tilePosition, bool stopped);
+    static void setElementEntityCase(const PairUI_t &tilePosition, uint32_t entity);
     //in the case of moveable wall reset case
-    static void resetMoveWallElementCase(const pairUI_t &tilePosition, uint32_t numEntity);
+    static void resetMoveWallElementCase(const PairUI_t &tilePosition, uint32_t numEntity);
 
-    static uint32_t getLevelCaseIndex(const pairUI_t &tilePosition);
+    static uint32_t getLevelCaseIndex(const PairUI_t &tilePosition);
 
-    inline const pairUI_t &getPlayerDeparture()const
+    inline const PairUI_t &getPlayerDeparture()const
     {
         return m_playerDeparture;
     }
-    static void setStandardElementTypeCase(const pairUI_t &tilePosition, LevelCaseType_e type);
+    static void setStandardElementTypeCase(const PairUI_t &tilePosition, LevelCaseType_e type);
 
-    static inline pairUI_t &getSize()
+    static inline PairUI_t &getSize()
     {
         return m_size;
     }
@@ -120,7 +128,7 @@ public:
         return m_playerDepartureDirection;
     }
 
-    static inline void setLevelSize(const pairFloat_t &pairLevelSize)
+    static inline void setLevelSize(const PairFloat_t &pairLevelSize)
     {
         m_size = pairLevelSize;
     }
@@ -136,14 +144,14 @@ public:
     static void updatePlayerOrientation(const MoveableComponent &moveComp,
                                         PositionVertexComponent &posComp);
 private:
-    pairUI_t m_playerDeparture;
-    static pairUI_t m_size;
+    PairUI_t m_playerDeparture;
+    static PairUI_t m_size;
     Direction_e m_playerDepartureDirection;
     static std::vector<ElementRaycast> m_levelCaseType;
     static float m_rangeViewPX;
 };
 
-pairFloat_t getAbsolutePosition(const pairUI_t &coord);
-pairFloat_t getCenteredAbsolutePosition(const pairUI_t &coord);
+PairFloat_t getAbsolutePosition(const PairUI_t &coord);
+PairFloat_t getCenteredAbsolutePosition(const PairUI_t &coord);
 
-std::optional<pairUI_t> getLevelCoord(const pairFloat_t &position);
+std::optional<PairUI_t> getLevelCoord(const PairFloat_t &position);

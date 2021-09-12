@@ -56,9 +56,9 @@ void MapDisplaySystem::execSystem()
 void MapDisplaySystem::confPositionVertexEntities()
 {
     assert(m_playerComp.m_mapCoordComp);
-    pairFloat_t playerPos = m_playerComp.m_mapCoordComp->m_absoluteMapPositionPX;
-    pairFloat_t corner, diffPosPX, relativePosMapGL;
-    pairUI_t max, min;
+    PairFloat_t playerPos = m_playerComp.m_mapCoordComp->m_absoluteMapPositionPX;
+    PairFloat_t corner, diffPosPX, relativePosMapGL;
+    PairUI_t max, min;
     getMapDisplayLimit(playerPos, min, max);
     m_entitiesToDisplay.clear();
     m_entitiesToDisplay.reserve(mVectNumEntity.size());
@@ -115,7 +115,7 @@ void MapDisplaySystem::fillVertexFromEntities()
 }
 
 //===================================================================
-pairFloat_t MapDisplaySystem::getUpLeftCorner(const MapCoordComponent *mapCoordComp, uint32_t entityNum)
+PairFloat_t MapDisplaySystem::getUpLeftCorner(const MapCoordComponent *mapCoordComp, uint32_t entityNum)
 {
     GeneralCollisionComponent *genCollComp = stairwayToComponentManager().
             searchComponentByType<GeneralCollisionComponent>(entityNum, Components_e::GENERAL_COLLISION_COMPONENT);
@@ -135,8 +135,8 @@ pairFloat_t MapDisplaySystem::getUpLeftCorner(const MapCoordComponent *mapCoordC
 }
 
 //===================================================================
-void MapDisplaySystem::getMapDisplayLimit(pairFloat_t &playerPos,
-                                          pairUI_t &min, pairUI_t &max)
+void MapDisplaySystem::getMapDisplayLimit(PairFloat_t &playerPos,
+                                          PairUI_t &min, PairUI_t &max)
 {
     assert(playerPos.first >= 0.0f || playerPos.second >= 0.0f);
     //getBound
@@ -166,7 +166,7 @@ void MapDisplaySystem::getMapDisplayLimit(pairFloat_t &playerPos,
 
 
 //===================================================================
-void MapDisplaySystem::confVertexElement(const pairFloat_t &glPosition,
+void MapDisplaySystem::confVertexElement(const PairFloat_t &glPosition,
                                          uint32_t entityNum)
 {
     PositionVertexComponent *posComp = stairwayToComponentManager().
@@ -191,8 +191,8 @@ void MapDisplaySystem::confVertexElement(const pairFloat_t &glPosition,
 
 //===================================================================
 bool MapDisplaySystem::checkBoundEntityMap(const MapCoordComponent &mapCoordComp,
-                                           const pairUI_t &minBound,
-                                           const pairUI_t &maxBound)
+                                           const PairUI_t &minBound,
+                                           const PairUI_t &maxBound)
 {
     if(mapCoordComp.m_coord.first < minBound.first ||
             mapCoordComp.m_coord.second < minBound.second)

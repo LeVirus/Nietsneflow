@@ -11,7 +11,7 @@ using SetStr_t = std::set<std::string>;
 struct MemSpriteData
 {
     uint8_t m_numSprite;
-    pairFloat_t m_GLSize;
+    PairFloat_t m_GLSize;
 };
 
 using MapVisibleShotData_t = std::map<std::string, std::vector<MemSpriteData>>;
@@ -34,25 +34,25 @@ struct WeaponINIData
 struct WallData
 {
     std::vector<uint8_t> m_sprites;
-    std::set<pairUI_t> m_TileGamePosition;
+    std::set<PairUI_t> m_TileGamePosition;
 };
 
 struct AssociatedTriggerData
 {
-    pairUI_t m_pos;
+    PairUI_t m_pos;
     MemSpriteData m_displayData;
 };
 
 struct MoveableWallData
 {
     std::vector<uint8_t> m_sprites;
-    std::set<pairUI_t> m_TileGamePosition;
+    std::set<PairUI_t> m_TileGamePosition;
     std::vector<std::pair<Direction_e, uint32_t>> m_directionMove;
     TriggerWallMoveType_e m_triggerType;
     TriggerBehaviourType_e m_triggerBehaviourType;
     float m_velocity;
     std::optional<AssociatedTriggerData> m_associatedTriggerData;
-    std::optional<pairUI_t> m_groundTriggerPos;
+    std::optional<PairUI_t> m_groundTriggerPos;
 };
 
 class LevelManager
@@ -115,6 +115,10 @@ public:
     {
         return m_displayTeleportData;
     }
+    inline const BarrelData &getBarrelData()const
+    {
+        return m_barrelElement;
+    }
 private:
     //texture and sprite loading
     void loadTexturePath(const INIReader &reader);
@@ -128,21 +132,23 @@ private:
     void loadGeneralStaticElements(const INIReader &reader,
                                    LevelStaticElementType_e elementType);
     void loadPositionStaticElements(const INIReader &reader);
+    void loadBarrelElements(const INIReader &reader);
     void readStandardStaticElement(const INIReader &reader, StaticLevelElementData &staticElement,
                                    const std::string &sectionName,
                                    LevelStaticElementType_e elementType);
     void fillStandartPositionVect(const INIReader &reader, const std::string &sectionName,
-                                  vectPairUI_t &vectPos);
+                                  VectPairUI_t &vectPos);
     void fillTeleportPositions(const INIReader &reader, const std::string &sectionName);
-    std::optional<pairUI_t> getPosition(const INIReader &reader, const std::string_view sectionName, const std::string_view propertyName);
+    std::optional<PairUI_t> getPosition(const INIReader &reader, const std::string_view sectionName, const std::string_view propertyName);
     bool fillWallPositionVect(const INIReader &reader, const std::string &sectionName, const std::string &propertyName,
-                              std::set<pairUI_t> &setPos);
+                              std::set<PairUI_t> &setPos);
     void removeWallPositionVect(const INIReader &reader, const std::string &sectionName,
-                                std::set<pairUI_t> &vectPos);
+                                std::set<PairUI_t> &vectPos);
     uint8_t getSpriteId(const INIReader &reader, const std::string &sectionName);
     void loadVisibleShotDisplayData(const INIReader &reader);
     void loadShotImpactDisplayData(const INIReader &reader);
     void loadWeaponsData(const INIReader &reader);
+    void loadBarrelsData(const INIReader &reader);
     void loadExit(const INIReader &reader);
     void loadVisualTeleportData(const INIReader &reader);
     void loadTriggerElements(const INIReader &reader);
@@ -162,8 +168,11 @@ private:
     void loadUtilsData(const INIReader &reader);
     void loadEnemySprites(const INIReader &reader, const std::string &sectionName,
                           EnemySpriteElementType_e spriteTypeEnum, EnemyData &enemyData);
-    void deleteWall(const pairUI_t &coord);
+    void deleteWall(const PairUI_t &coord);
     void loadPositionExit(const INIReader &reader);
+    std::vector<uint8_t> getVectSpriteNum(const INIReader &reader, const std::string_view section, const std::string_view param);
+    std::vector<PairFloat_t> getVectSpriteGLSize(const INIReader &reader, const std::string_view section, const std::string_view weightParam,
+                                                  const std::string_view heightParam);
 private:
     PictureData m_pictureData;
     FontData m_fontData;
@@ -174,6 +183,7 @@ private:
     std::map<std::string, MoveableWallData> m_moveableWallData;
     std::map<std::string, uint32_t> m_weaponINIAssociated, m_cardINIAssociated;
     std::map<std::string, StaticLevelElementData> m_groundElement, m_ceilingElement, m_objectElement, m_teleportElement;
+    BarrelData m_barrelElement;
     std::map<std::string, DoorData> m_doorData;
     std::map<std::string, EnemyData> m_enemyData;
     std::map<std::string, MemSpriteData> m_triggerDisplayData;
@@ -185,20 +195,21 @@ private:
     MapImpactData_t m_impactINIData;
 };
 
+VectPairUI_t getPositionData(const INIReader &reader, const std::string & sectionName, const std::string &propertyName);
 std::vector<uint32_t> convertStrToVectUI(const std::string &str);
 std::optional<std::vector<uint32_t> > getBrutPositionData(const INIReader &reader, const std::string & sectionName, const std::string &propertyName);
 std::vector<float> convertStrToVectFloat(const std::string &str);
 std::vector<bool> convertStrToVectBool(const std::string &str);
 std::vector<std::string> convertStrToVectStr(const std::string &str);
-void fillPositionVerticalLine(const pairUI_t &origins, uint32_t size,
-                              std::set<pairUI_t> &vectPos);
-void fillPositionHorizontalLine(const pairUI_t &origins, uint32_t size,
-                                std::set<pairUI_t> &vectPos);
-void fillPositionRectangle(const pairUI_t &origins, const pairUI_t &size,
-                           std::set<pairUI_t> &vectPos);
-void fillPositionDiagLineUpLeft(const pairUI_t &origins, uint32_t size,
-                                std::set<pairUI_t> &vectPos);
-void fillPositionDiagLineDownLeft(const pairUI_t &origins, uint32_t size,
-                                  std::set<pairUI_t> &vectPos);
-void fillPositionDiagRectangle(const pairUI_t &origins, uint32_t size,
-                               std::set<pairUI_t> &vectPos);
+void fillPositionVerticalLine(const PairUI_t &origins, uint32_t size,
+                              std::set<PairUI_t> &vectPos);
+void fillPositionHorizontalLine(const PairUI_t &origins, uint32_t size,
+                                std::set<PairUI_t> &vectPos);
+void fillPositionRectangle(const PairUI_t &origins, const PairUI_t &size,
+                           std::set<PairUI_t> &vectPos);
+void fillPositionDiagLineUpLeft(const PairUI_t &origins, uint32_t size,
+                                std::set<PairUI_t> &vectPos);
+void fillPositionDiagLineDownLeft(const PairUI_t &origins, uint32_t size,
+                                  std::set<PairUI_t> &vectPos);
+void fillPositionDiagRectangle(const PairUI_t &origins, uint32_t size,
+                               std::set<PairUI_t> &vectPos);

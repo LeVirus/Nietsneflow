@@ -9,6 +9,6 @@ struct TeleportComponent : public ecs::Component
     {
         muiTypeComponent = Components_e::TELEPORT_COMPONENT;
     }
-    pairUI_t m_targetPos;
+    PairUI_t m_targetPos;
     virtual ~TeleportComponent() = default;
 };

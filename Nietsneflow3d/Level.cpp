@@ -5,7 +5,7 @@
 #include <cassert>
 
 float Level::m_rangeViewPX;
-pairUI_t Level::m_size;
+PairUI_t Level::m_size;
 std::vector<ElementRaycast> Level::m_levelCaseType;
 
 
@@ -16,7 +16,7 @@ Level::Level()
 }
 
 //===================================================================
-void Level::setPlayerInitData(const pairFloat_t &pairInitPlayerPos,
+void Level::setPlayerInitData(const PairFloat_t &pairInitPlayerPos,
                               Direction_e playerDir)
 {
     m_playerDeparture = pairInitPlayerPos;
@@ -34,7 +34,7 @@ void Level::initLevelElementArray()
     }
 }
 //===================================================================
-void Level::addElementCase(SpriteTextureComponent *spriteComp, const pairUI_t &tilePosition,
+void Level::addElementCase(SpriteTextureComponent *spriteComp, const PairUI_t &tilePosition,
                            LevelCaseType_e type, uint32_t numEntity)
 {
     uint32_t index = getLevelCaseIndex(tilePosition);
@@ -54,7 +54,7 @@ void Level::addElementCase(SpriteTextureComponent *spriteComp, const pairUI_t &t
 }
 
 //===================================================================
-std::optional<ElementRaycast> Level::getElementCase(const pairUI_t &tilePosition)
+std::optional<ElementRaycast> Level::getElementCase(const PairUI_t &tilePosition)
 {
     if((tilePosition.first >= m_size.first) ||
             (tilePosition.second >= m_size.second))
@@ -65,7 +65,7 @@ std::optional<ElementRaycast> Level::getElementCase(const pairUI_t &tilePosition
 }
 
 //===================================================================
-void Level::memMoveWallEntity(const pairUI_t &tilePosition, uint32_t entity)
+void Level::memMoveWallEntity(const PairUI_t &tilePosition, uint32_t entity)
 {
     ElementRaycast &element = m_levelCaseType[getLevelCaseIndex(tilePosition)];
     if(!element.m_memMoveWall)
@@ -78,30 +78,30 @@ void Level::memMoveWallEntity(const pairUI_t &tilePosition, uint32_t entity)
 }
 
 //===================================================================
-void Level::setElementTypeCase(const pairUI_t &tilePosition, LevelCaseType_e type)
+void Level::setElementTypeCase(const PairUI_t &tilePosition, LevelCaseType_e type)
 {
     m_levelCaseType[getLevelCaseIndex(tilePosition)].m_type = type;
 }
 
 //===================================================================
-void Level::setStandardElementTypeCase(const pairUI_t &tilePosition, LevelCaseType_e type)
+void Level::setStandardElementTypeCase(const PairUI_t &tilePosition, LevelCaseType_e type)
 {
     m_levelCaseType[getLevelCaseIndex(tilePosition)].m_typeStd = type;
 }
 
 //===================================================================
-void Level::setMoveableWallStopped(const pairUI_t &tilePosition, bool stopped)
+void Level::setMoveableWallStopped(const PairUI_t &tilePosition, bool stopped)
 {
     m_levelCaseType[getLevelCaseIndex(tilePosition)].m_moveableWallStopped = stopped;
 }
 
-void Level::setElementEntityCase(const pairUI_t &tilePosition, uint32_t entity)
+void Level::setElementEntityCase(const PairUI_t &tilePosition, uint32_t entity)
 {
     m_levelCaseType[getLevelCaseIndex(tilePosition)].m_numEntity = entity;
 }
 
 //===================================================================
-void Level::resetMoveWallElementCase(const pairUI_t &tilePosition, uint32_t numEntity)
+void Level::resetMoveWallElementCase(const PairUI_t &tilePosition, uint32_t numEntity)
 {
     ElementRaycast &element = m_levelCaseType[getLevelCaseIndex(tilePosition)];
     if(!element.m_memMoveWall)
@@ -126,7 +126,7 @@ void Level::resetMoveWallElementCase(const pairUI_t &tilePosition, uint32_t numE
 }
 
 //===================================================================
-uint32_t Level::getLevelCaseIndex(const pairUI_t &tilePosition)
+uint32_t Level::getLevelCaseIndex(const PairUI_t &tilePosition)
 {
     uint32_t index = (tilePosition.second * m_size.first + tilePosition.first);
     assert(tilePosition.first < m_size.first);
@@ -135,21 +135,21 @@ uint32_t Level::getLevelCaseIndex(const pairUI_t &tilePosition)
 }
 
 //===================================================================
-pairFloat_t getAbsolutePosition(const pairUI_t &coord)
+PairFloat_t getAbsolutePosition(const PairUI_t &coord)
 {
     return {static_cast<float>(coord.first) * LEVEL_TILE_SIZE_PX,
                 static_cast<float>(coord.second) * LEVEL_TILE_SIZE_PX};
 }
 
 //===================================================================
-pairFloat_t getCenteredAbsolutePosition(const pairUI_t &coord)
+PairFloat_t getCenteredAbsolutePosition(const PairUI_t &coord)
 {
     return {(static_cast<float>(coord.first) + 0.5f) * LEVEL_TILE_SIZE_PX,
                 (static_cast<float>(coord.second + 0.5f)) * LEVEL_TILE_SIZE_PX};
 }
 
 //===================================================================
-std::optional<pairUI_t> getLevelCoord(const pairFloat_t &position)
+std::optional<PairUI_t> getLevelCoord(const PairFloat_t &position)
 {
     if(position.first < 0.0f || position.second < 0.0f)
     {

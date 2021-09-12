@@ -2,21 +2,21 @@
 
 #include <functional>
 
-using pairFloat_t = std::pair<float, float>;
-using array3PairFloat_t = std::array<pairFloat_t, 3>;
-using pairPairFloat_t = std::pair<pairFloat_t, pairFloat_t>;
+using PairFloat_t = std::pair<float, float>;
+using array3PairFloat_t = std::array<PairFloat_t, 3>;
+using pairPairFloat_t = std::pair<PairFloat_t, PairFloat_t>;
 
-bool checkCircleRectCollision(const pairFloat_t &cicleCenter,
+bool checkCircleRectCollision(const PairFloat_t &cicleCenter,
                               const float circleRay,
-                              const pairFloat_t &rectOrigin,
-                              const pairFloat_t &rectSize);
+                              const PairFloat_t &rectOrigin,
+                              const PairFloat_t &rectSize);
 
 bool checkTriangleCircleCollision(const array3PairFloat_t &trianglePoints,
-                                  const pairFloat_t &cicleCenter,
+                                  const PairFloat_t &cicleCenter,
                                   const float circleRay);
 
 bool checkTrianglePointCollision(const array3PairFloat_t &trianglePoints,
-                                 const pairFloat_t &point);
+                                 const PairFloat_t &point);
 
 bool floatEqualsZero(float value);
 bool checkFloatEqualsZero(float valueA, float valueB);
@@ -26,55 +26,55 @@ pairPairFloat_t getRectShapeFromTriangle(const array3PairFloat_t &trianglePoints
 bool checkTriangleRectCollision(const array3PairFloat_t &trianglePoints,
                                 const pairPairFloat_t &rectShape);
 
-bool checkSegmentSegmentCollision(const pairFloat_t &firstPointSegmentA, 
-                                  const pairFloat_t &secondPointSegmentA, 
-                                  const pairFloat_t &firstPointSegmentB, 
-                                  const pairFloat_t &secondPointSegmentB);
+bool checkSegmentSegmentCollision(const PairFloat_t &firstPointSegmentA, 
+                                  const PairFloat_t &secondPointSegmentA, 
+                                  const PairFloat_t &firstPointSegmentB, 
+                                  const PairFloat_t &secondPointSegmentB);
 
-bool checkCircleCircleCollision(const pairFloat_t &circleCenterA,
+bool checkCircleCircleCollision(const PairFloat_t &circleCenterA,
                                 const float rayCircleA,
-                                const pairFloat_t &circleCenterB,
+                                const PairFloat_t &circleCenterB,
                                 const float rayCircleB);
 
-bool checkRectRectCollision(const pairFloat_t &rectOriginA,
-                            const pairFloat_t &rectSizeA,
-                            const pairFloat_t &rectOriginB,
-                            const pairFloat_t &rectSizeB);
+bool checkRectRectCollision(const PairFloat_t &rectOriginA,
+                            const PairFloat_t &rectSizeA,
+                            const PairFloat_t &rectOriginB,
+                            const PairFloat_t &rectSizeB);
 
-bool checkSegmentRectCollision(const pairFloat_t &lineFirstPoint,
-                               const pairFloat_t &lineSecondPoint,
-                               const pairFloat_t &rectOrigin,
-                               const pairFloat_t &rectSize);
+bool checkSegmentRectCollision(const PairFloat_t &lineFirstPoint,
+                               const PairFloat_t &lineSecondPoint,
+                               const PairFloat_t &rectOrigin,
+                               const PairFloat_t &rectSize);
 
-bool checkPointRectCollision(const pairFloat_t &point,
-                             const pairFloat_t &rectOrigin,
-                             const pairFloat_t &rectSize);
+bool checkPointRectCollision(const PairFloat_t &point,
+                             const PairFloat_t &rectOrigin,
+                             const PairFloat_t &rectSize);
 
-bool checkPointCircleCollision(const pairFloat_t &point,
-                               const pairFloat_t &cicleCenter,
+bool checkPointCircleCollision(const PairFloat_t &point,
+                               const PairFloat_t &cicleCenter,
                                const float circleRay);
 
-bool checkPointSegmentCollision(const pairFloat_t &point,
-                                const pairFloat_t &firstSegmentPoint,
-                                const pairFloat_t &secondSegmentPoint);
+bool checkPointSegmentCollision(const PairFloat_t &point,
+                                const PairFloat_t &firstSegmentPoint,
+                                const PairFloat_t &secondSegmentPoint);
 
-bool checkCircleSegmentCollision(const pairFloat_t &circleCenter,
+bool checkCircleSegmentCollision(const PairFloat_t &circleCenter,
                                  const float circleRay,
-                                 const pairFloat_t &lineFirstPoint,
-                                 const pairFloat_t &lineSecondPoint);
+                                 const PairFloat_t &lineFirstPoint,
+                                 const PairFloat_t &lineSecondPoint);
 
-bool checkPointPosition(const pairFloat_t &firstPoint,
-                        const pairFloat_t &secondPoint,
-                        const pairFloat_t &currentPoint);
+bool checkPointPosition(const PairFloat_t &firstPoint,
+                        const PairFloat_t &secondPoint,
+                        const PairFloat_t &currentPoint);
 
 //get angle from 2 points from trigo sense
-float getTrigoAngle(const pairFloat_t &pointA, const pairFloat_t &pointB, bool degree = true);
-float getDistance(const pairFloat_t &pointA, const pairFloat_t &pointB);
-float getCameraDistance(const pairFloat_t &observerPoint, const pairFloat_t &targetPoint,
+float getTrigoAngle(const PairFloat_t &pointA, const PairFloat_t &pointB, bool degree = true);
+float getDistance(const PairFloat_t &pointA, const PairFloat_t &pointB);
+float getCameraDistance(const PairFloat_t &observerPoint, const PairFloat_t &targetPoint,
                         float observerAngleRadiant, bool limit = false);
 float getRectTriangleSide(float adj, float hyp);
 
-pairFloat_t getCircleUpLeftCorner(const pairFloat_t &point, float ray);
+PairFloat_t getCircleUpLeftCorner(const PairFloat_t &point, float ray);
 
 bool checkFloatEquals(float a, float b);
 

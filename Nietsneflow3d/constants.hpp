@@ -7,10 +7,10 @@
 #include <vector>
 #include <optional>
 
-using pairUI_t = std::pair<uint32_t, uint32_t>;
+using PairUI_t = std::pair<uint32_t, uint32_t>;
 using pairLong_t = std::pair<long, long>;
-using pairFloat_t = std::pair<float, float>;
-using pairDouble_t = std::pair<double, double>;
+using PairFloat_t = std::pair<float, float>;
+using PairDouble_t = std::pair<double, double>;
 
 enum class AnimationMode_e
 {
@@ -54,6 +54,7 @@ enum Components_e
     TRIGGER_COMPONENT,
     TELEPORT_COMPONENT,
     MEM_FPS_GLSIZE_COMPONENT,
+    BARREL_COMPONENT,
     TOTAL_COMPONENTS
 };
 
@@ -221,6 +222,7 @@ enum class CollisionTag_e
     TRIGGER_CT,
     TELEPORT_CT,
     IMPACT_CT,
+    BARREL_CT,
     TELEPORT_ANIM_CT
 };
 
