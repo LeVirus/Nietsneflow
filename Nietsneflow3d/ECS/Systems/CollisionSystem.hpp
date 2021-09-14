@@ -47,6 +47,7 @@ private:
     void treatCollisionFirstRect(CollisionArgs &args);
     void treatCollisionFirstCircle(CollisionArgs &args);
     void treatActionPlayerRect(CollisionArgs &args);
+    void treatExplosionColl(CollisionArgs &args);
     void setDamageCircle(uint32_t shotEntity, bool active, uint32_t baseEntity = 0);
     void treatActionPlayerCircle(CollisionArgs &args);
     void treatPlayerPickObject(CollisionArgs &args);

@@ -226,13 +226,20 @@ void CollisionSystem::treatSegmentShots()
         }
         else if(tagCompBullet->m_tagA == CollisionTag_e::BULLET_ENEMY_CT)
         {
-            PlayerConfComponent *playerConfCompB = stairwayToComponentManager().
-                    searchComponentByType<PlayerConfComponent>(m_vectMemShots[i].second, Components_e::PLAYER_CONF_COMPONENT);
-            assert(playerConfCompB);
             ShotConfComponent *shotConfComp = stairwayToComponentManager().
                     searchComponentByType<ShotConfComponent>(m_vectMemShots[i].first, Components_e::SHOT_CONF_COMPONENT);
             assert(shotConfComp);
-            playerConfCompB->takeDamage(shotConfComp->m_damage);
+            if(tagCompTarget->m_tagA == CollisionTag_e::PLAYER_CT)
+            {
+                PlayerConfComponent *playerConfCompB = stairwayToComponentManager().
+                        searchComponentByType<PlayerConfComponent>(m_vectMemShots[i].second, Components_e::PLAYER_CONF_COMPONENT);
+                assert(playerConfCompB);
+                playerConfCompB->takeDamage(shotConfComp->m_damage);
+            }
+            else if(tagCompTarget->m_tagA == CollisionTag_e::BARREL_CT)
+            {
+                treatBarrelShots(m_vectMemShots[i].second, shotConfComp->m_damage);
+            }
         }
     }
 }
@@ -240,24 +247,16 @@ void CollisionSystem::treatSegmentShots()
 //===================================================================
 void CollisionSystem::treatBarrelShots(uint32_t entityNum, uint32_t damage)
 {
-    BarrelComponent *barrelComp = stairwayToComponentManager().
-            searchComponentByType<BarrelComponent>(entityNum, Components_e::BARREL_COMPONENT);
+    BarrelComponent *barrelComp = stairwayToComponentManager().searchComponentByType<BarrelComponent>(entityNum, Components_e::BARREL_COMPONENT);
     assert(barrelComp);
+    if(barrelComp->m_destructPhase)
+    {
+        return;
+    }
     if(damage > barrelComp->m_life)
     {
         barrelComp->m_life = 0;
         barrelComp->m_destructPhase = true;
-        GeneralCollisionComponent *genComp = stairwayToComponentManager().
-                searchComponentByType<GeneralCollisionComponent>(barrelComp->m_damageZoneEntity, Components_e::GENERAL_COLLISION_COMPONENT);
-        assert(genComp);
-        MapCoordComponent *mapCompA = stairwayToComponentManager().
-                searchComponentByType<MapCoordComponent>(entityNum, Components_e::MAP_COORD_COMPONENT);
-        assert(mapCompA);
-        MapCoordComponent *mapCompB = stairwayToComponentManager().
-                searchComponentByType<MapCoordComponent>(barrelComp->m_damageZoneEntity, Components_e::MAP_COORD_COMPONENT);
-        assert(mapCompB);
-        mapCompB->m_absoluteMapPositionPX = mapCompA->m_absoluteMapPositionPX;
-        genComp->m_active = true;
     }
     else
     {
@@ -350,6 +349,8 @@ void CollisionSystem::initArrayTag()
     m_tagArray.insert({CollisionTag_e::PLAYER_CT, CollisionTag_e::TRIGGER_CT});
     m_tagArray.insert({CollisionTag_e::PLAYER_CT, CollisionTag_e::TELEPORT_CT});
     m_tagArray.insert({CollisionTag_e::PLAYER_CT, CollisionTag_e::BARREL_CT});
+
+    m_tagArray.insert({CollisionTag_e::BARREL_CT, CollisionTag_e::BARREL_CT});
 
     m_tagArray.insert({CollisionTag_e::PLAYER_ACTION_CT, CollisionTag_e::DOOR_CT});
     m_tagArray.insert({CollisionTag_e::PLAYER_ACTION_CT, CollisionTag_e::EXIT_CT});
@@ -557,7 +558,8 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
                 }
             }
             else if((args.tagCompA->m_tagA == CollisionTag_e::PLAYER_CT ||
-                    args.tagCompA->m_tagA == CollisionTag_e::ENEMY_CT) &&
+                    args.tagCompA->m_tagA == CollisionTag_e::ENEMY_CT ||
+                     args.tagCompA->m_tagA == CollisionTag_e::BARREL_CT) &&
                     (args.tagCompB->m_tagA == CollisionTag_e::WALL_CT ||
                      args.tagCompB->m_tagA == CollisionTag_e::PLAYER_CT ||
                      args.tagCompB->m_tagA == CollisionTag_e::ENEMY_CT ||
@@ -587,26 +589,7 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
             }
             else if(args.tagCompA->m_tagA == CollisionTag_e::EXPLOSION_CT)
             {
-                ShotConfComponent *shotConfComp = stairwayToComponentManager().
-                        searchComponentByType<ShotConfComponent>(args.entityNumA, Components_e::SHOT_CONF_COMPONENT);
-                assert(shotConfComp);
-                if(args.tagCompB->m_tagA == CollisionTag_e::PLAYER_CT)
-                {
-                    //OOOOOK factor
-                    PlayerConfComponent * playerConf = stairwayToComponentManager().
-                            searchComponentByType<PlayerConfComponent>(args.entityNumB,
-                                                  Components_e::PLAYER_CONF_COMPONENT);
-                    assert(playerConf);
-                    playerConf->takeDamage(shotConfComp->m_damage);
-                }
-                else if(args.tagCompB->m_tagA == CollisionTag_e::ENEMY_CT)
-                {
-                    treatEnemyShooted(args.entityNumB, shotConfComp->m_damage);
-                }
-                else if(args.tagCompB->m_tagA == CollisionTag_e::BARREL_CT)
-                {
-                    treatBarrelShots(args.entityNumB, shotConfComp->m_damage);
-                }
+                treatExplosionColl(args);
             }
         }
     }
@@ -680,21 +663,53 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
 }
 
 //===================================================================
+void CollisionSystem::treatExplosionColl(CollisionArgs &args)
+{
+    ShotConfComponent *shotConfComp = stairwayToComponentManager().
+            searchComponentByType<ShotConfComponent>(args.entityNumA, Components_e::SHOT_CONF_COMPONENT);
+    assert(shotConfComp);
+    MoveableComponent *moveComp = stairwayToComponentManager().
+            searchComponentByType<MoveableComponent>(args.entityNumB, Components_e::MOVEABLE_COMPONENT);
+    if(moveComp)
+    {
+        TimerComponent *timerComp = stairwayToComponentManager().
+                searchComponentByType<TimerComponent>(args.entityNumB, Components_e::TIMER_COMPONENT);
+        assert(timerComp);
+        timerComp->m_clockC = std::chrono::system_clock::now();
+        moveComp->m_currentDegreeMoveDirection = getTrigoAngle(args.mapCompA.m_absoluteMapPositionPX, args.mapCompB.m_absoluteMapPositionPX);
+        moveComp->m_ejectData = {1.0f, 0.5};
+    }
+    if(args.tagCompB->m_tagA == CollisionTag_e::PLAYER_CT)
+    {
+        //OOOOOK factor
+        PlayerConfComponent * playerConf = stairwayToComponentManager().
+                searchComponentByType<PlayerConfComponent>(args.entityNumB, Components_e::PLAYER_CONF_COMPONENT);
+        assert(playerConf);
+        playerConf->takeDamage(shotConfComp->m_damage);
+    }
+    else if(args.tagCompB->m_tagA == CollisionTag_e::ENEMY_CT)
+    {
+        treatEnemyShooted(args.entityNumB, shotConfComp->m_damage);
+    }
+    else if(args.tagCompB->m_tagA == CollisionTag_e::BARREL_CT)
+    {
+        treatBarrelShots(args.entityNumB, shotConfComp->m_damage);
+    }
+}
+
+//===================================================================
 void CollisionSystem::setDamageCircle(uint32_t damageEntity, bool active, uint32_t baseEntity)
 {
     GeneralCollisionComponent *genDam = stairwayToComponentManager().
-            searchComponentByType<GeneralCollisionComponent>(damageEntity,
-                                                             Components_e::GENERAL_COLLISION_COMPONENT);
+            searchComponentByType<GeneralCollisionComponent>(damageEntity, Components_e::GENERAL_COLLISION_COMPONENT);
     assert(genDam);
     genDam->m_active = active;
     if(active)
     {
         MapCoordComponent *mapCompDam = stairwayToComponentManager().
-                searchComponentByType<MapCoordComponent>(damageEntity,
-                                                         Components_e::MAP_COORD_COMPONENT);
+                searchComponentByType<MapCoordComponent>(damageEntity, Components_e::MAP_COORD_COMPONENT);
         MapCoordComponent *mapComp = stairwayToComponentManager().
-                searchComponentByType<MapCoordComponent>(baseEntity,
-                                                         Components_e::MAP_COORD_COMPONENT);
+                searchComponentByType<MapCoordComponent>(baseEntity, Components_e::MAP_COORD_COMPONENT);
         assert(mapCompDam);
         assert(mapComp);
         mapCompDam->m_absoluteMapPositionPX = mapComp->m_absoluteMapPositionPX;

@@ -2,7 +2,10 @@ NEW FUNCTIONALITIES=============================================================
 ========================================================================================================================
 
 ))
-Add explosif barrels
+CREATE CONF MENU
+
+))
+Add joypad support
 
 3)
 Create Start menu, game over menu 
@@ -15,6 +18,9 @@ Create a visual level designer
 
 6)
 Ajouter armure
+
+))
+Add explosif barrels===========================OK
 
 ))
 Add explosif ammo==================================OK

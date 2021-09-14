@@ -65,7 +65,7 @@ void ECSManager::initSystems()
     m_systemManager->bAddExternSystem(std::make_unique<VisionSystem>(this));
     m_systemManager->bAddExternSystem(std::make_unique<DoorWallSystem>(this));
     m_systemManager->bAddExternSystem(std::make_unique<StaticDisplaySystem>());
-    m_systemManager->bAddExternSystem(std::make_unique<IASystem>());
+    m_systemManager->bAddExternSystem(std::make_unique<IASystem>(this));
 }
 
 
@@ -121,8 +121,7 @@ std::vector<uint32_t> ECSManager::getEntitiesContainingComponents(const std::bit
 }
 
 //===================================================================
-void ECSManager::syncComponentsFromEntities(uint32_t numEntity,
-                                            const std::vector<Components_e> &vectComp)
+void ECSManager::syncComponentsFromEntities(uint32_t numEntity, const std::vector<Components_e> &vectComp)
 {
     assert(m_componentManager && "m_componentManager is null.");
     m_componentManager->updateComponentFromEntity();

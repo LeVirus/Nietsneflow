@@ -66,8 +66,7 @@ void PhysicalEngine::clearSystems()
 }
 
 //===================================================================
-void moveElementFromAngle(float distanceMove, float radiantAngle,
-                          PairFloat_t &point, bool playerMove)
+void moveElementFromAngle(float distanceMove, float radiantAngle, PairFloat_t &point, bool playerMove)
 {
     point.first += std::cos(radiantAngle) * distanceMove;
     //limit case

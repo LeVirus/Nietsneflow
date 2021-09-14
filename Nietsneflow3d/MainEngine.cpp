@@ -1766,6 +1766,7 @@ void MainEngine::loadBarrelElementEntities(const LevelManager &levelManager)
         mapComp->m_absoluteMapPositionPX = getCenteredAbsolutePosition(mapComp->m_coord);
         circleComp->m_ray = 10.0f;
         genComp->m_tagA = CollisionTag_e::BARREL_CT;
+        genComp->m_tagB = CollisionTag_e::BARREL_CT;
         genComp->m_shape = CollisionShape_e::CIRCLE_C;
         uint32_t totalSize = barrelData.m_staticSprite.size() + barrelData.m_explosionSprite.size();
         memGLSizeComp->m_memGLSizeData.reserve(totalSize);

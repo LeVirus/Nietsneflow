@@ -14,8 +14,10 @@
 #include <ECS/Components/WeaponComponent.hpp>
 #include <ECS/Components/MemSpriteDataComponent.hpp>
 #include <ECS/Components/MemFPSGLSizeComponent.hpp>
+#include <ECS/Components/MoveableComponent.hpp>
 #include <ECS/Components/SpriteTextureComponent.hpp>
 #include <ECS/Components/FPSVisibleStaticElementComponent.hpp>
+#include <ECS/ECSManager.hpp>
 #include <cassert>
 #include <random>
 #include <iostream>
@@ -26,10 +28,48 @@
 #include "MainEngine.hpp"
 
 //===================================================================
-IASystem::IASystem()
+IASystem::IASystem(const ECSManager* memECSManager) : m_memECSManager(memECSManager)
 {
     std::srand(std::time(nullptr));
     bAddComponentToSystem(Components_e::ENEMY_CONF_COMPONENT);
+}
+
+//===================================================================
+void IASystem::treatEject()
+{
+    std::bitset<TOTAL_COMPONENTS> bitset;
+    bitset[BARREL_COMPONENT] = true;
+    m_vectMoveableEntities = m_memECSManager->getEntitiesContainingComponents(bitset);
+    MoveableComponent *moveComp;
+    MapCoordComponent *mapComp;
+    TimerComponent *timerComp;
+    GeneralCollisionComponent *collComp;
+    for(uint32_t i = 0; i < m_vectMoveableEntities.size(); ++i)
+    {
+        moveComp = stairwayToComponentManager().
+                searchComponentByType<MoveableComponent>(m_vectMoveableEntities[i], Components_e::MOVEABLE_COMPONENT);
+        assert(moveComp);
+        collComp = stairwayToComponentManager().
+                searchComponentByType<GeneralCollisionComponent>(m_vectMoveableEntities[i], Components_e::GENERAL_COLLISION_COMPONENT);
+        assert(collComp);
+        if(moveComp->m_ejectData && collComp->m_tagB == CollisionTag_e::BARREL_CT)
+        {
+            timerComp = stairwayToComponentManager().
+                    searchComponentByType<TimerComponent>(m_vectMoveableEntities[i], Components_e::TIMER_COMPONENT);
+            assert(timerComp);
+            std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() - timerComp->m_clockC;
+            if(elapsed_seconds.count() > moveComp->m_ejectData->second)
+            {
+                moveComp->m_ejectData = std::nullopt;
+                return;
+            }
+            mapComp = stairwayToComponentManager().
+                    searchComponentByType<MapCoordComponent>(m_vectMoveableEntities[i], Components_e::MAP_COORD_COMPONENT);
+            assert(mapComp);
+            moveElementFromAngle(moveComp->m_ejectData->first, getRadiantAngle(moveComp->m_currentDegreeMoveDirection),
+                                 mapComp->m_absoluteMapPositionPX);
+        }
+    }
 }
 
 //===================================================================
@@ -39,10 +79,9 @@ void IASystem::execSystem()
     assert(m_playerComp);
     System::execSystem();
     WeaponComponent *weaponComp = stairwayToComponentManager().
-            searchComponentByType<WeaponComponent>(m_playerComp->m_weaponEntity,
-                                                   Components_e::WEAPON_COMPONENT);
+            searchComponentByType<WeaponComponent>(m_playerComp->m_weaponEntity, Components_e::WEAPON_COMPONENT);
     assert(weaponComp);
-
+    treatEject();
     for(uint32_t i = 0; i < weaponComp->m_weaponsData.size(); ++i)
     {
         if(weaponComp->m_weaponsData[i].m_attackType == AttackType_e::VISIBLE_SHOTS)
@@ -140,25 +179,20 @@ void IASystem::treatVisibleShot(uint32_t numEntity)
     TimerComponent *timerComp = stairwayToComponentManager().
             searchComponentByType<TimerComponent>(numEntity, Components_e::TIMER_COMPONENT);
     assert(timerComp);
-    std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() -
-            timerComp->m_clockA;
+    std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() - timerComp->m_clockA;
     if(elapsed_seconds.count() > 5.0)
     {
         genColl->m_active = false;
         return;
     }
     MapCoordComponent *ammoMapComp = stairwayToComponentManager().
-            searchComponentByType<MapCoordComponent>(numEntity,
-                                                     Components_e::MAP_COORD_COMPONENT);
+            searchComponentByType<MapCoordComponent>(numEntity, Components_e::MAP_COORD_COMPONENT);
     MoveableComponent *ammoMoveComp = stairwayToComponentManager().
-            searchComponentByType<MoveableComponent>(numEntity,
-                                                     Components_e::MOVEABLE_COMPONENT);
+            searchComponentByType<MoveableComponent>(numEntity, Components_e::MOVEABLE_COMPONENT);
     assert(ammoMapComp);
     assert(ammoMoveComp);
     assert(genColl->m_shape == CollisionShape_e::CIRCLE_C);
-    moveElementFromAngle((*ammoMoveComp).m_velocity,
-                         getRadiantAngle(ammoMoveComp->m_degreeOrientation),
-                         ammoMapComp->m_absoluteMapPositionPX);
+    moveElementFromAngle((*ammoMoveComp).m_velocity, getRadiantAngle(ammoMoveComp->m_degreeOrientation), ammoMapComp->m_absoluteMapPositionPX);
 }
 
 //===================================================================

@@ -172,8 +172,7 @@ void VisionSystem::updateWallSprites()
             {
                 memSpriteComp->m_current = 0;
             }
-            spriteComp->m_spriteData = memSpriteComp->
-                    m_vectSpriteData[memSpriteComp->m_current];
+            spriteComp->m_spriteData = memSpriteComp->m_vectSpriteData[memSpriteComp->m_current];
             timerComp->m_clockA = std::chrono::system_clock::now();
         }
     }
@@ -284,14 +283,33 @@ void VisionSystem::updateBarrelSprite(uint32_t barrelEntity, MemSpriteDataCompon
             fpsComp->m_inGameSpriteSize = glSizeComp->m_memGLSizeData[memSpriteComp->m_current];
             return;
         }
-        if(elapsed_seconds.count() > 0.12)
+        if(elapsed_seconds.count() > 0.5)
         {
             timerComp->m_clockA = std::chrono::system_clock::now();
-            if(memSpriteComp->m_current <= memSpriteComp->m_vectSpriteData.size() - 2)
+            if(memSpriteComp->m_current != memSpriteComp->m_vectSpriteData.size() - 1)
             {
                 ++memSpriteComp->m_current;
                 spriteComp->m_spriteData = memSpriteComp->m_vectSpriteData[memSpriteComp->m_current];
                 fpsComp->m_inGameSpriteSize = glSizeComp->m_memGLSizeData[memSpriteComp->m_current];
+                if(memSpriteComp->m_current == barrelComp->m_memPosExplosionSprite + 2)
+                {
+                    MapCoordComponent *mapCompA = stairwayToComponentManager().
+                            searchComponentByType<MapCoordComponent>(barrelEntity, Components_e::MAP_COORD_COMPONENT);
+                    assert(mapCompA);
+                    //active damage zone
+                    GeneralCollisionComponent *genComp = stairwayToComponentManager().
+                            searchComponentByType<GeneralCollisionComponent>(barrelComp->m_damageZoneEntity, Components_e::GENERAL_COLLISION_COMPONENT);
+                    assert(genComp);
+                    MapCoordComponent *mapCompB = stairwayToComponentManager().
+                            searchComponentByType<MapCoordComponent>(barrelComp->m_damageZoneEntity, Components_e::MAP_COORD_COMPONENT);
+                    assert(mapCompB);
+                    GeneralCollisionComponent *collComp = stairwayToComponentManager().
+                            searchComponentByType<GeneralCollisionComponent>(barrelEntity, Components_e::GENERAL_COLLISION_COMPONENT);
+                    assert(collComp);
+                    collComp->m_tagB = CollisionTag_e::GHOST_CT;
+                    mapCompB->m_absoluteMapPositionPX = mapCompA->m_absoluteMapPositionPX;
+                    genComp->m_active = true;
+                }
             }
             //remove entity
             else
@@ -344,8 +362,7 @@ void VisionSystem::updateEnemySprites(uint32_t enemyEntity, uint32_t observerEnt
             timerComp->m_clockB = std::chrono::system_clock::now();
         }
     }
-    spriteComp->m_spriteData = memSpriteComp->
-            m_vectSpriteData[static_cast<uint32_t>(enemyConfComp->m_currentSprite)];
+    spriteComp->m_spriteData = memSpriteComp->m_vectSpriteData[static_cast<uint32_t>(enemyConfComp->m_currentSprite)];
 }
 
 //===========================================================================
@@ -407,8 +424,7 @@ void updateEnemyAttackSprite(EnemyConfComponent *enemyConfComp, TimerComponent *
     if(enemyConfComp->m_currentSprite >= it->second.first &&
             enemyConfComp->m_currentSprite <= it->second.second)
     {
-        std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() -
-                timerComp->m_clockC;
+        std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() - timerComp->m_clockC;
         if(elapsed_seconds.count() > enemyConfComp->m_attackInterval)
         {
             ++enemyConfComp->m_currentSprite;
@@ -426,10 +442,8 @@ void updateEnemyAttackSprite(EnemyConfComponent *enemyConfComp, TimerComponent *
 }
 
 //===========================================================================
-void VisionSystem::updateImpactSprites(uint32_t entityImpact, MemSpriteDataComponent *memSpriteComp,
-                                       SpriteTextureComponent *spriteComp,
-                                       TimerComponent *timerComp,
-                                       GeneralCollisionComponent *genComp)
+void VisionSystem::updateImpactSprites(uint32_t entityImpact, MemSpriteDataComponent *memSpriteComp, SpriteTextureComponent *spriteComp,
+                                       TimerComponent *timerComp, GeneralCollisionComponent *genComp)
 {
     ImpactShotComponent *impactComp = stairwayToComponentManager().
             searchComponentByType<ImpactShotComponent>(entityImpact,
@@ -461,10 +475,8 @@ void VisionSystem::updateImpactSprites(uint32_t entityImpact, MemSpriteDataCompo
 }
 
 //===========================================================================
-void VisionSystem::updateTeleportDisplaySprite(MemSpriteDataComponent *memSpriteComp,
-                                               SpriteTextureComponent *spriteComp,
-                                               TimerComponent *timerComp,
-                                               GeneralCollisionComponent *genComp)
+void VisionSystem::updateTeleportDisplaySprite(MemSpriteDataComponent *memSpriteComp, SpriteTextureComponent *spriteComp,
+                                               TimerComponent *timerComp, GeneralCollisionComponent *genComp)
 {
     std::chrono::duration<double> elapsed_secondsA = std::chrono::system_clock::now() - timerComp->m_clockA,
             elapsed_secondsB = std::chrono::system_clock::now() - timerComp->m_clockB;
@@ -488,9 +500,7 @@ void VisionSystem::updateTeleportDisplaySprite(MemSpriteDataComponent *memSprite
 }
 
 //===========================================================================
-EnemySpriteType_e VisionSystem::getOrientationFromAngle(uint32_t observerEntity,
-                                               uint32_t targetEntity,
-                                               float targetDegreeAngle)
+EnemySpriteType_e VisionSystem::getOrientationFromAngle(uint32_t observerEntity, uint32_t targetEntity, float targetDegreeAngle)
 {
     MapCoordComponent *observMapComp = stairwayToComponentManager().
             searchComponentByType<MapCoordComponent>(observerEntity,
@@ -539,8 +549,7 @@ EnemySpriteType_e VisionSystem::getOrientationFromAngle(uint32_t observerEntity,
 }
 
 //===========================================================================
-void VisionSystem::treatVisible(VisionComponent *visionComp, MoveableComponent *moveCompA,
-                                uint32_t numEntity)
+void VisionSystem::treatVisible(VisionComponent *visionComp, MoveableComponent *moveCompA, uint32_t numEntity)
 {
     MapCoordComponent *mapCompB = stairwayToComponentManager().
             searchComponentByType<MapCoordComponent>(numEntity, Components_e::MAP_COORD_COMPONENT);
@@ -556,8 +565,7 @@ void VisionSystem::treatVisible(VisionComponent *visionComp, MoveableComponent *
 }
 
 //===========================================================================
-void updateTriangleVisionFromPosition(VisionComponent *visionComp, const MapCoordComponent *mapComp,
-                                      const MoveableComponent *movComp)
+void updateTriangleVisionFromPosition(VisionComponent *visionComp, const MapCoordComponent *mapComp, const MoveableComponent *movComp)
 {
     assert(visionComp);
     assert(mapComp);

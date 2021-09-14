@@ -22,8 +22,7 @@ public:
 private:
     void initComponents();
     void initSystems();
-    void syncComponentsFromEntities(uint32_t numEntity,
-                                    const std::vector<Components_e> &vectComp);
+    void syncComponentsFromEntities(uint32_t numEntity, const std::vector<Components_e> &vectComp);
     void instanciatePositionVertexComponent(uint32_t numEntity);
     void instanciateColorVertexComponent(uint32_t numEntity);
 private:
