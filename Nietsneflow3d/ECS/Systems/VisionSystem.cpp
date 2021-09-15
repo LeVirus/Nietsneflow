@@ -258,7 +258,7 @@ void VisionSystem::updateBarrelSprite(uint32_t barrelEntity, MemSpriteDataCompon
             timerComp->m_clockA;
     if(!barrelComp->m_destructPhase)
     {
-        if(elapsed_seconds.count() > 0.2)
+        if(elapsed_seconds.count() > barrelComp->m_timeStaticPhase)
         {
             timerComp->m_clockA = std::chrono::system_clock::now();
             if(memSpriteComp->m_current < barrelComp->m_memPosExplosionSprite)
@@ -283,7 +283,7 @@ void VisionSystem::updateBarrelSprite(uint32_t barrelEntity, MemSpriteDataCompon
             fpsComp->m_inGameSpriteSize = glSizeComp->m_memGLSizeData[memSpriteComp->m_current];
             return;
         }
-        if(elapsed_seconds.count() > 0.5)
+        if(elapsed_seconds.count() > barrelComp->m_timeEject / barrelComp->m_phaseDestructPhaseNumber)
         {
             timerComp->m_clockA = std::chrono::system_clock::now();
             if(memSpriteComp->m_current != memSpriteComp->m_vectSpriteData.size() - 1)

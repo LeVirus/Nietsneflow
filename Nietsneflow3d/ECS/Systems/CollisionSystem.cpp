@@ -557,14 +557,11 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
                     treatEnemyShooted(args.entityNumB, shotConfComp->m_damage);
                 }
             }
-            else if((args.tagCompA->m_tagA == CollisionTag_e::PLAYER_CT ||
-                    args.tagCompA->m_tagA == CollisionTag_e::ENEMY_CT ||
-                     args.tagCompA->m_tagA == CollisionTag_e::BARREL_CT) &&
-                    (args.tagCompB->m_tagA == CollisionTag_e::WALL_CT ||
-                     args.tagCompB->m_tagA == CollisionTag_e::PLAYER_CT ||
-                     args.tagCompB->m_tagA == CollisionTag_e::ENEMY_CT ||
-                     args.tagCompB->m_tagA == CollisionTag_e::STATIC_SET_CT ||
-                     args.tagCompB->m_tagA == CollisionTag_e::BARREL_CT))
+            else if((args.tagCompA->m_tagA == CollisionTag_e::PLAYER_CT || args.tagCompA->m_tagA == CollisionTag_e::ENEMY_CT ||
+                     args.tagCompA->m_tagB == CollisionTag_e::BARREL_CT) &&
+                    (args.tagCompB->m_tagA == CollisionTag_e::WALL_CT || args.tagCompB->m_tagA == CollisionTag_e::PLAYER_CT ||
+                     args.tagCompB->m_tagA == CollisionTag_e::ENEMY_CT || args.tagCompB->m_tagA == CollisionTag_e::STATIC_SET_CT ||
+                     args.tagCompB->m_tagB == CollisionTag_e::BARREL_CT))
             {
                 collisionCircleCircleEject(args, circleCompA, circleCompB);
             }
@@ -677,7 +674,7 @@ void CollisionSystem::treatExplosionColl(CollisionArgs &args)
         assert(timerComp);
         timerComp->m_clockC = std::chrono::system_clock::now();
         moveComp->m_currentDegreeMoveDirection = getTrigoAngle(args.mapCompA.m_absoluteMapPositionPX, args.mapCompB.m_absoluteMapPositionPX);
-        moveComp->m_ejectData = {1.0f, 0.5};
+        moveComp->m_ejectData = {1.5f, EJECT_TIME};
     }
     if(args.tagCompB->m_tagA == CollisionTag_e::PLAYER_CT)
     {
@@ -1169,36 +1166,32 @@ void CollisionSystem::collisionCircleCircleEject(CollisionArgs &args,
                                                  const CircleCollisionComponent &circleCollA,
                                                  const CircleCollisionComponent &circleCollB)
 {
-    if(args.tagCompA->m_tagA == CollisionTag_e::PLAYER_CT ||
-            args.tagCompA->m_tagA == CollisionTag_e::ENEMY_CT)
-    {
-        MoveableComponent *moveCompA = stairwayToComponentManager().
-                searchComponentByType<MoveableComponent>(args.entityNumA,
-                                      Components_e::MOVEABLE_COMPONENT);
-        assert(moveCompA);
+    MoveableComponent *moveCompA = stairwayToComponentManager().
+            searchComponentByType<MoveableComponent>(args.entityNumA,
+                                                     Components_e::MOVEABLE_COMPONENT);
+    assert(moveCompA);
 
-        float circleAPosX = args.mapCompA.m_absoluteMapPositionPX.first;
-        float circleAPosY = args.mapCompA.m_absoluteMapPositionPX.second;
-        float circleBPosX = args.mapCompB.m_absoluteMapPositionPX.first;
-        float circleBPosY = args.mapCompB.m_absoluteMapPositionPX.second;
-        float distanceX = std::abs(circleAPosX - circleBPosX);
-        float distanceY = std::abs(circleAPosY - circleBPosY);
-        float hyp = circleCollA.m_ray + circleCollB.m_ray;
-        assert(hyp > distanceX && hyp > distanceY);
-        float diffX = getRectTriangleSide(distanceY, hyp);
-        float diffY = getRectTriangleSide(distanceX, hyp);
-        diffX -= distanceX;
-        diffY -= distanceY;
-        if(circleAPosX < circleBPosX)
-        {
-            diffX = -diffX;
-        }
-        if(circleAPosY < circleBPosY)
-        {
-            diffY = -diffY;
-        }
-        collisionEject(args.mapCompA, diffX, diffY);
+    float circleAPosX = args.mapCompA.m_absoluteMapPositionPX.first;
+    float circleAPosY = args.mapCompA.m_absoluteMapPositionPX.second;
+    float circleBPosX = args.mapCompB.m_absoluteMapPositionPX.first;
+    float circleBPosY = args.mapCompB.m_absoluteMapPositionPX.second;
+    float distanceX = std::abs(circleAPosX - circleBPosX);
+    float distanceY = std::abs(circleAPosY - circleBPosY);
+    float hyp = circleCollA.m_ray + circleCollB.m_ray;
+    assert(hyp > distanceX && hyp > distanceY);
+    float diffX = getRectTriangleSide(distanceY, hyp);
+    float diffY = getRectTriangleSide(distanceX, hyp);
+    diffX -= distanceX;
+    diffY -= distanceY;
+    if(circleAPosX < circleBPosX)
+    {
+        diffX = -diffX;
     }
+    if(circleAPosY < circleBPosY)
+    {
+        diffY = -diffY;
+    }
+    collisionEject(args.mapCompA, diffX, diffY);
 }
 
 //===================================================================

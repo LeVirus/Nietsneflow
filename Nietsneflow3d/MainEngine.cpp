@@ -1786,6 +1786,7 @@ void MainEngine::loadBarrelElementEntities(const LevelManager &levelManager)
         spriteComp->m_spriteData = memSpriteComp->m_vectSpriteData[0];
         fpsComp->m_inGameSpriteSize = memGLSizeComp->m_memGLSizeData[0];
         fpsComp->m_levelElementType = LevelStaticElementType_e::GROUND;
+        barrelComp->m_phaseDestructPhaseNumber = barrelData.m_explosionSprite.size();
         barrelComp->m_life = 3;
         barrelComp->m_memPosExplosionSprite = barrelData.m_staticSprite.size() - 1;
         barrelComp->m_damageZoneEntity = createDamageZoneEntity(15, CollisionTag_e::EXPLOSION_CT, 30.0f);
