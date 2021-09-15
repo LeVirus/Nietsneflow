@@ -38,21 +38,17 @@ IASystem::IASystem(const ECSManager* memECSManager) : m_memECSManager(memECSMana
 void IASystem::treatEject()
 {
     std::bitset<TOTAL_COMPONENTS> bitset;
-    bitset[BARREL_COMPONENT] = true;
+    bitset[MOVEABLE_COMPONENT] = true;
     m_vectMoveableEntities = m_memECSManager->getEntitiesContainingComponents(bitset);
     MoveableComponent *moveComp;
     MapCoordComponent *mapComp;
     TimerComponent *timerComp;
-    GeneralCollisionComponent *collComp;
     for(uint32_t i = 0; i < m_vectMoveableEntities.size(); ++i)
     {
         moveComp = stairwayToComponentManager().
                 searchComponentByType<MoveableComponent>(m_vectMoveableEntities[i], Components_e::MOVEABLE_COMPONENT);
         assert(moveComp);
-        collComp = stairwayToComponentManager().
-                searchComponentByType<GeneralCollisionComponent>(m_vectMoveableEntities[i], Components_e::GENERAL_COLLISION_COMPONENT);
-        assert(collComp);
-        if(moveComp->m_ejectData && collComp->m_tagB == CollisionTag_e::BARREL_CT)
+        if(moveComp->m_ejectData)
         {
             timerComp = stairwayToComponentManager().
                     searchComponentByType<TimerComponent>(m_vectMoveableEntities[i], Components_e::TIMER_COMPONENT);
