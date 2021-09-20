@@ -667,14 +667,19 @@ void CollisionSystem::treatExplosionColl(CollisionArgs &args)
     assert(shotConfComp);
     MoveableComponent *moveComp = stairwayToComponentManager().
             searchComponentByType<MoveableComponent>(args.entityNumB, Components_e::MOVEABLE_COMPONENT);
-    if(moveComp)
+    if(moveComp && !(args.tagCompB->m_tagA == CollisionTag_e::BARREL_CT &&
+            args.tagCompB->m_tagB != CollisionTag_e::BARREL_CT))
     {
         TimerComponent *timerComp = stairwayToComponentManager().
                 searchComponentByType<TimerComponent>(args.entityNumB, Components_e::TIMER_COMPONENT);
         assert(timerComp);
-        timerComp->m_clockC = std::chrono::system_clock::now();
-        moveComp->m_currentDegreeMoveDirection = getTrigoAngle(args.mapCompA.m_absoluteMapPositionPX, args.mapCompB.m_absoluteMapPositionPX);
-        moveComp->m_ejectData = {1.5f, EJECT_TIME};
+        timerComp->m_clockD = std::chrono::system_clock::now();
+        if(!moveComp->m_ejectData && (std::abs(args.mapCompA.m_absoluteMapPositionPX.first - args.mapCompB.m_absoluteMapPositionPX.first) > 0.01f ||
+                std::abs(args.mapCompA.m_absoluteMapPositionPX.second - args.mapCompB.m_absoluteMapPositionPX.second) > 0.01f))
+        {
+            moveComp->m_currentDegreeMoveDirection = getTrigoAngle(args.mapCompA.m_absoluteMapPositionPX, args.mapCompB.m_absoluteMapPositionPX);
+            moveComp->m_ejectData = {1.5f, EJECT_TIME};
+        }
     }
     if(args.tagCompB->m_tagA == CollisionTag_e::PLAYER_CT)
     {

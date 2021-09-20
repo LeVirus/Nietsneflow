@@ -19,6 +19,6 @@ struct MoveableComponent : public ecs::Component
     float m_velocity = 3.0f;
     float m_rotationAngle = 3.000f;
     //first eject velocity, SECOND Time
-    std::optional<std::pair<float, double>> m_ejectData;
+    std::optional<std::pair<float, double>> m_ejectData = std::nullopt;
     virtual ~MoveableComponent() = default;
 };

@@ -38,7 +38,8 @@ IASystem::IASystem(const ECSManager* memECSManager) : m_memECSManager(memECSMana
 void IASystem::treatEject()
 {
     std::bitset<TOTAL_COMPONENTS> bitset;
-    bitset[BARREL_COMPONENT] = true;
+//    bitset[BARREL_COMPONENT] = true;
+    bitset[MOVEABLE_COMPONENT] = true;
     m_vectMoveableEntities = m_memECSManager->getEntitiesContainingComponents(bitset);
     MoveableComponent *moveComp;
     MapCoordComponent *mapComp;
@@ -52,12 +53,12 @@ void IASystem::treatEject()
         collComp = stairwayToComponentManager().
                 searchComponentByType<GeneralCollisionComponent>(m_vectMoveableEntities[i], Components_e::GENERAL_COLLISION_COMPONENT);
         assert(collComp);
-        if(moveComp->m_ejectData && collComp->m_tagB == CollisionTag_e::BARREL_CT)
+        if(moveComp->m_ejectData /*&& collComp->m_tagB == CollisionTag_e::BARREL_CT*/)
         {
             timerComp = stairwayToComponentManager().
                     searchComponentByType<TimerComponent>(m_vectMoveableEntities[i], Components_e::TIMER_COMPONENT);
             assert(timerComp);
-            std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() - timerComp->m_clockC;
+            std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() - timerComp->m_clockD;
             if(elapsed_seconds.count() > moveComp->m_ejectData->second)
             {
                 moveComp->m_ejectData = std::nullopt;
