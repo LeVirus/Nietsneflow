@@ -5,9 +5,12 @@ CONFIG -= qt
 QMAKE_CXXFLAGS += -std=c++17
 QMAKE_CXXFLAGS_DEBUG += -Wall -Wextra -Wpedantic -Og
 INCLUDEPATH += includesLib
-LIBS += -L../Nietsneflow3d/lib  -lECS -lglad -ldl -lglfw -lX11 -lXxf86vm -lXrandr -pthread -lXi
+LIBS += -L../Nietsneflow3d/lib  -lECS -lglad -ldl -lglfw -lX11 -lXxf86vm -lXrandr \
+-pthread -lXi -lopenal -lsndfile
 
 SOURCES += main.cpp \
+    AudioElement.cpp \
+    AudioEngine.cpp \
     ECS/Systems/DoorWallSystem.cpp \
     ECS/Systems/IASystem.cpp \
     ECS/Systems/VisionSystem.cpp \
@@ -32,6 +35,8 @@ SOURCES += main.cpp \
     ECS/Systems/StaticDisplaySystem.cpp
 
 HEADERS += \
+    AudioElement.hpp \
+    AudioEngine.hpp \
     ECS/Components/BarrelComponent.hpp \
     ECS/Components/EnemyConfComponent.hpp \
     ECS/Components/FPSVisibleStaticElementComponent.hpp \

@@ -20,7 +20,7 @@ void Game::clearLevel()
 void Game::loadLevelData(uint32_t levelNum)
 {
     m_levelManager.loadLevel("level.ini", levelNum);
-    m_mainEngine.loadLevelEntities(m_levelManager);
+    m_mainEngine.loadLevel(m_levelManager);
 }
 
 //===================================================================

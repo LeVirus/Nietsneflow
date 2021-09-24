@@ -44,6 +44,7 @@ void MainEngine::init()
     m_ecsManager.init();
     linkSystemsToGraphicEngine();
     linkSystemsToPhysicalEngine();
+    m_audioEngine.initOpenAL();
 }
 
 //===================================================================
@@ -65,6 +66,7 @@ bool MainEngine::mainLoop(bool &memGameOver)
         m_physicalEngine.runIteration(m_gamePaused);
         clearObjectToDelete();
         m_graphicEngine.runIteration(m_gamePaused);
+        m_audioEngine.runIteration(m_gamePaused);
         if(!m_exitColl->m_active)
         {
             m_playerConf->m_inMovement = false;
@@ -458,10 +460,12 @@ void MainEngine::loadGraphicPicture(const PictureData &picData, const FontData &
 }
 
 //===================================================================
-void MainEngine::loadLevelEntities(const LevelManager &levelManager)
+void MainEngine::loadLevel(const LevelManager &levelManager)
 {
     m_physicalEngine.clearSystems();
     m_graphicEngine.clearSystems();
+    //OOOOK no sound if exec that before ??
+//    m_audioEngine.clear();
     m_memTriggerCreated.clear();
     loadBackgroundEntities(levelManager.getPictureData().getGroundData(),
                            levelManager.getPictureData().getCeilingData(),
@@ -478,6 +482,10 @@ void MainEngine::loadLevelEntities(const LevelManager &levelManager)
     loadMoveableWallEntities(levelManager.getMoveableWallData(), levelManager.getPictureData().getSpriteData());
     loadDoorEntities(levelManager);
     loadEnemiesEntities(levelManager);
+    //    m_audioEngine.loadMusic("FF9.flac");
+    m_audioEngine.loadMusic("Finn.flac");
+//    m_audioEngine.loadMusic("Roar.wav");
+    m_audioEngine.playMusic();
 }
 
 //===================================================================

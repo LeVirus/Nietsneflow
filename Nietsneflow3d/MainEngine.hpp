@@ -2,6 +2,7 @@
 
 #include <GraphicEngine.hpp>
 #include <PhysicalEngine.hpp>
+#include <AudioEngine.hpp>
 #include <ECS/ECSManager.hpp>
 #include <Level.hpp>
 
@@ -37,7 +38,7 @@ public:
     MainEngine() = default;
     void loadGraphicPicture(const PictureData &picData, const FontData &fontData);
     void init();
-    void loadLevelEntities(const LevelManager &levelManager);
+    void loadLevel(const LevelManager &levelManager);
     bool mainLoop(bool &memGameOver);
     void playerAttack(uint32_t playerEntity, PlayerConfComponent *playerComp,
                       const PairFloat_t &point, float degreeAngle);
@@ -162,6 +163,7 @@ private:
 private:
     GraphicEngine m_graphicEngine;
     PhysicalEngine m_physicalEngine;
+    AudioEngine m_audioEngine;
     ECSManager m_ecsManager;
     std::vector<std::pair<uint32_t, time_t>> m_vectMemPausedTimer;
     bool m_gamePaused = false, m_playerMem = false;
