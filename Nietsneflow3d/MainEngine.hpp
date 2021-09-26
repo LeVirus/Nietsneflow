@@ -47,11 +47,7 @@ public:
     {
         return m_gamePaused;
     }
-    inline void clearLevel()
-    {
-        m_ecsManager.getEngine().RmAllEntity();
-        m_graphicEngine.clearSystems();
-    }
+    void clearLevel();
     void confSystems();
     uint32_t createAmmoEntity(CollisionTag_e collTag, bool visibleShot);
 private:

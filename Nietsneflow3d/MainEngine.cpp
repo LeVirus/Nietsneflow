@@ -268,6 +268,13 @@ void MainEngine::setUnsetPaused()
 }
 
 //===================================================================
+void MainEngine::clearLevel()
+{
+    m_ecsManager.getEngine().RmAllEntity();
+    m_graphicEngine.clearSystems();
+}
+
+//===================================================================
 void MainEngine::confSystems()
 {
     m_graphicEngine.confSystems();

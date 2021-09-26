@@ -99,9 +99,9 @@ std::optional<ALuint> AudioEngine::loadBufferFromFile(const std::string &filenam
     alBufferData(memMusicBuffer, format, &samples[0],
             nbSamples * sizeof(ALushort), sampleRate);
     // Vérification des erreurs
-    uint32_t dd = alGetError();
-    if(dd != AL_NO_ERROR)
+    if(alGetError() != AL_NO_ERROR)
     {
+        std::cout << "ERROR on BUFFER LOADING\n";
         return {};
     }
     return memMusicBuffer;
@@ -124,7 +124,7 @@ void AudioEngine::loadMusic(const std::string &filename)
 {
     if(m_memMusicBuffer)
     {
-        m_musicElement.cleanUpSourceData();
+        m_musicElement.stop();
         cleanUpBuffer();
     }
     std::optional<ALuint> memBuffer = loadBufferFromFile(filename);

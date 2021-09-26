@@ -14,12 +14,14 @@ AudioElement::~AudioElement()
 //===================================================================
 void AudioElement::conf()
 {
-    cleanUpSourceData();
-    ALuint source;
-    // Création d'une source
-    alGenSources(1, &source);
-    m_soundSourceID = source;
-    assert(m_soundSourceID);
+    stop();
+    if(!m_soundSourceID)
+    {
+        ALuint source;
+        // Création d'une source
+        alGenSources(1, &source);
+        m_soundSourceID = source;
+    }
     // On attache le tampon contenant les échantillons audio à la source
     alSourcei(*m_soundSourceID, AL_BUFFER, *m_memSoundBufferID);
 }
