@@ -107,6 +107,14 @@ public:
     static void setElementTypeCase(const PairUI_t &tilePosition, LevelCaseType_e type);
     static void setMoveableWallStopped(const PairUI_t &tilePosition, bool stopped);
     static void setElementEntityCase(const PairUI_t &tilePosition, uint32_t entity);
+    inline static void setMusicFile(const std::string filename)
+    {
+        m_musicFile = filename;
+    }
+    inline static std::string getMusicFilename()
+    {
+        return m_musicFile;
+    }
     //in the case of moveable wall reset case
     static void resetMoveWallElementCase(const PairUI_t &tilePosition, uint32_t numEntity);
 
@@ -149,6 +157,7 @@ private:
     Direction_e m_playerDepartureDirection;
     static std::vector<ElementRaycast> m_levelCaseType;
     static float m_rangeViewPX;
+    static std::string m_musicFile;
 };
 
 PairFloat_t getAbsolutePosition(const PairUI_t &coord);

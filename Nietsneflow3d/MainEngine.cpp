@@ -69,6 +69,7 @@ bool MainEngine::mainLoop(bool &memGameOver)
         m_audioEngine.runIteration(m_gamePaused);
         if(!m_exitColl->m_active)
         {
+            //end level
             m_playerConf->m_inMovement = false;
             savePlayerGear();
             m_graphicEngine.setTransition(m_gamePaused);
@@ -465,7 +466,7 @@ void MainEngine::loadLevel(const LevelManager &levelManager)
     m_physicalEngine.clearSystems();
     m_graphicEngine.clearSystems();
     //OOOOK no sound if exec that before ??
-//    m_audioEngine.clear();
+    m_audioEngine.clear();
     m_memTriggerCreated.clear();
     loadBackgroundEntities(levelManager.getPictureData().getGroundData(),
                            levelManager.getPictureData().getCeilingData(),
@@ -483,7 +484,7 @@ void MainEngine::loadLevel(const LevelManager &levelManager)
     loadDoorEntities(levelManager);
     loadEnemiesEntities(levelManager);
     //    m_audioEngine.loadMusic("FF9.flac");
-    m_audioEngine.loadMusic("Finn.flac");
+    m_audioEngine.loadMusic(levelManager.getLevel().getMusicFilename());
 //    m_audioEngine.loadMusic("Roar.wav");
     m_audioEngine.playMusic();
 }

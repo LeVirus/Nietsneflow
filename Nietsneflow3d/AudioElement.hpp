@@ -1,5 +1,7 @@
 #pragma once
 
+#include <optional>
+
 typedef unsigned int ALuint;
 
 class AudioElement
@@ -9,11 +11,12 @@ public:
     ~AudioElement();
     void conf();
     void play();
+    void stop();
     inline void setBufferID(ALuint memSoundBuffer)
     {
-        m_memSoundBuffer = memSoundBuffer;
+        m_memSoundBufferID = memSoundBuffer;
     }
     void cleanUpSourceData();
 private:
-    ALuint m_soundSource, m_memSoundBuffer;
+    std::optional<ALuint> m_soundSourceID, m_memSoundBufferID;
 };

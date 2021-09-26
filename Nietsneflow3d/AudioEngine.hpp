@@ -22,13 +22,13 @@ public:
     void clear();
     void loadMusic(const std::string &filename);
 private:
-    std::optional<ALuint> loadFile(const std::string &filename);
+    std::optional<ALuint> loadBufferFromFile(const std::string &filename);
     void updateDevices();
     void cleanUpBuffer();
 private:
     ALCdevice *m_device;
     ALCcontext *m_context;
     std::vector<std::string> m_vectDevices;
-    ALuint m_memMusicBuffer;
+    std::optional<ALuint> m_memMusicBuffer;
     AudioElement m_musicElement;
 };

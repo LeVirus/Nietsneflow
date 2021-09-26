@@ -51,12 +51,16 @@ void AudioEngine::updateDevices()
 //===================================================================
 void AudioEngine::cleanUpBuffer()
 {
-    // Destruction du tampon
-    alDeleteBuffers(1, &m_memMusicBuffer);
+    if(m_memMusicBuffer)
+    {
+        // Destruction du tampon
+        alDeleteBuffers(1, &(*m_memMusicBuffer));
+        m_memMusicBuffer = {};
+    }
 }
 
 //===================================================================
-std::optional<ALuint> AudioEngine::loadFile(const std::string &filename)
+std::optional<ALuint> AudioEngine::loadBufferFromFile(const std::string &filename)
 {
     std::string musicFile = LEVEL_RESSOURCES_DIR_STR + "Audio/Music/" + filename;
     SF_INFO fileInfos;
@@ -64,7 +68,7 @@ std::optional<ALuint> AudioEngine::loadFile(const std::string &filename)
     currentFile = sf_open(musicFile.c_str(), SFM_READ, &fileInfos);
     if (!currentFile)
     {
-        return false;
+        return {};
     }
     ALsizei nbSamples  = static_cast<ALsizei>(fileInfos.channels * fileInfos.frames);
     ALsizei sampleRate = static_cast<ALsizei>(fileInfos.samplerate);
@@ -72,7 +76,7 @@ std::optional<ALuint> AudioEngine::loadFile(const std::string &filename)
     std::vector<ALshort> samples(nbSamples);
     if(sf_read_short(currentFile, &samples[0], nbSamples) < nbSamples)
     {
-        return false;
+        return {};
     }
     sf_close(currentFile);
     // Détermination du format en fonction du nombre de canaux
@@ -86,7 +90,7 @@ std::optional<ALuint> AudioEngine::loadFile(const std::string &filename)
         format = AL_FORMAT_STEREO16;
         break;
         default:
-        return false;
+        return {};
     }
     ALuint memMusicBuffer;
     // Création du tampon OpenAL
@@ -95,7 +99,8 @@ std::optional<ALuint> AudioEngine::loadFile(const std::string &filename)
     alBufferData(memMusicBuffer, format, &samples[0],
             nbSamples * sizeof(ALushort), sampleRate);
     // Vérification des erreurs
-    if(alGetError() != AL_NO_ERROR)
+    uint32_t dd = alGetError();
+    if(dd != AL_NO_ERROR)
     {
         return {};
     }
@@ -117,7 +122,12 @@ void AudioEngine::clear()
 //===================================================================
 void AudioEngine::loadMusic(const std::string &filename)
 {
-    std::optional<ALuint> memBuffer = loadFile(filename);
+    if(m_memMusicBuffer)
+    {
+        m_musicElement.cleanUpSourceData();
+        cleanUpBuffer();
+    }
+    std::optional<ALuint> memBuffer = loadBufferFromFile(filename);
     if(memBuffer)
     {
         m_memMusicBuffer = *memBuffer;

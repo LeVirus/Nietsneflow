@@ -1,6 +1,8 @@
 #include "AudioElement.hpp"
 #include <AL/al.h>
 #include <AL/alc.h>
+#include <iostream>
+#include <cassert>
 #include "sndfile.h"
 
 //===================================================================
@@ -12,22 +14,43 @@ AudioElement::~AudioElement()
 //===================================================================
 void AudioElement::conf()
 {
+    cleanUpSourceData();
+    ALuint source;
     // Création d'une source
-    alGenSources(1, &m_soundSource);
+    alGenSources(1, &source);
+    m_soundSourceID = source;
+    assert(m_soundSourceID);
     // On attache le tampon contenant les échantillons audio à la source
-    alSourcei(m_soundSource, AL_BUFFER, m_memSoundBuffer);
+    alSourcei(*m_soundSourceID, AL_BUFFER, *m_memSoundBufferID);
 }
 
 //===================================================================
 void AudioElement::play()
 {
-    alSourcePlay(m_soundSource);
+    if(m_soundSourceID)
+    {
+        alSourcePlay(*m_soundSourceID);
+    }
+}
+
+//===================================================================
+void AudioElement::stop()
+{
+    if(m_soundSourceID)
+    {
+        alSourceStop(*m_soundSourceID);
+    }
 }
 
 //===================================================================
 void AudioElement::cleanUpSourceData()
 {
-    // Destruction de la source
-    alSourcei(m_soundSource, AL_BUFFER, 0);
-    alDeleteSources(1, &m_soundSource);
+    if(m_soundSourceID)
+    {
+        stop();
+        // Destruction de la source
+        alSourcei(*m_soundSourceID, AL_BUFFER, 0);
+        alDeleteSources(1, &(*m_soundSourceID));
+        m_soundSourceID = {};
+    }
 }

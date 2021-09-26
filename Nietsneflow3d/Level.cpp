@@ -7,7 +7,7 @@
 float Level::m_rangeViewPX;
 PairUI_t Level::m_size;
 std::vector<ElementRaycast> Level::m_levelCaseType;
-
+std::string Level::m_musicFile;
 
 //===================================================================
 Level::Level()

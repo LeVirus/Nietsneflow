@@ -132,6 +132,12 @@ void LevelManager::loadBackgroundData(const INIReader &reader)
 }
 
 //===================================================================
+void LevelManager::loadMusicData(const INIReader &reader)
+{
+    m_level.setMusicFile(reader.Get("Level", "music", ""));
+}
+
+//===================================================================
 void LevelManager::loadLevelData(const INIReader &reader)
 {
      m_level.setLevelSize({reader.GetInteger("Level", "weight", 10),
@@ -1164,6 +1170,7 @@ void LevelManager::loadLevel(const std::string &INIFileName, uint32_t levelNum)
     loadPositionDoorData(reader);
     loadPositionEnemyData(reader);
     loadBackgroundData(reader);
+    loadMusicData(reader);
 }
 
 //===================================================================

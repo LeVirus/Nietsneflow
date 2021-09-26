@@ -125,7 +125,7 @@ private:
     void loadSpriteData(const INIReader &reader, const std::string &sectionName = "Sprite",
                         bool font = false);
     void loadBackgroundData(const INIReader &reader);
-
+    void loadMusicData(const INIReader &reader);
     //Level element datas loading
     void loadLevelData(const INIReader &reader);
     void loadPositionPlayerData(const INIReader &reader);
