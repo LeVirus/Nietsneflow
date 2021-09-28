@@ -60,12 +60,15 @@ void AudioEngine::cleanUpBuffer()
 }
 
 //===================================================================
-std::optional<ALuint> AudioEngine::loadBufferFromFile(const std::string &filename)
+std::optional<ALuint> AudioEngine::loadBufferFromFile(const std::string &filename,
+                                                      bool soudEffect)
 {
-    std::string musicFile = LEVEL_RESSOURCES_DIR_STR + "Audio/Music/" + filename;
+    std::string bufferFile = (soudEffect) ?
+                LEVEL_RESSOURCES_DIR_STR + "Audio/SoundEffect/" + filename :
+                LEVEL_RESSOURCES_DIR_STR + "Audio/Music/" + filename;
     SF_INFO fileInfos;
     SNDFILE *currentFile;
-    currentFile = sf_open(musicFile.c_str(), SFM_READ, &fileInfos);
+    currentFile = sf_open(bufferFile.c_str(), SFM_READ, &fileInfos);
     if (!currentFile)
     {
         return {};
@@ -120,26 +123,36 @@ void AudioEngine::clear()
 }
 
 //===================================================================
-void AudioEngine::loadMusic(const std::string &filename)
+void AudioEngine::loadMusicFromFile(const std::string &filename)
 {
     if(m_memMusicBuffer)
     {
         m_musicElement.stop();
         cleanUpBuffer();
     }
-    std::optional<ALuint> memBuffer = loadBufferFromFile(filename);
+    std::optional<ALuint> memBuffer = loadBufferFromFile(filename, false);
     if(memBuffer)
     {
         m_memMusicBuffer = *memBuffer;
         m_musicElement.setBufferID(*memBuffer);
-        m_musicElement.conf();
     }
 }
 
 //===================================================================
-void AudioEngine::runIteration(bool gamePaused)
+std::optional<ALuint> AudioEngine::loadSoundEffectFromFile(const std::string &filename)
 {
-
+    std::map<std::string, ALuint>::const_iterator it = m_mapSoundEffect.find(filename);
+    if(it != m_mapSoundEffect.end())
+    {
+        return it->second;
+    }
+    std::optional<ALuint> memBuffer = loadBufferFromFile(filename, true);
+    if(memBuffer)
+    {
+        m_mapSoundEffect.insert({filename, *memBuffer});
+        return memBuffer;
+    }
+    return {};
 }
 
 //===================================================================

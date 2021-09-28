@@ -15,6 +15,7 @@
 #include <ECS/Components/TeleportComponent.hpp>
 #include <ECS/Components/ImpactShotComponent.hpp>
 #include <ECS/Components/MemSpriteDataComponent.hpp>
+#include <ECS/Components/AudioComponent.hpp>
 #include <ECS/Components/SpriteTextureComponent.hpp>
 #include <ECS/Components/WeaponComponent.hpp>
 #include <ECS/Components/BarrelComponent.hpp>
@@ -247,7 +248,8 @@ void CollisionSystem::treatSegmentShots()
 //===================================================================
 void CollisionSystem::treatBarrelShots(uint32_t entityNum, uint32_t damage)
 {
-    BarrelComponent *barrelComp = stairwayToComponentManager().searchComponentByType<BarrelComponent>(entityNum, Components_e::BARREL_COMPONENT);
+    BarrelComponent *barrelComp = stairwayToComponentManager().
+            searchComponentByType<BarrelComponent>(entityNum, Components_e::BARREL_COMPONENT);
     assert(barrelComp);
     if(barrelComp->m_destructPhase)
     {
@@ -257,6 +259,10 @@ void CollisionSystem::treatBarrelShots(uint32_t entityNum, uint32_t damage)
     {
         barrelComp->m_life = 0;
         barrelComp->m_destructPhase = true;
+        AudioComponent *audioComp = stairwayToComponentManager().
+                searchComponentByType<AudioComponent>(entityNum, Components_e::AUDIO_COMPONENT);
+        assert(audioComp);
+        audioComp->m_soundElement[0]->play();
     }
     else
     {

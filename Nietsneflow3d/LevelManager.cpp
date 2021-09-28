@@ -200,6 +200,7 @@ void LevelManager::loadBarrelsData(const INIReader &reader)
     m_barrelElement.m_explosionSprite = getVectSpriteNum(reader, vectINISections[0], "ExplosionSprite");
     m_barrelElement.m_vectinGameExplosionSpriteSize = getVectSpriteGLSize(reader, vectINISections[0],
             "ExplosionSpriteWeightGame", "ExplosionSpriteHeightGame");
+    m_barrelElement.m_explosionSoundFile = reader.Get(vectINISections[0], "ExplosionSound", "");
     assert(m_barrelElement.m_vectinGameExplosionSpriteSize.size() == m_barrelElement.m_explosionSprite.size());
 }
 

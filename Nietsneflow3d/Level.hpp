@@ -25,6 +25,7 @@ struct BarrelData
     std::vector<uint8_t> m_staticSprite, m_explosionSprite;
     PairDouble_t m_inGameStaticSpriteSize;
     std::vector<PairFloat_t> m_vectinGameExplosionSpriteSize;
+    std::string m_explosionSoundFile;
 };
 
 struct StaticLevelElementData

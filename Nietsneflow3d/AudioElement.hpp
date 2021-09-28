@@ -15,6 +15,7 @@ public:
     inline void setBufferID(ALuint memSoundBuffer)
     {
         m_memSoundBufferID = memSoundBuffer;
+        conf();
     }
     void cleanUpSourceData();
 private:

@@ -6,6 +6,7 @@ typedef	struct SNDFILE_tag	SNDFILE;
 typedef unsigned int ALuint;
 
 #include <vector>
+#include <map>
 #include <string>
 #include <optional>
 #include "AudioElement.hpp"
@@ -16,19 +17,20 @@ public:
     AudioEngine();
     ~AudioEngine();
     void initOpenAL();
-    void runIteration(bool gamePaused);
     void shutdownOpenAL();
     void playMusic();
     void clear();
-    void loadMusic(const std::string &filename);
+    void loadMusicFromFile(const std::string &filename);
+    std::optional<ALuint> loadSoundEffectFromFile(const std::string &filename);
 private:
-    std::optional<ALuint> loadBufferFromFile(const std::string &filename);
+    std::optional<ALuint> loadBufferFromFile(const std::string &filename, bool soudEffect);
     void updateDevices();
     void cleanUpBuffer();
 private:
     ALCdevice *m_device;
     ALCcontext *m_context;
     std::vector<std::string> m_vectDevices;
+    std::map<std::string, ALuint> m_mapSoundEffect;
     std::optional<ALuint> m_memMusicBuffer;
     AudioElement m_musicElement;
 };

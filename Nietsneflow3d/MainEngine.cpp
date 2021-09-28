@@ -25,6 +25,7 @@
 #include <ECS/Components/WeaponComponent.hpp>
 #include <ECS/Components/MoveableWallConfComponent.hpp>
 #include <ECS/Components/BarrelComponent.hpp>
+#include <ECS/Components/AudioComponent.hpp>
 #include <ECS/Systems/ColorDisplaySystem.hpp>
 #include <ECS/Systems/MapDisplaySystem.hpp>
 #include <ECS/Systems/CollisionSystem.hpp>
@@ -66,7 +67,6 @@ bool MainEngine::mainLoop(bool &memGameOver)
         m_physicalEngine.runIteration(m_gamePaused);
         clearObjectToDelete();
         m_graphicEngine.runIteration(m_gamePaused);
-        m_audioEngine.runIteration(m_gamePaused);
         if(!m_exitColl->m_active)
         {
             //end level
@@ -491,7 +491,7 @@ void MainEngine::loadLevel(const LevelManager &levelManager)
     loadDoorEntities(levelManager);
     loadEnemiesEntities(levelManager);
     //    m_audioEngine.loadMusic("FF9.flac");
-    m_audioEngine.loadMusic(levelManager.getLevel().getMusicFilename());
+    m_audioEngine.loadMusicFromFile(levelManager.getLevel().getMusicFilename());
 //    m_audioEngine.loadMusic("Roar.wav");
     m_audioEngine.playMusic();
 }
@@ -1380,6 +1380,7 @@ uint32_t MainEngine::createBarrelEntity()
     bitsetComponents[Components_e::MEM_SPRITE_DATA_COMPONENT] = true;
     bitsetComponents[Components_e::MEM_FPS_GLSIZE_COMPONENT] = true;
     bitsetComponents[Components_e::BARREL_COMPONENT] = true;
+    bitsetComponents[Components_e::AUDIO_COMPONENT] = true;
     return m_ecsManager.addEntity(bitsetComponents);
 }
 
@@ -1769,6 +1770,9 @@ void MainEngine::loadBarrelElementEntities(const LevelManager &levelManager)
                 searchComponentByType<MapCoordComponent>(barrelEntity, Components_e::MAP_COORD_COMPONENT);
         TimerComponent *timerComp = m_ecsManager.getComponentManager().
                 searchComponentByType<TimerComponent>(barrelEntity, Components_e::TIMER_COMPONENT);
+        AudioComponent *audioComp = m_ecsManager.getComponentManager().
+                searchComponentByType<AudioComponent>(barrelEntity, Components_e::AUDIO_COMPONENT);
+        assert(audioComp);
         assert(timerComp);
         assert(mapComp);
         assert(memGLSizeComp);
@@ -1778,6 +1782,11 @@ void MainEngine::loadBarrelElementEntities(const LevelManager &levelManager)
         assert(circleComp);
         assert(memSpriteComp);
         assert(spriteComp);
+        std::optional<ALuint> num = m_audioEngine.
+                loadSoundEffectFromFile(barrelData.m_explosionSoundFile);
+        assert(num);
+        audioComp->m_soundElement[0] = AudioElement();
+        audioComp->m_soundElement[0]->setBufferID(*num);
         mapComp->m_coord = barrelData.m_TileGamePosition[i];
         mapComp->m_absoluteMapPositionPX = getCenteredAbsolutePosition(mapComp->m_coord);
         circleComp->m_ray = 10.0f;

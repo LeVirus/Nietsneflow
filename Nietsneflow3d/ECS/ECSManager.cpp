@@ -27,6 +27,7 @@
 #include <ECS/Components/ObjectConfComponent.hpp>
 #include <ECS/Components/ImpactShotComponent.hpp>
 #include <ECS/Components/TriggerComponent.hpp>
+#include <ECS/Components/AudioComponent.hpp>
 #include <ECS/Systems/ColorDisplaySystem.hpp>
 #include <ECS/Systems/MapDisplaySystem.hpp>
 #include <ECS/Systems/InputSystem.hpp>
@@ -305,8 +306,12 @@ void ECSManager::syncComponentsFromEntities(uint32_t numEntity, const std::vecto
                                                            std::make_unique<BarrelComponent>());
         }
             break;
-
-
+        case Components_e::AUDIO_COMPONENT:
+        {
+            m_componentManager->instanciateExternComponent(numEntity,
+                                                           std::make_unique<AudioComponent>());
+        }
+            break;
         case Components_e::TOTAL_COMPONENTS:
             assert("Bad enum.");
             break;

@@ -37,6 +37,7 @@ SOURCES += main.cpp \
 HEADERS += \
     AudioElement.hpp \
     AudioEngine.hpp \
+    ECS/Components/AudioComponent.hpp \
     ECS/Components/BarrelComponent.hpp \
     ECS/Components/EnemyConfComponent.hpp \
     ECS/Components/FPSVisibleStaticElementComponent.hpp \
