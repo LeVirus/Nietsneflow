@@ -10,7 +10,6 @@
 #include <OpenGLUtils/Texture.hpp>
 #include <map>
 
-
 struct TimerComponent;
 struct PlayerConfComponent;
 struct MemPositionsVertexComponents;

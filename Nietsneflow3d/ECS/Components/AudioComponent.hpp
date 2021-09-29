@@ -4,7 +4,9 @@
 #include <constants.hpp>
 #include <array>
 #include <optional>
-#include "AudioElement.hpp"
+#include <bitset>
+
+typedef unsigned int ALuint;
 
 struct AudioComponent : public ecs::Component
 {
@@ -12,5 +14,7 @@ struct AudioComponent : public ecs::Component
     {
         muiTypeComponent = Components_e::AUDIO_COMPONENT;
     }
-    std::array<std::optional<AudioElement>, 3> m_soundElement;
+    //first source second buffer
+    std::array<std::optional<std::pair<ALuint, ALuint>>, 3> m_soundElement;
+    std::bitset<3> m_elementToPlay;
 };

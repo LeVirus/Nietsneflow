@@ -9,10 +9,10 @@ LIBS += -L../Nietsneflow3d/lib  -lECS -lglad -ldl -lglfw -lX11 -lXxf86vm -lXrand
 -pthread -lXi -lopenal -lsndfile
 
 SOURCES += main.cpp \
-    AudioElement.cpp \
     AudioEngine.cpp \
     ECS/Systems/DoorWallSystem.cpp \
     ECS/Systems/IASystem.cpp \
+    ECS/Systems/SoundSystem.cpp \
     ECS/Systems/VisionSystem.cpp \
     FontData.cpp \
     Game.cpp \
@@ -35,7 +35,6 @@ SOURCES += main.cpp \
     ECS/Systems/StaticDisplaySystem.cpp
 
 HEADERS += \
-    AudioElement.hpp \
     AudioEngine.hpp \
     ECS/Components/AudioComponent.hpp \
     ECS/Components/BarrelComponent.hpp \
@@ -54,6 +53,7 @@ HEADERS += \
     ECS/Components/WriteComponent.hpp \
     ECS/Systems/DoorWallSystem.hpp \
     ECS/Systems/IASystem.hpp \
+    ECS/Systems/SoundSystem.hpp \
     ECS/Systems/VisionSystem.hpp \
     FontData.hpp \
     Game.hpp \

@@ -9,7 +9,7 @@ typedef unsigned int ALuint;
 #include <map>
 #include <string>
 #include <optional>
-#include "AudioElement.hpp"
+#include "ECS/Systems/SoundSystem.hpp"
 
 class AudioEngine
 {
@@ -20,8 +20,17 @@ public:
     void shutdownOpenAL();
     void playMusic();
     void clear();
+    void runIteration();
     void loadMusicFromFile(const std::string &filename);
     std::optional<ALuint> loadSoundEffectFromFile(const std::string &filename);
+    inline SoundSystem *getSoundSystem()
+    {
+        return m_soundSystem;
+    }
+    inline void linkSystem(SoundSystem *soundSystem)
+    {
+        m_soundSystem = soundSystem;
+    }
 private:
     std::optional<ALuint> loadBufferFromFile(const std::string &filename, bool soudEffect);
     void updateDevices();
@@ -31,6 +40,6 @@ private:
     ALCcontext *m_context;
     std::vector<std::string> m_vectDevices;
     std::map<std::string, ALuint> m_mapSoundEffect;
-    std::optional<ALuint> m_memMusicBuffer;
-    AudioElement m_musicElement;
+    std::optional<std::pair<ALuint, ALuint>> m_musicElement;
+    SoundSystem *m_soundSystem = nullptr;
 };

@@ -37,6 +37,7 @@
 #include <ECS/Systems/DoorWallSystem.hpp>
 #include <ECS/Systems/StaticDisplaySystem.hpp>
 #include <ECS/Systems/IASystem.hpp>
+#include <ECS/Systems/SoundSystem.hpp>
 #include <constants.hpp>
 #include <memory>
 #include <cassert>
@@ -67,6 +68,7 @@ void ECSManager::initSystems()
     m_systemManager->bAddExternSystem(std::make_unique<DoorWallSystem>(this));
     m_systemManager->bAddExternSystem(std::make_unique<StaticDisplaySystem>());
     m_systemManager->bAddExternSystem(std::make_unique<IASystem>(this));
+    m_systemManager->bAddExternSystem(std::make_unique<SoundSystem>());
 }
 
 

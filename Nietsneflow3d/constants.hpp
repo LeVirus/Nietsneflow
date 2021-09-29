@@ -89,7 +89,8 @@ enum class Systems_e
     VISION_SYSTEM,
     DOOR_SYSTEM,
     STATIC_DISPLAY_SYSTEM,
-    IA_SYSTEM
+    IA_SYSTEM,
+    SOUND_SYSTEM
 };
 
 enum class DisplayType_e

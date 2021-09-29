@@ -45,6 +45,7 @@ void MainEngine::init()
     m_ecsManager.init();
     linkSystemsToGraphicEngine();
     linkSystemsToPhysicalEngine();
+    linkSystemsToSoundEngine();
     m_audioEngine.initOpenAL();
 }
 
@@ -67,6 +68,7 @@ bool MainEngine::mainLoop(bool &memGameOver)
         m_physicalEngine.runIteration(m_gamePaused);
         clearObjectToDelete();
         m_graphicEngine.runIteration(m_gamePaused);
+        m_audioEngine.runIteration();
         if(!m_exitColl->m_active)
         {
             //end level
@@ -1785,8 +1787,9 @@ void MainEngine::loadBarrelElementEntities(const LevelManager &levelManager)
         std::optional<ALuint> num = m_audioEngine.
                 loadSoundEffectFromFile(barrelData.m_explosionSoundFile);
         assert(num);
-        audioComp->m_soundElement[0] = AudioElement();
-        audioComp->m_soundElement[0]->setBufferID(*num);
+        audioComp->m_soundElement[0] = std::pair<ALuint, ALuint>();
+        audioComp->m_soundElement[0]->first = m_audioEngine.getSoundSystem()->createSource(*num);
+        audioComp->m_soundElement[0]->second = *num;
         mapComp->m_coord = barrelData.m_TileGamePosition[i];
         mapComp->m_absoluteMapPositionPX = getCenteredAbsolutePosition(mapComp->m_coord);
         circleComp->m_ray = 10.0f;
@@ -2094,4 +2097,12 @@ void MainEngine::linkSystemsToPhysicalEngine()
     input->linkMainEngine(this);
     iaSystem->linkMainEngine(this);
     m_physicalEngine.linkSystems(input, coll, door, iaSystem);
+}
+
+//===================================================================
+void MainEngine::linkSystemsToSoundEngine()
+{
+    SoundSystem *soundSystem = m_ecsManager.getSystemManager().
+            searchSystemByType<SoundSystem>(static_cast<uint32_t>(Systems_e::SOUND_SYSTEM));
+    m_audioEngine.linkSystem(soundSystem);
 }

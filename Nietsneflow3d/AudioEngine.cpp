@@ -51,12 +51,17 @@ void AudioEngine::updateDevices()
 //===================================================================
 void AudioEngine::cleanUpBuffer()
 {
-    if(m_memMusicBuffer)
+    if(m_musicElement)
     {
         // Destruction du tampon
-        alDeleteBuffers(1, &(*m_memMusicBuffer));
-        m_memMusicBuffer = {};
+        alDeleteBuffers(1, &m_musicElement->second);
     }
+    std::map<std::string, ALuint>::const_iterator it = m_mapSoundEffect.begin();
+    for(; it != m_mapSoundEffect.end(); ++it)
+    {
+        alDeleteBuffers(1, &it->second);
+    }
+    m_mapSoundEffect.clear();
 }
 
 //===================================================================
@@ -113,28 +118,44 @@ std::optional<ALuint> AudioEngine::loadBufferFromFile(const std::string &filenam
 //===================================================================
 void AudioEngine::playMusic()
 {
-    m_musicElement.play();
+    if(m_musicElement)
+    {
+        m_soundSystem->play(m_musicElement->first);
+    }
 }
 
 //===================================================================
 void AudioEngine::clear()
 {
-    m_musicElement.cleanUpSourceData();
+    if(m_musicElement)
+    {
+        m_soundSystem->cleanUpSourceData(m_musicElement->first);
+    }
+    m_soundSystem->cleanUp();
+}
+
+//===================================================================
+void AudioEngine::runIteration()
+{
+    m_soundSystem->execSystem();
 }
 
 //===================================================================
 void AudioEngine::loadMusicFromFile(const std::string &filename)
 {
-    if(m_memMusicBuffer)
+    if(m_musicElement)
     {
-        m_musicElement.stop();
+        m_soundSystem->stop(m_musicElement->first);
         cleanUpBuffer();
     }
     std::optional<ALuint> memBuffer = loadBufferFromFile(filename, false);
     if(memBuffer)
     {
-        m_memMusicBuffer = *memBuffer;
-        m_musicElement.setBufferID(*memBuffer);
+        if(m_musicElement)
+        {
+            m_soundSystem->cleanUpSourceData(m_musicElement->first);
+        }
+        m_soundSystem->createSource(*memBuffer);
     }
 }
 

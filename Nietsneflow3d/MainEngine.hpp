@@ -67,6 +67,7 @@ private:
     void confWriteEntities();
     void linkSystemsToGraphicEngine();
     void linkSystemsToPhysicalEngine();
+    void linkSystemsToSoundEngine();
     void loadShotImpactSprite(const std::vector<SpriteData> &vectSpriteData,
                               const PairImpactData_t &shootDisplayData,
                               uint32_t impactEntity);
