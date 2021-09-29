@@ -25,7 +25,6 @@
 #include <ECS/Components/WeaponComponent.hpp>
 #include <ECS/Components/MoveableWallConfComponent.hpp>
 #include <ECS/Components/BarrelComponent.hpp>
-#include <ECS/Components/AudioComponent.hpp>
 #include <ECS/Systems/ColorDisplaySystem.hpp>
 #include <ECS/Systems/MapDisplaySystem.hpp>
 #include <ECS/Systems/CollisionSystem.hpp>
@@ -272,8 +271,12 @@ void MainEngine::setUnsetPaused()
 //===================================================================
 void MainEngine::clearLevel()
 {
-    m_ecsManager.getEngine().RmAllEntity();
+    m_audioEngine.clear();
+    m_physicalEngine.clearSystems();
     m_graphicEngine.clearSystems();
+    m_memTriggerCreated.clear();
+    m_ecsManager.getEngine().RmAllEntity();
+    m_memWall.clear();
 }
 
 //===================================================================
@@ -472,11 +475,6 @@ void MainEngine::loadGraphicPicture(const PictureData &picData, const FontData &
 //===================================================================
 void MainEngine::loadLevel(const LevelManager &levelManager)
 {
-    m_physicalEngine.clearSystems();
-    m_graphicEngine.clearSystems();
-    //OOOOK no sound if exec that before ??
-    m_audioEngine.clear();
-    m_memTriggerCreated.clear();
     loadBackgroundEntities(levelManager.getPictureData().getGroundData(),
                            levelManager.getPictureData().getCeilingData(),
                            levelManager);
@@ -487,7 +485,6 @@ void MainEngine::loadLevel(const LevelManager &levelManager)
     uint32_t weaponEntity = loadWeaponsEntity(levelManager);
     loadPlayerEntity(levelManager, weaponEntity, displayTeleportEntity);
     Level::initLevelElementArray();
-    m_memWall.clear();
     loadWallEntities(levelManager.getWallData(), levelManager.getPictureData().getSpriteData());
     loadMoveableWallEntities(levelManager.getMoveableWallData(), levelManager.getPictureData().getSpriteData());
     loadDoorEntities(levelManager);
@@ -510,6 +507,9 @@ uint32_t MainEngine::loadWeaponsEntity(const LevelManager &levelManager)
             searchComponentByType<MemPositionsVertexComponents>(weaponEntity, Components_e::MEM_POSITIONS_VERTEX_COMPONENT);
     WeaponComponent *weaponComp = m_ecsManager.getComponentManager().
             searchComponentByType<WeaponComponent>(weaponEntity, Components_e::WEAPON_COMPONENT);
+    AudioComponent *audioComp = m_ecsManager.getComponentManager().
+            searchComponentByType<AudioComponent>(weaponEntity, Components_e::AUDIO_COMPONENT);
+    assert(audioComp);
     assert(weaponComp);
     assert(memSprite);
     assert(memPosVertex);
@@ -557,7 +557,10 @@ uint32_t MainEngine::loadWeaponsEntity(const LevelManager &levelManager)
         weaponComp->m_weaponsData[weaponToTreat].m_lastAnimNum = memSprite->m_vectSpriteData.size() + vectWeapons[i].m_lastAnimNum;
         weaponComp->m_weaponsData[weaponToTreat].m_attackType = vectWeapons[i].m_attackType;
         weaponComp->m_weaponsData[weaponToTreat].m_simultaneousShots = vectWeapons[i].m_simultaneousShots;
-
+        if(!vectWeapons[i].m_shotSound.empty())
+        {
+            audioComp->m_soundElements.push_back(loadSound(vectWeapons[i].m_shotSound));
+        }
         weaponComp->m_weaponsData[weaponToTreat].m_damageRay = vectWeapons[i].m_damageCircleRay;
         for(uint32_t j = 0; j < vectWeapons[i].m_spritesData.size(); ++j)
         {
@@ -1205,6 +1208,7 @@ uint32_t MainEngine::createWeaponEntity()
     bitsetComponents[Components_e::MEM_POSITIONS_VERTEX_COMPONENT] = true;
     bitsetComponents[Components_e::TIMER_COMPONENT] = true;
     bitsetComponents[Components_e::WEAPON_COMPONENT] = true;
+    bitsetComponents[Components_e::AUDIO_COMPONENT] = true;
     return m_ecsManager.addEntity(bitsetComponents);
 }
 
@@ -1784,12 +1788,7 @@ void MainEngine::loadBarrelElementEntities(const LevelManager &levelManager)
         assert(circleComp);
         assert(memSpriteComp);
         assert(spriteComp);
-        std::optional<ALuint> num = m_audioEngine.
-                loadSoundEffectFromFile(barrelData.m_explosionSoundFile);
-        assert(num);
-        audioComp->m_soundElement[0] = std::pair<ALuint, ALuint>();
-        audioComp->m_soundElement[0]->first = m_audioEngine.getSoundSystem()->createSource(*num);
-        audioComp->m_soundElement[0]->second = *num;
+        audioComp->m_soundElements.push_back(loadSound(barrelData.m_explosionSoundFile));
         mapComp->m_coord = barrelData.m_TileGamePosition[i];
         mapComp->m_absoluteMapPositionPX = getCenteredAbsolutePosition(mapComp->m_coord);
         circleComp->m_ray = 10.0f;
@@ -1820,6 +1819,14 @@ void MainEngine::loadBarrelElementEntities(const LevelManager &levelManager)
         barrelComp->m_damageZoneEntity = createDamageZoneEntity(15, CollisionTag_e::EXPLOSION_CT, 30.0f);
         timerComp->m_clockA = std::chrono::system_clock::now();
     }
+}
+
+//===================================================================
+SoundElement MainEngine::loadSound(const std::string &file)
+{
+    std::optional<ALuint> num = m_audioEngine.loadSoundEffectFromFile(file);
+    assert(num);
+    return {m_audioEngine.getSoundSystem()->createSource(*num), *num, false};
 }
 
 //===================================================================

@@ -151,6 +151,7 @@ void AudioEngine::clear()
         m_soundSystem->cleanUpSourceData(m_musicElement->first);
     }
     m_soundSystem->cleanUp();
+    cleanUpAllBuffer();
 }
 
 //===================================================================
@@ -165,8 +166,6 @@ void AudioEngine::loadMusicFromFile(const std::string &filename)
     if(m_musicElement)
     {
         m_soundSystem->stop(m_musicElement->first);
-        m_soundSystem->cleanUpSourceData(m_musicElement->first);
-        cleanUpBuffer(m_musicElement->second);
     }
     else
     {

@@ -24,7 +24,7 @@ struct WeaponINIData
     uint32_t m_maxAmmo, m_simultaneousShots, m_lastAnimNum, m_order, m_damage;
     AttackType_e m_attackType;
     AnimationMode_e m_animMode;
-    std::string m_visibleShootID, m_impactID;
+    std::string m_visibleShootID, m_impactID, m_shotSound;
     float m_animationLatency, m_shotVelocity;
     bool m_startingPossess;
     std::optional<float> m_damageCircleRay;

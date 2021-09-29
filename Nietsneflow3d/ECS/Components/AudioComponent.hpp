@@ -2,11 +2,16 @@
 
 #include <BaseECS/component.hpp>
 #include <constants.hpp>
-#include <array>
+#include <vector>
 #include <optional>
-#include <bitset>
 
 typedef unsigned int ALuint;
+
+struct SoundElement
+{
+    ALuint m_sourceALID, m_bufferALID;
+    bool m_toPlay;
+};
 
 struct AudioComponent : public ecs::Component
 {
@@ -14,7 +19,5 @@ struct AudioComponent : public ecs::Component
     {
         muiTypeComponent = Components_e::AUDIO_COMPONENT;
     }
-    //first source second buffer
-    std::array<std::optional<std::pair<ALuint, ALuint>>, 3> m_soundElement;
-    std::bitset<3> m_elementToPlay;
+    std::vector<SoundElement> m_soundElements;
 };

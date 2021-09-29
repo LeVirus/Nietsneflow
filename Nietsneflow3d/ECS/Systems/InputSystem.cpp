@@ -7,6 +7,7 @@
 #include <ECS/Components/PlayerConfComponent.hpp>
 #include <ECS/Components/WriteComponent.hpp>
 #include <ECS/Components/GeneralCollisionComponent.hpp>
+#include <ECS/Components/AudioComponent.hpp>
 #include <ECS/Components/WeaponComponent.hpp>
 #include "PhysicalEngine.hpp"
 #include <MainEngine.hpp>
@@ -113,6 +114,10 @@ void InputSystem::treatPlayerInput()
                         weaponComp->m_weaponsData[weaponComp->m_currentWeapon].m_ammunationsCount > 0)
                 {
                     playerComp->m_playerShoot = true;
+                    AudioComponent *audioComp = stairwayToComponentManager().
+                            searchComponentByType<AudioComponent>(playerComp->m_weaponEntity, Components_e::AUDIO_COMPONENT);
+                    assert(audioComp);
+                    audioComp->m_soundElements[0].m_toPlay = true;
                     m_mainEngine->playerAttack(mVectNumEntity[i], playerComp, mapComp->m_absoluteMapPositionPX,
                                                moveComp->m_degreeOrientation);
                     if(weaponComp->m_weaponsData[weaponComp->m_currentWeapon].m_ammunationsCount == 0)

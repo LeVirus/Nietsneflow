@@ -5,6 +5,7 @@
 #include <AudioEngine.hpp>
 #include <ECS/ECSManager.hpp>
 #include <Level.hpp>
+#include <ECS/Components/AudioComponent.hpp>
 
 struct MemSpriteData;
 struct WallData;
@@ -93,6 +94,7 @@ private:
     void confVisibleAmmo(uint32_t ammoEntity);
     void loadStaticElementEntities(const LevelManager &levelManager);
     void loadBarrelElementEntities(const LevelManager &levelManager);
+    SoundElement loadSound(const std::string &file);
     uint32_t loadDisplayTeleportEntity(const LevelManager &levelManager);
     void loadStaticElementGroup(const std::vector<SpriteData> &vectSpriteData, const std::map<std::string, StaticLevelElementData> &staticData,
                                 LevelStaticElementType_e elementType);

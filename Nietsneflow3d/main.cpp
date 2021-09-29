@@ -20,5 +20,6 @@ int main()
         }
         game.clearLevel();
     }
+    game.clearLevel();
     return 0;
 }

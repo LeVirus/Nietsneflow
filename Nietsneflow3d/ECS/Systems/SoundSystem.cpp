@@ -24,13 +24,12 @@ void SoundSystem::execSystem()
                 searchComponentByType<AudioComponent>(mVectNumEntity[i],
                                                       Components_e::AUDIO_COMPONENT);
         assert(audioComp);
-        for(uint32_t j = 0; j < audioComp->m_elementToPlay.size(); ++j)
+        for(uint32_t j = 0; j < audioComp->m_soundElements.size(); ++j)
         {
-            if(audioComp->m_elementToPlay[j])
+            if(audioComp->m_soundElements[j].m_toPlay)
             {
-                assert(audioComp->m_soundElement[j]);
-                play(audioComp->m_soundElement[j]->first);
-                audioComp->m_elementToPlay[j] = false;
+                play(audioComp->m_soundElements[j].m_sourceALID);
+                audioComp->m_soundElements[j].m_toPlay = false;
             }
         }
     }
@@ -51,12 +50,9 @@ void SoundSystem::cleanUp()
                 searchComponentByType<AudioComponent>(mVectNumEntity[i],
                                                       Components_e::AUDIO_COMPONENT);
         assert(audioComp);
-        for(uint32_t j = 0; j < audioComp->m_soundElement.size(); ++j)
+        for(uint32_t j = 0; j < audioComp->m_soundElements.size(); ++j)
         {
-            if(audioComp->m_soundElement[j])
-            {
-                cleanUpSourceData(audioComp->m_soundElement[j]->first);
-            }
+            cleanUpSourceData(audioComp->m_soundElements[j].m_sourceALID);
         }
     }
     mVectNumEntity.clear();
