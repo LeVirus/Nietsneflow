@@ -16,7 +16,7 @@ AudioEngine::AudioEngine()
 //===================================================================
 AudioEngine::~AudioEngine()
 {
-    cleanUpBuffer();
+    cleanUpAllBuffer();
     shutdownOpenAL();
 }
 
@@ -49,7 +49,7 @@ void AudioEngine::updateDevices()
 }
 
 //===================================================================
-void AudioEngine::cleanUpBuffer()
+void AudioEngine::cleanUpAllBuffer()
 {
     if(m_musicElement)
     {
@@ -65,10 +65,16 @@ void AudioEngine::cleanUpBuffer()
 }
 
 //===================================================================
-std::optional<ALuint> AudioEngine::loadBufferFromFile(const std::string &filename,
-                                                      bool soudEffect)
+void AudioEngine::cleanUpBuffer(ALuint buffer)
 {
-    std::string bufferFile = (soudEffect) ?
+    alDeleteBuffers(1, &buffer);
+}
+
+//===================================================================
+std::optional<ALuint> AudioEngine::loadBufferFromFile(const std::string &filename,
+                                                      bool soundEffect)
+{
+    std::string bufferFile = (soundEffect) ?
                 LEVEL_RESSOURCES_DIR_STR + "Audio/SoundEffect/" + filename :
                 LEVEL_RESSOURCES_DIR_STR + "Audio/Music/" + filename;
     SF_INFO fileInfos;
@@ -107,8 +113,21 @@ std::optional<ALuint> AudioEngine::loadBufferFromFile(const std::string &filenam
     alBufferData(memMusicBuffer, format, &samples[0],
             nbSamples * sizeof(ALushort), sampleRate);
     // Vérification des erreurs
-    if(alGetError() != AL_NO_ERROR)
+    ALenum vv = alGetError();
+    if(vv != AL_NO_ERROR)
     {
+        switch (vv)
+        {
+        case AL_OUT_OF_MEMORY:
+            std::cout << "AL_OUT_OF_MEMORY ";
+            break;
+        case AL_INVALID_OPERATION:
+            std::cout << "AL_INVALID_OPERATION ";
+            break;
+        case AL_INVALID_VALUE:
+            std::cout << "AL_INVALID_VALUE ";
+            break;
+        }
         std::cout << "ERROR on BUFFER LOADING\n";
         return {};
     }
@@ -146,16 +165,18 @@ void AudioEngine::loadMusicFromFile(const std::string &filename)
     if(m_musicElement)
     {
         m_soundSystem->stop(m_musicElement->first);
-        cleanUpBuffer();
+        m_soundSystem->cleanUpSourceData(m_musicElement->first);
+        cleanUpBuffer(m_musicElement->second);
+    }
+    else
+    {
+        m_musicElement = std::pair<ALuint, ALuint>();
     }
     std::optional<ALuint> memBuffer = loadBufferFromFile(filename, false);
     if(memBuffer)
     {
-        if(m_musicElement)
-        {
-            m_soundSystem->cleanUpSourceData(m_musicElement->first);
-        }
-        m_soundSystem->createSource(*memBuffer);
+        m_musicElement->second = *memBuffer;
+        m_musicElement->first = m_soundSystem->createSource(*memBuffer);
     }
 }
 
