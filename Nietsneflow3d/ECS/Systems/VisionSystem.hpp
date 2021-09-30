@@ -29,7 +29,7 @@ public:
     }
 private:
     EnemySpriteType_e getOrientationFromAngle(uint32_t observerEntity, uint32_t targetEntity,
-                                     float targetDegreeAngle);
+                                              float targetDegreeAngle);
     void setUsedComponents();
     void treatVisible(VisionComponent *visionComp, MoveableComponent *moveCompA,
                       uint32_t numEntity);

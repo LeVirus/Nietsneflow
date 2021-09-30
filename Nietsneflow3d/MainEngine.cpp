@@ -516,6 +516,7 @@ uint32_t MainEngine::loadWeaponsEntity(const LevelManager &levelManager)
     std::vector<bool> checkBitset(vectWeapons.size());
     std::fill(checkBitset.begin(), checkBitset.end(), false);
     weaponComp->m_weaponsData.resize(vectWeapons.size());
+    audioComp->m_soundElements.resize(vectWeapons.size());
     for(uint32_t i = 0; i < weaponComp->m_weaponsData.size(); ++i)
     {
         assert(vectWeapons[i].m_order < checkBitset.size());
@@ -559,7 +560,13 @@ uint32_t MainEngine::loadWeaponsEntity(const LevelManager &levelManager)
         weaponComp->m_weaponsData[weaponToTreat].m_simultaneousShots = vectWeapons[i].m_simultaneousShots;
         if(!vectWeapons[i].m_shotSound.empty())
         {
-            audioComp->m_soundElements.push_back(loadSound(vectWeapons[i].m_shotSound));
+            audioComp->m_soundElements[weaponToTreat] = loadSound(vectWeapons[i].m_shotSound);
+        }
+        if(!vectWeapons[i].m_reloadSound.empty())
+        {
+            weaponComp->m_reloadSoundAssociated.insert({weaponToTreat,
+                                                       audioComp->m_soundElements.size()});
+            audioComp->m_soundElements.push_back(loadSound(vectWeapons[i].m_reloadSound));
         }
         weaponComp->m_weaponsData[weaponToTreat].m_damageRay = vectWeapons[i].m_damageCircleRay;
         for(uint32_t j = 0; j < vectWeapons[i].m_spritesData.size(); ++j)

@@ -737,6 +737,7 @@ void LevelManager::loadWeaponData(const INIReader &reader, std::string_view sect
     m_vectWeaponsINIData[numIt].m_attackType = static_cast<AttackType_e>(
                 reader.GetInteger(sectionName.data(), "AttackType", 1));
     m_vectWeaponsINIData[numIt].m_shotSound = reader.Get(sectionName.data(), "SoundEffect", "");
+    m_vectWeaponsINIData[numIt].m_reloadSound = reader.Get(sectionName.data(), "ReloadSound", "");
     if(m_vectWeaponsINIData[numIt].m_attackType == AttackType_e::VISIBLE_SHOTS)
     {
         m_vectWeaponsINIData[numIt].m_visibleShootID = reader.Get(sectionName.data(), "ShootSpritesID", "");

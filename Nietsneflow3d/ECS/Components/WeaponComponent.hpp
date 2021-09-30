@@ -27,6 +27,7 @@ struct WeaponComponent : public ecs::Component
     {
         return m_weaponsData[m_currentWeapon].m_memPosSprite.first;
     }
+    std::map<uint32_t, uint32_t> m_reloadSoundAssociated;
     std::vector<WeaponData> m_weaponsData;
     uint32_t m_numWeaponSprite, m_currentWeapon = 10000, m_previousWeapon;
     PairFloat_t m_currentWeaponMove = {-0.02f, -0.01f};

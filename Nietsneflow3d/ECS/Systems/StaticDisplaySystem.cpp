@@ -7,6 +7,7 @@
 #include <ECS/Components/TimerComponent.hpp>
 #include <ECS/Components/WriteComponent.hpp>
 #include <ECS/Components/WeaponComponent.hpp>
+#include <ECS/Components/AudioComponent.hpp>
 #include <cassert>
 
 
@@ -254,6 +255,14 @@ void StaticDisplaySystem::treatWeaponShootAnimation(float elapsedSeconds,
             }
             else
             {
+                if(weaponComp->m_numWeaponSprite == currentWeapon.m_memPosSprite.first + 2)
+                {
+                    AudioComponent *audioComp = stairwayToComponentManager().
+                            searchComponentByType<AudioComponent>(playerComp->m_weaponEntity, Components_e::AUDIO_COMPONENT);
+                    assert(audioComp);
+                    audioComp->m_soundElements[weaponComp->m_reloadSoundAssociated[
+                            weaponComp->m_currentWeapon]].m_toPlay = true;
+                }
                 ++weaponComp->m_numWeaponSprite;
             }
         }
