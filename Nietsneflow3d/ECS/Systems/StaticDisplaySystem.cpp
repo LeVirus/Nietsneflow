@@ -261,7 +261,7 @@ void StaticDisplaySystem::treatWeaponShootAnimation(float elapsedSeconds,
                             searchComponentByType<AudioComponent>(playerComp->m_weaponEntity, Components_e::AUDIO_COMPONENT);
                     assert(audioComp);
                     audioComp->m_soundElements[weaponComp->m_reloadSoundAssociated[
-                            weaponComp->m_currentWeapon]].m_toPlay = true;
+                            weaponComp->m_currentWeapon]]->m_toPlay = true;
                 }
                 ++weaponComp->m_numWeaponSprite;
             }

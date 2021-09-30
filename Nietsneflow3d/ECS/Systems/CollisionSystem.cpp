@@ -262,7 +262,7 @@ void CollisionSystem::treatBarrelShots(uint32_t entityNum, uint32_t damage)
         AudioComponent *audioComp = stairwayToComponentManager().
                 searchComponentByType<AudioComponent>(entityNum, Components_e::AUDIO_COMPONENT);
         assert(audioComp);
-        audioComp->m_soundElements[0].m_toPlay = true;
+        audioComp->m_soundElements[0]->m_toPlay = true;
     }
     else
     {

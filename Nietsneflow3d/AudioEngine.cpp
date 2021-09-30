@@ -54,12 +54,12 @@ void AudioEngine::cleanUpAllBuffer()
     if(m_musicElement)
     {
         // Destruction du tampon
-        alDeleteBuffers(1, &m_musicElement->second);
+        cleanUpBuffer(m_musicElement->second);
     }
     std::map<std::string, ALuint>::const_iterator it = m_mapSoundEffect.begin();
     for(; it != m_mapSoundEffect.end(); ++it)
     {
-        alDeleteBuffers(1, &it->second);
+        cleanUpBuffer(it->second);
     }
     m_mapSoundEffect.clear();
 }
@@ -119,13 +119,19 @@ std::optional<ALuint> AudioEngine::loadBufferFromFile(const std::string &filenam
         switch (vv)
         {
         case AL_OUT_OF_MEMORY:
-            std::cout << "AL_OUT_OF_MEMORY ";
+            std::cout << "AL_OUT_OF_MEMORY: the requested operation resulted in OpenAL running out of memory ";
             break;
         case AL_INVALID_OPERATION:
-            std::cout << "AL_INVALID_OPERATION ";
+            std::cout << "AL_INVALID_OPERATION: the requested operation is not valid ";
             break;
         case AL_INVALID_VALUE:
-            std::cout << "AL_INVALID_VALUE ";
+            std::cout << "AL_INVALID_VALUE: an invalid value was passed to an OpenAL function ";
+            break;
+        case AL_INVALID_NAME:
+            std::cout << "AL_INVALID_NAME : a bad name (ID) was passed to an OpenAL function ";
+            break;
+        case AL_INVALID_ENUM:
+            std::cout << "AL_INVALID_ENUM: an invalid enum value was passed to an OpenAL function ";
             break;
         }
         std::cout << "ERROR on BUFFER LOADING\n";

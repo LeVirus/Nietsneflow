@@ -19,5 +19,5 @@ struct AudioComponent : public ecs::Component
     {
         muiTypeComponent = Components_e::AUDIO_COMPONENT;
     }
-    std::vector<SoundElement> m_soundElements;
+    std::vector<std::optional<SoundElement>> m_soundElements;
 };

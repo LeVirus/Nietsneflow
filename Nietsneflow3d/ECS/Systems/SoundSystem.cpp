@@ -26,10 +26,10 @@ void SoundSystem::execSystem()
         assert(audioComp);
         for(uint32_t j = 0; j < audioComp->m_soundElements.size(); ++j)
         {
-            if(audioComp->m_soundElements[j].m_toPlay)
+            if(audioComp->m_soundElements[j] && audioComp->m_soundElements[j]->m_toPlay)
             {
-                play(audioComp->m_soundElements[j].m_sourceALID);
-                audioComp->m_soundElements[j].m_toPlay = false;
+                play(audioComp->m_soundElements[j]->m_sourceALID);
+                audioComp->m_soundElements[j]->m_toPlay = false;
             }
         }
     }
@@ -52,7 +52,10 @@ void SoundSystem::cleanUp()
         assert(audioComp);
         for(uint32_t j = 0; j < audioComp->m_soundElements.size(); ++j)
         {
-            cleanUpSourceData(audioComp->m_soundElements[j].m_sourceALID);
+            if(audioComp->m_soundElements[j])
+            {
+                cleanUpSourceData(audioComp->m_soundElements[j]->m_sourceALID);
+            }
         }
     }
     mVectNumEntity.clear();
