@@ -6,6 +6,7 @@
 #include <constants.hpp>
 #include <string.h>
 #include <iostream>
+#include <algorithm>
 
 //===================================================================
 AudioEngine::AudioEngine()
@@ -51,15 +52,9 @@ void AudioEngine::updateDevices()
 //===================================================================
 void AudioEngine::cleanUpAllBuffer()
 {
-    if(m_musicElement)
+    while(!m_vectMemBufferALID.empty())
     {
-        // Destruction du tampon
-        cleanUpBuffer(m_musicElement->second);
-    }
-    std::map<std::string, ALuint>::const_iterator it = m_mapSoundEffect.begin();
-    for(; it != m_mapSoundEffect.end(); ++it)
-    {
-        cleanUpBuffer(it->second);
+        cleanUpBuffer(m_vectMemBufferALID[0]);
     }
     m_mapSoundEffect.clear();
 }
@@ -67,6 +62,10 @@ void AudioEngine::cleanUpAllBuffer()
 //===================================================================
 void AudioEngine::cleanUpBuffer(ALuint buffer)
 {
+    std::vector<ALuint>::iterator it = std::find(m_vectMemBufferALID.begin(),
+                                                 m_vectMemBufferALID.end(), buffer);
+    assert(it != m_vectMemBufferALID.end());
+    m_vectMemBufferALID.erase(it);
     alDeleteBuffers(1, &buffer);
 }
 
@@ -109,32 +108,20 @@ std::optional<ALuint> AudioEngine::loadBufferFromFile(const std::string &filenam
     ALuint memMusicBuffer;
     // Création du tampon OpenAL
     alGenBuffers(1, &memMusicBuffer);
+    ALenum error = alGetError();
+    if(error != AL_NO_ERROR)
+    {
+        printALError(error);
+    }
+    assert(error == AL_NO_ERROR);
     // Remplissage avec les échantillons lus
     alBufferData(memMusicBuffer, format, &samples[0],
             nbSamples * sizeof(ALushort), sampleRate);
     // Vérification des erreurs
-    ALenum vv = alGetError();
-    if(vv != AL_NO_ERROR)
+    error = alGetError();
+    if(error != AL_NO_ERROR)
     {
-        switch (vv)
-        {
-        case AL_OUT_OF_MEMORY:
-            std::cout << "AL_OUT_OF_MEMORY: the requested operation resulted in OpenAL running out of memory ";
-            break;
-        case AL_INVALID_OPERATION:
-            std::cout << "AL_INVALID_OPERATION: the requested operation is not valid ";
-            break;
-        case AL_INVALID_VALUE:
-            std::cout << "AL_INVALID_VALUE: an invalid value was passed to an OpenAL function ";
-            break;
-        case AL_INVALID_NAME:
-            std::cout << "AL_INVALID_NAME : a bad name (ID) was passed to an OpenAL function ";
-            break;
-        case AL_INVALID_ENUM:
-            std::cout << "AL_INVALID_ENUM: an invalid enum value was passed to an OpenAL function ";
-            break;
-        }
-        std::cout << "ERROR on BUFFER LOADING\n";
+        printALError(error);
         return {};
     }
     return memMusicBuffer;
@@ -143,19 +130,12 @@ std::optional<ALuint> AudioEngine::loadBufferFromFile(const std::string &filenam
 //===================================================================
 void AudioEngine::playMusic()
 {
-    if(m_musicElement)
-    {
-        m_soundSystem->play(m_musicElement->first);
-    }
+    m_soundSystem->play(m_musicElement.first);
 }
 
 //===================================================================
-void AudioEngine::clear()
+void AudioEngine::clearSourceAndBuffer()
 {
-    if(m_musicElement)
-    {
-        m_soundSystem->cleanUpSourceData(m_musicElement->first);
-    }
     m_soundSystem->cleanUp();
     cleanUpAllBuffer();
 }
@@ -169,19 +149,11 @@ void AudioEngine::runIteration()
 //===================================================================
 void AudioEngine::loadMusicFromFile(const std::string &filename)
 {
-    if(m_musicElement)
-    {
-        m_soundSystem->stop(m_musicElement->first);
-    }
-    else
-    {
-        m_musicElement = std::pair<ALuint, ALuint>();
-    }
     std::optional<ALuint> memBuffer = loadBufferFromFile(filename, false);
     if(memBuffer)
     {
-        m_musicElement->second = *memBuffer;
-        m_musicElement->first = m_soundSystem->createSource(*memBuffer);
+        m_musicElement.second = *memBuffer;
+        m_musicElement.first = m_soundSystem->createSource(*memBuffer);
     }
 }
 
@@ -196,6 +168,7 @@ std::optional<ALuint> AudioEngine::loadSoundEffectFromFile(const std::string &fi
     std::optional<ALuint> memBuffer = loadBufferFromFile(filename, true);
     if(memBuffer)
     {
+        m_vectMemBufferALID.push_back(*memBuffer);
         m_mapSoundEffect.insert({filename, *memBuffer});
         return memBuffer;
     }
@@ -208,4 +181,28 @@ void AudioEngine::shutdownOpenAL()
     alcMakeContextCurrent(nullptr);
     alcDestroyContext(m_context);
     alcCloseDevice(m_device);
+}
+
+//===================================================================
+void printALError(ALenum error)
+{
+    switch (error)
+    {
+    case AL_OUT_OF_MEMORY:
+        std::cout << "AL_OUT_OF_MEMORY: the requested operation resulted in OpenAL running out of memory ";
+        break;
+    case AL_INVALID_OPERATION:
+        std::cout << "AL_INVALID_OPERATION: the requested operation is not valid ";
+        break;
+    case AL_INVALID_VALUE:
+        std::cout << "AL_INVALID_VALUE: an invalid value was passed to an OpenAL function ";
+        break;
+    case AL_INVALID_NAME:
+        std::cout << "AL_INVALID_NAME : a bad name (ID) was passed to an OpenAL function ";
+        break;
+    case AL_INVALID_ENUM:
+        std::cout << "AL_INVALID_ENUM: an invalid enum value was passed to an OpenAL function ";
+        break;
+    }
+    std::cout << "ERROR on BUFFER LOADING\n";
 }

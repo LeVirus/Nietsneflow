@@ -271,7 +271,7 @@ void MainEngine::setUnsetPaused()
 //===================================================================
 void MainEngine::clearLevel()
 {
-    m_audioEngine.clear();
+    m_audioEngine.clearSourceAndBuffer();
     m_physicalEngine.clearSystems();
     m_graphicEngine.clearSystems();
     m_memTriggerCreated.clear();
@@ -1150,20 +1150,25 @@ void MainEngine::loadVisibleShotData(const std::vector<SpriteData> &vectSprite, 
         MemFPSGLSizeComponent *memFPSGLSizeComp = m_ecsManager.getComponentManager().
                 searchComponentByType<MemFPSGLSizeComponent>(
                     visibleAmmo[k], Components_e::MEM_FPS_GLSIZE_COMPONENT);
+        AudioComponent *audioComp = m_ecsManager.getComponentManager().
+                searchComponentByType<AudioComponent>(
+                    visibleAmmo[k], Components_e::AUDIO_COMPONENT);
+        assert(audioComp);
         assert(memFPSGLSizeComp);
         assert(fpsStaticComp);
         assert(spriteComp);
         assert(memSpriteComp);
         MapVisibleShotData_t::const_iterator it = visibleShot.find(visibleShootID);
         assert(it != visibleShot.end());
-        memSpriteComp->m_vectSpriteData.reserve(it->second.size());
-        memFPSGLSizeComp->m_memGLSizeData.reserve(it->second.size());
-        for(uint32_t l = 0; l < it->second.size(); ++l)
+        audioComp->m_soundElements.push_back(loadSound(it->second.first));
+        memSpriteComp->m_vectSpriteData.reserve(it->second.second.size());
+        memFPSGLSizeComp->m_memGLSizeData.reserve(it->second.second.size());
+        for(uint32_t l = 0; l < it->second.second.size(); ++l)
         {
-            memSpriteComp->m_vectSpriteData.emplace_back(&vectSprite[it->second[l].m_numSprite]);
-            memFPSGLSizeComp->m_memGLSizeData.emplace_back(it->second[l].m_GLSize);
+            memSpriteComp->m_vectSpriteData.emplace_back(&vectSprite[it->second.second[l].m_numSprite]);
+            memFPSGLSizeComp->m_memGLSizeData.emplace_back(it->second.second[l].m_GLSize);
         }
-        fpsStaticComp->m_inGameSpriteSize = it->second[0].m_GLSize;
+        fpsStaticComp->m_inGameSpriteSize = it->second.second[0].m_GLSize;
         spriteComp->m_spriteData = memSpriteComp->m_vectSpriteData[0];
     }
 }
@@ -1304,6 +1309,7 @@ uint32_t MainEngine::createVisibleShotEntity()
 {
     std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComponents;
     bitsetComponents[Components_e::CIRCLE_COLLISION_COMPONENT] = true;
+    bitsetComponents[Components_e::AUDIO_COMPONENT] = true;
     bitsetComponents[Components_e::GENERAL_COLLISION_COMPONENT] = true;
     bitsetComponents[Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT] = true;
     bitsetComponents[Components_e::SPRITE_TEXTURE_COMPONENT] = true;

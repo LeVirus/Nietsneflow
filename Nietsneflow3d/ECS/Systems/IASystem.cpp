@@ -28,7 +28,7 @@
 #include "MainEngine.hpp"
 
 //===================================================================
-IASystem::IASystem(const ECSManager* memECSManager) : m_memECSManager(memECSManager)
+IASystem::IASystem(ECSManager* memECSManager) : m_memECSManager(memECSManager)
 {
     std::srand(std::time(nullptr));
     bAddComponentToSystem(Components_e::ENEMY_CONF_COMPONENT);
@@ -383,6 +383,14 @@ void IASystem::confNewVisibleShot(const std::vector<uint32_t> &visibleShots)
     MemFPSGLSizeComponent *memFPSGLSizeCompTarget = stairwayToComponentManager().
             searchComponentByType<MemFPSGLSizeComponent>(visibleShots[targetIndex],
                                                      Components_e::MEM_FPS_GLSIZE_COMPONENT);
+    AudioComponent *audioCompTarget = stairwayToComponentManager().
+            searchComponentByType<AudioComponent>(visibleShots[targetIndex],
+                                                  Components_e::AUDIO_COMPONENT);
+    AudioComponent *audioCompBase = stairwayToComponentManager().
+            searchComponentByType<AudioComponent>(visibleShots[baseIndex],
+                                                  Components_e::AUDIO_COMPONENT);
+    assert(audioCompBase);
+    assert(audioCompTarget);
     assert(memFPSGLSizeCompBase);
     assert(memFPSGLSizeCompTarget);
     assert(baseMoveComp);
@@ -395,6 +403,13 @@ void IASystem::confNewVisibleShot(const std::vector<uint32_t> &visibleShots)
     assert(targetSpriteComp);
     assert(targetMemSpriteComp);
     assert(targetFpsStaticComp);
+    audioCompTarget->m_soundElements.push_back(SoundElement());
+    audioCompTarget->m_soundElements[0]->m_toPlay = true;
+    audioCompTarget->m_soundElements[0]->m_bufferALID = audioCompBase->m_soundElements[0]->m_bufferALID;
+    audioCompTarget->m_soundElements[0]->m_sourceALID =
+            mptrSystemManager->searchSystemByType<SoundSystem>(
+                static_cast<uint32_t>(Systems_e::SOUND_SYSTEM))->
+            createSource(audioCompBase->m_soundElements[0]->m_bufferALID);
     memFPSGLSizeCompTarget->m_memGLSizeData = memFPSGLSizeCompBase->m_memGLSizeData;
     targetMemSpriteComp->m_vectSpriteData = baseMemSpriteComp->m_vectSpriteData;
     targetSpriteComp->m_spriteData = targetMemSpriteComp->m_vectSpriteData[0];

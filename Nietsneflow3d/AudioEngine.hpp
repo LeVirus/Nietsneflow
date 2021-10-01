@@ -4,6 +4,7 @@ typedef struct ALCdevice_struct ALCdevice;
 typedef struct ALCcontext_struct ALCcontext;
 typedef	struct SNDFILE_tag	SNDFILE;
 typedef unsigned int ALuint;
+typedef int ALenum;
 
 #include <vector>
 #include <map>
@@ -19,7 +20,7 @@ public:
     void initOpenAL();
     void shutdownOpenAL();
     void playMusic();
-    void clear();
+    void clearSourceAndBuffer();
     void runIteration();
     void loadMusicFromFile(const std::string &filename);
     std::optional<ALuint> loadSoundEffectFromFile(const std::string &filename);
@@ -40,8 +41,11 @@ private:
     ALCdevice *m_device;
     ALCcontext *m_context;
     std::vector<std::string> m_vectDevices;
+    std::vector<ALuint> m_vectMemBufferALID;
     std::map<std::string, ALuint> m_mapSoundEffect;
     //first = source, second = buffer
-    std::optional<std::pair<ALuint, ALuint>> m_musicElement;
+    std::pair<ALuint, ALuint> m_musicElement;
     SoundSystem *m_soundSystem = nullptr;
 };
+
+void printALError(ALenum error);

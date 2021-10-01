@@ -633,7 +633,7 @@ void LevelManager::loadVisibleShotDisplayData(const INIReader &reader)
     {
         return;
     }
-    std::string sprites, weight, height;
+    std::string sprites, weight, height, impactSound;
     vectStr_t vectSprites;
     std::vector<float> vectWeight, vectHeight;
     for(uint32_t i = 0; i < vectINISections.size(); ++i)
@@ -646,10 +646,13 @@ void LevelManager::loadVisibleShotDisplayData(const INIReader &reader)
         vectSprites = convertStrToVectStr(sprites);
         assert(vectWeight.size() == vectHeight.size());
         assert(vectSprites.size() == vectHeight.size());
-        m_visibleShootINIData.insert({vectINISections[i], std::vector<MemSpriteData>()});
+        impactSound = reader.Get(vectINISections[i], "ImpactSound", "");
+        assert(!impactSound.empty());
+        m_visibleShootINIData.insert({vectINISections[i],
+                                      {impactSound, std::vector<MemSpriteData>()}});
         for(uint32_t j = 0; j < vectSprites.size(); ++j)
         {
-            m_visibleShootINIData[vectINISections[i]].emplace_back(
+            m_visibleShootINIData[vectINISections[i]].second.emplace_back(
                         MemSpriteData{*m_pictureData.getIdentifier(vectSprites[j]), {vectWeight[j], vectHeight[j]}});
         }
     }

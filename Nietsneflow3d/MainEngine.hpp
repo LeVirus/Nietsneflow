@@ -12,11 +12,11 @@ struct WallData;
 struct MoveableWallData;
 struct AssociatedTriggerData;
 
-using MapVisibleShotData_t = std::map<std::string, std::vector<MemSpriteData>>;
 using mapEnemySprite_t = std::map<EnemySpriteType_e, PairUI_t>;
 using mapUiVectUI_t = std::map<uint32_t, std::vector<uint32_t>>;
 using PairImpactData_t = std::pair<std::vector<MemSpriteData>, MemSpriteData>;
 using MapImpactData_t = std::map<std::string, PairImpactData_t>;
+using MapVisibleShotData_t = std::map<std::string, std::pair<std::string ,std::vector<MemSpriteData>>>;
 
 class LevelManager;
 class Level;

@@ -13,7 +13,7 @@ class ECSManager;
 class IASystem : public ecs::System
 {
 public:
-    IASystem(const ECSManager *memECSManager);
+    IASystem(ECSManager *memECSManager);
     void execSystem()override;
     void memPlayerDatas(uint32_t playerEntity);
     void confVisibleShoot(std::vector<uint32_t> &visibleShots, const PairFloat_t &point, float degreeAngle, CollisionTag_e tag);
@@ -38,6 +38,6 @@ private:
     float m_distanceEnemyBehaviour = LEVEL_TILE_SIZE_PX * 15.0f;
     MainEngine *m_mainEngine;
     std::vector<uint32_t> m_vectMoveableEntities;
-    const ECSManager *m_memECSManager;
+    ECSManager *m_memECSManager;
 };
 

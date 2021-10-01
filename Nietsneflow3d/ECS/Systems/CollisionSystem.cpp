@@ -637,6 +637,12 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
             TimerComponent *timerComp = stairwayToComponentManager().
                     searchComponentByType<TimerComponent>(args.entityNumA, Components_e::TIMER_COMPONENT);
             assert(timerComp);
+            AudioComponent *audioComp = stairwayToComponentManager().
+                    searchComponentByType<AudioComponent>(args.entityNumA, Components_e::AUDIO_COMPONENT);
+            assert(audioComp);
+            assert(!audioComp->m_soundElements.empty());
+            assert(audioComp->m_soundElements[0]);
+            audioComp->m_soundElements[0]->m_toPlay = true;
             timerComp->m_clockB = std::chrono::system_clock::now();
             shotConfComp->m_destructPhase = true;
             shotConfComp->m_spriteShotNum = 1;

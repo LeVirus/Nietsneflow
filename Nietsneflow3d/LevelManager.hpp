@@ -14,7 +14,7 @@ struct MemSpriteData
     PairFloat_t m_GLSize;
 };
 
-using MapVisibleShotData_t = std::map<std::string, std::vector<MemSpriteData>>;
+using MapVisibleShotData_t = std::map<std::string, std::pair<std::string ,std::vector<MemSpriteData>>>;
 using PairImpactData_t = std::pair<std::vector<MemSpriteData>, MemSpriteData>;
 using MapImpactData_t = std::map<std::string, PairImpactData_t>;
 

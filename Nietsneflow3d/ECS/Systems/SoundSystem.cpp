@@ -4,6 +4,7 @@
 #include <AL/alc.h>
 #include <cassert>
 #include "sndfile.h"
+#include <algorithm>
 
 //===================================================================
 SoundSystem::SoundSystem()
@@ -14,10 +15,7 @@ SoundSystem::SoundSystem()
 //===================================================================
 void SoundSystem::execSystem()
 {
-    if(mVectNumEntity.empty())
-    {
-        System::execSystem();
-    }
+    System::execSystem();
     for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
     {
         AudioComponent *audioComp = stairwayToComponentManager().
@@ -44,19 +42,9 @@ SoundSystem::~SoundSystem()
 //===================================================================
 void SoundSystem::cleanUp()
 {
-    for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
+    while(!m_vectSource.empty())
     {
-        AudioComponent *audioComp = stairwayToComponentManager().
-                searchComponentByType<AudioComponent>(mVectNumEntity[i],
-                                                      Components_e::AUDIO_COMPONENT);
-        assert(audioComp);
-        for(uint32_t j = 0; j < audioComp->m_soundElements.size(); ++j)
-        {
-            if(audioComp->m_soundElements[j])
-            {
-                cleanUpSourceData(audioComp->m_soundElements[j]->m_sourceALID);
-            }
-        }
+        cleanUpSourceData(m_vectSource[0]);
     }
     mVectNumEntity.clear();
 }
@@ -81,12 +69,17 @@ ALuint SoundSystem::createSource(ALuint memSoundBuffer)
     alGenSources(1, &source);
     // On attache le tampon contenant les échantillons audio à la source
     alSourcei(source, AL_BUFFER, memSoundBuffer);
+    m_vectSource.push_back(source);
     return source;
 }
 
 //===================================================================
 void SoundSystem::cleanUpSourceData(ALuint source)
 {
+    std::vector<ALuint>::iterator it = std::find(m_vectSource.begin(),
+                                                 m_vectSource.end(), source);
+    assert(it != m_vectSource.end());
+    m_vectSource.erase(it);
     stop(source);
     // Destruction de la source
     alSourcei(source, AL_BUFFER, 0);
