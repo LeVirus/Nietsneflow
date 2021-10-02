@@ -7,6 +7,7 @@ Audio Engine
 	Door==================OK
 	Enemy (attack & normal)
 	Object Pick up==================OK
+	Teleporter
 
 ))
 CREATE CONF MENU

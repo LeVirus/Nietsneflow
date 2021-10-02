@@ -967,7 +967,7 @@ void LevelManager::loadPositionEnemyData(const INIReader &reader)
 void LevelManager::loadUtilsData(const INIReader &reader)
 {
     std::vector<std::string> vectINISections;
-    vectINISections = reader.getSectionNamesContaining("Utils");
+    vectINISections = reader.getSectionNamesContaining("GraphicUtils");
     assert(!vectINISections.empty());
     m_spriteCursorName = reader.Get(vectINISections[0], "CursorSprite", "");
 }
