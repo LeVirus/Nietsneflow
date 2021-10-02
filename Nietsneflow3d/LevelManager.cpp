@@ -711,6 +711,8 @@ void LevelManager::loadGeneralSoundData(const INIReader &reader)
     assert(!m_doorOpeningSound.empty());
     m_hitSound = reader.Get("SoundUtils", "HitSound", "");
     assert(!m_hitSound.empty());
+    m_teleportSound = reader.Get("SoundUtils", "TeleportSound", "");
+    assert(!m_teleportSound.empty());
 }
 
 //===================================================================

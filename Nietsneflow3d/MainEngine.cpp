@@ -1384,6 +1384,7 @@ uint32_t MainEngine::createTeleportEntity()
     bitsetComponents[Components_e::GENERAL_COLLISION_COMPONENT] = true;
     bitsetComponents[Components_e::CIRCLE_COLLISION_COMPONENT] = true;
     bitsetComponents[Components_e::TELEPORT_COMPONENT] = true;
+    bitsetComponents[Components_e::AUDIO_COMPONENT] = true;
     return m_ecsManager.addEntity(bitsetComponents);
 }
 
@@ -1780,7 +1781,7 @@ void MainEngine::loadStaticElementEntities(const LevelManager &levelManager)
     loadStaticElementGroup(vectSprite, levelManager.getGroundData(), LevelStaticElementType_e::GROUND);
     loadStaticElementGroup(vectSprite, levelManager.getCeilingData(), LevelStaticElementType_e::CEILING);
     loadStaticElementGroup(vectSprite, levelManager.getObjectData(), LevelStaticElementType_e::OBJECT);
-    loadStaticElementGroup(vectSprite, levelManager.getTeleportData(), LevelStaticElementType_e::TELEPORT);
+    loadStaticElementGroup(vectSprite, levelManager.getTeleportData(), LevelStaticElementType_e::TELEPORT, levelManager.getTeleportSoundFile());
     loadExitElement(levelManager, levelManager.getExitElementData());
 }
 
@@ -1930,21 +1931,21 @@ void MainEngine::loadExitElement(const LevelManager &levelManager,
 //===================================================================
 void MainEngine::loadStaticElementGroup(const std::vector<SpriteData> &vectSpriteData,
                                         const std::map<std::string, StaticLevelElementData> &staticData,
-                                        LevelStaticElementType_e elementType)
+                                        LevelStaticElementType_e elementType, const std::string &soundFile)
 {
     std::map<std::string, StaticLevelElementData>::const_iterator it = staticData.begin();
     for(; it != staticData.end(); ++it)
     {
         for(uint32_t j = 0; j < it->second.m_TileGamePosition.size(); ++j)
         {
-            createStaticElementEntity(elementType, it->second, vectSpriteData, j);
+            createStaticElementEntity(elementType, it->second, vectSpriteData, j, soundFile);
         }
     }
 }
 
 //===================================================================
 uint32_t MainEngine::createStaticElementEntity(LevelStaticElementType_e elementType, const StaticLevelElementData &staticElementData,
-                                               const std::vector<SpriteData> &vectSpriteData, uint32_t iterationNum)
+                                               const std::vector<SpriteData> &vectSpriteData, uint32_t iterationNum, const std::string &soundFile)
 {
     CollisionTag_e tag;
     uint32_t entityNum;
@@ -1958,7 +1959,7 @@ uint32_t MainEngine::createStaticElementEntity(LevelStaticElementType_e elementT
     else if(elementType == LevelStaticElementType_e::TELEPORT)
     {
         tag = CollisionTag_e::TELEPORT_CT;
-        entityNum = confTeleportEntity(staticElementData, iterationNum);
+        entityNum = confTeleportEntity(staticElementData, iterationNum, soundFile);
     }
     else
     {
@@ -1986,12 +1987,18 @@ uint32_t MainEngine::createStaticElementEntity(LevelStaticElementType_e elementT
 }
 
 //===================================================================
-uint32_t MainEngine::confTeleportEntity(const StaticLevelElementData &teleportData, uint32_t iterationNum)
+uint32_t MainEngine::confTeleportEntity(const StaticLevelElementData &teleportData,
+                                        uint32_t iterationNum,
+                                        const std::string &soundFile)
 {
     uint32_t entityNum = createTeleportEntity();
     TeleportComponent *teleportComp = m_ecsManager.getComponentManager().
             searchComponentByType<TeleportComponent>(entityNum, Components_e::TELEPORT_COMPONENT);
+    AudioComponent *audioComp = m_ecsManager.getComponentManager().
+            searchComponentByType<AudioComponent>(entityNum, Components_e::AUDIO_COMPONENT);
     assert(teleportComp);
+    assert(audioComp);
+    audioComp->m_soundElements.push_back(loadSound(soundFile));
     teleportComp->m_targetPos = teleportData.m_teleportData->m_targetTeleport[iterationNum];
     return entityNum;
 }

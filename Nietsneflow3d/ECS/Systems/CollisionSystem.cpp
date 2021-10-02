@@ -259,10 +259,7 @@ void CollisionSystem::treatBarrelShots(uint32_t entityNum, uint32_t damage)
     {
         barrelComp->m_life = 0;
         barrelComp->m_destructPhase = true;
-        AudioComponent *audioComp = stairwayToComponentManager().
-                searchComponentByType<AudioComponent>(entityNum, Components_e::AUDIO_COMPONENT);
-        assert(audioComp);
-        audioComp->m_soundElements[0]->m_toPlay = true;
+        activeSound(entityNum);
     }
     else
     {
@@ -514,7 +511,7 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
                     if(doorComp->m_currentState == DoorState_e::MOVE_CLOSE)
                     {
                         doorComp->m_currentState = DoorState_e::MOVE_OPEN;
-                        activeDoorSound(args.entityNumB);
+                        activeSound(args.entityNumB);
                     }
                     else
                     {
@@ -537,7 +534,7 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
                     if(!doorComp->m_cardID)
                     {
                         doorComp->m_currentState = DoorState_e::MOVE_OPEN;
-                        activeDoorSound(args.entityNumB);
+                        activeSound(args.entityNumB);
                     }
                 }
             }
@@ -562,10 +559,7 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
                 assert(shotConfComp);
                 if(args.tagCompB->m_tagA == CollisionTag_e::ENEMY_CT)
                 {
-                    AudioComponent *audioComp = stairwayToComponentManager().
-                            searchComponentByType<AudioComponent>(args.entityNumA, Components_e::AUDIO_COMPONENT);
-                    assert(audioComp);
-                    audioComp->m_soundElements[0]->m_toPlay = true;
+                    activeSound(args.entityNumA);
                     treatEnemyShooted(args.entityNumB, shotConfComp->m_damage);
                 }
             }
@@ -643,12 +637,7 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
             TimerComponent *timerComp = stairwayToComponentManager().
                     searchComponentByType<TimerComponent>(args.entityNumA, Components_e::TIMER_COMPONENT);
             assert(timerComp);
-            AudioComponent *audioComp = stairwayToComponentManager().
-                    searchComponentByType<AudioComponent>(args.entityNumA, Components_e::AUDIO_COMPONENT);
-            assert(audioComp);
-            assert(!audioComp->m_soundElements.empty());
-            assert(audioComp->m_soundElements[0]);
-            audioComp->m_soundElements[0]->m_toPlay = true;
+            activeSound(args.entityNumA);
             timerComp->m_clockB = std::chrono::system_clock::now();
             shotConfComp->m_destructPhase = true;
             shotConfComp->m_spriteShotNum = 1;
@@ -760,7 +749,7 @@ void CollisionSystem::treatActionPlayerRect(CollisionArgs &args)
         if(doorComp->m_currentState == DoorState_e::STATIC_CLOSED || doorComp->m_currentState == DoorState_e::MOVE_CLOSE)
         {
             doorComp->m_currentState = DoorState_e::MOVE_OPEN;
-            activeDoorSound(args.entityNumB);
+            activeSound(args.entityNumB);
         }
     }
     else if(args.tagCompB->m_tagB == CollisionTag_e::TRIGGER_CT)
@@ -777,7 +766,7 @@ void CollisionSystem::treatActionPlayerRect(CollisionArgs &args)
 }
 
 //===================================================================
-void CollisionSystem::activeDoorSound(uint32_t entityNum)
+void CollisionSystem::activeSound(uint32_t entityNum)
 {
     AudioComponent *audioComp = stairwayToComponentManager().
             searchComponentByType<AudioComponent>(entityNum, Components_e::AUDIO_COMPONENT);
@@ -849,10 +838,7 @@ void CollisionSystem::treatPlayerPickObject(CollisionArgs &args)
         break;
     }
     playerComp->m_pickItem = true;
-    AudioComponent *audioComp = stairwayToComponentManager().
-            searchComponentByType<AudioComponent>(args.entityNumA, Components_e::AUDIO_COMPONENT);
-    assert(audioComp);
-    audioComp->m_soundElements[0]->m_toPlay = true;
+    activeSound(args.entityNumA);
     m_vectEntitiesToDelete.push_back(args.entityNumB);
 }
 
@@ -883,6 +869,7 @@ void CollisionSystem::treatPlayerTeleport(CollisionArgs &args)
     MoveableComponent *moveComp = stairwayToComponentManager().
             searchComponentByType<MoveableComponent>(args.entityNumA,
                                                      Components_e::MOVEABLE_COMPONENT);
+    activeSound(args.entityNumB);
     assert(moveComp);
     assert(timerComp);
     assert(genTeleportComp);
