@@ -703,10 +703,12 @@ void LevelManager::loadWeaponsData(const INIReader &reader)
 }
 
 //===================================================================
-void LevelManager::loadPlayerData(const INIReader &reader)
+void LevelManager::loadGeneralSoundData(const INIReader &reader)
 {
-    m_pickObjectSound = reader.Get("Player", "PickUpObjectSound", "");
+    m_pickObjectSound = reader.Get("SoundUtils", "PickUpObjectSound", "");
     assert(!m_pickObjectSound.empty());
+    m_doorOpeningSound = reader.Get("SoundUtils", "DoorOpeningSound", "");
+    assert(!m_doorOpeningSound.empty());
 }
 
 //===================================================================
@@ -1088,7 +1090,7 @@ void LevelManager::loadStandardData(const std::string &INIFileName)
     }
     loadWallData(reader);
     loadWeaponsData(reader);
-    loadPlayerData(reader);
+    loadGeneralSoundData(reader);
     loadGeneralStaticElements(reader, LevelStaticElementType_e::GROUND);
     loadGeneralStaticElements(reader, LevelStaticElementType_e::CEILING);
     loadGeneralStaticElements(reader, LevelStaticElementType_e::OBJECT);

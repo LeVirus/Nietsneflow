@@ -123,6 +123,11 @@ public:
     {
         return m_pickObjectSound;
     }
+    inline std::string getDoorOpeningSoundFile()const
+    {
+        return m_doorOpeningSound;
+    }
+
 private:
     //texture and sprite loading
     void loadTexturePath(const INIReader &reader);
@@ -152,7 +157,7 @@ private:
     void loadVisibleShotDisplayData(const INIReader &reader);
     void loadShotImpactDisplayData(const INIReader &reader);
     void loadWeaponsData(const INIReader &reader);
-    void loadPlayerData(const INIReader &reader);
+    void loadGeneralSoundData(const INIReader &reader);
     void loadBarrelsData(const INIReader &reader);
     void loadExit(const INIReader &reader);
     void loadVisualTeleportData(const INIReader &reader);
@@ -198,7 +203,7 @@ private:
     //first moving Shot sprite, all other destruct phase sprites
     MapVisibleShotData_t m_visibleShootINIData;
     MapImpactData_t m_impactINIData;
-    std::string m_pickObjectSound;
+    std::string m_pickObjectSound, m_doorOpeningSound;
 };
 
 VectPairUI_t getPositionData(const INIReader &reader, const std::string & sectionName, const std::string &propertyName);

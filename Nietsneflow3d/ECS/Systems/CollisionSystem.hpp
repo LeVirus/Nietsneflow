@@ -79,6 +79,7 @@ private:
     void calcBulletSegment(SegmentCollisionComponent &segmentCompA);
     void treatEnemyShooted(uint32_t enemyEntityNum, uint32_t damage = 1);
     void confDropedObject(uint32_t objectEntity, uint32_t enemyEntity);
+    void activeDoorSound(uint32_t entityNum);
 private:
     std::multimap<CollisionTag_e, CollisionTag_e> m_tagArray;
     std::pair<std::optional<uint32_t>, float> m_memDistCurrentBulletColl;

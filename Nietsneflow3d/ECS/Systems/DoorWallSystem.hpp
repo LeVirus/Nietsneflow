@@ -18,10 +18,13 @@ private:
     void treatDoorMovementSize(DoorComponent *doorComp, uint32_t entityNum);
     void updateEntities();
     void treatDoors();
+    void activeDoorSound(uint32_t entityNum);
     void treatMoveableWalls();
     void treatTriggers();
     bool triggerMoveableWall(uint32_t wallEntity);
-    void switchToNextPhaseMoveWall(uint32_t wallEntity, MapCoordComponent *mapComp, MoveableWallConfComponent *moveWallComp, const PairUI_t &previousPos);
+    void switchToNextPhaseMoveWall(uint32_t wallEntity, MapCoordComponent *mapComp,
+                                   MoveableWallConfComponent *moveWallComp,
+                                   const PairUI_t &previousPos);
 private:
     double m_timeDoorClosed = 0.6;
     std::vector<uint32_t> m_vectMoveableWall, m_vectTrigger;

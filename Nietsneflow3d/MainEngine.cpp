@@ -732,6 +732,10 @@ void MainEngine::loadDoorEntities(const LevelManager &levelManager)
             DoorComponent *doorComp = m_ecsManager.getComponentManager().
                     searchComponentByType<DoorComponent>(numEntity, Components_e::DOOR_COMPONENT);
             assert(doorComp);
+            AudioComponent *audioComp = m_ecsManager.getComponentManager().
+                    searchComponentByType<AudioComponent>(numEntity, Components_e::AUDIO_COMPONENT);
+            assert(audioComp);
+            audioComp->m_soundElements.push_back(loadSound(levelManager.getDoorOpeningSoundFile()));
             if(it->second.m_vertical)
             {
                 mapComp->m_absoluteMapPositionPX.first += DOOR_CASE_POS_PX;
@@ -1255,6 +1259,7 @@ uint32_t MainEngine::createDoorEntity()
     bitsetComponents[Components_e::GENERAL_COLLISION_COMPONENT] = true;
     bitsetComponents[Components_e::DOOR_COMPONENT] = true;
     bitsetComponents[Components_e::TIMER_COMPONENT] = true;
+    bitsetComponents[Components_e::AUDIO_COMPONENT] = true;
     return m_ecsManager.addEntity(bitsetComponents);
 }
 

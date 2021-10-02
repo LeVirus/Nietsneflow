@@ -10,6 +10,7 @@
 #include <ECS/Components/MoveableComponent.hpp>
 #include <ECS/Components/TriggerComponent.hpp>
 #include <ECS/Components/GeneralCollisionComponent.hpp>
+#include <ECS/Components/AudioComponent.hpp>
 #include <cassert>
 
 //===================================================================
@@ -68,6 +69,7 @@ void DoorWallSystem::treatDoors()
             if(elapsed_seconds.count() > m_timeDoorClosed)
             {
                 doorComp->m_currentState = DoorState_e::MOVE_CLOSE;
+                activeDoorSound(mVectNumEntity[i]);
                 timerComp->m_clockA = std::chrono::system_clock::now();
             }
             continue;
@@ -78,6 +80,15 @@ void DoorWallSystem::treatDoors()
             timerComp->m_clockA = std::chrono::system_clock::now();
         }
     }
+}
+
+//===================================================================
+void DoorWallSystem::activeDoorSound(uint32_t entityNum)
+{
+    AudioComponent *audioComp = stairwayToComponentManager().
+            searchComponentByType<AudioComponent>(entityNum, Components_e::AUDIO_COMPONENT);
+    assert(audioComp);
+    audioComp->m_soundElements[0]->m_toPlay = true;
 }
 
 //===================================================================

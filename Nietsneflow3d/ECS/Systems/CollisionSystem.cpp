@@ -514,6 +514,7 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
                     if(doorComp->m_currentState == DoorState_e::MOVE_CLOSE)
                     {
                         doorComp->m_currentState = DoorState_e::MOVE_OPEN;
+                        activeDoorSound(args.entityNumB);
                     }
                     else
                     {
@@ -536,6 +537,7 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
                     if(!doorComp->m_cardID)
                     {
                         doorComp->m_currentState = DoorState_e::MOVE_OPEN;
+                        activeDoorSound(args.entityNumB);
                     }
                 }
             }
@@ -754,6 +756,7 @@ void CollisionSystem::treatActionPlayerRect(CollisionArgs &args)
         if(doorComp->m_currentState == DoorState_e::STATIC_CLOSED || doorComp->m_currentState == DoorState_e::MOVE_CLOSE)
         {
             doorComp->m_currentState = DoorState_e::MOVE_OPEN;
+            activeDoorSound(args.entityNumB);
         }
     }
     else if(args.tagCompB->m_tagB == CollisionTag_e::TRIGGER_CT)
@@ -767,6 +770,15 @@ void CollisionSystem::treatActionPlayerRect(CollisionArgs &args)
             moveWallComp->m_manualTrigger = true;
         }
     }
+}
+
+//===================================================================
+void CollisionSystem::activeDoorSound(uint32_t entityNum)
+{
+    AudioComponent *audioComp = stairwayToComponentManager().
+            searchComponentByType<AudioComponent>(entityNum, Components_e::AUDIO_COMPONENT);
+    assert(audioComp);
+    audioComp->m_soundElements[0]->m_toPlay = true;
 }
 
 //===================================================================
