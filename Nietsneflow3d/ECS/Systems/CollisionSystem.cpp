@@ -833,6 +833,10 @@ void CollisionSystem::treatPlayerPickObject(CollisionArgs &args)
         break;
     }
     playerComp->m_pickItem = true;
+    AudioComponent *audioComp = stairwayToComponentManager().
+            searchComponentByType<AudioComponent>(args.entityNumA, Components_e::AUDIO_COMPONENT);
+    assert(audioComp);
+    audioComp->m_soundElements[0]->m_toPlay = true;
     m_vectEntitiesToDelete.push_back(args.entityNumB);
 }
 

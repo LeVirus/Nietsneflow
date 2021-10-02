@@ -489,9 +489,7 @@ void MainEngine::loadLevel(const LevelManager &levelManager)
     loadMoveableWallEntities(levelManager.getMoveableWallData(), levelManager.getPictureData().getSpriteData());
     loadDoorEntities(levelManager);
     loadEnemiesEntities(levelManager);
-    //    m_audioEngine.loadMusic("FF9.flac");
     m_audioEngine.loadMusicFromFile(levelManager.getLevel().getMusicFilename());
-//    m_audioEngine.loadMusic("Roar.wav");
     m_audioEngine.playMusic();
 }
 
@@ -1479,6 +1477,7 @@ void MainEngine::loadPlayerEntity(const LevelManager &levelManager,
     bitsetComponents[Components_e::VISION_COMPONENT] = true;
     bitsetComponents[Components_e::PLAYER_CONF_COMPONENT] = true;
     bitsetComponents[Components_e::TIMER_COMPONENT] = true;
+    bitsetComponents[Components_e::AUDIO_COMPONENT] = true;
     uint32_t entityNum = m_ecsManager.addEntity(bitsetComponents);
     confPlayerEntity(levelManager, entityNum, levelManager.getLevel(),
                      numWeaponEntity, numDisplayTeleportEntity);
@@ -1524,6 +1523,10 @@ void MainEngine::confPlayerEntity(const LevelManager &levelManager,
     WeaponComponent *weaponConf = m_ecsManager.getComponentManager().
             searchComponentByType<WeaponComponent>(playerConf->m_weaponEntity,
                                                    Components_e::WEAPON_COMPONENT);
+    AudioComponent *audioComp = m_ecsManager.getComponentManager().
+            searchComponentByType<AudioComponent>(entityNum, Components_e::AUDIO_COMPONENT);
+    assert(audioComp);
+    audioComp->m_soundElements.push_back(loadSound(levelManager.getPickObjectSoundFile()));
     assert(pos);
     assert(map);
     assert(move);

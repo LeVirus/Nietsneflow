@@ -703,6 +703,13 @@ void LevelManager::loadWeaponsData(const INIReader &reader)
 }
 
 //===================================================================
+void LevelManager::loadPlayerData(const INIReader &reader)
+{
+    m_pickObjectSound = reader.Get("Player", "PickUpObjectSound", "");
+    assert(!m_pickObjectSound.empty());
+}
+
+//===================================================================
 void LevelManager::loadDisplayData(const INIReader &reader, std::string_view sectionName,
                                    std::string_view subSectionName)
 {
@@ -1081,6 +1088,7 @@ void LevelManager::loadStandardData(const std::string &INIFileName)
     }
     loadWallData(reader);
     loadWeaponsData(reader);
+    loadPlayerData(reader);
     loadGeneralStaticElements(reader, LevelStaticElementType_e::GROUND);
     loadGeneralStaticElements(reader, LevelStaticElementType_e::CEILING);
     loadGeneralStaticElements(reader, LevelStaticElementType_e::OBJECT);

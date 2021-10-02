@@ -119,6 +119,10 @@ public:
     {
         return m_barrelElement;
     }
+    inline std::string getPickObjectSoundFile()const
+    {
+        return m_pickObjectSound;
+    }
 private:
     //texture and sprite loading
     void loadTexturePath(const INIReader &reader);
@@ -148,6 +152,7 @@ private:
     void loadVisibleShotDisplayData(const INIReader &reader);
     void loadShotImpactDisplayData(const INIReader &reader);
     void loadWeaponsData(const INIReader &reader);
+    void loadPlayerData(const INIReader &reader);
     void loadBarrelsData(const INIReader &reader);
     void loadExit(const INIReader &reader);
     void loadVisualTeleportData(const INIReader &reader);
@@ -193,6 +198,7 @@ private:
     //first moving Shot sprite, all other destruct phase sprites
     MapVisibleShotData_t m_visibleShootINIData;
     MapImpactData_t m_impactINIData;
+    std::string m_pickObjectSound;
 };
 
 VectPairUI_t getPositionData(const INIReader &reader, const std::string & sectionName, const std::string &propertyName);

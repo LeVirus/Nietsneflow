@@ -363,7 +363,6 @@ void IASystem::confNewVisibleShot(const std::vector<uint32_t> &visibleShots)
     FPSVisibleStaticElementComponent *targetFpsStaticComp = stairwayToComponentManager().
             searchComponentByType<FPSVisibleStaticElementComponent>(visibleShots[targetIndex],
                                                                     Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
-
     ShotConfComponent *baseShotConfComp = stairwayToComponentManager().
             searchComponentByType<ShotConfComponent>(visibleShots[baseIndex],
                                                      Components_e::SHOT_CONF_COMPONENT);
