@@ -127,7 +127,10 @@ public:
     {
         return m_doorOpeningSound;
     }
-
+    inline std::string getHitSoundFile()const
+    {
+        return m_hitSound;
+    }
 private:
     //texture and sprite loading
     void loadTexturePath(const INIReader &reader);
@@ -203,7 +206,7 @@ private:
     //first moving Shot sprite, all other destruct phase sprites
     MapVisibleShotData_t m_visibleShootINIData;
     MapImpactData_t m_impactINIData;
-    std::string m_pickObjectSound, m_doorOpeningSound;
+    std::string m_pickObjectSound, m_doorOpeningSound, m_hitSound;
 };
 
 VectPairUI_t getPositionData(const INIReader &reader, const std::string & sectionName, const std::string &propertyName);

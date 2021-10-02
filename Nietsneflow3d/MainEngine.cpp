@@ -1586,7 +1586,7 @@ void MainEngine::confPlayerEntity(const LevelManager &levelManager,
         if(weaponConf->m_weaponsData[i].m_attackType == AttackType_e::MELEE)
         {
             m_playerConf->m_hitMeleeEntity = createDamageZoneEntity(weaponConf->m_weaponsData[i].m_weaponPower,
-                                                                   CollisionTag_e::HIT_PLAYER_CT);
+                                                                   CollisionTag_e::HIT_PLAYER_CT, 10.0f, levelManager.getHitSoundFile());
             break;
         }
     }
@@ -1620,20 +1620,25 @@ void MainEngine::confActionEntity()
 }
 
 //===================================================================
-uint32_t MainEngine::createMeleeAttackEntity()
+uint32_t MainEngine::createMeleeAttackEntity(bool sound)
 {
     std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComponents;
     bitsetComponents[Components_e::GENERAL_COLLISION_COMPONENT] = true;
     bitsetComponents[Components_e::MAP_COORD_COMPONENT] = true;
     bitsetComponents[Components_e::CIRCLE_COLLISION_COMPONENT] = true;
     bitsetComponents[Components_e::SHOT_CONF_COMPONENT] = true;
+    if(sound)
+    {
+        bitsetComponents[Components_e::AUDIO_COMPONENT] = true;
+    }
     return m_ecsManager.addEntity(bitsetComponents);
 }
 
 //===================================================================
-uint32_t MainEngine::createDamageZoneEntity(uint32_t damage, CollisionTag_e tag, float ray)
+uint32_t MainEngine::createDamageZoneEntity(uint32_t damage, CollisionTag_e tag,
+                                            float ray, const std::string soundFile)
 {
-    uint32_t entityNum = createMeleeAttackEntity();
+    uint32_t entityNum = createMeleeAttackEntity(!soundFile.empty());
     GeneralCollisionComponent *genCollComp = m_ecsManager.getComponentManager().
             searchComponentByType<GeneralCollisionComponent>(entityNum, Components_e::GENERAL_COLLISION_COMPONENT);
     CircleCollisionComponent *circleColl = m_ecsManager.getComponentManager().
@@ -1643,6 +1648,13 @@ uint32_t MainEngine::createDamageZoneEntity(uint32_t damage, CollisionTag_e tag,
     assert(shotComp);
     assert(genCollComp);
     assert(circleColl);
+    if(!soundFile.empty())
+    {
+        AudioComponent *audioComp = m_ecsManager.getComponentManager().
+                searchComponentByType<AudioComponent>(entityNum, Components_e::AUDIO_COMPONENT);
+        assert(audioComp);
+        audioComp->m_soundElements.push_back(loadSound(soundFile));
+    }
     genCollComp->m_active = false;
     genCollComp->m_shape = CollisionShape_e::CIRCLE_C;
     genCollComp->m_tagA = tag;
@@ -1837,7 +1849,7 @@ void MainEngine::loadBarrelElementEntities(const LevelManager &levelManager)
         barrelComp->m_phaseDestructPhaseNumber = barrelData.m_explosionSprite.size();
         barrelComp->m_life = 3;
         barrelComp->m_memPosExplosionSprite = barrelData.m_staticSprite.size() - 1;
-        barrelComp->m_damageZoneEntity = createDamageZoneEntity(15, CollisionTag_e::EXPLOSION_CT, 30.0f);
+        barrelComp->m_damageZoneEntity = createDamageZoneEntity(15, CollisionTag_e::EXPLOSION_CT, 30.0f, levelManager.getHitSoundFile());
         timerComp->m_clockA = std::chrono::system_clock::now();
     }
 }

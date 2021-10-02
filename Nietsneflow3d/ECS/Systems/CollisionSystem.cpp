@@ -562,6 +562,10 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
                 assert(shotConfComp);
                 if(args.tagCompB->m_tagA == CollisionTag_e::ENEMY_CT)
                 {
+                    AudioComponent *audioComp = stairwayToComponentManager().
+                            searchComponentByType<AudioComponent>(args.entityNumA, Components_e::AUDIO_COMPONENT);
+                    assert(audioComp);
+                    audioComp->m_soundElements[0]->m_toPlay = true;
                     treatEnemyShooted(args.entityNumB, shotConfComp->m_damage);
                 }
             }

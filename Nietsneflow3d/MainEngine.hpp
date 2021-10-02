@@ -116,8 +116,8 @@ private:
                                    const std::vector<SpriteData> &vectSpriteData, uint32_t iterationNum);
     uint32_t confObjectEntity(const StaticLevelElementData &objectData);
     uint32_t confTeleportEntity(const StaticLevelElementData &teleportData, uint32_t iterationNum);
-    uint32_t createMeleeAttackEntity();
-    uint32_t createDamageZoneEntity(uint32_t damage, CollisionTag_e tag, float ray = 10.0f);
+    uint32_t createMeleeAttackEntity(bool sound = false);
+    uint32_t createDamageZoneEntity(uint32_t damage, CollisionTag_e tag, float ray = 10.0f, const std::string soundFile = "");
     uint32_t loadWeaponsEntity(const LevelManager &levelManager);
     uint32_t createBackgroundEntity(bool color);
     uint32_t createWeaponEntity();
