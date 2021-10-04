@@ -1,5 +1,7 @@
 #include "SoundSystem.hpp"
 #include <ECS/Components/AudioComponent.hpp>
+#include <ECS/Components/MapCoordComponent.hpp>
+#include "CollisionUtils.hpp"
 #include <AL/al.h>
 #include <AL/alc.h>
 #include <cassert>
@@ -19,18 +21,42 @@ void SoundSystem::execSystem()
     for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
     {
         AudioComponent *audioComp = stairwayToComponentManager().
-                searchComponentByType<AudioComponent>(mVectNumEntity[i],
-                                                      Components_e::AUDIO_COMPONENT);
+                searchComponentByType<AudioComponent>(mVectNumEntity[i], Components_e::AUDIO_COMPONENT);
         assert(audioComp);
         for(uint32_t j = 0; j < audioComp->m_soundElements.size(); ++j)
         {
             if(audioComp->m_soundElements[j] && audioComp->m_soundElements[j]->m_toPlay)
             {
-                play(audioComp->m_soundElements[j]->m_sourceALID);
+                std::optional<float> volume = getVolumeFromDistance(mVectNumEntity[i]);
+                if(volume)
+                {
+                    alSourcef(audioComp->m_soundElements[j]->m_sourceALID, AL_GAIN, *volume);
+                    play(audioComp->m_soundElements[j]->m_sourceALID);
+                }
                 audioComp->m_soundElements[j]->m_toPlay = false;
             }
         }
     }
+}
+
+//===================================================================
+std::optional<float> SoundSystem::getVolumeFromDistance(uint32_t distantEntity)
+{
+    MapCoordComponent *playerMapComp = stairwayToComponentManager().
+            searchComponentByType<MapCoordComponent>(m_playerEntity, Components_e::MAP_COORD_COMPONENT);
+    assert(playerMapComp);
+    MapCoordComponent *distantElementMapComp = stairwayToComponentManager().
+            searchComponentByType<MapCoordComponent>(distantEntity, Components_e::MAP_COORD_COMPONENT);
+    if(!distantElementMapComp)
+    {
+        return 1.0f;
+    }
+    float distance = getDistance(playerMapComp->m_absoluteMapPositionPX, distantElementMapComp->m_absoluteMapPositionPX);
+    if(distance >= MAX_DISTANCE)
+    {
+        return {};
+    }
+    return (MAX_DISTANCE - distance) / MAX_DISTANCE;
 }
 
 //===================================================================

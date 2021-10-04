@@ -1502,6 +1502,7 @@ void MainEngine::loadPlayerEntity(const LevelManager &levelManager,
     //notify player entity number
     m_graphicEngine.getMapSystem().confPlayerComp(entityNum);
     m_physicalEngine.memPlayerEntity(entityNum);
+    m_audioEngine.memPlayerEntity(entityNum);
 }
 
 //===================================================================

@@ -32,6 +32,10 @@ public:
     {
         m_soundSystem = soundSystem;
     }
+    inline void memPlayerEntity(uint32_t entityNum)
+    {
+        m_soundSystem->memPlayerEntity(entityNum);
+    }
 private:
     std::optional<ALuint> loadBufferFromFile(const std::string &filename, bool soundEffect);
     void updateDevices();

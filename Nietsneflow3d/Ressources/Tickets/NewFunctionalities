@@ -5,7 +5,8 @@ NEW FUNCTIONALITIES=============================================================
 Audio Engine
 	Fist attack===================OK
 	Door==================OK
-	Enemy (attack & normal)
+	Enemy (attack & normal)=====================OK
+		Death
 	Object Pick up==================OK
 	Teleporter=================OK
 
@@ -14,6 +15,9 @@ CREATE CONF MENU
 
 ))
 Add joypad support
+
+))
+Add encryption for conf level file
 
 3)
 Create Start menu, game over menu 

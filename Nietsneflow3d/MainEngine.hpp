@@ -58,8 +58,7 @@ private:
     void displayTransitionMenu();
     void loadColorEntities();
     void confUnifiedColorEntity(uint32_t entityNum, const tupleFloat_t &color);
-    void loadBackgroundEntities(const GroundCeilingData &groundData,
-                                const GroundCeilingData &backgroundData, const LevelManager &levelManager);
+    void loadBackgroundEntities(const GroundCeilingData &groundData, const GroundCeilingData &backgroundData, const LevelManager &levelManager);
     void confColorBackgroundComponents(uint32_t entity, const GroundCeilingData &groundData, bool ground);
     void confGroundSimpleTextBackgroundComponents(uint32_t entity, const GroundCeilingData &groundData, const std::vector<SpriteData> &vectSprite);
     void confCeilingSimpleTextBackgroundComponents(uint32_t entity, const GroundCeilingData &groundData, const std::vector<SpriteData> &vectSprite);
@@ -69,25 +68,19 @@ private:
     void linkSystemsToGraphicEngine();
     void linkSystemsToPhysicalEngine();
     void linkSystemsToSoundEngine();
-    void loadShotImpactSprite(const std::vector<SpriteData> &vectSpriteData,
-                              const PairImpactData_t &shootDisplayData,
-                              uint32_t impactEntity);
-    void confPlayerVisibleShotsSprite(const std::vector<SpriteData> &vectSpriteData,
-                                      const MapVisibleShotData_t &shootDisplayData,
+    void loadShotImpactSprite(const std::vector<SpriteData> &vectSpriteData, const PairImpactData_t &shootDisplayData, uint32_t impactEntity);
+    void confPlayerVisibleShotsSprite(const std::vector<SpriteData> &vectSpriteData, const MapVisibleShotData_t &shootDisplayData,
                                       WeaponComponent *weaponComp);
     void loadPlayerEntity(const LevelManager &levelManager, uint32_t numWeaponEntity, uint32_t numDisplayTeleportEntity);
-    void confPlayerEntity(const LevelManager &levelManager,
-                          uint32_t entityNum, const Level &level,
-                          uint32_t numWeaponEntity, uint32_t numDisplayTeleportEntity);
+    void confPlayerEntity(const LevelManager &levelManager, uint32_t entityNum, const Level &level, uint32_t numWeaponEntity,
+                          uint32_t numDisplayTeleportEntity);
     void confActionEntity();
     void loadWallEntities(const std::map<std::string, WallData> &wallData,
                           const std::vector<SpriteData> &vectSprite);
-    void loadMoveableWallEntities(const std::map<std::string, MoveableWallData> &wallData,
-                                  const std::vector<SpriteData> &vectSprite);
+    void loadMoveableWallEntities(const std::map<std::string, MoveableWallData> &wallData, const std::vector<SpriteData> &vectSprite);
     void confBaseWallData(uint32_t wallEntity, const SpriteData &memSpriteData, const PairUI_t &coordLevel,
                           const std::vector<uint8_t> &numWallSprites,
-                          const std::vector<SpriteData> &vectSprite,
-                          bool moveable = false);
+                          const std::vector<SpriteData> &vectSprite, bool moveable = false);
     void loadDoorEntities(const LevelManager &levelManager);
     void loadEnemiesEntities(const LevelManager &levelManager);
     void loadTriggerEntityData(const MoveableWallData &moveWallData, const std::vector<uint32_t> &vectPosition, const std::vector<SpriteData> &vectSprite, TriggerWallMoveType_e type);
