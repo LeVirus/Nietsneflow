@@ -849,6 +849,17 @@ void MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
                     searchComponentByType<MoveableComponent>(numEntity, Components_e::MOVEABLE_COMPONENT);
             assert(moveComp);
             moveComp->m_velocity = it->second.m_velocity;
+            AudioComponent *audiocomponent = m_ecsManager.getComponentManager().
+                    searchComponentByType<AudioComponent>(numEntity, Components_e::AUDIO_COMPONENT);
+            assert(audiocomponent);
+            audiocomponent->m_soundElements.reserve(3);
+            audiocomponent->m_soundElements.emplace_back(loadSound(it->second.m_normalBehaviourSoundFile));
+            audiocomponent->m_soundElements.emplace_back(loadSound(it->second.m_detectBehaviourSoundFile));
+            audiocomponent->m_soundElements.emplace_back(loadSound(it->second.m_attackSoundFile));
+            TimerComponent *timerComponent = m_ecsManager.getComponentManager().
+                    searchComponentByType<TimerComponent>(numEntity, Components_e::TIMER_COMPONENT);
+            assert(timerComponent);
+            timerComponent->m_clockC = std::chrono::system_clock::now();
         }
     }
 }
@@ -1277,6 +1288,7 @@ uint32_t MainEngine::createEnemyEntity()
     bitsetComponents[Components_e::MEM_SPRITE_DATA_COMPONENT] = true;
     bitsetComponents[Components_e::ENEMY_CONF_COMPONENT] = true;
     bitsetComponents[Components_e::TIMER_COMPONENT] = true;
+    bitsetComponents[Components_e::AUDIO_COMPONENT] = true;
     return m_ecsManager.addEntity(bitsetComponents);
 }
 

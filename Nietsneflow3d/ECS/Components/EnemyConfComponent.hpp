@@ -33,6 +33,13 @@ enum class EnemyAttackPhase_e
     SHOOTED//FROZEN
 };
 
+enum class EnemySoundEffect_e
+{
+    NORMAL,
+    DETECT,
+    ATTACK
+};
+
 struct EnemyConfComponent : public ecs::Component
 {
     EnemyConfComponent()

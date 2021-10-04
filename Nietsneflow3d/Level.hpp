@@ -82,11 +82,11 @@ struct EnemyData
     //In Game sprite size in % relative to a tile
     PairDouble_t m_inGameSpriteSize;
     VectPairUI_t m_TileGamePosition;
-    std::string m_visibleShootID, m_impactID;
+    std::string m_visibleShootID, m_impactID, m_dropedObjectID;
+    std::string m_normalBehaviourSoundFile, m_detectBehaviourSoundFile, m_attackSoundFile;
     uint32_t m_attackPower, m_life;
     std::optional<uint32_t> m_meleeDamage;
     float m_velocity, m_shotVelocity;
-    std::string m_dropedObjectID;
     bool m_traversable;
 };
 

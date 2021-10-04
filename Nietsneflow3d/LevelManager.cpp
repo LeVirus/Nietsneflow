@@ -936,6 +936,9 @@ void LevelManager::loadEnemyData(const INIReader &reader)
         m_enemyData[vectINISections[i]].m_shotVelocity = reader.GetReal(vectINISections[i], "ShotVelocity", 1.0f);
         m_enemyData[vectINISections[i]].m_dropedObjectID = reader.Get(vectINISections[i], "DropedObjectID", "");
         m_enemyData[vectINISections[i]].m_meleeDamage = reader.GetInteger(vectINISections[i], "MeleeDamage", 0);
+        m_enemyData[vectINISections[i]].m_normalBehaviourSoundFile = reader.Get(vectINISections[i], "NormalBehaviourSound", "");
+        m_enemyData[vectINISections[i]].m_detectBehaviourSoundFile = reader.Get(vectINISections[i], "DetectBehaviourSound", "");
+        m_enemyData[vectINISections[i]].m_attackSoundFile = reader.Get(vectINISections[i], "AttackSound", "");
         loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::STATIC_FRONT, m_enemyData[vectINISections[i]]);
         loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::STATIC_FRONT_LEFT, m_enemyData[vectINISections[i]]);
         loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::STATIC_FRONT_RIGHT, m_enemyData[vectINISections[i]]);
@@ -944,10 +947,10 @@ void LevelManager::loadEnemyData(const INIReader &reader)
         loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::STATIC_BACK_RIGHT, m_enemyData[vectINISections[i]]);
         loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::STATIC_LEFT, m_enemyData[vectINISections[i]]);
         loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::STATIC_RIGHT, m_enemyData[vectINISections[i]]);
-
         loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::ATTACK, m_enemyData[vectINISections[i]]);
         loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::DYING, m_enemyData[vectINISections[i]]);
         loadEnemySprites(reader, vectINISections[i], EnemySpriteElementType_e::TOUCHED, m_enemyData[vectINISections[i]]);
+
     }
 }
 

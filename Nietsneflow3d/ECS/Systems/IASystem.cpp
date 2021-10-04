@@ -38,7 +38,6 @@ IASystem::IASystem(ECSManager* memECSManager) : m_memECSManager(memECSManager)
 void IASystem::treatEject()
 {
     std::bitset<TOTAL_COMPONENTS> bitset;
-//    bitset[BARREL_COMPONENT] = true;
     bitset[MOVEABLE_COMPONENT] = true;
     m_vectMoveableEntities = m_memECSManager->getEntitiesContainingComponents(bitset);
     MoveableComponent *moveComp;
@@ -53,7 +52,7 @@ void IASystem::treatEject()
         collComp = stairwayToComponentManager().
                 searchComponentByType<GeneralCollisionComponent>(m_vectMoveableEntities[i], Components_e::GENERAL_COLLISION_COMPONENT);
         assert(collComp);
-        if(moveComp->m_ejectData /*&& collComp->m_tagB == CollisionTag_e::BARREL_CT*/)
+        if(moveComp->m_ejectData)
         {
             timerComp = stairwayToComponentManager().
                     searchComponentByType<TimerComponent>(m_vectMoveableEntities[i], Components_e::TIMER_COMPONENT);
@@ -116,16 +115,27 @@ void IASystem::execSystem()
                                      enemyMapComp->m_absoluteMapPositionPX);
         float radiantAnglePlayerDirection = getTrigoAngle(enemyMapComp->m_absoluteMapPositionPX,
                                                           m_playerMapComp->m_absoluteMapPositionPX, false);
-        if(enemyConfComp->m_behaviourMode != EnemyBehaviourMode_e::ATTACK &&
-                checkEnemyTriggerAttackMode(radiantAnglePlayerDirection,
-                                            distancePlayer, enemyMapComp))
+        if(enemyConfComp->m_behaviourMode != EnemyBehaviourMode_e::ATTACK)
         {
             timerComp = stairwayToComponentManager().searchComponentByType<TimerComponent>(
                         mVectNumEntity[i], Components_e::TIMER_COMPONENT);
             assert(timerComp);
-            timerComp->m_clockB = std::chrono::system_clock::now();
-            enemyConfComp->m_behaviourMode = EnemyBehaviourMode_e::ATTACK;
-            enemyConfComp->m_countPlayerInvisibility = 0;
+            if(enemyConfComp->m_behaviourMode == EnemyBehaviourMode_e::PASSIVE)
+            {
+                std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() - timerComp->m_clockC;
+                if(elapsed_seconds.count() > 5.0)
+                {
+                    activeSound(mVectNumEntity[i], static_cast<uint32_t>(EnemySoundEffect_e::NORMAL));
+                    timerComp->m_clockC = std::chrono::system_clock::now();
+                }
+            }
+            if(checkEnemyTriggerAttackMode(radiantAnglePlayerDirection, distancePlayer, enemyMapComp))
+            {
+                timerComp->m_clockB = std::chrono::system_clock::now();
+                enemyConfComp->m_behaviourMode = EnemyBehaviourMode_e::ATTACK;
+                activeSound(mVectNumEntity[i], static_cast<uint32_t>(EnemySoundEffect_e::DETECT));
+                enemyConfComp->m_countPlayerInvisibility = 0;
+            }
         }
         if(enemyConfComp->m_behaviourMode == EnemyBehaviourMode_e::ATTACK)
         {
@@ -197,6 +207,15 @@ void IASystem::treatVisibleShot(uint32_t numEntity)
 }
 
 //===================================================================
+void IASystem::activeSound(uint32_t entityNum, uint32_t soundNum)
+{
+    AudioComponent *audioComp = stairwayToComponentManager().
+            searchComponentByType<AudioComponent>(entityNum, Components_e::AUDIO_COMPONENT);
+    assert(audioComp);
+    audioComp->m_soundElements[soundNum]->m_toPlay = true;
+}
+
+//===================================================================
 void IASystem::updateEnemyDirection(EnemyConfComponent *enemyConfComp, MoveableComponent *moveComp,
                                     MapCoordComponent *enemyMapComp)
 {
@@ -263,12 +282,14 @@ void IASystem::treatEnemyBehaviourAttack(uint32_t enemyEntity, MapCoordComponent
         if(enemyConfComp->m_attackPhase == EnemyAttackPhase_e::SHOOT)
         {
             enemyShoot(enemyConfComp, moveComp, enemyMapComp, distancePlayer);
+            activeSound(enemyEntity, static_cast<uint32_t>(EnemySoundEffect_e::ATTACK));
         }
         if(!checkEnemyTriggerAttackMode(radiantAnglePlayerDirection, distancePlayer, enemyMapComp))
         {
             if(++enemyConfComp->m_countPlayerInvisibility > 5)
             {
                enemyConfComp->m_behaviourMode = EnemyBehaviourMode_e::PASSIVE;
+               timerComp->m_clockC = std::chrono::system_clock::now();
             }
         }
     }
@@ -383,11 +404,9 @@ void IASystem::confNewVisibleShot(const std::vector<uint32_t> &visibleShots)
             searchComponentByType<MemFPSGLSizeComponent>(visibleShots[targetIndex],
                                                      Components_e::MEM_FPS_GLSIZE_COMPONENT);
     AudioComponent *audioCompTarget = stairwayToComponentManager().
-            searchComponentByType<AudioComponent>(visibleShots[targetIndex],
-                                                  Components_e::AUDIO_COMPONENT);
+            searchComponentByType<AudioComponent>(visibleShots[targetIndex], Components_e::AUDIO_COMPONENT);
     AudioComponent *audioCompBase = stairwayToComponentManager().
-            searchComponentByType<AudioComponent>(visibleShots[baseIndex],
-                                                  Components_e::AUDIO_COMPONENT);
+            searchComponentByType<AudioComponent>(visibleShots[baseIndex], Components_e::AUDIO_COMPONENT);
     assert(audioCompBase);
     assert(audioCompTarget);
     assert(memFPSGLSizeCompBase);
