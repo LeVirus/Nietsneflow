@@ -856,6 +856,7 @@ void MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
             audiocomponent->m_soundElements.emplace_back(loadSound(it->second.m_normalBehaviourSoundFile));
             audiocomponent->m_soundElements.emplace_back(loadSound(it->second.m_detectBehaviourSoundFile));
             audiocomponent->m_soundElements.emplace_back(loadSound(it->second.m_attackSoundFile));
+            audiocomponent->m_maxDistance /= 5.0f;
             TimerComponent *timerComponent = m_ecsManager.getComponentManager().
                     searchComponentByType<TimerComponent>(numEntity, Components_e::TIMER_COMPONENT);
             assert(timerComponent);

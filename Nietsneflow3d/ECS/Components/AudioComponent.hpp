@@ -20,4 +20,5 @@ struct AudioComponent : public ecs::Component
         muiTypeComponent = Components_e::AUDIO_COMPONENT;
     }
     std::vector<std::optional<SoundElement>> m_soundElements;
+    ALuint m_maxDistance = MAX_SOUND_DISTANCE;
 };

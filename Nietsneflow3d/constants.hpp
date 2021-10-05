@@ -243,6 +243,7 @@ enum class LevelCaseType_e
     WALL_MOVE_LC
 };
 
+inline const float MAX_SOUND_DISTANCE = 1000.0f;
 inline const float EJECT_TIME = 0.5F;
 inline const float RAYCAST_VERTICAL_SIZE = 1.0f;
 inline const float STD_FONT_SIZE = 0.06f;

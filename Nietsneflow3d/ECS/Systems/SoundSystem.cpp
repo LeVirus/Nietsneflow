@@ -27,7 +27,7 @@ void SoundSystem::execSystem()
         {
             if(audioComp->m_soundElements[j] && audioComp->m_soundElements[j]->m_toPlay)
             {
-                std::optional<float> volume = getVolumeFromDistance(mVectNumEntity[i]);
+                std::optional<float> volume = getVolumeFromDistance(mVectNumEntity[i], audioComp->m_maxDistance);
                 if(volume)
                 {
                     alSourcef(audioComp->m_soundElements[j]->m_sourceALID, AL_GAIN, *volume);
@@ -40,7 +40,7 @@ void SoundSystem::execSystem()
 }
 
 //===================================================================
-std::optional<float> SoundSystem::getVolumeFromDistance(uint32_t distantEntity)
+std::optional<float> SoundSystem::getVolumeFromDistance(uint32_t distantEntity, float maxDistance)
 {
     MapCoordComponent *playerMapComp = stairwayToComponentManager().
             searchComponentByType<MapCoordComponent>(m_playerEntity, Components_e::MAP_COORD_COMPONENT);
@@ -52,11 +52,11 @@ std::optional<float> SoundSystem::getVolumeFromDistance(uint32_t distantEntity)
         return 1.0f;
     }
     float distance = getDistance(playerMapComp->m_absoluteMapPositionPX, distantElementMapComp->m_absoluteMapPositionPX);
-    if(distance >= MAX_DISTANCE)
+    if(distance >= maxDistance)
     {
         return {};
     }
-    return (MAX_DISTANCE - distance) / MAX_DISTANCE;
+    return (maxDistance - distance) / maxDistance;
 }
 
 //===================================================================

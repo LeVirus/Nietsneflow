@@ -1,6 +1,12 @@
 BUGS======================================================================
 
 ))
+Eject enemy and PLAYER?? don't take wall and element collision into account
+
+))
+visible shot impact does not appear when distance is high
+
+))
 if player is on limit level visible shot does not proceed
 
 ))

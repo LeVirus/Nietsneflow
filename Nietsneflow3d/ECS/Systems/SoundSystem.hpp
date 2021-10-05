@@ -21,9 +21,8 @@ public:
         m_playerEntity = entityNum;
     }
 private:
-    std::optional<float> getVolumeFromDistance(uint32_t distantEntity);
+    std::optional<float> getVolumeFromDistance(uint32_t distantEntity, float maxDistance);
 private:
     uint32_t m_playerEntity;
     std::vector<ALuint> m_vectSource;
-    const float MAX_DISTANCE = 1000.0f;
 };
