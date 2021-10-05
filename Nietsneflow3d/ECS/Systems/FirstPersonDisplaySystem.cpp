@@ -211,8 +211,11 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
         ++toRemove;
         return;
     }
-    simpleDistance = getDistance(mapCompA->m_absoluteMapPositionPX,
-                                 mapCompB->m_absoluteMapPositionPX);
+    if(cameraDistance < 13.0f)
+    {
+        cameraDistance = 13.0f;
+    }
+    simpleDistance = getDistance(mapCompA->m_absoluteMapPositionPX, mapCompB->m_absoluteMapPositionPX);
     if(genCollComp->m_tagA == CollisionTag_e::BULLET_PLAYER_CT ||
             genCollComp->m_tagA == CollisionTag_e::BULLET_ENEMY_CT)
     {
@@ -240,18 +243,15 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
 }
 
 //===================================================================
-bool FirstPersonDisplaySystem::behindRaycastElement(const MapCoordComponent *mapCompObserver,
-                                                    const MapCoordComponent *mapCompTarget,
-                                                    float distance, float radiantObserverAngle,
-                                                    uint32_t targetEntity)
+bool FirstPersonDisplaySystem::behindRaycastElement(const MapCoordComponent *mapCompObserver, const MapCoordComponent *mapCompTarget,
+                                                    float distance, float radiantObserverAngle, uint32_t targetEntity)
 {
     bool door = false;
     float targetlimitRadiantAngle;
     optionalTargetRaycast_t resultRaycast;
     PairFloat_t refPoint = mapCompTarget->m_absoluteMapPositionPX;
     CircleCollisionComponent *circleComp = stairwayToComponentManager().
-            searchComponentByType<CircleCollisionComponent>(targetEntity,
-                                                            Components_e::CIRCLE_COLLISION_COMPONENT);
+            searchComponentByType<CircleCollisionComponent>(targetEntity, Components_e::CIRCLE_COLLISION_COMPONENT);
     assert(circleComp);
     std::optional<PairUI_t> caseUI = getLevelCoord(mapCompTarget->m_absoluteMapPositionPX);
     if(caseUI)
@@ -263,12 +263,9 @@ bool FirstPersonDisplaySystem::behindRaycastElement(const MapCoordComponent *map
     }
     //check first limit point
     moveElementFromAngle(circleComp->m_ray, radiantObserverAngle + PI_HALF, refPoint);
-    targetlimitRadiantAngle = getTrigoAngle(mapCompObserver->m_absoluteMapPositionPX,
-                                            refPoint, false);
-    resultRaycast = calcLineSegmentRaycast(targetlimitRadiantAngle,
-                                           mapCompObserver->m_absoluteMapPositionPX, false);
-    float distanceRaycast = getDistance(mapCompObserver->m_absoluteMapPositionPX,
-                                        std::get<0>(*resultRaycast));
+    targetlimitRadiantAngle = getTrigoAngle(mapCompObserver->m_absoluteMapPositionPX, refPoint, false);
+    resultRaycast = calcLineSegmentRaycast(targetlimitRadiantAngle, mapCompObserver->m_absoluteMapPositionPX, false);
+    float distanceRaycast = getDistance(mapCompObserver->m_absoluteMapPositionPX, std::get<0>(*resultRaycast));
     if(distanceRaycast < distance)
     {
         if(!door && std::abs(distanceRaycast - distance) < 5.0f)
@@ -280,12 +277,9 @@ bool FirstPersonDisplaySystem::behindRaycastElement(const MapCoordComponent *map
     refPoint = mapCompTarget->m_absoluteMapPositionPX;
     //check second limit point
     moveElementFromAngle(circleComp->m_ray, radiantObserverAngle - PI_HALF, refPoint);
-    targetlimitRadiantAngle = getTrigoAngle(mapCompObserver->m_absoluteMapPositionPX,
-                                            refPoint, false);
-    resultRaycast = calcLineSegmentRaycast(targetlimitRadiantAngle,
-                                           mapCompObserver->m_absoluteMapPositionPX, false);
-    distanceRaycast = getDistance(mapCompObserver->m_absoluteMapPositionPX,
-                                        std::get<0>(*resultRaycast));
+    targetlimitRadiantAngle = getTrigoAngle(mapCompObserver->m_absoluteMapPositionPX, refPoint, false);
+    resultRaycast = calcLineSegmentRaycast(targetlimitRadiantAngle, mapCompObserver->m_absoluteMapPositionPX, false);
+    distanceRaycast = getDistance(mapCompObserver->m_absoluteMapPositionPX, std::get<0>(*resultRaycast));
     if(distanceRaycast < distance)
     {
         if(!door && std::abs(distanceRaycast - distance) < 5.0f)
@@ -298,8 +292,7 @@ bool FirstPersonDisplaySystem::behindRaycastElement(const MapCoordComponent *map
 }
 
 //===================================================================
-float getDoorDistance(const MapCoordComponent *mapCompCamera, const MapCoordComponent *mapCompDoor,
-                      const DoorComponent *doorComp)
+float getDoorDistance(const MapCoordComponent *mapCompCamera, const MapCoordComponent *mapCompDoor, const DoorComponent *doorComp)
 {
     PairFloat_t refPointA = getAbsolutePosition(mapCompDoor->m_coord);
     float latPosDoor = refPointA.first,
@@ -560,15 +553,12 @@ void FirstPersonDisplaySystem::fillVertexFromEntity(uint32_t numEntity, uint32_t
 {
     VerticesData &vertex = getClearedVertice(numIteration);
     PositionVertexComponent *posComp = stairwayToComponentManager().
-            searchComponentByType<PositionVertexComponent>(numEntity,
-                                                           Components_e::POSITION_VERTEX_COMPONENT);
+            searchComponentByType<PositionVertexComponent>(numEntity, Components_e::POSITION_VERTEX_COMPONENT);
     SpriteTextureComponent *spriteComp = stairwayToComponentManager().
-            searchComponentByType<SpriteTextureComponent>(numEntity,
-                                                          Components_e::SPRITE_TEXTURE_COMPONENT);
+            searchComponentByType<SpriteTextureComponent>(numEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
     assert(posComp);
     assert(spriteComp);
-    m_entitiesNumMem.insert(EntityData(distance, spriteComp->m_spriteData->m_textureNum,
-                                       numIteration));
+    m_entitiesNumMem.insert(EntityData(distance, spriteComp->m_spriteData->m_textureNum, numIteration));
     if(displayMode == DisplayMode_e::STANDART_DM)
     {
         vertex.loadVertexStandartTextureComponent(*posComp, *spriteComp);
@@ -576,8 +566,7 @@ void FirstPersonDisplaySystem::fillVertexFromEntity(uint32_t numEntity, uint32_t
     else
     {
         DoorComponent *doorComp = nullptr;
-        doorComp = stairwayToComponentManager().
-                searchComponentByType<DoorComponent>(numEntity, Components_e::DOOR_COMPONENT);
+        doorComp = stairwayToComponentManager(). searchComponentByType<DoorComponent>(numEntity, Components_e::DOOR_COMPONENT);
         vertex.loadVertexTextureDrawByLineComponent(*posComp, *spriteComp, RAYCAST_LINE_NUMBER, doorComp);
     }
 }
