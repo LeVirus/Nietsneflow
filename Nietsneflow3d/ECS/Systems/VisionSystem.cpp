@@ -348,10 +348,8 @@ void VisionSystem::updateEnemySprites(uint32_t enemyEntity, uint32_t observerEnt
     }
     else if(enemyConfComp->m_displayMode == EnemyDisplayMode_e::DYING)
     {
-        mapEnemySprite_t::const_iterator it =
-                enemyConfComp->m_mapSpriteAssociate.find(EnemySpriteType_e::DYING);
-        std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() -
-                timerComp->m_clockB;
+        mapEnemySprite_t::const_iterator it = enemyConfComp->m_mapSpriteAssociate.find(EnemySpriteType_e::DYING);
+        std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() - timerComp->m_clockB;
         if(enemyConfComp->m_currentSprite == it->second.second)
         {
             enemyConfComp->m_displayMode = EnemyDisplayMode_e::DEAD;
@@ -366,15 +364,13 @@ void VisionSystem::updateEnemySprites(uint32_t enemyEntity, uint32_t observerEnt
 }
 
 //===========================================================================
-void VisionSystem::updateEnemyNormalSprite(EnemyConfComponent *enemyConfComp,
-                                           TimerComponent *timerComp,
+void VisionSystem::updateEnemyNormalSprite(EnemyConfComponent *enemyConfComp, TimerComponent *timerComp,
                                            uint32_t enemyEntity, uint32_t observerEntity)
 {
     if(enemyConfComp->m_behaviourMode == EnemyBehaviourMode_e::DYING)
     {
         enemyConfComp->m_displayMode = EnemyDisplayMode_e::DYING;
-        enemyConfComp->m_currentSprite = enemyConfComp->
-                m_mapSpriteAssociate.find(EnemySpriteType_e::DYING)->second.first;
+        enemyConfComp->m_currentSprite = enemyConfComp->m_mapSpriteAssociate.find(EnemySpriteType_e::DYING)->second.first;
         timerComp->m_clockA = std::chrono::system_clock::now();
         timerComp->m_clockB = std::chrono::system_clock::now();
     }

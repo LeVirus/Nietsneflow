@@ -1,9 +1,6 @@
 BUGS======================================================================
 
 ))
-Eject enemy and PLAYER?? don't take wall and element collision into account
-
-))
 visible shot impact does not appear when distance is high
 
 ))
@@ -33,8 +30,11 @@ assert à CollisionSystem.cpp::89    EnemyConfComponent == nullptr
 assert à CollisionSystem.cpp::726   hyp > distanceX && hyp > distanceY
 assert à CollisionSystem.cpp::770  
 
+))
+Eject enemy and PLAYER?? don't take wall and element collision into account====================OK
+
 -14)
-First enemy display can display random texture=====================??
+First enemy display can display random texture=====================OK
 
 ))
 Damage on moveable wall angle=============================OK

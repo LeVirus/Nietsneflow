@@ -100,6 +100,13 @@ void CollisionSystem::execSystem()
                 playerComp->m_crush = false;
             }
         }
+        if(tagCompA->m_tagA == CollisionTag_e::ENEMY_CT)
+        {
+            if(checkEnemyRemoveCollisionMask(mVectNumEntity[i]))
+            {
+                rmCollisionMaskEntity(mVectNumEntity[i]);
+            }
+        }
         for(uint32_t j = 0; j < mVectNumEntity.size(); ++j)
         {
             if(i == j)
@@ -107,8 +114,7 @@ void CollisionSystem::execSystem()
                 continue;
             }
             GeneralCollisionComponent *tagCompB = stairwayToComponentManager().
-                    searchComponentByType<GeneralCollisionComponent>(mVectNumEntity[j],
-                                                        Components_e::GENERAL_COLLISION_COMPONENT);
+                    searchComponentByType<GeneralCollisionComponent>(mVectNumEntity[j], Components_e::GENERAL_COLLISION_COMPONENT);
             assert(tagCompB);
             if(!tagCompB->m_active)
             {
@@ -133,8 +139,7 @@ void CollisionSystem::execSystem()
         {
             if(m_memDistCurrentBulletColl.first)
             {
-                m_vectMemShots.emplace_back(PairUI_t{mVectNumEntity[i],
-                                                     (*m_memDistCurrentBulletColl.first)});
+                m_vectMemShots.emplace_back(PairUI_t{mVectNumEntity[i], (*m_memDistCurrentBulletColl.first)});
             }
         }
         treatSegmentShots();
@@ -147,14 +152,31 @@ void CollisionSystem::execSystem()
 }
 
 //===================================================================
+bool CollisionSystem::checkEnemyRemoveCollisionMask(uint32_t entityNum)
+{
+    EnemyConfComponent *enemyConfComp = stairwayToComponentManager().
+            searchComponentByType<EnemyConfComponent>(entityNum, Components_e::ENEMY_CONF_COMPONENT);
+    assert(enemyConfComp);
+    if(enemyConfComp->m_displayMode == EnemyDisplayMode_e::DEAD)
+    {
+        MoveableComponent *moveComp = stairwayToComponentManager().
+                searchComponentByType<MoveableComponent>(entityNum, Components_e::MOVEABLE_COMPONENT);
+        assert(moveComp);
+        if(!moveComp->m_ejectData)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+//===================================================================
 void CollisionSystem::treatEnemyShooted(uint32_t enemyEntityNum, uint32_t damage)
 {
     EnemyConfComponent *enemyConfCompB = stairwayToComponentManager().
-            searchComponentByType<EnemyConfComponent>(enemyEntityNum,
-                                                      Components_e::ENEMY_CONF_COMPONENT);
+            searchComponentByType<EnemyConfComponent>(enemyEntityNum, Components_e::ENEMY_CONF_COMPONENT);
     TimerComponent *timerComp = stairwayToComponentManager().
-            searchComponentByType<TimerComponent>(enemyEntityNum,
-                                                      Components_e::TIMER_COMPONENT);
+            searchComponentByType<TimerComponent>(enemyEntityNum, Components_e::TIMER_COMPONENT);
     assert(enemyConfCompB);
     assert(timerComp);
     enemyConfCompB->m_touched = true;
@@ -166,7 +188,6 @@ void CollisionSystem::treatEnemyShooted(uint32_t enemyEntityNum, uint32_t damage
     {
         enemyConfCompB->m_behaviourMode = EnemyBehaviourMode_e::DYING;
         enemyConfCompB->m_touched = false;
-        rmCollisionMaskEntity(enemyEntityNum);
         if(enemyConfCompB->m_dropedObjectEntity)
         {
             confDropedObject(*enemyConfCompB->m_dropedObjectEntity, enemyEntityNum);

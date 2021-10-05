@@ -2,15 +2,6 @@ NEW FUNCTIONALITIES=============================================================
 ========================================================================================================================
 
 ))
-Audio Engine
-	Fist attack===================OK
-	Door==================OK
-	Enemy (attack & normal)=====================OK
-		Death
-	Object Pick up==================OK
-	Teleporter=================OK
-
-))
 CREATE CONF MENU
 
 ))
@@ -30,6 +21,15 @@ Create a visual level designer
 
 6)
 Ajouter armure
+
+))
+Audio Engine
+	Fist attack===================OK
+	Door==================OK
+	Enemy (attack & normal)=====================OK
+		Death
+	Object Pick up==================OK
+	Teleporter=================OK
 
 ))
 Add explosif barrels===========================OK
