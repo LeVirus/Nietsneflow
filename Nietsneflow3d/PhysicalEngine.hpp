@@ -39,8 +39,7 @@ private:
     IASystem *m_iaSystem = nullptr;
 };
 
-void moveElementFromAngle(float distanceMove, float radiantAngle,
-                          PairFloat_t &point, bool playerMove = false);
+void moveElementFromAngle(float distanceMove, float radiantAngle, PairFloat_t &point, bool playerMove = false);
 void updatePlayerOrientation(const MoveableComponent &moveComp,
                              PositionVertexComponent &posComp, VisionComponent &visionComp);
 void updatePlayerArrow(const MoveableComponent &moveComp,

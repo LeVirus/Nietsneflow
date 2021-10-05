@@ -4,9 +4,6 @@ BUGS======================================================================
 visible shot impact does not appear when distance is high
 
 ))
-if player is on limit level visible shot does not proceed
-
-))
 Display issue on impact on moveable wall 
 
 ))
@@ -14,9 +11,6 @@ Some weapons displays a bit too high
 
 -12)
 Static element  table desapear at limit vision
-
--2)
-While enemy touch eject on wall
 
 -7)
 Coll exit on door??
@@ -29,6 +23,9 @@ If impact are touching wall behind door ISSUE
 assert à CollisionSystem.cpp::89    EnemyConfComponent == nullptr
 assert à CollisionSystem.cpp::726   hyp > distanceX && hyp > distanceY
 assert à CollisionSystem.cpp::770  
+
+))
+if player is on limit level visible shot does not proceed=================================OK
 
 ))
 Eject enemy and PLAYER?? don't take wall and element collision into account====================OK

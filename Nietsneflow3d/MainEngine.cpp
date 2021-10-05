@@ -158,10 +158,8 @@ void MainEngine::confPlayerVisibleShoot(std::vector<uint32_t> &playerVisibleShot
 }
 
 //===================================================================
-void MainEngine::playerAttack(uint32_t playerEntity, PlayerConfComponent *playerComp, const PairFloat_t &point,
-                              float degreeAngle)
+void MainEngine::playerAttack(uint32_t playerEntity, PlayerConfComponent *playerComp, const PairFloat_t &point, float degreeAngle)
 {
-
     assert(m_weaponComp->m_currentWeapon < m_weaponComp->m_weaponsData.size());
     WeaponData &currentWeapon = m_weaponComp->m_weaponsData[
             m_weaponComp->m_currentWeapon];
@@ -171,17 +169,14 @@ void MainEngine::playerAttack(uint32_t playerEntity, PlayerConfComponent *player
         GeneralCollisionComponent *actionGenColl = m_ecsManager.getComponentManager().
                 searchComponentByType<GeneralCollisionComponent>(playerComp->m_hitMeleeEntity,
                 Components_e::GENERAL_COLLISION_COMPONENT);
-        MapCoordComponent *playerMapComp = m_ecsManager.getComponentManager().
-                searchComponentByType<MapCoordComponent>(playerEntity,
-                Components_e::MAP_COORD_COMPONENT);
         MoveableComponent *playerMoveComp = m_ecsManager.getComponentManager().
-                searchComponentByType<MoveableComponent>(playerEntity,
-                Components_e::MOVEABLE_COMPONENT);
+                searchComponentByType<MoveableComponent>(playerEntity, Components_e::MOVEABLE_COMPONENT);
         MapCoordComponent *actionMapComp = m_ecsManager.getComponentManager().
-                searchComponentByType<MapCoordComponent>(playerComp->m_hitMeleeEntity,
-                Components_e::MAP_COORD_COMPONENT);
-        assert(playerMoveComp);
+                searchComponentByType<MapCoordComponent>(playerComp->m_hitMeleeEntity, Components_e::MAP_COORD_COMPONENT);
+        MapCoordComponent *playerMapComp = m_ecsManager.getComponentManager().
+                searchComponentByType<MapCoordComponent>(playerEntity, Components_e::MAP_COORD_COMPONENT);
         assert(playerMapComp);
+        assert(playerMoveComp);
         assert(actionGenColl);
         assert(playerMapComp);
         confActionShape(actionMapComp, actionGenColl, playerMapComp, playerMoveComp);

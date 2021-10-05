@@ -316,8 +316,7 @@ void IASystem::memPlayerDatas(uint32_t playerEntity)
 }
 
 //===================================================================
-void IASystem::confVisibleShoot(std::vector<uint32_t> &visibleShots, const PairFloat_t &point,
-                                float degreeAngle, CollisionTag_e tag)
+void IASystem::confVisibleShoot(std::vector<uint32_t> &visibleShots, const PairFloat_t &point, float degreeAngle, CollisionTag_e tag)
 {
     GeneralCollisionComponent *genComp = nullptr;
     uint32_t currentShot = 0;
@@ -358,6 +357,7 @@ void IASystem::confVisibleShoot(std::vector<uint32_t> &visibleShots, const PairF
     genComp->m_active = true;
     ammoTimeComp->m_clockA = std::chrono::system_clock::now();
     mapComp->m_absoluteMapPositionPX = point;
+    moveElementFromAngle(10.0f, getRadiantAngle(degreeAngle), mapComp->m_absoluteMapPositionPX);
     ammoMoveComp->m_degreeOrientation = degreeAngle;
 }
 

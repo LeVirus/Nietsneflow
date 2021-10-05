@@ -118,8 +118,7 @@ void InputSystem::treatPlayerInput()
                             searchComponentByType<AudioComponent>(playerComp->m_weaponEntity, Components_e::AUDIO_COMPONENT);
                     assert(audioComp);
                     audioComp->m_soundElements[weaponComp->m_currentWeapon]->m_toPlay = true;
-                    m_mainEngine->playerAttack(mVectNumEntity[i], playerComp, mapComp->m_absoluteMapPositionPX,
-                                               moveComp->m_degreeOrientation);
+                    m_mainEngine->playerAttack(mVectNumEntity[i], playerComp, mapComp->m_absoluteMapPositionPX, moveComp->m_degreeOrientation);
                     if(weaponComp->m_weaponsData[weaponComp->m_currentWeapon].m_ammunationsCount == 0)
                     {
                         changeToTopPlayerWeapon(*weaponComp);
