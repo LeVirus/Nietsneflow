@@ -3,10 +3,6 @@ BUGS======================================================================
 ))
 visible shot impact does not appear when distance is high
 
--11)
-Shot behind door might appear to verify
-If impact are touching wall behind door ISSUE
-
 ))
 Display issue on impact on moveable wall 
 
@@ -20,6 +16,10 @@ assert à CollisionSystem.cpp::770
 
 -12)
 Static element  table desapear at limit vision==================================~~
+
+-11)
+Shot behind door might appear to verify
+If impact are touching wall behind door ISSUE===================================OK
 
 ))
 Some weapons displays a bit too high==========================OK

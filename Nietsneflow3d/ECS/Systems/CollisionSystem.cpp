@@ -534,15 +534,8 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
                         doorComp->m_currentState = DoorState_e::MOVE_OPEN;
                         activeSound(args.entityNumB);
                     }
-                    else
-                    {
-                        collisionCircleRectEject(args, circleCompA, rectCompB);
-                    }
                 }
-                else
-                {
-                    collisionCircleRectEject(args, circleCompA, rectCompB);
-                }
+                collisionCircleRectEject(args, circleCompA, rectCompB);
             }
             else if(args.tagCompA->m_tagA == CollisionTag_e::ENEMY_CT)
             {
@@ -650,6 +643,11 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
             if(shotConfComp->m_destructPhase)
             {
                 return;
+            }
+            if(args.tagCompB->m_shape == CollisionShape_e::RECTANGLE_C)
+            {
+                RectangleCollisionComponent &rectCompB = getRectangleComponent(args.entityNumB);
+                collisionCircleRectEject(args, circleCompA, rectCompB);
             }
             if(shotConfComp->m_damageCircleRayData)
             {

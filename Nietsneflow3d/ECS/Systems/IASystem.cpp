@@ -139,8 +139,7 @@ void IASystem::execSystem()
         }
         if(enemyConfComp->m_behaviourMode == EnemyBehaviourMode_e::ATTACK)
         {
-            treatEnemyBehaviourAttack(mVectNumEntity[i], enemyMapComp, radiantAnglePlayerDirection,
-                                      enemyConfComp, distancePlayer);
+            treatEnemyBehaviourAttack(mVectNumEntity[i], enemyMapComp, radiantAnglePlayerDirection, enemyConfComp, distancePlayer);
         }
     }
 }
