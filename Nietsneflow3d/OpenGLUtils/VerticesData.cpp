@@ -145,7 +145,7 @@ float VerticesData::loadWallDoorRaycastingEntity(const SpriteTextureComponent &s
                                                  const std::vector<RayCastingIntersect> &raycastingData,
                                                  uint32_t totalLateralLine)
 {
-    float lateralPosA, lateralPosB, verticalPos, lateralText, closerDist = raycastingData[0].m_distance;
+    float lateralPosA, lateralPosB, verticalPos, lateralText, distantDist = raycastingData[0].m_distance;
     float diffTotalTexturePos = (spriteComp.m_spriteData->m_texturePosVertex[1].first -
                                  spriteComp.m_spriteData->m_texturePosVertex[0].first),
             totalGLLateralPos = static_cast<float>(totalLateralLine);
@@ -165,12 +165,12 @@ float VerticesData::loadWallDoorRaycastingEntity(const SpriteTextureComponent &s
         addTexturePoint({lateralPosA, -verticalPos}, {lateralText,
                                                       spriteComp.m_spriteData->m_texturePosVertex[3].second});
         addIndices(BaseShapeTypeGL_e::RECTANGLE);
-        if(raycastingData[i].m_distance < closerDist)
+        if(raycastingData[i].m_distance > distantDist)
         {
-            closerDist = raycastingData[i].m_distance;
+            distantDist = raycastingData[i].m_distance;
         }
     }
-    return closerDist;
+    return distantDist;
 }
 
 //===================================================================

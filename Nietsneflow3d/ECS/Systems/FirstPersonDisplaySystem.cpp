@@ -99,8 +99,7 @@ void FirstPersonDisplaySystem::confCompVertexMemEntities()
                     searchComponentByType<GeneralCollisionComponent>(visionComp->m_vectVisibleEntities[numIteration],
                                                                      Components_e::GENERAL_COLLISION_COMPONENT);
             mapCompB = stairwayToComponentManager().
-                    searchComponentByType<MapCoordComponent>(visionComp->m_vectVisibleEntities[numIteration],
-                                                             Components_e::MAP_COORD_COMPONENT);
+                    searchComponentByType<MapCoordComponent>(visionComp->m_vectVisibleEntities[numIteration], Components_e::MAP_COORD_COMPONENT);
             assert(mapCompB);
             assert(genCollComp);
             if(genCollComp->m_active)
@@ -182,8 +181,7 @@ void FirstPersonDisplaySystem::writeSimpleTextVertexGroundCeiling()
 }
 
 //===================================================================
-void FirstPersonDisplaySystem::writeVertexWallDoorRaycasting(const pairRaycastingData_t &entityData,
-                                                             uint32_t numIteration)
+void FirstPersonDisplaySystem::writeVertexWallDoorRaycasting(const pairRaycastingData_t &entityData, uint32_t numIteration)
 {
     VerticesData &vertex = getClearedVertice(numIteration);
     SpriteTextureComponent *spriteComp = stairwayToComponentManager().
@@ -203,8 +201,7 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
     uint32_t numEntity = visionComp->m_vectVisibleEntities[numIteration];
     PairFloat_t centerPosB = getCenterPosition(mapCompB, genCollComp, numEntity);
     float simpleDistance, radiantObserverAngle = getRadiantAngle(degreeObserverAngle),
-            cameraDistance = getCameraDistance(mapCompA->m_absoluteMapPositionPX,
-                                             mapCompB->m_absoluteMapPositionPX, radiantObserverAngle);
+            cameraDistance = getCameraDistance(mapCompA->m_absoluteMapPositionPX, mapCompB->m_absoluteMapPositionPX, radiantObserverAngle);
     float displayDistance = cameraDistance;
     if(cameraDistance > visionComp->m_distanceVisibility || cameraDistance < 1.0f)
     {
@@ -229,11 +226,14 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
             simpleDistance -= 5.0f;
         }
     }
-    if(genCollComp->m_tagA == CollisionTag_e::IMPACT_CT ||
-            !behindRaycastElement(mapCompA, mapCompB, simpleDistance, radiantObserverAngle,
+    if(!behindRaycastElement(mapCompA, mapCompB, simpleDistance, radiantObserverAngle,
                                   visionComp->m_vectVisibleEntities[numIteration]))
     {
-        displayDistance -= LEVEL_TILE_SIZE_PX;
+        displayDistance -= LEVEL_TILE_SIZE_PX * 4.0f;
+        if(genCollComp->m_tagA == CollisionTag_e::IMPACT_CT)
+        {
+            displayDistance -= LEVEL_TILE_SIZE_PX;
+        }
     }
     float trigoAngle = getTrigoAngle(mapCompA->m_absoluteMapPositionPX, centerPosB);
     //get lateral pos from angle
@@ -799,8 +799,7 @@ void FirstPersonDisplaySystem::rayCasting()
             targetPoint = calcLineSegmentRaycast(currentRadiantAngle, mapCompCamera->m_absoluteMapPositionPX, true);
             if(targetPoint)
             {
-                cameraDistance = getCameraDistance(mapCompCamera->m_absoluteMapPositionPX,
-                                                   std::get<0>(*targetPoint), cameraRadiantAngle);
+                cameraDistance = getCameraDistance(mapCompCamera->m_absoluteMapPositionPX, std::get<0>(*targetPoint), cameraRadiantAngle);
                 memDistance(*std::get<2>(*targetPoint), j, cameraDistance, std::get<1>(*targetPoint));
             }
             if(m_backgroundRaycastActive)
