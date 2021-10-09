@@ -1,13 +1,22 @@
 BUGS======================================================================
 
 ))
-visible shot impact does not appear when distance is high
+visible shot impact does not appear when distance is high on door on east side
 
 ))
 Display issue on impact on moveable wall 
 
 -7)
 Coll exit on door??
+
+))
+Enemy eject issue!!!!!
+
+))
+on limite vision element appear before closer raycast elements
+
+))
+Still issue on order display element raycast
 
 1)
 assert à CollisionSystem.cpp::89    EnemyConfComponent == nullptr

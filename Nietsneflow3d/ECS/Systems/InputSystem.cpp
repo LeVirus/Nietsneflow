@@ -110,8 +110,7 @@ void InputSystem::treatPlayerInput()
             //SHOOT
             else if(glfwGetKey(m_window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
             {
-                if(!weaponComp->m_timerShootActive &&
-                        weaponComp->m_weaponsData[weaponComp->m_currentWeapon].m_ammunationsCount > 0)
+                if(!weaponComp->m_timerShootActive && weaponComp->m_weaponsData[weaponComp->m_currentWeapon].m_ammunationsCount > 0)
                 {
                     playerComp->m_playerShoot = true;
                     AudioComponent *audioComp = stairwayToComponentManager().

@@ -122,8 +122,7 @@ void VisionSystem::updateSprites(uint32_t observerEntity,
             updateTeleportDisplaySprite(memSpriteComp, spriteComp, timerComp, genComp);
         }
         //OOOOK put enemy tag to tagB
-        else if(genComp->m_tagA == CollisionTag_e::ENEMY_CT ||
-                genComp->m_tagA == CollisionTag_e::GHOST_CT)
+        else if(genComp->m_tagA == CollisionTag_e::ENEMY_CT || genComp->m_tagA == CollisionTag_e::GHOST_CT)
         {
             EnemyConfComponent *enemyConfComp = stairwayToComponentManager().
                     searchComponentByType<EnemyConfComponent>(vectEntities[i],
@@ -206,11 +205,9 @@ void VisionSystem::updateVisibleShotSprite(uint32_t shotEntity, MemSpriteDataCom
                                            TimerComponent *timerComp, GeneralCollisionComponent *genComp)
 {
     ShotConfComponent *shotComp = stairwayToComponentManager().
-            searchComponentByType<ShotConfComponent>(
-                shotEntity, Components_e::SHOT_CONF_COMPONENT);
+            searchComponentByType<ShotConfComponent>(shotEntity, Components_e::SHOT_CONF_COMPONENT);
     MemFPSGLSizeComponent *memGLSizeComp = stairwayToComponentManager().
-            searchComponentByType<MemFPSGLSizeComponent>(
-                shotEntity, Components_e::MEM_FPS_GLSIZE_COMPONENT);
+            searchComponentByType<MemFPSGLSizeComponent>(shotEntity, Components_e::MEM_FPS_GLSIZE_COMPONENT);
     FPSVisibleStaticElementComponent *fpsStaticComp = stairwayToComponentManager().
             searchComponentByType<FPSVisibleStaticElementComponent>(shotEntity, Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
     assert(fpsStaticComp);
@@ -220,8 +217,7 @@ void VisionSystem::updateVisibleShotSprite(uint32_t shotEntity, MemSpriteDataCom
     {
         return;
     }
-    std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() -
-            timerComp->m_clockB;
+    std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() - timerComp->m_clockB;
     if(elapsed_seconds.count() > 0.12)
     {
         if(shotComp->m_spriteShotNum != memSpriteComp->m_vectSpriteData.size() - 1)

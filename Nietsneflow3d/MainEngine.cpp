@@ -1033,8 +1033,7 @@ void MainEngine::createPlayerVisibleShotEntity(WeaponComponent *weaponConf)
             (*weaponConf->m_weaponsData[i].m_visibleShootEntities).resize(1);
             for(uint32_t j = 0; j < weaponConf->m_weaponsData[i].m_visibleShootEntities->size(); ++j)
             {
-                (*weaponConf->m_weaponsData[i].m_visibleShootEntities)[j] =
-                        createAmmoEntity(CollisionTag_e::BULLET_PLAYER_CT, true);
+                (*weaponConf->m_weaponsData[i].m_visibleShootEntities)[j] = createAmmoEntity(CollisionTag_e::BULLET_PLAYER_CT, true);
             }
         }
     }
@@ -1154,14 +1153,14 @@ void MainEngine::loadVisibleShotData(const std::vector<SpriteData> &vectSprite, 
                 searchComponentByType<MemSpriteDataComponent>(visibleAmmo[k],
                                                               Components_e::MEM_SPRITE_DATA_COMPONENT);
         FPSVisibleStaticElementComponent *fpsStaticComp = m_ecsManager.getComponentManager().
-                searchComponentByType<FPSVisibleStaticElementComponent>(
-                    visibleAmmo[k], Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
+                searchComponentByType<FPSVisibleStaticElementComponent>(visibleAmmo[k], Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
         MemFPSGLSizeComponent *memFPSGLSizeComp = m_ecsManager.getComponentManager().
-                searchComponentByType<MemFPSGLSizeComponent>(
-                    visibleAmmo[k], Components_e::MEM_FPS_GLSIZE_COMPONENT);
+                searchComponentByType<MemFPSGLSizeComponent>(visibleAmmo[k], Components_e::MEM_FPS_GLSIZE_COMPONENT);
         AudioComponent *audioComp = m_ecsManager.getComponentManager().
-                searchComponentByType<AudioComponent>(
-                    visibleAmmo[k], Components_e::AUDIO_COMPONENT);
+                searchComponentByType<AudioComponent>(visibleAmmo[k], Components_e::AUDIO_COMPONENT);
+        ShotConfComponent *shotComp = m_ecsManager.getComponentManager().
+                searchComponentByType<ShotConfComponent>(visibleAmmo[k], Components_e::SHOT_CONF_COMPONENT);
+        assert(shotComp);
         assert(audioComp);
         assert(memFPSGLSizeComp);
         assert(fpsStaticComp);
@@ -1179,6 +1178,15 @@ void MainEngine::loadVisibleShotData(const std::vector<SpriteData> &vectSprite, 
         }
         fpsStaticComp->m_inGameSpriteSize = it->second.second[0].m_GLSize;
         spriteComp->m_spriteData = memSpriteComp->m_vectSpriteData[0];
+        float maxWidth = memFPSGLSizeComp->m_memGLSizeData[0].first;
+        for(uint32_t i = 1; i < memFPSGLSizeComp->m_memGLSizeData.size(); ++i)
+        {
+            if(maxWidth < memFPSGLSizeComp->m_memGLSizeData[i].first)
+            {
+                maxWidth = memFPSGLSizeComp->m_memGLSizeData[i].first;
+            }
+        }
+        shotComp->m_ejectExplosionRay = maxWidth * LEVEL_HALF_TILE_SIZE_PX;
     }
 }
 
@@ -1190,11 +1198,9 @@ void MainEngine::confVisibleAmmo(uint32_t ammoEntity)
     CircleCollisionComponent *circleComp = m_ecsManager.getComponentManager().
             searchComponentByType<CircleCollisionComponent>(ammoEntity, Components_e::CIRCLE_COLLISION_COMPONENT);
     FPSVisibleStaticElementComponent *fpsStaticComp = m_ecsManager.getComponentManager().
-            searchComponentByType<FPSVisibleStaticElementComponent>(
-                ammoEntity, Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
+            searchComponentByType<FPSVisibleStaticElementComponent>(ammoEntity, Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
     MoveableComponent *moveComp = m_ecsManager.getComponentManager().
-            searchComponentByType<MoveableComponent>(
-                ammoEntity, Components_e::MOVEABLE_COMPONENT);
+            searchComponentByType<MoveableComponent>(ammoEntity, Components_e::MOVEABLE_COMPONENT);
     assert(circleComp);
     assert(fpsStaticComp);
     assert(moveComp);

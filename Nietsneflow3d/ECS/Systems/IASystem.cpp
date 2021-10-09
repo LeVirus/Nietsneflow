@@ -340,6 +340,17 @@ void IASystem::confVisibleShoot(std::vector<uint32_t> &visibleShots, const PairF
             break;
         }
     }
+    ShotConfComponent *targetShotConfComp = stairwayToComponentManager().
+            searchComponentByType<ShotConfComponent>(visibleShots[currentShot], Components_e::SHOT_CONF_COMPONENT);
+    assert(targetShotConfComp);
+    if(targetShotConfComp->m_ejectMode)
+    {
+        targetShotConfComp->m_ejectMode = false;
+        CircleCollisionComponent *circleTargetComp = stairwayToComponentManager().
+                searchComponentByType<CircleCollisionComponent>(visibleShots[currentShot], Components_e::CIRCLE_COLLISION_COMPONENT);
+        assert(circleTargetComp);
+        std::swap(targetShotConfComp->m_ejectExplosionRay, circleTargetComp->m_ray);
+    }
     MapCoordComponent *mapComp = stairwayToComponentManager().
             searchComponentByType<MapCoordComponent>(
                 visibleShots[currentShot], Components_e::MAP_COORD_COMPONENT);
@@ -358,6 +369,7 @@ void IASystem::confVisibleShoot(std::vector<uint32_t> &visibleShots, const PairF
     mapComp->m_absoluteMapPositionPX = point;
     moveElementFromAngle(10.0f, getRadiantAngle(degreeAngle), mapComp->m_absoluteMapPositionPX);
     ammoMoveComp->m_degreeOrientation = degreeAngle;
+    ammoMoveComp->m_currentDegreeMoveDirection = degreeAngle;
 }
 
 //===================================================================
@@ -386,18 +398,16 @@ void IASystem::confNewVisibleShot(const std::vector<uint32_t> &visibleShots)
     ShotConfComponent *baseShotConfComp = stairwayToComponentManager().
             searchComponentByType<ShotConfComponent>(visibleShots[baseIndex],
                                                      Components_e::SHOT_CONF_COMPONENT);
+    ShotConfComponent *targetShotConfComp = stairwayToComponentManager().
+            searchComponentByType<ShotConfComponent>(visibleShots[targetIndex], Components_e::SHOT_CONF_COMPONENT);
     MoveableComponent *baseMoveComp = stairwayToComponentManager().
             searchComponentByType<MoveableComponent>(visibleShots[baseIndex],
                                                      Components_e::MOVEABLE_COMPONENT);
-    ShotConfComponent *targetShotConfComp = stairwayToComponentManager().
-            searchComponentByType<ShotConfComponent>(visibleShots[targetIndex],
-                                                     Components_e::SHOT_CONF_COMPONENT);
     MoveableComponent *targetMoveComp = stairwayToComponentManager().
             searchComponentByType<MoveableComponent>(visibleShots[targetIndex],
                                                      Components_e::MOVEABLE_COMPONENT);
     MemFPSGLSizeComponent *memFPSGLSizeCompBase = stairwayToComponentManager().
-            searchComponentByType<MemFPSGLSizeComponent>(visibleShots[baseIndex],
-                                                     Components_e::MEM_FPS_GLSIZE_COMPONENT);
+            searchComponentByType<MemFPSGLSizeComponent>(visibleShots[baseIndex], Components_e::MEM_FPS_GLSIZE_COMPONENT);
     assert(baseShotConfComp);
     MemFPSGLSizeComponent *memFPSGLSizeCompTarget = stairwayToComponentManager().
             searchComponentByType<MemFPSGLSizeComponent>(visibleShots[targetIndex],
@@ -413,7 +423,6 @@ void IASystem::confNewVisibleShot(const std::vector<uint32_t> &visibleShots)
     assert(baseMoveComp);
     assert(targetShotConfComp);
     assert(targetMoveComp);
-
     assert(baseSpriteComp);
     assert(baseMemSpriteComp);
     assert(baseFpsStaticComp);
@@ -423,10 +432,8 @@ void IASystem::confNewVisibleShot(const std::vector<uint32_t> &visibleShots)
     audioCompTarget->m_soundElements.push_back(SoundElement());
     audioCompTarget->m_soundElements[0]->m_toPlay = true;
     audioCompTarget->m_soundElements[0]->m_bufferALID = audioCompBase->m_soundElements[0]->m_bufferALID;
-    audioCompTarget->m_soundElements[0]->m_sourceALID =
-            mptrSystemManager->searchSystemByType<SoundSystem>(
-                static_cast<uint32_t>(Systems_e::SOUND_SYSTEM))->
-            createSource(audioCompBase->m_soundElements[0]->m_bufferALID);
+    audioCompTarget->m_soundElements[0]->m_sourceALID = mptrSystemManager->searchSystemByType<SoundSystem>(
+                static_cast<uint32_t>(Systems_e::SOUND_SYSTEM))->createSource(audioCompBase->m_soundElements[0]->m_bufferALID);
     memFPSGLSizeCompTarget->m_memGLSizeData = memFPSGLSizeCompBase->m_memGLSizeData;
     targetMemSpriteComp->m_vectSpriteData = baseMemSpriteComp->m_vectSpriteData;
     targetSpriteComp->m_spriteData = targetMemSpriteComp->m_vectSpriteData[0];
@@ -434,4 +441,5 @@ void IASystem::confNewVisibleShot(const std::vector<uint32_t> &visibleShots)
     targetFpsStaticComp->m_inGameSpriteSize = memFPSGLSizeCompBase->m_memGLSizeData[0];
     targetMoveComp->m_velocity = baseMoveComp->m_velocity;
     targetShotConfComp->m_damage = baseShotConfComp->m_damage;
+    targetShotConfComp->m_ejectExplosionRay = baseShotConfComp->m_ejectExplosionRay;
 }
