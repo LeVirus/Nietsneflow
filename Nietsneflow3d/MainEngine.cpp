@@ -208,17 +208,20 @@ void MainEngine::confPlayerBullet(PlayerConfComponent *playerComp,
             searchComponentByType<WeaponComponent>(playerComp->m_weaponEntity,
             Components_e::WEAPON_COMPONENT);
     assert(weaponComp);
-    uint32_t bulletEntity = (*weaponComp->m_weaponsData[weaponComp->m_currentWeapon].
-            m_segmentShootEntities)[numBullet];
+    uint32_t bulletEntity = (*weaponComp->m_weaponsData[weaponComp->m_currentWeapon].m_segmentShootEntities)[numBullet];
     GeneralCollisionComponent *genColl = m_ecsManager.getComponentManager().
-            searchComponentByType<GeneralCollisionComponent>(bulletEntity,
-            Components_e::GENERAL_COLLISION_COMPONENT);
+            searchComponentByType<GeneralCollisionComponent>(bulletEntity, Components_e::GENERAL_COLLISION_COMPONENT);
     SegmentCollisionComponent *segmentColl = m_ecsManager.getComponentManager().
-            searchComponentByType<SegmentCollisionComponent>(bulletEntity,
-            Components_e::SEGMENT_COLLISION_COMPONENT);
+            searchComponentByType<SegmentCollisionComponent>(bulletEntity, Components_e::SEGMENT_COLLISION_COMPONENT);
     assert(genColl);
+    ShotConfComponent *shotComp = m_ecsManager.getComponentManager().
+            searchComponentByType<ShotConfComponent>(bulletEntity, Components_e::SHOT_CONF_COMPONENT);
+    assert(shotComp);
+    MoveableComponent *moveImpactComp = m_ecsManager.getComponentManager().
+            searchComponentByType<MoveableComponent>(shotComp->m_impactEntity, Components_e::MOVEABLE_COMPONENT);
+    assert(moveImpactComp);
     assert(segmentColl);
-    confBullet(genColl, segmentColl, CollisionTag_e::BULLET_PLAYER_CT, point, degreeAngle);
+    confBullet(genColl, segmentColl, moveImpactComp, CollisionTag_e::BULLET_PLAYER_CT, point, degreeAngle);
 }
 
 //===================================================================
@@ -232,11 +235,11 @@ void confActionShape(MapCoordComponent *mapCompAction, GeneralCollisionComponent
 }
 
 //===================================================================
-void confBullet(GeneralCollisionComponent *genColl, SegmentCollisionComponent *segmentColl,
+void confBullet(GeneralCollisionComponent *genColl, SegmentCollisionComponent *segmentColl, MoveableComponent *moveImpactComp,
                 CollisionTag_e collTag, const PairFloat_t &point, float degreeAngle)
 {
-    assert(collTag == CollisionTag_e::BULLET_ENEMY_CT ||
-           collTag == CollisionTag_e::BULLET_PLAYER_CT);
+    assert(collTag == CollisionTag_e::BULLET_ENEMY_CT || collTag == CollisionTag_e::BULLET_PLAYER_CT);
+    moveImpactComp->m_degreeOrientation = degreeAngle;
     genColl->m_tagA = collTag;
     genColl->m_shape = CollisionShape_e::SEGMENT_C;
     genColl->m_active = true;
@@ -835,7 +838,7 @@ void MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
                             searchComponentByType<ShotConfComponent>(enemyComp->m_stdAmmo[j],
                                                                      Components_e::SHOT_CONF_COMPONENT);
                     assert(shotComp);
-                    confShotImpactEntity(levelManager.getPictureSpriteData(), itt->second, shotComp->m_impactEntity);
+                    shotComp->m_impactEntity = confShotImpactEntity(levelManager.getPictureSpriteData(), itt->second);
                 }
             }
             loadEnemySprites(levelManager.getPictureData().getSpriteData(),
@@ -1052,44 +1055,45 @@ void MainEngine::createPlayerImpactEntities(const std::vector<SpriteData> &vectS
                     mapImpactData.find(weaponConf->m_weaponsData[i].m_impactID);
             assert(it != mapImpactData.end());
             assert(weaponConf->m_weaponsData[i].m_segmentShootEntities);
-            for(uint32_t j = 0; j <
-                weaponConf->m_weaponsData[i].m_segmentShootEntities->size(); ++j)
+            for(uint32_t j = 0; j < weaponConf->m_weaponsData[i].m_segmentShootEntities->size(); ++j)
             {
                 ShotConfComponent *shotComp = m_ecsManager.getComponentManager().
                         searchComponentByType<ShotConfComponent>((*weaponConf->m_weaponsData[i].m_segmentShootEntities)[j],
                                                                  Components_e::SHOT_CONF_COMPONENT);
                 assert(shotComp);
-                confShotImpactEntity(vectSpriteData, it->second, shotComp->m_impactEntity);
+                shotComp->m_impactEntity = confShotImpactEntity(vectSpriteData, it->second);
             }
         }
     }
 }
 
 //===================================================================
-void MainEngine::confShotImpactEntity(const std::vector<SpriteData> &vectSpriteData,
-                                      const PairImpactData_t &shootDisplayData,
-                                      uint32_t &impactEntity)
+uint32_t MainEngine::confShotImpactEntity(const std::vector<SpriteData> &vectSpriteData,
+                                          const PairImpactData_t &shootDisplayData)
 {
-    impactEntity = createShotImpactEntity();
+    uint32_t impactEntity = createShotImpactEntity();
     FPSVisibleStaticElementComponent *fpsStaticComp = m_ecsManager.getComponentManager().
             searchComponentByType<FPSVisibleStaticElementComponent>(
                 impactEntity, Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
     GeneralCollisionComponent *genComp = m_ecsManager.getComponentManager().
-            searchComponentByType<GeneralCollisionComponent>(impactEntity,
-                                                             Components_e::GENERAL_COLLISION_COMPONENT);
+            searchComponentByType<GeneralCollisionComponent>(impactEntity, Components_e::GENERAL_COLLISION_COMPONENT);
+    CircleCollisionComponent *circleComp = m_ecsManager.getComponentManager().
+            searchComponentByType<CircleCollisionComponent>(impactEntity, Components_e::CIRCLE_COLLISION_COMPONENT);
+    assert(circleComp);
     assert(genComp);
     assert(fpsStaticComp);
+    circleComp->m_ray = 2.0f;
     fpsStaticComp->m_inGameSpriteSize = shootDisplayData.first[0].m_GLSize;
     fpsStaticComp->m_levelElementType = LevelStaticElementType_e::IMPACT;
     genComp->m_active = false;
     genComp->m_tagA = CollisionTag_e::IMPACT_CT;
     genComp->m_shape = CollisionShape_e::CIRCLE_C;
     loadShotImpactSprite(vectSpriteData, shootDisplayData, impactEntity);
+    return impactEntity;
 }
 
 //===================================================================
-void MainEngine::loadEnemySprites(const std::vector<SpriteData> &vectSprite,
-                                  const EnemyData &enemiesData, uint32_t numEntity,
+void MainEngine::loadEnemySprites(const std::vector<SpriteData> &vectSprite, const EnemyData &enemiesData, uint32_t numEntity,
                                   EnemyConfComponent *enemyComp, const MapVisibleShotData_t &visibleShot)
 {
     MemSpriteDataComponent *memSpriteComp = m_ecsManager.getComponentManager().
@@ -1147,11 +1151,9 @@ void MainEngine::loadVisibleShotData(const std::vector<SpriteData> &vectSprite, 
     for(uint32_t k = 0; k < visibleAmmo.size(); ++k)
     {
         SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().
-                searchComponentByType<SpriteTextureComponent>(visibleAmmo[k],
-                                                              Components_e::SPRITE_TEXTURE_COMPONENT);
+                searchComponentByType<SpriteTextureComponent>(visibleAmmo[k], Components_e::SPRITE_TEXTURE_COMPONENT);
         MemSpriteDataComponent *memSpriteComp = m_ecsManager.getComponentManager().
-                searchComponentByType<MemSpriteDataComponent>(visibleAmmo[k],
-                                                              Components_e::MEM_SPRITE_DATA_COMPONENT);
+                searchComponentByType<MemSpriteDataComponent>(visibleAmmo[k], Components_e::MEM_SPRITE_DATA_COMPONENT);
         FPSVisibleStaticElementComponent *fpsStaticComp = m_ecsManager.getComponentManager().
                 searchComponentByType<FPSVisibleStaticElementComponent>(visibleAmmo[k], Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
         MemFPSGLSizeComponent *memFPSGLSizeComp = m_ecsManager.getComponentManager().
@@ -1353,6 +1355,7 @@ uint32_t MainEngine::createShotImpactEntity()
     bitsetComponents[Components_e::GENERAL_COLLISION_COMPONENT] = true;
     bitsetComponents[Components_e::CIRCLE_COLLISION_COMPONENT] = true;
     bitsetComponents[Components_e::IMPACT_CONF_COMPONENT] = true;
+    bitsetComponents[Components_e::MOVEABLE_COMPONENT] = true;
     return m_ecsManager.addEntity(bitsetComponents);
 }
 

@@ -411,6 +411,9 @@ void CollisionSystem::initArrayTag()
     m_tagArray.insert({CollisionTag_e::BULLET_PLAYER_CT, CollisionTag_e::DOOR_CT});
     m_tagArray.insert({CollisionTag_e::BULLET_PLAYER_CT, CollisionTag_e::BARREL_CT});
 
+    m_tagArray.insert({CollisionTag_e::IMPACT_CT, CollisionTag_e::WALL_CT});
+    m_tagArray.insert({CollisionTag_e::IMPACT_CT, CollisionTag_e::DOOR_CT});
+
     //    m_tagArray.insert({CollisionTag_e::OBJECT_CT, CollisionTag_e::PLAYER_CT});
 }
 
@@ -551,6 +554,10 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
                         activeSound(args.entityNumB);
                     }
                 }
+            }
+            else if(args.tagCompA->m_tagA == CollisionTag_e::IMPACT_CT)
+            {
+                collisionCircleRectEject(args, circleCompA, rectCompB);
             }
         }
     }

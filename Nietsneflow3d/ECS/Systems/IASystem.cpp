@@ -247,15 +247,18 @@ void IASystem::enemyShoot(EnemyConfComponent *enemyConfComp, MoveableComponent *
     else
     {
         genComp = stairwayToComponentManager().
-                searchComponentByType<GeneralCollisionComponent>(
-                    enemyConfComp->m_stdAmmo[0], Components_e::GENERAL_COLLISION_COMPONENT);
+                searchComponentByType<GeneralCollisionComponent>(enemyConfComp->m_stdAmmo[0], Components_e::GENERAL_COLLISION_COMPONENT);
         SegmentCollisionComponent *segmentComp = stairwayToComponentManager().
-                searchComponentByType<SegmentCollisionComponent>(
-                    enemyConfComp->m_stdAmmo[0], Components_e::SEGMENT_COLLISION_COMPONENT);
+                searchComponentByType<SegmentCollisionComponent>(enemyConfComp->m_stdAmmo[0], Components_e::SEGMENT_COLLISION_COMPONENT);
+        ShotConfComponent *shotComp = stairwayToComponentManager().
+                searchComponentByType<ShotConfComponent>(enemyConfComp->m_stdAmmo[0], Components_e::SHOT_CONF_COMPONENT);
+        assert(shotComp);
+        MoveableComponent *moveComp = stairwayToComponentManager().
+                searchComponentByType<MoveableComponent>(shotComp->m_impactEntity, Components_e::MOVEABLE_COMPONENT);
+        assert(moveComp);
         assert(genComp);
         assert(segmentComp);
-        confBullet(genComp, segmentComp, CollisionTag_e::BULLET_ENEMY_CT,
-                   enemyMapComp->m_absoluteMapPositionPX, moveComp->m_degreeOrientation);
+        confBullet(genComp, segmentComp, moveComp, CollisionTag_e::BULLET_ENEMY_CT, enemyMapComp->m_absoluteMapPositionPX, moveComp->m_degreeOrientation);
     }
 }
 
@@ -353,14 +356,11 @@ void IASystem::confVisibleShoot(std::vector<uint32_t> &visibleShots, const PairF
         std::swap(targetShotConfComp->m_ejectExplosionRay, circleTargetComp->m_ray);
     }
     MapCoordComponent *mapComp = stairwayToComponentManager().
-            searchComponentByType<MapCoordComponent>(
-                visibleShots[currentShot], Components_e::MAP_COORD_COMPONENT);
+            searchComponentByType<MapCoordComponent>(visibleShots[currentShot], Components_e::MAP_COORD_COMPONENT);
     MoveableComponent *ammoMoveComp = stairwayToComponentManager().
-            searchComponentByType<MoveableComponent>(
-                visibleShots[currentShot], Components_e::MOVEABLE_COMPONENT);
+            searchComponentByType<MoveableComponent>(visibleShots[currentShot], Components_e::MOVEABLE_COMPONENT);
     TimerComponent *ammoTimeComp = stairwayToComponentManager().
-            searchComponentByType<TimerComponent>(
-                visibleShots[currentShot], Components_e::TIMER_COMPONENT);
+            searchComponentByType<TimerComponent>(visibleShots[currentShot], Components_e::TIMER_COMPONENT);
     assert(genComp);
     assert(ammoTimeComp);
     assert(mapComp);

@@ -99,8 +99,7 @@ private:
     void createPlayerVisibleShotEntity(WeaponComponent *weaponConf);
     void createPlayerImpactEntities(const std::vector<SpriteData> &vectSpriteData, WeaponComponent *weaponConf,
                                     const MapImpactData_t &mapImpactData);
-    void confShotImpactEntity(const std::vector<SpriteData> &vectSpriteData, const PairImpactData_t &shootDisplayData,
-                              uint32_t &impactEntity);
+    uint32_t confShotImpactEntity(const std::vector<SpriteData> &vectSpriteData, const PairImpactData_t &shootDisplayData);
     uint32_t createTriggerEntity(bool visible);
     uint32_t createColorEntity();
     uint32_t createTextureEntity();
@@ -173,7 +172,7 @@ private:
 void insertEnemySpriteFromType(const std::vector<SpriteData> &vectSprite, mapEnemySprite_t &mapSpriteAssociate,
                                std::vector<SpriteData const *> &vectSpriteData, const std::vector<uint8_t> &enemyMemArray,
                                EnemySpriteType_e type);
-void confBullet(GeneralCollisionComponent *genColl, SegmentCollisionComponent *segmentColl,
+void confBullet(GeneralCollisionComponent *genColl, SegmentCollisionComponent *segmentColl, MoveableComponent *moveImpactComp,
                 CollisionTag_e collTag, const PairFloat_t &point, float degreeAngle);
 void setWeaponPlayer();
 void confActionShape(MapCoordComponent *mapCompAction, GeneralCollisionComponent *genCompAction, const MapCoordComponent *attackerMapComp,
