@@ -413,6 +413,7 @@ void CollisionSystem::initArrayTag()
 
     m_tagArray.insert({CollisionTag_e::IMPACT_CT, CollisionTag_e::WALL_CT});
     m_tagArray.insert({CollisionTag_e::IMPACT_CT, CollisionTag_e::DOOR_CT});
+    m_tagArray.insert({CollisionTag_e::IMPACT_CT, CollisionTag_e::ENEMY_CT});
 
     //    m_tagArray.insert({CollisionTag_e::OBJECT_CT, CollisionTag_e::PLAYER_CT});
 }
@@ -585,7 +586,7 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
                 }
             }
             else if((args.tagCompA->m_tagA == CollisionTag_e::PLAYER_CT || args.tagCompA->m_tagA == CollisionTag_e::ENEMY_CT ||
-                     args.tagCompA->m_tagB == CollisionTag_e::BARREL_CT) &&
+                     args.tagCompA->m_tagB == CollisionTag_e::BARREL_CT || args.tagCompA->m_tagA == CollisionTag_e::IMPACT_CT) &&
                     (args.tagCompB->m_tagA == CollisionTag_e::WALL_CT || args.tagCompB->m_tagA == CollisionTag_e::PLAYER_CT ||
                      args.tagCompB->m_tagA == CollisionTag_e::ENEMY_CT || args.tagCompB->m_tagA == CollisionTag_e::STATIC_SET_CT ||
                      args.tagCompB->m_tagB == CollisionTag_e::BARREL_CT))
