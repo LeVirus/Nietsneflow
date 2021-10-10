@@ -484,8 +484,8 @@ void MainEngine::loadLevel(const LevelManager &levelManager)
     loadMoveableWallEntities(levelManager.getMoveableWallData(), levelManager.getPictureData().getSpriteData());
     loadDoorEntities(levelManager);
     loadEnemiesEntities(levelManager);
-    m_audioEngine.loadMusicFromFile(levelManager.getLevel().getMusicFilename());
-    m_audioEngine.playMusic();
+//    m_audioEngine.loadMusicFromFile(levelManager.getLevel().getMusicFilename());
+//    m_audioEngine.playMusic();
 }
 
 //===================================================================

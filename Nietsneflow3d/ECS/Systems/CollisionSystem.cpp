@@ -641,16 +641,10 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
                 {
                     std::swap(circleCompA.m_ray, shotConfComp->m_ejectExplosionRay);
                     shotConfComp->m_ejectMode = true;
-                    //back explosion
-//                    MoveableComponent *moveComp = stairwayToComponentManager().
-//                            searchComponentByType<MoveableComponent>(args.entityNumA, Components_e::MOVEABLE_COMPONENT);
-//                    assert(moveComp);
-//                    moveElementFromAngle(moveComp->m_velocity, getRadiantAngle(moveComp->m_degreeOrientation) + PI,
-//                                         args.mapCompA.m_absoluteMapPositionPX);
+                    RectangleCollisionComponent &rectCompB = getRectangleComponent(args.entityNumB);
+                    collisionCircleRectEject(args, circleCompA, rectCompB);
                     return;
                 }
-                RectangleCollisionComponent &rectCompB = getRectangleComponent(args.entityNumB);
-                collisionCircleRectEject(args, circleCompA, rectCompB);
             }
             if(shotConfComp->m_destructPhase)
             {
@@ -671,13 +665,11 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
             {
                 return;
             }
-            if(args.tagCompA->m_tagA == CollisionTag_e::BULLET_PLAYER_CT &&
-                    args.tagCompB->m_tagA == CollisionTag_e::ENEMY_CT)
+            if(args.tagCompA->m_tagA == CollisionTag_e::BULLET_PLAYER_CT && args.tagCompB->m_tagA == CollisionTag_e::ENEMY_CT)
             {
                 treatEnemyShooted(args.entityNumB, shotConfComp->m_damage);
             }
-            else if(args.tagCompA->m_tagA == CollisionTag_e::BULLET_ENEMY_CT &&
-                    args.tagCompB->m_tagA == CollisionTag_e::PLAYER_CT)
+            else if(args.tagCompA->m_tagA == CollisionTag_e::BULLET_ENEMY_CT && args.tagCompB->m_tagA == CollisionTag_e::PLAYER_CT)
             {
                 PlayerConfComponent * playerConf = stairwayToComponentManager().
                         searchComponentByType<PlayerConfComponent>(args.entityNumB, Components_e::PLAYER_CONF_COMPONENT);
@@ -1190,8 +1182,7 @@ float CollisionSystem::getHorizontalCircleRectEject(const EjectXArgs &args, bool
 }
 
 //===================================================================
-void CollisionSystem::collisionEject(MapCoordComponent &mapComp,
-                                     float diffX, float diffY, bool limitEjectY, bool limitEjectX)
+void CollisionSystem::collisionEject(MapCoordComponent &mapComp, float diffX, float diffY, bool limitEjectY, bool limitEjectX)
 {
     if(!limitEjectX && (limitEjectY || std::abs(diffY) < std::abs(diffX)))
     {
