@@ -11,7 +11,7 @@ struct ShotConfComponent : public ecs::Component
         muiTypeComponent = Components_e::SHOT_CONF_COMPONENT;
     }
     uint32_t m_damage;
-    bool m_destructPhase = false, m_ejectMode = false;
+    bool m_destructPhase = false, m_ejectMode = false, m_currentLoopEjected = false;
     uint32_t m_spriteShotNum = 0, m_impactEntity;
     std::optional<uint32_t> m_damageCircleRayData;
     float m_ejectExplosionRay = 10.0f;

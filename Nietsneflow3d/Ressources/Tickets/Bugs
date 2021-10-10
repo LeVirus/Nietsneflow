@@ -1,9 +1,6 @@
 BUGS======================================================================
 
 ))
-visible shot impact does not appear when distance is high on door on east side
-
-))
 Display issue on impact on moveable wall 
 
 -7)
@@ -15,9 +12,6 @@ Enemy eject issue!!!!!
 ))
 on limite vision element appear before closer raycast elements
 
-))
-Still issue on order display element raycast
-
 1)
 assert à CollisionSystem.cpp::89    EnemyConfComponent == nullptr
 assert à CollisionSystem.cpp::726   hyp > distanceX && hyp > distanceY
@@ -25,6 +19,12 @@ assert à CollisionSystem.cpp::770
 
 -12)
 Static element  table desapear at limit vision==================================~~
+
+))
+Still issue on order display element raycast===================================OK
+
+))
+visible shot impact does not appear when distance is high on door on east side=============================OK
 
 -11)
 Shot behind door might appear to verify

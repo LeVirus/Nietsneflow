@@ -214,7 +214,7 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
     {
         cameraDistance = 15.0f;
     }
-//OOOOOOOOOOOOK TMP
+    //OOOOOOOOOOOOK TMP
     if(genCollComp->m_tagA == CollisionTag_e::BULLET_PLAYER_CT || genCollComp->m_tagA == CollisionTag_e::BULLET_ENEMY_CT
             || genCollComp->m_tagA == CollisionTag_e::IMPACT_CT)
     {
