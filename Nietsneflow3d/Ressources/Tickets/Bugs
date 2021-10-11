@@ -1,7 +1,10 @@
 BUGS======================================================================
 
 ))
-Display issue on impact on moveable wall 
+ENemy bullet shoot behind
+
+))
+Enemy AND Player shot throught door
 
 -7)
 Coll exit on door??
@@ -16,6 +19,10 @@ on limite vision element appear before closer raycast elements
 assert à CollisionSystem.cpp::89    EnemyConfComponent == nullptr
 assert à CollisionSystem.cpp::726   hyp > distanceX && hyp > distanceY
 assert à CollisionSystem.cpp::770  
+
+))
+Display issue on impact on moveable wall==============================~
+	(bullet impact OK, visible shot impact scratch case~~)
 
 -12)
 Static element  table desapear at limit vision==================================~~

@@ -67,7 +67,7 @@ bool MainEngine::mainLoop(bool &memGameOver)
         m_physicalEngine.runIteration(m_gamePaused);
         clearObjectToDelete();
         m_graphicEngine.runIteration(m_gamePaused);
-        m_audioEngine.runIteration();
+//        m_audioEngine.runIteration();
         if(!m_exitColl->m_active)
         {
             //end level

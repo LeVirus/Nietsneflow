@@ -75,8 +75,7 @@ bool VerticesData::loadVertexColorComponent(const PositionVertexComponent *posCo
 }
 
 //===================================================================
-void VerticesData::loadVertexStandartTextureComponent(const PositionVertexComponent &posComp,
-                                                      SpriteTextureComponent &spriteComp)
+void VerticesData::loadVertexStandartTextureComponent(const PositionVertexComponent &posComp, SpriteTextureComponent &spriteComp)
 {
     size_t sizeVertex = posComp.m_vertex.size();
     //first rect 0  1   2   3
@@ -141,14 +140,12 @@ void VerticesData::loadVertexWriteTextureComponent(const PositionVertexComponent
 }
 
 //===================================================================
-float VerticesData::loadWallDoorRaycastingEntity(const SpriteTextureComponent &spriteComp,
-                                                 const std::vector<RayCastingIntersect> &raycastingData,
+float VerticesData::loadWallDoorRaycastingEntity(const SpriteTextureComponent &spriteComp, const std::vector<RayCastingIntersect> &raycastingData,
                                                  uint32_t totalLateralLine)
 {
     float lateralPosA, lateralPosB, verticalPos, lateralText, distantDist = raycastingData[0].m_distance;
     float diffTotalTexturePos = (spriteComp.m_spriteData->m_texturePosVertex[1].first -
-                                 spriteComp.m_spriteData->m_texturePosVertex[0].first),
-            totalGLLateralPos = static_cast<float>(totalLateralLine);
+                                 spriteComp.m_spriteData->m_texturePosVertex[0].first), totalGLLateralPos = static_cast<float>(totalLateralLine);
     for(uint32_t i = 0; i < raycastingData.size(); ++i)
     {
         lateralPosA = 2.0f * static_cast<float>(raycastingData[i].m_lateral) / totalGLLateralPos - 1.0f;
@@ -156,14 +153,10 @@ float VerticesData::loadWallDoorRaycastingEntity(const SpriteTextureComponent &s
         verticalPos = RAYCAST_VERTICAL_SIZE / (raycastingData[i].m_distance / LEVEL_TILE_SIZE_PX);
         lateralText = spriteComp.m_spriteData->m_texturePosVertex[0].first +
                 (raycastingData[i].m_texturePos / LEVEL_TILE_SIZE_PX) * diffTotalTexturePos;
-        addTexturePoint({lateralPosA, verticalPos}, {lateralText,
-                                                     spriteComp.m_spriteData->m_texturePosVertex[0].second});
-        addTexturePoint({lateralPosB, verticalPos}, {lateralText,
-                                                     spriteComp.m_spriteData->m_texturePosVertex[1].second});
-        addTexturePoint({lateralPosB, -verticalPos}, {lateralText,
-                                                      spriteComp.m_spriteData->m_texturePosVertex[2].second});
-        addTexturePoint({lateralPosA, -verticalPos}, {lateralText,
-                                                      spriteComp.m_spriteData->m_texturePosVertex[3].second});
+        addTexturePoint({lateralPosA, verticalPos}, {lateralText, spriteComp.m_spriteData->m_texturePosVertex[0].second});
+        addTexturePoint({lateralPosB, verticalPos}, {lateralText, spriteComp.m_spriteData->m_texturePosVertex[1].second});
+        addTexturePoint({lateralPosB, -verticalPos}, {lateralText, spriteComp.m_spriteData->m_texturePosVertex[2].second});
+        addTexturePoint({lateralPosA, -verticalPos}, {lateralText, spriteComp.m_spriteData->m_texturePosVertex[3].second});
         addIndices(BaseShapeTypeGL_e::RECTANGLE);
         if(raycastingData[i].m_distance > distantDist)
         {

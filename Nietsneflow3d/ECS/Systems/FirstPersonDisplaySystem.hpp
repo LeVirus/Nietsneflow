@@ -43,7 +43,7 @@ struct EntityData
         m_textureNum(textureNum), m_iterationNum(iterationNum)
     {}
 
-    bool operator<(const EntityData& rhs)const
+    bool operator<(const EntityData &rhs)const
     {
         return m_distance > rhs.m_distance;
     }
