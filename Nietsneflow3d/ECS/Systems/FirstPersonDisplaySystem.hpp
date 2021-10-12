@@ -92,7 +92,8 @@ private:
     void writeVertexWallDoorRaycasting(const pairRaycastingData_t &entityData, uint32_t numIteration);
     void treatDisplayEntity(GeneralCollisionComponent *genCollComp, MapCoordComponent *mapCompA,
                             MapCoordComponent *mapCompB, VisionComponent *visionComp,
-                            uint32_t &toRemove, float degreeObserverAngle, uint32_t numIteration);
+                            uint32_t &toRemove, float degreeObserverAngle, uint32_t numIteration, uint32_t currentNormal);
+    bool elementBehindDoor(const ElementRaycast &elementCase, float radiantObserverAngle, const MapCoordComponent *mapComp);
     void confNormalEntityVertex(uint32_t numEntity, VisionComponent *visionComp, CollisionTag_e tag, float lateralPosGL, float distance);
     void drawVertex();
     void drawTextureBackground();
@@ -103,6 +104,7 @@ private:
     void writeSimpleTextVertexGroundCeiling();
 private:
     Shader *m_shader;
+    std::map<uint32_t, uint32_t> m_memDoorDistance;
     std::multiset<EntityData> m_entitiesNumMem;
     std::vector<VerticesData> m_vectWallDoorVerticesData;
     VerticesData m_groundSimpleTextVertice, m_groundTiledTextVertice, m_ceilingSimpleVertice, m_ceilingTiledVertice;

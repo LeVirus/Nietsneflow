@@ -82,6 +82,7 @@ void FirstPersonDisplaySystem::confCompVertexMemEntities()
     uint32_t numIteration;
     for(uint32_t i = 0; i < vectEntitiesSize; ++i)
     {
+        numIteration = 0;
         visionComp = stairwayToComponentManager().
                 searchComponentByType<VisionComponent>(mVectNumEntity[i], Components_e::VISION_COMPONENT);
         moveComp = stairwayToComponentManager().
@@ -94,23 +95,7 @@ void FirstPersonDisplaySystem::confCompVertexMemEntities()
         toRemove = 0;
         m_numVertexToDraw[i] = visionComp->m_vectVisibleEntities.size();
         m_entitiesNumMem.clear();
-        //draw dynamic element
-        for(numIteration = 0; numIteration < m_numVertexToDraw[i]; ++numIteration)
-        {
-            genCollComp = stairwayToComponentManager().
-                    searchComponentByType<GeneralCollisionComponent>(visionComp->m_vectVisibleEntities[numIteration],
-                                                                     Components_e::GENERAL_COLLISION_COMPONENT);
-            mapCompB = stairwayToComponentManager().
-                    searchComponentByType<MapCoordComponent>(visionComp->m_vectVisibleEntities[numIteration], Components_e::MAP_COORD_COMPONENT);
-            assert(mapCompB);
-            assert(genCollComp);
-            if(genCollComp->m_active)
-            {
-                treatDisplayEntity(genCollComp, mapCompA, mapCompB, visionComp, toRemove, moveComp->m_degreeOrientation, numIteration);
-            }
-        }
-        m_numVertexToDraw[i] -= toRemove;
-        ++numIteration;
+        m_memDoorDistance.clear();
         rayCasting();
         if(m_groundCeilingSimpleTextureActive)
         {
@@ -122,6 +107,23 @@ void FirstPersonDisplaySystem::confCompVertexMemEntities()
         {
             writeVertexWallDoorRaycasting(*it, numIteration);
         }
+        ++numIteration;
+        for(uint32_t j = 0; j < m_numVertexToDraw[i]; ++j, ++numIteration)
+        {
+            genCollComp = stairwayToComponentManager().
+                    searchComponentByType<GeneralCollisionComponent>(visionComp->m_vectVisibleEntities[j],
+                                                                     Components_e::GENERAL_COLLISION_COMPONENT);
+            mapCompB = stairwayToComponentManager().
+                    searchComponentByType<MapCoordComponent>(visionComp->m_vectVisibleEntities[j], Components_e::MAP_COORD_COMPONENT);
+            assert(mapCompB);
+            assert(genCollComp);
+            if(genCollComp->m_active)
+            {
+                treatDisplayEntity(genCollComp, mapCompA, mapCompB, visionComp, toRemove, moveComp->m_degreeOrientation, numIteration, j);
+            }
+        }
+        //draw dynamic element
+        m_numVertexToDraw[i] -= toRemove;
     }
 }
 
@@ -190,7 +192,12 @@ void FirstPersonDisplaySystem::writeVertexWallDoorRaycasting(const pairRaycastin
             searchComponentByType<SpriteTextureComponent>(entityData.first,
                                                           Components_e::SPRITE_TEXTURE_COMPONENT);
     assert(spriteComp);
+    DoorComponent *doorComp = stairwayToComponentManager().searchComponentByType<DoorComponent>(entityData.first, Components_e::DOOR_COMPONENT);
     float distance = vertex.loadWallDoorRaycastingEntity(*spriteComp, entityData.second, RAYCAST_LINE_NUMBER);
+    if(doorComp)
+    {
+        m_memDoorDistance.insert({entityData.first, distance});
+    }
     m_entitiesNumMem.insert(EntityData(distance, spriteComp->m_spriteData->m_textureNum, numIteration));
 }
 
@@ -198,9 +205,10 @@ void FirstPersonDisplaySystem::writeVertexWallDoorRaycasting(const pairRaycastin
 //===================================================================
 void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *genCollComp, MapCoordComponent *mapCompA,
                                                   MapCoordComponent *mapCompB, VisionComponent *visionComp,
-                                                  uint32_t &toRemove, float degreeObserverAngle, uint32_t numIteration)
+                                                  uint32_t &toRemove, float degreeObserverAngle, uint32_t numIteration, uint32_t currentNormal)
 {
-    uint32_t numEntity = visionComp->m_vectVisibleEntities[numIteration];
+    uint32_t numEntity = visionComp->m_vectVisibleEntities[currentNormal];
+    assert(visionComp->m_vectVisibleEntities.size() > currentNormal);
     PairFloat_t centerPosB = getCenterPosition(mapCompB, genCollComp, numEntity);
     float radiantObserverAngle = getRadiantAngle(degreeObserverAngle),
             cameraDistance = getCameraDistance(mapCompA->m_absoluteMapPositionPX, mapCompB->m_absoluteMapPositionPX, radiantObserverAngle);
@@ -210,9 +218,20 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
         ++toRemove;
         return;
     }
+    //OOOOOOOOK QUICK FIX
     if(cameraDistance < 15.0f)
     {
         cameraDistance = 15.0f;
+    }
+    std::optional<ElementRaycast> elementCase = Level::getElementCase(*getLevelCoord(mapCompB->m_absoluteMapPositionPX));
+    assert(elementCase);
+    if(elementCase->m_type == LevelCaseType_e::DOOR_LC && (genCollComp->m_tagA == CollisionTag_e::ENEMY_CT ||
+            genCollComp->m_tagA == CollisionTag_e::BARREL_CT || genCollComp->m_tagA == CollisionTag_e::GHOST_CT))
+    {
+        if(elementBehindDoor(*elementCase, radiantObserverAngle, mapCompB))
+        {
+            displayDistance = m_memDoorDistance[elementCase->m_numEntity] + 1.0f;
+        }
     }
     //OOOOOOOOOOOOK TMP
     if(genCollComp->m_tagA == CollisionTag_e::BULLET_PLAYER_CT || genCollComp->m_tagA == CollisionTag_e::BULLET_ENEMY_CT
@@ -225,6 +244,34 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
     float lateralPos = getLateralAngle(degreeObserverAngle, trigoAngle);
     confNormalEntityVertex(numEntity, visionComp, genCollComp->m_tagA, lateralPos, cameraDistance);
     fillVertexFromEntity(numEntity, numIteration, displayDistance, DisplayMode_e::STANDART_DM);
+}
+
+//===================================================================
+bool FirstPersonDisplaySystem::elementBehindDoor(const ElementRaycast &elementCase, float radiantObserverAngle, const MapCoordComponent *mapComp)
+{
+    if(m_memDoorDistance.find(elementCase.m_numEntity) != m_memDoorDistance.end())
+    {
+        DoorComponent *doorComp = stairwayToComponentManager().
+                searchComponentByType<DoorComponent>(elementCase.m_numEntity, Components_e::DOOR_COMPONENT);
+        assert(doorComp);
+        float m_lateralMod = std::fmod(mapComp->m_absoluteMapPositionPX.second, LEVEL_TILE_SIZE_PX);
+        if(!doorComp->m_vertical)
+        {
+            if((std::sin(radiantObserverAngle) > EPSILON_FLOAT) == (m_lateralMod < LEVEL_HALF_TILE_SIZE_PX))
+            {
+                return true;
+            }
+        }
+        else
+        {
+            float m_verticalMod = std::fmod(mapComp->m_absoluteMapPositionPX.first, LEVEL_TILE_SIZE_PX);
+            if((std::cos(radiantObserverAngle) > EPSILON_FLOAT) == (m_verticalMod > LEVEL_HALF_TILE_SIZE_PX))
+            {
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
 //===================================================================

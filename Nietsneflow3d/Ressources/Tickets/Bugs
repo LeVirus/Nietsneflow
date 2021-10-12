@@ -12,9 +12,6 @@ Coll exit on door??
 ))
 Enemy eject issue!!!!!
 
-))
-on limite vision element appear before closer raycast elements
-
 1)
 assert à CollisionSystem.cpp::89    EnemyConfComponent == nullptr
 assert à CollisionSystem.cpp::726   hyp > distanceX && hyp > distanceY
@@ -26,6 +23,10 @@ Display issue on impact on moveable wall==============================~
 
 -12)
 Static element  table desapear at limit vision==================================~~
+
+))
+on limite vision element appear before closer raycast elements=================================OK
+	(When 2 door are beside display issue >> prevent this)
 
 ))
 Still issue on order display element raycast===================================OK
