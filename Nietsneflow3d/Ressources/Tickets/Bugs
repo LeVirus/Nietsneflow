@@ -24,6 +24,10 @@ Display issue on impact on moveable wall==============================~
 -12)
 Static element  table desapear at limit vision==================================~~
 
+
+))
+Add eject dead enemy if on door way============================OK
+
 ))
 on limite vision element appear before closer raycast elements=================================OK
 	(When 2 door are beside display issue >> prevent this)

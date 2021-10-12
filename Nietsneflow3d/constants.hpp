@@ -225,7 +225,8 @@ enum class CollisionTag_e
     TELEPORT_CT,
     IMPACT_CT,
     BARREL_CT,
-    TELEPORT_ANIM_CT
+    TELEPORT_ANIM_CT,
+    DEAD_CORPSE_CT
 };
 
 enum class CollisionShape_e

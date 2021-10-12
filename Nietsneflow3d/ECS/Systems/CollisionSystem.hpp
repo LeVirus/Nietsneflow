@@ -36,7 +36,7 @@ private:
     void treatSegmentShots();
     void treatBarrelShots(uint32_t entityNum, uint32_t damage);
     void confImpactShots(uint32_t numBullet, CollisionTag_e targetTag);
-    void rmCollisionMaskEntity(uint32_t numEntity);
+    void rmEnemyCollisionMaskEntity(uint32_t numEntity);
     void setUsedComponents();
     void initArrayTag();
     bool checkTag(CollisionTag_e entityTagA, CollisionTag_e entityTagB);

@@ -96,7 +96,7 @@ void CollisionSystem::execSystem()
         {
             if(checkEnemyRemoveCollisionMask(mVectNumEntity[i]))
             {
-                rmCollisionMaskEntity(mVectNumEntity[i]);
+                rmEnemyCollisionMaskEntity(mVectNumEntity[i]);
             }
         }
         else if(tagCompA->m_shape == CollisionShape_e::CIRCLE_C &&
@@ -353,13 +353,13 @@ void CollisionSystem::confImpactShots(uint32_t numBullet, CollisionTag_e targetT
 }
 
 //===================================================================
-void CollisionSystem::rmCollisionMaskEntity(uint32_t numEntity)
+void CollisionSystem::rmEnemyCollisionMaskEntity(uint32_t numEntity)
 {
     GeneralCollisionComponent *tagComp = stairwayToComponentManager().
             searchComponentByType<GeneralCollisionComponent>(numEntity,
                                                              Components_e::GENERAL_COLLISION_COMPONENT);
     assert(tagComp);
-    tagComp->m_tagA = CollisionTag_e::GHOST_CT;
+    tagComp->m_tagA = CollisionTag_e::DEAD_CORPSE_CT;
 }
 
 //===================================================================
@@ -415,6 +415,8 @@ void CollisionSystem::initArrayTag()
     m_tagArray.insert({CollisionTag_e::IMPACT_CT, CollisionTag_e::DOOR_CT});
     m_tagArray.insert({CollisionTag_e::IMPACT_CT, CollisionTag_e::ENEMY_CT});
 
+    m_tagArray.insert({CollisionTag_e::DEAD_CORPSE_CT, CollisionTag_e::DOOR_CT});
+    m_tagArray.insert({CollisionTag_e::DEAD_CORPSE_CT, CollisionTag_e::WALL_CT});
     //    m_tagArray.insert({CollisionTag_e::OBJECT_CT, CollisionTag_e::PLAYER_CT});
 }
 
@@ -556,7 +558,7 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
                     }
                 }
             }
-            else if(args.tagCompA->m_tagA == CollisionTag_e::IMPACT_CT)
+            else if(args.tagCompA->m_tagA == CollisionTag_e::IMPACT_CT || args.tagCompA->m_tagA == CollisionTag_e::DEAD_CORPSE_CT)
             {
                 collisionCircleRectEject(args, circleCompA, rectCompB);
             }
