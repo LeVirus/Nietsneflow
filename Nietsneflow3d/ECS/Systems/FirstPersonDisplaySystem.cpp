@@ -225,12 +225,11 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
     }
     std::optional<ElementRaycast> elementCase = Level::getElementCase(*getLevelCoord(mapCompB->m_absoluteMapPositionPX));
     assert(elementCase);
-    if(elementCase->m_type == LevelCaseType_e::DOOR_LC && (genCollComp->m_tagA == CollisionTag_e::ENEMY_CT ||
-            genCollComp->m_tagA == CollisionTag_e::BARREL_CT || genCollComp->m_tagA == CollisionTag_e::GHOST_CT))
+    if(elementCase->m_type == LevelCaseType_e::DOOR_LC)
     {
         if(elementBehindDoor(*elementCase, radiantObserverAngle, mapCompB))
         {
-            displayDistance = m_memDoorDistance[elementCase->m_numEntity] + 1.0f;
+            displayDistance = m_memDoorDistance[elementCase->m_numEntity] + 5.0f;
         }
     }
     //OOOOOOOOOOOOK TMP
