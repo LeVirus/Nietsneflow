@@ -218,8 +218,7 @@ void IASystem::activeSound(uint32_t entityNum, uint32_t soundNum)
 void IASystem::updateEnemyDirection(EnemyConfComponent *enemyConfComp, MoveableComponent *moveComp,
                                     MapCoordComponent *enemyMapComp)
 {
-    moveComp->m_degreeOrientation = getTrigoAngle(enemyMapComp->m_absoluteMapPositionPX,
-                                                  m_playerMapComp->m_absoluteMapPositionPX);
+    moveComp->m_degreeOrientation = getTrigoAngle(enemyMapComp->m_absoluteMapPositionPX, m_playerMapComp->m_absoluteMapPositionPX);
     if(enemyConfComp->m_attackPhase == EnemyAttackPhase_e::MOVE_TO_TARGET_RIGHT)
     {
         moveComp->m_degreeOrientation -= 30.0f;
@@ -253,12 +252,13 @@ void IASystem::enemyShoot(EnemyConfComponent *enemyConfComp, MoveableComponent *
         ShotConfComponent *shotComp = stairwayToComponentManager().
                 searchComponentByType<ShotConfComponent>(enemyConfComp->m_stdAmmo[0], Components_e::SHOT_CONF_COMPONENT);
         assert(shotComp);
-        MoveableComponent *moveComp = stairwayToComponentManager().
+        MoveableComponent *impactMoveComp = stairwayToComponentManager().
                 searchComponentByType<MoveableComponent>(shotComp->m_impactEntity, Components_e::MOVEABLE_COMPONENT);
         assert(moveComp);
         assert(genComp);
         assert(segmentComp);
-        confBullet(genComp, segmentComp, moveComp, CollisionTag_e::BULLET_ENEMY_CT, enemyMapComp->m_absoluteMapPositionPX, moveComp->m_degreeOrientation);
+        confBullet(genComp, segmentComp, impactMoveComp, CollisionTag_e::BULLET_ENEMY_CT,
+                   enemyMapComp->m_absoluteMapPositionPX, moveComp->m_degreeOrientation);
     }
 }
 

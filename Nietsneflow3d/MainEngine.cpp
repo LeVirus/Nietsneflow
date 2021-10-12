@@ -175,7 +175,7 @@ void MainEngine::playerAttack(uint32_t playerEntity, PlayerConfComponent *player
                 searchComponentByType<MapCoordComponent>(playerComp->m_hitMeleeEntity, Components_e::MAP_COORD_COMPONENT);
         MapCoordComponent *playerMapComp = m_ecsManager.getComponentManager().
                 searchComponentByType<MapCoordComponent>(playerEntity, Components_e::MAP_COORD_COMPONENT);
-        assert(playerMapComp);
+        assert(actionMapComp);
         assert(playerMoveComp);
         assert(actionGenColl);
         assert(playerMapComp);

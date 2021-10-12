@@ -1,16 +1,13 @@
 BUGS======================================================================
 
 ))
-ENemy bullet shoot behind
-
-))
 Enemy AND Player shot throught door
-
--7)
-Coll exit on door??
 
 ))
 Enemy eject issue!!!!!
+
+-7)
+Coll exit on door??
 
 1)
 assert à CollisionSystem.cpp::89    EnemyConfComponent == nullptr
@@ -24,6 +21,8 @@ Display issue on impact on moveable wall==============================~
 -12)
 Static element  table desapear at limit vision==================================~~
 
+))
+ENemy bullet shoot behind===============================OK
 
 ))
 Add eject dead enemy if on door way============================OK
