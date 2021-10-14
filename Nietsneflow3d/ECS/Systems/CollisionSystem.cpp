@@ -541,11 +541,11 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
                         activeSound(args.entityNumB);
                     }
                 }
-                collisionCircleRectEject(args, circleCompA, rectCompB);
+                collisionCircleRectEject(args, circleCompA.m_ray, rectCompB);
             }
             else if(args.tagCompA->m_tagA == CollisionTag_e::ENEMY_CT)
             {
-                collisionCircleRectEject(args, circleCompA, rectCompB);
+                collisionCircleRectEject(args, circleCompA.m_ray, rectCompB);
                 if(args.tagCompB->m_tagA == CollisionTag_e::DOOR_CT)
                 {
                     DoorComponent *doorComp = stairwayToComponentManager().
@@ -560,7 +560,7 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
             }
             else if(args.tagCompA->m_tagA == CollisionTag_e::IMPACT_CT || args.tagCompA->m_tagA == CollisionTag_e::DEAD_CORPSE_CT)
             {
-                collisionCircleRectEject(args, circleCompA, rectCompB);
+                collisionCircleRectEject(args, circleCompA.m_ray, rectCompB);
             }
         }
     }
@@ -653,9 +653,8 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
                 if(!shotConfComp->m_ejectMode)
                 {
                     shotConfComp->m_ejectMode = true;
-                    std::swap(circleCompA.m_ray, shotConfComp->m_ejectExplosionRay);
                     RectangleCollisionComponent &rectCompB = getRectangleComponent(args.entityNumB);
-                    collisionCircleRectEject(args, circleCompA, rectCompB);
+                    collisionCircleRectEject(args, shotConfComp->m_ejectExplosionRay, rectCompB);
                     return;
                 }
                 if(args.tagCompB->m_tagA == CollisionTag_e::WALL_CT && !shotConfComp->m_currentLoopEjected)
@@ -666,7 +665,7 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
                     {
                         shotConfComp->m_currentLoopEjected = true;
                         RectangleCollisionComponent &rectCompB = getRectangleComponent(args.entityNumB);
-                        collisionCircleRectEject(args, circleCompA, rectCompB);
+                        collisionCircleRectEject(args, shotConfComp->m_ejectExplosionRay, rectCompB);
                     }
                 }
             }
@@ -1073,7 +1072,7 @@ void CollisionSystem::calcBulletSegment(SegmentCollisionComponent &segmentCompA)
 }
 
 //===================================================================
-void CollisionSystem::collisionCircleRectEject(CollisionArgs &args, const CircleCollisionComponent &circleCollA,
+void CollisionSystem::collisionCircleRectEject(CollisionArgs &args, float circleRay,
                                                const RectangleCollisionComponent &rectCollB)
 {
     MapCoordComponent &mapComp = getMapComponent(args.entityNumA);
@@ -1098,11 +1097,11 @@ void CollisionSystem::collisionCircleRectEject(CollisionArgs &args, const Circle
     float pointElementY = (circlePosY < elementPosY) ? elementPosY : elementSecondPosY;
     float diffY, diffX = EPSILON_FLOAT;
     diffY = getVerticalCircleRectEject({circlePosX, circlePosY, pointElementX, elementPosY,
-                                        elementSecondPosY, circleCollA.m_ray, radiantObserverAngle, angleBehavior}, limitEjectY);
+                                        elementSecondPosY, circleRay, radiantObserverAngle, angleBehavior}, limitEjectY);
     if(!limitEjectY)
     {
         diffX = getHorizontalCircleRectEject({circlePosX, circlePosY, pointElementY, elementPosX, elementSecondPosX,
-                                              circleCollA.m_ray, radiantObserverAngle, angleBehavior}, limitEjectX);
+                                              circleRay, radiantObserverAngle, angleBehavior}, limitEjectX);
     }
     treatCrushing(args, diffX, diffY);
     collisionEject(mapComp, diffX, diffY, limitEjectY, limitEjectX);

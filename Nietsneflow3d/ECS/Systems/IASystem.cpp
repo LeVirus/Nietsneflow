@@ -347,14 +347,7 @@ void IASystem::confVisibleShoot(std::vector<uint32_t> &visibleShots, const PairF
             searchComponentByType<ShotConfComponent>(visibleShots[currentShot], Components_e::SHOT_CONF_COMPONENT);
     assert(targetShotConfComp);
     targetShotConfComp->m_currentLoopEjected = false;
-    if(targetShotConfComp->m_ejectMode)
-    {
-        targetShotConfComp->m_ejectMode = false;
-        CircleCollisionComponent *circleTargetComp = stairwayToComponentManager().
-                searchComponentByType<CircleCollisionComponent>(visibleShots[currentShot], Components_e::CIRCLE_COLLISION_COMPONENT);
-        assert(circleTargetComp);
-        std::swap(targetShotConfComp->m_ejectExplosionRay, circleTargetComp->m_ray);
-    }
+    targetShotConfComp->m_ejectMode = false;
     MapCoordComponent *mapComp = stairwayToComponentManager().
             searchComponentByType<MapCoordComponent>(visibleShots[currentShot], Components_e::MAP_COORD_COMPONENT);
     MoveableComponent *ammoMoveComp = stairwayToComponentManager().
@@ -443,13 +436,4 @@ void IASystem::confNewVisibleShot(const std::vector<uint32_t> &visibleShots)
     targetMoveComp->m_velocity = baseMoveComp->m_velocity;
     targetShotConfComp->m_damage = baseShotConfComp->m_damage;
     targetShotConfComp->m_ejectExplosionRay = baseShotConfComp->m_ejectExplosionRay;
-    float maxWidth = EPSILON_FLOAT;
-    for(uint32_t i = 1; i < memFPSGLSizeCompTarget->m_memGLSizeData.size(); ++i)
-    {
-        if(maxWidth < memFPSGLSizeCompTarget->m_memGLSizeData[i].first)
-        {
-            maxWidth = memFPSGLSizeCompTarget->m_memGLSizeData[i].first;
-        }
-    }
-    targetShotConfComp->m_ejectExplosionRay = maxWidth * LEVEL_HALF_TILE_SIZE_PX;
 }

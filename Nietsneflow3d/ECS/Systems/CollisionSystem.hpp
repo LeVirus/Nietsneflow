@@ -56,7 +56,7 @@ private:
     bool treatCrushing(const CollisionArgs &args, float diffX, float diffY);
     //Collisions treatment
     void collisionCircleRectEject(CollisionArgs &args,
-                                  const CircleCollisionComponent &circleCollA,
+                                  float circleRay,
                                   const RectangleCollisionComponent &rectCollB);
     float getVerticalCircleRectEject(const EjectYArgs &args, bool &limitEject);
     float getHorizontalCircleRectEject(const EjectXArgs &args, bool &limitEject);
