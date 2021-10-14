@@ -443,4 +443,13 @@ void IASystem::confNewVisibleShot(const std::vector<uint32_t> &visibleShots)
     targetMoveComp->m_velocity = baseMoveComp->m_velocity;
     targetShotConfComp->m_damage = baseShotConfComp->m_damage;
     targetShotConfComp->m_ejectExplosionRay = baseShotConfComp->m_ejectExplosionRay;
+    float maxWidth = EPSILON_FLOAT;
+    for(uint32_t i = 1; i < memFPSGLSizeCompTarget->m_memGLSizeData.size(); ++i)
+    {
+        if(maxWidth < memFPSGLSizeCompTarget->m_memGLSizeData[i].first)
+        {
+            maxWidth = memFPSGLSizeCompTarget->m_memGLSizeData[i].first;
+        }
+    }
+    targetShotConfComp->m_ejectExplosionRay = maxWidth * LEVEL_HALF_TILE_SIZE_PX;
 }

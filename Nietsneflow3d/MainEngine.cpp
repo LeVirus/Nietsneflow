@@ -984,9 +984,6 @@ void MainEngine::confAmmoEntities(std::vector<uint32_t> &ammoEntities, Collision
         shotConfComp->m_damage = damage;
         if(damageRay)
         {
-            CircleCollisionComponent *circleComp = m_ecsManager.getComponentManager().
-                    searchComponentByType<CircleCollisionComponent>(ammoEntities[j], Components_e::CIRCLE_COLLISION_COMPONENT);
-            assert(circleComp);
             shotConfComp->m_damageCircleRayData = createDamageZoneEntity(damage, CollisionTag_e::EXPLOSION_CT, LEVEL_TILE_SIZE_PX);
         }
         if(visibleShot)
