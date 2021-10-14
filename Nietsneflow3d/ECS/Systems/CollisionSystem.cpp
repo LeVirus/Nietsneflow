@@ -653,8 +653,9 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
                 if(!shotConfComp->m_ejectMode)
                 {
                     shotConfComp->m_ejectMode = true;
+                    std::swap(circleCompA.m_ray, shotConfComp->m_ejectExplosionRay);
                     RectangleCollisionComponent &rectCompB = getRectangleComponent(args.entityNumB);
-                    collisionCircleRectEject(args, shotConfComp->m_ejectExplosionRay, rectCompB);
+                    collisionCircleRectEject(args, circleCompA.m_ray, rectCompB);
                     return;
                 }
                 if(args.tagCompB->m_tagA == CollisionTag_e::WALL_CT && !shotConfComp->m_currentLoopEjected)
@@ -665,7 +666,7 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
                     {
                         shotConfComp->m_currentLoopEjected = true;
                         RectangleCollisionComponent &rectCompB = getRectangleComponent(args.entityNumB);
-                        collisionCircleRectEject(args, shotConfComp->m_ejectExplosionRay, rectCompB);
+                        collisionCircleRectEject(args, circleCompA.m_ray, rectCompB);
                     }
                 }
             }
