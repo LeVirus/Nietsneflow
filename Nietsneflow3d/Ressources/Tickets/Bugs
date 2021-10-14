@@ -1,9 +1,6 @@
 BUGS======================================================================
 
 ))
-Enemy AND Player shot throught door
-
-))
 Enemy eject issue!!!!!
 
 -7)
@@ -20,6 +17,12 @@ Display issue on impact on moveable wall==============================~
 
 -12)
 Static element  table desapear at limit vision==================================~~
+
+))
+Visible shot travers door in some distance=============================OK
+
+))
+Enemy AND Player shot throught door==========================OK
 
 ))
 ENemy bullet shoot behind===============================OK

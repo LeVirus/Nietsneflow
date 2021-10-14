@@ -1096,22 +1096,23 @@ void CollisionSystem::collisionCircleRectEject(CollisionArgs &args, float circle
     float pointElementX = (circlePosX < elementPosX) ? elementPosX : elementSecondPosX;
     float pointElementY = (circlePosY < elementPosY) ? elementPosY : elementSecondPosY;
     float diffY, diffX = EPSILON_FLOAT;
+    bool visibleShot = (args.tagCompA->m_tagA == CollisionTag_e::BULLET_ENEMY_CT || args.tagCompA->m_tagA == CollisionTag_e::BULLET_PLAYER_CT);
     diffY = getVerticalCircleRectEject({circlePosX, circlePosY, pointElementX, elementPosY,
-                                        elementSecondPosY, circleRay, radiantObserverAngle, angleBehavior}, limitEjectY);
+                                        elementSecondPosY, circleRay, radiantObserverAngle, angleBehavior}, limitEjectY, visibleShot);
     if(!limitEjectY)
     {
         diffX = getHorizontalCircleRectEject({circlePosX, circlePosY, pointElementY, elementPosX, elementSecondPosX,
-                                              circleRay, radiantObserverAngle, angleBehavior}, limitEjectX);
+                                              circleRay, radiantObserverAngle, angleBehavior}, limitEjectX, visibleShot);
     }
     treatCrushing(args, diffX, diffY);
     collisionEject(mapComp, diffX, diffY, limitEjectY, limitEjectX);
 }
 
 //===================================================================
-float CollisionSystem::getVerticalCircleRectEject(const EjectYArgs& args, bool &limitEject)
+float CollisionSystem::getVerticalCircleRectEject(const EjectYArgs& args, bool &limitEject, bool visibleShot)
 {
     float adj, diffYA = EPSILON_FLOAT, diffYB;
-    if(std::abs(std::sin(args.radDegree)) < 0.01f &&
+    if(std::abs(std::sin(args.radiantAngle)) < 0.01f &&
             (args.angleMode || args.circlePosY < args.elementPosY || args.circlePosY > args.elementSecondPosY))
     {
         float distUpPoint = std::abs(args.circlePosY - args.elementPosY),
@@ -1135,7 +1136,7 @@ float CollisionSystem::getVerticalCircleRectEject(const EjectYArgs& args, bool &
         adj = std::abs(args.circlePosX - args.elementPosX);
         diffYA = getRectTriangleSide(adj, args.ray);
         //EJECT UP
-        if(std::sin(args.radDegree) < EPSILON_FLOAT)
+        if(std::sin(args.radiantAngle) < EPSILON_FLOAT)
         {
             diffYA -= (args.elementPosY - args.circlePosY);
             diffYA = -diffYA;
@@ -1148,18 +1149,25 @@ float CollisionSystem::getVerticalCircleRectEject(const EjectYArgs& args, bool &
     }
     else
     {
-        diffYA = args.elementSecondPosY - (args.circlePosY - args.ray);
-        diffYB = args.elementPosY - (args.circlePosY + args.ray);
-        diffYA = (std::abs(diffYA) < std::abs(diffYB)) ? diffYA : diffYB;
+        diffYA = args.elementPosY - (args.circlePosY + args.ray);
+        diffYB = args.elementSecondPosY - (args.circlePosY - args.ray);
+        if(visibleShot)
+        {
+            diffYA = (std::sin(args.radiantAngle) < EPSILON_FLOAT) ? diffYA : diffYB;
+        }
+        else
+        {
+            diffYA = (std::abs(diffYA) < std::abs(diffYB)) ? diffYA : diffYB;
+        }
     }
     return diffYA;
 }
 
 //===================================================================
-float CollisionSystem::getHorizontalCircleRectEject(const EjectXArgs &args, bool &limitEject)
+float CollisionSystem::getHorizontalCircleRectEject(const EjectXArgs &args, bool &limitEject, bool visibleShot)
 {
     float adj, diffXA = EPSILON_FLOAT, diffXB;
-    if(std::abs(std::cos(args.radDegree)) < 0.01f &&
+    if(std::abs(std::cos(args.radiantAngle)) < 0.01f &&
             (args.angleMode || args.circlePosX < args.elementPosX ||
              args.circlePosX > args.elementSecondPosX))
     {
@@ -1184,7 +1192,7 @@ float CollisionSystem::getHorizontalCircleRectEject(const EjectXArgs &args, bool
         adj = std::abs(args.circlePosY - args.elementPosY);
         diffXA = getRectTriangleSide(adj, args.ray);
         //RIGHT
-        if(std::cos(args.radDegree) > EPSILON_FLOAT)
+        if(std::cos(args.radiantAngle) > EPSILON_FLOAT)
         {
             diffXA -= (args.elementPosX - args.circlePosX);
             diffXA = -diffXA;
@@ -1197,9 +1205,16 @@ float CollisionSystem::getHorizontalCircleRectEject(const EjectXArgs &args, bool
     }
     else
     {
-        diffXA = args.elementSecondPosX - (args.circlePosX - args.ray) ;
-        diffXB = args.elementPosX - (args.circlePosX + args.ray);
-        diffXA = (std::abs(diffXA) < std::abs(diffXB)) ? diffXA : diffXB;
+        diffXA = args.elementPosX - (args.circlePosX + args.ray);
+        diffXB = args.elementSecondPosX - (args.circlePosX - args.ray) ;
+        if(visibleShot)
+        {
+            diffXA = (std::cos(args.radiantAngle) > EPSILON_FLOAT) ? diffXA : diffXB;
+        }
+        else
+        {
+            diffXA = (std::abs(diffXA) < std::abs(diffXB)) ? diffXA : diffXB;
+        }
     }
     return diffXA;
 }

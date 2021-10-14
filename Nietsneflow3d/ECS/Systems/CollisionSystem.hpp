@@ -58,8 +58,8 @@ private:
     void collisionCircleRectEject(CollisionArgs &args,
                                   float circleRay,
                                   const RectangleCollisionComponent &rectCollB);
-    float getVerticalCircleRectEject(const EjectYArgs &args, bool &limitEject);
-    float getHorizontalCircleRectEject(const EjectXArgs &args, bool &limitEject);
+    float getVerticalCircleRectEject(const EjectYArgs &args, bool &limitEject, bool visibleShot);
+    float getHorizontalCircleRectEject(const EjectXArgs &args, bool &limitEject, bool visibleShot);
     void collisionCircleCircleEject(CollisionArgs &args,
                                     const CircleCollisionComponent &circleCollA,
                                     const CircleCollisionComponent &circleCollB);
@@ -107,13 +107,13 @@ struct CollisionArgs
 struct EjectXArgs
 {
     float circlePosX, circlePosY, elementPosY, elementPosX,
-    elementSecondPosX, ray, radDegree;
+    elementSecondPosX, ray, radiantAngle;
     bool angleMode;
 };
 
 struct EjectYArgs
 {
     float circlePosX, circlePosY, elementPosX, elementPosY,
-    elementSecondPosY, ray, radDegree;
+    elementSecondPosY, ray, radiantAngle;
     bool angleMode;
 };
