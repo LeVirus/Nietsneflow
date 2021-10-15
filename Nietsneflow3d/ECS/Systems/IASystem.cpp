@@ -354,7 +354,6 @@ void IASystem::confVisibleShoot(std::vector<uint32_t> &visibleShots, const PairF
                 searchComponentByType<CircleCollisionComponent>(visibleShots[currentShot], Components_e::CIRCLE_COLLISION_COMPONENT);
         assert(circleTargetComp);
         std::swap(targetShotConfComp->m_ejectExplosionRay, circleTargetComp->m_ray);
-        std::cerr <<  circleTargetComp->m_ray << "\n";
     }
     MapCoordComponent *mapComp = stairwayToComponentManager().
             searchComponentByType<MapCoordComponent>(visibleShots[currentShot], Components_e::MAP_COORD_COMPONENT);
