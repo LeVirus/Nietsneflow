@@ -25,8 +25,8 @@ struct PlayerConfComponent : public ecs::Component
             m_life -= damage;
         }
     }
-    //first active, second moveable wall, third direction, fourth entity
-    std::tuple<bool, bool, Direction_e, uint32_t> m_crushMem = {false, false, Direction_e::NORTH, 0};
+    //first direction, second entity
+    std::optional<std::pair<Direction_e, uint32_t>> m_crushMem;
     bool m_playerShoot = false, m_takeDamage = false, m_inMovement = false,
     m_pickItem = false, m_crush = false, m_frozen = false, m_teleported;
     std::pair<bool, std::string> m_infoWriteData = {false, ""};

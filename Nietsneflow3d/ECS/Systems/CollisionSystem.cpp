@@ -82,7 +82,7 @@ void CollisionSystem::execSystem()
             PlayerConfComponent *playerComp = stairwayToComponentManager().
                     searchComponentByType<PlayerConfComponent>(mVectNumEntity[i], Components_e::PLAYER_CONF_COMPONENT);
             assert(playerComp);
-            std::get<0>(playerComp->m_crushMem) = false;
+            playerComp->m_crushMem = std::nullopt;
             if(!playerComp->m_crush)
             {
                 playerComp->m_frozen = false;
@@ -937,15 +937,11 @@ bool CollisionSystem::treatCrushing(const CollisionArgs &args, float diffX, floa
     if(playerComp && !playerComp->m_crush)
     {
         //mem crush if player is eject from a moveable wall
-        if(!std::get<0>(playerComp->m_crushMem))
+        if(!playerComp->m_crushMem)
         {
             if(args.tagCompB->m_tagA == CollisionTag_e::WALL_CT)
             {
-                MoveableWallConfComponent *moveWallComp = stairwayToComponentManager().
-                        searchComponentByType<MoveableWallConfComponent>(args.entityNumA,
-                                                                         Components_e::MOVEABLE_WALL_CONF_COMPONENT);
-                playerComp->m_crushMem = {true, moveWallComp,
-                                          getDirection(diffX, diffY), args.entityNumB};
+                playerComp->m_crushMem = {getDirection(diffX, diffY), args.entityNumB};
             }
         }
         //if crush
@@ -957,16 +953,16 @@ bool CollisionSystem::treatCrushing(const CollisionArgs &args, float diffX, floa
             //check if at least one wall is moveable and 2 distinct walls
             if(args.tagCompB->m_tagA == CollisionTag_e::WALL_CT &&
                     (moveWallComp || args.tagCompB->m_tagB == CollisionTag_e::WALL_CT) &&
-                    args.entityNumB != std::get<3>(playerComp->m_crushMem))
+                    args.entityNumB != playerComp->m_crushMem->second)
             {
                 Direction_e dir = getDirection(diffX, diffY);
-                if((std::get<2>(playerComp->m_crushMem) == Direction_e::EAST &&
+                if((playerComp->m_crushMem->first == Direction_e::EAST &&
                     dir == Direction_e::WEST) ||
-                        (std::get<2>(playerComp->m_crushMem) == Direction_e::WEST &&
+                        (playerComp->m_crushMem->first == Direction_e::WEST &&
                          dir == Direction_e::EAST) ||
-                        (std::get<2>(playerComp->m_crushMem) == Direction_e::NORTH &&
+                        (playerComp->m_crushMem->first == Direction_e::NORTH &&
                          dir == Direction_e::SOUTH) ||
-                        (std::get<2>(playerComp->m_crushMem) == Direction_e::SOUTH &&
+                        (playerComp->m_crushMem->first == Direction_e::SOUTH &&
                          dir == Direction_e::NORTH))
                 {
                     playerComp->m_crush = true;
