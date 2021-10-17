@@ -659,7 +659,7 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
                     shotConfComp->m_ejectMode = true;
                     std::swap(circleCompA.m_ray, shotConfComp->m_ejectExplosionRay);
                     RectangleCollisionComponent &rectCompB = getRectangleComponent(args.entityNumB);
-                    collisionCircleRectEject(args, circleCompA.m_ray, rectCompB);
+                    collisionCircleRectEject(args, circleCompA.m_ray, rectCompB, true);
                     return;
                 }
                 if(args.tagCompB->m_tagA == CollisionTag_e::WALL_CT && !shotConfComp->m_currentLoopEjected)
@@ -1078,7 +1078,7 @@ void CollisionSystem::calcBulletSegment(SegmentCollisionComponent &segmentCompA)
 
 //===================================================================
 void CollisionSystem::collisionCircleRectEject(CollisionArgs &args, float circleRay,
-                                               const RectangleCollisionComponent &rectCollB)
+                                               const RectangleCollisionComponent &rectCollB, bool visibleShotFirstEject)
 {
     MapCoordComponent &mapComp = getMapComponent(args.entityNumA);
     MoveableComponent *moveComp = stairwayToComponentManager().
@@ -1110,7 +1110,7 @@ void CollisionSystem::collisionCircleRectEject(CollisionArgs &args, float circle
                                               circleRay, radiantObserverAngle, angleBehavior}, limitEjectX, visibleShot);
     }
     treatCrushing(args, diffX, diffY);
-    if(moveComp->m_crushMem && args.tagCompA->m_tagA != CollisionTag_e::PLAYER_CT &&
+    if(!visibleShotFirstEject && moveComp->m_crushMem && args.tagCompA->m_tagA != CollisionTag_e::PLAYER_CT &&
             std::min(std::abs(diffX), std::abs(diffY)) > LEVEL_THIRD_TILE_SIZE_PX)
     {
         return;
