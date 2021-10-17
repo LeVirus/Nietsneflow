@@ -53,7 +53,7 @@ private:
     void treatPlayerPickObject(CollisionArgs &args);
     void treatPlayerTeleport(CollisionArgs &args);
     void treatCollisionFirstSegment(CollisionArgs &args);
-    bool treatCrushing(const CollisionArgs &args, float diffX, float diffY);
+    void treatCrushing(const CollisionArgs &args, float diffX, float diffY);
     //Collisions treatment
     void collisionCircleRectEject(CollisionArgs &args,
                                   float circleRay,

@@ -4,7 +4,6 @@
 #include <constants.hpp>
 #include <array>
 #include <set>
-#include <optional>
 
 struct PlayerConfComponent : public ecs::Component
 {
@@ -25,8 +24,6 @@ struct PlayerConfComponent : public ecs::Component
             m_life -= damage;
         }
     }
-    //first direction, second entity
-    std::optional<std::pair<Direction_e, uint32_t>> m_crushMem;
     bool m_playerShoot = false, m_takeDamage = false, m_inMovement = false,
     m_pickItem = false, m_crush = false, m_frozen = false, m_teleported;
     std::pair<bool, std::string> m_infoWriteData = {false, ""};
