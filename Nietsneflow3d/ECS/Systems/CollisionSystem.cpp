@@ -111,26 +111,7 @@ void CollisionSystem::execSystem()
             assert(shotConfComp);
             shotConfComp->m_currentLoopEjected = false;
         }
-        for(uint32_t j = 0; j < mVectNumEntity.size(); ++j)
-        {
-            if(i == j)
-            {
-                continue;
-            }
-            GeneralCollisionComponent *tagCompB = stairwayToComponentManager().
-                    searchComponentByType<GeneralCollisionComponent>(mVectNumEntity[j], Components_e::GENERAL_COLLISION_COMPONENT);
-            assert(tagCompB);
-            if(!tagCompB->m_active)
-            {
-                continue;
-            }
-            if(!checkTag(tagCompA->m_tagA, tagCompB->m_tagA) &&
-                    !checkTag(tagCompA->m_tagA, tagCompB->m_tagB))
-            {
-                continue;
-            }
-            treatCollision(mVectNumEntity[i], mVectNumEntity[j], tagCompA, tagCompB);
-        }
+        secondEntitiesLoop(mVectNumEntity[i], i, tagCompA);
         if(tagCompA->m_tagA == CollisionTag_e::EXPLOSION_CT)
         {
             setDamageCircle(mVectNumEntity[i], false);
@@ -152,6 +133,34 @@ void CollisionSystem::execSystem()
     if(!m_memPlayerTeleport)
     {
         m_playerComp->m_teleported = false;
+    }
+}
+
+//===================================================================
+void CollisionSystem::secondEntitiesLoop(uint32_t entityA, uint32_t currentIteration, GeneralCollisionComponent *tagCompA, bool shotExplosionEject)
+{
+    for(uint32_t j = 0; j < mVectNumEntity.size(); ++j)
+    {
+        if(currentIteration == j)
+        {
+            continue;
+        }
+        GeneralCollisionComponent *tagCompB = stairwayToComponentManager().
+                searchComponentByType<GeneralCollisionComponent>(mVectNumEntity[j], Components_e::GENERAL_COLLISION_COMPONENT);
+        assert(tagCompB);
+        if(!tagCompB->m_active)
+        {
+            continue;
+        }
+        if(!checkTag(tagCompA->m_tagA, tagCompB->m_tagA) && !checkTag(tagCompA->m_tagA, tagCompB->m_tagB))
+        {
+            continue;
+        }
+        if(!treatCollision(entityA, mVectNumEntity[j], tagCompA, tagCompB, shotExplosionEject))
+        {
+            secondEntitiesLoop(entityA, currentIteration, tagCompA, true);
+            return;
+        }
     }
 }
 
@@ -448,8 +457,8 @@ bool CollisionSystem::checkTag(CollisionTag_e entityTagA, CollisionTag_e entityT
 }
 
 //===================================================================
-void CollisionSystem::treatCollision(uint32_t entityNumA, uint32_t entityNumB,
-                                     GeneralCollisionComponent *tagCompA, GeneralCollisionComponent *tagCompB)
+bool CollisionSystem::treatCollision(uint32_t entityNumA, uint32_t entityNumB, GeneralCollisionComponent *tagCompA,
+                                     GeneralCollisionComponent *tagCompB, bool shotExplosionEject)
 {
 
 //    if(tagCompA->m_shape == CollisionShape_e::RECTANGLE_C)
@@ -459,13 +468,14 @@ void CollisionSystem::treatCollision(uint32_t entityNumA, uint32_t entityNumB,
     if(tagCompA->m_shape == CollisionShape_e::CIRCLE_C)
     {
         CollisionArgs args = {entityNumA, entityNumB, tagCompA, tagCompB, getMapComponent(entityNumA), getMapComponent(entityNumB)};
-        treatCollisionFirstCircle(args);
+        return treatCollisionFirstCircle(args, shotExplosionEject);
     }
     else if(tagCompA->m_shape == CollisionShape_e::SEGMENT_C)
     {
         assert(tagCompA->m_tagA == CollisionTag_e::BULLET_PLAYER_CT || tagCompA->m_tagA == CollisionTag_e::BULLET_ENEMY_CT);
         checkCollisionFirstSegment(entityNumA, entityNumB, tagCompB, getMapComponent(entityNumB));
     }
+    return true;
 }
 
 //===================================================================
@@ -510,7 +520,7 @@ void CollisionSystem::writePlayerInfo(const std::string &info)
 }
 
 //===================================================================
-void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
+bool CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args, bool shotExplosionEject)
 {
     if(args.tagCompA->m_tagA == CollisionTag_e::PLAYER_ACTION_CT ||
             args.tagCompA->m_tagA == CollisionTag_e::HIT_PLAYER_CT)
@@ -654,15 +664,19 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
             assert(shotConfComp);
             if(args.tagCompB->m_shape == CollisionShape_e::RECTANGLE_C)
             {
-                if(!shotConfComp->m_ejectMode)
+                if(shotExplosionEject)
+                {
+                    RectangleCollisionComponent &rectCompB = getRectangleComponent(args.entityNumB);
+                    collisionCircleRectEject(args, circleCompA.m_ray, rectCompB, shotExplosionEject);
+                    return true;
+                }
+                else if(!shotConfComp->m_ejectMode)
                 {
                     shotConfComp->m_ejectMode = true;
                     std::swap(circleCompA.m_ray, shotConfComp->m_ejectExplosionRay);
-                    RectangleCollisionComponent &rectCompB = getRectangleComponent(args.entityNumB);
-                    collisionCircleRectEject(args, circleCompA.m_ray, rectCompB, true);
-                    return;
+                    return false;
                 }
-                if(args.tagCompB->m_tagA == CollisionTag_e::WALL_CT && !shotConfComp->m_currentLoopEjected)
+                else if(args.tagCompB->m_tagA == CollisionTag_e::WALL_CT && !shotConfComp->m_currentLoopEjected)
                 {
                     MoveableWallConfComponent *moveWallComp = stairwayToComponentManager().
                             searchComponentByType<MoveableWallConfComponent>(args.entityNumB, Components_e::MOVEABLE_WALL_CONF_COMPONENT);
@@ -670,13 +684,13 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
                     {
                         shotConfComp->m_currentLoopEjected = true;
                         RectangleCollisionComponent &rectCompB = getRectangleComponent(args.entityNumB);
-                        collisionCircleRectEject(args, circleCompA.m_ray, rectCompB);
+                        collisionCircleRectEject(args, circleCompA.m_ray, rectCompB, shotExplosionEject);
                     }
                 }
             }
             if(shotConfComp->m_destructPhase)
             {
-                return;
+                return true;
             }
             if(shotConfComp->m_damageCircleRayData)
             {
@@ -691,7 +705,7 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
             shotConfComp->m_spriteShotNum = 1;
             if(limitLevelDestruct || shotConfComp->m_damageCircleRayData)
             {
-                return;
+                return true;
             }
             if(args.tagCompA->m_tagA == CollisionTag_e::BULLET_PLAYER_CT && args.tagCompB->m_tagA == CollisionTag_e::ENEMY_CT)
             {
@@ -710,6 +724,7 @@ void CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args)
             }
         }
     }
+    return true;
 }
 
 //===================================================================

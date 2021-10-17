@@ -40,12 +40,12 @@ private:
     void setUsedComponents();
     void initArrayTag();
     bool checkTag(CollisionTag_e entityTagA, CollisionTag_e entityTagB);
-    void treatCollision(uint32_t entityNumA, uint32_t entityNumB,
-                        GeneralCollisionComponent *tagCompA,
-                        GeneralCollisionComponent *tagCompB);
+    //return false if new collision iteration have to be done
+    bool treatCollision(uint32_t entityNumA, uint32_t entityNumB, GeneralCollisionComponent *tagCompA,
+                        GeneralCollisionComponent *tagCompB, bool shotExplosionEject = false);
     //Collisions detection
     void treatCollisionFirstRect(CollisionArgs &args);
-    void treatCollisionFirstCircle(CollisionArgs &args);
+    bool treatCollisionFirstCircle(CollisionArgs &args, bool shotExplosionEject = false);
     void treatActionPlayerRect(CollisionArgs &args);
     void treatExplosionColl(CollisionArgs &args);
     void setDamageCircle(uint32_t shotEntity, bool active, uint32_t baseEntity = 0);
@@ -80,6 +80,7 @@ private:
     void confDropedObject(uint32_t objectEntity, uint32_t enemyEntity);
     void activeSound(uint32_t entityNum);
     bool checkEnemyRemoveCollisionMask(uint32_t entityNum);
+    void secondEntitiesLoop(uint32_t entityA, uint32_t currentIteration, GeneralCollisionComponent *tagCompA, bool shotExplosionEject = false);
 private:
     std::multimap<CollisionTag_e, CollisionTag_e> m_tagArray;
     std::pair<std::optional<uint32_t>, float> m_memDistCurrentBulletColl;

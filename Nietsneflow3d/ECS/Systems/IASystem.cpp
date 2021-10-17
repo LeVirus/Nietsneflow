@@ -378,44 +378,34 @@ void IASystem::confNewVisibleShot(const std::vector<uint32_t> &visibleShots)
     assert(visibleShots.size() > 1);
     uint32_t targetIndex = visibleShots.size() - 1, baseIndex = targetIndex - 1;
     SpriteTextureComponent *baseSpriteComp = stairwayToComponentManager().
-            searchComponentByType<SpriteTextureComponent>(visibleShots[baseIndex],
-                                                          Components_e::SPRITE_TEXTURE_COMPONENT);
+            searchComponentByType<SpriteTextureComponent>(visibleShots[baseIndex], Components_e::SPRITE_TEXTURE_COMPONENT);
     MemSpriteDataComponent *baseMemSpriteComp = stairwayToComponentManager().
-            searchComponentByType<MemSpriteDataComponent>(visibleShots[baseIndex],
-                                                          Components_e::MEM_SPRITE_DATA_COMPONENT);
+            searchComponentByType<MemSpriteDataComponent>(visibleShots[baseIndex], Components_e::MEM_SPRITE_DATA_COMPONENT);
     FPSVisibleStaticElementComponent *baseFpsStaticComp = stairwayToComponentManager().
-            searchComponentByType<FPSVisibleStaticElementComponent>(visibleShots[baseIndex],
-                                                                    Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
+            searchComponentByType<FPSVisibleStaticElementComponent>(visibleShots[baseIndex], Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
     SpriteTextureComponent *targetSpriteComp = stairwayToComponentManager().
-            searchComponentByType<SpriteTextureComponent>(visibleShots[targetIndex],
-                                                          Components_e::SPRITE_TEXTURE_COMPONENT);
+            searchComponentByType<SpriteTextureComponent>(visibleShots[targetIndex], Components_e::SPRITE_TEXTURE_COMPONENT);
     MemSpriteDataComponent *targetMemSpriteComp = stairwayToComponentManager().
-            searchComponentByType<MemSpriteDataComponent>(visibleShots[targetIndex],
-                                                          Components_e::MEM_SPRITE_DATA_COMPONENT);
+            searchComponentByType<MemSpriteDataComponent>(visibleShots[targetIndex], Components_e::MEM_SPRITE_DATA_COMPONENT);
     FPSVisibleStaticElementComponent *targetFpsStaticComp = stairwayToComponentManager().
-            searchComponentByType<FPSVisibleStaticElementComponent>(visibleShots[targetIndex],
-                                                                    Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
+            searchComponentByType<FPSVisibleStaticElementComponent>(visibleShots[targetIndex], Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
     ShotConfComponent *baseShotConfComp = stairwayToComponentManager().
-            searchComponentByType<ShotConfComponent>(visibleShots[baseIndex],
-                                                     Components_e::SHOT_CONF_COMPONENT);
+            searchComponentByType<ShotConfComponent>(visibleShots[baseIndex], Components_e::SHOT_CONF_COMPONENT);
     ShotConfComponent *targetShotConfComp = stairwayToComponentManager().
             searchComponentByType<ShotConfComponent>(visibleShots[targetIndex], Components_e::SHOT_CONF_COMPONENT);
     MoveableComponent *baseMoveComp = stairwayToComponentManager().
-            searchComponentByType<MoveableComponent>(visibleShots[baseIndex],
-                                                     Components_e::MOVEABLE_COMPONENT);
+            searchComponentByType<MoveableComponent>(visibleShots[baseIndex], Components_e::MOVEABLE_COMPONENT);
     MoveableComponent *targetMoveComp = stairwayToComponentManager().
-            searchComponentByType<MoveableComponent>(visibleShots[targetIndex],
-                                                     Components_e::MOVEABLE_COMPONENT);
+            searchComponentByType<MoveableComponent>(visibleShots[targetIndex], Components_e::MOVEABLE_COMPONENT);
     MemFPSGLSizeComponent *memFPSGLSizeCompBase = stairwayToComponentManager().
             searchComponentByType<MemFPSGLSizeComponent>(visibleShots[baseIndex], Components_e::MEM_FPS_GLSIZE_COMPONENT);
-    assert(baseShotConfComp);
     MemFPSGLSizeComponent *memFPSGLSizeCompTarget = stairwayToComponentManager().
-            searchComponentByType<MemFPSGLSizeComponent>(visibleShots[targetIndex],
-                                                     Components_e::MEM_FPS_GLSIZE_COMPONENT);
+            searchComponentByType<MemFPSGLSizeComponent>(visibleShots[targetIndex], Components_e::MEM_FPS_GLSIZE_COMPONENT);
     AudioComponent *audioCompTarget = stairwayToComponentManager().
             searchComponentByType<AudioComponent>(visibleShots[targetIndex], Components_e::AUDIO_COMPONENT);
     AudioComponent *audioCompBase = stairwayToComponentManager().
             searchComponentByType<AudioComponent>(visibleShots[baseIndex], Components_e::AUDIO_COMPONENT);
+    assert(baseShotConfComp);
     assert(audioCompBase);
     assert(audioCompTarget);
     assert(memFPSGLSizeCompBase);
