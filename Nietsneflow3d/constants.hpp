@@ -259,6 +259,7 @@ inline const float WIDTH_DOOR_SIZE_PX = LEVEL_TILE_SIZE_PX / 9.0f;
 inline const float DOOR_CASE_POS_PX = WIDTH_DOOR_SIZE_PX * 4.0f;
 inline const float LEVEL_HALF_TILE_SIZE_PX = LEVEL_TILE_SIZE_PX / 2.0f;
 inline const float LEVEL_THIRD_TILE_SIZE_PX = LEVEL_TILE_SIZE_PX / 3.0f;
+inline const float LEVEL_TWO_THIRD_TILE_SIZE_PX = (LEVEL_TILE_SIZE_PX / 3.0f) * 2.0f;
 inline const float ENEMY_RAY = LEVEL_HALF_TILE_SIZE_PX;
 inline const float PLAYER_RAY = LEVEL_HALF_TILE_SIZE_PX - 2.0f;
 inline const float MAP_LOCAL_CENTER_X_GL = 0.75f;

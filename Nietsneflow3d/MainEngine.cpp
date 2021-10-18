@@ -787,7 +787,7 @@ void MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
     std::map<std::string, EnemyData>::const_iterator it = enemiesData.begin();
     for(; it != enemiesData.end(); ++it)
     {
-        collisionRay = it->second.m_inGameSpriteSize.first * LEVEL_HALF_TILE_SIZE_PX;
+        collisionRay = it->second.m_inGameSpriteSize.first * LEVEL_TWO_THIRD_TILE_SIZE_PX;
         const SpriteData &memSpriteData = levelManager.getPictureData().
                 getSpriteData()[it->second.m_staticFrontSprites[0]];
         for(uint32_t j = 0; j < it->second.m_TileGamePosition.size(); ++j)
