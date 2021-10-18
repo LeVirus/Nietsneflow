@@ -458,12 +458,6 @@ bool floatEqualsZero(float value)
 }
 
 //===================================================================
-bool checkFloatEqualsZero(float valueA, float valueB)
-{
-    return static_cast<int32_t>(valueA * 100.0f) == static_cast<int32_t>(valueB * 100.0f);
-}
-
-//===================================================================
 PairFloat_t getCircleUpLeftCorner(const PairFloat_t &point, float ray)
 {
     return {point.first - ray, point.second - ray};

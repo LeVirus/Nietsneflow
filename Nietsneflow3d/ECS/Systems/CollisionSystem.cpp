@@ -1130,6 +1130,18 @@ void CollisionSystem::collisionCircleRectEject(CollisionArgs &args, float circle
     {
         return;
     }
+    MoveableWallConfComponent *moveWallComp = stairwayToComponentManager().
+            searchComponentByType<MoveableWallConfComponent>(args.entityNumB, Components_e::MOVEABLE_WALL_CONF_COMPONENT);
+    if(moveWallComp)
+    {
+        bool vert = (moveWallComp->m_directionMove[moveWallComp->m_currentMove].first == Direction_e::NORTH ||
+                moveWallComp->m_directionMove[moveWallComp->m_currentMove].first == Direction_e::SOUTH);
+        if(vert != (std::abs(diffY) < std::abs(diffX)) &&
+                std::min(std::abs(diffX), std::abs(diffY)) > LEVEL_HALF_TILE_SIZE_PX)
+        {
+            return;
+        }
+    }
     collisionEject(mapComp, diffX, diffY, limitEjectY, limitEjectX);
 }
 

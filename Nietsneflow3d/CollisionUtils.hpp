@@ -19,7 +19,6 @@ bool checkTrianglePointCollision(const array3PairFloat_t &trianglePoints,
                                  const PairFloat_t &point);
 
 bool floatEqualsZero(float value);
-bool checkFloatEqualsZero(float valueA, float valueB);
 
 pairPairFloat_t getRectShapeFromTriangle(const array3PairFloat_t &trianglePoints);
 
