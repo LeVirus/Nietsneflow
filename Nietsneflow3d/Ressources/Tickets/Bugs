@@ -4,8 +4,6 @@ BUGS======================================================================
 On scratching case eject in bad direction=========================~~
 	For visible shot OK but bad display order (...)
 	For player maybe let
-))
-Enemy eject issue!!!!!
 
 -7)
 Coll exit on door??
@@ -14,6 +12,9 @@ Coll exit on door??
 assert à CollisionSystem.cpp::89    EnemyConfComponent == nullptr
 assert à CollisionSystem.cpp::726   hyp > distanceX && hyp > distanceY
 assert à CollisionSystem.cpp::770  
+
+))
+Enemy eject issue!!!!!================================??
 
 ))
 Display issue on impact on moveable wall==============================~

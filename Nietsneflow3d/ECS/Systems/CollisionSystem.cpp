@@ -962,7 +962,7 @@ void CollisionSystem::treatCrushing(const CollisionArgs &args, float diffX, floa
             bool vert = false;
             MoveableWallConfComponent *moveWallComp = stairwayToComponentManager().
                     searchComponentByType<MoveableWallConfComponent>(args.entityNumB, Components_e::MOVEABLE_WALL_CONF_COMPONENT);
-            if(moveWallComp)
+            if(moveWallComp && moveWallComp->m_inMovement)
             {
                 Direction_e dir = moveWallComp->m_directionMove[moveWallComp->m_currentMove].first;
                 vert = (dir == Direction_e::NORTH || dir == Direction_e::SOUTH);
@@ -1132,7 +1132,7 @@ void CollisionSystem::collisionCircleRectEject(CollisionArgs &args, float circle
     }
     MoveableWallConfComponent *moveWallComp = stairwayToComponentManager().
             searchComponentByType<MoveableWallConfComponent>(args.entityNumB, Components_e::MOVEABLE_WALL_CONF_COMPONENT);
-    if(moveWallComp)
+    if(moveWallComp && moveWallComp->m_inMovement)
     {
         bool vert = (moveWallComp->m_directionMove[moveWallComp->m_currentMove].first == Direction_e::NORTH ||
                 moveWallComp->m_directionMove[moveWallComp->m_currentMove].first == Direction_e::SOUTH);

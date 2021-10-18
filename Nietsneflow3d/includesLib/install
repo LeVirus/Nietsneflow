@@ -1,0 +1,7 @@
+install glad and glfw
+
+GLAD::=======================================
+git clone https://github.com/Dav1dde/glad.git
+
+GLFW::=======================================
+install package
