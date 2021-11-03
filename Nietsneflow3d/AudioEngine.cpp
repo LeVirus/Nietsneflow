@@ -1,6 +1,4 @@
 #include "AudioEngine.hpp"
-#include <AL/al.h>
-#include <AL/alc.h>
 #include "sndfile.h"
 #include <cassert>
 #include <constants.hpp>

@@ -1,11 +1,11 @@
 #pragma once
 
-typedef struct ALCdevice ALCdevice;
-typedef struct ALCcontext ALCcontext;
 typedef	struct SNDFILE_tag	SNDFILE;
 typedef unsigned int ALuint;
 typedef int ALenum;
 
+#include <AL/al.h>
+#include <AL/alc.h>
 #include <vector>
 #include <map>
 #include <string>
