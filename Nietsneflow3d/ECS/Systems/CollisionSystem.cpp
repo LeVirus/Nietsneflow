@@ -977,15 +977,12 @@ void CollisionSystem::treatCrushing(const CollisionArgs &args, float diffX, floa
                 searchComponentByType<MoveableWallConfComponent>(args.entityNumB, Components_e::MOVEABLE_WALL_CONF_COMPONENT);
         //check if at least one wall is moveable and 2 distinct walls
         if(args.tagCompB->m_tagA == CollisionTag_e::WALL_CT &&
-                ((moveWallComp && moveWallComp->m_inMovement) || args.tagCompB->m_tagB == CollisionTag_e::WALL_CT) &&
+                ((moveWallComp && moveWallComp->m_inMovement) ||
+                 args.tagCompB->m_tagB == CollisionTag_e::WALL_CT) &&
                 args.entityNumB != std::get<1>(*moveComp->m_crushMem))
         {
-            if(moveWallComp && moveWallComp->m_inMovement)
-            {
-                Direction_e dir = moveWallComp->m_directionMove[moveWallComp->m_currentMove].first;
-                std::get<2>(*moveComp->m_crushMem) = (dir == Direction_e::NORTH || dir == Direction_e::SOUTH);
-            }
-            if(args.tagCompA->m_tagA == CollisionTag_e::PLAYER_CT)
+            Direction_e dir = moveWallComp->m_directionMove[moveWallComp->m_currentMove].first;
+            if(args.tagCompA->m_tagA == CollisionTag_e::PLAYER_CT && isDirectionOpposing(dir, std::get<0>(*moveComp->m_crushMem)))
             {
                 PlayerConfComponent *playerComp = stairwayToComponentManager().
                         searchComponentByType<PlayerConfComponent>(args.entityNumA, Components_e::PLAYER_CONF_COMPONENT);
@@ -1358,4 +1355,13 @@ Direction_e getDirection(float diffX, float diffY)
     bool vert = (std::abs(diffX) > std::abs(diffY)) ? true : false;
     return vert ? ((diffY < EPSILON_FLOAT) ? Direction_e::SOUTH : Direction_e::NORTH) :
                   ((diffX < EPSILON_FLOAT) ? Direction_e::WEST : Direction_e::EAST);
+}
+
+//===================================================================
+bool isDirectionOpposing(Direction_e dirA, Direction_e dirB)
+{
+    return ((dirA == Direction_e::NORTH && dirB == Direction_e::SOUTH) ||
+            (dirB == Direction_e::NORTH && dirA == Direction_e::SOUTH) ||
+            (dirA == Direction_e::EAST && dirB == Direction_e::WEST) ||
+            (dirB == Direction_e::EAST && dirA == Direction_e::WEST));
 }

@@ -91,6 +91,7 @@ private:
     bool m_pair = true, m_memPlayerTeleport;
 };
 
+bool isDirectionOpposing(Direction_e dirA, Direction_e dirB);
 bool pickUpWeapon(uint32_t numWeapon, WeaponComponent *weaponComp,
                   uint32_t objectContaining);
 bool pickUpAmmo(uint32_t numWeapon, WeaponComponent *weaponComp,

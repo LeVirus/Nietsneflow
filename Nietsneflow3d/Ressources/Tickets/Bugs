@@ -1,7 +1,7 @@
 BUGS======================================================================
 
 ))
-When multi wall move auto issue display!!!!
+AUto Moveable wall bad display at init.
 
 ))
 On scratching case eject in bad direction=========================~~
@@ -10,6 +10,9 @@ On scratching case eject in bad direction=========================~~
 
 -7)
 Coll exit on door??
+
+))
+When multi wall move auto issue display!!!!==========================OK
 
 ))
 If moveable wall does not move damage on touch reverse behaviour=====================OK
