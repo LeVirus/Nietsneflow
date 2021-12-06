@@ -7,15 +7,15 @@ For wall editing level interpret diagonal rect as an unique size for width and h
 If moveable wall does not move damage on touch reverse behaviour
 
 ))
-If anemy drop object crash if the object does not exist in the container (if the object is not in the level)
-
-))
 On scratching case eject in bad direction=========================~~
 	For visible shot OK but bad display order (...)
 	For player maybe let
 
 -7)
 Coll exit on door??
+
+))
+If enemy drop object crash if the object does not exist in the container (if the object is not in the level)========================OK
 
 1)
 assert à CollisionSystem.cpp::89    EnemyConfComponent == nullptr

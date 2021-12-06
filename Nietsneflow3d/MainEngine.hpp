@@ -126,7 +126,7 @@ private:
     uint32_t createBarrelEntity();
     uint32_t createObjectEntity();
     uint32_t createDisplayTeleportEntity();
-    void confBaseComponent(uint32_t entityNum, const SpriteData &memSpriteData, const PairUI_t &coordLevel,
+    void confBaseComponent(uint32_t entityNum, const SpriteData &memSpriteData, const std::optional<PairUI_t> &coordLevel,
                            CollisionShape_e collisionShape, CollisionTag_e tag);
     void confStaticComponent(uint32_t entityNum, const PairFloat_t &elementSize, LevelStaticElementType_e elementType);
     void loadEnemySprites(const std::vector<SpriteData> &vectSprite, const EnemyData &enemiesData,

@@ -1437,7 +1437,7 @@ uint32_t MainEngine::createObjectEntity()
 
 //===================================================================
 void MainEngine::confBaseComponent(uint32_t entityNum, const SpriteData &memSpriteData,
-                                   const PairUI_t& coordLevel, CollisionShape_e collisionShape,
+                                   const std::optional<PairUI_t> &coordLevel, CollisionShape_e collisionShape,
                                    CollisionTag_e tag)
 {
     SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().
@@ -1446,15 +1446,18 @@ void MainEngine::confBaseComponent(uint32_t entityNum, const SpriteData &memSpri
             searchComponentByType<MapCoordComponent>(entityNum, Components_e::MAP_COORD_COMPONENT);
     assert(spriteComp);
     assert(mapComp);
-    mapComp->m_coord = coordLevel;
     spriteComp->m_spriteData = &memSpriteData;
-    if(tag == CollisionTag_e::WALL_CT || tag == CollisionTag_e::DOOR_CT)
+    if(coordLevel)
     {
-        mapComp->m_absoluteMapPositionPX = getAbsolutePosition(coordLevel);
-    }
-    else
-    {
-        mapComp->m_absoluteMapPositionPX = getCenteredAbsolutePosition(coordLevel);
+        mapComp->m_coord = *coordLevel;
+        if(tag == CollisionTag_e::WALL_CT || tag == CollisionTag_e::DOOR_CT)
+        {
+            mapComp->m_absoluteMapPositionPX = getAbsolutePosition(*coordLevel);
+        }
+        else
+        {
+            mapComp->m_absoluteMapPositionPX = getCenteredAbsolutePosition(*coordLevel);
+        }
     }
     GeneralCollisionComponent *tagComp = m_ecsManager.getComponentManager().
             searchComponentByType<GeneralCollisionComponent>(entityNum, Components_e::GENERAL_COLLISION_COMPONENT);
@@ -1992,7 +1995,15 @@ uint32_t MainEngine::createStaticElementEntity(LevelStaticElementType_e elementT
             searchComponentByType<FPSVisibleStaticElementComponent>(entityNum, Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
     assert(fpsStaticComp);
     fpsStaticComp->m_inGameSpriteSize = staticElementData.m_inGameSpriteSize;
-    confBaseComponent(entityNum, memSpriteData, staticElementData.m_TileGamePosition[iterationNum], CollisionShape_e::CIRCLE_C, tag);
+    //Enemy dropable object case
+    if(iterationNum <= staticElementData.m_TileGamePosition.size())
+    {
+        confBaseComponent(entityNum, memSpriteData, {}, CollisionShape_e::CIRCLE_C, tag);
+    }
+    else
+    {
+        confBaseComponent(entityNum, memSpriteData, staticElementData.m_TileGamePosition[iterationNum], CollisionShape_e::CIRCLE_C, tag);
+    }
     CircleCollisionComponent *circleComp = m_ecsManager.getComponentManager().
             searchComponentByType<CircleCollisionComponent>(entityNum, Components_e::CIRCLE_COLLISION_COMPONENT);
     assert(circleComp);
