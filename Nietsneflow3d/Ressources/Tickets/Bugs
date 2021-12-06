@@ -4,6 +4,12 @@ BUGS======================================================================
 For wall editing level interpret diagonal rect as an unique size for width and height
 
 ))
+If moveable wall does not move damage on touch reverse behaviour
+
+))
+If anemy drop object crash if the object does not exist in the container (if the object is not in the level)
+
+))
 On scratching case eject in bad direction=========================~~
 	For visible shot OK but bad display order (...)
 	For player maybe let

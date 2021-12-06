@@ -812,19 +812,21 @@ void LevelManager::loadPositionWall(const INIReader &reader)
 {
     std::vector<std::string> vectINISections = reader.getSectionNamesContaining("Wall");
     std::map<std::string, WallData>::iterator it;
+    std::string direction, moveNumber;
     for(uint32_t i = 0; i < vectINISections.size(); ++i)
     {
+        direction = reader.Get(vectINISections[i], "Direction", "");
+        it = m_wallData.find(reader.Get(vectINISections[i], "WallDisplayID", ""));
+        assert(it != m_wallData.end());
         //Moveable wall
-        if(vectINISections[i].find("MoveableWall") != std::string::npos)
+        if(!direction.empty())
         {
-            std::string direction, moveNumber;
-            it = m_wallData.find(reader.Get(vectINISections[i], "WallDisplayID", ""));
-            assert(it != m_wallData.end());
             m_moveableWallData.insert({vectINISections[i], MoveableWallData()});
             m_moveableWallData[vectINISections[i]].m_sprites = it->second.m_sprites;
             fillWallPositionVect(reader, vectINISections[i], "GamePosition",
                                  m_moveableWallData[vectINISections[i]].m_TileGamePosition);
-            direction = reader.Get(vectINISections[i], "Direction", "");
+            removeWallPositionVect(reader, vectINISections[i],
+                                   m_moveableWallData[vectINISections[i]].m_TileGamePosition);
             moveNumber = reader.Get(vectINISections[i], "NumberOfMove", "");
             assert(!direction.empty());
             assert(!moveNumber.empty());
@@ -856,8 +858,6 @@ void LevelManager::loadPositionWall(const INIReader &reader)
         //Normal wall
         else
         {
-            it = m_wallData.find(vectINISections[i]);
-            assert(it != m_wallData.end());
             fillWallPositionVect(reader, vectINISections[i], "GamePosition", it->second.m_TileGamePosition);
             removeWallPositionVect(reader, vectINISections[i], it->second.m_TileGamePosition);
         }
