@@ -977,10 +977,10 @@ void CollisionSystem::treatCrushing(const CollisionArgs &args, float diffX, floa
                 searchComponentByType<MoveableWallConfComponent>(args.entityNumB, Components_e::MOVEABLE_WALL_CONF_COMPONENT);
         //check if at least one wall is moveable and 2 distinct walls
         if(args.tagCompB->m_tagA == CollisionTag_e::WALL_CT &&
-                (moveWallComp || args.tagCompB->m_tagB == CollisionTag_e::WALL_CT) &&
+                ((moveWallComp && moveWallComp->m_inMovement) || args.tagCompB->m_tagB == CollisionTag_e::WALL_CT) &&
                 args.entityNumB != std::get<1>(*moveComp->m_crushMem))
         {
-            if(moveWallComp)
+            if(moveWallComp && moveWallComp->m_inMovement)
             {
                 Direction_e dir = moveWallComp->m_directionMove[moveWallComp->m_currentMove].first;
                 std::get<2>(*moveComp->m_crushMem) = (dir == Direction_e::NORTH || dir == Direction_e::SOUTH);
