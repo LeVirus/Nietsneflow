@@ -1,7 +1,7 @@
 BUGS======================================================================
 
 ))
-AUto Moveable wall bad display at init.
+Crash when enemy collide with circle elements?
 
 ))
 On scratching case eject in bad direction=========================~~
@@ -10,6 +10,9 @@ On scratching case eject in bad direction=========================~~
 
 -7)
 Coll exit on door??
+
+))
+AUto Moveable wall bad display at init.=======================OK
 
 ))
 When multi wall move auto issue display!!!!==========================OK

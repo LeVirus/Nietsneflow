@@ -266,8 +266,9 @@ void setInitPhaseMoveWall(MapCoordComponent *mapComp, MoveableWallConfComponent 
                                         mapComp->m_absoluteMapPositionPX.second + LEVEL_TILE_SIZE_PX};
         nextCase = {mapComp->m_coord.first, mapComp->m_coord.second + 1};
         break;
-    }
-    if(Level::getElementCase(nextCase)->m_type != LevelCaseType_e::WALL_LC)
+    }    
+    if(Level::getElementCase(nextCase)->m_type != LevelCaseType_e::WALL_LC ||
+            moveWallComp->m_triggerBehaviour == TriggerBehaviourType_e::AUTO)
     {
         Level::memMoveWallEntity(nextCase, wallEntity);
         Level::setElementTypeCase(nextCase, LevelCaseType_e::WALL_MOVE_LC);
