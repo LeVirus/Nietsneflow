@@ -1996,7 +1996,7 @@ uint32_t MainEngine::createStaticElementEntity(LevelStaticElementType_e elementT
     assert(fpsStaticComp);
     fpsStaticComp->m_inGameSpriteSize = staticElementData.m_inGameSpriteSize;
     //Enemy dropable object case
-    if(iterationNum <= staticElementData.m_TileGamePosition.size())
+    if(iterationNum >= staticElementData.m_TileGamePosition.size())
     {
         confBaseComponent(entityNum, memSpriteData, {}, CollisionShape_e::CIRCLE_C, tag);
     }

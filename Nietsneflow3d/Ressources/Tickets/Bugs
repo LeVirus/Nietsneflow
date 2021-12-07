@@ -1,6 +1,12 @@
 BUGS======================================================================
 
 ))
+    assert(elementCase); FistPersonSystem.cpp::227
+
+))
+Issue bad display order on Diagonal wall
+
+))
 Crash when enemy collide with circle elements?
 
 ))
