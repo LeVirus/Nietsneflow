@@ -612,12 +612,6 @@ void MainEngine::loadWallEntities(const std::map<std::string, MoveableWallData> 
             {
                 m_ecsManager.bRmEntity(m_memWallPos[*it]);
                 m_memWallPos[*it] = numEntity;
-                if(moveable)
-                {
-                    std::vector<uint32_t>::iterator it = std::find(vectMemEntities.begin(), vectMemEntities.end(), itt->second);
-                    assert(it != vectMemEntities.end());
-                    vectMemEntities.erase(it);
-                }
             }
             else
             {
