@@ -1,10 +1,10 @@
 BUGS======================================================================
 
 ))
-    assert(elementCase); FistPersonSystem.cpp::227
+Issue bad display order on Diagonal wall
 
 ))
-Issue bad display order on Diagonal wall
+Issue bad display order on moveable wall and static object
 
 ))
 Crash when enemy collide with circle elements?
@@ -17,19 +17,8 @@ On scratching case eject in bad direction=========================~~
 -7)
 Coll exit on door??
 
-))
-AUto Moveable wall bad display at init.=======================OK
-
-))
-When multi wall move auto issue display!!!!==========================OK
-
-))
-If moveable wall does not move damage on touch reverse behaviour=====================OK
-
-))
-If enemy drop object crash if the object does not exist in the container (if the object is not in the level)========================OK
-
 1)
+assert(elementCase); FistPersonSystem.cpp::227
 assert à CollisionSystem.cpp::89    EnemyConfComponent == nullptr
 assert à CollisionSystem.cpp::726   hyp > distanceX && hyp > distanceY
 assert à CollisionSystem.cpp::770  
@@ -43,6 +32,21 @@ Display issue on impact on moveable wall==============================~
 
 -12)
 Static element  table desapear at limit vision==================================~~
+
+
+
+
+))
+AUto Moveable wall bad display at init.=======================OK
+
+))
+When multi wall move auto issue display!!!!==========================OK
+
+))
+If moveable wall does not move damage on touch reverse behaviour=====================OK
+
+))
+If enemy drop object crash if the object does not exist in the container (if the object is not in the level)========================OK
 
 ))
 Visible shot travers door in some distance=============================OK
