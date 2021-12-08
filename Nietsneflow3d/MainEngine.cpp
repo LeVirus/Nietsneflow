@@ -473,6 +473,7 @@ void MainEngine::loadGraphicPicture(const PictureData &picData, const FontData &
 //===================================================================
 void MainEngine::loadLevel(const LevelManager &levelManager)
 {
+    m_memWallPos.clear();
     loadBackgroundEntities(levelManager.getPictureData().getGroundData(),
                            levelManager.getPictureData().getCeilingData(),
                            levelManager);
@@ -483,7 +484,7 @@ void MainEngine::loadLevel(const LevelManager &levelManager)
     uint32_t weaponEntity = loadWeaponsEntity(levelManager);
     loadPlayerEntity(levelManager, weaponEntity, displayTeleportEntity);
     Level::initLevelElementArray();
-    loadWallEntities(levelManager.getWallData(), levelManager.getPictureData().getSpriteData());
+    loadWallEntities(levelManager.getStaticWallData(), levelManager.getPictureData().getSpriteData());
     loadMoveableWallEntities(levelManager.getMoveableWallData(), levelManager.getPictureData().getSpriteData());
     loadDoorEntities(levelManager);
     loadEnemiesEntities(levelManager);
@@ -591,7 +592,6 @@ void MainEngine::loadWallEntities(const std::map<std::string, WallData> &wallDat
                                   const std::vector<SpriteData> &vectSprite)
 {
     assert(!Level::getLevelCaseType().empty());
-    std::pair<std::set<PairUI_t>::const_iterator, bool> itt;
     std::map<std::string, WallData>::const_iterator iter = wallData.begin();
     for(; iter != wallData.end(); ++iter)
     {
@@ -601,13 +601,29 @@ void MainEngine::loadWallEntities(const std::map<std::string, WallData> &wallDat
         for(std::set<PairUI_t>::const_iterator it = iter->second.m_TileGamePosition.begin();
             it != iter->second.m_TileGamePosition.end(); ++it)
         {
-            itt = m_memWall.insert(*it);
-            if(!itt.second)
-            {
-                continue;
-            }
             uint32_t numEntity = createWallEntity(iter->second.m_sprites.size() > 1);
+            std::map<PairUI_t, uint32_t>::iterator itt = m_memWallPos.find(*it);
+            if(itt != m_memWallPos.end())
+            {
+                m_ecsManager.bRmEntity(m_memWallPos[*it]);
+                m_memWallPos[*it] = numEntity;
+            }
+            else
+            {
+                m_memWallPos.insert({*it, numEntity});
+            }
             confBaseWallData(numEntity, memSpriteData, *it, iter->second.m_sprites, vectSprite);
+        }
+        for(std::set<PairUI_t>::const_iterator it = iter->second.m_removeGamePosition.begin();
+            it != iter->second.m_removeGamePosition.end(); ++it)
+        {
+            std::map<PairUI_t, uint32_t>::iterator itt = m_memWallPos.find(*it);
+            if(itt != m_memWallPos.end())
+            {
+                m_ecsManager.bRmEntity(m_memWallPos[*it]);
+                m_memWallPos.erase(itt);
+                Level::clearLevelElement(*it);
+            }
         }
     }
 }

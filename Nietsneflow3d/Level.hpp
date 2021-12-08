@@ -97,6 +97,7 @@ public:
     void setPlayerInitData(const PairFloat_t &pairInitPlayerPos,
                            Direction_e playerDir);
     static void initLevelElementArray();
+    static void clearLevelElement(const PairUI_t &tilePosition);
     static const std::vector<ElementRaycast> &getLevelCaseType()
     {
         return m_levelCaseType;

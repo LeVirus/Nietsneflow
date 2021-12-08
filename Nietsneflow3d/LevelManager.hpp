@@ -34,7 +34,7 @@ struct WeaponINIData
 struct WallData
 {
     std::vector<uint8_t> m_sprites;
-    std::set<PairUI_t> m_TileGamePosition;
+    std::set<PairUI_t> m_TileGamePosition, m_removeGamePosition;
 };
 
 struct AssociatedTriggerData
@@ -72,6 +72,10 @@ public:
     inline const std::map<std::string, MoveableWallData> getMoveableWallData()const
     {
         return m_moveableWallData;
+    }
+    inline const std::map<std::string, WallData> getStaticWallData()const
+    {
+        return m_staticWallData;
     }
     inline const std::map<std::string, StaticLevelElementData> &getGroundData()const
     {return m_groundElement;}
@@ -196,7 +200,7 @@ private:
     Level m_level;
     std::string m_spriteCursorName;
     StaticLevelElementData m_exitStaticElement;
-    std::map<std::string, WallData> m_wallData;
+    std::map<std::string, WallData> m_wallData, m_staticWallData;
     std::map<std::string, MoveableWallData> m_moveableWallData;
     std::map<std::string, uint32_t> m_weaponINIAssociated, m_cardINIAssociated;
     std::map<std::string, StaticLevelElementData> m_groundElement, m_ceilingElement, m_objectElement, m_teleportElement;

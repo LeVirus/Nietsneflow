@@ -810,7 +810,7 @@ void LevelManager::loadWallData(const INIReader &reader)
 //===================================================================
 void LevelManager::loadPositionWall(const INIReader &reader)
 {
-    std::vector<std::string> vectINISections = reader.getSectionNamesContaining("Wall");
+    std::vector<std::string> vectINISections = reader.getSectionNamesContaining("WallShape");
     std::map<std::string, WallData>::iterator it;
     std::string direction, moveNumber;
     for(uint32_t i = 0; i < vectINISections.size(); ++i)
@@ -821,8 +821,8 @@ void LevelManager::loadPositionWall(const INIReader &reader)
         //Moveable wall
         if(!direction.empty())
         {
-            m_moveableWallData.insert({vectINISections[i], MoveableWallData()});
             m_moveableWallData[vectINISections[i]].m_sprites = it->second.m_sprites;
+            m_moveableWallData.insert({vectINISections[i], MoveableWallData()});
             fillWallPositionVect(reader, vectINISections[i], "GamePosition",
                                  m_moveableWallData[vectINISections[i]].m_TileGamePosition);
             removeWallPositionVect(reader, vectINISections[i],
@@ -858,8 +858,11 @@ void LevelManager::loadPositionWall(const INIReader &reader)
         //Normal wall
         else
         {
-            fillWallPositionVect(reader, vectINISections[i], "GamePosition", it->second.m_TileGamePosition);
-            removeWallPositionVect(reader, vectINISections[i], it->second.m_TileGamePosition);
+            m_staticWallData[vectINISections[i]].m_sprites = it->second.m_sprites;
+            m_staticWallData.insert({vectINISections[i], WallData()});
+            fillWallPositionVect(reader, vectINISections[i], "GamePosition", m_staticWallData[vectINISections[i]].m_TileGamePosition);
+            fillWallPositionVect(reader, vectINISections[i], "RemovePosition", m_staticWallData[vectINISections[i]].m_removeGamePosition);
+//            removeWallPositionVect(reader, vectINISections[i], m_staticWallData[vectINISections[i]].m_TileGamePosition);
         }
     }
 }

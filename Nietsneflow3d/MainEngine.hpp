@@ -166,7 +166,7 @@ private:
     WeaponComponent *m_weaponComp;
     MemPlayerConf m_memPlayerConf;
     std::set<PairUI_t> m_memWall;
-    std::map<PairUI_t, uint32_t> m_memTriggerCreated;
+    std::map<PairUI_t, uint32_t> m_memTriggerCreated, m_memWallPos;
 };
 
 void insertEnemySpriteFromType(const std::vector<SpriteData> &vectSprite, mapEnemySprite_t &mapSpriteAssociate,
