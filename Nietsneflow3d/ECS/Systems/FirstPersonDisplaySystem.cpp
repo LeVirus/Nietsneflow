@@ -985,6 +985,19 @@ optionalTargetRaycast_t FirstPersonDisplaySystem::calcLineSegmentRaycast(float r
                     return result;
                 }
             }
+            if(visual && element->m_type == LevelCaseType_e::EMPTY_LC)
+            {
+                if(std::fmod(currentPoint.first, LEVEL_TILE_SIZE_PX) < 0.01f &&
+                        std::fmod(currentPoint.second, LEVEL_TILE_SIZE_PX) < 0.01f)
+                {
+                    optionalTargetRaycast_t result =
+                            getTextureLimitCase(*lateralLeadCoef, *verticalLeadCoef, *currentCoord, currentPoint, lateral);
+                    if(result)
+                    {
+                        return result;
+                    }
+                }
+            }
         }
     }
     if(visual)
@@ -995,6 +1008,37 @@ optionalTargetRaycast_t FirstPersonDisplaySystem::calcLineSegmentRaycast(float r
     {
         return tupleTargetRaycast_t{currentPoint, EPSILON_FLOAT, {}};
     }
+}
+
+//===================================================================
+optionalTargetRaycast_t FirstPersonDisplaySystem::getTextureLimitCase(float lateralLeadCoef, float verticalLeadCoef,
+                                                                      const PairUI_t &currentCoord,
+                                                                      const PairFloat_t &currentPoint, bool lateral)
+{
+    PairUI_t pointA, pointB;
+    float textPos;
+    std::optional<ElementRaycast> elementA, elementB;
+    pointA = (lateralLeadCoef < EPSILON_FLOAT) ? PairUI_t{currentCoord.first + 1, currentCoord.second} :
+                                                   PairUI_t{currentCoord.first - 1, currentCoord.second};
+    pointB = (verticalLeadCoef < EPSILON_FLOAT) ? PairUI_t{currentCoord.first, currentCoord.second + 1} :
+                                                   PairUI_t{currentCoord.first, currentCoord.second - 1};
+    elementA = (lateralLeadCoef > EPSILON_FLOAT) ? Level::getElementCase(pointA) : Level::getElementCase(pointB);
+    elementB = (verticalLeadCoef > EPSILON_FLOAT) ? Level::getElementCase(pointA) : Level::getElementCase(pointB);
+    if(elementA->m_type == LevelCaseType_e::WALL_LC ||
+            elementA->m_type == LevelCaseType_e::WALL_MOVE_LC)
+    {
+        textPos = lateral ? std::fmod(currentPoint.first + 1.0f, LEVEL_TILE_SIZE_PX) :
+                            std::fmod(currentPoint.second + 1.0f, LEVEL_TILE_SIZE_PX);
+        return tupleTargetRaycast_t{currentPoint, textPos, elementA->m_numEntity};
+    }
+    if(elementB->m_type == LevelCaseType_e::WALL_LC ||
+            elementB->m_type == LevelCaseType_e::WALL_MOVE_LC)
+    {
+        textPos = lateral ? std::fmod(currentPoint.first + 1.0f, LEVEL_TILE_SIZE_PX) :
+                            std::fmod(currentPoint.second + 1.0f, LEVEL_TILE_SIZE_PX);
+        return tupleTargetRaycast_t{currentPoint, textPos, elementB->m_numEntity};
+    }
+    return {};
 }
 
 //===================================================================

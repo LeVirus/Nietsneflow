@@ -1,10 +1,13 @@
 BUGS======================================================================
 
 ))
-Issue bad display order on Diagonal wall
+on some case enemy desapear behind walls when touch walls
 
 ))
-Issue bad display order on moveable wall and static object
+Diagonal wall display behind on limit case 
+
+))
+Issue bad display order on Diagonal wall Explosion
 
 ))
 Crash when enemy collide with circle elements?
@@ -35,6 +38,8 @@ Static element  table desapear at limit vision==================================
 
 
 
+))
+Issue bad display order on moveable wall and static object=============================OK
 
 ))
 AUto Moveable wall bad display at init.=======================OK

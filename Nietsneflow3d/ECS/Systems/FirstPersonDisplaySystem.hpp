@@ -78,6 +78,9 @@ private:
     optionalTargetRaycast_t calcMovingWallSegmentRaycast(float radiantAngle, std::optional<float> lateralLeadCoef,
                                                          std::optional<float> verticalLeadCoef, PairFloat_t &currentPoint,
                                                          const ElementRaycast &element);
+    optionalTargetRaycast_t getTextureLimitCase(float lateralLeadCoef, float verticalLeadCoef,
+                                                const PairUI_t &currentCoord,
+                                                const PairFloat_t &currentPoint, bool lateral);
     std::optional<float> getCloserRaycastDistance(const MapCoordComponent *mapCompObserver, const MapCoordComponent *mapCompTarget, float distance,
                               float radiantObserverAngle, uint32_t targetEntity);
     void rayCasting();
