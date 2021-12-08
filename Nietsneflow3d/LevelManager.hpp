@@ -46,7 +46,7 @@ struct AssociatedTriggerData
 struct MoveableWallData
 {
     std::vector<uint8_t> m_sprites;
-    std::set<PairUI_t> m_TileGamePosition;
+    std::set<PairUI_t> m_TileGamePosition, m_removeGamePosition;
     std::vector<std::pair<Direction_e, uint32_t>> m_directionMove;
     TriggerWallMoveType_e m_triggerType;
     TriggerBehaviourType_e m_triggerBehaviourType;
@@ -71,11 +71,7 @@ public:
     inline const std::map<std::string, WallData> getWallData()const{return m_wallData;}
     inline const std::map<std::string, MoveableWallData> getMoveableWallData()const
     {
-        return m_moveableWallData;
-    }
-    inline const std::map<std::string, WallData> getStaticWallData()const
-    {
-        return m_staticWallData;
+        return m_mainWallData;
     }
     inline const std::map<std::string, StaticLevelElementData> &getGroundData()const
     {return m_groundElement;}
@@ -162,8 +158,6 @@ private:
     std::optional<PairUI_t> getPosition(const INIReader &reader, const std::string_view sectionName, const std::string_view propertyName);
     bool fillWallPositionVect(const INIReader &reader, const std::string &sectionName, const std::string &propertyName,
                               std::set<PairUI_t> &setPos);
-    void removeWallPositionVect(const INIReader &reader, const std::string &sectionName,
-                                std::set<PairUI_t> &vectPos);
     uint8_t getSpriteId(const INIReader &reader, const std::string &sectionName);
     void loadVisibleShotDisplayData(const INIReader &reader);
     void loadShotImpactDisplayData(const INIReader &reader);
@@ -200,8 +194,8 @@ private:
     Level m_level;
     std::string m_spriteCursorName;
     StaticLevelElementData m_exitStaticElement;
-    std::map<std::string, WallData> m_wallData, m_staticWallData;
-    std::map<std::string, MoveableWallData> m_moveableWallData;
+    std::map<std::string, WallData> m_wallData;
+    std::map<std::string, MoveableWallData> m_mainWallData;
     std::map<std::string, uint32_t> m_weaponINIAssociated, m_cardINIAssociated;
     std::map<std::string, StaticLevelElementData> m_groundElement, m_ceilingElement, m_objectElement, m_teleportElement;
     BarrelData m_barrelElement;

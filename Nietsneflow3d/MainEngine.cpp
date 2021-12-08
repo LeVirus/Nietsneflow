@@ -484,8 +484,7 @@ void MainEngine::loadLevel(const LevelManager &levelManager)
     uint32_t weaponEntity = loadWeaponsEntity(levelManager);
     loadPlayerEntity(levelManager, weaponEntity, displayTeleportEntity);
     Level::initLevelElementArray();
-    loadWallEntities(levelManager.getStaticWallData(), levelManager.getPictureData().getSpriteData());
-    loadMoveableWallEntities(levelManager.getMoveableWallData(), levelManager.getPictureData().getSpriteData());
+    loadWallEntities(levelManager.getMoveableWallData(), levelManager.getPictureData().getSpriteData());
     loadDoorEntities(levelManager);
     loadEnemiesEntities(levelManager);
 //    m_audioEngine.loadMusicFromFile(levelManager.getLevel().getMusicFilename());
@@ -588,72 +587,47 @@ uint32_t MainEngine::loadWeaponsEntity(const LevelManager &levelManager)
 }
 
 //===================================================================
-void MainEngine::loadWallEntities(const std::map<std::string, WallData> &wallData,
+void MainEngine::loadWallEntities(const std::map<std::string, MoveableWallData> &wallData,
                                   const std::vector<SpriteData> &vectSprite)
 {
     assert(!Level::getLevelCaseType().empty());
-    std::map<std::string, WallData>::const_iterator iter = wallData.begin();
+    std::map<std::string, MoveableWallData>::const_iterator iter = wallData.begin();
+    std::vector<uint32_t> vectMemEntities;
+    TriggerWallMoveType_e memTriggerType;
+    bool moveable;
     for(; iter != wallData.end(); ++iter)
     {
+        vectMemEntities.clear();
         assert(!iter->second.m_sprites.empty());
         assert(iter->second.m_sprites[0] < vectSprite.size());
+        moveable = !(iter->second.m_directionMove.empty());
+        memTriggerType = iter->second.m_triggerType;
         const SpriteData &memSpriteData = vectSprite[iter->second.m_sprites[0]];
         for(std::set<PairUI_t>::const_iterator it = iter->second.m_TileGamePosition.begin();
             it != iter->second.m_TileGamePosition.end(); ++it)
         {
-            uint32_t numEntity = createWallEntity(iter->second.m_sprites.size() > 1);
+            uint32_t numEntity = createWallEntity(iter->second.m_sprites.size() > 1, moveable);
             std::map<PairUI_t, uint32_t>::iterator itt = m_memWallPos.find(*it);
             if(itt != m_memWallPos.end())
             {
                 m_ecsManager.bRmEntity(m_memWallPos[*it]);
                 m_memWallPos[*it] = numEntity;
+                if(moveable)
+                {
+                    std::vector<uint32_t>::iterator it = std::find(vectMemEntities.begin(), vectMemEntities.end(), itt->second);
+                    assert(it != vectMemEntities.end());
+                    vectMemEntities.erase(it);
+                }
             }
             else
             {
                 m_memWallPos.insert({*it, numEntity});
             }
             confBaseWallData(numEntity, memSpriteData, *it, iter->second.m_sprites, vectSprite);
-        }
-        for(std::set<PairUI_t>::const_iterator it = iter->second.m_removeGamePosition.begin();
-            it != iter->second.m_removeGamePosition.end(); ++it)
-        {
-            std::map<PairUI_t, uint32_t>::iterator itt = m_memWallPos.find(*it);
-            if(itt != m_memWallPos.end())
-            {
-                m_ecsManager.bRmEntity(m_memWallPos[*it]);
-                m_memWallPos.erase(itt);
-                Level::clearLevelElement(*it);
-            }
-        }
-    }
-}
-
-//===================================================================
-void MainEngine::loadMoveableWallEntities(const std::map<std::string, MoveableWallData> &wallData,
-                                          const std::vector<SpriteData> &vectSprite)
-{
-    assert(!Level::getLevelCaseType().empty());
-    std::pair<std::set<PairUI_t>::const_iterator, bool> itt;
-    TriggerWallMoveType_e memTriggerType;
-    std::vector<uint32_t> vectMemEntities;
-    std::map<std::string, MoveableWallData>::const_iterator iter = wallData.begin();
-    for(; iter != wallData.end(); ++iter)
-    {
-        assert(!iter->second.m_sprites.empty());
-        assert(iter->second.m_sprites[0] < vectSprite.size());
-        const SpriteData &memSpriteData = vectSprite[iter->second.m_sprites[0]];
-        memTriggerType = iter->second.m_triggerType;
-        vectMemEntities.clear();
-        vectMemEntities.reserve(iter->second.m_TileGamePosition.size());
-        for(std::set<PairUI_t>::const_iterator it = iter->second.m_TileGamePosition.begin();
-            it != iter->second.m_TileGamePosition.end(); ++it)
-        {
-            itt = m_memWall.insert(*it);
-            if(!itt.second)
+            if(!moveable)
             {
                 continue;
             }
-            uint32_t numEntity = createWallEntity(iter->second.m_sprites.size() > 1, true);
             vectMemEntities.emplace_back(numEntity);
             confBaseWallData(numEntity, memSpriteData, *it, iter->second.m_sprites, vectSprite, true);
             MoveableComponent *moveComp = m_ecsManager.getComponentManager().
@@ -677,11 +651,31 @@ void MainEngine::loadMoveableWallEntities(const std::map<std::string, MoveableWa
                 genCollComp->m_tagB = CollisionTag_e::TRIGGER_CT;
             }
         }
-        if(memTriggerType == TriggerWallMoveType_e::BUTTON ||
-                memTriggerType == TriggerWallMoveType_e::GROUND)
+        for(std::set<PairUI_t>::const_iterator it = iter->second.m_removeGamePosition.begin();
+            it != iter->second.m_removeGamePosition.end(); ++it)
         {
-            loadTriggerEntityData(iter->second, vectMemEntities,
-                                  vectSprite, memTriggerType);
+            std::map<PairUI_t, uint32_t>::iterator itt = m_memWallPos.find(*it);
+            if(itt != m_memWallPos.end())
+            {
+                m_ecsManager.bRmEntity(m_memWallPos[*it]);
+                m_memWallPos.erase(itt);
+                Level::clearLevelElement(*it);
+                if(moveable)
+                {
+                    std::vector<uint32_t>::iterator it = std::find(vectMemEntities.begin(), vectMemEntities.end(), itt->second);
+                    assert(it != vectMemEntities.end());
+                    vectMemEntities.erase(it);
+                }
+            }
+        }
+        if(moveable)
+        {
+            if(memTriggerType == TriggerWallMoveType_e::BUTTON ||
+                    memTriggerType == TriggerWallMoveType_e::GROUND)
+            {
+                loadTriggerEntityData(iter->second, vectMemEntities,
+                                      vectSprite, memTriggerType);
+            }
         }
     }
 }

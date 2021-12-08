@@ -75,9 +75,8 @@ private:
     void confPlayerEntity(const LevelManager &levelManager, uint32_t entityNum, const Level &level, uint32_t numWeaponEntity,
                           uint32_t numDisplayTeleportEntity);
     void confActionEntity();
-    void loadWallEntities(const std::map<std::string, WallData> &wallData,
+    void loadWallEntities(const std::map<std::string, MoveableWallData> &wallData,
                           const std::vector<SpriteData> &vectSprite);
-    void loadMoveableWallEntities(const std::map<std::string, MoveableWallData> &wallData, const std::vector<SpriteData> &vectSprite);
     void confBaseWallData(uint32_t wallEntity, const SpriteData &memSpriteData, const PairUI_t &coordLevel,
                           const std::vector<uint8_t> &numWallSprites,
                           const std::vector<SpriteData> &vectSprite, bool moveable = false);
