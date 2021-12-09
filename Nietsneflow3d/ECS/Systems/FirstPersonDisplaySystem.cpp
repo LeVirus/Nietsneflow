@@ -223,10 +223,9 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
     }
     displayDistance = getCorrectedDistance(mapCompA, mapCompB, visionComp->m_vectVisibleEntities[currentNormal],
                                            radiantObserverAngle, cameraDistance);
-    //OOOOOOOOK QUICK FIX
     if(cameraDistance < 15.0f)
     {
-        cameraDistance = 15.0f;
+        return;
     }
     //OOOOOOOOOOOOK TMP
     if(genCollComp->m_tagA == CollisionTag_e::BULLET_PLAYER_CT || genCollComp->m_tagA == CollisionTag_e::BULLET_ENEMY_CT

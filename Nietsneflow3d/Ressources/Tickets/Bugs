@@ -7,9 +7,6 @@ On changing level a frame display previous level
 If impact are touching wall behind door and wall ISSU
 
 ))
-When traversing a static element bad display
-
-))
 On scratching case eject in bad direction=========================~~
 	For visible shot OK but bad display order (...)
 	For player maybe let
@@ -31,6 +28,10 @@ Display issue on impact on moveable wall==============================~
 Static element  table desapear at limit vision==================================~~
 
 
+
+
+))
+When traversing a static element bad display===========================OK
 
 -7)
 Coll exit on door?? CONFIRMED===========================OK
