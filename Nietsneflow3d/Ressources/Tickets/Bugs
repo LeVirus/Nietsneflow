@@ -1,7 +1,10 @@
 BUGS======================================================================
 
 ))
-on some case enemy desapear behind walls when touch walls
+on some case enemy desapear behind walls when touch walls CONFIRMED
+
+-7)
+Coll exit on door?? CONFIRMED
 
 ))
 Crash when enemy collide with circle elements?
@@ -11,11 +14,8 @@ On scratching case eject in bad direction=========================~~
 	For visible shot OK but bad display order (...)
 	For player maybe let
 
--7)
-Coll exit on door??
-
 1)
-assert(elementCase); FistPersonSystem.cpp::227
+assert(elementCase); FistPersonSystem.cpp::232===========================OK?
 assert à CollisionSystem.cpp::89    EnemyConfComponent == nullptr
 assert à CollisionSystem.cpp::726   hyp > distanceX && hyp > distanceY
 assert à CollisionSystem.cpp::770  
