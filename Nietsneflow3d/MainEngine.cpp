@@ -1948,6 +1948,10 @@ void MainEngine::loadExitElement(const LevelManager &levelManager,
     confBaseComponent(entityNum, memSpriteData, exit.m_TileGamePosition[0],
             CollisionShape_e::CIRCLE_C, CollisionTag_e::EXIT_CT);
     confStaticComponent(entityNum, exit.m_inGameSpriteSize, LevelStaticElementType_e::GROUND);
+    CircleCollisionComponent *circleComp = m_ecsManager.getComponentManager().
+            searchComponentByType<CircleCollisionComponent>(entityNum, Components_e::CIRCLE_COLLISION_COMPONENT);
+    assert(circleComp);
+    circleComp->m_ray = 5.0f;
 }
 
 //===================================================================

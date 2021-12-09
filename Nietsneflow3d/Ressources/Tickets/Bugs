@@ -6,9 +6,8 @@ On changing level a frame display previous level
 -11)
 If impact are touching wall behind door and wall ISSU
 
-
--7)
-Coll exit on door?? CONFIRMED
+))
+When traversing a static element bad display
 
 ))
 On scratching case eject in bad direction=========================~~
@@ -31,6 +30,10 @@ Display issue on impact on moveable wall==============================~
 -12)
 Static element  table desapear at limit vision==================================~~
 
+
+
+-7)
+Coll exit on door?? CONFIRMED===========================OK
 
 ))
 on some case enemy desapear behind walls when touch walls CONFIRMED============OK
