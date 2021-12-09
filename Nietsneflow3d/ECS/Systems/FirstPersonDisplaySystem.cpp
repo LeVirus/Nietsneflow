@@ -1024,19 +1024,14 @@ optionalTargetRaycast_t FirstPersonDisplaySystem::getTextureLimitCase(float late
                                                    PairUI_t{currentCoord.first, currentCoord.second - 1};
     elementA = (lateralLeadCoef > EPSILON_FLOAT) ? Level::getElementCase(pointA) : Level::getElementCase(pointB);
     elementB = (verticalLeadCoef > EPSILON_FLOAT) ? Level::getElementCase(pointA) : Level::getElementCase(pointB);
-    if(elementA->m_type == LevelCaseType_e::WALL_LC ||
-            elementA->m_type == LevelCaseType_e::WALL_MOVE_LC)
+    if((elementA && (elementA->m_type == LevelCaseType_e::WALL_LC ||
+                     (elementA->m_type == LevelCaseType_e::WALL_MOVE_LC && elementA->m_moveableWallStopped))) &&
+            (elementB && (elementB->m_type == LevelCaseType_e::WALL_LC ||
+                          (elementB->m_type == LevelCaseType_e::WALL_MOVE_LC && elementB->m_moveableWallStopped))))
     {
         textPos = lateral ? std::fmod(currentPoint.first + 1.0f, LEVEL_TILE_SIZE_PX) :
                             std::fmod(currentPoint.second + 1.0f, LEVEL_TILE_SIZE_PX);
         return tupleTargetRaycast_t{currentPoint, textPos, elementA->m_numEntity};
-    }
-    if(elementB->m_type == LevelCaseType_e::WALL_LC ||
-            elementB->m_type == LevelCaseType_e::WALL_MOVE_LC)
-    {
-        textPos = lateral ? std::fmod(currentPoint.first + 1.0f, LEVEL_TILE_SIZE_PX) :
-                            std::fmod(currentPoint.second + 1.0f, LEVEL_TILE_SIZE_PX);
-        return tupleTargetRaycast_t{currentPoint, textPos, elementB->m_numEntity};
     }
     return {};
 }
