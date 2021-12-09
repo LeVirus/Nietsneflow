@@ -142,8 +142,8 @@ void MainEngine::displayTransitionMenu()
     m_graphicEngine.unsetTransition(m_gamePaused);
     do
     {
-        m_graphicEngine.runIteration(m_gamePaused);
         m_physicalEngine.runIteration(m_gamePaused);
+        m_graphicEngine.runIteration(m_gamePaused);
     }while(m_gamePaused);
     m_physicalEngine.setModeTransitionMenu(false);
     m_graphicEngine.setTransition(true);

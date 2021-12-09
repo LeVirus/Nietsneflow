@@ -4,12 +4,6 @@ BUGS======================================================================
 on some case enemy desapear behind walls when touch walls
 
 ))
-Diagonal wall display behind on limit case 
-
-))
-Issue bad display order on Diagonal wall Explosion
-
-))
 Crash when enemy collide with circle elements?
 
 ))
@@ -37,6 +31,11 @@ Display issue on impact on moveable wall==============================~
 Static element  table desapear at limit vision==================================~~
 
 
+))
+Issue bad display order on Diagonal wall Explosion=======================OK
+
+))
+Diagonal wall display behind on limit case========================OK
 
 ))
 Issue bad display order on moveable wall and static object=============================OK
