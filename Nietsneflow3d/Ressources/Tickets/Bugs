@@ -1,13 +1,14 @@
 BUGS======================================================================
 
 ))
-on some case enemy desapear behind walls when touch walls CONFIRMED
+On changing level a frame display previous level
+
+-11)
+If impact are touching wall behind door and wall ISSU
+
 
 -7)
 Coll exit on door?? CONFIRMED
-
-))
-Crash when enemy collide with circle elements?
 
 ))
 On scratching case eject in bad direction=========================~~
@@ -30,6 +31,9 @@ Display issue on impact on moveable wall==============================~
 -12)
 Static element  table desapear at limit vision==================================~~
 
+
+))
+on some case enemy desapear behind walls when touch walls CONFIRMED============OK
 
 ))
 Issue bad display order on Diagonal wall Explosion=======================OK
@@ -74,9 +78,6 @@ Still issue on order display element raycast===================================O
 ))
 visible shot impact does not appear when distance is high on door on east side=============================OK
 
--11)
-Shot behind door might appear to verify
-If impact are touching wall behind door ISSUE===================================OK
 
 ))
 Some weapons displays a bit too high==========================OK

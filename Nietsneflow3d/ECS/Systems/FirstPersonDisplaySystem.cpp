@@ -247,7 +247,7 @@ float FirstPersonDisplaySystem::getCorrectedDistance(MapCoordComponent const *ma
                                                      uint32_t targetEntityNum, float radiantObserverAngle,
                                                      float baseDistance)
 {
-    float radiantAngle;
+    float radiantAngle, rayDistanceA = baseDistance, rayDistanceB = baseDistance;
     PairFloat_t refPoint = mapCompTarget->m_absoluteMapPositionPX;
     CircleCollisionComponent *circleComp = stairwayToComponentManager().
             searchComponentByType<CircleCollisionComponent>(targetEntityNum,
@@ -260,7 +260,7 @@ float FirstPersonDisplaySystem::getCorrectedDistance(MapCoordComponent const *ma
                                                                    mapCompObserver->m_absoluteMapPositionPX, false);
     if(targetRaycast && std::get<2>(*targetRaycast))
     {
-        baseDistance = getCorrectedDistanceRay(targetRaycast, radiantObserverAngle, baseDistance, mapCompObserver, mapCompTarget);
+        rayDistanceA = getCorrectedDistanceRay(targetRaycast, radiantObserverAngle, baseDistance, mapCompObserver, mapCompTarget);
     }
     //second point
     refPoint = mapCompTarget->m_absoluteMapPositionPX;
@@ -269,9 +269,13 @@ float FirstPersonDisplaySystem::getCorrectedDistance(MapCoordComponent const *ma
     targetRaycast = calcLineSegmentRaycast(radiantAngle, mapCompObserver->m_absoluteMapPositionPX, false);
     if(targetRaycast && std::get<2>(*targetRaycast))
     {
-        baseDistance = getCorrectedDistanceRay(targetRaycast, radiantObserverAngle, baseDistance, mapCompObserver, mapCompTarget);
+        rayDistanceB = getCorrectedDistanceRay(targetRaycast, radiantObserverAngle, baseDistance, mapCompObserver, mapCompTarget);
     }
-    return baseDistance;
+    if(std::abs(rayDistanceA - rayDistanceB) < LEVEL_TILE_SIZE_PX)
+    {
+        return baseDistance;
+    }
+    return std::min(rayDistanceA, rayDistanceB);
 }
 
 //===================================================================
