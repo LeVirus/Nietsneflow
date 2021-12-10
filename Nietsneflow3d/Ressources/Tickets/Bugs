@@ -1,8 +1,5 @@
 BUGS======================================================================
 
-))
-On changing level a frame display previous level
-
 -11)
 If impact are touching wall behind door and wall ISSU
 
@@ -29,6 +26,9 @@ Static element  table desapear at limit vision==================================
 
 
 
+
+))
+On changing level a frame display previous level================================OK
 
 ))
 When traversing a static element bad display===========================OK
