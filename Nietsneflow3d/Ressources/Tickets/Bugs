@@ -37,9 +37,6 @@ When traversing a static element bad display===========================OK
 Coll exit on door?? CONFIRMED===========================OK
 
 ))
-on some case enemy desapear behind walls when touch walls CONFIRMED============OK
-
-))
 Issue bad display order on Diagonal wall Explosion=======================OK
 
 ))
@@ -82,6 +79,9 @@ Still issue on order display element raycast===================================O
 ))
 visible shot impact does not appear when distance is high on door on east side=============================OK
 
+-11)
+Shot behind door might appear to verify
+If impact are touching wall behind door ISSUE===================================OK
 
 ))
 Some weapons displays a bit too high==========================OK
