@@ -89,7 +89,7 @@ private:
     std::optional<float> treatDoorRaycast(uint32_t numEntity, float currentRadiantAngle,
                                           PairFloat_t &currentPoint, std::optional<float> lateralLeadCoef,
                                           std::optional<float> verticalLeadCoef, bool &textLateral, bool &textFace);
-    void memDistance(uint32_t numEntity, uint32_t lateralScreenPos, float distance, float texturePos);
+    void memRaycastDistance(uint32_t numEntity, uint32_t lateralScreenPos, float distance, float texturePos);
     void setUsedComponents();
     void confCompVertexMemEntities();
     void writeVertexWallDoorRaycasting(const pairRaycastingData_t &entityData, uint32_t numIteration);
@@ -107,7 +107,7 @@ private:
     void drawVertex();
     void drawTextureBackground();
     PairFloat_t getCenterPosition(MapCoordComponent const *mapComp, GeneralCollisionComponent *genCollComp, float numEntity);
-    void fillVertexFromEntity(uint32_t numEntity, uint32_t numIteration, float distance, DisplayMode_e displayMode);
+    void fillVertexFromEntity(uint32_t numEntity, uint32_t numIteration, float distance);
     VerticesData &getClearedVertice(uint32_t index);
     void confSimpleTextVertexGroundCeiling(float observerAngle);
     void writeSimpleTextVertexGroundCeiling();
@@ -122,11 +122,13 @@ private:
     mapRayCastingData_t m_raycastingData;
     //number of entity to draw per player
     vectUI_t m_numVertexToDraw;
-    float m_stepAngle = getRadiantAngle(CONE_VISION / static_cast<float>(RAYCAST_LINE_NUMBER));
+    float m_stepAngle = getRadiantAngle(CONE_VISION / static_cast<float>(RAYCAST_LINE_NUMBER)),
+    m_stepAngleDouble = m_stepAngle * 2.0f;
     //second :: false = tiled texture     true = simple texture
     std::optional<uint32_t> m_groundSimpleTextBackground, m_groundTiledTextBackground,
     m_ceilingSimpleTextBackground, m_ceilingTiledTextBackground;
     bool m_backgroundRaycastActive = false, m_groundCeilingSimpleTextureActive = false;
+    std::array<float, RAYCAST_LINE_NUMBER> m_memRaycastDist;
     std::optional<std::array<float, RAYCAST_GROUND_CEILING_NUMBER>> m_memBackgroundDistance;
 };
 

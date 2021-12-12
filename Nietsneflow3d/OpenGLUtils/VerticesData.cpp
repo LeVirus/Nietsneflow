@@ -84,44 +84,44 @@ void VerticesData::loadVertexStandartTextureComponent(const PositionVertexCompon
         addTexturePoint(posComp.m_vertex[j], spriteComp.m_spriteData->m_texturePosVertex[j]);
     }
     //treat second rect >> 1    4   5   2
-    if(sizeVertex > 4)
-    {
-        uint32_t k;
-        for(uint32_t j = 0; j < 4; ++j)
-        {
-            if(j == 0)
-            {
-                k = 1;
-            }
-            else if(j == 1)
-            {
-                k = 4;
-            }
-            else if(j == 2)
-            {
-                k = 5;
-            }
-            else
-            {
-                k = 2;
-            }
-            addTexturePoint(posComp.m_vertex[k], spriteComp.m_spriteData->m_texturePosVertex[j]);
-        }
-    }
-    BaseShapeTypeGL_e shape;
+    BaseShapeTypeGL_e shape = BaseShapeTypeGL_e::RECTANGLE;
     if(sizeVertex == 3)
     {
         shape = BaseShapeTypeGL_e::TRIANGLE;
     }
-    else if(sizeVertex == 4)
-    {
-        shape = BaseShapeTypeGL_e::RECTANGLE;
-    }
-    else
-    {
-        shape = BaseShapeTypeGL_e::DOUBLE_RECT;
-    }
     addIndices(shape);
+}
+
+//===================================================================
+void VerticesData::loadVertexStandartTextureByLine(const PositionVertexComponent &posComp,
+                                                   SpriteTextureComponent &spriteComp, float stepAngle, float entityDistance,
+                                                   const std::array<float, RAYCAST_LINE_NUMBER> &memRaycastDist)
+{
+    float lateralGLPosA = posComp.m_vertex[0].first, lateralGLPosB = lateralGLPosA + stepAngle, lateralText;
+    int32_t currentLine = (((posComp.m_vertex[0].first + 1.0f) * RAYCAST_LINE_NUMBER) / 2.0f),
+            finalLine = ((posComp.m_vertex[1].first + 1.0f) * RAYCAST_LINE_NUMBER) / 2.0f,
+            totalLine = finalLine - currentLine;
+    float diffTotalTexturePos = (spriteComp.m_spriteData->m_texturePosVertex[1].first -
+                                 spriteComp.m_spriteData->m_texturePosVertex[0].first);
+    for(int32_t i = 0; i < totalLine; ++i, lateralGLPosA += stepAngle, lateralGLPosB += stepAngle, ++currentLine)
+    {
+        if(currentLine > static_cast<int32_t>(RAYCAST_LINE_NUMBER))
+        {
+            break;
+        }
+        if(currentLine < 0 || (memRaycastDist[currentLine] > 15.0f &&
+                               entityDistance > memRaycastDist[currentLine]))
+        {
+            continue;
+        }
+        lateralText = spriteComp.m_spriteData->m_texturePosVertex[0].first +
+                static_cast<float>(i) / static_cast<float>(totalLine) * diffTotalTexturePos;
+        addTexturePoint({lateralGLPosA, posComp.m_vertex[0].second}, {lateralText, spriteComp.m_spriteData->m_texturePosVertex[0].second});
+        addTexturePoint({lateralGLPosB, posComp.m_vertex[0].second}, {lateralText, spriteComp.m_spriteData->m_texturePosVertex[1].second});
+        addTexturePoint({lateralGLPosB, posComp.m_vertex[2].second}, {lateralText, spriteComp.m_spriteData->m_texturePosVertex[2].second});
+        addTexturePoint({lateralGLPosA, posComp.m_vertex[2].second}, {lateralText, spriteComp.m_spriteData->m_texturePosVertex[3].second});
+        addIndices(BaseShapeTypeGL_e::RECTANGLE);
+    }
 }
 
 //===================================================================
@@ -140,8 +140,8 @@ void VerticesData::loadVertexWriteTextureComponent(const PositionVertexComponent
 }
 
 //===================================================================
-float VerticesData::loadWallDoorRaycastingEntity(const SpriteTextureComponent &spriteComp, const std::vector<RayCastingIntersect> &raycastingData,
-                                                 uint32_t totalLateralLine)
+float VerticesData::loadRaycastingEntity(const SpriteTextureComponent &spriteComp, const std::vector<RayCastingIntersect> &raycastingData,
+                                         uint32_t totalLateralLine)
 {
     float lateralPosA, lateralPosB, verticalPos, lateralText, distantDist = raycastingData[0].m_distance;
     float diffTotalTexturePos = (spriteComp.m_spriteData->m_texturePosVertex[1].first -

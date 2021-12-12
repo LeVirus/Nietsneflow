@@ -194,9 +194,9 @@ void FirstPersonDisplaySystem::writeVertexWallDoorRaycasting(const pairRaycastin
             searchComponentByType<SpriteTextureComponent>(entityData.first,
                                                           Components_e::SPRITE_TEXTURE_COMPONENT);
     assert(spriteComp);
-    DoorComponent *doorComp = stairwayToComponentManager().searchComponentByType<DoorComponent>(entityData.first, Components_e::DOOR_COMPONENT);
-    float distance = vertex.loadWallDoorRaycastingEntity(*spriteComp, entityData.second, RAYCAST_LINE_NUMBER);
+    float distance = vertex.loadRaycastingEntity(*spriteComp, entityData.second, RAYCAST_LINE_NUMBER);
     m_memWallEntityDistances.insert({entityData.first, distance});
+    DoorComponent *doorComp = stairwayToComponentManager().searchComponentByType<DoorComponent>(entityData.first, Components_e::DOOR_COMPONENT);
     if(doorComp)
     {
         m_memDoorDistance.insert({entityData.first, distance});
@@ -221,8 +221,8 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
         ++toRemove;
         return;
     }
-    displayDistance = getCorrectedDistance(mapCompA, mapCompB, visionComp->m_vectVisibleEntities[currentNormal],
-                                           radiantObserverAngle, cameraDistance);
+//    displayDistance = getCorrectedDistance(mapCompA, mapCompB, visionComp->m_vectVisibleEntities[currentNormal],
+//                                           radiantObserverAngle, cameraDistance);
     if(cameraDistance < 15.0f)
     {
         return;
@@ -237,7 +237,7 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
     //get lateral pos from angle
     float lateralPos = getLateralAngle(degreeObserverAngle, trigoAngle);
     confNormalEntityVertex(numEntity, visionComp, genCollComp->m_tagA, lateralPos, cameraDistance);
-    fillVertexFromEntity(numEntity, numIteration, displayDistance, DisplayMode_e::STANDART_DM);
+    fillVertexFromEntity(numEntity, numIteration, displayDistance);
 }
 
 //===================================================================
@@ -586,7 +586,7 @@ float getQuarterAngle(float angle)
 
 //===================================================================
 void FirstPersonDisplaySystem::fillVertexFromEntity(uint32_t numEntity, uint32_t numIteration,
-                                                    float distance, DisplayMode_e displayMode)
+                                                    float distance)
 {
     VerticesData &vertex = getClearedVertice(numIteration);
     PositionVertexComponent *posComp = stairwayToComponentManager().
@@ -596,15 +596,7 @@ void FirstPersonDisplaySystem::fillVertexFromEntity(uint32_t numEntity, uint32_t
     assert(posComp);
     assert(spriteComp);
     m_entitiesNumMem.insert(EntityData(distance, spriteComp->m_spriteData->m_textureNum, numIteration));
-    if(displayMode == DisplayMode_e::STANDART_DM)
-    {
-        vertex.loadVertexStandartTextureComponent(*posComp, *spriteComp);
-    }
-    else
-    {
-        DoorComponent *doorComp = stairwayToComponentManager().searchComponentByType<DoorComponent>(numEntity, Components_e::DOOR_COMPONENT);
-        vertex.loadVertexTextureDrawByLineComponent(*posComp, *spriteComp, RAYCAST_LINE_NUMBER, doorComp);
-    }
+    vertex.loadVertexStandartTextureByLine(*posComp, *spriteComp, m_stepAngleDouble, distance, m_memRaycastDist);
 }
 
 //===================================================================
@@ -804,7 +796,6 @@ void FirstPersonDisplaySystem::rayCasting()
     MapCoordComponent *mapCompCamera;
     MoveableComponent *moveComp;
     optionalTargetRaycast_t targetPoint;
-    float cameraDistance;
     for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
     {
         //WORK FOR ONE PLAYER ONLY
@@ -834,8 +825,12 @@ void FirstPersonDisplaySystem::rayCasting()
             targetPoint = calcLineSegmentRaycast(currentRadiantAngle, mapCompCamera->m_absoluteMapPositionPX, true);
             if(targetPoint)
             {
-                cameraDistance = getCameraDistance(mapCompCamera->m_absoluteMapPositionPX, std::get<0>(*targetPoint), cameraRadiantAngle);
-                memDistance(*std::get<2>(*targetPoint), j, cameraDistance, std::get<1>(*targetPoint));
+                m_memRaycastDist[j] = getCameraDistance(mapCompCamera->m_absoluteMapPositionPX, std::get<0>(*targetPoint), cameraRadiantAngle);
+                memRaycastDistance(*std::get<2>(*targetPoint), j, m_memRaycastDist[j], std::get<1>(*targetPoint));
+            }
+            else
+            {
+                m_memRaycastDist[j] = -1.0f;
             }
             if(m_backgroundRaycastActive)
             {
@@ -1328,8 +1323,8 @@ std::optional<PairUI_t> getCorrectedCoord(const PairFloat_t &currentPoint,
 }
 
 //===================================================================
-void FirstPersonDisplaySystem::memDistance(uint32_t numEntity, uint32_t lateralScreenPos,
-                                           float distance, float texturePos)
+void FirstPersonDisplaySystem::memRaycastDistance(uint32_t numEntity, uint32_t lateralScreenPos,
+                                                  float distance, float texturePos)
 {
     mapRayCastingData_t::iterator it = m_raycastingData.find(numEntity);
     if(it == m_raycastingData.end())

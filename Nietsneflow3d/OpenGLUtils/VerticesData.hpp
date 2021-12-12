@@ -33,9 +33,11 @@ public:
                                   const ColorVertexComponent *colorComp);
     void loadVertexStandartTextureComponent(const PositionVertexComponent &posComp,
                                             SpriteTextureComponent &spriteComp);
+    void loadVertexStandartTextureByLine(const PositionVertexComponent &posComp,
+                                            SpriteTextureComponent &spriteComp, float stepAngle, float entityDistance, const std::array<float, RAYCAST_LINE_NUMBER> &memRaycastDist);
     void loadVertexWriteTextureComponent(const PositionVertexComponent &posComp,
                                          const WriteComponent &writeComp);
-    float loadWallDoorRaycastingEntity(const SpriteTextureComponent &spriteComp,
+    float loadRaycastingEntity(const SpriteTextureComponent &spriteComp,
                                        const std::vector<RayCastingIntersect> &raycastingData,
                                        uint32_t totalLateralLine);
     void loadPointBackgroundRaycasting(const SpriteTextureComponent *spriteComp,
