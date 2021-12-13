@@ -33,13 +33,11 @@ public:
                                   const ColorVertexComponent *colorComp);
     void loadVertexStandartTextureComponent(const PositionVertexComponent &posComp,
                                             SpriteTextureComponent &spriteComp);
-    void loadVertexStandartTextureByLine(const PositionVertexComponent &posComp,
-                                            SpriteTextureComponent &spriteComp, float stepAngle, float entityDistance, const std::array<float, RAYCAST_LINE_NUMBER> &memRaycastDist);
+    void loadVertexStandardEntityByLine(const PositionVertexComponent &posComp,
+                                            SpriteTextureComponent &spriteComp, float entityDistance, const std::array<float, RAYCAST_LINE_NUMBER> &memRaycastDist);
     void loadVertexWriteTextureComponent(const PositionVertexComponent &posComp,
                                          const WriteComponent &writeComp);
-    float loadRaycastingEntity(const SpriteTextureComponent &spriteComp,
-                                       const std::vector<RayCastingIntersect> &raycastingData,
-                                       uint32_t totalLateralLine, float stepAngle);
+    float loadRaycastingEntity(const SpriteTextureComponent &spriteComp, const std::vector<RayCastingIntersect> &raycastingData);
     void loadPointBackgroundRaycasting(const SpriteTextureComponent *spriteComp,
                                        const PairFloat_t &observerPoint, const PairFloat_t &currentPoint);
     void loadVertexTextureDrawByLineComponent(const PositionVertexComponent &posComp,
@@ -63,6 +61,7 @@ private:
     Shader_e m_shaderNum;
     uint32_t m_cursor = 0, m_sizeOfVertex;
     uint32_t m_ebo, m_vao, m_vbo;
+    float m_raycastStep = 2.0f / static_cast<float>(RAYCAST_LINE_NUMBER);
 };
 
 PairFloat_t getTexturePixelFromCoord(const PairFloat_t &pointA, const std::array<PairFloat_t, 4> &texturePosVertex);

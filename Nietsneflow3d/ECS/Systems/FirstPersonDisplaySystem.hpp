@@ -116,8 +116,7 @@ private:
     mapRayCastingData_t m_raycastingData;
     //number of entity to draw per player
     vectUI_t m_numVertexToDraw;
-    float m_stepAngle = getRadiantAngle(CONE_VISION / static_cast<float>(RAYCAST_LINE_NUMBER)),
-    m_stepAngleDouble = m_stepAngle * 2.0f;
+    float m_stepAngle = getRadiantAngle(CONE_VISION / static_cast<float>(RAYCAST_LINE_NUMBER));
     //second :: false = tiled texture     true = simple texture
     std::optional<uint32_t> m_groundSimpleTextBackground, m_groundTiledTextBackground,
     m_ceilingSimpleTextBackground, m_ceilingTiledTextBackground;

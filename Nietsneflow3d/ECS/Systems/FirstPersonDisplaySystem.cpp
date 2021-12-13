@@ -194,7 +194,7 @@ void FirstPersonDisplaySystem::writeVertexWallDoorRaycasting(const pairRaycastin
             searchComponentByType<SpriteTextureComponent>(entityData.first,
                                                           Components_e::SPRITE_TEXTURE_COMPONENT);
     assert(spriteComp);
-    float distance = vertex.loadRaycastingEntity(*spriteComp, entityData.second, RAYCAST_LINE_NUMBER, m_stepAngleDouble);
+    float distance = vertex.loadRaycastingEntity(*spriteComp, entityData.second);
     m_memWallEntityDistances.insert({entityData.first, distance});
     DoorComponent *doorComp = stairwayToComponentManager().searchComponentByType<DoorComponent>(entityData.first, Components_e::DOOR_COMPONENT);
     if(doorComp)
@@ -534,7 +534,7 @@ void FirstPersonDisplaySystem::fillVertexFromEntity(uint32_t numEntity, uint32_t
     assert(posComp);
     assert(spriteComp);
     m_entitiesNumMem.insert(EntityData(distance, spriteComp->m_spriteData->m_textureNum, numIteration));
-    vertex.loadVertexStandartTextureByLine(*posComp, *spriteComp, m_stepAngleDouble, distance, m_memRaycastDist);
+    vertex.loadVertexStandardEntityByLine(*posComp, *spriteComp, distance, m_memRaycastDist);
 }
 
 //===================================================================
