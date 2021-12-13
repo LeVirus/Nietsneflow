@@ -97,13 +97,13 @@ void VerticesData::loadVertexStandartTextureByLine(const PositionVertexComponent
                                                    SpriteTextureComponent &spriteComp, float stepAngle, float entityDistance,
                                                    const std::array<float, RAYCAST_LINE_NUMBER> &memRaycastDist)
 {
-    float lateralGLPosA = posComp.m_vertex[0].first - stepAngle, lateralGLPosB = posComp.m_vertex[0].first + stepAngle, lateralText;
+    float lateralGLPosA, lateralGLPosB, lateralText;
     int32_t currentLine = (((posComp.m_vertex[0].first + 1.0f) * RAYCAST_LINE_NUMBER) / 2.0f),
             finalLine = (((posComp.m_vertex[1].first + 1.0f) * RAYCAST_LINE_NUMBER) / 2.0f),
             totalLine = finalLine - currentLine;
     float diffTotalTexturePos = (spriteComp.m_spriteData->m_texturePosVertex[1].first -
                                  spriteComp.m_spriteData->m_texturePosVertex[0].first);
-    for(int32_t i = 0; i < totalLine; ++i, lateralGLPosA += stepAngle, lateralGLPosB += stepAngle, ++currentLine)
+    for(int32_t i = 0; i < totalLine; ++i, ++currentLine)
     {
         if(currentLine > static_cast<int32_t>(RAYCAST_LINE_NUMBER))
         {
@@ -114,6 +114,8 @@ void VerticesData::loadVertexStandartTextureByLine(const PositionVertexComponent
         {
             continue;
         }
+        lateralGLPosA = 2.0f * static_cast<float>(currentLine) / RAYCAST_LINE_NUMBER - 1.0f;
+        lateralGLPosB = 2.0f * static_cast<float>(currentLine + 1) / RAYCAST_LINE_NUMBER - 1.0f;
         lateralText = spriteComp.m_spriteData->m_texturePosVertex[0].first +
                 static_cast<float>(i) / static_cast<float>(totalLine) * diffTotalTexturePos;
         addTexturePoint({lateralGLPosA, posComp.m_vertex[0].second}, {lateralText, spriteComp.m_spriteData->m_texturePosVertex[0].second});
@@ -131,10 +133,10 @@ float VerticesData::loadRaycastingEntity(const SpriteTextureComponent &spriteCom
     float lateralPosA, lateralPosB, verticalPos, lateralText, distantDist = raycastingData[0].m_distance;
     float diffTotalTexturePos = (spriteComp.m_spriteData->m_texturePosVertex[1].first -
                                  spriteComp.m_spriteData->m_texturePosVertex[0].first), totalGLLateralPos = static_cast<float>(totalLateralLine);
-    lateralPosA = 2.0f * static_cast<float>(raycastingData[0].m_lateral) / totalGLLateralPos - 1.0f;
-    lateralPosB = lateralPosA + stepAngle;
-    for(uint32_t i = 0; i < raycastingData.size(); ++i, lateralPosA += stepAngle, lateralPosB += stepAngle)
+    for(uint32_t i = 0; i < raycastingData.size(); ++i)
     {
+        lateralPosA = 2.0f * static_cast<float>(raycastingData[i].m_lateral) / totalGLLateralPos - 1.0f;
+        lateralPosB = 2.0f * static_cast<float>(raycastingData[i].m_lateral + 1) / totalGLLateralPos - 1.0f;
         verticalPos = RAYCAST_VERTICAL_SIZE / (raycastingData[i].m_distance / LEVEL_TILE_SIZE_PX);
         lateralText = spriteComp.m_spriteData->m_texturePosVertex[0].first +
                 (raycastingData[i].m_texturePos / LEVEL_TILE_SIZE_PX) * diffTotalTexturePos;
