@@ -96,12 +96,6 @@ private:
     void treatDisplayEntity(GeneralCollisionComponent *genCollComp, MapCoordComponent *mapCompA,
                             MapCoordComponent *mapCompB, VisionComponent *visionComp,
                             uint32_t &toRemove, float degreeObserverAngle, uint32_t numIteration, uint32_t currentNormal);
-    float getCorrectedDistance(const MapCoordComponent *mapCompObserver,
-                               const MapCoordComponent *mapCompTarget,
-                               uint32_t targetEntityNum, float radiantObserverAngle, float baseDistance);
-    float getCorrectedDistanceRay(const optionalTargetRaycast_t &targetRaycast, float radiantObserverAngle,
-                                  float baseDistance, MapCoordComponent const *mapCompObserver,
-                                  MapCoordComponent const *mapCompTarget);
     bool elementBehindDoor(const ElementRaycast &elementCase, float radiantObserverAngle, const MapCoordComponent *mapComp);
     void confNormalEntityVertex(uint32_t numEntity, VisionComponent *visionComp, CollisionTag_e tag, float lateralPosGL, float distance);
     void drawVertex();

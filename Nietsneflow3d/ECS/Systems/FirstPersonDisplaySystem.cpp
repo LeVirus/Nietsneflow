@@ -194,7 +194,7 @@ void FirstPersonDisplaySystem::writeVertexWallDoorRaycasting(const pairRaycastin
             searchComponentByType<SpriteTextureComponent>(entityData.first,
                                                           Components_e::SPRITE_TEXTURE_COMPONENT);
     assert(spriteComp);
-    float distance = vertex.loadRaycastingEntity(*spriteComp, entityData.second, RAYCAST_LINE_NUMBER);
+    float distance = vertex.loadRaycastingEntity(*spriteComp, entityData.second, RAYCAST_LINE_NUMBER, m_stepAngleDouble);
     m_memWallEntityDistances.insert({entityData.first, distance});
     DoorComponent *doorComp = stairwayToComponentManager().searchComponentByType<DoorComponent>(entityData.first, Components_e::DOOR_COMPONENT);
     if(doorComp)
@@ -221,8 +221,6 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
         ++toRemove;
         return;
     }
-//    displayDistance = getCorrectedDistance(mapCompA, mapCompB, visionComp->m_vectVisibleEntities[currentNormal],
-//                                           radiantObserverAngle, cameraDistance);
     if(cameraDistance < 15.0f)
     {
         return;
@@ -238,66 +236,6 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
     float lateralPos = getLateralAngle(degreeObserverAngle, trigoAngle);
     confNormalEntityVertex(numEntity, visionComp, genCollComp->m_tagA, lateralPos, cameraDistance);
     fillVertexFromEntity(numEntity, numIteration, displayDistance);
-}
-
-//===================================================================
-float FirstPersonDisplaySystem::getCorrectedDistance(MapCoordComponent const *mapCompObserver,
-                                                     MapCoordComponent const *mapCompTarget,
-                                                     uint32_t targetEntityNum, float radiantObserverAngle,
-                                                     float baseDistance)
-{
-    float radiantAngle;
-    PairFloat_t refPoint = mapCompTarget->m_absoluteMapPositionPX;
-    CircleCollisionComponent *circleComp = stairwayToComponentManager().
-            searchComponentByType<CircleCollisionComponent>(targetEntityNum,
-                                                            Components_e::CIRCLE_COLLISION_COMPONENT);
-    assert(circleComp);
-    //first point
-    moveElementFromAngle(circleComp->m_ray, radiantObserverAngle - PI_HALF, refPoint);
-    radiantAngle = getTrigoAngle(mapCompObserver->m_absoluteMapPositionPX, refPoint, false);
-    optionalTargetRaycast_t targetRaycast = calcLineSegmentRaycast(radiantAngle,
-                                                                   mapCompObserver->m_absoluteMapPositionPX, false);
-    if(targetRaycast && std::get<2>(*targetRaycast))
-    {
-        baseDistance = getCorrectedDistanceRay(targetRaycast, radiantObserverAngle, baseDistance, mapCompObserver, mapCompTarget);
-    }
-    //second point
-    refPoint = mapCompTarget->m_absoluteMapPositionPX;
-    moveElementFromAngle(circleComp->m_ray, radiantObserverAngle + PI_HALF, refPoint);
-    radiantAngle = getTrigoAngle(mapCompObserver->m_absoluteMapPositionPX, refPoint, false);
-    targetRaycast = calcLineSegmentRaycast(radiantAngle, mapCompObserver->m_absoluteMapPositionPX, false);
-    if(targetRaycast && std::get<2>(*targetRaycast))
-    {
-        baseDistance = getCorrectedDistanceRay(targetRaycast, radiantObserverAngle, baseDistance, mapCompObserver, mapCompTarget);
-    }
-    return baseDistance;
-}
-
-//===================================================================
-float FirstPersonDisplaySystem::getCorrectedDistanceRay(const optionalTargetRaycast_t &targetRaycast,
-                                                        float radiantObserverAngle,
-                                                        float baseDistance,
-                                                        MapCoordComponent const *mapCompObserver,
-                                                        MapCoordComponent const *mapCompTarget)
-{
-    if(m_memWallEntityDistances.find(*std::get<2>(*targetRaycast)) == m_memWallEntityDistances.end())
-    {
-        return baseDistance;
-    }
-    float targetRaycastDistance, secondDistance, originDistance;
-    originDistance = getCameraDistance(std::get<0>(*targetRaycast),
-                                       mapCompObserver->m_absoluteMapPositionPX, radiantObserverAngle);
-    targetRaycastDistance = m_memWallEntityDistances[*std::get<2>(*targetRaycast)];
-    secondDistance = getCameraDistance(mapCompObserver->m_absoluteMapPositionPX,
-                                       mapCompTarget->m_absoluteMapPositionPX, radiantObserverAngle);
-    if(originDistance < secondDistance && std::abs(originDistance - secondDistance) < 30.0f)
-    {
-        if(targetRaycastDistance > baseDistance)
-        {
-            baseDistance = targetRaycastDistance + 1.0f;
-        }
-    }
-    return baseDistance;
 }
 
 //===================================================================

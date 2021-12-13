@@ -39,7 +39,7 @@ public:
                                          const WriteComponent &writeComp);
     float loadRaycastingEntity(const SpriteTextureComponent &spriteComp,
                                        const std::vector<RayCastingIntersect> &raycastingData,
-                                       uint32_t totalLateralLine);
+                                       uint32_t totalLateralLine, float stepAngle);
     void loadPointBackgroundRaycasting(const SpriteTextureComponent *spriteComp,
                                        const PairFloat_t &observerPoint, const PairFloat_t &currentPoint);
     void loadVertexTextureDrawByLineComponent(const PositionVertexComponent &posComp,

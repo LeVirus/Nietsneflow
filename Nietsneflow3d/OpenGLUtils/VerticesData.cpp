@@ -97,9 +97,9 @@ void VerticesData::loadVertexStandartTextureByLine(const PositionVertexComponent
                                                    SpriteTextureComponent &spriteComp, float stepAngle, float entityDistance,
                                                    const std::array<float, RAYCAST_LINE_NUMBER> &memRaycastDist)
 {
-    float lateralGLPosA = posComp.m_vertex[0].first, lateralGLPosB = lateralGLPosA + stepAngle, lateralText;
+    float lateralGLPosA = posComp.m_vertex[0].first - stepAngle, lateralGLPosB = posComp.m_vertex[0].first + stepAngle, lateralText;
     int32_t currentLine = (((posComp.m_vertex[0].first + 1.0f) * RAYCAST_LINE_NUMBER) / 2.0f),
-            finalLine = ((posComp.m_vertex[1].first + 1.0f) * RAYCAST_LINE_NUMBER) / 2.0f,
+            finalLine = (((posComp.m_vertex[1].first + 1.0f) * RAYCAST_LINE_NUMBER) / 2.0f),
             totalLine = finalLine - currentLine;
     float diffTotalTexturePos = (spriteComp.m_spriteData->m_texturePosVertex[1].first -
                                  spriteComp.m_spriteData->m_texturePosVertex[0].first);
@@ -125,31 +125,16 @@ void VerticesData::loadVertexStandartTextureByLine(const PositionVertexComponent
 }
 
 //===================================================================
-void VerticesData::loadVertexWriteTextureComponent(const PositionVertexComponent &posComp,
-                                                   const WriteComponent &writeComp)
-{
-    for(uint32_t i = 0; i < writeComp.m_fontSpriteData.size(); ++i)
-    {
-        for(uint32_t j = 0; j < 4; ++j)
-        {
-            addTexturePoint(posComp.m_vertex[i * 4 + j],
-                    writeComp.m_fontSpriteData[i].get().m_texturePosVertex[j]);
-        }
-        addIndices(BaseShapeTypeGL_e::RECTANGLE);
-    }
-}
-
-//===================================================================
 float VerticesData::loadRaycastingEntity(const SpriteTextureComponent &spriteComp, const std::vector<RayCastingIntersect> &raycastingData,
-                                         uint32_t totalLateralLine)
+                                         uint32_t totalLateralLine, float stepAngle)
 {
     float lateralPosA, lateralPosB, verticalPos, lateralText, distantDist = raycastingData[0].m_distance;
     float diffTotalTexturePos = (spriteComp.m_spriteData->m_texturePosVertex[1].first -
                                  spriteComp.m_spriteData->m_texturePosVertex[0].first), totalGLLateralPos = static_cast<float>(totalLateralLine);
-    for(uint32_t i = 0; i < raycastingData.size(); ++i)
+    lateralPosA = 2.0f * static_cast<float>(raycastingData[0].m_lateral) / totalGLLateralPos - 1.0f;
+    lateralPosB = lateralPosA + stepAngle;
+    for(uint32_t i = 0; i < raycastingData.size(); ++i, lateralPosA += stepAngle, lateralPosB += stepAngle)
     {
-        lateralPosA = 2.0f * static_cast<float>(raycastingData[i].m_lateral) / totalGLLateralPos - 1.0f;
-        lateralPosB = 2.0f * static_cast<float>(raycastingData[i].m_lateral + 1) / totalGLLateralPos - 1.0f;
         verticalPos = RAYCAST_VERTICAL_SIZE / (raycastingData[i].m_distance / LEVEL_TILE_SIZE_PX);
         lateralText = spriteComp.m_spriteData->m_texturePosVertex[0].first +
                 (raycastingData[i].m_texturePos / LEVEL_TILE_SIZE_PX) * diffTotalTexturePos;
@@ -164,6 +149,21 @@ float VerticesData::loadRaycastingEntity(const SpriteTextureComponent &spriteCom
         }
     }
     return distantDist;
+}
+
+//===================================================================
+void VerticesData::loadVertexWriteTextureComponent(const PositionVertexComponent &posComp,
+                                                   const WriteComponent &writeComp)
+{
+    for(uint32_t i = 0; i < writeComp.m_fontSpriteData.size(); ++i)
+    {
+        for(uint32_t j = 0; j < 4; ++j)
+        {
+            addTexturePoint(posComp.m_vertex[i * 4 + j],
+                    writeComp.m_fontSpriteData[i].get().m_texturePosVertex[j]);
+        }
+        addIndices(BaseShapeTypeGL_e::RECTANGLE);
+    }
 }
 
 //===================================================================
