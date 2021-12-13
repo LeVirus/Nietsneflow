@@ -221,15 +221,9 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
         ++toRemove;
         return;
     }
-    if(cameraDistance < 15.0f)
+    if(cameraDistance < 10.0f || getDistance(mapCompA->m_absoluteMapPositionPX, mapCompB->m_absoluteMapPositionPX) < 15.0f)
     {
         return;
-    }
-    //OOOOOOOOOOOOK TMP
-    if(genCollComp->m_tagA == CollisionTag_e::BULLET_PLAYER_CT || genCollComp->m_tagA == CollisionTag_e::BULLET_ENEMY_CT
-            || genCollComp->m_tagA == CollisionTag_e::IMPACT_CT)
-    {
-        displayDistance -=3.0f;
     }
     float trigoAngle = getTrigoAngle(mapCompA->m_absoluteMapPositionPX, centerPosB);
     //get lateral pos from angle

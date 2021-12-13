@@ -116,8 +116,6 @@ void VerticesData::loadVertexStandardEntityByLine(const PositionVertexComponent 
         {
             continue;
         }
-        lateralGLPosA = 2.0f * static_cast<float>(currentLine) / RAYCAST_LINE_NUMBER - 1.0f;
-        lateralGLPosB = 2.0f * static_cast<float>(currentLine + 1) / RAYCAST_LINE_NUMBER - 1.0f;
         lateralText = spriteComp.m_spriteData->m_texturePosVertex[0].first +
                 static_cast<float>(i) / static_cast<float>(totalLine) * diffTotalTexturePos;
         addTexturePoint({lateralGLPosA, posComp.m_vertex[0].second}, {lateralText, spriteComp.m_spriteData->m_texturePosVertex[0].second});
