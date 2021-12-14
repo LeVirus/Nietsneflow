@@ -1,11 +1,8 @@
 BUGS======================================================================
 
--11)
-If impact are touching wall behind door and wall ISSU
-
 ))
 On scratching case eject in bad direction=========================~~
-	For visible shot OK but bad display order (...)
+	For visible shot OK but bad display order (...)============================OK
 	For player maybe let
 
 1)
@@ -18,14 +15,17 @@ assert à CollisionSystem.cpp::770
 Enemy eject issue!!!!!================================??
 
 ))
-Display issue on impact on moveable wall==============================~
-	(bullet impact OK, visible shot impact scratch case~~)
+Display issue on impact on moveable wall==============================~??
+	(bullet impact OK, visible shot impact scratch case~~)========================OK
 
 -12)
 Static element  table desapear at limit vision==================================~~
 
 
 
+
+-11)
+If impact are touching wall behind door and wall ISSU========================OK
 
 ))
 On changing level a frame display previous level================================OK

@@ -66,6 +66,11 @@ bool MainEngine::mainLoop(bool &memGameOver)
     {
         m_physicalEngine.runIteration(m_gamePaused);
         clearObjectToDelete();
+        if(m_physicalEngine.toogledFullScreen())
+        {
+            m_graphicEngine.toogleFullScreen();
+            m_physicalEngine.reinitToggleFullScreen();
+        }
         m_graphicEngine.runIteration(m_gamePaused);
 //        m_audioEngine.runIteration();
         if(!m_exitColl->m_active)

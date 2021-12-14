@@ -32,6 +32,14 @@ public:
     {
         m_collisionSystem->clearVectObjectToDelete();
     }
+    inline void reinitToggleFullScreen()
+    {
+        m_inputSystem->reinitToggleFullScreen();
+    }
+    inline bool toogledFullScreen()const
+    {
+        return m_inputSystem->toggleFullScreen();
+    }
 private:
     InputSystem *m_inputSystem = nullptr;
     CollisionSystem *m_collisionSystem = nullptr;

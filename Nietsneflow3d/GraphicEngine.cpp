@@ -84,6 +84,14 @@ void GraphicEngine::mainDisplay(bool gamePaused)
 }
 
 //===================================================================
+void GraphicEngine::toogleFullScreen()
+{
+    m_fullscreenMode = !m_fullscreenMode;
+    glfwSetWindowMonitor(m_window, m_fullscreenMode ? glfwGetPrimaryMonitor() : nullptr,
+                         0, 0, m_screenSize.first, m_screenSize.second, GLFW_DONT_CARE);
+}
+
+//===================================================================
 void GraphicEngine::preDisplay()
 {
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);

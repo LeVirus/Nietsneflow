@@ -27,18 +27,25 @@ public:
     {
         m_modeTransition = transition;
     }
+    inline void reinitToggleFullScreen()
+    {
+        m_toggleSignal = false;
+    }
+    inline bool toggleFullScreen()const
+    {
+        return m_toggleSignal;
+    }
 private:
     void setUsedComponents();
     void treatPlayerInput();
     void treatMainMenu(uint32_t playerEntity);
-    void treatPlayerMove(PlayerConfComponent *playerComp, MoveableComponent *moveComp,
-                         MapCoordComponent *mapComp);
+    void treatPlayerMove(PlayerConfComponent *playerComp, MoveableComponent *moveComp, MapCoordComponent *mapComp);
 private:
     GLFWwindow *m_window = nullptr;
     MainEngine *m_mainEngine = nullptr;
-    bool m_keyEspapePressed = false, m_keyUpPressed = false, m_keyDownPressed = false;
+    bool m_keyEspapePressed = false, m_keyUpPressed = false, m_keyDownPressed = false, m_F12Pressed = false;
     uint32_t m_maxMenuCursorIndex = static_cast<uint32_t>(CurrentMenuCursorPos_e::TOTAL) - 1;
-    bool m_modeTransition = false;
+    bool m_modeTransition = false, m_toggleSignal = false;
 };
 
 void changePlayerWeapon(WeaponComponent &weaponComp, bool next);
