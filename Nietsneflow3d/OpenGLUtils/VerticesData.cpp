@@ -131,10 +131,10 @@ float VerticesData::loadRaycastingEntity(const SpriteTextureComponent &spriteCom
 {
     float lateralGLPosA, lateralGLPosB, verticalPos, lateralText, distantDist = raycastingData[0].m_distance;
     float diffTotalTexturePos = (spriteComp.m_spriteData->m_texturePosVertex[1].first - spriteComp.m_spriteData->m_texturePosVertex[0].first);
-    lateralGLPosA = raycastingData[0].m_lateral * m_raycastStep - 1.0f;
-    lateralGLPosB = lateralGLPosA + m_raycastStep;
-    for(uint32_t i = 0; i < raycastingData.size(); ++i, lateralGLPosA += m_raycastStep, lateralGLPosB += m_raycastStep)
+    for(uint32_t i = 0; i < raycastingData.size(); ++i)
     {
+        lateralGLPosA = raycastingData[i].m_lateral * m_raycastStep - 1.0f;
+        lateralGLPosB = lateralGLPosA + m_raycastStep;
         verticalPos = RAYCAST_VERTICAL_SIZE / (raycastingData[i].m_distance / LEVEL_TILE_SIZE_PX);
         lateralText = spriteComp.m_spriteData->m_texturePosVertex[0].first +
                 (raycastingData[i].m_texturePos / LEVEL_TILE_SIZE_PX) * diffTotalTexturePos;
