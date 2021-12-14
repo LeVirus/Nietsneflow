@@ -54,6 +54,11 @@ void AudioEngine::cleanUpAllBuffer()
     {
         cleanUpBuffer(m_vectMemBufferALID[0]);
     }
+    if(m_musicElement)
+    {
+        alDeleteBuffers(1, &m_musicElement->second);
+        m_musicElement = {};
+    }
     m_mapSoundEffect.clear();
 }
 
@@ -128,7 +133,10 @@ std::optional<ALuint> AudioEngine::loadBufferFromFile(const std::string &filenam
 //===================================================================
 void AudioEngine::playMusic()
 {
-    m_soundSystem->play(m_musicElement.first);
+    if(m_musicElement)
+    {
+        m_soundSystem->play(m_musicElement->first);
+    }
 }
 
 //===================================================================
@@ -150,8 +158,10 @@ void AudioEngine::loadMusicFromFile(const std::string &filename)
     std::optional<ALuint> memBuffer = loadBufferFromFile(filename, false);
     if(memBuffer)
     {
-        m_musicElement.second = *memBuffer;
-        m_musicElement.first = m_soundSystem->createSource(*memBuffer);
+        m_musicElement = std::pair<ALuint, ALuint>();
+        m_musicElement->second = *memBuffer;
+        m_musicElement->first = m_soundSystem->createSource(*memBuffer);
+        alSourcei(m_musicElement->first, AL_LOOPING, 1);
     }
 }
 

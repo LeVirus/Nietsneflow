@@ -71,7 +71,7 @@ private:
     void loadSprites(const std::vector<SpriteData> &vectSprites, const FontData &fontData);
 private:
     GLFWwindow* m_window = nullptr;
-    pairI_t m_screenSize = {800, 600};
+    pairI_t m_screenSize = {720, 480};
     std::vector<Shader> m_vectShader;
     //PictureData
     std::vector<Texture> m_vectTexture;

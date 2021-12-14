@@ -48,7 +48,7 @@ private:
     std::vector<ALuint> m_vectMemBufferALID;
     std::map<std::string, ALuint> m_mapSoundEffect;
     //first = source, second = buffer
-    std::pair<ALuint, ALuint> m_musicElement;
+    std::optional<std::pair<ALuint, ALuint>> m_musicElement;
     SoundSystem *m_soundSystem = nullptr;
 };
 

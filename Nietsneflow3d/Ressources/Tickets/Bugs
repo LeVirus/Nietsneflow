@@ -1,15 +1,6 @@
 BUGS======================================================================
 
 ))
-AudioEngine if previous level music loaded and current level doesn't have music random audio file played
-
-))
-AudioEngine if previous level does not have music loaded assert on current level loading
-
-))
-ON LEVEL EDITOR music on loaded level don't taken into account
-
-))
 Raycasting display issue on door resolution
 
 ))
@@ -36,6 +27,15 @@ Static element  table desapear at limit vision==================================
 
 
 
+
+))
+AudioEngine set music play loop======================================OK
+
+))
+AudioEngine if previous level music loaded and current level doesn't have music random audio file played===============================OK
+
+))
+AudioEngine if previous level does not have music loaded assert on current level loading==================================OK
 
 ))
 standard shoot element dissapear when player touched========================OK
