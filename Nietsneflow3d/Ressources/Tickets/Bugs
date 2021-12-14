@@ -1,6 +1,18 @@
 BUGS======================================================================
 
 ))
+AudioEngine if previous level music loaded and current level doesn't have music random audio file played
+
+))
+AudioEngine if previous level does not have music loaded assert on current level loading
+
+))
+ON LEVEL EDITOR music on loaded level don't taken into account
+
+))
+Raycasting display issue on door resolution
+
+))
 On scratching case eject in bad direction=========================~~
 	For visible shot OK but bad display order (...)============================OK
 	For player maybe let
@@ -13,6 +25,7 @@ assert à CollisionSystem.cpp::770
 
 ))
 Enemy eject issue!!!!!================================??
+Marines go into wall
 
 ))
 Display issue on impact on moveable wall==============================~??
@@ -23,6 +36,9 @@ Static element  table desapear at limit vision==================================
 
 
 
+
+))
+standard shoot element dissapear when player touched========================OK
 
 -11)
 If impact are touching wall behind door and wall ISSU========================OK
