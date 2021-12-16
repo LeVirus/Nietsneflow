@@ -4,9 +4,6 @@ BUGS======================================================================
 When moveable wall move onto an other moveable wall display and scratch issue
 
 ))
-Crush when touching a moveable wall Auto and changing dir==========================
-
-))
 On zone damage target take damage when behind wall
 
 ))
@@ -38,6 +35,9 @@ Static element  table desapear at limit vision==================================
 
 
 
+
+))
+Crush when touching a moveable wall Auto and changing dir==========================OK
 
 ))
 Raycasting display issue on door resolution==========================OK

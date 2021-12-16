@@ -968,8 +968,7 @@ bool CollisionSystem::treatCrushing(const CollisionArgs &args, float diffX, floa
             searchComponentByType<MoveableWallConfComponent>(args.entityNumB, Components_e::MOVEABLE_WALL_CONF_COMPONENT);
     //check if at least one wall is moveable and 2 distinct walls
     if(args.tagCompB->m_tagA == CollisionTag_e::WALL_CT &&
-            ((moveWallComp && moveWallComp->m_inMovement) ||
-             args.tagCompB->m_tagB == CollisionTag_e::WALL_CT) &&
+            ((moveWallComp && moveWallComp->m_inMovement) || args.tagCompB->m_tagB == CollisionTag_e::WALL_CT) &&
             args.entityNumB != moveComp->m_crushMem->second)
     {
         if(args.tagCompA->m_tagA == CollisionTag_e::PLAYER_CT && getDirection(diffX, diffY) != moveComp->m_crushMem->first)
@@ -1112,13 +1111,8 @@ void CollisionSystem::collisionCircleRectEject(CollisionArgs &args, float circle
         diffX = getHorizontalCircleRectEject({circlePosX, circlePosY, pointElementY, elementPosX, elementSecondPosX,
                                               circleRay, radiantObserverAngle, angleBehavior}, limitEjectX, visibleShot);
     }
-    crushMode = treatCrushing(args, diffX, diffY);
     if(!visibleShotFirstEject && moveComp->m_crushMem && args.tagCompA->m_tagA != CollisionTag_e::PLAYER_CT &&
             std::min(std::abs(diffX), std::abs(diffY)) > LEVEL_THIRD_TILE_SIZE_PX)
-    {
-        return;
-    }
-    if(args.tagCompA->m_tagA == CollisionTag_e::PLAYER_CT && crushMode)
     {
         return;
     }
@@ -1130,10 +1124,15 @@ void CollisionSystem::collisionCircleRectEject(CollisionArgs &args, float circle
         bool ejectVert = (dir == Direction_e::NORTH || dir == Direction_e::SOUTH);
         bool wallVert = (moveWallComp->m_directionMove[moveWallComp->m_currentMove].first == Direction_e::NORTH ||
                 moveWallComp->m_directionMove[moveWallComp->m_currentMove].first == Direction_e::SOUTH);
-        if(ejectVert != wallVert || std::abs(diffX - diffY) < 1.0f)
+        if(ejectVert != wallVert || std::abs(std::min(diffX, diffY)) < 1.0f)
         {
             return;
         }
+    }
+    crushMode = treatCrushing(args, diffX, diffY);
+    if(args.tagCompA->m_tagA == CollisionTag_e::PLAYER_CT && crushMode)
+    {
+        return;
     }
     collisionEject(mapComp, diffX, diffY, limitEjectY, limitEjectX);
 }
