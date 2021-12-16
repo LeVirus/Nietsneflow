@@ -158,7 +158,10 @@ void CollisionSystem::secondEntitiesLoop(uint32_t entityA, uint32_t currentItera
         }
         if(!treatCollision(entityA, mVectNumEntity[j], tagCompA, tagCompB, shotExplosionEject))
         {
-            secondEntitiesLoop(entityA, currentIteration, tagCompA, true);
+            if(tagCompA->m_tagA == CollisionTag_e::BULLET_PLAYER_CT || tagCompA->m_tagA == CollisionTag_e::BULLET_ENEMY_CT)
+            {
+                secondEntitiesLoop(entityA, currentIteration, tagCompA, true);
+            }
             return;
         }
     }
@@ -599,6 +602,7 @@ bool CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args, bool shotEx
                 {
                     activeSound(args.entityNumA);
                     treatEnemyShooted(args.entityNumB, shotConfComp->m_damage);
+                    return false;
                 }
             }
             else if((args.tagCompA->m_tagA == CollisionTag_e::PLAYER_CT || args.tagCompA->m_tagA == CollisionTag_e::ENEMY_CT ||
