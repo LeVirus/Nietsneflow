@@ -226,6 +226,7 @@ bool DoorWallSystem::triggerMoveableWall(uint32_t wallEntity)
     {
         Level::memMoveWallEntity(mapComp->m_coord, wallEntity);
     }
+    moveableWallComp->m_cycleInMovement = true;
     moveableWallComp->m_inMovement = true;
     moveableWallComp->m_initPos = true;
     moveableWallComp->m_currentPhase = 0;
@@ -282,6 +283,7 @@ void stopMoveWallLevelLimitCase(MapCoordComponent *mapComp, MoveableWallConfComp
     Level::setElementTypeCase(mapComp->m_coord, LevelCaseType_e::WALL_LC);
     Level::setStandardElementTypeCase(mapComp->m_coord, LevelCaseType_e::WALL_LC);
     Level::setElementEntityCase(mapComp->m_coord, moveWallComp->muiGetIdEntityAssociated());
+    moveWallComp->m_cycleInMovement = false;
     moveWallComp->m_actionned = true;
     moveWallComp->m_inMovement = false;
     moveWallComp->m_triggerBehaviour = TriggerBehaviourType_e::ONCE;
@@ -331,6 +333,7 @@ void DoorWallSystem::switchToNextPhaseMoveWall(uint32_t wallEntity, MapCoordComp
             moveWallComp->m_manualTrigger = autoMode;
             moveWallComp->m_inMovement = false;
             moveWallComp->m_actionned = false;
+            moveWallComp->m_cycleInMovement = (moveWallComp->m_triggerBehaviour == TriggerBehaviourType_e::AUTO);
         }
     }
 }

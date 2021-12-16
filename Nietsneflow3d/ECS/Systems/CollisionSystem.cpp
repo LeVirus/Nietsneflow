@@ -949,7 +949,7 @@ void CollisionSystem::treatPlayerTeleport(CollisionArgs &args)
 }
 
 //===================================================================
-void CollisionSystem::treatCrushing(const CollisionArgs &args, float diffX, float diffY)
+bool CollisionSystem::treatCrushing(const CollisionArgs &args, float diffX, float diffY)
 {
     MoveableComponent *moveComp = stairwayToComponentManager().
             searchComponentByType<MoveableComponent>(args.entityNumA, Components_e::MOVEABLE_COMPONENT);
@@ -959,41 +959,32 @@ void CollisionSystem::treatCrushing(const CollisionArgs &args, float diffX, floa
     {
         if(args.tagCompB->m_tagA == CollisionTag_e::WALL_CT)
         {
-            bool vert = false;
-            MoveableWallConfComponent *moveWallComp = stairwayToComponentManager().
-                    searchComponentByType<MoveableWallConfComponent>(args.entityNumB, Components_e::MOVEABLE_WALL_CONF_COMPONENT);
-            if(moveWallComp && moveWallComp->m_inMovement)
-            {
-                Direction_e dir = moveWallComp->m_directionMove[moveWallComp->m_currentMove].first;
-                vert = (dir == Direction_e::NORTH || dir == Direction_e::SOUTH);
-            }
-            moveComp->m_crushMem = {getDirection(diffX, diffY), args.entityNumB, vert};
+            moveComp->m_crushMem = {getDirection(diffX, diffY), args.entityNumB};
         }
+        return false;
     }
     //if crush
-    else
+    MoveableWallConfComponent *moveWallComp = stairwayToComponentManager().
+            searchComponentByType<MoveableWallConfComponent>(args.entityNumB, Components_e::MOVEABLE_WALL_CONF_COMPONENT);
+    //check if at least one wall is moveable and 2 distinct walls
+    if(args.tagCompB->m_tagA == CollisionTag_e::WALL_CT &&
+            ((moveWallComp && moveWallComp->m_inMovement) ||
+             args.tagCompB->m_tagB == CollisionTag_e::WALL_CT) &&
+            args.entityNumB != moveComp->m_crushMem->second)
     {
-        MoveableWallConfComponent *moveWallComp = stairwayToComponentManager().
-                searchComponentByType<MoveableWallConfComponent>(args.entityNumB, Components_e::MOVEABLE_WALL_CONF_COMPONENT);
-        //check if at least one wall is moveable and 2 distinct walls
-        if(args.tagCompB->m_tagA == CollisionTag_e::WALL_CT &&
-                ((moveWallComp && moveWallComp->m_inMovement) ||
-                 args.tagCompB->m_tagB == CollisionTag_e::WALL_CT) &&
-                args.entityNumB != std::get<1>(*moveComp->m_crushMem))
+        if(args.tagCompA->m_tagA == CollisionTag_e::PLAYER_CT && getDirection(diffX, diffY) != moveComp->m_crushMem->first)
         {
-            Direction_e dir = moveWallComp->m_directionMove[moveWallComp->m_currentMove].first;
-            if(args.tagCompA->m_tagA == CollisionTag_e::PLAYER_CT && isDirectionOpposing(dir, std::get<0>(*moveComp->m_crushMem)))
-            {
-                PlayerConfComponent *playerComp = stairwayToComponentManager().
-                        searchComponentByType<PlayerConfComponent>(args.entityNumA, Components_e::PLAYER_CONF_COMPONENT);
-                assert(playerComp);
-                playerComp->m_crush = true;
-                playerComp->m_frozen = true;
-                playerComp->takeDamage(1);
-            }
-            moveComp->m_crushMem = std::nullopt;
+            PlayerConfComponent *playerComp = stairwayToComponentManager().
+                    searchComponentByType<PlayerConfComponent>(args.entityNumA, Components_e::PLAYER_CONF_COMPONENT);
+            assert(playerComp);
+            playerComp->m_crush = true;
+            playerComp->m_frozen = true;
+            playerComp->takeDamage(1);
+            return true;
         }
+        moveComp->m_crushMem = std::nullopt;
     }
+    return false;
 }
 
 //===================================================================
@@ -1103,7 +1094,7 @@ void CollisionSystem::collisionCircleRectEject(CollisionArgs &args, float circle
     float elementPosY = args.mapCompB.m_absoluteMapPositionPX.second;
     float elementSecondPosX = elementPosX + rectCollB.m_size.first;
     float elementSecondPosY = elementPosY + rectCollB.m_size.second;
-    bool angleBehavior = false, limitEjectY = false, limitEjectX = false;
+    bool angleBehavior = false, limitEjectY = false, limitEjectX = false, crushMode;
     //collision on angle of rect
     if((circlePosX < elementPosX || circlePosX > elementSecondPosX) &&
             (circlePosY < elementPosY || circlePosY > elementSecondPosY))
@@ -1121,20 +1112,25 @@ void CollisionSystem::collisionCircleRectEject(CollisionArgs &args, float circle
         diffX = getHorizontalCircleRectEject({circlePosX, circlePosY, pointElementY, elementPosX, elementSecondPosX,
                                               circleRay, radiantObserverAngle, angleBehavior}, limitEjectX, visibleShot);
     }
-    treatCrushing(args, diffX, diffY);
+    crushMode = treatCrushing(args, diffX, diffY);
     if(!visibleShotFirstEject && moveComp->m_crushMem && args.tagCompA->m_tagA != CollisionTag_e::PLAYER_CT &&
             std::min(std::abs(diffX), std::abs(diffY)) > LEVEL_THIRD_TILE_SIZE_PX)
     {
         return;
     }
+    if(args.tagCompA->m_tagA == CollisionTag_e::PLAYER_CT && crushMode)
+    {
+        return;
+    }
     MoveableWallConfComponent *moveWallComp = stairwayToComponentManager().
             searchComponentByType<MoveableWallConfComponent>(args.entityNumB, Components_e::MOVEABLE_WALL_CONF_COMPONENT);
-    if(moveWallComp && moveWallComp->m_inMovement)
+    if(moveWallComp && moveWallComp->m_cycleInMovement)
     {
-        bool vert = (moveWallComp->m_directionMove[moveWallComp->m_currentMove].first == Direction_e::NORTH ||
+        Direction_e dir = getDirection(diffX, diffY);
+        bool ejectVert = (dir == Direction_e::NORTH || dir == Direction_e::SOUTH);
+        bool wallVert = (moveWallComp->m_directionMove[moveWallComp->m_currentMove].first == Direction_e::NORTH ||
                 moveWallComp->m_directionMove[moveWallComp->m_currentMove].first == Direction_e::SOUTH);
-        if(vert != (std::abs(diffY) < std::abs(diffX)) &&
-                std::min(std::abs(diffX), std::abs(diffY)) > LEVEL_HALF_TILE_SIZE_PX)
+        if(ejectVert != wallVert || std::abs(diffX - diffY) < 1.0f)
         {
             return;
         }
@@ -1208,7 +1204,7 @@ float CollisionSystem::getHorizontalCircleRectEject(const EjectXArgs &args, bool
         float distLeftPoint = std::abs(args.circlePosX - args.elementPosX),
                 distRightPoint = std::abs(args.circlePosX - args.elementSecondPosX);
         limitEject = true;
-        if(distLeftPoint < distRightPoint )
+        if(distLeftPoint < distRightPoint)
         {
             --diffXA;
         }
@@ -1355,13 +1351,4 @@ Direction_e getDirection(float diffX, float diffY)
     bool vert = (std::abs(diffX) > std::abs(diffY)) ? true : false;
     return vert ? ((diffY < EPSILON_FLOAT) ? Direction_e::SOUTH : Direction_e::NORTH) :
                   ((diffX < EPSILON_FLOAT) ? Direction_e::WEST : Direction_e::EAST);
-}
-
-//===================================================================
-bool isDirectionOpposing(Direction_e dirA, Direction_e dirB)
-{
-    return ((dirA == Direction_e::NORTH && dirB == Direction_e::SOUTH) ||
-            (dirB == Direction_e::NORTH && dirA == Direction_e::SOUTH) ||
-            (dirA == Direction_e::EAST && dirB == Direction_e::WEST) ||
-            (dirB == Direction_e::EAST && dirA == Direction_e::WEST));
 }

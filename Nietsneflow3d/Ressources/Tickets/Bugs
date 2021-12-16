@@ -1,7 +1,19 @@
 BUGS======================================================================
 
 ))
-On scratching case eject in bad direction=========================~~
+When moveable wall move onto an other moveable wall display and scratch issue
+
+))
+Crush when touching a moveable wall Auto and changing dir==========================
+
+))
+On zone damage target take damage when behind wall
+
+))
+Marines can stay stuck in wall
+
+))
+On scratching case eject in bad direction=========================OK
 	For visible shot OK but bad display order (...)============================OK
 	For player maybe let
 

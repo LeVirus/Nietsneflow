@@ -53,7 +53,7 @@ private:
     void treatPlayerPickObject(CollisionArgs &args);
     void treatPlayerTeleport(CollisionArgs &args);
     void treatCollisionFirstSegment(CollisionArgs &args);
-    void treatCrushing(const CollisionArgs &args, float diffX, float diffY);
+    bool treatCrushing(const CollisionArgs &args, float diffX, float diffY);
     //Collisions treatment
     void collisionCircleRectEject(CollisionArgs &args,
                                   float circleRay, const RectangleCollisionComponent &rectCollB, bool visibleShotFirstEject = false);
@@ -91,7 +91,6 @@ private:
     bool m_pair = true, m_memPlayerTeleport;
 };
 
-bool isDirectionOpposing(Direction_e dirA, Direction_e dirB);
 bool pickUpWeapon(uint32_t numWeapon, WeaponComponent *weaponComp,
                   uint32_t objectContaining);
 bool pickUpAmmo(uint32_t numWeapon, WeaponComponent *weaponComp,

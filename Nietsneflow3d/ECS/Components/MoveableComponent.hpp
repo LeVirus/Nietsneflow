@@ -21,6 +21,6 @@ struct MoveableComponent : public ecs::Component
     //first eject velocity, SECOND Time
     std::optional<std::pair<float, double>> m_ejectData = std::nullopt;
     //first direction, second entity, third vertical == true or lateral == false
-    std::optional<std::tuple<Direction_e, uint32_t, bool>> m_crushMem;
+    std::optional<std::pair<Direction_e, uint32_t>> m_crushMem;
     virtual ~MoveableComponent() = default;
 };
