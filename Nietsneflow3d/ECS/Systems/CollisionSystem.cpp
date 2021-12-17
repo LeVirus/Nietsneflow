@@ -732,6 +732,15 @@ bool CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args, bool shotEx
 //===================================================================
 void CollisionSystem::treatExplosionColl(CollisionArgs &args)
 {
+    float radiantAngle = getTrigoAngle(args.mapCompA.m_absoluteMapPositionPX, args.mapCompB.m_absoluteMapPositionPX, false);
+    optionalTargetRaycast_t result = mptrSystemManager->searchSystemByType<FirstPersonDisplaySystem>(
+                static_cast<uint32_t>(Systems_e::FIRST_PERSON_DISPLAY_SYSTEM))->
+            calcLineSegmentRaycast(radiantAngle, args.mapCompA.m_absoluteMapPositionPX, false);
+    if(result && std::get<1>(*result) > 0.1f && getDistance(std::get<0>(*result), args.mapCompB.m_absoluteMapPositionPX) <
+            getDistance(args.mapCompA.m_absoluteMapPositionPX, args.mapCompB.m_absoluteMapPositionPX))
+    {
+        return;
+    }
     ShotConfComponent *shotConfComp = stairwayToComponentManager().
             searchComponentByType<ShotConfComponent>(args.entityNumA, Components_e::SHOT_CONF_COMPONENT);
     assert(shotConfComp);
@@ -1118,6 +1127,7 @@ void CollisionSystem::collisionCircleRectEject(CollisionArgs &args, float circle
     {
         return;
     }
+    //!!!ISSUE MOVEABLE WALL EJECT!!!
 //    MoveableWallConfComponent *moveWallComp = stairwayToComponentManager().
 //            searchComponentByType<MoveableWallConfComponent>(args.entityNumB, Components_e::MOVEABLE_WALL_CONF_COMPONENT);
 //    if(moveWallComp && moveWallComp->m_cycleInMovement)
