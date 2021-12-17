@@ -239,8 +239,7 @@ void CollisionSystem::treatSegmentShots()
                     m_vectMemShots[i].second, Components_e::GENERAL_COLLISION_COMPONENT);
         assert(tagCompTarget);
         confImpactShots(i, tagCompTarget->m_tagA);
-        if(tagCompTarget->m_tagA == CollisionTag_e::WALL_CT ||
-                tagCompTarget->m_tagA == CollisionTag_e::DOOR_CT)
+        if(tagCompTarget->m_tagA == CollisionTag_e::WALL_CT || tagCompTarget->m_tagA == CollisionTag_e::DOOR_CT)
         {
             continue;
         }
@@ -342,8 +341,7 @@ void CollisionSystem::confImpactShots(uint32_t numBullet, CollisionTag_e targetT
     assert(spriteComp);
     assert(mapImpact);
     impactComp->m_moveUp = EPSILON_FLOAT;
-    impactComp->m_touched = (targetTag == CollisionTag_e::ENEMY_CT ||
-                             targetTag == CollisionTag_e::PLAYER_CT);
+    impactComp->m_touched = (targetTag == CollisionTag_e::ENEMY_CT || targetTag == CollisionTag_e::PLAYER_CT);
     if(impactComp->m_touched)
     {
         impactComp->m_spritePhase = ImpactPhase_e::TOUCHED;
@@ -1120,19 +1118,19 @@ void CollisionSystem::collisionCircleRectEject(CollisionArgs &args, float circle
     {
         return;
     }
-    MoveableWallConfComponent *moveWallComp = stairwayToComponentManager().
-            searchComponentByType<MoveableWallConfComponent>(args.entityNumB, Components_e::MOVEABLE_WALL_CONF_COMPONENT);
-    if(moveWallComp && moveWallComp->m_cycleInMovement)
-    {
-        Direction_e dir = getDirection(diffX, diffY);
-        bool ejectVert = (dir == Direction_e::NORTH || dir == Direction_e::SOUTH);
-        bool wallVert = (moveWallComp->m_directionMove[moveWallComp->m_currentMove].first == Direction_e::NORTH ||
-                moveWallComp->m_directionMove[moveWallComp->m_currentMove].first == Direction_e::SOUTH);
-        if(ejectVert != wallVert || std::abs(std::min(diffX, diffY)) < 1.0f)
-        {
-            return;
-        }
-    }
+//    MoveableWallConfComponent *moveWallComp = stairwayToComponentManager().
+//            searchComponentByType<MoveableWallConfComponent>(args.entityNumB, Components_e::MOVEABLE_WALL_CONF_COMPONENT);
+//    if(moveWallComp && moveWallComp->m_cycleInMovement)
+//    {
+//        Direction_e dir = getDirection(diffX, diffY);
+//        bool ejectVert = (dir == Direction_e::NORTH || dir == Direction_e::SOUTH);
+//        bool wallVert = (moveWallComp->m_directionMove[moveWallComp->m_currentMove].first == Direction_e::NORTH ||
+//                moveWallComp->m_directionMove[moveWallComp->m_currentMove].first == Direction_e::SOUTH);
+//        if(args.tagCompA->m_tagA != CollisionTag_e::IMPACT_CT && (ejectVert != wallVert || std::abs(std::min(diffX, diffY)) < 0.1f))
+//        {
+//            return;
+//        }
+//    }
     crushMode = treatCrushing(args, diffX, diffY);
     if(args.tagCompA->m_tagA == CollisionTag_e::PLAYER_CT && crushMode)
     {

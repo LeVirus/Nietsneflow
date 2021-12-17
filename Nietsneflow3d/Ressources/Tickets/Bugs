@@ -1,21 +1,13 @@
 BUGS======================================================================
 
 ))
-Impact bad display on move wall perpendiculaire
-
-))
 When moveable wall move onto an other moveable wall display and scratch issue
 
 ))
 On zone damage target take damage when behind wall
 
 ))
-Marines can stay stuck in wall
-
-))
-On scratching case eject in bad direction=========================OK
-	For visible shot OK but bad display order (...)============================OK
-	For player maybe let
+On scratching case eject in bad direction=========================
 
 1)
 assert(elementCase); FistPersonSystem.cpp::232===========================OK?
@@ -24,20 +16,25 @@ assert à CollisionSystem.cpp::726   hyp > distanceX && hyp > distanceY
 assert à CollisionSystem.cpp::770  
 assert à CollisionSystem.cpp::1286  
 
-
 ))
 Enemy eject issue!!!!!================================??
 Marines go into wall
-
-))
-Display issue on impact on moveable wall==============================~??
-	(bullet impact OK, visible shot impact scratch case~~)========================OK
 
 -12)
 Static element  table desapear at limit vision==================================~~
 
 
 
+
+))
+Display issue on impact on moveable wall==============================~OK
+	(bullet impact OK, visible shot impact scratch case~~)========================OK
+
+))
+For visible shot OK but bad display order (...)============================OK
+
+))
+Impact bad display on move wall perpendiculaire===============================OK
 
 ))
 Crush when touching a moveable wall Auto and changing dir==========================OK
