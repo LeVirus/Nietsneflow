@@ -84,10 +84,42 @@ void VerticesData::loadVertexStandartTextureComponent(const PositionVertexCompon
         addTexturePoint(posComp.m_vertex[j], spriteComp.m_spriteData->m_texturePosVertex[j]);
     }
     //treat second rect >> 1    4   5   2
+    if(sizeVertex > 4)
+    {
+        uint32_t k;
+        for(uint32_t j = 0; j < 4; ++j)
+        {
+            if(j == 0)
+            {
+                k = 1;
+            }
+            else if(j == 1)
+            {
+                k = 4;
+            }
+            else if(j == 2)
+            {
+                k = 5;
+            }
+            else
+            {
+                k = 2;
+            }
+            addTexturePoint(posComp.m_vertex[k], spriteComp.m_spriteData->m_texturePosVertex[j]);
+        }
+    }
     BaseShapeTypeGL_e shape = BaseShapeTypeGL_e::RECTANGLE;
     if(sizeVertex == 3)
     {
         shape = BaseShapeTypeGL_e::TRIANGLE;
+    }
+    else if(sizeVertex == 4)
+    {
+        shape = BaseShapeTypeGL_e::RECTANGLE;
+    }
+    else
+    {
+        shape = BaseShapeTypeGL_e::DOUBLE_RECT;
     }
     addIndices(shape);
 }
