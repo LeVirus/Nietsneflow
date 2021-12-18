@@ -56,7 +56,7 @@ struct DoorData
 struct ElementRaycast
 {
     //first mem origin case type second moveable wall entities which on the case
-    std::optional<std::set<uint32_t>> m_memMoveWall;
+    std::optional<std::set<uint32_t>> m_memMoveWall, m_memStaticMoveableWall;
     bool m_moveableWallStopped = false;
     uint32_t m_numEntity;
     LevelCaseType_e m_type;
@@ -104,6 +104,7 @@ public:
     }
     static void addElementCase(SpriteTextureComponent *spriteComp, const PairUI_t &tilePosition,
                                LevelCaseType_e type, uint32_t numEntity);
+    static void memStaticMoveWallEntity(const PairUI_t &tilePosition, uint32_t entity);
     static std::optional<ElementRaycast> getElementCase(const PairUI_t &tilePosition);
     static void memMoveWallEntity(const PairUI_t &tilePosition, uint32_t entity);
     static void setElementTypeCase(const PairUI_t &tilePosition, LevelCaseType_e type);
@@ -119,6 +120,7 @@ public:
     }
     //in the case of moveable wall reset case
     static void resetMoveWallElementCase(const PairUI_t &tilePosition, uint32_t numEntity);
+    static bool removeStaticMoveWallElementCase(const PairUI_t &tilePosition, uint32_t numEntity);
 
     static uint32_t getLevelCaseIndex(const PairUI_t &tilePosition);
 

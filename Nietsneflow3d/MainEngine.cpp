@@ -622,13 +622,13 @@ void MainEngine::loadWallEntities(const std::map<std::string, MoveableWallData> 
             {
                 m_memWallPos.insert({*it, numEntity});
             }
-            confBaseWallData(numEntity, memSpriteData, *it, iter->second.m_sprites, vectSprite);
+            confBaseWallData(numEntity, memSpriteData, *it, iter->second.m_sprites, vectSprite, iter->second.m_triggerBehaviourType);
             if(!moveable)
             {
                 continue;
             }
             vectMemEntities.emplace_back(numEntity);
-            confBaseWallData(numEntity, memSpriteData, *it, iter->second.m_sprites, vectSprite, true);
+            confBaseWallData(numEntity, memSpriteData, *it, iter->second.m_sprites, vectSprite, iter->second.m_triggerBehaviourType, true);
             MoveableComponent *moveComp = m_ecsManager.getComponentManager().
                     searchComponentByType<MoveableComponent>(numEntity, Components_e::MOVEABLE_COMPONENT);
             assert(moveComp);
@@ -683,7 +683,7 @@ void MainEngine::loadWallEntities(const std::map<std::string, MoveableWallData> 
 void MainEngine::confBaseWallData(uint32_t wallEntity, const SpriteData &memSpriteData,
                                   const PairUI_t& coordLevel,
                                   const std::vector<uint8_t> &numWallSprites,
-                                  const std::vector<SpriteData> &vectSprite, bool moveable)
+                                  const std::vector<SpriteData> &vectSprite, TriggerBehaviourType_e triggerType, bool moveable)
 {
     MemSpriteDataComponent *memSpriteComp;
     SpriteTextureComponent *spriteComp;
@@ -694,14 +694,17 @@ void MainEngine::confBaseWallData(uint32_t wallEntity, const SpriteData &memSpri
             searchComponentByType<SpriteTextureComponent>(wallEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
     assert(spriteComp);
     LevelCaseType_e type = moveable ? LevelCaseType_e::WALL_MOVE_LC : LevelCaseType_e::WALL_LC;
+    if(moveable && triggerType != TriggerBehaviourType_e::AUTO)
+    {
+        Level::memStaticMoveWallEntity(coordLevel, wallEntity);
+    }
     Level::addElementCase(spriteComp, coordLevel, type, wallEntity);
     if(numWallSprites.size() == 1)
     {
         return;
     }
     memSpriteComp = m_ecsManager.getComponentManager().
-            searchComponentByType<MemSpriteDataComponent>(wallEntity,
-                                                          Components_e::MEM_SPRITE_DATA_COMPONENT);
+            searchComponentByType<MemSpriteDataComponent>(wallEntity, Components_e::MEM_SPRITE_DATA_COMPONENT);
     assert(memSpriteComp);
     uint32_t vectSize = numWallSprites.size();
     memSpriteComp->m_vectSpriteData.reserve(static_cast<uint32_t>(WallSpriteType_e::TOTAL_SPRITE));

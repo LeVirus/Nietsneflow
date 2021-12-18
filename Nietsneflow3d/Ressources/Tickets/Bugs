@@ -1,10 +1,10 @@
 BUGS======================================================================
 
 ))
-When moveable wall move onto an other moveable wall display and scratch issue
+On multi static moveable wall on same case update last wall.
 
 ))
-On scratching case eject in bad direction=========================
+On scratching case eject in bad direction=========================!!!!!!!!!!!!!!!!!
 
 1)
 assert(elementCase); FistPersonSystem.cpp::232===========================OK?
@@ -14,7 +14,7 @@ assert à CollisionSystem.cpp::770
 assert à CollisionSystem.cpp::1286  
 
 ))
-Enemy eject issue!!!!!================================??
+Enemy eject issue!!!!!!!!!!!
 Marines go into wall
 
 -12)
@@ -22,6 +22,9 @@ Static element  table desapear at limit vision==================================
 
 
 
+
+))
+When moveable wall move onto an other moveable wall display and scratch issue=============================OK
 
 ))
 On zone damage target take damage when behind wall and door====================================OK

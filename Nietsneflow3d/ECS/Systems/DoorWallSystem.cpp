@@ -226,6 +226,14 @@ bool DoorWallSystem::triggerMoveableWall(uint32_t wallEntity)
     {
         Level::memMoveWallEntity(mapComp->m_coord, wallEntity);
     }
+    if(!Level::removeStaticMoveWallElementCase(mapComp->m_coord, wallEntity))
+    {
+        Level::setElementTypeCase(mapComp->m_coord, LevelCaseType_e::EMPTY_LC);
+    }
+    else
+    {
+        Level::setElementTypeCase(mapComp->m_coord, LevelCaseType_e::WALL_LC);
+    }
     moveableWallComp->m_cycleInMovement = true;
     moveableWallComp->m_inMovement = true;
     moveableWallComp->m_initPos = true;
@@ -305,20 +313,20 @@ void DoorWallSystem::switchToNextPhaseMoveWall(uint32_t wallEntity, MapCoordComp
         //IF CYCLE END
         if(++moveWallComp->m_currentPhase == moveWallComp->m_directionMove.size())
         {
+            if(!autoMode)
+            {
+                Level::memStaticMoveWallEntity(mapComp->m_coord, wallEntity);
+            }
             std::optional<ElementRaycast> element = Level::getElementCase(mapComp->m_coord);
             //put element case to static wall
-            if(element->m_type != LevelCaseType_e::WALL_LC)
-            {
-                Level::setElementEntityCase(mapComp->m_coord, moveWallComp->muiGetIdEntityAssociated());
-                Level::resetMoveWallElementCase(mapComp->m_coord, moveWallComp->muiGetIdEntityAssociated());
-                Level::setElementTypeCase(mapComp->m_coord, LevelCaseType_e::WALL_LC);
-                Level::setMoveableWallStopped(mapComp->m_coord, true);
-            }
+            Level::setElementEntityCase(mapComp->m_coord, moveWallComp->muiGetIdEntityAssociated());
+            Level::resetMoveWallElementCase(mapComp->m_coord, moveWallComp->muiGetIdEntityAssociated());
+            Level::setElementTypeCase(mapComp->m_coord, LevelCaseType_e::WALL_LC);
+            Level::setMoveableWallStopped(mapComp->m_coord, true);
             if(moveWallComp->m_triggerBehaviour == TriggerBehaviourType_e::ONCE)
             {
                 GeneralCollisionComponent *genComp = stairwayToComponentManager().
-                        searchComponentByType<GeneralCollisionComponent>(wallEntity,
-                                                                         Components_e::GENERAL_COLLISION_COMPONENT);
+                        searchComponentByType<GeneralCollisionComponent>(wallEntity, Components_e::GENERAL_COLLISION_COMPONENT);
                 assert(genComp);
                 genComp->m_tagB = CollisionTag_e::WALL_CT;
             }

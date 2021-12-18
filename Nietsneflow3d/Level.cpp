@@ -62,6 +62,18 @@ void Level::addElementCase(SpriteTextureComponent *spriteComp, const PairUI_t &t
 }
 
 //===================================================================
+void Level::memStaticMoveWallEntity(const PairUI_t &tilePosition, uint32_t entity)
+{
+    uint32_t index = getLevelCaseIndex(tilePosition);
+    if(!m_levelCaseType[index].m_memStaticMoveableWall)
+    {
+        m_levelCaseType[index].m_memStaticMoveableWall = std::set<uint32_t>();
+    }
+    m_levelCaseType[index].m_memStaticMoveableWall->insert(entity);
+    setElementTypeCase(tilePosition, LevelCaseType_e::WALL_LC);
+}
+
+//===================================================================
 std::optional<ElementRaycast> Level::getElementCase(const PairUI_t &tilePosition)
 {
     if((tilePosition.first >= m_size.first) ||
@@ -80,9 +92,9 @@ void Level::memMoveWallEntity(const PairUI_t &tilePosition, uint32_t entity)
     {
         element.m_memMoveWall = std::set<uint32_t>();
     }
+    element.m_memMoveWall->insert(entity);
     element.m_moveableWallStopped = false;
     element.m_type = LevelCaseType_e::WALL_MOVE_LC;
-    element.m_memMoveWall->insert(entity);
 }
 
 //===================================================================
@@ -103,6 +115,7 @@ void Level::setMoveableWallStopped(const PairUI_t &tilePosition, bool stopped)
     m_levelCaseType[getLevelCaseIndex(tilePosition)].m_moveableWallStopped = stopped;
 }
 
+//===================================================================
 void Level::setElementEntityCase(const PairUI_t &tilePosition, uint32_t entity)
 {
     m_levelCaseType[getLevelCaseIndex(tilePosition)].m_numEntity = entity;
@@ -122,15 +135,32 @@ void Level::resetMoveWallElementCase(const PairUI_t &tilePosition, uint32_t numE
         return;
     }
     element.m_memMoveWall->erase(*it);
-    if(element.m_memMoveWall->empty())
+}
+
+//===================================================================
+bool Level::removeStaticMoveWallElementCase(const PairUI_t &tilePosition, uint32_t numEntity)
+{
+    ElementRaycast &element = m_levelCaseType[getLevelCaseIndex(tilePosition)];
+    if(!element.m_memStaticMoveableWall)
+    {
+        return !element.m_memStaticMoveableWall->empty();
+    }
+    std::set<uint32_t>::iterator it = element.m_memStaticMoveableWall->find(numEntity);
+    if(it == element.m_memStaticMoveableWall->end())
+    {
+        return !element.m_memStaticMoveableWall->empty();
+    }
+    element.m_memStaticMoveableWall->erase(*it);
+    if(element.m_memStaticMoveableWall->empty())
     {
         if(!element.m_moveableWallStopped)
         {
             element.m_type = element.m_typeStd;
         }
-        element.m_memMoveWall.reset();
+        element.m_memStaticMoveableWall.reset();
         assert(element.m_type != LevelCaseType_e::WALL_MOVE_LC);
     }
+    return !element.m_memStaticMoveableWall->empty();
 }
 
 //===================================================================

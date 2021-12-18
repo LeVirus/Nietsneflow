@@ -79,7 +79,7 @@ private:
                           const std::vector<SpriteData> &vectSprite);
     void confBaseWallData(uint32_t wallEntity, const SpriteData &memSpriteData, const PairUI_t &coordLevel,
                           const std::vector<uint8_t> &numWallSprites,
-                          const std::vector<SpriteData> &vectSprite, bool moveable = false);
+                          const std::vector<SpriteData> &vectSprite, TriggerBehaviourType_e triggerType, bool moveable = false);
     void loadDoorEntities(const LevelManager &levelManager);
     void loadEnemiesEntities(const LevelManager &levelManager);
     void loadTriggerEntityData(const MoveableWallData &moveWallData, const std::vector<uint32_t> &vectPosition, const std::vector<SpriteData> &vectSprite, TriggerWallMoveType_e type);
