@@ -228,7 +228,10 @@ bool DoorWallSystem::triggerMoveableWall(uint32_t wallEntity)
     }
     if(!Level::removeStaticMoveWallElementCase(mapComp->m_coord, wallEntity))
     {
-        Level::setElementTypeCase(mapComp->m_coord, LevelCaseType_e::EMPTY_LC);
+        if(element && element->m_typeStd != LevelCaseType_e::WALL_LC)
+        {
+            Level::setElementTypeCase(mapComp->m_coord, LevelCaseType_e::EMPTY_LC);
+        }
     }
     else
     {
@@ -313,13 +316,16 @@ void DoorWallSystem::switchToNextPhaseMoveWall(uint32_t wallEntity, MapCoordComp
         //IF CYCLE END
         if(++moveWallComp->m_currentPhase == moveWallComp->m_directionMove.size())
         {
-            if(!autoMode)
+            std::optional<ElementRaycast> element = Level::getElementCase(mapComp->m_coord);
+            if(!autoMode && element && element->m_typeStd != LevelCaseType_e::WALL_LC)
             {
                 Level::memStaticMoveWallEntity(mapComp->m_coord, wallEntity);
             }
-            std::optional<ElementRaycast> element = Level::getElementCase(mapComp->m_coord);
             //put element case to static wall
-            Level::setElementEntityCase(mapComp->m_coord, moveWallComp->muiGetIdEntityAssociated());
+            if(!element || element->m_typeStd != LevelCaseType_e::WALL_LC)
+            {
+                Level::setElementEntityCase(mapComp->m_coord, moveWallComp->muiGetIdEntityAssociated());
+            }
             Level::resetMoveWallElementCase(mapComp->m_coord, moveWallComp->muiGetIdEntityAssociated());
             Level::setElementTypeCase(mapComp->m_coord, LevelCaseType_e::WALL_LC);
             Level::setMoveableWallStopped(mapComp->m_coord, true);
