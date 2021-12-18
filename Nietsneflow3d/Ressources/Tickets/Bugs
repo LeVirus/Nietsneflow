@@ -1,9 +1,6 @@
 BUGS======================================================================
 
 ))
-On multi static moveable wall on same case update last wall.
-
-))
 On scratching case eject in bad direction=========================!!!!!!!!!!!!!!!!!
 
 1)
@@ -22,6 +19,9 @@ Static element  table desapear at limit vision==================================
 
 
 
+
+))
+On multi static moveable wall on same case update last wall.===========================OK
 
 ))
 When moveable wall move onto an other moveable wall display and scratch issue=============================OK

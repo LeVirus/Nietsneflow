@@ -160,6 +160,13 @@ bool Level::removeStaticMoveWallElementCase(const PairUI_t &tilePosition, uint32
         element.m_memStaticMoveableWall.reset();
         assert(element.m_type != LevelCaseType_e::WALL_MOVE_LC);
     }
+    else
+    {
+        if(numEntity == element.m_numEntity)
+        {
+            setElementEntityCase(tilePosition, *element.m_memStaticMoveableWall->begin());
+        }
+    }
     return !element.m_memStaticMoveableWall->empty();
 }
 
