@@ -66,7 +66,7 @@ void ColorDisplaySystem::addColorSystemEntity(uint32_t entity)
 }
 
 //===================================================================
-void ColorDisplaySystem::loadColorEntities(uint32_t damage, uint32_t getObject, uint32_t transition)
+void ColorDisplaySystem::loadColorEntities(uint32_t damage, uint32_t getObject, uint32_t transition, uint32_t scratchEntity)
 {
     m_damageMemComponents.first = stairwayToComponentManager().
             searchComponentByType<PositionVertexComponent>(damage, Components_e::POSITION_VERTEX_COMPONENT);
@@ -74,20 +74,24 @@ void ColorDisplaySystem::loadColorEntities(uint32_t damage, uint32_t getObject, 
             searchComponentByType<ColorVertexComponent>(damage, Components_e::COLOR_VERTEX_COMPONENT);
     assert(m_damageMemComponents.first);
     assert(m_damageMemComponents.second);
-
     m_getObjectMemComponents.first = stairwayToComponentManager().
             searchComponentByType<PositionVertexComponent>(getObject, Components_e::POSITION_VERTEX_COMPONENT);
     m_getObjectMemComponents.second = stairwayToComponentManager().
             searchComponentByType<ColorVertexComponent>(getObject, Components_e::COLOR_VERTEX_COMPONENT);
     assert(m_getObjectMemComponents.first);
     assert(m_getObjectMemComponents.second);
-
     m_transitionMemComponents.first = stairwayToComponentManager().
             searchComponentByType<PositionVertexComponent>(transition, Components_e::POSITION_VERTEX_COMPONENT);
     m_transitionMemComponents.second = stairwayToComponentManager().
             searchComponentByType<ColorVertexComponent>(transition, Components_e::COLOR_VERTEX_COMPONENT);
     assert(m_transitionMemComponents.first);
     assert(m_transitionMemComponents.second);
+    m_insideWallScratchMemComponents.first = stairwayToComponentManager().
+            searchComponentByType<PositionVertexComponent>(scratchEntity, Components_e::POSITION_VERTEX_COMPONENT);
+    m_insideWallScratchMemComponents.second = stairwayToComponentManager().
+            searchComponentByType<ColorVertexComponent>(scratchEntity, Components_e::COLOR_VERTEX_COMPONENT);
+    assert(m_insideWallScratchMemComponents.first);
+    assert(m_insideWallScratchMemComponents.second);
 }
 
 //===================================================================
@@ -104,6 +108,13 @@ void ColorDisplaySystem::drawVisibleDamage()
     drawEntity(m_damageMemComponents.first, m_damageMemComponents.second);
 }
 
+//===================================================================
+void ColorDisplaySystem::drawScratchWall()
+{
+    drawEntity(m_insideWallScratchMemComponents.first, m_insideWallScratchMemComponents.second);
+}
+
+//===================================================================
 void ColorDisplaySystem::drawVisiblePickUpObject()
 {
     drawEntity(m_getObjectMemComponents.first, m_getObjectMemComponents.second);

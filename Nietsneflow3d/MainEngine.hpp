@@ -57,7 +57,7 @@ private:
     void loadPlayerGear();
     void displayTransitionMenu();
     void loadColorEntities();
-    void confUnifiedColorEntity(uint32_t entityNum, const tupleFloat_t &color);
+    void confUnifiedColorEntity(uint32_t entityNum, const tupleFloat_t &color, bool transparent);
     void loadBackgroundEntities(const GroundCeilingData &groundData, const GroundCeilingData &backgroundData, const LevelManager &levelManager);
     void confColorBackgroundComponents(uint32_t entity, const GroundCeilingData &groundData, bool ground);
     void confGroundSimpleTextBackgroundComponents(uint32_t entity, const GroundCeilingData &groundData, const std::vector<SpriteData> &vectSprite);

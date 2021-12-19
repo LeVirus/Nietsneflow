@@ -40,11 +40,11 @@ void FirstPersonDisplaySystem::execSystem()
     System::execSystem();
     confCompVertexMemEntities();
     drawVertex();
-    drawPlayerDamage();
+    drawPlayerColorEffects();
 }
 
 //===================================================================
-void FirstPersonDisplaySystem::drawPlayerDamage()
+void FirstPersonDisplaySystem::drawPlayerColorEffects()
 {
     for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
     {
@@ -64,14 +64,19 @@ void FirstPersonDisplaySystem::drawPlayerDamage()
                         static_cast<uint32_t>(Systems_e::COLOR_DISPLAY_SYSTEM))->drawVisiblePickUpObject();
             playerComp->m_pickItem = false;
         }
+        if(playerComp->m_scratch)
+        {
+            mptrSystemManager->searchSystemByType<ColorDisplaySystem>(
+                        static_cast<uint32_t>(Systems_e::COLOR_DISPLAY_SYSTEM))->drawScratchWall();
+            playerComp->m_scratch = false;
+        }
     }
 }
 
 //===================================================================
 void FirstPersonDisplaySystem::confCompVertexMemEntities()
 {
-    uint32_t vectEntitiesSize = mVectNumEntity.size();
-    m_numVertexToDraw.resize(vectEntitiesSize);
+    m_numVertexToDraw.resize(mVectNumEntity.size());
     //treat one player
     uint32_t toRemove = 0;
     VisionComponent *visionComp;
@@ -80,7 +85,7 @@ void FirstPersonDisplaySystem::confCompVertexMemEntities()
     GeneralCollisionComponent *genCollComp;
     MapCoordComponent *mapCompB;
     uint32_t numIteration;
-    for(uint32_t i = 0; i < vectEntitiesSize; ++i)
+    for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
     {
         numIteration = 0;
         visionComp = stairwayToComponentManager().
@@ -96,7 +101,7 @@ void FirstPersonDisplaySystem::confCompVertexMemEntities()
         m_numVertexToDraw[i] = visionComp->m_vectVisibleEntities.size();
         m_entitiesNumMem.clear();
         m_memDoorDistance.clear();
-        rayCasting();
+        rayCasting(mVectNumEntity[i]);
         if(m_groundCeilingSimpleTextureActive)
         {
             confSimpleTextVertexGroundCeiling(moveComp->m_degreeOrientation);
@@ -720,60 +725,89 @@ void FirstPersonDisplaySystem::memCeilingBackgroundEntity(uint32_t entity, bool 
 }
 
 //===================================================================
-void FirstPersonDisplaySystem::rayCasting()
+void FirstPersonDisplaySystem::rayCasting(uint32_t observerEntity)
 {
-    MapCoordComponent *mapCompCamera;
-    MoveableComponent *moveComp;
     optionalTargetRaycast_t targetPoint;
-    for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
+    //WORK FOR ONE PLAYER ONLY
+    m_raycastingData.clear();
+    if(m_groundTiledTextBackground)
     {
-        //WORK FOR ONE PLAYER ONLY
-        m_raycastingData.clear();
-        if(m_groundTiledTextBackground)
+        m_groundTiledTextVertice.clear();
+    }
+    if(m_ceilingTiledTextBackground)
+    {
+        m_ceilingTiledVertice.clear();
+    }
+    MapCoordComponent *mapCompCamera = stairwayToComponentManager().
+            searchComponentByType<MapCoordComponent>(observerEntity, Components_e::MAP_COORD_COMPONENT);
+    assert(mapCompCamera);
+    if(isInsideWall(mapCompCamera->m_absoluteMapPositionPX))
+    {
+        PlayerConfComponent *playerComp = stairwayToComponentManager().
+                searchComponentByType<PlayerConfComponent>(observerEntity, Components_e::PLAYER_CONF_COMPONENT);
+        assert(playerComp);
+        playerComp->m_scratch = true;
+        return;
+    }
+    MoveableComponent *moveComp = stairwayToComponentManager().
+            searchComponentByType<MoveableComponent>(observerEntity, Components_e::MOVEABLE_COMPONENT);
+    assert(moveComp);
+    float leftAngle = moveComp->m_degreeOrientation + HALF_CONE_VISION;
+    float radiantObserverAngle = getRadiantAngle(moveComp->m_degreeOrientation);
+    float currentRadiantAngle = getRadiantAngle(leftAngle), currentLateralScreen = -1.0f;
+    float cameraRadiantAngle = getRadiantAngle(moveComp->m_degreeOrientation);
+    //mem entity num & distances
+    for(uint32_t j = 0; j < RAYCAST_LINE_NUMBER; ++j)
+    {
+        //mem ground and ceiling
+        targetPoint = calcLineSegmentRaycast(currentRadiantAngle, mapCompCamera->m_absoluteMapPositionPX, true);
+        if(targetPoint)
         {
-            m_groundTiledTextVertice.clear();
+            m_memRaycastDist[j] = getCameraDistance(mapCompCamera->m_absoluteMapPositionPX, std::get<0>(*targetPoint), cameraRadiantAngle);
+            memRaycastDistance(*std::get<2>(*targetPoint), j, m_memRaycastDist[j], std::get<1>(*targetPoint));
         }
-        if(m_ceilingTiledTextBackground)
+        else
         {
-            m_ceilingTiledVertice.clear();
+            m_memRaycastDist[j] = -1.0f;
         }
-        mapCompCamera = stairwayToComponentManager().
-                searchComponentByType<MapCoordComponent>(mVectNumEntity[i], Components_e::MAP_COORD_COMPONENT);
-        assert(mapCompCamera);
-        moveComp = stairwayToComponentManager().
-                searchComponentByType<MoveableComponent>(mVectNumEntity[i], Components_e::MOVEABLE_COMPONENT);
-        assert(moveComp);
-        float leftAngle = moveComp->m_degreeOrientation + HALF_CONE_VISION;
-        float radiantObserverAngle = getRadiantAngle(moveComp->m_degreeOrientation);
-        float currentRadiantAngle = getRadiantAngle(leftAngle), currentLateralScreen = -1.0f;
-        float cameraRadiantAngle = getRadiantAngle(moveComp->m_degreeOrientation);
-        //mem entity num & distances
-        for(uint32_t j = 0; j < RAYCAST_LINE_NUMBER; ++j)
+        if(m_backgroundRaycastActive)
         {
-            //mem ground and ceiling
-            targetPoint = calcLineSegmentRaycast(currentRadiantAngle, mapCompCamera->m_absoluteMapPositionPX, true);
-            if(targetPoint)
+            calcVerticalBackgroundLineRaycast(mapCompCamera->m_absoluteMapPositionPX, currentRadiantAngle, currentLateralScreen,
+                                              radiantObserverAngle);
+        }
+        currentLateralScreen += SCREEN_HORIZ_BACKGROUND_GL_STEP;
+        currentRadiantAngle -= m_stepAngle;
+        if(currentRadiantAngle < EPSILON_FLOAT)
+        {
+            currentRadiantAngle += PI_DOUBLE;
+        }
+    }
+}
+
+//===================================================================
+bool FirstPersonDisplaySystem::isInsideWall(const PairFloat_t &pos)
+{
+    std::optional<ElementRaycast> element = Level::getElementCase({static_cast<uint32_t>(pos.first / LEVEL_TILE_SIZE_PX),
+                                                                   static_cast<uint32_t>(pos.second / LEVEL_TILE_SIZE_PX)});
+    if(element && element->m_memMoveWall)
+    {
+        MapCoordComponent *mapComp;
+        RectangleCollisionComponent *rectComp;
+        for(std::set<uint32_t>::const_iterator it = element->m_memMoveWall->begin(); it != element->m_memMoveWall->end(); ++it)
+        {
+            mapComp = stairwayToComponentManager().
+                    searchComponentByType<MapCoordComponent>(*it, Components_e::MAP_COORD_COMPONENT);
+            assert(mapComp);
+            rectComp = stairwayToComponentManager().
+                    searchComponentByType<RectangleCollisionComponent>(*it, Components_e::RECTANGLE_COLLISION_COMPONENT);
+            assert(rectComp);
+            if(checkPointRectCollision(pos, mapComp->m_absoluteMapPositionPX, rectComp->m_size))
             {
-                m_memRaycastDist[j] = getCameraDistance(mapCompCamera->m_absoluteMapPositionPX, std::get<0>(*targetPoint), cameraRadiantAngle);
-                memRaycastDistance(*std::get<2>(*targetPoint), j, m_memRaycastDist[j], std::get<1>(*targetPoint));
-            }
-            else
-            {
-                m_memRaycastDist[j] = -1.0f;
-            }
-            if(m_backgroundRaycastActive)
-            {
-                calcVerticalBackgroundLineRaycast(mapCompCamera->m_absoluteMapPositionPX, currentRadiantAngle, currentLateralScreen,
-                                                  radiantObserverAngle);
-            }
-            currentLateralScreen += SCREEN_HORIZ_BACKGROUND_GL_STEP;
-            currentRadiantAngle -= m_stepAngle;
-            if(currentRadiantAngle < EPSILON_FLOAT)
-            {
-                currentRadiantAngle += PI_DOUBLE;
+                return true;
             }
         }
     }
+    return false;
 }
 
 //===================================================================

@@ -346,18 +346,19 @@ void MainEngine::loadColorEntities()
 {
     uint32_t damageEntity = createColorEntity(),
             getObjectEntity = createColorEntity(),
+            scratchEntity = createColorEntity(),
             transitionEntity = createColorEntity();
-    confUnifiedColorEntity(transitionEntity, {0.0f, 0.0f, 0.0f});
-    confUnifiedColorEntity(damageEntity, {0.7f, 0.2f, 0.1f});
-    confUnifiedColorEntity(getObjectEntity, {0.1f, 0.7f, 0.5f});
-    m_ecsManager.getSystemManager().searchSystemByType<ColorDisplaySystem>(
-                static_cast<uint32_t>(Systems_e::COLOR_DISPLAY_SYSTEM))->
-            loadColorEntities(damageEntity, getObjectEntity, transitionEntity);
+    confUnifiedColorEntity(transitionEntity, {0.0f, 0.0f, 0.0f}, true);
+    confUnifiedColorEntity(damageEntity, {0.7f, 0.2f, 0.1f}, true);
+    confUnifiedColorEntity(getObjectEntity, {0.1f, 0.7f, 0.5f}, true);
+    confUnifiedColorEntity(scratchEntity, {0.0f, 0.0f, 0.0f}, false);
+    m_ecsManager.getSystemManager().searchSystemByType<ColorDisplaySystem>(static_cast<uint32_t>(Systems_e::COLOR_DISPLAY_SYSTEM))->
+            loadColorEntities(damageEntity, getObjectEntity, transitionEntity, scratchEntity);
 }
 
 
 //===================================================================
-void MainEngine::confUnifiedColorEntity(uint32_t entityNum, const tupleFloat_t &color)
+void MainEngine::confUnifiedColorEntity(uint32_t entityNum, const tupleFloat_t &color, bool transparent)
 {
     PositionVertexComponent *posComp = m_ecsManager.getComponentManager().
             searchComponentByType<PositionVertexComponent>(entityNum, Components_e::POSITION_VERTEX_COMPONENT);
@@ -379,14 +380,11 @@ void MainEngine::confUnifiedColorEntity(uint32_t entityNum, const tupleFloat_t &
         colorComp->m_vertex.clear();
     }
     colorComp->m_vertex.reserve(4);
-    colorComp->m_vertex.emplace_back(std::get<0>(color), std::get<1>(color),
-                                     std::get<2>(color), 0.4f);
-    colorComp->m_vertex.emplace_back(std::get<0>(color), std::get<1>(color),
-                                     std::get<2>(color), 0.4f);
-    colorComp->m_vertex.emplace_back(std::get<0>(color), std::get<1>(color),
-                                     std::get<2>(color), 0.4f);
-    colorComp->m_vertex.emplace_back(std::get<0>(color), std::get<1>(color),
-                                     std::get<2>(color), 0.4f);
+    float alpha = transparent ? 0.4f : 1.0f;
+    colorComp->m_vertex.emplace_back(std::get<0>(color), std::get<1>(color), std::get<2>(color), alpha);
+    colorComp->m_vertex.emplace_back(std::get<0>(color), std::get<1>(color), std::get<2>(color), alpha);
+    colorComp->m_vertex.emplace_back(std::get<0>(color), std::get<1>(color), std::get<2>(color), alpha);
+    colorComp->m_vertex.emplace_back(std::get<0>(color), std::get<1>(color), std::get<2>(color), alpha);
 }
 
 //===================================================================

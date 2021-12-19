@@ -1,5 +1,6 @@
 BUGS======================================================================
 
+
 ))
 On scratching case eject in bad direction=========================!!!!!!!!!!!!!!!!!
 
@@ -15,6 +16,9 @@ assert à CollisionSystem.cpp::770  ==============??
 assert à CollisionSystem.cpp::1286 =======================COMMENT
 
 
+
+))
+On scratch case display behind wall=========================OK
 
 ))
 When moveable wall move onto an other moveable wall display and scratch issue===============================OK

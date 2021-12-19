@@ -55,7 +55,7 @@ class FirstPersonDisplaySystem : public ecs::System
 public:
     FirstPersonDisplaySystem();
     void execSystem()override;
-    void drawPlayerDamage();
+    void drawPlayerColorEffects();
     void setVectTextures(std::vector<Texture> &vectTexture);
     void setShader(Shader &shader);
     void memGroundBackgroundEntity(uint32_t entity, bool simpleTexture);
@@ -83,7 +83,8 @@ private:
                                                 const PairFloat_t &currentPoint, bool lateral);
     std::optional<float> getCloserRaycastDistance(const MapCoordComponent *mapCompObserver, const MapCoordComponent *mapCompTarget, float distance,
                               float radiantObserverAngle, uint32_t targetEntity);
-    void rayCasting();
+    void rayCasting(uint32_t observerEntity);
+    bool isInsideWall(const PairFloat_t &pos);
     void calcVerticalBackgroundLineRaycast(const PairFloat_t &observerPos, float currentRadiantAngle,
                                               float currentGLLatPos, float radiantObserverAngle);
     std::optional<float> treatDoorRaycast(uint32_t numEntity, float currentRadiantAngle,
