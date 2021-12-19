@@ -17,6 +17,9 @@ assert à CollisionSystem.cpp::1286 =======================COMMENT
 
 
 ))
+When moveable wall move onto an other moveable wall display and scratch issue===============================OK
+
+))
 When enemy die weapon animation still activated============================OK
 
 -12)
@@ -24,9 +27,6 @@ Static element  table desapear at limit vision==================================
 
 ))
 On multi static moveable wall on same case update last wall.===========================OK
-
-))
-When moveable wall move onto an other moveable wall display and scratch issue=============================OK
 
 ))
 On zone damage target take damage when behind wall and door====================================OK

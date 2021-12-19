@@ -1141,7 +1141,10 @@ void CollisionSystem::collisionCircleRectEject(CollisionArgs &args, float circle
 //            return;
 //        }
 //    }
-    crushMode = treatCrushing(args, diffX, diffY);
+    if(!angleBehavior)
+    {
+        crushMode = treatCrushing(args, diffX, diffY);
+    }
     if(args.tagCompA->m_tagA == CollisionTag_e::PLAYER_CT && crushMode)
     {
         return;
@@ -1263,6 +1266,11 @@ float CollisionSystem::getHorizontalCircleRectEject(const EjectXArgs &args, bool
 //===================================================================
 void CollisionSystem::collisionEject(MapCoordComponent &mapComp, float diffX, float diffY, bool limitEjectY, bool limitEjectX)
 {
+    float minEject = std::min(std::abs(diffY), std::abs(diffX));
+    if(minEject >= LEVEL_TILE_SIZE_PX)
+    {
+        return;
+    }
     if(!limitEjectX && (limitEjectY || std::abs(diffY) < std::abs(diffX)))
     {
         mapComp.m_absoluteMapPositionPX.second += diffY;
