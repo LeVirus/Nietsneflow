@@ -216,13 +216,10 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
     float radiantObserverAngle = getRadiantAngle(degreeObserverAngle),
             cameraDistance = getCameraDistance(mapCompA->m_absoluteMapPositionPX, mapCompB->m_absoluteMapPositionPX, radiantObserverAngle);
     float displayDistance = cameraDistance;
-    if(cameraDistance > visionComp->m_distanceVisibility || cameraDistance < 1.0f)
+    if(cameraDistance > visionComp->m_distanceVisibility || cameraDistance < 5.0f
+            || getDistance(mapCompA->m_absoluteMapPositionPX, mapCompB->m_absoluteMapPositionPX) < 5.0f)
     {
         ++toRemove;
-        return;
-    }
-    if(getDistance(mapCompA->m_absoluteMapPositionPX, mapCompB->m_absoluteMapPositionPX) < 5.0f)
-    {
         return;
     }
     float trigoAngle = getTrigoAngle(mapCompA->m_absoluteMapPositionPX, centerPosB);

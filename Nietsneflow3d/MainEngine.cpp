@@ -1985,7 +1985,6 @@ uint32_t MainEngine::createStaticElementEntity(LevelStaticElementType_e elementT
     CollisionTag_e tag;
     uint32_t entityNum;
     const SpriteData &memSpriteData = vectSpriteData[staticElementData.m_numSprite];
-    float collisionRay = staticElementData.m_inGameSpriteSize.first * LEVEL_HALF_TILE_SIZE_PX;
     if(elementType == LevelStaticElementType_e::OBJECT)
     {
         tag = CollisionTag_e::OBJECT_CT;
@@ -2024,7 +2023,7 @@ uint32_t MainEngine::createStaticElementEntity(LevelStaticElementType_e elementT
     CircleCollisionComponent *circleComp = m_ecsManager.getComponentManager().
             searchComponentByType<CircleCollisionComponent>(entityNum, Components_e::CIRCLE_COLLISION_COMPONENT);
     assert(circleComp);
-    circleComp->m_ray = collisionRay;
+    circleComp->m_ray = staticElementData.m_inGameSpriteSize.first * LEVEL_THIRD_TILE_SIZE_PX;
     confStaticComponent(entityNum, staticElementData.m_inGameSpriteSize, elementType);
     return entityNum;
 }

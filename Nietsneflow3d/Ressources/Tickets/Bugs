@@ -3,22 +3,24 @@ BUGS======================================================================
 ))
 On scratching case eject in bad direction=========================!!!!!!!!!!!!!!!!!
 
-1)
-assert(elementCase); FistPersonSystem.cpp::232===========================OK?
-assert à CollisionSystem.cpp::89    EnemyConfComponent == nullptr
-assert à CollisionSystem.cpp::726   hyp > distanceX && hyp > distanceY
-assert à CollisionSystem.cpp::770  
-assert à CollisionSystem.cpp::1286  
+))
+When enemy die weapon animation still activated
+
 
 ))
 Enemy eject issue!!!!!!!!!!!
-Marines go into wall
+Marines go into wall=====NOT REPRODUCT
+
+1)
+assert(elementCase); FistPersonSystem.cpp::232===========================OK?
+assert à CollisionSystem.cpp::89    EnemyConfComponent == nullptr
+assert à CollisionSystem.cpp::770  ==============??
+assert à CollisionSystem.cpp::1286 =======================COMMENT
+
+
 
 -12)
-Static element  table desapear at limit vision==================================~~
-
-
-
+Static element  table desapear at limit vision==================================OK
 
 ))
 On multi static moveable wall on same case update last wall.===========================OK

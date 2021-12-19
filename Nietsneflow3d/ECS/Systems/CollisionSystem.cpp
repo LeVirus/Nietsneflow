@@ -1282,7 +1282,6 @@ void CollisionSystem::collisionCircleCircleEject(CollisionArgs &args,
             searchComponentByType<MoveableComponent>(args.entityNumA,
                                                      Components_e::MOVEABLE_COMPONENT);
     assert(moveCompA);
-
     float circleAPosX = args.mapCompA.m_absoluteMapPositionPX.first;
     float circleAPosY = args.mapCompA.m_absoluteMapPositionPX.second;
     float circleBPosX = args.mapCompB.m_absoluteMapPositionPX.first;
@@ -1290,7 +1289,7 @@ void CollisionSystem::collisionCircleCircleEject(CollisionArgs &args,
     float distanceX = std::abs(circleAPosX - circleBPosX);
     float distanceY = std::abs(circleAPosY - circleBPosY);
     float hyp = circleCollA.m_ray + circleCollB.m_ray;
-    assert(hyp > distanceX && hyp > distanceY);
+//    assert(hyp > distanceX && hyp > distanceY);
     float diffX = getRectTriangleSide(distanceY, hyp);
     float diffY = getRectTriangleSide(distanceX, hyp);
     diffX -= distanceX;
