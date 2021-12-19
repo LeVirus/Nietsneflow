@@ -83,7 +83,7 @@ private:
                                                 const PairFloat_t &currentPoint, bool lateral);
     std::optional<float> getCloserRaycastDistance(const MapCoordComponent *mapCompObserver, const MapCoordComponent *mapCompTarget, float distance,
                               float radiantObserverAngle, uint32_t targetEntity);
-    void rayCasting(uint32_t observerEntity);
+    bool rayCasting(uint32_t observerEntity);
     bool isInsideWall(const PairFloat_t &pos);
     void calcVerticalBackgroundLineRaycast(const PairFloat_t &observerPos, float currentRadiantAngle,
                                               float currentGLLatPos, float radiantObserverAngle);

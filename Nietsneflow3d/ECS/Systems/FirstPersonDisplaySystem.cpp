@@ -101,7 +101,11 @@ void FirstPersonDisplaySystem::confCompVertexMemEntities()
         m_numVertexToDraw[i] = visionComp->m_vectVisibleEntities.size();
         m_entitiesNumMem.clear();
         m_memDoorDistance.clear();
-        rayCasting(mVectNumEntity[i]);
+        //if scratch continue
+        if(rayCasting(mVectNumEntity[i]))
+        {
+            continue;
+        }
         if(m_groundCeilingSimpleTextureActive)
         {
             confSimpleTextVertexGroundCeiling(moveComp->m_degreeOrientation);
@@ -725,7 +729,7 @@ void FirstPersonDisplaySystem::memCeilingBackgroundEntity(uint32_t entity, bool 
 }
 
 //===================================================================
-void FirstPersonDisplaySystem::rayCasting(uint32_t observerEntity)
+bool FirstPersonDisplaySystem::rayCasting(uint32_t observerEntity)
 {
     optionalTargetRaycast_t targetPoint;
     //WORK FOR ONE PLAYER ONLY
@@ -747,7 +751,7 @@ void FirstPersonDisplaySystem::rayCasting(uint32_t observerEntity)
                 searchComponentByType<PlayerConfComponent>(observerEntity, Components_e::PLAYER_CONF_COMPONENT);
         assert(playerComp);
         playerComp->m_scratch = true;
-        return;
+        return true;
     }
     MoveableComponent *moveComp = stairwayToComponentManager().
             searchComponentByType<MoveableComponent>(observerEntity, Components_e::MOVEABLE_COMPONENT);
@@ -782,6 +786,7 @@ void FirstPersonDisplaySystem::rayCasting(uint32_t observerEntity)
             currentRadiantAngle += PI_DOUBLE;
         }
     }
+    return false;
 }
 
 //===================================================================

@@ -62,8 +62,7 @@ void DoorWallSystem::treatDoors()
                 searchComponentByType<TimerComponent>(mVectNumEntity[i],
                                                      Components_e::TIMER_COMPONENT);
         assert(timerComp);
-        std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() -
-                timerComp->m_clockA;
+        std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() - timerComp->m_clockA;
         if(doorComp->m_currentState == DoorState_e::STATIC_OPEN)
         {
             if(elapsed_seconds.count() > m_timeDoorClosed)

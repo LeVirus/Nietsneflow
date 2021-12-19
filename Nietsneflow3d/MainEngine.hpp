@@ -151,6 +151,7 @@ private:
         m_graphicEngine.memGroundBackgroundFPSSystemEntity(entity, simpleTexture);
     }
 private:
+    float m_fpsValue = 1.0f / 60.0f;
     GraphicEngine m_graphicEngine;
     PhysicalEngine m_physicalEngine;
     AudioEngine m_audioEngine;
