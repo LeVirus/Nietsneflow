@@ -62,17 +62,26 @@ bool MainEngine::mainLoop(bool &memGameOver)
         savePlayerGear();
     }
     std::chrono::duration<double> elapsed_seconds;
+
+    //display FPS
+//    std::chrono::duration<double> fps;
+//    std::chrono::time_point<std::chrono::system_clock> clockFrame  = std::chrono::system_clock::now();
+
     m_graphicEngine.unsetTransition(m_gamePaused);
     std::chrono::time_point<std::chrono::system_clock> clock;
     clock = std::chrono::system_clock::now();
     do
     {
         elapsed_seconds = std::chrono::system_clock::now() - clock;
-        std::cerr << m_fpsValue << "  " << elapsed_seconds.count() << "\n";
         if(m_fpsValue > elapsed_seconds.count())
         {
             continue;
         }
+        //display FPS
+//        fps = std::chrono::system_clock::now() - clockFrame;
+//        std::cout << 1.0f / fps.count() << "  " << fps.count() << " FPS\n";
+//        clockFrame = std::chrono::system_clock::now();
+
         clock = std::chrono::system_clock::now();
         m_physicalEngine.runIteration(m_gamePaused);
         clearObjectToDelete();
