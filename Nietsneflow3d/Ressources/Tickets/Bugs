@@ -3,9 +3,6 @@ BUGS======================================================================
 ))
 On scratching case eject in bad direction=========================!!!!!!!!!!!!!!!!!
 
-))
-When enemy die weapon animation still activated
-
 
 ))
 Enemy eject issue!!!!!!!!!!!
@@ -18,6 +15,9 @@ assert à CollisionSystem.cpp::770  ==============??
 assert à CollisionSystem.cpp::1286 =======================COMMENT
 
 
+
+))
+When enemy die weapon animation still activated============================OK
 
 -12)
 Static element  table desapear at limit vision==================================OK

@@ -147,6 +147,10 @@ void InputSystem::treatPlayerMove(PlayerConfComponent *playerComp, MoveableCompo
                                   MapCoordComponent *mapComp)
 {
     playerComp->m_inMovement = false;
+    if(playerComp->m_life == 0)
+    {
+        return;
+    }
     //init value
     MoveOrientation_e currentMoveDirection = MoveOrientation_e::FORWARD;
     //STRAFE
