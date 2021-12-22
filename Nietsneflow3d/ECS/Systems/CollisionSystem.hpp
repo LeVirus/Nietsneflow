@@ -90,8 +90,8 @@ private:
     std::vector<uint32_t> m_vectEntitiesToDelete;
     PlayerConfComponent *m_playerComp = nullptr;
     bool m_pair = true, m_memPlayerTeleport;
-    //0 movement eject, 1 angle behaviour, 2 Direction
-    std::vector<std::tuple<PairFloat_t, bool, Direction_e>> m_memCrush;
+    //0 movement eject, 1 angle behaviour, 2 Direction,  3 if moveable wall true = vertical false = lateral
+    std::vector<std::tuple<PairFloat_t, bool, Direction_e, std::optional<bool>>> m_memCrush;
 };
 
 bool opposingDirection(Direction_e dirA, Direction_e dirB);

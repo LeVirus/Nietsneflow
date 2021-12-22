@@ -200,8 +200,14 @@ void CollisionSystem::treatGeneralCrushing(uint32_t entityNum)
     bool crush = false;
     for(uint32_t i = 0; i < m_memCrush.size(); ++i)
     {
-        mapComp->m_absoluteMapPositionPX.first += std::get<0>(m_memCrush[i]).first;
-        mapComp->m_absoluteMapPositionPX.second += std::get<0>(m_memCrush[i]).second;
+        //vertical
+        if(m_memCrush.size() < 3 || (std::get<3>(m_memCrush[i]) && *std::get<3>(m_memCrush[i]) ==
+                                      (std::get<2>(m_memCrush[i]) == Direction_e::NORTH
+                                      || std::get<2>(m_memCrush[i]) == Direction_e::SOUTH)))
+        {
+            mapComp->m_absoluteMapPositionPX.first += std::get<0>(m_memCrush[i]).first;
+            mapComp->m_absoluteMapPositionPX.second += std::get<0>(m_memCrush[i]).second;
+        }
         if(!crush && !std::get<1>(m_memCrush[i]))
         {
             for(uint32_t j = 0; j < i; ++j)
@@ -1150,6 +1156,13 @@ void CollisionSystem::collisionCircleRectEject(CollisionArgs &args, float circle
     {
         std::get<1>(m_memCrush.back()) = angleBehavior;
         std::get<2>(m_memCrush.back()) = getDirection(diffX, diffY);
+        MoveableWallConfComponent *moveWallComp = stairwayToComponentManager().
+                searchComponentByType<MoveableWallConfComponent>(args.entityNumB, Components_e::MOVEABLE_WALL_CONF_COMPONENT);
+        if(moveWallComp)
+        {
+            Direction_e currentWallDir = moveWallComp->m_directionMove[moveWallComp->m_currentMove].first;
+            std::get<3>(m_memCrush.back()) = (currentWallDir == Direction_e::NORTH || currentWallDir == Direction_e::SOUTH);
+        }
     }
 }
 
@@ -1290,7 +1303,7 @@ void CollisionSystem::collisionEject(MapCoordComponent &mapComp, float diffX, fl
     }
     if(crushCase)
     {
-        m_memCrush.push_back({{EPSILON_FLOAT, EPSILON_FLOAT}, false, {}});
+        m_memCrush.push_back({{EPSILON_FLOAT, EPSILON_FLOAT}, false, {}, {}});
     }
     if(!limitEjectX && (limitEjectY || std::abs(diffY) < std::abs(diffX)))
     {

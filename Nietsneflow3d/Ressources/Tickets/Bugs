@@ -7,9 +7,6 @@ Display behind at intersection moveable wall
 scratch when wall open
 
 ))
-On scratching case eject in bad direction=========================!!!!!!!!!!!!!!!!!
-
-))
 Door eject issue
 
 ))
@@ -23,6 +20,9 @@ assert à CollisionSystem.cpp::770  ==============??
 assert à CollisionSystem.cpp::1286 =======================COMMENT
 
 
+
+))
+On scratching case eject in bad direction=========================OK
 
 ))
 On scratch case display behind wall=========================OK
