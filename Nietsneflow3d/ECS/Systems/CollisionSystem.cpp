@@ -198,15 +198,15 @@ void CollisionSystem::treatGeneralCrushing(uint32_t entityNum)
             searchComponentByType<MapCoordComponent>(entityNum, Components_e::MAP_COORD_COMPONENT);
     assert(mapComp);
     bool crush = false;
+    PairFloat_t pairBase = mapComp->m_absoluteMapPositionPX;
     for(uint32_t i = 0; i < m_memCrush.size(); ++i)
     {
-        //vertical
-        if(m_memCrush.size() < 3 || (std::get<3>(m_memCrush[i]) && *std::get<3>(m_memCrush[i]) ==
-                                      (std::get<2>(m_memCrush[i]) == Direction_e::NORTH
-                                      || std::get<2>(m_memCrush[i]) == Direction_e::SOUTH)))
+        if(m_memCrush.size() < 3 || !std::get<3>(m_memCrush[i]) ||
+                *std::get<3>(m_memCrush[i]) ==
+                (std::get<2>(m_memCrush[i]) == Direction_e::NORTH || std::get<2>(m_memCrush[i]) == Direction_e::SOUTH))
         {
-            mapComp->m_absoluteMapPositionPX.first += std::get<0>(m_memCrush[i]).first;
             mapComp->m_absoluteMapPositionPX.second += std::get<0>(m_memCrush[i]).second;
+            mapComp->m_absoluteMapPositionPX.first += std::get<0>(m_memCrush[i]).first;
         }
         if(!crush && !std::get<1>(m_memCrush[i]))
         {
@@ -216,6 +216,7 @@ void CollisionSystem::treatGeneralCrushing(uint32_t entityNum)
                 {
                     crush = true;
                     treatCrushing(entityNum);
+                    mapComp->m_absoluteMapPositionPX = pairBase;
                     break;
                 }
             }
