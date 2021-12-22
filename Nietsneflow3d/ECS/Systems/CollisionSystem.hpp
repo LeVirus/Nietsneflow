@@ -53,7 +53,7 @@ private:
     void treatPlayerPickObject(CollisionArgs &args);
     void treatPlayerTeleport(CollisionArgs &args);
     void treatCollisionFirstSegment(CollisionArgs &args);
-    bool treatCrushing(const CollisionArgs &args, float diffX, float diffY);
+    void treatCrushing(uint32_t entityNum);
     //Collisions treatment
     void collisionCircleRectEject(CollisionArgs &args,
                                   float circleRay, const RectangleCollisionComponent &rectCollB, bool visibleShotFirstEject = false);
@@ -66,7 +66,7 @@ private:
 //                                     const CircleCollisionComponent &circleCollA,
 //                                     const SegmentCollisionComponent &segmCollB);
     void collisionEject(MapCoordComponent &mapComp, float diffX, float diffY,
-                        bool limitEjectY = false, bool limitEjectX = false);
+                        bool limitEjectY = false, bool limitEjectX = false, bool crushCase = false);
     //Components accessors
     CircleCollisionComponent &getCircleComponent(uint32_t entityNum);
     RectangleCollisionComponent &getRectangleComponent(uint32_t entityNum);
@@ -80,6 +80,7 @@ private:
     void confDropedObject(uint32_t objectEntity, uint32_t enemyEntity);
     void activeSound(uint32_t entityNum);
     bool checkEnemyRemoveCollisionMask(uint32_t entityNum);
+    void treatGeneralCrushing(uint32_t entityNum);
     void secondEntitiesLoop(uint32_t entityA, uint32_t currentIteration, GeneralCollisionComponent *tagCompA, bool shotExplosionEject = false);
 private:
     std::multimap<CollisionTag_e, CollisionTag_e> m_tagArray;
@@ -89,8 +90,11 @@ private:
     std::vector<uint32_t> m_vectEntitiesToDelete;
     PlayerConfComponent *m_playerComp = nullptr;
     bool m_pair = true, m_memPlayerTeleport;
+    //0 movement eject, 1 angle behaviour, 2 Direction
+    std::vector<std::tuple<PairFloat_t, bool, Direction_e>> m_memCrush;
 };
 
+bool opposingDirection(Direction_e dirA, Direction_e dirB);
 bool pickUpWeapon(uint32_t numWeapon, WeaponComponent *weaponComp,
                   uint32_t objectContaining);
 bool pickUpAmmo(uint32_t numWeapon, WeaponComponent *weaponComp,

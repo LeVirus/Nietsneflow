@@ -7,14 +7,16 @@ Weapon movement on begin and end movement
 4) 
 Improve Enemy behaviour
 
-5)
-Set collision behaviour from tag instead of shape
-
 -9)
 Animation move while shooting===========================~
 
 3)
 Enemy animations========================~
+
+
+
+5)
+Set collision behaviour from tag instead of shape================================NO
 
 ))
 Add possibility to cumulate color and texture for background=========================OK

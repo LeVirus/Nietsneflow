@@ -59,15 +59,12 @@ void CollisionSystem::execSystem()
         assert(tagCompA);
         MoveableComponent *moveCompA = stairwayToComponentManager().
                 searchComponentByType<MoveableComponent>(mVectNumEntity[i], Components_e::MOVEABLE_COMPONENT);
-        if(moveCompA)
-        {
-            moveCompA->m_crushMem = std::nullopt;
-        }
         if(!tagCompA->m_active || tagCompA->m_tagA == CollisionTag_e::WALL_CT || tagCompA->m_tagA == CollisionTag_e::OBJECT_CT ||
                 tagCompA->m_tagA == CollisionTag_e::DOOR_CT)
         {
             continue;
         }
+        m_memCrush.clear();
         if(tagCompA->m_shape == CollisionShape_e::SEGMENT_C &&
                 (tagCompA->m_tagA == CollisionTag_e::BULLET_PLAYER_CT || tagCompA->m_tagA == CollisionTag_e::BULLET_ENEMY_CT))
         {
@@ -116,9 +113,13 @@ void CollisionSystem::execSystem()
         {
             setDamageCircle(mVectNumEntity[i], false);
         }
-        if(tagCompA->m_tagA == CollisionTag_e::PLAYER_ACTION_CT)
+        else if(tagCompA->m_tagA == CollisionTag_e::PLAYER_ACTION_CT)
         {
             tagCompA->m_active = false;
+        }
+        if(moveCompA && (tagCompA->m_tagA == CollisionTag_e::PLAYER_CT || tagCompA->m_tagA == CollisionTag_e::ENEMY_CT))
+        {
+            treatGeneralCrushing(mVectNumEntity[i]);
         }
         if(segmentCompA && m_memDistCurrentBulletColl.second > EPSILON_FLOAT)
         {
@@ -184,6 +185,36 @@ bool CollisionSystem::checkEnemyRemoveCollisionMask(uint32_t entityNum)
         }
     }
     return false;
+}
+
+//===================================================================
+void CollisionSystem::treatGeneralCrushing(uint32_t entityNum)
+{
+    if(m_memCrush.empty())
+    {
+        return;
+    }
+    MapCoordComponent *mapComp = stairwayToComponentManager().
+            searchComponentByType<MapCoordComponent>(entityNum, Components_e::MAP_COORD_COMPONENT);
+    assert(mapComp);
+    bool crush = false;
+    for(uint32_t i = 0; i < m_memCrush.size(); ++i)
+    {
+        mapComp->m_absoluteMapPositionPX.first += std::get<0>(m_memCrush[i]).first;
+        mapComp->m_absoluteMapPositionPX.second += std::get<0>(m_memCrush[i]).second;
+        if(!crush && !std::get<1>(m_memCrush[i]))
+        {
+            for(uint32_t j = 0; j < i; ++j)
+            {
+                if(opposingDirection(std::get<2>(m_memCrush[j]), std::get<2>(m_memCrush[i])))
+                {
+                    crush = true;
+                    treatCrushing(entityNum);
+                    break;
+                }
+            }
+        }
+    }
 }
 
 //===================================================================
@@ -960,41 +991,27 @@ void CollisionSystem::treatPlayerTeleport(CollisionArgs &args)
 }
 
 //===================================================================
-bool CollisionSystem::treatCrushing(const CollisionArgs &args, float diffX, float diffY)
+void CollisionSystem::treatCrushing(uint32_t entityNum)
 {
-    MoveableComponent *moveComp = stairwayToComponentManager().
-            searchComponentByType<MoveableComponent>(args.entityNumA, Components_e::MOVEABLE_COMPONENT);
-    assert(moveComp);
-    //mem crush if player is eject from a moveable wall
-    if(!moveComp->m_crushMem)
+    PlayerConfComponent *playerComp = stairwayToComponentManager().
+            searchComponentByType<PlayerConfComponent>(entityNum, Components_e::PLAYER_CONF_COMPONENT);
+    if(playerComp)
     {
-        if(args.tagCompB->m_tagA == CollisionTag_e::WALL_CT)
-        {
-            moveComp->m_crushMem = {getDirection(diffX, diffY), args.entityNumB};
-        }
-        return false;
+        playerComp->m_crush = true;
+        playerComp->m_frozen = true;
+        playerComp->takeDamage(1);
     }
-    //if crush
-    MoveableWallConfComponent *moveWallComp = stairwayToComponentManager().
-            searchComponentByType<MoveableWallConfComponent>(args.entityNumB, Components_e::MOVEABLE_WALL_CONF_COMPONENT);
-    //check if at least one wall is moveable and 2 distinct walls
-    if(args.tagCompB->m_tagA == CollisionTag_e::WALL_CT &&
-            ((moveWallComp && moveWallComp->m_inMovement) || args.tagCompB->m_tagB == CollisionTag_e::WALL_CT) &&
-            args.entityNumB != moveComp->m_crushMem->second)
+    else
     {
-        if(args.tagCompA->m_tagA == CollisionTag_e::PLAYER_CT && getDirection(diffX, diffY) != moveComp->m_crushMem->first)
+        EnemyConfComponent *enemyComp = stairwayToComponentManager().
+                searchComponentByType<EnemyConfComponent>(entityNum, Components_e::ENEMY_CONF_COMPONENT);
+        if(enemyComp)
         {
-            PlayerConfComponent *playerComp = stairwayToComponentManager().
-                    searchComponentByType<PlayerConfComponent>(args.entityNumA, Components_e::PLAYER_CONF_COMPONENT);
-            assert(playerComp);
-            playerComp->m_crush = true;
-            playerComp->m_frozen = true;
-            playerComp->takeDamage(1);
-            return true;
+//                            enemyComp->m_crush = true;
+//                            enemyComp->m_frozen = true;
+            enemyComp->takeDamage(1);
         }
-        moveComp->m_crushMem = std::nullopt;
     }
-    return false;
 }
 
 //===================================================================
@@ -1104,7 +1121,7 @@ void CollisionSystem::collisionCircleRectEject(CollisionArgs &args, float circle
     float elementPosY = args.mapCompB.m_absoluteMapPositionPX.second;
     float elementSecondPosX = elementPosX + rectCollB.m_size.first;
     float elementSecondPosY = elementPosY + rectCollB.m_size.second;
-    bool angleBehavior = false, limitEjectY = false, limitEjectX = false, crushMode;
+    bool angleBehavior = false, limitEjectY = false, limitEjectX = false, crushMode = false;
     //collision on angle of rect
     if((circlePosX < elementPosX || circlePosX > elementSecondPosX) &&
             (circlePosY < elementPosY || circlePosY > elementSecondPosY))
@@ -1117,39 +1134,23 @@ void CollisionSystem::collisionCircleRectEject(CollisionArgs &args, float circle
     bool visibleShot = (args.tagCompA->m_tagA == CollisionTag_e::BULLET_ENEMY_CT || args.tagCompA->m_tagA == CollisionTag_e::BULLET_PLAYER_CT);
     diffY = getVerticalCircleRectEject({circlePosX, circlePosY, pointElementX, elementPosY,
                                         elementSecondPosY, circleRay, radiantObserverAngle, angleBehavior}, limitEjectY, visibleShot);
-    if(!limitEjectY)
-    {
-        diffX = getHorizontalCircleRectEject({circlePosX, circlePosY, pointElementY, elementPosX, elementSecondPosX,
-                                              circleRay, radiantObserverAngle, angleBehavior}, limitEjectX, visibleShot);
-    }
-    if(!visibleShotFirstEject && moveComp->m_crushMem && args.tagCompA->m_tagA != CollisionTag_e::PLAYER_CT &&
+    diffX = getHorizontalCircleRectEject({circlePosX, circlePosY, pointElementY, elementPosX, elementSecondPosX,
+                                          circleRay, radiantObserverAngle, angleBehavior}, limitEjectX, visibleShot);
+    if(!visibleShotFirstEject && args.tagCompA->m_tagA != CollisionTag_e::PLAYER_CT &&
             std::min(std::abs(diffX), std::abs(diffY)) > LEVEL_THIRD_TILE_SIZE_PX)
     {
         return;
     }
-    //!!!ISSUE MOVEABLE WALL EJECT!!!
-//    MoveableWallConfComponent *moveWallComp = stairwayToComponentManager().
-//            searchComponentByType<MoveableWallConfComponent>(args.entityNumB, Components_e::MOVEABLE_WALL_CONF_COMPONENT);
-//    if(moveWallComp && moveWallComp->m_cycleInMovement)
-//    {
-//        Direction_e dir = getDirection(diffX, diffY);
-//        bool ejectVert = (dir == Direction_e::NORTH || dir == Direction_e::SOUTH);
-//        bool wallVert = (moveWallComp->m_directionMove[moveWallComp->m_currentMove].first == Direction_e::NORTH ||
-//                moveWallComp->m_directionMove[moveWallComp->m_currentMove].first == Direction_e::SOUTH);
-//        if(args.tagCompA->m_tagA != CollisionTag_e::IMPACT_CT && (ejectVert != wallVert || std::abs(std::min(diffX, diffY)) < 0.1f))
-//        {
-//            return;
-//        }
-//    }
-    if(!angleBehavior)
+    if(args.tagCompA->m_tagA == CollisionTag_e::PLAYER_CT || args.tagCompA->m_tagA == CollisionTag_e::ENEMY_CT)
     {
-        crushMode = treatCrushing(args, diffX, diffY);
+        crushMode = args.tagCompB->m_tagA == CollisionTag_e::WALL_CT;
     }
-    if(args.tagCompA->m_tagA == CollisionTag_e::PLAYER_CT && crushMode)
+    collisionEject(mapComp, diffX, diffY, limitEjectY, limitEjectX, crushMode);
+    if(crushMode)
     {
-        return;
+        std::get<1>(m_memCrush.back()) = angleBehavior;
+        std::get<2>(m_memCrush.back()) = getDirection(diffX, diffY);
     }
-    collisionEject(mapComp, diffX, diffY, limitEjectY, limitEjectX);
 }
 
 //===================================================================
@@ -1180,15 +1181,23 @@ float CollisionSystem::getVerticalCircleRectEject(const EjectYArgs& args, bool &
         adj = std::abs(args.circlePosX - args.elementPosX);
         diffYA = getRectTriangleSide(adj, args.ray);
         //EJECT UP
-        if(std::sin(args.radiantAngle) < EPSILON_FLOAT)
+        if(args.circlePosY < args.elementPosY ||
+                std::abs(args.circlePosY - args.elementPosY) < std::abs(args.circlePosY - args.elementSecondPosY))
         {
             diffYA -= (args.elementPosY - args.circlePosY);
-            diffYA = -diffYA;
+            if(diffYA > EPSILON_FLOAT)
+            {
+                diffYA = -diffYA;
+            }
         }
         //EJECT DOWN
         else
         {
             diffYA -= (args.circlePosY - args.elementSecondPosY);
+            if(diffYA < EPSILON_FLOAT)
+            {
+                diffYA = -diffYA;
+            }
         }
     }
     else
@@ -1235,16 +1244,24 @@ float CollisionSystem::getHorizontalCircleRectEject(const EjectXArgs &args, bool
     {
         adj = std::abs(args.circlePosY - args.elementPosY);
         diffXA = getRectTriangleSide(adj, args.ray);
-        //RIGHT
-        if(std::cos(args.radiantAngle) > EPSILON_FLOAT)
+        //EJECT LEFT
+        if(args.circlePosX < args.elementPosX ||
+                std::abs(args.circlePosX - args.elementPosX) < std::abs(args.circlePosX - args.elementSecondPosX))
         {
-            diffXA -= (args.elementPosX - args.circlePosX);
-            diffXA = -diffXA;
+            diffXA -= std::abs(args.elementPosX - args.circlePosX);
+            if(diffXA > EPSILON_FLOAT)
+            {
+                diffXA = -diffXA;
+            }
         }
-        //LEFT
+        //EJECT RIGHT
         else
         {
             diffXA -= (args.circlePosX - args.elementSecondPosX);
+            if(diffXA < EPSILON_FLOAT)
+            {
+                diffXA = -diffXA;
+            }
         }
     }
     else
@@ -1264,20 +1281,38 @@ float CollisionSystem::getHorizontalCircleRectEject(const EjectXArgs &args, bool
 }
 
 //===================================================================
-void CollisionSystem::collisionEject(MapCoordComponent &mapComp, float diffX, float diffY, bool limitEjectY, bool limitEjectX)
+void CollisionSystem::collisionEject(MapCoordComponent &mapComp, float diffX, float diffY, bool limitEjectY, bool limitEjectX, bool crushCase)
 {
     float minEject = std::min(std::abs(diffY), std::abs(diffX));
     if(minEject >= LEVEL_TILE_SIZE_PX)
     {
         return;
     }
+    if(crushCase)
+    {
+        m_memCrush.push_back({{EPSILON_FLOAT, EPSILON_FLOAT}, false, {}});
+    }
     if(!limitEjectX && (limitEjectY || std::abs(diffY) < std::abs(diffX)))
     {
-        mapComp.m_absoluteMapPositionPX.second += diffY;
+        if(crushCase)
+        {
+            std::get<0>(m_memCrush.back()).second = diffY;
+        }
+        else
+        {
+            mapComp.m_absoluteMapPositionPX.second += diffY;
+        }
     }
     if(!limitEjectY && (limitEjectX || std::abs(diffY) > std::abs(diffX)))
     {
-        mapComp.m_absoluteMapPositionPX.first += diffX;
+        if(crushCase)
+        {
+            std::get<0>(m_memCrush.back()).first = diffX;
+        }
+        else
+        {
+            mapComp.m_absoluteMapPositionPX.first += diffX;
+        }
     }
 }
 
@@ -1366,7 +1401,17 @@ MapCoordComponent &CollisionSystem::getMapComponent(uint32_t entityNum)
 //===================================================================
 Direction_e getDirection(float diffX, float diffY)
 {
-    bool vert = (std::abs(diffX) > std::abs(diffY)) ? true : false;
-    return vert ? ((diffY < EPSILON_FLOAT) ? Direction_e::SOUTH : Direction_e::NORTH) :
+    bool vert = (std::abs(diffX) > std::abs(diffY));
+    return vert ? ((diffY < EPSILON_FLOAT) ? Direction_e::NORTH : Direction_e::SOUTH) :
                   ((diffX < EPSILON_FLOAT) ? Direction_e::WEST : Direction_e::EAST);
+}
+
+//===================================================================
+bool opposingDirection(Direction_e dirA, Direction_e dirB)
+{
+    std::bitset<4> bitset;
+    bitset[static_cast<uint32_t>(dirA)] = true;
+    bitset[static_cast<uint32_t>(dirB)] = true;
+    return (bitset[static_cast<uint32_t>(Direction_e::EAST)] && bitset[static_cast<uint32_t>(Direction_e::WEST)]) ||
+            (bitset[static_cast<uint32_t>(Direction_e::NORTH)] && bitset[static_cast<uint32_t>(Direction_e::SOUTH)]);
 }

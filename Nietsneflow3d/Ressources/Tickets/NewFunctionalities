@@ -3,6 +3,9 @@ NEW FUNCTIONALITIES=============================================================
 
 ))
 CREATE CONF MENU
+	Sound
+	Reassign touche
+	Resolution
 
 ))
 Add joypad support
@@ -16,8 +19,10 @@ Create Start menu, game over menu
 10)
 Optionnel :: afficher l'inventaire dans le menu
 
+
+
 6)
-Ajouter armure
+Ajouter armure=====================NO
 
 +++12)
 Create a visual level designer===============================================OK
