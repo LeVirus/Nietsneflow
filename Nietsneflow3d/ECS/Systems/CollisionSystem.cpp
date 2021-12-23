@@ -198,7 +198,6 @@ void CollisionSystem::treatGeneralCrushing(uint32_t entityNum)
             searchComponentByType<MapCoordComponent>(entityNum, Components_e::MAP_COORD_COMPONENT);
     assert(mapComp);
     bool crush = false;
-    PairFloat_t pairBase = mapComp->m_absoluteMapPositionPX;
     for(uint32_t i = 0; i < m_memCrush.size(); ++i)
     {
         if(m_memCrush.size() < 3 || !std::get<3>(m_memCrush[i]) ||
@@ -216,7 +215,6 @@ void CollisionSystem::treatGeneralCrushing(uint32_t entityNum)
                 {
                     crush = true;
                     treatCrushing(entityNum);
-                    mapComp->m_absoluteMapPositionPX = pairBase;
                     break;
                 }
             }
