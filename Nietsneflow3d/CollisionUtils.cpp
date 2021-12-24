@@ -267,6 +267,11 @@ float getCameraDistance(const PairFloat_t &observerPoint, const PairFloat_t &tar
                         float observerAngleRadiant, bool limit)
 {
     float angleCalc;
+    float hyp = getDistance(observerPoint, targetPoint);
+    if(hyp < 1.0f)
+    {
+        return 1.0f;
+    }
     if(limit)
     {
         angleCalc = PI_QUARTER;
@@ -275,7 +280,6 @@ float getCameraDistance(const PairFloat_t &observerPoint, const PairFloat_t &tar
     {
         angleCalc = std::abs(getTrigoAngle(observerPoint, targetPoint, false) - observerAngleRadiant);
     }
-    float hyp = getDistance(observerPoint, targetPoint);
     return std::abs(hyp * std::cos(angleCalc));
 }
 

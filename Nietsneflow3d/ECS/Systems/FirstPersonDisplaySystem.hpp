@@ -126,6 +126,8 @@ private:
     std::optional<std::array<float, RAYCAST_GROUND_CEILING_NUMBER>> m_memBackgroundDistance;
 };
 
+//if player pos is on limit case modify position to prevent display issue
+PairFloat_t getCorrectedPosition(const PairFloat_t &initPos, float radiantAngle);
 float getQuarterAngle(float angle);
 uint32_t getMaxValueFromEntries(const float distance[4]);
 uint32_t getMinValueFromEntries(const float distance[4]);

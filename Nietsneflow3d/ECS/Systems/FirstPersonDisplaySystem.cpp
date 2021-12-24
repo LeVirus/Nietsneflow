@@ -878,7 +878,8 @@ optionalTargetRaycast_t FirstPersonDisplaySystem::calcLineSegmentRaycast(float r
     std::optional<float> lateralLeadCoef, verticalLeadCoef;
     verticalLeadCoef = getLeadCoef(radiantAngle, false);
     lateralLeadCoef = getLeadCoef(radiantAngle, true);
-    PairFloat_t currentPoint = originPoint;
+//    PairFloat_t currentPoint = originPoint;
+    PairFloat_t currentPoint = getCorrectedPosition(originPoint, radiantAngle);
     optionalTargetRaycast_t result;
     lateral = raycastPointLateral(radiantAngle, originPoint);
     currentCoord = getCorrectedCoord(currentPoint, lateral, radiantAngle);
@@ -999,9 +1000,9 @@ optionalTargetRaycast_t FirstPersonDisplaySystem::calcMovingWallSegmentRaycast(f
     assert(element.m_memMoveWall);
     PairFloat_t memBase = currentPoint;
     float memDistance;
-    std::set<uint32_t>::const_iterator it = element.m_memMoveWall->begin();
     //first raycast result second distance
     std::optional<std::pair<tupleTargetRaycast_t, float>> resultMem;
+    std::set<uint32_t>::const_iterator it = element.m_memMoveWall->begin();
     for(; it != element.m_memMoveWall->end(); ++it)
     {
         bool lateralColl, textPosWall = false;
@@ -1498,6 +1499,7 @@ PairFloat_t FirstPersonDisplaySystem::getCenterPosition(const MapCoordComponent 
     return mapComp->m_absoluteMapPositionPX;
 }
 
+//===================================================================
 uint32_t getMinValueFromEntries(const float distance[])
 {
     uint32_t val = 0;
@@ -1507,6 +1509,7 @@ uint32_t getMinValueFromEntries(const float distance[])
     return val;
 }
 
+//===================================================================
 uint32_t getMaxValueFromEntries(const float distance[])
 {
     uint32_t val = 0;
@@ -1514,4 +1517,33 @@ uint32_t getMaxValueFromEntries(const float distance[])
     val = (distance[val] > distance[2]) ? val : 2;
     val = (distance[val] > distance[3]) ? val : 3;
     return val;
+}
+
+//===================================================================
+PairFloat_t getCorrectedPosition(const PairFloat_t &initPos, float radiantAngle)
+{
+    PairFloat_t finalPos = initPos;
+    if(static_cast<uint32_t>(std::fmod(initPos.first, LEVEL_TILE_SIZE_PX)) == 0)
+    {
+        if(std::cos(radiantAngle) > EPSILON_FLOAT)
+        {
+            --finalPos.first;
+        }
+        else
+        {
+            ++finalPos.first;
+        }
+    }
+    if(static_cast<uint32_t>(std::fmod(initPos.second, LEVEL_TILE_SIZE_PX)) == 0)
+    {
+        if(std::sin(radiantAngle) < EPSILON_FLOAT)
+        {
+            --finalPos.second;
+        }
+        else
+        {
+            ++finalPos.second;
+        }
+    }
+    return finalPos;
 }
