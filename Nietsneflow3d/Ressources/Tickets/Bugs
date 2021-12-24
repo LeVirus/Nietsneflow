@@ -1,7 +1,8 @@
 BUGS======================================================================
 
+
 ))
-Display behind at intersection moveable wall
+Line display on limit wall
 
 ))
 scratch when wall open
@@ -20,6 +21,9 @@ assert à CollisionSystem.cpp::770  ==============??
 assert à CollisionSystem.cpp::1286 =======================COMMENT
 
 
+
+))
+Display behind at intersection moveable wall==================================OK
 
 ))
 On scratching case eject in bad direction=========================OK

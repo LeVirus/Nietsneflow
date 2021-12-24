@@ -745,11 +745,11 @@ bool FirstPersonDisplaySystem::rayCasting(uint32_t observerEntity)
     MapCoordComponent *mapCompCamera = stairwayToComponentManager().
             searchComponentByType<MapCoordComponent>(observerEntity, Components_e::MAP_COORD_COMPONENT);
     assert(mapCompCamera);
+    PlayerConfComponent *playerComp = stairwayToComponentManager().
+            searchComponentByType<PlayerConfComponent>(observerEntity, Components_e::PLAYER_CONF_COMPONENT);
+    assert(playerComp);
     if(isInsideWall(mapCompCamera->m_absoluteMapPositionPX))
     {
-        PlayerConfComponent *playerComp = stairwayToComponentManager().
-                searchComponentByType<PlayerConfComponent>(observerEntity, Components_e::PLAYER_CONF_COMPONENT);
-        assert(playerComp);
         playerComp->m_scratch = true;
         return true;
     }
@@ -764,7 +764,8 @@ bool FirstPersonDisplaySystem::rayCasting(uint32_t observerEntity)
     for(uint32_t j = 0; j < RAYCAST_LINE_NUMBER; ++j)
     {
         //mem ground and ceiling
-        targetPoint = calcLineSegmentRaycast(currentRadiantAngle, mapCompCamera->m_absoluteMapPositionPX, true);
+        //??
+        targetPoint = calcLineSegmentRaycast(currentRadiantAngle, mapCompCamera->m_absoluteMapPositionPX, true, !playerComp->m_scratch);
         if(targetPoint)
         {
             m_memRaycastDist[j] = getCameraDistance(mapCompCamera->m_absoluteMapPositionPX, std::get<0>(*targetPoint), cameraRadiantAngle);
@@ -869,7 +870,7 @@ void FirstPersonDisplaySystem::calcVerticalBackgroundLineRaycast(const PairFloat
 //===================================================================
 optionalTargetRaycast_t FirstPersonDisplaySystem::calcLineSegmentRaycast(float radiantAngle,
                                                                          const PairFloat_t &originPoint,
-                                                                         bool visual)
+                                                                         bool visual, bool scratchMode)
 {
     std::optional<ElementRaycast> element;
     float textPos;
@@ -878,8 +879,7 @@ optionalTargetRaycast_t FirstPersonDisplaySystem::calcLineSegmentRaycast(float r
     std::optional<float> lateralLeadCoef, verticalLeadCoef;
     verticalLeadCoef = getLeadCoef(radiantAngle, false);
     lateralLeadCoef = getLeadCoef(radiantAngle, true);
-//    PairFloat_t currentPoint = originPoint;
-    PairFloat_t currentPoint = getCorrectedPosition(originPoint, radiantAngle);
+    PairFloat_t currentPoint = scratchMode ? getCorrectedPosition(originPoint, radiantAngle) : originPoint;
     optionalTargetRaycast_t result;
     lateral = raycastPointLateral(radiantAngle, originPoint);
     currentCoord = getCorrectedCoord(currentPoint, lateral, radiantAngle);
@@ -1523,9 +1523,10 @@ uint32_t getMaxValueFromEntries(const float distance[])
 PairFloat_t getCorrectedPosition(const PairFloat_t &initPos, float radiantAngle)
 {
     PairFloat_t finalPos = initPos;
-    if(static_cast<uint32_t>(std::fmod(initPos.first, LEVEL_TILE_SIZE_PX)) == 0)
+    float cosVal = std::cos(radiantAngle), sinVal = std::sin(radiantAngle);
+    if(std::abs(cosVal) > 0.1f && static_cast<uint32_t>(std::fmod(initPos.first, LEVEL_TILE_SIZE_PX)) == 0)
     {
-        if(std::cos(radiantAngle) > EPSILON_FLOAT)
+        if(cosVal > EPSILON_FLOAT)
         {
             --finalPos.first;
         }
@@ -1534,9 +1535,9 @@ PairFloat_t getCorrectedPosition(const PairFloat_t &initPos, float radiantAngle)
             ++finalPos.first;
         }
     }
-    if(static_cast<uint32_t>(std::fmod(initPos.second, LEVEL_TILE_SIZE_PX)) == 0)
+    if(std::abs(sinVal) > 0.1f && static_cast<uint32_t>(std::fmod(initPos.second, LEVEL_TILE_SIZE_PX)) == 0)
     {
-        if(std::sin(radiantAngle) < EPSILON_FLOAT)
+        if(sinVal < EPSILON_FLOAT)
         {
             --finalPos.second;
         }

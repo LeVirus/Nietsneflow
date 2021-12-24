@@ -70,7 +70,7 @@ public:
         m_backgroundRaycastActive = false;
     }
     //return target point, texture position and entity num if collision
-    optionalTargetRaycast_t calcLineSegmentRaycast(float radiantAngle, const PairFloat_t &originPoint, bool visual);
+    optionalTargetRaycast_t calcLineSegmentRaycast(float radiantAngle, const PairFloat_t &originPoint, bool visual, bool scratchMode = false);
 private:
     optionalTargetRaycast_t calcDoorSegmentRaycast(float radiantAngle, std::optional<float> lateralLeadCoef,
                                                    std::optional<float> verticalLeadCoef, PairFloat_t &currentPoint,
