@@ -79,18 +79,21 @@ void CollisionSystem::execSystem()
         {
             segmentCompA = nullptr;
         }
-        if(m_pair && tagCompA->m_tagA == CollisionTag_e::PLAYER_CT)
+        if(tagCompA->m_tagA == CollisionTag_e::PLAYER_CT)
         {
             PlayerConfComponent *playerComp = stairwayToComponentManager().
                     searchComponentByType<PlayerConfComponent>(mVectNumEntity[i], Components_e::PLAYER_CONF_COMPONENT);
             assert(playerComp);
-            if(!playerComp->m_crush)
+            if(m_pair)
             {
-                playerComp->m_frozen = false;
-            }
-            else
-            {
-                playerComp->m_crush = false;
+                if(!playerComp->m_crush)
+                {
+                    playerComp->m_frozen = false;
+                }
+                else
+                {
+                    playerComp->m_crush = false;
+                }
             }
         }
         else if(tagCompA->m_tagA == CollisionTag_e::ENEMY_CT)
@@ -207,11 +210,13 @@ void CollisionSystem::treatGeneralCrushing(uint32_t entityNum)
             mapComp->m_absoluteMapPositionPX.second += std::get<0>(m_memCrush[i]).second;
             mapComp->m_absoluteMapPositionPX.first += std::get<0>(m_memCrush[i]).first;
         }
+        //3 == direction
         if(!crush && !std::get<1>(m_memCrush[i]))
         {
             for(uint32_t j = 0; j < i; ++j)
             {
-                if(opposingDirection(std::get<2>(m_memCrush[j]), std::get<2>(m_memCrush[i])))
+                if((std::get<3>(m_memCrush[j]) || std::get<3>(m_memCrush[i])) &&
+                        opposingDirection(std::get<2>(m_memCrush[j]), std::get<2>(m_memCrush[i])))
                 {
                     crush = true;
                     treatCrushing(entityNum);
@@ -1160,7 +1165,14 @@ void CollisionSystem::collisionCircleRectEject(CollisionArgs &args, float circle
         if(moveWallComp)
         {
             Direction_e currentWallDir = moveWallComp->m_directionMove[moveWallComp->m_currentMove].first;
-            std::get<3>(m_memCrush.back()) = (currentWallDir == Direction_e::NORTH || currentWallDir == Direction_e::SOUTH);
+            float radiantAngle = getTrigoAngle(args.mapCompB.m_absoluteMapPositionPX, args.mapCompA.m_absoluteMapPositionPX, false);
+            if((currentWallDir == Direction_e::NORTH && std::sin(radiantAngle) > EPSILON_FLOAT) ||
+                    (currentWallDir == Direction_e::SOUTH && std::sin(radiantAngle) < EPSILON_FLOAT) ||
+                    (currentWallDir == Direction_e::WEST && std::cos(radiantAngle) < EPSILON_FLOAT) ||
+                    (currentWallDir == Direction_e::EAST && std::cos(radiantAngle) > EPSILON_FLOAT))
+            {
+                std::get<3>(m_memCrush.back()) = (currentWallDir == Direction_e::NORTH || currentWallDir == Direction_e::SOUTH);
+            }
         }
     }
 }

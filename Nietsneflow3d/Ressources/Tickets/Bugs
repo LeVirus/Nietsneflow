@@ -1,11 +1,8 @@
 BUGS======================================================================
 
-
 ))
-Line display on limit wall
+Display behind at intersection moveable wall==================================
 
-))
-scratch when wall open
 
 ))
 Door eject issue
@@ -23,7 +20,10 @@ assert à CollisionSystem.cpp::1286 =======================COMMENT
 
 
 ))
-Display behind at intersection moveable wall==================================OK
+scratch when wall open==============================OK
+
+))
+Line display on limit wall==============================OK
 
 ))
 On scratching case eject in bad direction=========================OK
