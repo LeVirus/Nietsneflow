@@ -884,7 +884,7 @@ optionalTargetRaycast_t FirstPersonDisplaySystem::calcLineSegmentRaycast(float r
     lateral = raycastPointLateral(radiantAngle, originPoint);
     currentCoord = getCorrectedCoord(currentPoint, lateral, radiantAngle);
     element = Level::getElementCase(*currentCoord);
-    if(element && (*element).m_type == LevelCaseType_e::DOOR_LC)
+    if(element && element->m_type == LevelCaseType_e::DOOR_LC)
     {
         result = calcDoorSegmentRaycast(radiantAngle, lateralLeadCoef,
                                         verticalLeadCoef, currentPoint, *element);
@@ -893,7 +893,7 @@ optionalTargetRaycast_t FirstPersonDisplaySystem::calcLineSegmentRaycast(float r
             return result;
         }
     }
-    else if(element && (*element).m_type == LevelCaseType_e::WALL_MOVE_LC)
+    else if(element && element->m_type == LevelCaseType_e::WALL_MOVE_LC)
     {
         result = calcMovingWallSegmentRaycast(radiantAngle, lateralLeadCoef,
                                               verticalLeadCoef, currentPoint, *element);
@@ -1265,10 +1265,11 @@ std::optional<PairUI_t> getCorrectedCoord(const PairFloat_t &currentPoint,
                                           bool lateral, float radiantAngle)
 {
     PairFloat_t point = currentPoint;
+    bool fmodX = (std::fmod(point.first, LEVEL_TILE_SIZE_PX) <= 0.01f),
+            fmodY = (std::fmod(point.second, LEVEL_TILE_SIZE_PX) <= 0.01f);
     //treat limit angle cube case
     //raycast on angle case
-    if(std::fmod(point.second, LEVEL_TILE_SIZE_PX) <= 0.01f &&
-            std::fmod(point.first, LEVEL_TILE_SIZE_PX) <= 0.01f)
+    if(fmodX && fmodY)
     {
         if(std::cos(radiantAngle) < EPSILON_FLOAT)
         {
@@ -1279,12 +1280,12 @@ std::optional<PairUI_t> getCorrectedCoord(const PairFloat_t &currentPoint,
             --point.second;
         }
     }
-    else if(std::sin(radiantAngle) > EPSILON_FLOAT &&
+    else if(fmodY && std::sin(radiantAngle) > EPSILON_FLOAT &&
             (lateral || std::abs(std::cos(radiantAngle)) < 0.0001f))
     {
         --point.second;
     }
-    else if(!lateral && std::cos(radiantAngle) < EPSILON_FLOAT)
+    else if(fmodX && !lateral && std::cos(radiantAngle) < EPSILON_FLOAT)
     {
         --point.first;
     }
