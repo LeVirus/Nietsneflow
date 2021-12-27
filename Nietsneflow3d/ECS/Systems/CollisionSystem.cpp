@@ -204,8 +204,7 @@ void CollisionSystem::treatGeneralCrushing(uint32_t entityNum)
     for(uint32_t i = 0; i < m_memCrush.size(); ++i)
     {
         if(m_memCrush.size() < 3 || !std::get<3>(m_memCrush[i]) ||
-                *std::get<3>(m_memCrush[i]) ==
-                (std::get<2>(m_memCrush[i]) == Direction_e::NORTH || std::get<2>(m_memCrush[i]) == Direction_e::SOUTH))
+                *std::get<3>(m_memCrush[i]) != std::get<2>(m_memCrush[i]))
         {
             mapComp->m_absoluteMapPositionPX.second += std::get<0>(m_memCrush[i]).second;
             mapComp->m_absoluteMapPositionPX.first += std::get<0>(m_memCrush[i]).first;
@@ -1162,17 +1161,9 @@ void CollisionSystem::collisionCircleRectEject(CollisionArgs &args, float circle
         std::get<2>(m_memCrush.back()) = getDirection(diffX, diffY);
         MoveableWallConfComponent *moveWallComp = stairwayToComponentManager().
                 searchComponentByType<MoveableWallConfComponent>(args.entityNumB, Components_e::MOVEABLE_WALL_CONF_COMPONENT);
-        if(moveWallComp)
+        if(moveWallComp && moveWallComp->m_inMovement)
         {
-            Direction_e currentWallDir = moveWallComp->m_directionMove[moveWallComp->m_currentMove].first;
-            float radiantAngle = getTrigoAngle(args.mapCompB.m_absoluteMapPositionPX, args.mapCompA.m_absoluteMapPositionPX, false);
-            if((currentWallDir == Direction_e::NORTH && std::sin(radiantAngle) > EPSILON_FLOAT) ||
-                    (currentWallDir == Direction_e::SOUTH && std::sin(radiantAngle) < EPSILON_FLOAT) ||
-                    (currentWallDir == Direction_e::WEST && std::cos(radiantAngle) < EPSILON_FLOAT) ||
-                    (currentWallDir == Direction_e::EAST && std::cos(radiantAngle) > EPSILON_FLOAT))
-            {
-                std::get<3>(m_memCrush.back()) = (currentWallDir == Direction_e::NORTH || currentWallDir == Direction_e::SOUTH);
-            }
+            std::get<3>(m_memCrush.back()) = moveWallComp->m_directionMove[moveWallComp->m_currentMove].first;
         }
     }
 }

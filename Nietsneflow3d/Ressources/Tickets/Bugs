@@ -18,6 +18,8 @@ assert à CollisionSystem.cpp::770  ==============??
 assert à CollisionSystem.cpp::1286 =======================COMMENT
 
 
+))
+Travers moveable wall on scratch mode========================OK
 
 ))
 Display issue when player is at intersection and look a moveable wall===================================OK
