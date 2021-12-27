@@ -64,11 +64,11 @@ void FirstPersonDisplaySystem::drawPlayerColorEffects()
                         static_cast<uint32_t>(Systems_e::COLOR_DISPLAY_SYSTEM))->drawVisiblePickUpObject();
             playerComp->m_pickItem = false;
         }
-        if(playerComp->m_scratch)
+        if(playerComp->m_insideWall)
         {
             mptrSystemManager->searchSystemByType<ColorDisplaySystem>(
                         static_cast<uint32_t>(Systems_e::COLOR_DISPLAY_SYSTEM))->drawScratchWall();
-            playerComp->m_scratch = false;
+            playerComp->m_insideWall = false;
         }
     }
 }
@@ -750,7 +750,7 @@ bool FirstPersonDisplaySystem::rayCasting(uint32_t observerEntity)
     assert(playerComp);
     if(isInsideWall(mapCompCamera->m_absoluteMapPositionPX))
     {
-        playerComp->m_scratch = true;
+        playerComp->m_insideWall = true;
         return true;
     }
     MoveableComponent *moveComp = stairwayToComponentManager().
@@ -765,7 +765,7 @@ bool FirstPersonDisplaySystem::rayCasting(uint32_t observerEntity)
     {
         //mem ground and ceiling
         //??
-        targetPoint = calcLineSegmentRaycast(currentRadiantAngle, mapCompCamera->m_absoluteMapPositionPX, true, !playerComp->m_scratch);
+        targetPoint = calcLineSegmentRaycast(currentRadiantAngle, mapCompCamera->m_absoluteMapPositionPX, true, playerComp->m_frozen);
         if(targetPoint)
         {
             m_memRaycastDist[j] = getCameraDistance(mapCompCamera->m_absoluteMapPositionPX, std::get<0>(*targetPoint), cameraRadiantAngle);

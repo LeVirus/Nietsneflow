@@ -1,7 +1,7 @@
 BUGS======================================================================
 
 ))
-Display issue when player is at intersection and look a moveable wall
+Eject issue on moveable wall lateral
 
 
 ))
@@ -18,6 +18,9 @@ assert à CollisionSystem.cpp::770  ==============??
 assert à CollisionSystem.cpp::1286 =======================COMMENT
 
 
+
+))
+Display issue when player is at intersection and look a moveable wall===================================OK
 
 ))
 Display behind at intersection moveable wall==================================OK
