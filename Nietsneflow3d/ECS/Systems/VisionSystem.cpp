@@ -117,6 +117,10 @@ void VisionSystem::updateSprites(uint32_t observerEntity,
         {
             updateBarrelSprite(vectEntities[i], memSpriteComp, spriteComp, timerComp, genComp);
         }
+        else if(genComp->m_tagB == CollisionTag_e::IMPACT_CT)
+        {
+            updateImpactSprites(vectEntities[i], memSpriteComp, spriteComp, timerComp, genComp);
+        }
         else if(genComp->m_tagB == CollisionTag_e::TELEPORT_ANIM_CT)
         {
             updateTeleportDisplaySprite(memSpriteComp, spriteComp, timerComp, genComp);
@@ -132,10 +136,6 @@ void VisionSystem::updateSprites(uint32_t observerEntity,
                 updateEnemySprites(vectEntities[i], observerEntity,
                                    memSpriteComp, spriteComp, timerComp, enemyConfComp);
             }
-        }
-        else if(genComp->m_tagA == CollisionTag_e::IMPACT_CT)
-        {
-            updateImpactSprites(vectEntities[i], memSpriteComp, spriteComp, timerComp, genComp);
         }
     }
 }

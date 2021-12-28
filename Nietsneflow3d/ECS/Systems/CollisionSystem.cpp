@@ -351,9 +351,8 @@ void CollisionSystem::confImpactShots(uint32_t numBullet, CollisionTag_e targetT
                                                      Components_e::SHOT_CONF_COMPONENT);
     assert(shotComp);
     //remove warning
-    GeneralCollisionComponent *genImpact = nullptr;
     uint32_t impactEntity = shotComp->m_impactEntity;
-    genImpact = stairwayToComponentManager().
+    GeneralCollisionComponent *genImpact = stairwayToComponentManager().
             searchComponentByType<GeneralCollisionComponent>(impactEntity,
                                                              Components_e::GENERAL_COLLISION_COMPONENT);
     assert(genImpact);
@@ -384,10 +383,12 @@ void CollisionSystem::confImpactShots(uint32_t numBullet, CollisionTag_e targetT
     impactComp->m_touched = (targetTag == CollisionTag_e::ENEMY_CT || targetTag == CollisionTag_e::PLAYER_CT);
     if(impactComp->m_touched)
     {
+        genImpact->m_tagA = CollisionTag_e::GHOST_CT;
         impactComp->m_spritePhase = ImpactPhase_e::TOUCHED;
     }
     else
     {
+        genImpact->m_tagA = CollisionTag_e::IMPACT_CT;
         impactComp->m_spritePhase = ImpactPhase_e::FIRST;
     }
     spriteComp->m_spriteData = memSpriteComp->m_vectSpriteData[static_cast<uint32_t>(impactComp->m_spritePhase)];

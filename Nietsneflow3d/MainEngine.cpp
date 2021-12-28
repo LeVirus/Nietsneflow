@@ -1114,6 +1114,7 @@ uint32_t MainEngine::confShotImpactEntity(const std::vector<SpriteData> &vectSpr
     fpsStaticComp->m_levelElementType = LevelStaticElementType_e::IMPACT;
     genComp->m_active = false;
     genComp->m_tagA = CollisionTag_e::IMPACT_CT;
+    genComp->m_tagB = CollisionTag_e::IMPACT_CT;
     genComp->m_shape = CollisionShape_e::CIRCLE_C;
     loadShotImpactSprite(vectSpriteData, shootDisplayData, impactEntity);
     return impactEntity;
