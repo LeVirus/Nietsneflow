@@ -595,13 +595,13 @@ bool CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args, bool shotEx
                     {
                         doorComp->m_currentState = DoorState_e::MOVE_OPEN;
                         activeSound(args.entityNumB);
+                        return true;
                     }
                 }
                 collisionCircleRectEject(args, circleCompA.m_ray, rectCompB);
             }
             else if(args.tagCompA->m_tagA == CollisionTag_e::ENEMY_CT)
             {
-                collisionCircleRectEject(args, circleCompA.m_ray, rectCompB);
                 if(args.tagCompB->m_tagA == CollisionTag_e::DOOR_CT)
                 {
                     DoorComponent *doorComp = stairwayToComponentManager().
@@ -609,10 +609,16 @@ bool CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args, bool shotEx
                     assert(doorComp);
                     if(!doorComp->m_cardID)
                     {
+                        DoorState_e initState = doorComp->m_currentState;
                         doorComp->m_currentState = DoorState_e::MOVE_OPEN;
                         activeSound(args.entityNumB);
+                        if(initState == DoorState_e::MOVE_CLOSE)
+                        {
+                            return true;
+                        }
                     }
                 }
+                collisionCircleRectEject(args, circleCompA.m_ray, rectCompB);
             }
             else if(args.tagCompA->m_tagA == CollisionTag_e::IMPACT_CT || args.tagCompA->m_tagA == CollisionTag_e::DEAD_CORPSE_CT)
             {
