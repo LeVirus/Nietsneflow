@@ -152,9 +152,10 @@ void GraphicEngine::updatePlayerLife(WriteComponent *writeComp, PlayerConfCompon
 }
 
 //===================================================================
-void GraphicEngine::fillMenuWrite(WriteComponent *writeComp, const std::string &menuEntry)
+void GraphicEngine::fillMenuWrite(WriteComponent *writeComp, MenuMode_e menuEntry)
 {
-    writeComp->m_str = menuEntry;
+    std::map<MenuMode_e, PairPairFloatStr_t>::const_iterator it = m_mapMenuEntries.find(menuEntry);
+    writeComp->m_str = it->second.second;
     writeComp->m_fontSpriteData = m_ptrFontData->getWriteData(writeComp->m_str, writeComp->m_numTexture);
 }
 

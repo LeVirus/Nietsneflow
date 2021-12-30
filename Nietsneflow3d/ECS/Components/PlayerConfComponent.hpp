@@ -31,6 +31,6 @@ struct PlayerConfComponent : public ecs::Component
     uint32_t m_weaponEntity, m_ammoWriteEntity, m_menuEntity, m_menuCursorEntity,
     m_actionEntity, m_hitMeleeEntity, m_lifeWriteEntity, m_numInfoWriteEntity,
     m_life = 100, m_displayTeleportEntity;
-    CurrentMenuCursorPos_e m_currentCursorPos = static_cast<CurrentMenuCursorPos_e>(0);
+    uint32_t m_currentCursorPos = 0;
     virtual ~PlayerConfComponent() = default;
 };

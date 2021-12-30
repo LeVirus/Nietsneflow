@@ -159,10 +159,10 @@ void MainEngine::displayTransitionMenu()
 {
     m_gamePaused = true;
     assert(m_writeConf);
-    m_graphicEngine.fillMenuWrite(m_writeConf, "CONTINUE");
+    m_graphicEngine.fillMenuWrite(m_writeConf, MenuMode_e::NEXT_LEVEL);
     m_physicalEngine.setModeTransitionMenu(true);
     m_graphicEngine.mainDisplay(m_gamePaused);
-    m_playerConf->m_currentCursorPos = static_cast<CurrentMenuCursorPos_e>(0);
+    m_playerConf->m_currentCursorPos = 0;
     m_graphicEngine.unsetTransition(m_gamePaused);
     do
     {
@@ -171,7 +171,7 @@ void MainEngine::displayTransitionMenu()
     }while(m_gamePaused);
     m_physicalEngine.setModeTransitionMenu(false);
     m_graphicEngine.setTransition(true);
-    m_graphicEngine.fillMenuWrite(m_writeConf, MENU_ENTRIES);
+    m_graphicEngine.fillMenuWrite(m_writeConf, MenuMode_e::BASE);
 }
 
 //===================================================================
@@ -282,6 +282,7 @@ void MainEngine::setUnsetPaused()
     m_gamePaused = !m_gamePaused;
     if(m_gamePaused)
     {
+        m_playerConf->m_currentCursorPos = 0;
         memTimerPausedValue();
     }
     else
@@ -1786,7 +1787,7 @@ void MainEngine::confWriteEntities()
     m_writeConf = writeConf;
     writeConf->m_upLeftPositionGL = m_menuCornerUpLeft;
     writeConf->m_fontSize = MENU_FONT_SIZE;
-    m_graphicEngine.fillMenuWrite(writeConf, MENU_ENTRIES);
+    m_graphicEngine.fillMenuWrite(writeConf, MenuMode_e::BASE);
     m_playerConf->m_menuEntity = numMenuWrite;
     m_playerConf->m_ammoWriteEntity = numAmmoWrite;
     m_playerConf->m_lifeWriteEntity = numLifeWrite;
@@ -1908,6 +1909,10 @@ void MainEngine::loadBarrelElementEntities(const LevelManager &levelManager)
 SoundElement MainEngine::loadSound(const std::string &file)
 {
     std::optional<ALuint> num = m_audioEngine.loadSoundEffectFromFile(file);
+    if(!num)
+    {
+        std::cout << "loading " << file << " failed\n";
+    }
     assert(num);
     return {m_audioEngine.getSoundSystem()->createSource(*num), *num, false};
 }

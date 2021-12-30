@@ -38,7 +38,7 @@ public:
                      StaticDisplaySystem *staticDisplaySystem);
     void updateAmmoCount(WriteComponent *writeComp, WeaponComponent *weaponComp);
     void updatePlayerLife(WriteComponent *writeComp, PlayerConfComponent *playerComp);
-    void fillMenuWrite(WriteComponent *writeComp, const std::string &menuEntry);
+    void fillMenuWrite(WriteComponent *writeComp, MenuMode_e menuEntry);
     inline MapDisplaySystem &getMapSystem()
     {
         return *m_mapSystem;

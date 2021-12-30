@@ -38,14 +38,23 @@ public:
 private:
     void setUsedComponents();
     void treatPlayerInput();
-    void treatMainMenu(uint32_t playerEntity);
+    void treatMenu(uint32_t playerEntity, MenuMode_e mode);
+    void treatMainMenu(PlayerConfComponent *playerComp);
+    void treatSoundMenu(PlayerConfComponent *playerComp);
+    void treatDisplayMenu(PlayerConfComponent *playerComp);
+    void treatInputMenu(PlayerConfComponent *playerComp);
     void treatPlayerMove(PlayerConfComponent *playerComp, MoveableComponent *moveComp, MapCoordComponent *mapComp);
 private:
     GLFWwindow *m_window = nullptr;
     MainEngine *m_mainEngine = nullptr;
-    bool m_keyEspapePressed = false, m_keyUpPressed = false, m_keyDownPressed = false, m_F12Pressed = false;
-    uint32_t m_maxMenuCursorIndex = static_cast<uint32_t>(CurrentMenuCursorPos_e::TOTAL) - 1;
+    bool m_keyEspapePressed = false, m_keyUpPressed = false, m_keyDownPressed = false, m_F12Pressed = false, m_enterPressed = false;
+    const std::map<MenuMode_e, uint32_t> m_mapMenuSize = {{MenuMode_e::BASE, static_cast<uint32_t>(MainMenuCursorPos_e::TOTAL) - 1},
+                                                          {MenuMode_e::DISPLAY, static_cast<uint32_t>(DisplayMenuCursorPos_e::TOTAL) - 1},
+                                                          {MenuMode_e::INPUT, static_cast<uint32_t>(InputMenuCursorPos_e::TOTAL) - 1},
+                                                          {MenuMode_e::NEXT_LEVEL, 1},
+                                                          {MenuMode_e::SOUND, static_cast<uint32_t>(SoundMenuCursorPos_e::TOTAL) - 1}};
     bool m_modeTransition = false, m_toggleSignal = false;
+    MenuMode_e m_menuMode;
 };
 
 void changePlayerWeapon(WeaponComponent &weaponComp, bool next);

@@ -75,7 +75,7 @@ private:
     float m_middleWeaponMovementX = m_forkWeaponMovementX.first + (m_forkWeaponMovementX.second -
                                                                    m_forkWeaponMovementX.first) / 2.0f;
     //FORCE UPDATE AT LAUNCH
-    CurrentMenuCursorPos_e m_currentCursorPos = CurrentMenuCursorPos_e::TOTAL;
+    uint32_t m_currentCursorPos = static_cast<uint32_t>(MainMenuCursorPos_e::TOTAL);
 };
 
 void modVertexPos(PositionVertexComponent *posComp, const PairFloat_t &mod);

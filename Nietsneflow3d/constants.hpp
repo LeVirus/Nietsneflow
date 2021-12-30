@@ -11,7 +11,7 @@ using PairUI_t = std::pair<uint32_t, uint32_t>;
 using pairLong_t = std::pair<long, long>;
 using PairFloat_t = std::pair<float, float>;
 using PairDouble_t = std::pair<double, double>;
-
+using PairPairFloatStr_t = std::pair<PairFloat_t, std::string>;
 enum class AnimationMode_e
 {
     STANDART,
@@ -59,11 +59,47 @@ enum Components_e
     TOTAL_COMPONENTS
 };
 
-enum class CurrentMenuCursorPos_e
+enum class MainMenuCursorPos_e
 {
     RETURN_TO_GAME,
+    SOUND_CONF,
+    DISPLAY_CONF,
+    INPUT_CONF,
     NEW_GAME,
     QUIT_GAME,
+    TOTAL
+};
+
+enum class SoundMenuCursorPos_e
+{
+    MUSIC_VOLUME,
+    EFFECTS_VOLUME,
+    RETURN,
+    VALID,
+    TOTAL
+};
+
+enum class DisplayMenuCursorPos_e
+{
+    RESOLUTION_SETTING,
+    QUALITY_SETTING,
+    RETURN,
+    VALID,
+    TOTAL
+};
+
+enum class InputMenuCursorPos_e
+{
+    MOVE_FORWARD,
+    MOVE_BACKWARD,
+    STRAFE_LEFT,
+    STRAFE_RIGHT,
+    TURN_LEFT,
+    TURN_RIGHT,
+    ACTION,
+    SHOOT,
+    RETURN,
+    VALID,
     TOTAL
 };
 
@@ -244,6 +280,16 @@ enum class LevelCaseType_e
     WALL_MOVE_LC
 };
 
+
+enum class MenuMode_e
+{
+    BASE,
+    NEXT_LEVEL,
+    DISPLAY,
+    SOUND,
+    INPUT
+};
+
 inline const float MAX_SOUND_DISTANCE = 1000.0f;
 inline const float EJECT_TIME = 0.5F;
 inline const float RAYCAST_VERTICAL_SIZE = 1.0f;
@@ -282,7 +328,22 @@ inline const std::string STR_PLAYER_AMMO = "AMMO::";
 inline const std::string SHADER_DIR_STR = "../Nietsneflow3d/Ressources/Shader/";
 inline const std::string LEVEL_RESSOURCES_DIR_STR = "../Nietsneflow3d/Ressources/";
 inline const std::string TEXTURES_DIR_STR = "../Nietsneflow3d/Ressources/Textures/";
-inline const std::string MENU_ENTRIES = "RETURN TO GAME\\NEW GAME\\EXIT GAME";
+inline const std::map<MenuMode_e, PairPairFloatStr_t> m_mapMenuEntries =
+{
+    {MenuMode_e::BASE,
+     PairPairFloatStr_t{{-0.95f, 0.9f},
+      "RETURN TO GAME\\SOUND CONF\\DISPLAY CONF\\INPUT CONF\\NEW GAME\\EXIT GAME"}},
+    {MenuMode_e::NEXT_LEVEL,
+     PairPairFloatStr_t{{-0.95f, 0.9f}, "CONTINUE"}},
+    {MenuMode_e::SOUND,
+     PairPairFloatStr_t{{-0.95f, 0.9f}, "MUSIC VOLUME\\EFFECTS VOLUME\\RETURN\\VALID"}},
+    {MenuMode_e::DISPLAY,
+     PairPairFloatStr_t{{-0.95f, 0.9f}, "SET RESOLUTION\\SET PICTURE QUALITY\\RETURN\\VALID"}},
+    {MenuMode_e::INPUT,
+     PairPairFloatStr_t{{-0.95f, 0.9f}, "MOVE FORWARD\\MOVE BACKWARD\\STRAFE LEFT\\"
+         "STRAFE RIGHT\\TURN RIGHT\\TURN LEFT\\ACTION\\SHOOT\\RETURN\\VALID"}
+    }
+};
 inline const std::map<Shader_e, std::string> SHADER_ID_MAP
 {
     {Shader_e::COLOR_S, "ceilingFloor"},
