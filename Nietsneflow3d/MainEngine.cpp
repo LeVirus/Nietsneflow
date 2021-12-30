@@ -156,7 +156,7 @@ void MainEngine::loadPlayerGear()
 //===================================================================
 void MainEngine::displayTransitionMenu()
 {
-    setMenuEntries(MenuMode_e::TRANSITION_LEVEL);
+    setMenuEntries(MenuMode_e::TRANSITION_LEVEL, m_playerConf);
     m_gamePaused = true;
     assert(m_writeConf);
     m_physicalEngine.setModeTransitionMenu(true);
@@ -1053,11 +1053,11 @@ uint32_t MainEngine::createAmmoEntity(CollisionTag_e collTag, bool visibleShot)
 }
 
 //===================================================================
-void MainEngine::setMenuEntries(MenuMode_e mode)
+void MainEngine::setMenuEntries(MenuMode_e mode, PlayerConfComponent *playerComp)
 {
     m_writeConf->m_upLeftPositionGL = MAP_MENU_DATA.at(mode).first;
     m_graphicEngine.fillMenuWrite(m_writeConf, mode);
-    m_physicalEngine.setMenuMode(mode);
+    playerComp->m_menuMode = mode;
 }
 
 //===================================================================
@@ -1793,7 +1793,7 @@ void MainEngine::confWriteEntities()
     assert(writeConf);
     m_writeConf = writeConf;
     writeConf->m_fontSize = MENU_FONT_SIZE;
-    setMenuEntries(MenuMode_e::BASE);
+    setMenuEntries(MenuMode_e::BASE, m_playerConf);
     m_playerConf->m_menuEntity = numMenuWrite;
     m_playerConf->m_ammoWriteEntity = numAmmoWrite;
     m_playerConf->m_lifeWriteEntity = numLifeWrite;
@@ -1814,16 +1814,9 @@ void MainEngine::confMenuCursorEntity()
     assert(spriteCursor);
     assert(m_memCursorSpriteData);
     m_playerConf->m_menuCursorEntity = cursorEntity;
+    m_playerConf->m_menuMode = MenuMode_e::BASE;
     spriteCursor->m_spriteData = m_memCursorSpriteData;
-    posCursor->m_vertex.reserve(4);
-    float rightPos = MAP_MENU_DATA.at(MenuMode_e::BASE).first.first - 0.05f,
-            leftPos = rightPos - CURSOR_GL_SIZE.first,
-            upPos = MAP_MENU_DATA.at(MenuMode_e::BASE).first.second,
-            downPos = MAP_MENU_DATA.at(MenuMode_e::BASE).first.second - CURSOR_GL_SIZE.second;
-    posCursor->m_vertex.emplace_back(PairFloat_t{leftPos, upPos});
-    posCursor->m_vertex.emplace_back(PairFloat_t{rightPos, upPos});
-    posCursor->m_vertex.emplace_back(PairFloat_t{rightPos, downPos});
-    posCursor->m_vertex.emplace_back(PairFloat_t{leftPos, downPos});
+    posCursor->m_vertex.resize(4);
 }
 
 //===================================================================

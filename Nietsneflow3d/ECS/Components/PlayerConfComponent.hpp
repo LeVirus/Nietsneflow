@@ -32,5 +32,6 @@ struct PlayerConfComponent : public ecs::Component
     m_actionEntity, m_hitMeleeEntity, m_lifeWriteEntity, m_numInfoWriteEntity,
     m_life = 100, m_displayTeleportEntity;
     uint32_t m_currentCursorPos = 0;
+    MenuMode_e m_menuMode;
     virtual ~PlayerConfComponent() = default;
 };

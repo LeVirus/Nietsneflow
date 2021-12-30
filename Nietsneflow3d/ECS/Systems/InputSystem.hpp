@@ -35,14 +35,10 @@ public:
     {
         return m_toggleSignal;
     }
-    inline void setMode(MenuMode_e mode)
-    {
-        m_menuMode = mode;
-    }
 private:
     void setUsedComponents();
     void treatPlayerInput();
-    void treatMenu(uint32_t playerEntity, MenuMode_e mode);
+    void treatMenu(uint32_t playerEntity);
     void treatMainMenu(PlayerConfComponent *playerComp);
     void treatSoundMenu(PlayerConfComponent *playerComp);
     void treatDisplayMenu(PlayerConfComponent *playerComp);
@@ -58,7 +54,6 @@ private:
                                                           {MenuMode_e::TRANSITION_LEVEL, 1},
                                                           {MenuMode_e::SOUND, static_cast<uint32_t>(SoundMenuCursorPos_e::TOTAL) - 1}};
     bool m_modeTransition = false, m_toggleSignal = false;
-    MenuMode_e m_menuMode;
 };
 
 void changePlayerWeapon(WeaponComponent &weaponComp, bool next);

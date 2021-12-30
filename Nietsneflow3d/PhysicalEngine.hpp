@@ -40,7 +40,6 @@ public:
     {
         return m_inputSystem->toggleFullScreen();
     }
-    void setMenuMode(MenuMode_e mode);
 private:
     InputSystem *m_inputSystem = nullptr;
     CollisionSystem *m_collisionSystem = nullptr;
