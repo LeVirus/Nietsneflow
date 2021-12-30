@@ -13,6 +13,7 @@ assert(elementCase); FistPersonSystem.cpp::232===========================OK?
 assert à CollisionSystem.cpp::89    EnemyConfComponent == nullptr
 assert à CollisionSystem.cpp::770  ==============??
 assert à CollisionSystem.cpp::1286 =======================COMMENT
+assert MainEngine.cpp::1916
 
 
 ))

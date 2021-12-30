@@ -47,11 +47,13 @@ void StaticDisplaySystem::updateMenuCursorPosition(PlayerConfComponent *playerCo
     assert(writeMenuComp);
     float upPos = writeMenuComp->m_upLeftPositionGL.second -
             static_cast<float>(playerComp->m_currentCursorPos) * writeMenuComp->m_fontSize,
-            downPos = upPos - writeMenuComp->m_fontSize * 2.0f;
-    posComp->m_vertex[0].second = upPos;
-    posComp->m_vertex[1].second = upPos;
-    posComp->m_vertex[2].second = downPos;
-    posComp->m_vertex[3].second = downPos;
+            downPos = upPos - writeMenuComp->m_fontSize * 2.0f, rightPos =
+            writeMenuComp->m_upLeftPositionGL.first - 0.05f, leftPos =
+            rightPos - CURSOR_GL_SIZE.first;
+    posComp->m_vertex[0] = {leftPos, upPos};
+    posComp->m_vertex[1] = {rightPos, upPos};
+    posComp->m_vertex[2] = {rightPos, downPos};
+    posComp->m_vertex[3] = {leftPos, downPos};
     m_currentCursorPos = playerComp->m_currentCursorPos;
     m_cursorInit = false;
 }

@@ -1054,6 +1054,13 @@ uint32_t MainEngine::createAmmoEntity(CollisionTag_e collTag, bool visibleShot)
 }
 
 //===================================================================
+void MainEngine::setMenuEntries(MenuMode_e mode)
+{
+    m_writeConf->m_upLeftPositionGL = MAP_MENU_DATA.at(mode).first;
+    m_graphicEngine.fillMenuWrite(m_writeConf, mode);
+}
+
+//===================================================================
 void MainEngine::createPlayerVisibleShotEntity(WeaponComponent *weaponConf)
 {
     for(uint32_t i = 0; i < weaponConf->m_weaponsData.size(); ++i)
@@ -1785,9 +1792,8 @@ void MainEngine::confWriteEntities()
             searchComponentByType<WriteComponent>(numMenuWrite, Components_e::WRITE_COMPONENT);
     assert(writeConf);
     m_writeConf = writeConf;
-    writeConf->m_upLeftPositionGL = m_menuCornerUpLeft;
     writeConf->m_fontSize = MENU_FONT_SIZE;
-    m_graphicEngine.fillMenuWrite(writeConf, MenuMode_e::BASE);
+    setMenuEntries(MenuMode_e::BASE);
     m_playerConf->m_menuEntity = numMenuWrite;
     m_playerConf->m_ammoWriteEntity = numAmmoWrite;
     m_playerConf->m_lifeWriteEntity = numLifeWrite;
@@ -1810,10 +1816,10 @@ void MainEngine::confMenuCursorEntity()
     m_playerConf->m_menuCursorEntity = cursorEntity;
     spriteCursor->m_spriteData = m_memCursorSpriteData;
     posCursor->m_vertex.reserve(4);
-    float leftPos = m_menuCornerUpLeft.first - 0.25f,
-            rightPos = m_menuCornerUpLeft.first - 0.05f,
-            upPos = m_menuCornerUpLeft.second,
-            downPos = m_menuCornerUpLeft.second - 0.25f;
+    float rightPos = MAP_MENU_DATA.at(MenuMode_e::BASE).first.first - 0.05f,
+            leftPos = rightPos - CURSOR_GL_SIZE.first,
+            upPos = MAP_MENU_DATA.at(MenuMode_e::BASE).first.second,
+            downPos = MAP_MENU_DATA.at(MenuMode_e::BASE).first.second - CURSOR_GL_SIZE.second;
     posCursor->m_vertex.emplace_back(PairFloat_t{leftPos, upPos});
     posCursor->m_vertex.emplace_back(PairFloat_t{rightPos, upPos});
     posCursor->m_vertex.emplace_back(PairFloat_t{rightPos, downPos});

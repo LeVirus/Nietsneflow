@@ -51,10 +51,7 @@ public:
     void clearLevel();
     void confSystems();
     uint32_t createAmmoEntity(CollisionTag_e collTag, bool visibleShot);
-    inline void setMenuEntries(MenuMode_e mode)
-    {
-        m_graphicEngine.fillMenuWrite(m_writeConf, mode);
-    }
+    void setMenuEntries(MenuMode_e mode);
 private:
     void clearObjectToDelete();
     void savePlayerGear();
@@ -163,7 +160,6 @@ private:
     std::vector<std::pair<uint32_t, time_t>> m_vectMemPausedTimer;
     bool m_gamePaused = false, m_playerMem = false;
     SpriteData const *m_memCursorSpriteData = nullptr, *m_memVisibleShotA = nullptr;
-    PairFloat_t m_menuCornerUpLeft = {-0.5f, 0.5f};
     GeneralCollisionComponent *m_exitColl = nullptr;
     WriteComponent *m_writeConf = nullptr;
     PlayerConfComponent *m_playerConf = nullptr;

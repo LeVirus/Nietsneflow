@@ -98,6 +98,7 @@ enum class InputMenuCursorPos_e
     TURN_RIGHT,
     ACTION,
     SHOOT,
+    DEFAULT,
     RETURN,
     VALID,
     TOTAL
@@ -294,7 +295,7 @@ inline const float MAX_SOUND_DISTANCE = 1000.0f;
 inline const float EJECT_TIME = 0.5F;
 inline const float RAYCAST_VERTICAL_SIZE = 1.0f;
 inline const float STD_FONT_SIZE = 0.06f;
-inline const float MENU_FONT_SIZE = 0.15f;
+inline const float MENU_FONT_SIZE = 0.10f;
 inline const float PI = 3.14159265359f;
 inline const float PI_DOUBLE = PI * 2.0f;
 inline const float PI_QUARTER = PI / 4.0f;
@@ -317,31 +318,31 @@ inline const float TAN_PI_QUARTER = std::tan(45.0f);
 inline const float CONE_VISION = 60.0f;
 inline const float HALF_CONE_VISION = CONE_VISION / 2.0f;
 inline const float DOUBLE_CONE_VISION = CONE_VISION * 2.0f;
-
 inline const uint32_t RAYCAST_LINE_NUMBER = 200, RAYCAST_DEPTH = 20, MAX_SHOTS = 5,
 RAYCAST_GROUND_CEILING_NUMBER = RAYCAST_LINE_NUMBER / 2.0f;
 inline const float SCREEN_VERT_BACKGROUND_GL_STEP = 1.0f / RAYCAST_GROUND_CEILING_NUMBER;
 inline const float SCREEN_HORIZ_BACKGROUND_GL_STEP = 2.0f / RAYCAST_LINE_NUMBER;
+inline const PairFloat_t CURSOR_GL_SIZE = {0.20f, 0.25f};
 
 inline const std::string STR_PLAYER_LIFE = "LIFE::";
 inline const std::string STR_PLAYER_AMMO = "AMMO::";
 inline const std::string SHADER_DIR_STR = "../Nietsneflow3d/Ressources/Shader/";
 inline const std::string LEVEL_RESSOURCES_DIR_STR = "../Nietsneflow3d/Ressources/";
 inline const std::string TEXTURES_DIR_STR = "../Nietsneflow3d/Ressources/Textures/";
-inline const std::map<MenuMode_e, PairPairFloatStr_t> m_mapMenuEntries =
+inline const std::map<MenuMode_e, PairPairFloatStr_t> MAP_MENU_DATA =
 {
     {MenuMode_e::BASE,
-     PairPairFloatStr_t{{-0.95f, 0.9f},
+     PairPairFloatStr_t{{-0.5f, 0.5f},
       "RETURN TO GAME\\SOUND CONF\\DISPLAY CONF\\INPUT CONF\\NEW GAME\\EXIT GAME"}},
     {MenuMode_e::NEXT_LEVEL,
-     PairPairFloatStr_t{{-0.95f, 0.9f}, "CONTINUE"}},
+     PairPairFloatStr_t{{-0.5f, 0.5f}, "CONTINUE"}},
     {MenuMode_e::SOUND,
-     PairPairFloatStr_t{{-0.95f, 0.9f}, "MUSIC VOLUME\\EFFECTS VOLUME\\RETURN\\VALID"}},
+     PairPairFloatStr_t{{-0.8f, 0.5f}, "MUSIC VOLUME\\EFFECTS VOLUME\\RETURN\\VALID"}},
     {MenuMode_e::DISPLAY,
-     PairPairFloatStr_t{{-0.95f, 0.9f}, "SET RESOLUTION\\SET PICTURE QUALITY\\RETURN\\VALID"}},
+     PairPairFloatStr_t{{-0.8f, 0.5f}, "SET RESOLUTION\\SET PICTURE QUALITY\\RETURN\\VALID"}},
     {MenuMode_e::INPUT,
-     PairPairFloatStr_t{{-0.95f, 0.9f}, "MOVE FORWARD\\MOVE BACKWARD\\STRAFE LEFT\\"
-         "STRAFE RIGHT\\TURN RIGHT\\TURN LEFT\\ACTION\\SHOOT\\RETURN\\VALID"}
+     PairPairFloatStr_t{{-0.9f, 0.8f}, "MOVE FORWARD\\MOVE BACKWARD\\STRAFE LEFT\\"
+         "STRAFE RIGHT\\TURN RIGHT\\TURN LEFT\\ACTION\\SHOOT\\DEFAULT\\RETURN\\VALID"}
     }
 };
 inline const std::map<Shader_e, std::string> SHADER_ID_MAP
