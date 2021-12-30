@@ -35,6 +35,10 @@ public:
     {
         return m_toggleSignal;
     }
+    inline void setMode(MenuMode_e mode)
+    {
+        m_menuMode = mode;
+    }
 private:
     void setUsedComponents();
     void treatPlayerInput();
@@ -51,7 +55,7 @@ private:
     const std::map<MenuMode_e, uint32_t> m_mapMenuSize = {{MenuMode_e::BASE, static_cast<uint32_t>(MainMenuCursorPos_e::TOTAL) - 1},
                                                           {MenuMode_e::DISPLAY, static_cast<uint32_t>(DisplayMenuCursorPos_e::TOTAL) - 1},
                                                           {MenuMode_e::INPUT, static_cast<uint32_t>(InputMenuCursorPos_e::TOTAL) - 1},
-                                                          {MenuMode_e::NEXT_LEVEL, 1},
+                                                          {MenuMode_e::TRANSITION_LEVEL, 1},
                                                           {MenuMode_e::SOUND, static_cast<uint32_t>(SoundMenuCursorPos_e::TOTAL) - 1}};
     bool m_modeTransition = false, m_toggleSignal = false;
     MenuMode_e m_menuMode;

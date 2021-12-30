@@ -285,7 +285,7 @@ enum class LevelCaseType_e
 enum class MenuMode_e
 {
     BASE,
-    NEXT_LEVEL,
+    TRANSITION_LEVEL,
     DISPLAY,
     SOUND,
     INPUT
@@ -334,7 +334,7 @@ inline const std::map<MenuMode_e, PairPairFloatStr_t> MAP_MENU_DATA =
     {MenuMode_e::BASE,
      PairPairFloatStr_t{{-0.5f, 0.5f},
       "RETURN TO GAME\\SOUND CONF\\DISPLAY CONF\\INPUT CONF\\NEW GAME\\EXIT GAME"}},
-    {MenuMode_e::NEXT_LEVEL,
+    {MenuMode_e::TRANSITION_LEVEL,
      PairPairFloatStr_t{{-0.5f, 0.5f}, "CONTINUE"}},
     {MenuMode_e::SOUND,
      PairPairFloatStr_t{{-0.8f, 0.5f}, "MUSIC VOLUME\\EFFECTS VOLUME\\RETURN\\VALID"}},

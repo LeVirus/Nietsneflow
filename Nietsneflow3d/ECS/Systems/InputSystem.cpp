@@ -254,7 +254,7 @@ void InputSystem::treatMenu(uint32_t playerEntity, MenuMode_e mode)
     else if(!m_keyEspapePressed && glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
     {
         m_keyEspapePressed = true;
-        if(mode == MenuMode_e::BASE)
+        if(mode == MenuMode_e::BASE || mode == MenuMode_e::TRANSITION_LEVEL)
         {
             m_mainEngine->setUnsetPaused();
         }
@@ -320,7 +320,8 @@ void InputSystem::treatMenu(uint32_t playerEntity, MenuMode_e mode)
         case MenuMode_e::INPUT:
             treatInputMenu(playerComp);
             break;
-        case MenuMode_e::NEXT_LEVEL:
+        case MenuMode_e::TRANSITION_LEVEL:
+            m_mainEngine->setUnsetPaused();
             break;
         }
     }
@@ -436,6 +437,8 @@ void InputSystem::treatInputMenu(PlayerConfComponent *playerComp)
         m_enterPressed = true;
         break;
     case InputMenuCursorPos_e::VALID:
+        break;
+    case InputMenuCursorPos_e::DEFAULT:
         break;
     case InputMenuCursorPos_e::TOTAL:
         break;

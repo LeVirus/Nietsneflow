@@ -66,7 +66,6 @@ bool MainEngine::mainLoop(bool &memGameOver)
     //display FPS
 //    std::chrono::duration<double> fps;
 //    std::chrono::time_point<std::chrono::system_clock> clockFrame  = std::chrono::system_clock::now();
-
     m_graphicEngine.unsetTransition(m_gamePaused);
     std::chrono::time_point<std::chrono::system_clock> clock;
     clock = std::chrono::system_clock::now();
@@ -157,9 +156,9 @@ void MainEngine::loadPlayerGear()
 //===================================================================
 void MainEngine::displayTransitionMenu()
 {
+    setMenuEntries(MenuMode_e::TRANSITION_LEVEL);
     m_gamePaused = true;
     assert(m_writeConf);
-    m_graphicEngine.fillMenuWrite(m_writeConf, MenuMode_e::NEXT_LEVEL);
     m_physicalEngine.setModeTransitionMenu(true);
     m_graphicEngine.mainDisplay(m_gamePaused);
     m_playerConf->m_currentCursorPos = 0;
@@ -1058,6 +1057,7 @@ void MainEngine::setMenuEntries(MenuMode_e mode)
 {
     m_writeConf->m_upLeftPositionGL = MAP_MENU_DATA.at(mode).first;
     m_graphicEngine.fillMenuWrite(m_writeConf, mode);
+    m_physicalEngine.setMenuMode(mode);
 }
 
 //===================================================================
