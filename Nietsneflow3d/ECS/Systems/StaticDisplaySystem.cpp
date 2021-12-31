@@ -116,10 +116,7 @@ void StaticDisplaySystem::displayMenu()
                 searchComponentByType<SpriteTextureComponent>(playerComp->m_menuCursorEntity,
                                                               Components_e::SPRITE_TEXTURE_COMPONENT);
         assert(spriteComp);
-        if(m_currentCursorPos != playerComp->m_currentCursorPos)
-        {
-            updateMenuCursorPosition(playerComp);
-        }
+        updateMenuCursorPosition(playerComp);
         if(!m_cursorInit)
         {
             fillCursorMenuVertex(playerComp);

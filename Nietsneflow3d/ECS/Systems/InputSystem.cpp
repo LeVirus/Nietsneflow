@@ -262,7 +262,7 @@ void InputSystem::treatMenu(uint32_t playerEntity)
         {
             playerComp->m_currentCursorPos = 0;
             playerComp->m_menuMode = MenuMode_e::BASE;
-            m_mainEngine->setMenuEntries(MenuMode_e::BASE, playerComp);
+            m_mainEngine->setMenuEntries(playerComp);
             return;
         }
         return;
@@ -336,17 +336,17 @@ void InputSystem::treatMainMenu(PlayerConfComponent *playerComp)
     case MainMenuCursorPos_e::SOUND_CONF:
         playerComp->m_currentCursorPos = 0;
         playerComp->m_menuMode = MenuMode_e::SOUND;
-        m_mainEngine->setMenuEntries(MenuMode_e::SOUND, playerComp);
+        m_mainEngine->setMenuEntries(playerComp);
         break;
     case MainMenuCursorPos_e::DISPLAY_CONF:
         playerComp->m_currentCursorPos = 0;
         playerComp->m_menuMode = MenuMode_e::DISPLAY;
-        m_mainEngine->setMenuEntries(MenuMode_e::DISPLAY, playerComp);
+        m_mainEngine->setMenuEntries(playerComp);
         break;
     case MainMenuCursorPos_e::INPUT_CONF:
         playerComp->m_currentCursorPos = 0;
         playerComp->m_menuMode = MenuMode_e::INPUT;
-        m_mainEngine->setMenuEntries(MenuMode_e::INPUT, playerComp);
+        m_mainEngine->setMenuEntries(playerComp);
         break;
     case MainMenuCursorPos_e::NEW_GAME:
         break;
@@ -374,7 +374,7 @@ void InputSystem::treatSoundMenu(PlayerConfComponent *playerComp)
     case SoundMenuCursorPos_e::RETURN:
         playerComp->m_currentCursorPos = 0;
         playerComp->m_menuMode = MenuMode_e::BASE;
-        m_mainEngine->setMenuEntries(MenuMode_e::BASE, playerComp);
+        m_mainEngine->setMenuEntries(playerComp);
         m_enterPressed = true;
         break;
     case SoundMenuCursorPos_e::VALID:
@@ -398,7 +398,7 @@ void InputSystem::treatDisplayMenu(PlayerConfComponent *playerComp)
     case DisplayMenuCursorPos_e::RETURN:
         playerComp->m_currentCursorPos = 0;
         playerComp->m_menuMode = MenuMode_e::BASE;
-        m_mainEngine->setMenuEntries(MenuMode_e::BASE, playerComp);
+        m_mainEngine->setMenuEntries(playerComp);
         m_enterPressed = true;
         break;
     case DisplayMenuCursorPos_e::VALID:
@@ -433,7 +433,7 @@ void InputSystem::treatInputMenu(PlayerConfComponent *playerComp)
     case InputMenuCursorPos_e::RETURN:
         playerComp->m_currentCursorPos = 0;
         playerComp->m_menuMode = MenuMode_e::BASE;
-        m_mainEngine->setMenuEntries(MenuMode_e::BASE, playerComp);
+        m_mainEngine->setMenuEntries(playerComp);
         m_enterPressed = true;
         break;
     case InputMenuCursorPos_e::VALID:

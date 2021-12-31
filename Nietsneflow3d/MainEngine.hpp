@@ -51,7 +51,7 @@ public:
     void clearLevel();
     void confSystems();
     uint32_t createAmmoEntity(CollisionTag_e collTag, bool visibleShot);
-    void setMenuEntries(MenuMode_e mode, PlayerConfComponent *playerComp);
+    void setMenuEntries(PlayerConfComponent *playerComp);
 private:
     void clearObjectToDelete();
     void savePlayerGear();

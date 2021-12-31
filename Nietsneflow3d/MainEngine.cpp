@@ -156,7 +156,8 @@ void MainEngine::loadPlayerGear()
 //===================================================================
 void MainEngine::displayTransitionMenu()
 {
-    setMenuEntries(MenuMode_e::TRANSITION_LEVEL, m_playerConf);
+    m_playerConf->m_menuMode = MenuMode_e::TRANSITION_LEVEL;
+    setMenuEntries(m_playerConf);
     m_gamePaused = true;
     assert(m_writeConf);
     m_physicalEngine.setModeTransitionMenu(true);
@@ -1053,11 +1054,10 @@ uint32_t MainEngine::createAmmoEntity(CollisionTag_e collTag, bool visibleShot)
 }
 
 //===================================================================
-void MainEngine::setMenuEntries(MenuMode_e mode, PlayerConfComponent *playerComp)
+void MainEngine::setMenuEntries(PlayerConfComponent *playerComp)
 {
-    m_writeConf->m_upLeftPositionGL = MAP_MENU_DATA.at(mode).first;
-    m_graphicEngine.fillMenuWrite(m_writeConf, mode);
-    playerComp->m_menuMode = mode;
+    m_writeConf->m_upLeftPositionGL = MAP_MENU_DATA.at(playerComp->m_menuMode).first;
+    m_graphicEngine.fillMenuWrite(m_writeConf, playerComp->m_menuMode);
 }
 
 //===================================================================
@@ -1793,7 +1793,8 @@ void MainEngine::confWriteEntities()
     assert(writeConf);
     m_writeConf = writeConf;
     writeConf->m_fontSize = MENU_FONT_SIZE;
-    setMenuEntries(MenuMode_e::BASE, m_playerConf);
+    m_playerConf->m_menuMode = MenuMode_e::BASE;
+    setMenuEntries(m_playerConf);
     m_playerConf->m_menuEntity = numMenuWrite;
     m_playerConf->m_ammoWriteEntity = numAmmoWrite;
     m_playerConf->m_lifeWriteEntity = numLifeWrite;
