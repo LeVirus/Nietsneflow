@@ -337,11 +337,11 @@ inline const std::map<MenuMode_e, PairPairFloatStr_t> MAP_MENU_DATA =
     {MenuMode_e::TRANSITION_LEVEL,
      PairPairFloatStr_t{{-0.5f, 0.5f}, "CONTINUE"}},
     {MenuMode_e::SOUND,
-     PairPairFloatStr_t{{-0.8f, 0.5f}, "MUSIC VOLUME\\EFFECTS VOLUME\\RETURN\\VALID"}},
+     PairPairFloatStr_t{{-0.7f, 0.5f}, "MUSIC VOLUME\\EFFECTS VOLUME\\RETURN\\VALID"}},
     {MenuMode_e::DISPLAY,
-     PairPairFloatStr_t{{-0.8f, 0.5f}, "SET RESOLUTION\\SET PICTURE QUALITY\\RETURN\\VALID"}},
+     PairPairFloatStr_t{{-0.7f, 0.5f}, "SET RESOLUTION\\SET PICTURE QUALITY\\RETURN\\VALID"}},
     {MenuMode_e::INPUT,
-     PairPairFloatStr_t{{-0.9f, 0.8f}, "MOVE FORWARD\\MOVE BACKWARD\\STRAFE LEFT\\"
+     PairPairFloatStr_t{{-0.7f, 0.8f}, "MOVE FORWARD\\MOVE BACKWARD\\STRAFE LEFT\\"
          "STRAFE RIGHT\\TURN RIGHT\\TURN LEFT\\ACTION\\SHOOT\\DEFAULT\\RETURN\\VALID"}
     }
 };

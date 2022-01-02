@@ -4,7 +4,7 @@
 #include <constants.hpp>
 #include <vector>
 
-using tupleTetraFloat = std::tuple<float, float, float, float>;
+using TupleTetraFloat_t = std::tuple<float, float, float, float>;
 
 struct ColorVertexComponent : public ecs::Component
 {
@@ -12,6 +12,6 @@ struct ColorVertexComponent : public ecs::Component
     {
         muiTypeComponent = Components_e::COLOR_VERTEX_COMPONENT;
     }
-    std::vector<tupleTetraFloat> m_vertex;
+    std::vector<TupleTetraFloat_t> m_vertex;
     virtual ~ColorVertexComponent() = default;
 };

@@ -8,6 +8,7 @@
 #include <ECS/Components/WriteComponent.hpp>
 #include <ECS/Components/WeaponComponent.hpp>
 #include <ECS/Components/AudioComponent.hpp>
+#include <ECS/Systems/ColorDisplaySystem.hpp>
 #include <cassert>
 
 
@@ -122,6 +123,12 @@ void StaticDisplaySystem::displayMenu()
             fillCursorMenuVertex(playerComp);
         }
         drawVertex(spriteComp->m_spriteData->m_textureNum, VertexID_e::MENU_CURSOR);
+        if(playerComp->m_menuMode == MenuMode_e::SOUND)
+        {
+            mptrSystemManager->searchSystemByType<ColorDisplaySystem>(
+                        static_cast<uint32_t>(Systems_e::COLOR_DISPLAY_SYSTEM))->drawSoundMenuBars();
+            m_shader->use();
+        }
     }
 }
 

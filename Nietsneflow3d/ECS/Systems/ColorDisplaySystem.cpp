@@ -66,7 +66,8 @@ void ColorDisplaySystem::addColorSystemEntity(uint32_t entity)
 }
 
 //===================================================================
-void ColorDisplaySystem::loadColorEntities(uint32_t damage, uint32_t getObject, uint32_t transition, uint32_t scratchEntity)
+void ColorDisplaySystem::loadColorEntities(uint32_t damage, uint32_t getObject, uint32_t transition, uint32_t scratchEntity,
+                                           uint32_t musicVolume, uint32_t effectVolume)
 {
     m_damageMemComponents.first = stairwayToComponentManager().
             searchComponentByType<PositionVertexComponent>(damage, Components_e::POSITION_VERTEX_COMPONENT);
@@ -92,6 +93,18 @@ void ColorDisplaySystem::loadColorEntities(uint32_t damage, uint32_t getObject, 
             searchComponentByType<ColorVertexComponent>(scratchEntity, Components_e::COLOR_VERTEX_COMPONENT);
     assert(m_insideWallScratchMemComponents.first);
     assert(m_insideWallScratchMemComponents.second);
+    m_menuMusicVolumeComponents.first = stairwayToComponentManager().
+            searchComponentByType<PositionVertexComponent>(musicVolume, Components_e::POSITION_VERTEX_COMPONENT);
+    m_menuMusicVolumeComponents.second = stairwayToComponentManager().
+            searchComponentByType<ColorVertexComponent>(musicVolume, Components_e::COLOR_VERTEX_COMPONENT);
+    assert(m_menuMusicVolumeComponents.first);
+    assert(m_menuMusicVolumeComponents.second);
+    m_menuEffectsVolumeComponents.first = stairwayToComponentManager().
+            searchComponentByType<PositionVertexComponent>(effectVolume, Components_e::POSITION_VERTEX_COMPONENT);
+    m_menuEffectsVolumeComponents.second = stairwayToComponentManager().
+            searchComponentByType<ColorVertexComponent>(effectVolume, Components_e::COLOR_VERTEX_COMPONENT);
+    assert(m_menuEffectsVolumeComponents.first);
+    assert(m_menuEffectsVolumeComponents.second);
 }
 
 //===================================================================
@@ -106,6 +119,13 @@ void ColorDisplaySystem::drawEntity(const PositionVertexComponent *posComp, cons
 void ColorDisplaySystem::drawVisibleDamage()
 {
     drawEntity(m_damageMemComponents.first, m_damageMemComponents.second);
+}
+
+//===================================================================
+void ColorDisplaySystem::drawSoundMenuBars()
+{
+    drawEntity(m_menuMusicVolumeComponents.first, m_menuMusicVolumeComponents.second);
+    drawEntity(m_menuEffectsVolumeComponents.first, m_menuEffectsVolumeComponents.second);
 }
 
 //===================================================================
