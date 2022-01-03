@@ -52,6 +52,24 @@ public:
     void confSystems();
     uint32_t createAmmoEntity(CollisionTag_e collTag, bool visibleShot);
     void setMenuEntries(PlayerConfComponent *playerComp);
+    inline void updateMusicVolume(uint32_t volume)
+    {
+        m_audioEngine.updateMusicVolume(volume);
+        m_graphicEngine.updateMusicVolumeBar(volume);
+    }
+    inline void updateEffectsVolume(uint32_t volume)
+    {
+        m_audioEngine.updateEffectsVolume(volume);
+        m_graphicEngine.updateEffectsVolumeBar(volume);
+    }
+    inline uint32_t getMusicVolume()const
+    {
+        return m_audioEngine.getMusicVolume();
+    }
+    inline uint32_t getEffectsVolume()const
+    {
+        return m_audioEngine.getEffectsVolume();
+    }
 private:
     void clearObjectToDelete();
     void savePlayerGear();

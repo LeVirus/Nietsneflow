@@ -23,6 +23,8 @@ public:
     void setTransition(uint32_t current, uint32_t total);
     void display()const;
     void clearEntities();
+    void updateMusicVolumeBar(uint32_t volume);
+    void updateEffectsVolumeBar(uint32_t volume);
 private:
     void fillVertexFromEntities();
     void drawVertex();

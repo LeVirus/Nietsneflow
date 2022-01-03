@@ -36,6 +36,22 @@ public:
     {
         m_soundSystem->memPlayerEntity(entityNum);
     }
+    inline void updateMusicVolume(uint32_t volume)
+    {
+        m_musicVolume = volume;
+    }
+    inline void updateEffectsVolume(uint32_t volume)
+    {
+        m_effectsVolume = volume;
+    }
+    inline uint32_t getMusicVolume()const
+    {
+        return m_musicVolume;
+    }
+    inline uint32_t getEffectsVolume()const
+    {
+        return m_effectsVolume;
+    }
 private:
     std::optional<ALuint> loadBufferFromFile(const std::string &filename, bool soundEffect);
     void updateDevices();
@@ -50,6 +66,7 @@ private:
     //first = source, second = buffer
     std::optional<std::pair<ALuint, ALuint>> m_musicElement;
     SoundSystem *m_soundSystem = nullptr;
+    uint32_t m_musicVolume = 100u, m_effectsVolume = 100u;
 };
 
 void printALError(ALenum error);

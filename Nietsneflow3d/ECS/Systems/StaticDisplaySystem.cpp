@@ -72,7 +72,7 @@ void StaticDisplaySystem::execSystem()
         assert(playerComp);
         WeaponComponent *weaponComp = stairwayToComponentManager().
                 searchComponentByType<WeaponComponent>(playerComp->m_weaponEntity,
-                                                                    Components_e::WEAPON_COMPONENT);
+                                                       Components_e::WEAPON_COMPONENT);
         assert(weaponComp);
         //DRAW WEAPON
         SpriteTextureComponent *spriteComp = stairwayToComponentManager().

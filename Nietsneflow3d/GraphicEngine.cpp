@@ -160,6 +160,18 @@ void GraphicEngine::fillMenuWrite(WriteComponent *writeComp, MenuMode_e menuEntr
 }
 
 //===================================================================
+void GraphicEngine::updateMusicVolumeBar(uint32_t volume)
+{
+    m_colorSystem->updateMusicVolumeBar(volume);
+}
+
+//===================================================================
+void GraphicEngine::updateEffectsVolumeBar(uint32_t volume)
+{
+    m_colorSystem->updateEffectsVolumeBar(volume);
+}
+
+//===================================================================
 void GraphicEngine::clearSystems()
 {
     m_firstPersonSystem->clearBackgroundData();

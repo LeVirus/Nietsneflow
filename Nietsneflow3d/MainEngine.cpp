@@ -388,8 +388,8 @@ void MainEngine::confSoundMenuEntities(uint32_t musicEntity, uint32_t effectEnti
     ColorVertexComponent *colorComp = m_ecsManager.getComponentManager().
             searchComponentByType<ColorVertexComponent>(musicEntity, Components_e::COLOR_VERTEX_COMPONENT);
     assert(colorComp);
-    float leftPos = 0.3f, rightPos = leftPos + 0.2f,
-    upPos = MAP_MENU_DATA.at(MenuMode_e::SOUND).first.second - (MENU_FONT_SIZE + 0.01f),
+    float leftPos = 0.1f, rightPos = leftPos + (getMusicVolume() * MAX_SOUND_MENU_SIZE) / 100.0f,
+    upPos = MAP_MENU_DATA.at(MenuMode_e::SOUND).first.second - 0.01f,
     downPos = upPos - (MENU_FONT_SIZE - 0.02f);
     if(!posComp->m_vertex.empty())
     {
@@ -409,15 +409,15 @@ void MainEngine::confSoundMenuEntities(uint32_t musicEntity, uint32_t effectEnti
     colorComp->m_vertex.emplace_back(TupleTetraFloat_t{0.5f, 0.0f, 0.0f, 1.0f});
     colorComp->m_vertex.emplace_back(TupleTetraFloat_t{0.5f, 0.0f, 0.0f, 1.0f});
     colorComp->m_vertex.emplace_back(TupleTetraFloat_t{0.5f, 0.0f, 0.0f, 1.0f});
-
     posComp = m_ecsManager.getComponentManager().
             searchComponentByType<PositionVertexComponent>(effectEntity, Components_e::POSITION_VERTEX_COMPONENT);
     assert(posComp);
     colorComp = m_ecsManager.getComponentManager().
             searchComponentByType<ColorVertexComponent>(effectEntity, Components_e::COLOR_VERTEX_COMPONENT);
     assert(colorComp);
-    upPos += MENU_FONT_SIZE;
-    downPos += MENU_FONT_SIZE;
+    upPos -= MENU_FONT_SIZE;
+    downPos -= MENU_FONT_SIZE;
+    rightPos = leftPos + (getEffectsVolume() * MAX_SOUND_MENU_SIZE) / 100.0f;
     posComp->m_vertex.reserve(4);
     posComp->m_vertex.emplace_back(PairFloat_t{leftPos, upPos});
     posComp->m_vertex.emplace_back(PairFloat_t{rightPos, upPos});

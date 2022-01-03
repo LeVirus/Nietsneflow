@@ -163,3 +163,18 @@ void ColorDisplaySystem::clearEntities()
     mVectNumEntity.clear();
 }
 
+//===================================================================
+void ColorDisplaySystem::updateMusicVolumeBar(uint32_t volume)
+{
+    float newVal = 0.1f + (volume * MAX_SOUND_MENU_SIZE) / 100.0f;
+    m_menuMusicVolumeComponents.first->m_vertex[1].first = newVal;
+    m_menuMusicVolumeComponents.first->m_vertex[2].first = newVal;
+}
+
+//===================================================================
+void ColorDisplaySystem::updateEffectsVolumeBar(uint32_t volume)
+{
+    float newVal = 0.1f + (volume * MAX_SOUND_MENU_SIZE) / 100.0f;
+    m_menuEffectsVolumeComponents.first->m_vertex[1].first = newVal;
+    m_menuEffectsVolumeComponents.first->m_vertex[2].first = newVal;
+}

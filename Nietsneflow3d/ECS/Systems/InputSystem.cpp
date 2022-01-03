@@ -277,6 +277,12 @@ void InputSystem::treatMenu(uint32_t playerEntity)
         m_keyDownPressed = false;
         return;
     }
+    treatGeneralKeysMenu(playerComp);
+}
+
+//===================================================================
+void InputSystem::treatGeneralKeysMenu(PlayerConfComponent *playerComp)
+{
     uint32_t maxMenuIndex = m_mapMenuSize.at(playerComp->m_menuMode);
     if(!m_modeTransition && !m_keyUpPressed && glfwGetKey(m_window, GLFW_KEY_UP) == GLFW_PRESS)
     {
@@ -306,29 +312,109 @@ void InputSystem::treatMenu(uint32_t playerEntity)
     }
     else if(glfwGetKey(m_window, GLFW_KEY_ENTER) == GLFW_PRESS)
     {
-        switch (playerComp->m_menuMode)
-        {
-        case MenuMode_e::BASE:
-            treatMainMenu(playerComp);
-            break;
-        case MenuMode_e::SOUND:
-            treatSoundMenu(playerComp);
-            break;
-        case MenuMode_e::DISPLAY:
-            treatDisplayMenu(playerComp);
-            break;
-        case MenuMode_e::INPUT:
-            treatInputMenu(playerComp);
-            break;
-        case MenuMode_e::TRANSITION_LEVEL:
-            m_mainEngine->setUnsetPaused();
-            break;
-        }
+        treatEnterPressedMenu(playerComp);
+    }
+    else if(glfwGetKey(m_window, GLFW_KEY_LEFT) == GLFW_PRESS)
+    {
+        treatLeftPressedMenu(playerComp);
+    }
+    else if(glfwGetKey(m_window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+    {
+        treatRightPressedMenu(playerComp);
     }
 }
 
 //===================================================================
-void InputSystem::treatMainMenu(PlayerConfComponent *playerComp)
+void InputSystem::treatEnterPressedMenu(PlayerConfComponent *playerComp)
+{
+    switch (playerComp->m_menuMode)
+    {
+    case MenuMode_e::BASE:
+        treatEnterPressedMainMenu(playerComp);
+        break;
+    case MenuMode_e::SOUND:
+        treatEnterPressedSoundMenu(playerComp);
+        break;
+    case MenuMode_e::DISPLAY:
+        treatEnterPressedDisplayMenu(playerComp);
+        break;
+    case MenuMode_e::INPUT:
+        treatEnterPressedInputMenu(playerComp);
+        break;
+    case MenuMode_e::TRANSITION_LEVEL:
+        m_mainEngine->setUnsetPaused();
+        break;
+    }
+}
+
+//===================================================================
+void InputSystem::treatLeftPressedMenu(PlayerConfComponent *playerComp)
+{
+    if(playerComp->m_menuMode == MenuMode_e::SOUND)
+    {
+        SoundMenuCursorPos_e soundCursorPos = static_cast<SoundMenuCursorPos_e>(playerComp->m_currentCursorPos);
+        if(soundCursorPos == SoundMenuCursorPos_e::MUSIC_VOLUME)
+        {
+            uint32_t musicVolume = m_mainEngine->getMusicVolume();
+            if(musicVolume > 0)
+            {
+                m_mainEngine->updateMusicVolume(--musicVolume);
+            }
+        }
+        else if(soundCursorPos == SoundMenuCursorPos_e::EFFECTS_VOLUME)
+        {
+            uint32_t effectsVolume = m_mainEngine->getEffectsVolume();
+            if(effectsVolume > 0)
+            {
+                m_mainEngine->updateEffectsVolume(--effectsVolume);
+            }
+        }
+    }
+    else if(playerComp->m_menuMode == MenuMode_e::DISPLAY)
+    {
+
+    }
+    else if(playerComp->m_menuMode == MenuMode_e::INPUT)
+    {
+
+    }
+}
+
+//===================================================================
+void InputSystem::treatRightPressedMenu(PlayerConfComponent *playerComp)
+{
+    if(playerComp->m_menuMode == MenuMode_e::SOUND)
+    {
+        SoundMenuCursorPos_e soundCursorPos = static_cast<SoundMenuCursorPos_e>(playerComp->m_currentCursorPos);
+        if(soundCursorPos == SoundMenuCursorPos_e::MUSIC_VOLUME)
+        {
+            uint32_t musicVolume = m_mainEngine->getMusicVolume();
+            if(musicVolume < 100)
+            {
+                m_mainEngine->updateMusicVolume(++musicVolume);
+            }
+        }
+        else if(soundCursorPos == SoundMenuCursorPos_e::EFFECTS_VOLUME)
+        {
+            uint32_t effectsVolume = m_mainEngine->getEffectsVolume();
+            if(effectsVolume < 100)
+            {
+                m_mainEngine->updateEffectsVolume(++effectsVolume);
+            }
+        }
+    }
+    else if(playerComp->m_menuMode == MenuMode_e::DISPLAY)
+    {
+
+    }
+    else if(playerComp->m_menuMode == MenuMode_e::INPUT)
+    {
+
+    }
+}
+
+//===================================================================
+void InputSystem::treatEnterPressedMainMenu(PlayerConfComponent *playerComp)
 {
     MainMenuCursorPos_e menuPos = static_cast<MainMenuCursorPos_e>(playerComp->m_currentCursorPos);
     switch(menuPos)
@@ -337,6 +423,7 @@ void InputSystem::treatMainMenu(PlayerConfComponent *playerComp)
         playerComp->m_currentCursorPos = 0;
         playerComp->m_menuMode = MenuMode_e::SOUND;
         m_mainEngine->setMenuEntries(playerComp);
+        m_mainEngine->getMusicVolume();
         break;
     case MainMenuCursorPos_e::DISPLAY_CONF:
         playerComp->m_currentCursorPos = 0;
@@ -362,7 +449,7 @@ void InputSystem::treatMainMenu(PlayerConfComponent *playerComp)
 }
 
 //===================================================================
-void InputSystem::treatSoundMenu(PlayerConfComponent *playerComp)
+void InputSystem::treatEnterPressedSoundMenu(PlayerConfComponent *playerComp)
 {
     SoundMenuCursorPos_e menuPos = static_cast<SoundMenuCursorPos_e>(playerComp->m_currentCursorPos);
     switch(menuPos)
@@ -385,7 +472,7 @@ void InputSystem::treatSoundMenu(PlayerConfComponent *playerComp)
 }
 
 //===================================================================
-void InputSystem::treatDisplayMenu(PlayerConfComponent *playerComp)
+void InputSystem::treatEnterPressedDisplayMenu(PlayerConfComponent *playerComp)
 {
     DisplayMenuCursorPos_e menuPos =
             static_cast<DisplayMenuCursorPos_e>(playerComp->m_currentCursorPos);
@@ -409,7 +496,7 @@ void InputSystem::treatDisplayMenu(PlayerConfComponent *playerComp)
 }
 
 //===================================================================
-void InputSystem::treatInputMenu(PlayerConfComponent *playerComp)
+void InputSystem::treatEnterPressedInputMenu(PlayerConfComponent *playerComp)
 {
     InputMenuCursorPos_e menuPos = static_cast<InputMenuCursorPos_e>(playerComp->m_currentCursorPos);
     switch(menuPos)

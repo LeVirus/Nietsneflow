@@ -39,10 +39,14 @@ private:
     void setUsedComponents();
     void treatPlayerInput();
     void treatMenu(uint32_t playerEntity);
-    void treatMainMenu(PlayerConfComponent *playerComp);
-    void treatSoundMenu(PlayerConfComponent *playerComp);
-    void treatDisplayMenu(PlayerConfComponent *playerComp);
-    void treatInputMenu(PlayerConfComponent *playerComp);
+    void treatGeneralKeysMenu(PlayerConfComponent *playerComp);
+    void treatEnterPressedMenu(PlayerConfComponent *playerComp);
+    void treatLeftPressedMenu(PlayerConfComponent *playerComp);
+    void treatRightPressedMenu(PlayerConfComponent *playerComp);
+    void treatEnterPressedMainMenu(PlayerConfComponent *playerComp);
+    void treatEnterPressedSoundMenu(PlayerConfComponent *playerComp);
+    void treatEnterPressedDisplayMenu(PlayerConfComponent *playerComp);
+    void treatEnterPressedInputMenu(PlayerConfComponent *playerComp);
     void treatPlayerMove(PlayerConfComponent *playerComp, MoveableComponent *moveComp, MapCoordComponent *mapComp);
 private:
     GLFWwindow *m_window = nullptr;

@@ -51,6 +51,8 @@ public:
     {
         return *m_window;
     }
+    void updateMusicVolumeBar(uint32_t volume);
+    void updateEffectsVolumeBar(uint32_t volume);
     void clearSystems();
     void memColorSystemEntity(uint32_t entity);
     void memGroundBackgroundFPSSystemEntity(uint32_t entity, bool simpleTexture);
