@@ -464,8 +464,6 @@ void InputSystem::treatEnterPressedSoundMenu(PlayerConfComponent *playerComp)
         m_mainEngine->setMenuEntries(playerComp);
         m_enterPressed = true;
         break;
-    case SoundMenuCursorPos_e::VALID:
-        break;
     case SoundMenuCursorPos_e::TOTAL:
         break;
     }

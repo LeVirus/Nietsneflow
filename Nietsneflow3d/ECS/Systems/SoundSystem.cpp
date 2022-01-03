@@ -30,7 +30,8 @@ void SoundSystem::execSystem()
                 std::optional<float> volume = getVolumeFromDistance(mVectNumEntity[i], audioComp->m_maxDistance);
                 if(volume)
                 {
-                    alSourcef(audioComp->m_soundElements[j]->m_sourceALID, AL_GAIN, *volume);
+                    alSourcef(audioComp->m_soundElements[j]->m_sourceALID, AL_GAIN,
+                              *volume * static_cast<float>(m_effectsVolume) / 100.0f);
                     play(audioComp->m_soundElements[j]->m_sourceALID);
                 }
                 audioComp->m_soundElements[j]->m_toPlay = false;
@@ -97,6 +98,15 @@ ALuint SoundSystem::createSource(ALuint memSoundBuffer)
     alSourcei(source, AL_BUFFER, memSoundBuffer);
     m_vectSource.push_back(source);
     return source;
+}
+
+//===================================================================
+void SoundSystem::updateEffectsVolume(uint32_t volume)
+{
+    m_effectsVolume = volume;
+    alSourcef(m_sourceMenuAudio, AL_GAIN,
+              static_cast<float>(m_effectsVolume) / 100.0f);
+    play(m_sourceMenuAudio);
 }
 
 //===================================================================

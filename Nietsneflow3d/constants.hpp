@@ -75,7 +75,6 @@ enum class SoundMenuCursorPos_e
     MUSIC_VOLUME,
     EFFECTS_VOLUME,
     RETURN,
-    VALID,
     TOTAL
 };
 
@@ -338,7 +337,7 @@ inline const std::map<MenuMode_e, PairPairFloatStr_t> MAP_MENU_DATA =
     {MenuMode_e::TRANSITION_LEVEL,
      PairPairFloatStr_t{{-0.5f, 0.5f}, "CONTINUE"}},
     {MenuMode_e::SOUND,
-     PairPairFloatStr_t{{-0.7f, 0.5f}, "MUSIC VOLUME\\EFFECTS VOLUME\\RETURN\\VALID"}},
+     PairPairFloatStr_t{{-0.7f, 0.5f}, "MUSIC VOLUME\\EFFECTS VOLUME\\RETURN"}},
     {MenuMode_e::DISPLAY,
      PairPairFloatStr_t{{-0.7f, 0.5f}, "SET RESOLUTION\\SET PICTURE QUALITY\\RETURN\\VALID"}},
     {MenuMode_e::INPUT,

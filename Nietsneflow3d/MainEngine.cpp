@@ -90,7 +90,8 @@ bool MainEngine::mainLoop(bool &memGameOver)
             m_physicalEngine.reinitToggleFullScreen();
         }
         m_graphicEngine.runIteration(m_gamePaused);
-//        m_audioEngine.runIteration();
+        //MUUUUUSSSSSS
+        //m_audioEngine.runIteration();
         if(!m_exitColl->m_active)
         {
             //end level
@@ -564,8 +565,9 @@ void MainEngine::loadLevel(const LevelManager &levelManager)
     loadWallEntities(levelManager.getMoveableWallData(), levelManager.getPictureData().getSpriteData());
     loadDoorEntities(levelManager);
     loadEnemiesEntities(levelManager);
-//    m_audioEngine.loadMusicFromFile(levelManager.getLevel().getMusicFilename());
-//    m_audioEngine.playMusic();
+    //MMUUUUUUUUUUUUSSSSS
+    //m_audioEngine.loadMusicFromFile(levelManager.getLevel().getMusicFilename());
+    //m_audioEngine.playMusic();
 }
 
 //===================================================================
@@ -634,6 +636,7 @@ uint32_t MainEngine::loadWeaponsEntity(const LevelManager &levelManager)
         if(!vectWeapons[i].m_shotSound.empty())
         {
             audioComp->m_soundElements[weaponToTreat] = loadSound(vectWeapons[i].m_shotSound);
+            m_audioEngine.memAudioMenuSound(audioComp->m_soundElements[weaponToTreat]->m_sourceALID);
         }
         if(!vectWeapons[i].m_reloadSound.empty())
         {

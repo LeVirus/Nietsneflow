@@ -20,9 +20,20 @@ public:
     {
         m_playerEntity = entityNum;
     }
+    void updateEffectsVolume(uint32_t volume);
+    inline uint32_t getEffectsVolume()const
+    {
+        return m_effectsVolume;
+    }
+    inline void memAudioMenuSound(ALuint source)
+    {
+        m_sourceMenuAudio = source;
+    }
 private:
     std::optional<float> getVolumeFromDistance(uint32_t distantEntity, float maxDistance);
 private:
+    ALuint m_sourceMenuAudio;
     uint32_t m_playerEntity;
     std::vector<ALuint> m_vectSource;
+    uint32_t m_effectsVolume = 100;
 };
