@@ -88,7 +88,8 @@ void GraphicEngine::toogleFullScreen()
 {
     m_fullscreenMode = !m_fullscreenMode;
     glfwSetWindowMonitor(m_window, m_fullscreenMode ? glfwGetPrimaryMonitor() : nullptr,
-                         0, 0, m_screenSize.first, m_screenSize.second, GLFW_DONT_CARE);
+                         0, 0, m_memGraphicResolution[m_currentResolution].first.first,
+                         m_memGraphicResolution[m_currentResolution].first.second, GLFW_DONT_CARE);
 }
 
 //===================================================================
@@ -160,6 +161,33 @@ void GraphicEngine::fillMenuWrite(WriteComponent *writeComp, MenuMode_e menuEntr
 }
 
 //===================================================================
+void GraphicEngine::confWriteComponent(WriteComponent *writeComp)
+{
+    writeComp->m_fontSpriteData = m_ptrFontData->getWriteData(writeComp->m_str, writeComp->m_numTexture);
+}
+
+//===================================================================
+void GraphicEngine::memGraphicResolutions()
+{
+    //get resolution
+    int totalMonitor, resolutionCount;
+    GLFWmonitor** monitors = glfwGetMonitors(&totalMonitor);
+    assert(totalMonitor > 0);
+    m_memGraphicResolution.clear();
+    //one monitor
+    const GLFWvidmode* modes = glfwGetVideoModes(monitors[0], &resolutionCount);
+    m_memGraphicResolution.reserve(resolutionCount);
+    for (int i = 0; i < resolutionCount; i++)
+    {
+        m_memGraphicResolution.emplace_back(
+                    std::pair<pairI_t, std::string>{pairI_t{modes[i].width, modes[i].height},
+                                                    std::to_string(modes[i].width) + " X " + std::to_string(modes[i].height)});
+    }
+    assert(!m_memGraphicResolution.empty());
+    //init basic resolution to 0
+}
+
+//===================================================================
 void GraphicEngine::updateMusicVolumeBar(uint32_t volume)
 {
     m_colorSystem->updateMusicVolumeBar(volume);
@@ -209,10 +237,11 @@ void GraphicEngine::initGLWindow()
 #ifdef __APPLE__
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // uncomment this statement to fix compilation on OS X
 #endif
-
+    memGraphicResolutions();
     // glfw window creation
     // --------------------
-    m_window = glfwCreateWindow(m_screenSize.first, m_screenSize.second, "Nietsneflow", nullptr, nullptr);
+    m_window = glfwCreateWindow(m_memGraphicResolution[m_currentResolution].first.first,
+                                m_memGraphicResolution[m_currentResolution].first.second, "Nietsneflow", nullptr, nullptr);
     if(!m_window)
     {
         std::cout << "Failed to create GLFW window" << std::endl;

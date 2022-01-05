@@ -83,8 +83,8 @@ void StaticDisplaySystem::execSystem()
         drawVertex(spriteComp->m_spriteData->m_textureNum, VertexID_e::WEAPON);
         std::string strAmmoDisplay = STR_PLAYER_AMMO +
                 std::to_string(weaponComp->m_weaponsData[weaponComp->m_currentWeapon].m_ammunationsCount);
-        treatWriteVertex(playerComp->m_ammoWriteEntity, VertexID_e::AMMO_WRITE, strAmmoDisplay);
-        treatWriteVertex(playerComp->m_lifeWriteEntity, VertexID_e::LIFE_WRITE, STR_PLAYER_LIFE +
+        drawWriteVertex(playerComp->m_ammoWriteEntity, VertexID_e::AMMO_WRITE, strAmmoDisplay);
+        drawWriteVertex(playerComp->m_lifeWriteEntity, VertexID_e::LIFE_WRITE, STR_PLAYER_LIFE +
                          std::to_string(playerComp->m_life));
         if(playerComp->m_infoWriteData.first)
         {
@@ -92,7 +92,7 @@ void StaticDisplaySystem::execSystem()
                     searchComponentByType<TimerComponent>(mVectNumEntity[i], Components_e::TIMER_COMPONENT);
             assert(timerComp);
             std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() - timerComp->m_clockA;
-            treatWriteVertex(playerComp->m_numInfoWriteEntity, VertexID_e::INFO, playerComp->m_infoWriteData.second);
+            drawWriteVertex(playerComp->m_numInfoWriteEntity, VertexID_e::INFO, playerComp->m_infoWriteData.second);
             if(elapsed_seconds.count() > 1.5)
             {
                 playerComp->m_infoWriteData.first = false;
@@ -109,13 +109,11 @@ void StaticDisplaySystem::displayMenu()
     for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
     {
         PlayerConfComponent *playerComp = stairwayToComponentManager().
-                    searchComponentByType<PlayerConfComponent>(mVectNumEntity[i],
-                                                               Components_e::PLAYER_CONF_COMPONENT);
+                    searchComponentByType<PlayerConfComponent>(mVectNumEntity[i], Components_e::PLAYER_CONF_COMPONENT);
         assert(playerComp);
-        treatWriteVertex(playerComp->m_menuEntity, VertexID_e::MENU_WRITE);
+        drawWriteVertex(playerComp->m_menuEntity, VertexID_e::MENU_WRITE);
         SpriteTextureComponent *spriteComp = stairwayToComponentManager().
-                searchComponentByType<SpriteTextureComponent>(playerComp->m_menuCursorEntity,
-                                                              Components_e::SPRITE_TEXTURE_COMPONENT);
+                searchComponentByType<SpriteTextureComponent>(playerComp->m_menuCursorEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
         assert(spriteComp);
         updateMenuCursorPosition(playerComp);
         if(!m_cursorInit)
@@ -128,6 +126,11 @@ void StaticDisplaySystem::displayMenu()
             mptrSystemManager->searchSystemByType<ColorDisplaySystem>(
                         static_cast<uint32_t>(Systems_e::COLOR_DISPLAY_SYSTEM))->drawSoundMenuBars();
             m_shader->use();
+        }
+        else if(playerComp->m_menuMode == MenuMode_e::DISPLAY)
+        {
+            drawWriteVertex(m_resolutionDisplayMenuEntity, VertexID_e::RESOLUTION_DISPLAY_MENU);
+            drawWriteVertex(m_resolutionMenuQualityEntity, VertexID_e::QUALITY_DISPLAY_MENU);
         }
     }
 }
@@ -155,7 +158,7 @@ void StaticDisplaySystem::drawVertex(uint32_t numTexture, VertexID_e type)
 }
 
 //===================================================================
-void StaticDisplaySystem::treatWriteVertex(uint32_t numEntity, VertexID_e type, const std::string &value)
+void StaticDisplaySystem::drawWriteVertex(uint32_t numEntity, VertexID_e type, const std::string &value)
 {
     WriteComponent *writeComp = stairwayToComponentManager().
                 searchComponentByType<WriteComponent>(numEntity,
@@ -501,14 +504,8 @@ void StaticDisplaySystem::setWeaponSprite(uint32_t weaponEntity, uint32_t weapon
 }
 
 //===================================================================
-void StaticDisplaySystem::updateWeaponData(uint32_t weaponEntity)
+void StaticDisplaySystem::memDisplayMenuEntities(uint32_t numMenuResolutionWrite, uint32_t numMenuQualityWrite)
 {
-    WeaponComponent *weaponComp = stairwayToComponentManager().
-            searchComponentByType<WeaponComponent>(weaponEntity,
-                                                   Components_e::WEAPON_COMPONENT);
-    assert(weaponComp);
-    for(uint32_t i = 0; i < weaponComp->m_weaponsData.size(); ++i)
-    {
-//        weaponComp->m_weaponsData[i].m_memPosSprite.first;
-    }
+    m_resolutionDisplayMenuEntity = numMenuResolutionWrite;
+    m_resolutionMenuQualityEntity = numMenuQualityWrite;
 }

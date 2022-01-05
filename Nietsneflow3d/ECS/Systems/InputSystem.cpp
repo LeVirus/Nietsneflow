@@ -236,8 +236,7 @@ void InputSystem::treatPlayerMove(PlayerConfComponent *playerComp, MoveableCompo
 void InputSystem::treatMenu(uint32_t playerEntity)
 {
     PlayerConfComponent *playerComp = stairwayToComponentManager().
-            searchComponentByType<PlayerConfComponent>(playerEntity,
-                                                       Components_e::PLAYER_CONF_COMPONENT);
+            searchComponentByType<PlayerConfComponent>(playerEntity, Components_e::PLAYER_CONF_COMPONENT);
     assert(playerComp);
     if(glfwGetKey(m_window, GLFW_KEY_ENTER) == GLFW_RELEASE)
     {

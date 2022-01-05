@@ -39,6 +39,7 @@ public:
     void updateAmmoCount(WriteComponent *writeComp, WeaponComponent *weaponComp);
     void updatePlayerLife(WriteComponent *writeComp, PlayerConfComponent *playerComp);
     void fillMenuWrite(WriteComponent *writeComp, MenuMode_e menuEntry);
+    void confWriteComponent(WriteComponent *writeComp);
     inline MapDisplaySystem &getMapSystem()
     {
         return *m_mapSystem;
@@ -50,6 +51,10 @@ public:
     inline GLFWwindow &getGLWindow()
     {
         return *m_window;
+    }
+    inline const std::vector<std::pair<pairI_t, std::string>> &getResolutions()const
+    {
+        return m_memGraphicResolution;
     }
     void updateMusicVolumeBar(uint32_t volume);
     void updateEffectsVolumeBar(uint32_t volume);
@@ -64,6 +69,7 @@ public:
 private:
     void preDisplay();
     void postDisplay();
+    void memGraphicResolutions();
     void displayGameIteration();
     void initGLWindow();
     void initGlad();
@@ -73,11 +79,12 @@ private:
     void loadSprites(const std::vector<SpriteData> &vectSprites, const FontData &fontData);
 private:
     GLFWwindow* m_window = nullptr;
-    pairI_t m_screenSize = {720, 480};
+    uint32_t m_currentResolution = 0;
     std::vector<Shader> m_vectShader;
     //PictureData
     std::vector<Texture> m_vectTexture;
     std::vector<SpriteData> const *m_ptrSpriteData = nullptr;
+    std::vector<std::pair<pairI_t, std::string>> m_memGraphicResolution;
     FontData const *m_ptrFontData = nullptr;
     //Systems
     ColorDisplaySystem *m_colorSystem = nullptr;

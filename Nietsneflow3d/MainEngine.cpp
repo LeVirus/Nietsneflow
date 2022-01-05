@@ -1822,8 +1822,8 @@ void MainEngine::confPlayerVisibleShotsSprite(const std::vector<SpriteData> &vec
 //===================================================================
 void MainEngine::confWriteEntities()
 {
-    uint32_t numAmmoWrite = createWriteEntity(), numInfoWrite = createWriteEntity(),
-            numLifeWrite = createWriteEntity(), numMenuWrite = createWriteEntity();
+    uint32_t numAmmoWrite = createWriteEntity(), numInfoWrite = createWriteEntity(), numLifeWrite = createWriteEntity(),
+            numMenuWrite = createWriteEntity();
     //INFO
     WriteComponent *writeConf = m_ecsManager.getComponentManager().
             searchComponentByType<WriteComponent>(numInfoWrite, Components_e::WRITE_COMPONENT);
@@ -1850,12 +1850,39 @@ void MainEngine::confWriteEntities()
     assert(writeConf);
     m_writeConf = writeConf;
     writeConf->m_fontSize = MENU_FONT_SIZE;
+    confDisplayMenu();
     m_playerConf->m_menuMode = MenuMode_e::BASE;
     setMenuEntries(m_playerConf);
     m_playerConf->m_menuEntity = numMenuWrite;
     m_playerConf->m_ammoWriteEntity = numAmmoWrite;
     m_playerConf->m_lifeWriteEntity = numLifeWrite;
     m_playerConf->m_numInfoWriteEntity = numInfoWrite;
+}
+
+//===================================================================
+void MainEngine::confDisplayMenu()
+{
+    uint32_t numMenuResolutionWrite = createWriteEntity(), numMenuQualityWrite = createWriteEntity();
+    //Resolution
+    WriteComponent *writeConfA = m_ecsManager.getComponentManager().
+            searchComponentByType<WriteComponent>(numMenuResolutionWrite, Components_e::WRITE_COMPONENT);
+    assert(writeConfA);
+    writeConfA->m_upLeftPositionGL.first = MAP_MENU_DATA.at(MenuMode_e::DISPLAY).first.first + 1.0f;
+    writeConfA->m_upLeftPositionGL.second = MAP_MENU_DATA.at(MenuMode_e::DISPLAY).first.second;
+    writeConfA->m_fontSize = MENU_FONT_SIZE;
+    //OOOOK default resolution
+    writeConfA->m_str = m_graphicEngine.getResolutions()[0].second;
+    m_graphicEngine.confWriteComponent(writeConfA);
+    //Quality
+    WriteComponent *writeConfB = m_ecsManager.getComponentManager().
+            searchComponentByType<WriteComponent>(numMenuQualityWrite, Components_e::WRITE_COMPONENT);
+    assert(writeConfB);
+    writeConfB->m_upLeftPositionGL = {writeConfA->m_upLeftPositionGL.first, writeConfA->m_upLeftPositionGL.second - MENU_FONT_SIZE};
+    writeConfB->m_fontSize = MENU_FONT_SIZE;
+    writeConfB->m_str = "MEDIUM";
+    m_graphicEngine.confWriteComponent(writeConfB);
+    m_ecsManager.getSystemManager().searchSystemByType<StaticDisplaySystem>(static_cast<uint32_t>(Systems_e::STATIC_DISPLAY_SYSTEM))->
+            memDisplayMenuEntities(numMenuResolutionWrite, numMenuQualityWrite);
 }
 
 //===================================================================
