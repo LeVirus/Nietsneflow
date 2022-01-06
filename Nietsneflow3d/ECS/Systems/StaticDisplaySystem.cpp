@@ -130,9 +130,37 @@ void StaticDisplaySystem::displayMenu()
         else if(playerComp->m_menuMode == MenuMode_e::DISPLAY)
         {
             drawWriteVertex(m_resolutionDisplayMenuEntity, VertexID_e::RESOLUTION_DISPLAY_MENU);
-            drawWriteVertex(m_resolutionMenuQualityEntity, VertexID_e::QUALITY_DISPLAY_MENU);
+            drawWriteVertex(m_qualityMenuEntity, VertexID_e::QUALITY_DISPLAY_MENU);
         }
     }
+}
+
+//===================================================================
+void StaticDisplaySystem::updateDisplayMenuResolution(const std::string &str)
+{
+    WriteComponent *writeComp = stairwayToComponentManager().
+                searchComponentByType<WriteComponent>(m_resolutionDisplayMenuEntity, Components_e::WRITE_COMPONENT);
+    assert(writeComp);
+    writeComp->m_str = str;
+    PositionVertexComponent *posComp = stairwayToComponentManager().
+                searchComponentByType<PositionVertexComponent>(m_resolutionDisplayMenuEntity, Components_e::POSITION_VERTEX_COMPONENT);
+    assert(posComp);
+    writeComp->m_fontSpriteData = m_fontDataPtr->getWriteData(str, writeComp->m_numTexture);
+    confWriteVertex(writeComp, posComp, VertexID_e::RESOLUTION_DISPLAY_MENU);
+}
+
+//===================================================================
+void StaticDisplaySystem::updateDisplayMenuQuality(const std::string &str)
+{
+    WriteComponent *writeComp = stairwayToComponentManager().
+                searchComponentByType<WriteComponent>(m_qualityMenuEntity, Components_e::WRITE_COMPONENT);
+    assert(writeComp);
+    writeComp->m_str = str;
+    PositionVertexComponent *posComp = stairwayToComponentManager().
+                searchComponentByType<PositionVertexComponent>(m_qualityMenuEntity, Components_e::POSITION_VERTEX_COMPONENT);
+    assert(posComp);
+    writeComp->m_fontSpriteData = m_fontDataPtr->getWriteData(str, writeComp->m_numTexture);
+    confWriteVertex(writeComp, posComp, VertexID_e::RESOLUTION_DISPLAY_MENU);
 }
 
 //===================================================================
@@ -161,8 +189,7 @@ void StaticDisplaySystem::drawVertex(uint32_t numTexture, VertexID_e type)
 void StaticDisplaySystem::drawWriteVertex(uint32_t numEntity, VertexID_e type, const std::string &value)
 {
     WriteComponent *writeComp = stairwayToComponentManager().
-                searchComponentByType<WriteComponent>(numEntity,
-                                                      Components_e::WRITE_COMPONENT);
+                searchComponentByType<WriteComponent>(numEntity, Components_e::WRITE_COMPONENT);
     PositionVertexComponent *posComp = stairwayToComponentManager().
                 searchComponentByType<PositionVertexComponent>(numEntity,
                                                                Components_e::POSITION_VERTEX_COMPONENT);
@@ -507,5 +534,5 @@ void StaticDisplaySystem::setWeaponSprite(uint32_t weaponEntity, uint32_t weapon
 void StaticDisplaySystem::memDisplayMenuEntities(uint32_t numMenuResolutionWrite, uint32_t numMenuQualityWrite)
 {
     m_resolutionDisplayMenuEntity = numMenuResolutionWrite;
-    m_resolutionMenuQualityEntity = numMenuQualityWrite;
+    m_qualityMenuEntity = numMenuQualityWrite;
 }

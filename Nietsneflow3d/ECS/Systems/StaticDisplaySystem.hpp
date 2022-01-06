@@ -49,6 +49,8 @@ public:
     {
         m_fontDataPtr = fontData;
     }
+    void updateDisplayMenuResolution(const std::string &str);
+    void updateDisplayMenuQuality(const std::string &str);
 private:
     void fillCursorMenuVertex(PlayerConfComponent *playerComp);
     void updateMenuCursorPosition(PlayerConfComponent *playerComp);
@@ -77,7 +79,7 @@ private:
     float m_middleWeaponMovementX = m_forkWeaponMovementX.first + (m_forkWeaponMovementX.second -
                                                                    m_forkWeaponMovementX.first) / 2.0f;
     //FORCE UPDATE AT LAUNCH
-    uint32_t m_currentCursorPos = static_cast<uint32_t>(MainMenuCursorPos_e::TOTAL), m_resolutionDisplayMenuEntity, m_resolutionMenuQualityEntity;
+    uint32_t m_currentCursorPos = static_cast<uint32_t>(MainMenuCursorPos_e::TOTAL), m_resolutionDisplayMenuEntity, m_qualityMenuEntity;
 };
 
 void modVertexPos(PositionVertexComponent *posComp, const PairFloat_t &mod);

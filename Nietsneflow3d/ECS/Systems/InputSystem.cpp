@@ -276,6 +276,16 @@ void InputSystem::treatMenu(uint32_t playerEntity)
         m_keyDownPressed = false;
         return;
     }
+    if(m_keyLeftPressed && glfwGetKey(m_window, GLFW_KEY_LEFT) == GLFW_RELEASE)
+    {
+        m_keyLeftPressed = false;
+        return;
+    }
+    if(m_keyRightPressed && glfwGetKey(m_window, GLFW_KEY_RIGHT) == GLFW_RELEASE)
+    {
+        m_keyRightPressed = false;
+        return;
+    }
     treatGeneralKeysMenu(playerComp);
 }
 
@@ -313,11 +323,11 @@ void InputSystem::treatGeneralKeysMenu(PlayerConfComponent *playerComp)
     {
         treatEnterPressedMenu(playerComp);
     }
-    else if(glfwGetKey(m_window, GLFW_KEY_LEFT) == GLFW_PRESS)
+    else if(!m_keyLeftPressed && glfwGetKey(m_window, GLFW_KEY_LEFT) == GLFW_PRESS)
     {
         treatLeftPressedMenu(playerComp);
     }
-    else if(glfwGetKey(m_window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+    else if(!m_keyRightPressed && glfwGetKey(m_window, GLFW_KEY_RIGHT) == GLFW_PRESS)
     {
         treatRightPressedMenu(playerComp);
     }
@@ -371,7 +381,24 @@ void InputSystem::treatLeftPressedMenu(PlayerConfComponent *playerComp)
     }
     else if(playerComp->m_menuMode == MenuMode_e::DISPLAY)
     {
-
+        m_keyLeftPressed = true;
+        DisplayMenuCursorPos_e displayCursorPos = static_cast<DisplayMenuCursorPos_e>(playerComp->m_currentCursorPos);
+        if(displayCursorPos == DisplayMenuCursorPos_e::RESOLUTION_SETTING)
+        {
+            uint32_t index = m_mainEngine->getCurrentResolutionNum();
+            if(index == 0)
+            {
+                m_mainEngine->setCurrentResolution(m_mainEngine->getMaxResolutionNum());
+            }
+            else
+            {
+                m_mainEngine->setCurrentResolution(--index);
+            }
+        }
+        else if(displayCursorPos == DisplayMenuCursorPos_e::QUALITY_SETTING)
+        {
+            m_mainEngine->decreaseDisplayQuality();
+        }
     }
     else if(playerComp->m_menuMode == MenuMode_e::INPUT)
     {
@@ -404,7 +431,24 @@ void InputSystem::treatRightPressedMenu(PlayerConfComponent *playerComp)
     }
     else if(playerComp->m_menuMode == MenuMode_e::DISPLAY)
     {
-
+        m_keyRightPressed = true;
+        DisplayMenuCursorPos_e displayCursorPos = static_cast<DisplayMenuCursorPos_e>(playerComp->m_currentCursorPos);
+        if(displayCursorPos == DisplayMenuCursorPos_e::RESOLUTION_SETTING)
+        {
+            uint32_t index = m_mainEngine->getCurrentResolutionNum();
+            if(index == m_mainEngine->getMaxResolutionNum())
+            {
+                m_mainEngine->setCurrentResolution(0);
+            }
+            else
+            {
+                m_mainEngine->setCurrentResolution(++index);
+            }
+        }
+        else if(displayCursorPos == DisplayMenuCursorPos_e::QUALITY_SETTING)
+        {
+            m_mainEngine->increaseDisplayQuality();
+        }
     }
     else if(playerComp->m_menuMode == MenuMode_e::INPUT)
     {

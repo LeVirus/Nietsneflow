@@ -51,7 +51,8 @@ private:
 private:
     GLFWwindow *m_window = nullptr;
     MainEngine *m_mainEngine = nullptr;
-    bool m_keyEspapePressed = false, m_keyUpPressed = false, m_keyDownPressed = false, m_F12Pressed = false, m_enterPressed = false;
+    bool m_keyEspapePressed = false, m_keyLeftPressed = false, m_keyRightPressed = false,
+    m_keyUpPressed = false, m_keyDownPressed = false, m_F12Pressed = false, m_enterPressed = false;
     const std::map<MenuMode_e, uint32_t> m_mapMenuSize = {{MenuMode_e::BASE, static_cast<uint32_t>(MainMenuCursorPos_e::TOTAL) - 1},
                                                           {MenuMode_e::DISPLAY, static_cast<uint32_t>(DisplayMenuCursorPos_e::TOTAL) - 1},
                                                           {MenuMode_e::INPUT, static_cast<uint32_t>(InputMenuCursorPos_e::TOTAL) - 1},

@@ -70,6 +70,26 @@ public:
     {
         return m_audioEngine.getEffectsVolume();
     }
+    inline void setCurrentResolution(uint32_t resolution)
+    {
+        m_graphicEngine.setCurrentResolution(resolution);
+    }
+    inline uint32_t getCurrentResolutionNum()const
+    {
+        return m_graphicEngine.getCurrentResolutionNum();
+    }
+    inline uint32_t getMaxResolutionNum()const
+    {
+        return m_graphicEngine.getMaxResolutionNum();
+    }
+    inline void decreaseDisplayQuality()
+    {
+        m_graphicEngine.decreaseDisplayQuality();
+    }
+    inline void increaseDisplayQuality()
+    {
+        m_graphicEngine.increaseDisplayQuality();
+    }
 private:
     void clearObjectToDelete();
     void savePlayerGear();

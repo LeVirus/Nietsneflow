@@ -167,6 +167,41 @@ void GraphicEngine::confWriteComponent(WriteComponent *writeComp)
 }
 
 //===================================================================
+void GraphicEngine::decreaseDisplayQuality()
+{
+    if(m_currentQuality == 0)
+    {
+        m_currentQuality = m_qualityResolution.size() - 1;
+    }
+    else
+    {
+        --m_currentQuality;
+    }
+    m_staticDisplaySystem->updateDisplayMenuQuality(m_qualityResolution[m_currentQuality]);
+}
+
+//===================================================================
+void GraphicEngine::increaseDisplayQuality()
+{
+    if(m_currentQuality == m_qualityResolution.size() - 1)
+    {
+        m_currentQuality = 0;
+    }
+    else
+    {
+        ++m_currentQuality;
+    }
+    m_staticDisplaySystem->updateDisplayMenuQuality(m_qualityResolution[m_currentQuality]);
+}
+
+//===================================================================
+void GraphicEngine::setCurrentResolution(uint32_t resolution)
+{
+    m_currentResolution = resolution;
+    m_staticDisplaySystem->updateDisplayMenuResolution(m_memGraphicResolution[m_currentResolution].second);
+}
+
+//===================================================================
 void GraphicEngine::memGraphicResolutions()
 {
     //get resolution
@@ -177,11 +212,16 @@ void GraphicEngine::memGraphicResolutions()
     //one monitor
     const GLFWvidmode* modes = glfwGetVideoModes(monitors[0], &resolutionCount);
     m_memGraphicResolution.reserve(resolutionCount);
+    pairI_t pair;
     for (int i = 0; i < resolutionCount; i++)
     {
+        pair = {modes[i].width, modes[i].height};
+        if(i > 0 && pair == m_memGraphicResolution.back().first)
+        {
+            continue;
+        }
         m_memGraphicResolution.emplace_back(
-                    std::pair<pairI_t, std::string>{pairI_t{modes[i].width, modes[i].height},
-                                                    std::to_string(modes[i].width) + " X " + std::to_string(modes[i].height)});
+                    std::pair<pairI_t, std::string>{pair, std::to_string(modes[i].width) + " X " + std::to_string(modes[i].height)});
     }
     assert(!m_memGraphicResolution.empty());
     //init basic resolution to 0

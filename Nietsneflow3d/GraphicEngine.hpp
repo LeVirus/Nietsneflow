@@ -56,6 +56,17 @@ public:
     {
         return m_memGraphicResolution;
     }
+    inline uint32_t getCurrentResolutionNum()const
+    {
+        return m_currentResolution;
+    }
+    inline uint32_t getMaxResolutionNum()const
+    {
+        return m_memGraphicResolution.size() - 1;
+    }
+    void decreaseDisplayQuality();
+    void increaseDisplayQuality();
+    void setCurrentResolution(uint32_t resolution);
     void updateMusicVolumeBar(uint32_t volume);
     void updateEffectsVolumeBar(uint32_t volume);
     void clearSystems();
@@ -79,12 +90,13 @@ private:
     void loadSprites(const std::vector<SpriteData> &vectSprites, const FontData &fontData);
 private:
     GLFWwindow* m_window = nullptr;
-    uint32_t m_currentResolution = 0;
+    uint32_t m_currentResolution = 0, m_currentQuality = 1;
     std::vector<Shader> m_vectShader;
     //PictureData
     std::vector<Texture> m_vectTexture;
     std::vector<SpriteData> const *m_ptrSpriteData = nullptr;
     std::vector<std::pair<pairI_t, std::string>> m_memGraphicResolution;
+    std::vector<std::string> m_qualityResolution = {"LOW", "MEDIUM", "HIGH"};
     FontData const *m_ptrFontData = nullptr;
     //Systems
     ColorDisplaySystem *m_colorSystem = nullptr;
