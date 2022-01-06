@@ -87,6 +87,8 @@ void GraphicEngine::mainDisplay(bool gamePaused)
 void GraphicEngine::toogleFullScreen()
 {
     m_fullscreenMode = !m_fullscreenMode;
+    m_displayMenuFullscreenMode = m_fullscreenMode;
+    m_staticDisplaySystem->updateMenuEntryFullscreen(m_fullscreenMode);
     glfwSetWindowMonitor(m_window, m_fullscreenMode ? glfwGetPrimaryMonitor() : nullptr,
                          0, 0, m_memGraphicResolution[m_currentResolution].first.first,
                          m_memGraphicResolution[m_currentResolution].first.second, GLFW_DONT_CARE);
@@ -224,8 +226,6 @@ void GraphicEngine::validDisplayMenu()
         m_currentResolution = m_currentDisplayedResolution;
         glfwSetWindowSize(m_window, m_memGraphicResolution[m_currentResolution].first.first,
                           m_memGraphicResolution[m_currentResolution].first.second);
-        int x, y;
-        glfwGetWindowSize(m_window, &x, &y);
     }
     if(m_currentQuality != m_currentDisplayedQuality)
     {
@@ -234,9 +234,6 @@ void GraphicEngine::validDisplayMenu()
     if(m_fullscreenMode != m_displayMenuFullscreenMode)
     {
         toogleFullScreen();
-        m_fullscreenMode = m_displayMenuFullscreenMode;
-        int x, y;
-        glfwGetWindowSize(m_window, &x, &y);
     }
 }
 
