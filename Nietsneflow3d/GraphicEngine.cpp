@@ -162,7 +162,7 @@ void GraphicEngine::fillMenuWrite(WriteComponent *writeComp, MenuMode_e menuEntr
     {
         m_currentDisplayedQuality = m_currentQuality;
         m_currentDisplayedResolution = m_currentResolution;
-        m_displayMenufullscreenMode = m_fullscreenMode;
+        m_displayMenuFullscreenMode = m_fullscreenMode;
         setCurrentMenuResolution(m_currentDisplayedResolution);
         m_staticDisplaySystem->updateDisplayMenuQuality(m_qualityResolution[m_currentDisplayedQuality]);
     }
@@ -205,8 +205,8 @@ void GraphicEngine::increaseMenuDisplayQuality()
 //===================================================================
 void GraphicEngine::toogleMenuEntryFullscreen()
 {
-    m_displayMenufullscreenMode = !m_displayMenufullscreenMode;
-    m_staticDisplaySystem->updateMenuEntryFullscreen(m_displayMenufullscreenMode);
+    m_displayMenuFullscreenMode = !m_displayMenuFullscreenMode;
+    m_staticDisplaySystem->updateMenuEntryFullscreen(m_displayMenuFullscreenMode);
 }
 
 //===================================================================
@@ -214,6 +214,30 @@ void GraphicEngine::setCurrentMenuResolution(uint32_t resolution)
 {
     m_currentDisplayedResolution = resolution;
     m_staticDisplaySystem->updateDisplayMenuResolution(m_memGraphicResolution[m_currentDisplayedResolution].second);
+}
+
+//===================================================================
+void GraphicEngine::validDisplayMenu()
+{
+    if(m_currentResolution != m_currentDisplayedResolution)
+    {
+        m_currentResolution = m_currentDisplayedResolution;
+        glfwSetWindowSize(m_window, m_memGraphicResolution[m_currentResolution].first.first,
+                          m_memGraphicResolution[m_currentResolution].first.second);
+        int x, y;
+        glfwGetWindowSize(m_window, &x, &y);
+    }
+    if(m_currentQuality != m_currentDisplayedQuality)
+    {
+        m_currentQuality = m_currentDisplayedQuality;
+    }
+    if(m_fullscreenMode != m_displayMenuFullscreenMode)
+    {
+        toogleFullScreen();
+        m_fullscreenMode = m_displayMenuFullscreenMode;
+        int x, y;
+        glfwGetWindowSize(m_window, &x, &y);
+    }
 }
 
 //===================================================================

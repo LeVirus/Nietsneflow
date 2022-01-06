@@ -534,7 +534,7 @@ void InputSystem::treatEnterPressedDisplayMenu(PlayerConfComponent *playerComp)
     }
     else if(menuPos == DisplayMenuCursorPos_e::VALID)
     {
-
+        m_mainEngine->validDisplayMenu();
     }
 }
 

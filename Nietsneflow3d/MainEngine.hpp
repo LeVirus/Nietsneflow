@@ -52,6 +52,10 @@ public:
     void confSystems();
     uint32_t createAmmoEntity(CollisionTag_e collTag, bool visibleShot);
     void setMenuEntries(PlayerConfComponent *playerComp);
+    inline void validDisplayMenu()
+    {
+        m_graphicEngine.validDisplayMenu();
+    }
     inline void updateMusicVolume(uint32_t volume)
     {
         m_audioEngine.updateMusicVolume(volume);

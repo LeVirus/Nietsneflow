@@ -82,6 +82,7 @@ public:
     void unsetTransition(bool gamePaused);
     void mainDisplay(bool gamePaused);
     void toogleFullScreen();
+    void validDisplayMenu();
 private:
     void preDisplay();
     void postDisplay();
@@ -111,7 +112,7 @@ private:
     VisionSystem *m_visionSystem = nullptr;
     StaticDisplaySystem *m_staticDisplaySystem = nullptr;
     uint32_t m_transitionFrameNumber = 30;
-    bool m_fullscreenMode = false, m_displayMenufullscreenMode = m_fullscreenMode;
+    bool m_fullscreenMode = false, m_displayMenuFullscreenMode = m_fullscreenMode;
 };
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
