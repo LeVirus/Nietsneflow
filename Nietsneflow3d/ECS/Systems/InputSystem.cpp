@@ -31,6 +31,15 @@ void InputSystem::treatPlayerInput()
 {
     for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
     {
+        if(!m_F12Pressed && glfwGetKey(m_window, GLFW_KEY_F12) == GLFW_PRESS)
+        {
+            m_toggleSignal = true;
+            m_F12Pressed = true;
+        }
+        else if(m_F12Pressed && glfwGetKey(m_window, GLFW_KEY_F12) == GLFW_RELEASE)
+        {
+            m_F12Pressed = false;
+        }
         if(m_mainEngine->isGamePaused())
         {
             treatMenu(mVectNumEntity[i]);
@@ -44,15 +53,6 @@ void InputSystem::treatPlayerInput()
         {
             glfwSetWindowShouldClose(m_window, true);
             return;
-        }
-        if(!m_F12Pressed && glfwGetKey(m_window, GLFW_KEY_F12) == GLFW_PRESS)
-        {
-            m_toggleSignal = true;
-            m_F12Pressed = true;
-        }
-        else if(m_F12Pressed)
-        {
-            m_F12Pressed = false;
         }
         MapCoordComponent *mapComp = stairwayToComponentManager().
                 searchComponentByType<MapCoordComponent>(mVectNumEntity[i], Components_e::MAP_COORD_COMPONENT);

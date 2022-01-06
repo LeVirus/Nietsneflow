@@ -31,7 +31,7 @@ public:
     {
         m_toggleSignal = false;
     }
-    inline bool toggleFullScreen()const
+    inline bool toggleFullScreenSignal()const
     {
         return m_toggleSignal;
     }

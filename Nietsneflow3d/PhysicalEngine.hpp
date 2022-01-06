@@ -36,9 +36,9 @@ public:
     {
         m_inputSystem->reinitToggleFullScreen();
     }
-    inline bool toogledFullScreen()const
+    inline bool toogledFullScreenSignal()const
     {
-        return m_inputSystem->toggleFullScreen();
+        return m_inputSystem->toggleFullScreenSignal();
     }
 private:
     InputSystem *m_inputSystem = nullptr;

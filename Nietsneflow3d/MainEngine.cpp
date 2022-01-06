@@ -84,7 +84,7 @@ bool MainEngine::mainLoop(bool &memGameOver)
         clock = std::chrono::system_clock::now();
         m_physicalEngine.runIteration(m_gamePaused);
         clearObjectToDelete();
-        if(m_physicalEngine.toogledFullScreen())
+        if(m_physicalEngine.toogledFullScreenSignal())
         {
             m_graphicEngine.toogleFullScreen();
             m_physicalEngine.reinitToggleFullScreen();
