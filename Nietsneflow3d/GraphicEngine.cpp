@@ -158,6 +158,13 @@ void GraphicEngine::fillMenuWrite(WriteComponent *writeComp, MenuMode_e menuEntr
     std::map<MenuMode_e, PairPairFloatStr_t>::const_iterator it = MAP_MENU_DATA.find(menuEntry);
     writeComp->m_str = it->second.second;
     writeComp->m_fontSpriteData = m_ptrFontData->getWriteData(writeComp->m_str, writeComp->m_numTexture);
+    if(menuEntry == MenuMode_e::DISPLAY)
+    {
+        m_currentDisplayedQuality = m_currentQuality;
+        m_currentDisplayedResolution = m_currentResolution;
+        setCurrentMenuResolution(m_currentDisplayedResolution);
+        m_staticDisplaySystem->updateDisplayMenuQuality(m_qualityResolution[m_currentDisplayedQuality]);
+    }
 }
 
 //===================================================================
@@ -167,38 +174,38 @@ void GraphicEngine::confWriteComponent(WriteComponent *writeComp)
 }
 
 //===================================================================
-void GraphicEngine::decreaseDisplayQuality()
+void GraphicEngine::decreaseMenuDisplayQuality()
 {
-    if(m_currentQuality == 0)
+    if(m_currentDisplayedQuality == 0)
     {
-        m_currentQuality = m_qualityResolution.size() - 1;
+        m_currentDisplayedQuality = m_qualityResolution.size() - 1;
     }
     else
     {
-        --m_currentQuality;
+        --m_currentDisplayedQuality;
     }
-    m_staticDisplaySystem->updateDisplayMenuQuality(m_qualityResolution[m_currentQuality]);
+    m_staticDisplaySystem->updateDisplayMenuQuality(m_qualityResolution[m_currentDisplayedQuality]);
 }
 
 //===================================================================
-void GraphicEngine::increaseDisplayQuality()
+void GraphicEngine::increaseMenuDisplayQuality()
 {
-    if(m_currentQuality == m_qualityResolution.size() - 1)
+    if(m_currentDisplayedQuality == m_qualityResolution.size() - 1)
     {
-        m_currentQuality = 0;
+        m_currentDisplayedQuality = 0;
     }
     else
     {
-        ++m_currentQuality;
+        ++m_currentDisplayedQuality;
     }
-    m_staticDisplaySystem->updateDisplayMenuQuality(m_qualityResolution[m_currentQuality]);
+    m_staticDisplaySystem->updateDisplayMenuQuality(m_qualityResolution[m_currentDisplayedQuality]);
 }
 
 //===================================================================
-void GraphicEngine::setCurrentResolution(uint32_t resolution)
+void GraphicEngine::setCurrentMenuResolution(uint32_t resolution)
 {
-    m_currentResolution = resolution;
-    m_staticDisplaySystem->updateDisplayMenuResolution(m_memGraphicResolution[m_currentResolution].second);
+    m_currentDisplayedResolution = resolution;
+    m_staticDisplaySystem->updateDisplayMenuResolution(m_memGraphicResolution[m_currentDisplayedResolution].second);
 }
 
 //===================================================================

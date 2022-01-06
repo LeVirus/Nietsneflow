@@ -385,7 +385,7 @@ void InputSystem::treatLeftPressedMenu(PlayerConfComponent *playerComp)
         DisplayMenuCursorPos_e displayCursorPos = static_cast<DisplayMenuCursorPos_e>(playerComp->m_currentCursorPos);
         if(displayCursorPos == DisplayMenuCursorPos_e::RESOLUTION_SETTING)
         {
-            uint32_t index = m_mainEngine->getCurrentResolutionNum();
+            uint32_t index = m_mainEngine->getCurrentDisplayedResolutionNum();
             if(index == 0)
             {
                 m_mainEngine->setCurrentResolution(m_mainEngine->getMaxResolutionNum());
@@ -435,7 +435,7 @@ void InputSystem::treatRightPressedMenu(PlayerConfComponent *playerComp)
         DisplayMenuCursorPos_e displayCursorPos = static_cast<DisplayMenuCursorPos_e>(playerComp->m_currentCursorPos);
         if(displayCursorPos == DisplayMenuCursorPos_e::RESOLUTION_SETTING)
         {
-            uint32_t index = m_mainEngine->getCurrentResolutionNum();
+            uint32_t index = m_mainEngine->getCurrentDisplayedResolutionNum();
             if(index == m_mainEngine->getMaxResolutionNum())
             {
                 m_mainEngine->setCurrentResolution(0);

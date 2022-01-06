@@ -72,23 +72,28 @@ public:
     }
     inline void setCurrentResolution(uint32_t resolution)
     {
-        m_graphicEngine.setCurrentResolution(resolution);
+        m_graphicEngine.setCurrentMenuResolution(resolution);
     }
     inline uint32_t getCurrentResolutionNum()const
     {
         return m_graphicEngine.getCurrentResolutionNum();
     }
+    inline uint32_t getCurrentDisplayedResolutionNum()const
+    {
+        return m_graphicEngine.getCurrentDisplayedResolutionNum();
+    }
+
     inline uint32_t getMaxResolutionNum()const
     {
         return m_graphicEngine.getMaxResolutionNum();
     }
     inline void decreaseDisplayQuality()
     {
-        m_graphicEngine.decreaseDisplayQuality();
+        m_graphicEngine.decreaseMenuDisplayQuality();
     }
     inline void increaseDisplayQuality()
     {
-        m_graphicEngine.increaseDisplayQuality();
+        m_graphicEngine.increaseMenuDisplayQuality();
     }
 private:
     void clearObjectToDelete();
