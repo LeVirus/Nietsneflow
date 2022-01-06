@@ -25,6 +25,7 @@ enum class VertexID_e
     INFO,
     RESOLUTION_DISPLAY_MENU,
     QUALITY_DISPLAY_MENU,
+    FULLSCREEN,
     TOTAL
 };
 
@@ -40,7 +41,7 @@ public:
     void displayMenu();
     void setShader(Shader &shader);
     void setWeaponSprite(uint32_t weaponEntity, uint32_t weaponNumSprite);
-    void memDisplayMenuEntities(uint32_t numMenuResolutionWrite, uint32_t numMenuQualityWrite);
+    void memDisplayMenuEntities(uint32_t numMenuResolutionWrite, uint32_t numMenuQualityWrite, uint32_t numFullscreenMenuEntity);
     inline void setVectTextures(std::vector<Texture> &vectTexture)
     {
         m_ptrVectTexture = &vectTexture;
@@ -51,6 +52,7 @@ public:
     }
     void updateDisplayMenuResolution(const std::string &str);
     void updateDisplayMenuQuality(const std::string &str);
+    void updateMenuEntryFullscreen(bool displayMenufullscreenMode);
 private:
     void fillCursorMenuVertex(PlayerConfComponent *playerComp);
     void updateMenuCursorPosition(PlayerConfComponent *playerComp);
@@ -79,7 +81,8 @@ private:
     float m_middleWeaponMovementX = m_forkWeaponMovementX.first + (m_forkWeaponMovementX.second -
                                                                    m_forkWeaponMovementX.first) / 2.0f;
     //FORCE UPDATE AT LAUNCH
-    uint32_t m_currentCursorPos = static_cast<uint32_t>(MainMenuCursorPos_e::TOTAL), m_resolutionDisplayMenuEntity, m_qualityMenuEntity;
+    uint32_t m_currentCursorPos = static_cast<uint32_t>(MainMenuCursorPos_e::TOTAL), m_resolutionDisplayMenuEntity, m_qualityMenuEntity,
+    m_fullscreenMenuEntity;
 };
 
 void modVertexPos(PositionVertexComponent *posComp, const PairFloat_t &mod);

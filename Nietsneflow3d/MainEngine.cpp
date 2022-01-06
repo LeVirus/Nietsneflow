@@ -1862,7 +1862,8 @@ void MainEngine::confWriteEntities()
 //===================================================================
 void MainEngine::confDisplayMenu()
 {
-    uint32_t numMenuResolutionWrite = createWriteEntity(), numMenuQualityWrite = createWriteEntity();
+    uint32_t numMenuResolutionWrite = createWriteEntity(), numMenuQualityWrite = createWriteEntity(),
+            numMenuFullscreenWrite = createWriteEntity();
     //Resolution
     WriteComponent *writeConfA = m_ecsManager.getComponentManager().
             searchComponentByType<WriteComponent>(numMenuResolutionWrite, Components_e::WRITE_COMPONENT);
@@ -1881,8 +1882,16 @@ void MainEngine::confDisplayMenu()
     writeConfB->m_fontSize = MENU_FONT_SIZE;
     writeConfB->m_str = "MEDIUM";
     m_graphicEngine.confWriteComponent(writeConfB);
+    //Fullscreen
+    writeConfB = m_ecsManager.getComponentManager().
+                searchComponentByType<WriteComponent>(numMenuFullscreenWrite, Components_e::WRITE_COMPONENT);
+    assert(writeConfB);
+    writeConfB->m_upLeftPositionGL = {writeConfA->m_upLeftPositionGL.first, writeConfA->m_upLeftPositionGL.second - 2.0f * MENU_FONT_SIZE};
+    writeConfB->m_fontSize = MENU_FONT_SIZE;
+    writeConfB->m_str = "";
+    m_graphicEngine.confWriteComponent(writeConfB);
     m_ecsManager.getSystemManager().searchSystemByType<StaticDisplaySystem>(static_cast<uint32_t>(Systems_e::STATIC_DISPLAY_SYSTEM))->
-            memDisplayMenuEntities(numMenuResolutionWrite, numMenuQualityWrite);
+            memDisplayMenuEntities(numMenuResolutionWrite, numMenuQualityWrite, numMenuFullscreenWrite);
 }
 
 //===================================================================

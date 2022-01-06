@@ -131,6 +131,7 @@ void StaticDisplaySystem::displayMenu()
         {
             drawWriteVertex(m_resolutionDisplayMenuEntity, VertexID_e::RESOLUTION_DISPLAY_MENU);
             drawWriteVertex(m_qualityMenuEntity, VertexID_e::QUALITY_DISPLAY_MENU);
+            drawWriteVertex(m_fullscreenMenuEntity, VertexID_e::FULLSCREEN);
         }
     }
 }
@@ -164,12 +165,25 @@ void StaticDisplaySystem::updateDisplayMenuQuality(const std::string &str)
 }
 
 //===================================================================
+void StaticDisplaySystem::updateMenuEntryFullscreen(bool displayMenufullscreenMode)
+{
+    WriteComponent *writeComp = stairwayToComponentManager().
+                searchComponentByType<WriteComponent>(m_fullscreenMenuEntity, Components_e::WRITE_COMPONENT);
+    assert(writeComp);
+    writeComp->m_str = displayMenufullscreenMode ? "X" : "";
+    PositionVertexComponent *posComp = stairwayToComponentManager().
+                searchComponentByType<PositionVertexComponent>(m_fullscreenMenuEntity, Components_e::POSITION_VERTEX_COMPONENT);
+    assert(posComp);
+    writeComp->m_fontSpriteData = m_fontDataPtr->getWriteData(writeComp->m_str, writeComp->m_numTexture);
+    confWriteVertex(writeComp, posComp, VertexID_e::FULLSCREEN);
+}
+
+//===================================================================
 void StaticDisplaySystem::confWriteVertex(WriteComponent *writeComp,
                                           PositionVertexComponent *posComp,
                                           VertexID_e type)
 {
     uint32_t index = static_cast<uint32_t>(type);
-    assert(!writeComp->m_fontSpriteData.empty());
     m_vertices[index].clear();
     drawLineWriteVertex(posComp, writeComp);
     m_vertices[index].loadVertexWriteTextureComponent(*posComp, *writeComp);
@@ -178,7 +192,10 @@ void StaticDisplaySystem::confWriteVertex(WriteComponent *writeComp,
 //===================================================================
 void StaticDisplaySystem::drawVertex(uint32_t numTexture, VertexID_e type)
 {
-    assert(static_cast<size_t>(numTexture) < m_ptrVectTexture->size());
+    if(static_cast<size_t>(numTexture) > m_ptrVectTexture->size())
+    {
+        return;
+    }
     m_ptrVectTexture->operator[](numTexture).bind();
     uint32_t index = static_cast<uint32_t>(type);
     m_vertices[index].confVertexBuffer();
@@ -458,7 +475,10 @@ void modVertexPos(PositionVertexComponent *posComp, const PairFloat_t &mod)
 void StaticDisplaySystem::drawLineWriteVertex(PositionVertexComponent *posComp,
                                               WriteComponent *writeComp)
 {
-    assert(!writeComp->m_fontSpriteData.empty());
+    if(writeComp->m_fontSpriteData.empty())
+    {
+        return;
+    }
     posComp->m_vertex.clear();
     posComp->m_vertex.reserve(writeComp->m_fontSpriteData.size() * 4);
     float currentX = writeComp->m_upLeftPositionGL.first, diffX,
@@ -531,8 +551,9 @@ void StaticDisplaySystem::setWeaponSprite(uint32_t weaponEntity, uint32_t weapon
 }
 
 //===================================================================
-void StaticDisplaySystem::memDisplayMenuEntities(uint32_t numMenuResolutionWrite, uint32_t numMenuQualityWrite)
+void StaticDisplaySystem::memDisplayMenuEntities(uint32_t numMenuResolutionWrite, uint32_t numMenuQualityWrite, uint32_t numFullscreenMenuEntity)
 {
     m_resolutionDisplayMenuEntity = numMenuResolutionWrite;
     m_qualityMenuEntity = numMenuQualityWrite;
+    m_fullscreenMenuEntity = numFullscreenMenuEntity;
 }

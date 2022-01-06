@@ -95,6 +95,10 @@ public:
     {
         m_graphicEngine.increaseMenuDisplayQuality();
     }
+    inline void toogleMenuEntryFullscreen()
+    {
+        m_graphicEngine.toogleMenuEntryFullscreen();
+    }
 private:
     void clearObjectToDelete();
     void savePlayerGear();

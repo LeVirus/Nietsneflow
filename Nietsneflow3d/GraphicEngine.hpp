@@ -70,6 +70,7 @@ public:
     }
     void decreaseMenuDisplayQuality();
     void increaseMenuDisplayQuality();
+    void toogleMenuEntryFullscreen();
     void setCurrentMenuResolution(uint32_t resolution);
     void updateMusicVolumeBar(uint32_t volume);
     void updateEffectsVolumeBar(uint32_t volume);
@@ -110,7 +111,7 @@ private:
     VisionSystem *m_visionSystem = nullptr;
     StaticDisplaySystem *m_staticDisplaySystem = nullptr;
     uint32_t m_transitionFrameNumber = 30;
-    bool m_fullscreenMode = false;
+    bool m_fullscreenMode = false, m_displayMenufullscreenMode = m_fullscreenMode;
 };
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);

@@ -399,6 +399,10 @@ void InputSystem::treatLeftPressedMenu(PlayerConfComponent *playerComp)
         {
             m_mainEngine->decreaseDisplayQuality();
         }
+        else if(displayCursorPos == DisplayMenuCursorPos_e::FULLSCREEN)
+        {
+            m_mainEngine->toogleMenuEntryFullscreen();
+        }
     }
     else if(playerComp->m_menuMode == MenuMode_e::INPUT)
     {
@@ -448,6 +452,10 @@ void InputSystem::treatRightPressedMenu(PlayerConfComponent *playerComp)
         else if(displayCursorPos == DisplayMenuCursorPos_e::QUALITY_SETTING)
         {
             m_mainEngine->increaseDisplayQuality();
+        }
+        else if(displayCursorPos == DisplayMenuCursorPos_e::FULLSCREEN)
+        {
+            m_mainEngine->toogleMenuEntryFullscreen();
         }
     }
     else if(playerComp->m_menuMode == MenuMode_e::INPUT)
@@ -517,22 +525,16 @@ void InputSystem::treatEnterPressedDisplayMenu(PlayerConfComponent *playerComp)
 {
     DisplayMenuCursorPos_e menuPos =
             static_cast<DisplayMenuCursorPos_e>(playerComp->m_currentCursorPos);
-    switch(menuPos)
+    if(menuPos == DisplayMenuCursorPos_e::RETURN)
     {
-    case DisplayMenuCursorPos_e::QUALITY_SETTING:
-        break;
-    case DisplayMenuCursorPos_e::RESOLUTION_SETTING:
-        break;
-    case DisplayMenuCursorPos_e::RETURN:
         playerComp->m_currentCursorPos = 0;
         playerComp->m_menuMode = MenuMode_e::BASE;
         m_mainEngine->setMenuEntries(playerComp);
         m_enterPressed = true;
-        break;
-    case DisplayMenuCursorPos_e::VALID:
-        break;
-    case DisplayMenuCursorPos_e::TOTAL:
-        break;
+    }
+    else if(menuPos == DisplayMenuCursorPos_e::VALID)
+    {
+
     }
 }
 

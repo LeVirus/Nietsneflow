@@ -162,6 +162,7 @@ void GraphicEngine::fillMenuWrite(WriteComponent *writeComp, MenuMode_e menuEntr
     {
         m_currentDisplayedQuality = m_currentQuality;
         m_currentDisplayedResolution = m_currentResolution;
+        m_displayMenufullscreenMode = m_fullscreenMode;
         setCurrentMenuResolution(m_currentDisplayedResolution);
         m_staticDisplaySystem->updateDisplayMenuQuality(m_qualityResolution[m_currentDisplayedQuality]);
     }
@@ -199,6 +200,13 @@ void GraphicEngine::increaseMenuDisplayQuality()
         ++m_currentDisplayedQuality;
     }
     m_staticDisplaySystem->updateDisplayMenuQuality(m_qualityResolution[m_currentDisplayedQuality]);
+}
+
+//===================================================================
+void GraphicEngine::toogleMenuEntryFullscreen()
+{
+    m_displayMenufullscreenMode = !m_displayMenufullscreenMode;
+    m_staticDisplaySystem->updateMenuEntryFullscreen(m_displayMenufullscreenMode);
 }
 
 //===================================================================
