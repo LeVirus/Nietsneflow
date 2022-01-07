@@ -1851,7 +1851,8 @@ void MainEngine::confWriteEntities()
     assert(writeConf);
     m_writeConf = writeConf;
     writeConf->m_fontSize = MENU_FONT_SIZE;
-    confDisplayMenu();
+    confWriteEntitiesDisplayMenu();
+    confWriteEntitiesInputMenu();
     m_playerConf->m_menuMode = MenuMode_e::BASE;
     setMenuEntries(m_playerConf);
     m_playerConf->m_menuEntity = numMenuWrite;
@@ -1861,7 +1862,7 @@ void MainEngine::confWriteEntities()
 }
 
 //===================================================================
-void MainEngine::confDisplayMenu()
+void MainEngine::confWriteEntitiesDisplayMenu()
 {
     uint32_t numMenuResolutionWrite = createWriteEntity(), numMenuQualityWrite = createWriteEntity(),
             numMenuFullscreenWrite = createWriteEntity();
@@ -1893,6 +1894,31 @@ void MainEngine::confDisplayMenu()
     m_graphicEngine.confWriteComponent(writeConfB);
     m_ecsManager.getSystemManager().searchSystemByType<StaticDisplaySystem>(static_cast<uint32_t>(Systems_e::STATIC_DISPLAY_SYSTEM))->
             memDisplayMenuEntities(numMenuResolutionWrite, numMenuQualityWrite, numMenuFullscreenWrite);
+}
+
+//===================================================================
+void MainEngine::confWriteEntitiesInputMenu()
+{
+    ArrayControlKey_t memEntities;
+    PairFloat_t currentUpLeftPos = {MAP_MENU_DATA.at(MenuMode_e::INPUT).first.first + 1.0f, MAP_MENU_DATA.at(MenuMode_e::INPUT).first.second};
+    const std::map<ControlKey_e, uint32_t> &map = m_ecsManager.getSystemManager().searchSystemByType<InputSystem>(
+                static_cast<uint32_t>(Systems_e::INPUT_SYSTEM))->getMapCurrentDefaultAssociatedKey();
+    for(uint32_t i = 0; i < memEntities.size(); ++i)
+    {
+        memEntities[i] = createWriteEntity();
+        WriteComponent *writeConf = m_ecsManager.getComponentManager().
+                searchComponentByType<WriteComponent>(memEntities[i], Components_e::WRITE_COMPONENT);
+        assert(writeConf);
+        writeConf->m_upLeftPositionGL = currentUpLeftPos;
+        writeConf->m_fontSize = MENU_FONT_SIZE;
+        writeConf->m_str = m_ecsManager.getSystemManager().searchSystemByType<StaticDisplaySystem>(
+                    static_cast<uint32_t>(Systems_e::STATIC_DISPLAY_SYSTEM))->
+                getStringKeyAssociated(map.at(static_cast<ControlKey_e>(i)));
+        currentUpLeftPos.second -= MENU_FONT_SIZE;
+        m_graphicEngine.confWriteComponent(writeConf);
+    }
+    m_ecsManager.getSystemManager().searchSystemByType<StaticDisplaySystem>(static_cast<uint32_t>(Systems_e::STATIC_DISPLAY_SYSTEM))->
+            memInputMenuEntities(memEntities);
 }
 
 //===================================================================

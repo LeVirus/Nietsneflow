@@ -303,7 +303,7 @@ void InputSystem::treatGeneralKeysMenu(PlayerConfComponent *playerComp)
         uint32_t index = playerComp->m_currentCursorPos;
         if(index == 0)
         {
-            playerComp->m_currentCursorPos = maxMenuIndex ;
+            playerComp->m_currentCursorPos = maxMenuIndex;
         }
         else
         {

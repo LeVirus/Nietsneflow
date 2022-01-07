@@ -20,17 +20,17 @@ enum class AnimationMode_e
 
 enum class ControlKey_e
 {
-    ACTION,
-    MOVE_BACKWARD,
     MOVE_FORWARD,
-    SHOOT,
-    TURN_LEFT,
-    TURN_RIGHT,
+    MOVE_BACKWARD,
     STRAFE_LEFT,
     STRAFE_RIGHT,
+    TURN_LEFT,
+    TURN_RIGHT,
+    ACTION,
+    SHOOT,
     PREVIOUS_WEAPON,
-    NEXT_WEAPON
-
+    NEXT_WEAPON,
+    TOTAL
 };
 
 enum class AttackType_e
@@ -113,6 +113,8 @@ enum class InputMenuCursorPos_e
     TURN_RIGHT,
     ACTION,
     SHOOT,
+    PREVIOUS_WEAPON,
+    NEXT_WEAPON,
     DEFAULT,
     RETURN,
     VALID,
@@ -359,7 +361,7 @@ inline const std::map<MenuMode_e, PairPairFloatStr_t> MAP_MENU_DATA =
      PairPairFloatStr_t{{-0.7f, 0.5f}, "SET RESOLUTION\\SET PICTURE QUALITY\\FULLSCREEN\\RETURN\\VALID"}},
     {MenuMode_e::INPUT,
      PairPairFloatStr_t{{-0.7f, 0.8f}, "MOVE FORWARD\\MOVE BACKWARD\\STRAFE LEFT\\"
-         "STRAFE RIGHT\\TURN RIGHT\\TURN LEFT\\ACTION\\SHOOT\\DEFAULT\\RETURN\\VALID"}
+         "STRAFE RIGHT\\TURN LEFT\\TURN RIGHT\\ACTION\\SHOOT\\PREVIOUS WEAPON\\NEXT WEAPON\\DEFAULT\\RETURN\\VALID"}
     },
     {MenuMode_e::NEW_KEY,
      PairPairFloatStr_t{{-0.3f, 0.1f}, "ENTER NEW KEY:"}

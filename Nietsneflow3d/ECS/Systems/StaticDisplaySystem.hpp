@@ -15,6 +15,8 @@ struct PlayerConfComponent;
 struct MemPositionsVertexComponents;
 struct WriteComponent;
 
+using ArrayControlKey_t = std::array<uint32_t, static_cast<uint32_t>(ControlKey_e::TOTAL)>;
+
 enum class VertexID_e
 {
     WEAPON,
@@ -26,6 +28,7 @@ enum class VertexID_e
     RESOLUTION_DISPLAY_MENU,
     QUALITY_DISPLAY_MENU,
     FULLSCREEN,
+    INPUT,
     TOTAL
 };
 
@@ -42,6 +45,10 @@ public:
     void setShader(Shader &shader);
     void setWeaponSprite(uint32_t weaponEntity, uint32_t weaponNumSprite);
     void memDisplayMenuEntities(uint32_t numMenuResolutionWrite, uint32_t numMenuQualityWrite, uint32_t numFullscreenMenuEntity);
+    void updateDisplayMenuResolution(const std::string &str);
+    void updateDisplayMenuQuality(const std::string &str);
+    void updateMenuEntryFullscreen(bool displayMenufullscreenMode);
+    std::string getStringKeyAssociated(uint32_t key)const;
     inline void setVectTextures(std::vector<Texture> &vectTexture)
     {
         m_ptrVectTexture = &vectTexture;
@@ -50,9 +57,10 @@ public:
     {
         m_fontDataPtr = fontData;
     }
-    void updateDisplayMenuResolution(const std::string &str);
-    void updateDisplayMenuQuality(const std::string &str);
-    void updateMenuEntryFullscreen(bool displayMenufullscreenMode);
+    inline void memInputMenuEntities(const ArrayControlKey_t &memEntities)
+    {
+        m_inputMenuWriteKeysEntities = memEntities;
+    }
 private:
     void fillCursorMenuVertex(PlayerConfComponent *playerComp);
     void updateMenuCursorPosition(PlayerConfComponent *playerComp);
@@ -83,6 +91,91 @@ private:
     //FORCE UPDATE AT LAUNCH
     uint32_t m_currentCursorPos = static_cast<uint32_t>(MainMenuCursorPos_e::TOTAL), m_resolutionDisplayMenuEntity, m_qualityMenuEntity,
     m_fullscreenMenuEntity;
+    ArrayControlKey_t m_inputMenuWriteKeysEntities;
+    const std::map<uint32_t, std::string> m_inputKeyboardKeyString = {
+        {GLFW_KEY_SPACE, "SPACE"},
+        {GLFW_KEY_APOSTROPHE, "APOSTROPHE"},
+        {GLFW_KEY_COMMA, "COMMA"},
+        {GLFW_KEY_MINUS, "MINUS"},
+        {GLFW_KEY_PERIOD, "PERIOD"},
+        {GLFW_KEY_SLASH, "SLASH"},
+        {GLFW_KEY_0, "0"},
+        {GLFW_KEY_1, "1"},
+        {GLFW_KEY_2, "2"},
+        {GLFW_KEY_3, "3"},
+        {GLFW_KEY_4, "4"},
+        {GLFW_KEY_5, "5"},
+        {GLFW_KEY_6, "6"},
+        {GLFW_KEY_7, "7"},
+        {GLFW_KEY_8, "8"},
+        {GLFW_KEY_9, "9"},
+        {GLFW_KEY_SEMICOLON, "SEMICOLON"},
+        {GLFW_KEY_EQUAL, "EQUAL"},
+        {GLFW_KEY_A, "A"},
+        {GLFW_KEY_B, "B"},
+        {GLFW_KEY_C, "C"},
+        {GLFW_KEY_D, "D"},
+        {GLFW_KEY_E, "E"},
+        {GLFW_KEY_F, "F"},
+        {GLFW_KEY_G, "G"},
+        {GLFW_KEY_H, "H"},
+        {GLFW_KEY_I, "I"},
+        {GLFW_KEY_J, "J"},
+        {GLFW_KEY_K, "K"},
+        {GLFW_KEY_L, "L"},
+        {GLFW_KEY_M, "M"},
+        {GLFW_KEY_N, "N"},
+        {GLFW_KEY_O, "O"},
+        {GLFW_KEY_P, "P"},
+        {GLFW_KEY_Q, "Q"},
+        {GLFW_KEY_R, "R"},
+        {GLFW_KEY_S, "S"},
+        {GLFW_KEY_T, "T"},
+        {GLFW_KEY_U, "U"},
+        {GLFW_KEY_V, "V"},
+        {GLFW_KEY_W, "W"},
+        {GLFW_KEY_X, "X"},
+        {GLFW_KEY_Y, "Y"},
+        {GLFW_KEY_Z, "Z"},
+        {GLFW_KEY_LEFT_BRACKET, "LEFT BRACKET"},
+        {GLFW_KEY_BACKSLASH, "BACKSLASH"},
+        {GLFW_KEY_RIGHT_BRACKET, "RIGHT BRACKET"},
+        {GLFW_KEY_GRAVE_ACCENT, "GRAVE ACCENT"},
+        {GLFW_KEY_INSERT, "INSERT"},
+        {GLFW_KEY_RIGHT, "RIGHT"},
+        {GLFW_KEY_LEFT, "LEFT"},
+        {GLFW_KEY_DOWN, "DOWN"},
+        {GLFW_KEY_UP, "UP"},
+        {GLFW_KEY_PAGE_UP, "PAGE UP"},
+        {GLFW_KEY_PAGE_DOWN, "PAGE DOWN"},
+        {GLFW_KEY_HOME, "HOME"},
+        {GLFW_KEY_END, "END"},
+        {GLFW_KEY_KP_0, "KP 0"},
+        {GLFW_KEY_KP_1, "KP 1"},
+        {GLFW_KEY_KP_2, "KP 2"},
+        {GLFW_KEY_KP_3, "KP 3"},
+        {GLFW_KEY_KP_4, "KP 4"},
+        {GLFW_KEY_KP_5, "KP 5"},
+        {GLFW_KEY_KP_6, "KP 6"},
+        {GLFW_KEY_KP_7, "KP 7"},
+        {GLFW_KEY_KP_8, "KP 8"},
+        {GLFW_KEY_KP_9, "KP 9"},
+        {GLFW_KEY_KP_DECIMAL, "KP DECIMAL"},
+        {GLFW_KEY_KP_DIVIDE, "KP DIVIDE"},
+        {GLFW_KEY_KP_MULTIPLY, "KP MULTIPLY"},
+        {GLFW_KEY_KP_SUBTRACT, "KP SUBTRACT"},
+        {GLFW_KEY_KP_ADD, "KP ADD"},
+        {GLFW_KEY_KP_EQUAL, "KP EQUAL"},
+        {GLFW_KEY_LEFT_SHIFT, "LEFT SHIFT"},
+        {GLFW_KEY_LEFT_CONTROL, "LEFT CONTROL"},
+        {GLFW_KEY_LEFT_ALT, "LEFT ALT"},
+        {GLFW_KEY_LEFT_SUPER, "LEFT SUPER"},
+        {GLFW_KEY_RIGHT_SHIFT, "RIGHT SHIFT"},
+        {GLFW_KEY_RIGHT_CONTROL, "RIGHT CONTROL"},
+        {GLFW_KEY_RIGHT_ALT, "RIGHT ALT"},
+        {GLFW_KEY_RIGHT_SUPER, "RIGHT SUPER"},
+        {GLFW_KEY_MENU, "MENU"}
+    };
 };
 
 void modVertexPos(PositionVertexComponent *posComp, const PairFloat_t &mod);

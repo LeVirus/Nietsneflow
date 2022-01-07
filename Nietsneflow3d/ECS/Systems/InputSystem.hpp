@@ -35,6 +35,10 @@ public:
     {
         return m_toggleSignal;
     }
+    inline const std::map<ControlKey_e, uint32_t> &getMapCurrentDefaultAssociatedKey()const
+    {
+        return m_mapCurrentAssociatedKey;
+    }
 private:
     void setUsedComponents();
     void treatPlayerInput();
@@ -62,14 +66,14 @@ private:
         {MenuMode_e::NEW_KEY, 0}
     };
     const std::map<ControlKey_e, uint32_t> m_mapDefaultAssociatedKey = {
-        {ControlKey_e::ACTION, GLFW_KEY_SPACE},
         {ControlKey_e::MOVE_FORWARD, GLFW_KEY_UP},
         {ControlKey_e::MOVE_BACKWARD, GLFW_KEY_DOWN},
-        {ControlKey_e::SHOOT, GLFW_KEY_LEFT_SHIFT},
         {ControlKey_e::STRAFE_LEFT, GLFW_KEY_Q},
         {ControlKey_e::STRAFE_RIGHT, GLFW_KEY_W},
         {ControlKey_e::TURN_LEFT, GLFW_KEY_LEFT},
         {ControlKey_e::TURN_RIGHT, GLFW_KEY_RIGHT},
+        {ControlKey_e::ACTION, GLFW_KEY_SPACE},
+        {ControlKey_e::SHOOT, GLFW_KEY_LEFT_SHIFT},
         {ControlKey_e::PREVIOUS_WEAPON, GLFW_KEY_E},
         {ControlKey_e::NEXT_WEAPON, GLFW_KEY_R}
     };

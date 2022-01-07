@@ -136,6 +136,13 @@ void StaticDisplaySystem::displayMenu()
             drawWriteVertex(m_qualityMenuEntity, VertexID_e::QUALITY_DISPLAY_MENU);
             drawWriteVertex(m_fullscreenMenuEntity, VertexID_e::FULLSCREEN);
         }
+        else if(playerComp->m_menuMode == MenuMode_e::INPUT)
+        {
+            for(uint32_t j = 0; j < m_inputMenuWriteKeysEntities.size(); ++j)
+            {
+                drawWriteVertex(m_inputMenuWriteKeysEntities[j], VertexID_e::INPUT);
+            }
+        }
     }
 }
 
@@ -179,6 +186,17 @@ void StaticDisplaySystem::updateMenuEntryFullscreen(bool displayMenufullscreenMo
     assert(posComp);
     writeComp->m_fontSpriteData = m_fontDataPtr->getWriteData(writeComp->m_str, writeComp->m_numTexture);
     confWriteVertex(writeComp, posComp, VertexID_e::FULLSCREEN);
+}
+
+//===================================================================
+std::string StaticDisplaySystem::getStringKeyAssociated(uint32_t key)const
+{
+    std::map<uint32_t, std::string>::const_iterator it = m_inputKeyboardKeyString.find(key);
+    if(it == m_inputKeyboardKeyString.end())
+    {
+        return "";
+    }
+    return it->second;
 }
 
 //===================================================================
