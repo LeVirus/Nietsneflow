@@ -115,12 +115,15 @@ void StaticDisplaySystem::displayMenu()
         SpriteTextureComponent *spriteComp = stairwayToComponentManager().
                 searchComponentByType<SpriteTextureComponent>(playerComp->m_menuCursorEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
         assert(spriteComp);
-        updateMenuCursorPosition(playerComp);
-        if(!m_cursorInit)
+        if(playerComp->m_menuMode != MenuMode_e::NEW_KEY)
         {
-            fillCursorMenuVertex(playerComp);
+            updateMenuCursorPosition(playerComp);
+            if(!m_cursorInit)
+            {
+                fillCursorMenuVertex(playerComp);
+            }
+            drawVertex(spriteComp->m_spriteData->m_textureNum, VertexID_e::MENU_CURSOR);
         }
-        drawVertex(spriteComp->m_spriteData->m_textureNum, VertexID_e::MENU_CURSOR);
         if(playerComp->m_menuMode == MenuMode_e::SOUND)
         {
             mptrSystemManager->searchSystemByType<ColorDisplaySystem>(

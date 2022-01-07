@@ -18,6 +18,21 @@ enum class AnimationMode_e
     RETURN
 };
 
+enum class ControlKey_e
+{
+    ACTION,
+    MOVE_BACKWARD,
+    MOVE_FORWARD,
+    SHOOT,
+    TURN_LEFT,
+    TURN_RIGHT,
+    STRAFE_LEFT,
+    STRAFE_RIGHT,
+    PREVIOUS_WEAPON,
+    NEXT_WEAPON
+
+};
+
 enum class AttackType_e
 {
     MELEE,
@@ -288,7 +303,8 @@ enum class MenuMode_e
     TRANSITION_LEVEL,
     DISPLAY,
     SOUND,
-    INPUT
+    INPUT,
+    NEW_KEY
 };
 
 inline const float MAX_SOUND_DISTANCE = 1000.0f;
@@ -344,6 +360,9 @@ inline const std::map<MenuMode_e, PairPairFloatStr_t> MAP_MENU_DATA =
     {MenuMode_e::INPUT,
      PairPairFloatStr_t{{-0.7f, 0.8f}, "MOVE FORWARD\\MOVE BACKWARD\\STRAFE LEFT\\"
          "STRAFE RIGHT\\TURN RIGHT\\TURN LEFT\\ACTION\\SHOOT\\DEFAULT\\RETURN\\VALID"}
+    },
+    {MenuMode_e::NEW_KEY,
+     PairPairFloatStr_t{{-0.3f, 0.1f}, "ENTER NEW KEY:"}
     }
 };
 inline const std::map<Shader_e, std::string> SHADER_ID_MAP

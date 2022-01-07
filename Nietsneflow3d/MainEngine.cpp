@@ -1113,6 +1113,7 @@ uint32_t MainEngine::createAmmoEntity(CollisionTag_e collTag, bool visibleShot)
 //===================================================================
 void MainEngine::setMenuEntries(PlayerConfComponent *playerComp)
 {
+    playerComp->m_currentCursorPos = 0;
     m_writeConf->m_upLeftPositionGL = MAP_MENU_DATA.at(playerComp->m_menuMode).first;
     m_graphicEngine.fillMenuWrite(m_writeConf, playerComp->m_menuMode);
 }

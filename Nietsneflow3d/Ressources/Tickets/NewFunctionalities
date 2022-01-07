@@ -3,9 +3,9 @@ NEW FUNCTIONALITIES=============================================================
 
 ))
 CREATE CONF MENU
-	Sound
+	Sound=========================OK
 	Reassign touche
-	Resolution
+	Resolution====================OK
 
 ))
 Add joypad support
@@ -13,8 +13,17 @@ Add joypad support
 ))
 Add encryption for conf level file
 
+))
+Set saving system
+	Game advancement
+		Set multi games saved (like zelda)
+	Settings
+
 3)
-Create Start menu, game over menu 
+Create 
+	Start menu 
+	game over======================OK
+	menu===========================OK
 
 10)
 Optionnel :: afficher l'inventaire dans le menu

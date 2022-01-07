@@ -73,7 +73,7 @@ void InputSystem::treatPlayerInput()
                 searchComponentByType<WeaponComponent>(playerComp->m_weaponEntity, Components_e::WEAPON_COMPONENT);
         assert(weaponComp);
         treatPlayerMove(playerComp, moveComp, mapComp);
-        if(glfwGetKey(m_window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+        if(glfwGetKey(m_window, m_mapCurrentAssociatedKey[ControlKey_e::TURN_RIGHT]) == GLFW_PRESS)
         {
             moveComp->m_degreeOrientation -= moveComp->m_rotationAngle;
             if(moveComp->m_degreeOrientation < 0.0f)
@@ -82,7 +82,7 @@ void InputSystem::treatPlayerInput()
             }
             updatePlayerOrientation(*moveComp, *posComp, *visionComp);
         }
-        else if(glfwGetKey(m_window, GLFW_KEY_LEFT) == GLFW_PRESS)
+        else if(glfwGetKey(m_window, m_mapCurrentAssociatedKey[ControlKey_e::TURN_LEFT]) == GLFW_PRESS)
         {
             moveComp->m_degreeOrientation += moveComp->m_rotationAngle;
             if(moveComp->m_degreeOrientation > 360.0f)
@@ -91,7 +91,7 @@ void InputSystem::treatPlayerInput()
             }
             updatePlayerOrientation(*moveComp, *posComp, *visionComp);
         }
-        if(glfwGetKey(m_window, GLFW_KEY_SPACE) == GLFW_PRESS)
+        if(glfwGetKey(m_window, m_mapCurrentAssociatedKey[ControlKey_e::ACTION]) == GLFW_PRESS)
         {
             MapCoordComponent *mapCompAction = stairwayToComponentManager().
                     searchComponentByType<MapCoordComponent>(playerComp->m_actionEntity, Components_e::MAP_COORD_COMPONENT);
@@ -109,16 +109,16 @@ void InputSystem::treatPlayerInput()
         if(!weaponComp->m_weaponChange && !weaponComp->m_timerShootActive)
         {
             //Change weapon
-            if(glfwGetKey(m_window, GLFW_KEY_E) == GLFW_PRESS)
+            if(glfwGetKey(m_window, m_mapCurrentAssociatedKey[ControlKey_e::PREVIOUS_WEAPON]) == GLFW_PRESS)
             {
                 changePlayerWeapon(*weaponComp, false);
             }
-            else if(glfwGetKey(m_window, GLFW_KEY_R) == GLFW_PRESS)
+            else if(glfwGetKey(m_window, m_mapCurrentAssociatedKey[ControlKey_e::NEXT_WEAPON]) == GLFW_PRESS)
             {
                 changePlayerWeapon(*weaponComp, true);
             }
             //SHOOT
-            else if(glfwGetKey(m_window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+            else if(glfwGetKey(m_window, m_mapCurrentAssociatedKey[ControlKey_e::SHOOT]) == GLFW_PRESS)
             {
                 if(!weaponComp->m_timerShootActive && weaponComp->m_weaponsData[weaponComp->m_currentWeapon].m_ammunationsCount > 0)
                 {
@@ -155,17 +155,17 @@ void InputSystem::treatPlayerMove(PlayerConfComponent *playerComp, MoveableCompo
     //init value
     MoveOrientation_e currentMoveDirection = MoveOrientation_e::FORWARD;
     //STRAFE
-    if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS)
+    if (glfwGetKey(m_window, m_mapCurrentAssociatedKey[ControlKey_e::STRAFE_RIGHT]) == GLFW_PRESS)
     {
         currentMoveDirection = MoveOrientation_e::RIGHT;
         playerComp->m_inMovement = true;
     }
-    else if (glfwGetKey(m_window, GLFW_KEY_Q) == GLFW_PRESS)
+    else if (glfwGetKey(m_window, m_mapCurrentAssociatedKey[ControlKey_e::STRAFE_LEFT]) == GLFW_PRESS)
     {
         currentMoveDirection = MoveOrientation_e::LEFT;
         playerComp->m_inMovement = true;
     }
-    if (glfwGetKey(m_window, GLFW_KEY_UP) == GLFW_PRESS)
+    if (glfwGetKey(m_window, m_mapCurrentAssociatedKey[ControlKey_e::MOVE_FORWARD]) == GLFW_PRESS)
     {
         if(currentMoveDirection == MoveOrientation_e::RIGHT)
         {
@@ -181,7 +181,7 @@ void InputSystem::treatPlayerMove(PlayerConfComponent *playerComp, MoveableCompo
         }
         playerComp->m_inMovement = true;
     }
-    else if (glfwGetKey(m_window, GLFW_KEY_DOWN) == GLFW_PRESS)
+    else if (glfwGetKey(m_window, m_mapCurrentAssociatedKey[ControlKey_e::MOVE_BACKWARD]) == GLFW_PRESS)
     {
         if(currentMoveDirection == MoveOrientation_e::RIGHT)
         {
@@ -257,9 +257,13 @@ void InputSystem::treatMenu(uint32_t playerEntity)
         {
             m_mainEngine->setUnsetPaused();
         }
+        else if(playerComp->m_menuMode == MenuMode_e::NEW_KEY)
+        {
+            playerComp->m_menuMode = MenuMode_e::INPUT;
+            m_mainEngine->setMenuEntries(playerComp);
+        }
         else
         {
-            playerComp->m_currentCursorPos = 0;
             playerComp->m_menuMode = MenuMode_e::BASE;
             m_mainEngine->setMenuEntries(playerComp);
             return;
@@ -336,6 +340,7 @@ void InputSystem::treatGeneralKeysMenu(PlayerConfComponent *playerComp)
 //===================================================================
 void InputSystem::treatEnterPressedMenu(PlayerConfComponent *playerComp)
 {
+    m_enterPressed = true;
     switch (playerComp->m_menuMode)
     {
     case MenuMode_e::BASE:
@@ -352,6 +357,8 @@ void InputSystem::treatEnterPressedMenu(PlayerConfComponent *playerComp)
         break;
     case MenuMode_e::TRANSITION_LEVEL:
         m_mainEngine->setUnsetPaused();
+        break;
+    case MenuMode_e::NEW_KEY:
         break;
     }
 }
@@ -404,10 +411,6 @@ void InputSystem::treatLeftPressedMenu(PlayerConfComponent *playerComp)
             m_mainEngine->toogleMenuEntryFullscreen();
         }
     }
-    else if(playerComp->m_menuMode == MenuMode_e::INPUT)
-    {
-
-    }
 }
 
 //===================================================================
@@ -458,10 +461,6 @@ void InputSystem::treatRightPressedMenu(PlayerConfComponent *playerComp)
             m_mainEngine->toogleMenuEntryFullscreen();
         }
     }
-    else if(playerComp->m_menuMode == MenuMode_e::INPUT)
-    {
-
-    }
 }
 
 //===================================================================
@@ -471,18 +470,15 @@ void InputSystem::treatEnterPressedMainMenu(PlayerConfComponent *playerComp)
     switch(menuPos)
     {
     case MainMenuCursorPos_e::SOUND_CONF:
-        playerComp->m_currentCursorPos = 0;
         playerComp->m_menuMode = MenuMode_e::SOUND;
         m_mainEngine->setMenuEntries(playerComp);
         m_mainEngine->getMusicVolume();
         break;
     case MainMenuCursorPos_e::DISPLAY_CONF:
-        playerComp->m_currentCursorPos = 0;
         playerComp->m_menuMode = MenuMode_e::DISPLAY;
         m_mainEngine->setMenuEntries(playerComp);
         break;
     case MainMenuCursorPos_e::INPUT_CONF:
-        playerComp->m_currentCursorPos = 0;
         playerComp->m_menuMode = MenuMode_e::INPUT;
         m_mainEngine->setMenuEntries(playerComp);
         break;
@@ -510,10 +506,8 @@ void InputSystem::treatEnterPressedSoundMenu(PlayerConfComponent *playerComp)
     case SoundMenuCursorPos_e::EFFECTS_VOLUME:
         break;
     case SoundMenuCursorPos_e::RETURN:
-        playerComp->m_currentCursorPos = 0;
         playerComp->m_menuMode = MenuMode_e::BASE;
         m_mainEngine->setMenuEntries(playerComp);
-        m_enterPressed = true;
         break;
     case SoundMenuCursorPos_e::TOTAL:
         break;
@@ -527,10 +521,8 @@ void InputSystem::treatEnterPressedDisplayMenu(PlayerConfComponent *playerComp)
             static_cast<DisplayMenuCursorPos_e>(playerComp->m_currentCursorPos);
     if(menuPos == DisplayMenuCursorPos_e::RETURN)
     {
-        playerComp->m_currentCursorPos = 0;
         playerComp->m_menuMode = MenuMode_e::BASE;
         m_mainEngine->setMenuEntries(playerComp);
-        m_enterPressed = true;
     }
     else if(menuPos == DisplayMenuCursorPos_e::VALID)
     {
@@ -542,37 +534,46 @@ void InputSystem::treatEnterPressedDisplayMenu(PlayerConfComponent *playerComp)
 void InputSystem::treatEnterPressedInputMenu(PlayerConfComponent *playerComp)
 {
     InputMenuCursorPos_e menuPos = static_cast<InputMenuCursorPos_e>(playerComp->m_currentCursorPos);
-    switch(menuPos)
+    if(menuPos != InputMenuCursorPos_e::RETURN && menuPos != InputMenuCursorPos_e::VALID && menuPos != InputMenuCursorPos_e::DEFAULT)
     {
-    case InputMenuCursorPos_e::ACTION:
-        break;
-    case InputMenuCursorPos_e::MOVE_BACKWARD:
-        break;
-    case InputMenuCursorPos_e::MOVE_FORWARD:
-        break;
-    case InputMenuCursorPos_e::SHOOT:
-        break;
-    case InputMenuCursorPos_e::TURN_LEFT:
-        break;
-    case InputMenuCursorPos_e::TURN_RIGHT:
-        break;
-    case InputMenuCursorPos_e::STRAFE_LEFT:
-        break;
-    case InputMenuCursorPos_e::STRAFE_RIGHT:
-        break;
-    case InputMenuCursorPos_e::RETURN:
-        playerComp->m_currentCursorPos = 0;
+        playerComp->m_menuMode = MenuMode_e::NEW_KEY;
+        m_mainEngine->setMenuEntries(playerComp);
+        return;
+    }
+    if(menuPos == InputMenuCursorPos_e::RETURN)
+    {
         playerComp->m_menuMode = MenuMode_e::BASE;
         m_mainEngine->setMenuEntries(playerComp);
-        m_enterPressed = true;
-        break;
-    case InputMenuCursorPos_e::VALID:
-        break;
-    case InputMenuCursorPos_e::DEFAULT:
-        break;
-    case InputMenuCursorPos_e::TOTAL:
-        break;
     }
+//    switch(menuPos)
+//    {
+//    case InputMenuCursorPos_e::ACTION:
+//        break;
+//    case InputMenuCursorPos_e::MOVE_BACKWARD:
+//        break;
+//    case InputMenuCursorPos_e::MOVE_FORWARD:
+//        break;
+//    case InputMenuCursorPos_e::SHOOT:
+//        break;
+//    case InputMenuCursorPos_e::TURN_LEFT:
+//        break;
+//    case InputMenuCursorPos_e::TURN_RIGHT:
+//        break;
+//    case InputMenuCursorPos_e::STRAFE_LEFT:
+//        break;
+//    case InputMenuCursorPos_e::STRAFE_RIGHT:
+//        break;
+//    case InputMenuCursorPos_e::RETURN:
+//        playerComp->m_menuMode = MenuMode_e::BASE;
+//        m_mainEngine->setMenuEntries(playerComp);
+//        break;
+//    case InputMenuCursorPos_e::VALID:
+//        break;
+//    case InputMenuCursorPos_e::DEFAULT:
+//        break;
+//    case InputMenuCursorPos_e::TOTAL:
+//        break;
+//    }
 }
 
 //===================================================================
