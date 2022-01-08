@@ -1125,6 +1125,12 @@ void MainEngine::updateWriteComp(WriteComponent *writeComp)
 }
 
 //===================================================================
+void MainEngine::updateStringWriteEntitiesInputMenu()
+{
+    m_graphicEngine.updateStringWriteEntitiesInputMenu();
+}
+
+//===================================================================
 void MainEngine::createPlayerVisibleShotEntity(WeaponComponent *weaponConf)
 {
     for(uint32_t i = 0; i < weaponConf->m_weaponsData.size(); ++i)
@@ -1907,8 +1913,6 @@ void MainEngine::confWriteEntitiesInputMenu()
 {
     ArrayControlKey_t memEntities;
     PairFloat_t currentUpLeftPos = {MAP_MENU_DATA.at(MenuMode_e::INPUT).first.first + 1.0f, MAP_MENU_DATA.at(MenuMode_e::INPUT).first.second};
-    const std::map<ControlKey_e, uint32_t> &map = m_ecsManager.getSystemManager().searchSystemByType<InputSystem>(
-                static_cast<uint32_t>(Systems_e::INPUT_SYSTEM))->getMapCurrentDefaultAssociatedKey();
     for(uint32_t i = 0; i < memEntities.size(); ++i)
     {
         memEntities[i] = createWriteEntity();
@@ -1917,14 +1921,11 @@ void MainEngine::confWriteEntitiesInputMenu()
         assert(writeConf);
         writeConf->m_upLeftPositionGL = currentUpLeftPos;
         writeConf->m_fontSize = MENU_FONT_SIZE;
-        writeConf->m_str = m_ecsManager.getSystemManager().searchSystemByType<StaticDisplaySystem>(
-                    static_cast<uint32_t>(Systems_e::STATIC_DISPLAY_SYSTEM))->
-                getStringKeyAssociated(map.at(static_cast<ControlKey_e>(i)));
         currentUpLeftPos.second -= MENU_FONT_SIZE;
-        m_graphicEngine.confWriteComponent(writeConf);
     }
     m_ecsManager.getSystemManager().searchSystemByType<StaticDisplaySystem>(static_cast<uint32_t>(Systems_e::STATIC_DISPLAY_SYSTEM))->
             memInputMenuEntities(memEntities);
+    updateStringWriteEntitiesInputMenu();
 }
 
 //===================================================================
@@ -2317,6 +2318,7 @@ void MainEngine::linkSystemsToGraphicEngine()
             searchSystemByType<VisionSystem>(static_cast<uint32_t>(Systems_e::VISION_SYSTEM));
     StaticDisplaySystem *staticDisplay = m_ecsManager.getSystemManager().
             searchSystemByType<StaticDisplaySystem>(static_cast<uint32_t>(Systems_e::STATIC_DISPLAY_SYSTEM));
+    staticDisplay->linkMainEngine(this);
     m_graphicEngine.linkSystems(color, map, first, vision, staticDisplay);
 }
 

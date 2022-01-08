@@ -78,7 +78,19 @@ private:
         {ControlKey_e::PREVIOUS_WEAPON, GLFW_KEY_E},
         {ControlKey_e::NEXT_WEAPON, GLFW_KEY_R}
     };
-    std::map<ControlKey_e, uint32_t> m_mapCurrentAssociatedKey = m_mapDefaultAssociatedKey;
+    std::map<ControlKey_e, uint32_t> m_mapCurrentAssociatedKey = m_mapDefaultAssociatedKey, m_mapTmpAssociatedKey = m_mapCurrentAssociatedKey;
+    const std::map<InputMenuCursorPos_e, ControlKey_e> m_mapInputControl = {
+        {InputMenuCursorPos_e::ACTION, ControlKey_e::ACTION},
+        {InputMenuCursorPos_e::MOVE_BACKWARD, ControlKey_e::MOVE_BACKWARD},
+        {InputMenuCursorPos_e::MOVE_FORWARD, ControlKey_e::MOVE_FORWARD},
+        {InputMenuCursorPos_e::NEXT_WEAPON, ControlKey_e::NEXT_WEAPON},
+        {InputMenuCursorPos_e::PREVIOUS_WEAPON, ControlKey_e::PREVIOUS_WEAPON},
+        {InputMenuCursorPos_e::SHOOT, ControlKey_e::SHOOT},
+        {InputMenuCursorPos_e::STRAFE_LEFT, ControlKey_e::STRAFE_LEFT},
+        {InputMenuCursorPos_e::STRAFE_RIGHT, ControlKey_e::STRAFE_RIGHT},
+        {InputMenuCursorPos_e::TURN_LEFT, ControlKey_e::TURN_LEFT},
+        {InputMenuCursorPos_e::TURN_RIGHT, ControlKey_e::TURN_RIGHT}
+    };
     ControlKey_e m_currentSelectedKey;
     bool m_modeTransition = false, m_toggleSignal = false;
 };

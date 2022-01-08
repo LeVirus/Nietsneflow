@@ -50,7 +50,12 @@ public:
     void updateDisplayMenuQuality(const std::string &str);
     void updateMenuEntryFullscreen(bool displayMenufullscreenMode);
     std::string getStringKeyAssociated(uint32_t key)const;
-    void updateNewInputKey(ControlKey_e currentSelectedKey, uint32_t glKey, MainEngine *mainEngine);
+    void updateNewInputKey(ControlKey_e currentSelectedKey, uint32_t glKey);
+    void updateStringWriteEntitiesInputMenu();
+    inline void linkMainEngine(MainEngine *mainEngine)
+    {
+        m_mainEngine = mainEngine;
+    }
     inline void setVectTextures(std::vector<Texture> &vectTexture)
     {
         m_ptrVectTexture = &vectTexture;
@@ -83,6 +88,7 @@ private:
     void setWeaponMovement(PlayerConfComponent *playerComp, PositionVertexComponent *posComp,
                            MemPositionsVertexComponents *memPosComp);
 private:
+    MainEngine *m_mainEngine;
     FontData const *m_fontDataPtr;
     bool m_cursorInit = false;
     Shader *m_shader;

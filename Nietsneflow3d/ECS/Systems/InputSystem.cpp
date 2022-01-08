@@ -356,8 +356,8 @@ bool InputSystem::treatNewKey()
     {
         if(glfwGetKey(m_window, it->first) == GLFW_PRESS)
         {
-            m_mapCurrentAssociatedKey[m_currentSelectedKey] = it->first;
-            staticSystem->updateNewInputKey(m_currentSelectedKey, it->first, m_mainEngine);
+            m_mapTmpAssociatedKey[m_currentSelectedKey] = it->first;
+            staticSystem->updateNewInputKey(m_currentSelectedKey, it->first);
             return true;
         }
     }
@@ -508,6 +508,8 @@ void InputSystem::treatEnterPressedMainMenu(PlayerConfComponent *playerComp)
     case MainMenuCursorPos_e::INPUT_CONF:
         playerComp->m_menuMode = MenuMode_e::INPUT;
         m_mainEngine->setMenuEntries(playerComp);
+        m_mapTmpAssociatedKey = m_mapCurrentAssociatedKey;
+        m_mainEngine->updateStringWriteEntitiesInputMenu();
         break;
     case MainMenuCursorPos_e::NEW_GAME:
         break;
@@ -565,42 +567,25 @@ void InputSystem::treatEnterPressedInputMenu(PlayerConfComponent *playerComp)
     {
         playerComp->m_menuMode = MenuMode_e::NEW_KEY;
         m_mainEngine->setMenuEntries(playerComp);
-        //DIRTY
-        if(menuPos == InputMenuCursorPos_e::ACTION)
-        {
-            m_currentSelectedKey = ControlKey_e::ACTION;
-        }
-        else if(menuPos == InputMenuCursorPos_e::MOVE_BACKWARD)
-        {
-            m_currentSelectedKey = ControlKey_e::MOVE_BACKWARD;
-        }
-        else if(menuPos == InputMenuCursorPos_e::MOVE_FORWARD)
-        {
-            m_currentSelectedKey = ControlKey_e::MOVE_FORWARD;
-        }
-        else if(menuPos == InputMenuCursorPos_e::SHOOT)
-        {
-            m_currentSelectedKey = ControlKey_e::SHOOT;
-        }
-        else if(menuPos == InputMenuCursorPos_e::TURN_LEFT)
-        {
-            m_currentSelectedKey = ControlKey_e::TURN_LEFT;
-        }
-        else if(menuPos == InputMenuCursorPos_e::TURN_RIGHT)
-        {
-            m_currentSelectedKey = ControlKey_e::TURN_RIGHT;
-        }
-        else if(menuPos == InputMenuCursorPos_e::STRAFE_LEFT)
-        {
-            m_currentSelectedKey = ControlKey_e::STRAFE_LEFT;
-        }
-        else if(menuPos == InputMenuCursorPos_e::STRAFE_RIGHT)
-        {
-            m_currentSelectedKey = ControlKey_e::STRAFE_RIGHT;
-        }
+        m_currentSelectedKey = m_mapInputControl.at(menuPos);
     }
     else if(menuPos == InputMenuCursorPos_e::RETURN)
     {
+        playerComp->m_menuMode = MenuMode_e::BASE;
+        m_mainEngine->setMenuEntries(playerComp);
+    }
+    else if(menuPos == InputMenuCursorPos_e::DEFAULT)
+    {
+        m_mapTmpAssociatedKey = m_mapCurrentAssociatedKey;
+        m_mapCurrentAssociatedKey = m_mapDefaultAssociatedKey;
+        m_mainEngine->updateStringWriteEntitiesInputMenu();
+        m_mapCurrentAssociatedKey = m_mapTmpAssociatedKey;
+        m_mapTmpAssociatedKey = m_mapDefaultAssociatedKey;
+    }
+    else if(menuPos == InputMenuCursorPos_e::VALID)
+    {
+        m_mapCurrentAssociatedKey = m_mapTmpAssociatedKey;
+        m_mainEngine->updateStringWriteEntitiesInputMenu();
         playerComp->m_menuMode = MenuMode_e::BASE;
         m_mainEngine->setMenuEntries(playerComp);
     }

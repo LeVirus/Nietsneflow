@@ -40,6 +40,7 @@ public:
     void updatePlayerLife(WriteComponent *writeComp, PlayerConfComponent *playerComp);
     void fillMenuWrite(WriteComponent *writeComp, MenuMode_e menuEntry);
     void confWriteComponent(WriteComponent *writeComp);
+    void updateStringWriteEntitiesInputMenu();
     inline MapDisplaySystem &getMapSystem()
     {
         return *m_mapSystem;

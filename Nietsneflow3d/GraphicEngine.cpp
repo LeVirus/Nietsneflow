@@ -177,6 +177,12 @@ void GraphicEngine::confWriteComponent(WriteComponent *writeComp)
 }
 
 //===================================================================
+void GraphicEngine::updateStringWriteEntitiesInputMenu()
+{
+    m_staticDisplaySystem->updateStringWriteEntitiesInputMenu();
+}
+
+//===================================================================
 void GraphicEngine::decreaseMenuDisplayQuality()
 {
     if(m_currentDisplayedQuality == 0)

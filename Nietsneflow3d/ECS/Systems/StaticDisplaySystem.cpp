@@ -148,6 +148,21 @@ void StaticDisplaySystem::displayMenu()
 }
 
 //===================================================================
+void StaticDisplaySystem::updateStringWriteEntitiesInputMenu()
+{
+    const std::map<ControlKey_e, uint32_t> &map = mptrSystemManager->searchSystemByType<InputSystem>(
+                static_cast<uint32_t>(Systems_e::INPUT_SYSTEM))->getMapCurrentDefaultAssociatedKey();
+    for(uint32_t i = 0; i < m_inputMenuWriteKeysEntities.size(); ++i)
+    {
+        WriteComponent *writeConf = stairwayToComponentManager().
+                searchComponentByType<WriteComponent>(m_inputMenuWriteKeysEntities[i], Components_e::WRITE_COMPONENT);
+        assert(writeConf);
+        writeConf->m_str = getStringKeyAssociated(map.at(static_cast<ControlKey_e>(i)));
+        m_mainEngine->updateWriteComp(writeConf);
+    }
+}
+
+//===================================================================
 void StaticDisplaySystem::updateDisplayMenuResolution(const std::string &str)
 {
     WriteComponent *writeComp = stairwayToComponentManager().
@@ -201,14 +216,13 @@ std::string StaticDisplaySystem::getStringKeyAssociated(uint32_t key)const
 }
 
 //===================================================================
-void StaticDisplaySystem::updateNewInputKey(ControlKey_e currentSelectedKey, uint32_t glKey, MainEngine *mainEngine)
+void StaticDisplaySystem::updateNewInputKey(ControlKey_e currentSelectedKey, uint32_t glKey)
 {
-    WriteComponent *writeComp = stairwayToComponentManager().
-                searchComponentByType<WriteComponent>(m_inputMenuWriteKeysEntities[static_cast<uint32_t>(currentSelectedKey)],
-            Components_e::WRITE_COMPONENT);
+    WriteComponent *writeComp = stairwayToComponentManager().searchComponentByType<WriteComponent>(
+                m_inputMenuWriteKeysEntities[static_cast<uint32_t>(currentSelectedKey)], Components_e::WRITE_COMPONENT);
     assert(writeComp);
     writeComp->m_str = getStringKeyAssociated(glKey);
-    mainEngine->updateWriteComp(writeComp);
+    m_mainEngine->updateWriteComp(writeComp);
 }
 
 //===================================================================
