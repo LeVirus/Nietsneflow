@@ -1119,6 +1119,12 @@ void MainEngine::setMenuEntries(PlayerConfComponent *playerComp)
 }
 
 //===================================================================
+void MainEngine::updateWriteComp(WriteComponent *writeComp)
+{
+    m_graphicEngine.confWriteComponent(writeComp);
+}
+
+//===================================================================
 void MainEngine::createPlayerVisibleShotEntity(WeaponComponent *weaponConf)
 {
     for(uint32_t i = 0; i < weaponConf->m_weaponsData.size(); ++i)

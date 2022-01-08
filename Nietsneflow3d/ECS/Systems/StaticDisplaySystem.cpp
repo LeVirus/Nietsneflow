@@ -1,4 +1,5 @@
 #include "StaticDisplaySystem.hpp"
+#include "MainEngine.hpp"
 #include <ECS/Components/MemPositionsVertexComponents.hpp>
 #include <ECS/Components/MemSpriteDataComponent.hpp>
 #include <ECS/Components/SpriteTextureComponent.hpp>
@@ -197,6 +198,17 @@ std::string StaticDisplaySystem::getStringKeyAssociated(uint32_t key)const
         return "";
     }
     return it->second;
+}
+
+//===================================================================
+void StaticDisplaySystem::updateNewInputKey(ControlKey_e currentSelectedKey, uint32_t glKey, MainEngine *mainEngine)
+{
+    WriteComponent *writeComp = stairwayToComponentManager().
+                searchComponentByType<WriteComponent>(m_inputMenuWriteKeysEntities[static_cast<uint32_t>(currentSelectedKey)],
+            Components_e::WRITE_COMPONENT);
+    assert(writeComp);
+    writeComp->m_str = getStringKeyAssociated(glKey);
+    mainEngine->updateWriteComp(writeComp);
 }
 
 //===================================================================

@@ -9,6 +9,7 @@
 #include <ECS/Components/GeneralCollisionComponent.hpp>
 #include <ECS/Components/AudioComponent.hpp>
 #include <ECS/Components/WeaponComponent.hpp>
+#include <ECS/Systems/StaticDisplaySystem.hpp>
 #include "PhysicalEngine.hpp"
 #include <MainEngine.hpp>
 #include <cassert>
@@ -270,6 +271,14 @@ void InputSystem::treatMenu(uint32_t playerEntity)
         }
         return;
     }
+    if(playerComp->m_menuMode == MenuMode_e::NEW_KEY)
+    {
+        if(treatNewKey())
+        {
+            playerComp->m_menuMode = MenuMode_e::INPUT;
+            m_mainEngine->setMenuEntries(playerComp);
+        }
+    }
     if(m_keyUpPressed && glfwGetKey(m_window, GLFW_KEY_UP) == GLFW_RELEASE)
     {
         m_keyUpPressed = false;
@@ -335,6 +344,24 @@ void InputSystem::treatGeneralKeysMenu(PlayerConfComponent *playerComp)
     {
         treatRightPressedMenu(playerComp);
     }
+}
+
+//===================================================================
+bool InputSystem::treatNewKey()
+{
+    StaticDisplaySystem *staticSystem = mptrSystemManager->searchSystemByType<StaticDisplaySystem>(
+                static_cast<uint32_t>(Systems_e::STATIC_DISPLAY_SYSTEM));
+    const std::map<uint32_t, std::string> &map = staticSystem->getInputKeys();
+    for(std::map<uint32_t, std::string>::const_iterator it = map.begin(); it != map.end(); ++it)
+    {
+        if(glfwGetKey(m_window, it->first) == GLFW_PRESS)
+        {
+            m_mapCurrentAssociatedKey[m_currentSelectedKey] = it->first;
+            staticSystem->updateNewInputKey(m_currentSelectedKey, it->first, m_mainEngine);
+            return true;
+        }
+    }
+    return false;
 }
 
 //===================================================================
@@ -538,42 +565,45 @@ void InputSystem::treatEnterPressedInputMenu(PlayerConfComponent *playerComp)
     {
         playerComp->m_menuMode = MenuMode_e::NEW_KEY;
         m_mainEngine->setMenuEntries(playerComp);
-        return;
+        //DIRTY
+        if(menuPos == InputMenuCursorPos_e::ACTION)
+        {
+            m_currentSelectedKey = ControlKey_e::ACTION;
+        }
+        else if(menuPos == InputMenuCursorPos_e::MOVE_BACKWARD)
+        {
+            m_currentSelectedKey = ControlKey_e::MOVE_BACKWARD;
+        }
+        else if(menuPos == InputMenuCursorPos_e::MOVE_FORWARD)
+        {
+            m_currentSelectedKey = ControlKey_e::MOVE_FORWARD;
+        }
+        else if(menuPos == InputMenuCursorPos_e::SHOOT)
+        {
+            m_currentSelectedKey = ControlKey_e::SHOOT;
+        }
+        else if(menuPos == InputMenuCursorPos_e::TURN_LEFT)
+        {
+            m_currentSelectedKey = ControlKey_e::TURN_LEFT;
+        }
+        else if(menuPos == InputMenuCursorPos_e::TURN_RIGHT)
+        {
+            m_currentSelectedKey = ControlKey_e::TURN_RIGHT;
+        }
+        else if(menuPos == InputMenuCursorPos_e::STRAFE_LEFT)
+        {
+            m_currentSelectedKey = ControlKey_e::STRAFE_LEFT;
+        }
+        else if(menuPos == InputMenuCursorPos_e::STRAFE_RIGHT)
+        {
+            m_currentSelectedKey = ControlKey_e::STRAFE_RIGHT;
+        }
     }
-    if(menuPos == InputMenuCursorPos_e::RETURN)
+    else if(menuPos == InputMenuCursorPos_e::RETURN)
     {
         playerComp->m_menuMode = MenuMode_e::BASE;
         m_mainEngine->setMenuEntries(playerComp);
     }
-//    switch(menuPos)
-//    {
-//    case InputMenuCursorPos_e::ACTION:
-//        break;
-//    case InputMenuCursorPos_e::MOVE_BACKWARD:
-//        break;
-//    case InputMenuCursorPos_e::MOVE_FORWARD:
-//        break;
-//    case InputMenuCursorPos_e::SHOOT:
-//        break;
-//    case InputMenuCursorPos_e::TURN_LEFT:
-//        break;
-//    case InputMenuCursorPos_e::TURN_RIGHT:
-//        break;
-//    case InputMenuCursorPos_e::STRAFE_LEFT:
-//        break;
-//    case InputMenuCursorPos_e::STRAFE_RIGHT:
-//        break;
-//    case InputMenuCursorPos_e::RETURN:
-//        playerComp->m_menuMode = MenuMode_e::BASE;
-//        m_mainEngine->setMenuEntries(playerComp);
-//        break;
-//    case InputMenuCursorPos_e::VALID:
-//        break;
-//    case InputMenuCursorPos_e::DEFAULT:
-//        break;
-//    case InputMenuCursorPos_e::TOTAL:
-//        break;
-//    }
 }
 
 //===================================================================

@@ -44,6 +44,7 @@ private:
     void treatPlayerInput();
     void treatMenu(uint32_t playerEntity);
     void treatGeneralKeysMenu(PlayerConfComponent *playerComp);
+    bool treatNewKey();
     void treatEnterPressedMenu(PlayerConfComponent *playerComp);
     void treatLeftPressedMenu(PlayerConfComponent *playerComp);
     void treatRightPressedMenu(PlayerConfComponent *playerComp);
@@ -78,6 +79,7 @@ private:
         {ControlKey_e::NEXT_WEAPON, GLFW_KEY_R}
     };
     std::map<ControlKey_e, uint32_t> m_mapCurrentAssociatedKey = m_mapDefaultAssociatedKey;
+    ControlKey_e m_currentSelectedKey;
     bool m_modeTransition = false, m_toggleSignal = false;
 };
 

@@ -14,6 +14,7 @@ struct TimerComponent;
 struct PlayerConfComponent;
 struct MemPositionsVertexComponents;
 struct WriteComponent;
+class MainEngine;
 
 using ArrayControlKey_t = std::array<uint32_t, static_cast<uint32_t>(ControlKey_e::TOTAL)>;
 
@@ -49,6 +50,7 @@ public:
     void updateDisplayMenuQuality(const std::string &str);
     void updateMenuEntryFullscreen(bool displayMenufullscreenMode);
     std::string getStringKeyAssociated(uint32_t key)const;
+    void updateNewInputKey(ControlKey_e currentSelectedKey, uint32_t glKey, MainEngine *mainEngine);
     inline void setVectTextures(std::vector<Texture> &vectTexture)
     {
         m_ptrVectTexture = &vectTexture;
@@ -60,6 +62,10 @@ public:
     inline void memInputMenuEntities(const ArrayControlKey_t &memEntities)
     {
         m_inputMenuWriteKeysEntities = memEntities;
+    }
+    inline const std::map<uint32_t, std::string> &getInputKeys()const
+    {
+        return m_inputKeyboardKeyString;
     }
 private:
     void fillCursorMenuVertex(PlayerConfComponent *playerComp);
