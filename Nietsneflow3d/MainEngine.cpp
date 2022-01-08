@@ -51,6 +51,7 @@ void MainEngine::init()
 //===================================================================
 bool MainEngine::mainLoop(bool &memGameOver)
 {
+    m_memInputCursorPos = 0;
     memGameOver = false;
     m_graphicEngine.getMapSystem().confLevelData();
     if(m_playerMem)
@@ -1115,7 +1116,16 @@ void MainEngine::setMenuEntries(PlayerConfComponent *playerComp)
 {
     m_writeConf->m_upLeftPositionGL = MAP_MENU_DATA.at(playerComp->m_menuMode).first;
     m_graphicEngine.fillMenuWrite(m_writeConf, playerComp->m_menuMode, playerComp->m_currentCursorPos);
-    if(playerComp->m_menuMode != MenuMode_e::NEW_KEY /*&& playerComp->m_menuMode != MenuMode_e::INPUT*/)
+    if(playerComp->m_menuMode == MenuMode_e::NEW_KEY)
+    {
+        m_memInputCursorPos = playerComp->m_currentCursorPos;
+    }
+    else if(playerComp->m_menuMode == MenuMode_e::INPUT)
+    {
+        playerComp->m_currentCursorPos = m_memInputCursorPos;
+        m_memInputCursorPos = 0;
+    }
+    else if(playerComp->m_menuMode != MenuMode_e::NEW_KEY)
     {
         playerComp->m_currentCursorPos = 0;
     }

@@ -208,6 +208,7 @@ private:
         m_graphicEngine.memGroundBackgroundFPSSystemEntity(entity, simpleTexture);
     }
 private:
+    uint32_t m_memInputCursorPos;
     float m_fpsValue = 1.0f / 60.0f;
     GraphicEngine m_graphicEngine;
     PhysicalEngine m_physicalEngine;
