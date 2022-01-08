@@ -364,7 +364,7 @@ inline const std::map<MenuMode_e, PairPairFloatStr_t> MAP_MENU_DATA =
          "STRAFE RIGHT\\TURN LEFT\\TURN RIGHT\\ACTION\\SHOOT\\PREVIOUS WEAPON\\NEXT WEAPON\\DEFAULT\\RETURN\\VALID"}
     },
     {MenuMode_e::NEW_KEY,
-     PairPairFloatStr_t{{-0.3f, 0.1f}, "ENTER NEW KEY:"}
+     PairPairFloatStr_t{{-0.6f, 0.1f}, "ENTER NEW KEY FOR ACTION :\\"}
     }
 };
 inline const std::map<Shader_e, std::string> SHADER_ID_MAP

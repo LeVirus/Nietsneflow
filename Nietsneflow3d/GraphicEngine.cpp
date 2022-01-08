@@ -155,11 +155,10 @@ void GraphicEngine::updatePlayerLife(WriteComponent *writeComp, PlayerConfCompon
 }
 
 //===================================================================
-void GraphicEngine::fillMenuWrite(WriteComponent *writeComp, MenuMode_e menuEntry)
+void GraphicEngine::fillMenuWrite(WriteComponent *writeComp, MenuMode_e menuEntry, uint32_t cursorPos)
 {
     std::map<MenuMode_e, PairPairFloatStr_t>::const_iterator it = MAP_MENU_DATA.find(menuEntry);
     writeComp->m_str = it->second.second;
-    writeComp->m_fontSpriteData = m_ptrFontData->getWriteData(writeComp->m_str, writeComp->m_numTexture);
     if(menuEntry == MenuMode_e::DISPLAY)
     {
         m_currentDisplayedQuality = m_currentQuality;
@@ -168,6 +167,11 @@ void GraphicEngine::fillMenuWrite(WriteComponent *writeComp, MenuMode_e menuEntr
         setCurrentMenuResolution(m_currentDisplayedResolution);
         m_staticDisplaySystem->updateDisplayMenuQuality(m_qualityResolution[m_currentDisplayedQuality]);
     }
+    else if(menuEntry == MenuMode_e::NEW_KEY)
+    {
+        writeComp->m_str += " " + m_mapInputActionStringAssociated.at(static_cast<InputMenuCursorPos_e>(cursorPos));
+    }
+    writeComp->m_fontSpriteData = m_ptrFontData->getWriteData(writeComp->m_str, writeComp->m_numTexture);
 }
 
 //===================================================================

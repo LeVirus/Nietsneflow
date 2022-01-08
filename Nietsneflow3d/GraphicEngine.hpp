@@ -38,7 +38,7 @@ public:
                      StaticDisplaySystem *staticDisplaySystem);
     void updateAmmoCount(WriteComponent *writeComp, WeaponComponent *weaponComp);
     void updatePlayerLife(WriteComponent *writeComp, PlayerConfComponent *playerComp);
-    void fillMenuWrite(WriteComponent *writeComp, MenuMode_e menuEntry);
+    void fillMenuWrite(WriteComponent *writeComp, MenuMode_e menuEntry, uint32_t cursorPos = 0);
     void confWriteComponent(WriteComponent *writeComp);
     void updateStringWriteEntitiesInputMenu();
     inline MapDisplaySystem &getMapSystem()
@@ -114,6 +114,18 @@ private:
     StaticDisplaySystem *m_staticDisplaySystem = nullptr;
     uint32_t m_transitionFrameNumber = 30;
     bool m_fullscreenMode = false, m_displayMenuFullscreenMode = m_fullscreenMode;
+    const std::map<InputMenuCursorPos_e, std::string> m_mapInputActionStringAssociated = {
+        {InputMenuCursorPos_e::ACTION, "ACTION"},
+        {InputMenuCursorPos_e::MOVE_BACKWARD, "MOVE BACKWARD"},
+        {InputMenuCursorPos_e::MOVE_FORWARD, "MOVE FORWARD"},
+        {InputMenuCursorPos_e::NEXT_WEAPON, "NEXT WEAPON"},
+        {InputMenuCursorPos_e::PREVIOUS_WEAPON, "PREVIOUS WEAPON"},
+        {InputMenuCursorPos_e::SHOOT, "SHOOT"},
+        {InputMenuCursorPos_e::STRAFE_LEFT, "STRAFE LEFT"},
+        {InputMenuCursorPos_e::STRAFE_RIGHT, "STRAFE RIGHT"},
+        {InputMenuCursorPos_e::TURN_LEFT, "TURN LEFT"},
+        {InputMenuCursorPos_e::TURN_RIGHT, "TURN RIGHT"}
+    };
 };
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);

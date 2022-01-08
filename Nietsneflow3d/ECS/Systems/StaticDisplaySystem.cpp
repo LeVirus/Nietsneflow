@@ -519,8 +519,7 @@ void modVertexPos(PositionVertexComponent *posComp, const PairFloat_t &mod)
 }
 
 //===================================================================
-void StaticDisplaySystem::drawLineWriteVertex(PositionVertexComponent *posComp,
-                                              WriteComponent *writeComp)
+void StaticDisplaySystem::drawLineWriteVertex(PositionVertexComponent *posComp, WriteComponent *writeComp)
 {
     if(writeComp->m_fontSpriteData.empty())
     {
