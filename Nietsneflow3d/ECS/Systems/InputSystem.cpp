@@ -19,6 +19,35 @@
 InputSystem::InputSystem()
 {
     setUsedComponents();
+    gamepadInit();
+//    GLFWAPI const float* glfwGetJoystickAxes(int jid, int* count);
+}
+
+//===================================================================
+void InputSystem::gamepadInit()
+{
+    m_vectGamepadID.clear();
+    for(uint32_t i = 0; i < GLFW_JOYSTICK_LAST; ++i)
+    {
+        if(glfwJoystickPresent(i) == GLFW_TRUE)
+        {
+            m_vectGamepadID.push_back({i, nullptr});
+        }
+    }
+}
+
+//===================================================================
+bool InputSystem::checkGamepadKeyStatus(uint32_t key, uint32_t status)
+{
+    for(uint32_t i = 0; i < m_vectGamepadID.size(); ++i)
+    {
+        assert(m_vectGamepadID[i].second);
+        if(m_vectGamepadID[i].second[key] == status)
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
 //===================================================================
@@ -28,10 +57,21 @@ void InputSystem::setUsedComponents()
 }
 
 //===================================================================
+void InputSystem::getGamepadInputs()
+{
+    int count;
+    for(uint32_t i = 0; i < m_vectGamepadID.size(); ++i)
+    {
+        m_vectGamepadID[i].second = glfwGetJoystickButtons(m_vectGamepadID[i].first, &count);
+    }
+}
+
+//===================================================================
 void InputSystem::treatPlayerInput()
 {
     for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
     {
+        getGamepadInputs();
         if(!m_F12Pressed && glfwGetKey(m_window, GLFW_KEY_F12) == GLFW_PRESS)
         {
             m_toggleSignal = true;
@@ -74,7 +114,7 @@ void InputSystem::treatPlayerInput()
                 searchComponentByType<WeaponComponent>(playerComp->m_weaponEntity, Components_e::WEAPON_COMPONENT);
         assert(weaponComp);
         treatPlayerMove(playerComp, moveComp, mapComp);
-        if(glfwGetKey(m_window, m_mapCurrentAssociatedKey[ControlKey_e::TURN_RIGHT]) == GLFW_PRESS)
+        if(glfwGetKey(m_window, m_mapKeyboardCurrentAssociatedKey[ControlKey_e::TURN_RIGHT]) == GLFW_PRESS)
         {
             moveComp->m_degreeOrientation -= moveComp->m_rotationAngle;
             if(moveComp->m_degreeOrientation < 0.0f)
@@ -83,7 +123,7 @@ void InputSystem::treatPlayerInput()
             }
             updatePlayerOrientation(*moveComp, *posComp, *visionComp);
         }
-        else if(glfwGetKey(m_window, m_mapCurrentAssociatedKey[ControlKey_e::TURN_LEFT]) == GLFW_PRESS)
+        else if(glfwGetKey(m_window, m_mapKeyboardCurrentAssociatedKey[ControlKey_e::TURN_LEFT]) == GLFW_PRESS)
         {
             moveComp->m_degreeOrientation += moveComp->m_rotationAngle;
             if(moveComp->m_degreeOrientation > 360.0f)
@@ -92,7 +132,7 @@ void InputSystem::treatPlayerInput()
             }
             updatePlayerOrientation(*moveComp, *posComp, *visionComp);
         }
-        if(glfwGetKey(m_window, m_mapCurrentAssociatedKey[ControlKey_e::ACTION]) == GLFW_PRESS)
+        if(glfwGetKey(m_window, m_mapKeyboardCurrentAssociatedKey[ControlKey_e::ACTION]) == GLFW_PRESS)
         {
             MapCoordComponent *mapCompAction = stairwayToComponentManager().
                     searchComponentByType<MapCoordComponent>(playerComp->m_actionEntity, Components_e::MAP_COORD_COMPONENT);
@@ -110,16 +150,16 @@ void InputSystem::treatPlayerInput()
         if(!weaponComp->m_weaponChange && !weaponComp->m_timerShootActive)
         {
             //Change weapon
-            if(glfwGetKey(m_window, m_mapCurrentAssociatedKey[ControlKey_e::PREVIOUS_WEAPON]) == GLFW_PRESS)
+            if(glfwGetKey(m_window, m_mapKeyboardCurrentAssociatedKey[ControlKey_e::PREVIOUS_WEAPON]) == GLFW_PRESS)
             {
                 changePlayerWeapon(*weaponComp, false);
             }
-            else if(glfwGetKey(m_window, m_mapCurrentAssociatedKey[ControlKey_e::NEXT_WEAPON]) == GLFW_PRESS)
+            else if(glfwGetKey(m_window, m_mapKeyboardCurrentAssociatedKey[ControlKey_e::NEXT_WEAPON]) == GLFW_PRESS)
             {
                 changePlayerWeapon(*weaponComp, true);
             }
             //SHOOT
-            else if(glfwGetKey(m_window, m_mapCurrentAssociatedKey[ControlKey_e::SHOOT]) == GLFW_PRESS)
+            else if(glfwGetKey(m_window, m_mapKeyboardCurrentAssociatedKey[ControlKey_e::SHOOT]) == GLFW_PRESS)
             {
                 if(!weaponComp->m_timerShootActive && weaponComp->m_weaponsData[weaponComp->m_currentWeapon].m_ammunationsCount > 0)
                 {
@@ -156,17 +196,17 @@ void InputSystem::treatPlayerMove(PlayerConfComponent *playerComp, MoveableCompo
     //init value
     MoveOrientation_e currentMoveDirection = MoveOrientation_e::FORWARD;
     //STRAFE
-    if (glfwGetKey(m_window, m_mapCurrentAssociatedKey[ControlKey_e::STRAFE_RIGHT]) == GLFW_PRESS)
+    if (glfwGetKey(m_window, m_mapKeyboardCurrentAssociatedKey[ControlKey_e::STRAFE_RIGHT]) == GLFW_PRESS)
     {
         currentMoveDirection = MoveOrientation_e::RIGHT;
         playerComp->m_inMovement = true;
     }
-    else if (glfwGetKey(m_window, m_mapCurrentAssociatedKey[ControlKey_e::STRAFE_LEFT]) == GLFW_PRESS)
+    else if (glfwGetKey(m_window, m_mapKeyboardCurrentAssociatedKey[ControlKey_e::STRAFE_LEFT]) == GLFW_PRESS)
     {
         currentMoveDirection = MoveOrientation_e::LEFT;
         playerComp->m_inMovement = true;
     }
-    if (glfwGetKey(m_window, m_mapCurrentAssociatedKey[ControlKey_e::MOVE_FORWARD]) == GLFW_PRESS)
+    if (glfwGetKey(m_window, m_mapKeyboardCurrentAssociatedKey[ControlKey_e::MOVE_FORWARD]) == GLFW_PRESS)
     {
         if(currentMoveDirection == MoveOrientation_e::RIGHT)
         {
@@ -182,7 +222,7 @@ void InputSystem::treatPlayerMove(PlayerConfComponent *playerComp, MoveableCompo
         }
         playerComp->m_inMovement = true;
     }
-    else if (glfwGetKey(m_window, m_mapCurrentAssociatedKey[ControlKey_e::MOVE_BACKWARD]) == GLFW_PRESS)
+    else if (glfwGetKey(m_window, m_mapKeyboardCurrentAssociatedKey[ControlKey_e::MOVE_BACKWARD]) == GLFW_PRESS)
     {
         if(currentMoveDirection == MoveOrientation_e::RIGHT)
         {
@@ -243,7 +283,11 @@ void InputSystem::treatMenu(uint32_t playerEntity)
     {
         m_enterPressed = false;
     }
-    if(m_enterPressed)
+    if(checkGamepadKeyStatus(GLFW_GAMEPAD_BUTTON_A, GLFW_RELEASE))
+    {
+        m_keyGamepadButtonAPressed = false;
+    }
+    if(m_enterPressed || m_keyGamepadButtonAPressed)
     {
         return;
     }
@@ -251,9 +295,15 @@ void InputSystem::treatMenu(uint32_t playerEntity)
     {
         m_keyEspapePressed = false;
     }
-    else if(!m_keyEspapePressed && glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+    if(checkGamepadKeyStatus(GLFW_GAMEPAD_BUTTON_B, GLFW_RELEASE))
+    {
+        m_keyGamepadButtonBPressed = false;
+    }
+    if((!m_keyEspapePressed && glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_PRESS) ||
+            (!m_keyGamepadButtonBPressed && checkGamepadKeyStatus(GLFW_GAMEPAD_BUTTON_B, GLFW_PRESS)))
     {
         m_keyEspapePressed = true;
+        m_keyGamepadButtonBPressed = true;
         if(playerComp->m_menuMode == MenuMode_e::BASE || playerComp->m_menuMode == MenuMode_e::TRANSITION_LEVEL)
         {
             m_mainEngine->setUnsetPaused();
@@ -279,36 +329,60 @@ void InputSystem::treatMenu(uint32_t playerEntity)
             m_mainEngine->setMenuEntries(playerComp);
         }
     }
+    treatReleaseDirectionalInputMenu();
+    treatGeneralKeysMenu(playerComp);
+}
+
+//===================================================================
+void InputSystem::treatReleaseDirectionalInputMenu()
+{
+    //UP
     if(m_keyUpPressed && glfwGetKey(m_window, GLFW_KEY_UP) == GLFW_RELEASE)
     {
         m_keyUpPressed = false;
-        return;
     }
+    if(m_keyGamepadUpPressed && checkGamepadKeyStatus(GLFW_GAMEPAD_BUTTON_DPAD_UP, GLFW_RELEASE))
+    {
+        m_keyGamepadUpPressed = false;
+    }
+    //DOWN
     if(m_keyDownPressed && glfwGetKey(m_window, GLFW_KEY_DOWN) == GLFW_RELEASE)
     {
         m_keyDownPressed = false;
-        return;
     }
+    if(m_keyGamepadDownPressed && checkGamepadKeyStatus(GLFW_GAMEPAD_BUTTON_DPAD_DOWN, GLFW_RELEASE))
+    {
+        m_keyGamepadDownPressed = false;
+    }
+    //LEFT
     if(m_keyLeftPressed && glfwGetKey(m_window, GLFW_KEY_LEFT) == GLFW_RELEASE)
     {
         m_keyLeftPressed = false;
-        return;
     }
+    if(m_keyGamepadLeftPressed && checkGamepadKeyStatus(GLFW_GAMEPAD_BUTTON_DPAD_LEFT, GLFW_RELEASE))
+    {
+        m_keyGamepadLeftPressed = false;
+    }
+    //RIGHT
     if(m_keyRightPressed && glfwGetKey(m_window, GLFW_KEY_RIGHT) == GLFW_RELEASE)
     {
         m_keyRightPressed = false;
-        return;
     }
-    treatGeneralKeysMenu(playerComp);
+    if(m_keyGamepadRightPressed && checkGamepadKeyStatus(GLFW_GAMEPAD_BUTTON_DPAD_RIGHT, GLFW_RELEASE))
+    {
+        m_keyGamepadRightPressed = false;
+    }
 }
 
 //===================================================================
 void InputSystem::treatGeneralKeysMenu(PlayerConfComponent *playerComp)
 {
     uint32_t maxMenuIndex = m_mapMenuSize.at(playerComp->m_menuMode);
-    if(!m_modeTransition && !m_keyUpPressed && glfwGetKey(m_window, GLFW_KEY_UP) == GLFW_PRESS)
+    if(!m_modeTransition && ((!m_keyUpPressed && glfwGetKey(m_window, GLFW_KEY_UP) == GLFW_PRESS) ||
+                             (!m_keyGamepadUpPressed && checkGamepadKeyStatus(GLFW_GAMEPAD_BUTTON_DPAD_UP, GLFW_PRESS))))
     {
         m_keyUpPressed = true;
+        m_keyGamepadUpPressed = true;
         uint32_t index = playerComp->m_currentCursorPos;
         if(index == 0)
         {
@@ -319,9 +393,11 @@ void InputSystem::treatGeneralKeysMenu(PlayerConfComponent *playerComp)
             playerComp->m_currentCursorPos = index - 1;
         }
     }
-    else if(!m_modeTransition && !m_keyDownPressed && glfwGetKey(m_window, GLFW_KEY_DOWN) == GLFW_PRESS)
+    else if(!m_modeTransition && ((!m_keyDownPressed && (glfwGetKey(m_window, GLFW_KEY_DOWN) == GLFW_PRESS)) ||
+                                  (!m_keyGamepadDownPressed && checkGamepadKeyStatus(GLFW_GAMEPAD_BUTTON_DPAD_DOWN, GLFW_PRESS))))
     {
         m_keyDownPressed = true;
+        m_keyGamepadDownPressed = true;
         uint32_t index = playerComp->m_currentCursorPos;
         if(index == maxMenuIndex)
         {
@@ -332,15 +408,17 @@ void InputSystem::treatGeneralKeysMenu(PlayerConfComponent *playerComp)
             playerComp->m_currentCursorPos = index + 1;
         }
     }
-    else if(glfwGetKey(m_window, GLFW_KEY_ENTER) == GLFW_PRESS)
+    else if(glfwGetKey(m_window, GLFW_KEY_ENTER) == GLFW_PRESS || checkGamepadKeyStatus(GLFW_GAMEPAD_BUTTON_A, GLFW_PRESS))
     {
         treatEnterPressedMenu(playerComp);
     }
-    else if(!m_keyLeftPressed && glfwGetKey(m_window, GLFW_KEY_LEFT) == GLFW_PRESS)
+    else if((!m_keyLeftPressed && (glfwGetKey(m_window, GLFW_KEY_LEFT) == GLFW_PRESS)) ||
+             (!m_keyGamepadLeftPressed && checkGamepadKeyStatus(GLFW_GAMEPAD_BUTTON_DPAD_LEFT, GLFW_PRESS)))
     {
         treatLeftPressedMenu(playerComp);
     }
-    else if(!m_keyRightPressed && glfwGetKey(m_window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+    else if((!m_keyRightPressed && (glfwGetKey(m_window, GLFW_KEY_RIGHT) == GLFW_PRESS)) ||
+             (!m_keyGamepadRightPressed && checkGamepadKeyStatus(GLFW_GAMEPAD_BUTTON_DPAD_RIGHT, GLFW_PRESS)))
     {
         treatRightPressedMenu(playerComp);
     }
@@ -351,12 +429,12 @@ bool InputSystem::treatNewKey()
 {
     StaticDisplaySystem *staticSystem = mptrSystemManager->searchSystemByType<StaticDisplaySystem>(
                 static_cast<uint32_t>(Systems_e::STATIC_DISPLAY_SYSTEM));
-    const std::map<uint32_t, std::string> &map = staticSystem->getInputKeys();
+    const std::map<uint32_t, std::string> &map = staticSystem->getKeyboardInputKeys();
     for(std::map<uint32_t, std::string>::const_iterator it = map.begin(); it != map.end(); ++it)
     {
         if(glfwGetKey(m_window, it->first) == GLFW_PRESS)
         {
-            m_mapTmpAssociatedKey[m_currentSelectedKey] = it->first;
+            m_mapKeyboardTmpAssociatedKey[m_currentSelectedKey] = it->first;
             staticSystem->updateNewInputKey(m_currentSelectedKey, it->first);
             return true;
         }
@@ -368,6 +446,7 @@ bool InputSystem::treatNewKey()
 void InputSystem::treatEnterPressedMenu(PlayerConfComponent *playerComp)
 {
     m_enterPressed = true;
+    m_keyGamepadButtonAPressed = true;
     switch (playerComp->m_menuMode)
     {
     case MenuMode_e::BASE:
@@ -416,6 +495,7 @@ void InputSystem::treatLeftPressedMenu(PlayerConfComponent *playerComp)
     else if(playerComp->m_menuMode == MenuMode_e::DISPLAY)
     {
         m_keyLeftPressed = true;
+        m_keyGamepadLeftPressed = true;
         DisplayMenuCursorPos_e displayCursorPos = static_cast<DisplayMenuCursorPos_e>(playerComp->m_currentCursorPos);
         if(displayCursorPos == DisplayMenuCursorPos_e::RESOLUTION_SETTING)
         {
@@ -466,6 +546,7 @@ void InputSystem::treatRightPressedMenu(PlayerConfComponent *playerComp)
     else if(playerComp->m_menuMode == MenuMode_e::DISPLAY)
     {
         m_keyRightPressed = true;
+        m_keyGamepadRightPressed = true;
         DisplayMenuCursorPos_e displayCursorPos = static_cast<DisplayMenuCursorPos_e>(playerComp->m_currentCursorPos);
         if(displayCursorPos == DisplayMenuCursorPos_e::RESOLUTION_SETTING)
         {
@@ -508,7 +589,7 @@ void InputSystem::treatEnterPressedMainMenu(PlayerConfComponent *playerComp)
     case MainMenuCursorPos_e::INPUT_CONF:
         playerComp->m_menuMode = MenuMode_e::INPUT;
         m_mainEngine->setMenuEntries(playerComp);
-        m_mapTmpAssociatedKey = m_mapCurrentAssociatedKey;
+        m_mapKeyboardTmpAssociatedKey = m_mapKeyboardCurrentAssociatedKey;
         m_mainEngine->updateStringWriteEntitiesInputMenu();
         break;
     case MainMenuCursorPos_e::NEW_GAME:
@@ -576,15 +657,15 @@ void InputSystem::treatEnterPressedInputMenu(PlayerConfComponent *playerComp)
     }
     else if(menuPos == InputMenuCursorPos_e::DEFAULT)
     {
-        m_mapTmpAssociatedKey = m_mapCurrentAssociatedKey;
-        m_mapCurrentAssociatedKey = m_mapDefaultAssociatedKey;
+        m_mapKeyboardTmpAssociatedKey = m_mapKeyboardCurrentAssociatedKey;
+        m_mapKeyboardCurrentAssociatedKey = m_mapKeyboardDefaultAssociatedKey;
         m_mainEngine->updateStringWriteEntitiesInputMenu();
-        m_mapCurrentAssociatedKey = m_mapTmpAssociatedKey;
-        m_mapTmpAssociatedKey = m_mapDefaultAssociatedKey;
+        m_mapKeyboardCurrentAssociatedKey = m_mapKeyboardTmpAssociatedKey;
+        m_mapKeyboardTmpAssociatedKey = m_mapKeyboardDefaultAssociatedKey;
     }
     else if(menuPos == InputMenuCursorPos_e::VALID)
     {
-        m_mapCurrentAssociatedKey = m_mapTmpAssociatedKey;
+        m_mapKeyboardCurrentAssociatedKey = m_mapKeyboardTmpAssociatedKey;
         m_mainEngine->updateStringWriteEntitiesInputMenu();
         playerComp->m_menuMode = MenuMode_e::BASE;
         m_mainEngine->setMenuEntries(playerComp);

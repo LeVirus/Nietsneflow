@@ -49,7 +49,7 @@ public:
     void updateDisplayMenuResolution(const std::string &str);
     void updateDisplayMenuQuality(const std::string &str);
     void updateMenuEntryFullscreen(bool displayMenufullscreenMode);
-    std::string getStringKeyAssociated(uint32_t key)const;
+    std::string getKeyboardStringKeyAssociated(uint32_t key)const;
     void updateNewInputKey(ControlKey_e currentSelectedKey, uint32_t glKey);
     void updateStringWriteEntitiesInputMenu();
     inline void linkMainEngine(MainEngine *mainEngine)
@@ -68,9 +68,13 @@ public:
     {
         m_inputMenuWriteKeysEntities = memEntities;
     }
-    inline const std::map<uint32_t, std::string> &getInputKeys()const
+    inline const std::map<uint32_t, std::string> &getKeyboardInputKeys()const
     {
         return m_inputKeyboardKeyString;
+    }
+    inline const std::map<uint32_t, std::string> &getGamepadInputKeys()const
+    {
+        return m_inputGamepadKeyString;
     }
 private:
     void fillCursorMenuVertex(PlayerConfComponent *playerComp);
@@ -187,6 +191,30 @@ private:
         {GLFW_KEY_RIGHT_ALT, "RIGHT ALT"},
         {GLFW_KEY_RIGHT_SUPER, "RIGHT SUPER"},
         {GLFW_KEY_MENU, "MENU"}
+    },
+    m_inputGamepadKeyString = {
+        {GLFW_GAMEPAD_BUTTON_A, "BUTTON A"},
+        {GLFW_GAMEPAD_BUTTON_B, "BUTTON B"},
+        {GLFW_GAMEPAD_BUTTON_X, "BUTTON X"},
+        {GLFW_GAMEPAD_BUTTON_Y, "BUTTON Y"},
+        {GLFW_GAMEPAD_BUTTON_LEFT_BUMPER, "LEFT BUMPER"},
+        {GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER, "RIGHT BUMPER"},
+        {GLFW_GAMEPAD_BUTTON_BACK, "BACK"},
+        {GLFW_GAMEPAD_BUTTON_START, "START"},
+        {GLFW_GAMEPAD_BUTTON_GUIDE, "GUIDE"},
+        {GLFW_GAMEPAD_BUTTON_LEFT_THUMB, "LEFT THUMB"},
+        {GLFW_GAMEPAD_BUTTON_RIGHT_THUMB, "RIGHT THUMB"},
+        {GLFW_GAMEPAD_BUTTON_DPAD_UP, "DPAD UP"},
+        {GLFW_GAMEPAD_BUTTON_DPAD_RIGHT, "DPAD RIGHT"},
+        {GLFW_GAMEPAD_BUTTON_DPAD_DOWN, "DPAD DOWN"},
+        {GLFW_GAMEPAD_BUTTON_DPAD_LEFT, "DPAD LEFT"},
+
+        {GLFW_GAMEPAD_AXIS_LEFT_X, "AXIS LEFT X"},
+        {GLFW_GAMEPAD_AXIS_LEFT_Y, "AXIS LEFT Y"},
+        {GLFW_GAMEPAD_AXIS_RIGHT_X, "AXIS RIGHT X"},
+        {GLFW_GAMEPAD_AXIS_RIGHT_Y, "AXIS RIGHT Y"},
+        {GLFW_GAMEPAD_AXIS_LEFT_TRIGGER, "AXIS LEFT TRIGGER"},
+        {GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER, "AXIS RIGHT TRIGGER"}
     };
 };
 

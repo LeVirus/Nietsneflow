@@ -158,7 +158,7 @@ void StaticDisplaySystem::updateStringWriteEntitiesInputMenu()
         WriteComponent *writeConf = stairwayToComponentManager().
                 searchComponentByType<WriteComponent>(m_inputMenuWriteKeysEntities[i], Components_e::WRITE_COMPONENT);
         assert(writeConf);
-        writeConf->m_str = getStringKeyAssociated(map.at(static_cast<ControlKey_e>(i)));
+        writeConf->m_str = getKeyboardStringKeyAssociated(map.at(static_cast<ControlKey_e>(i)));
         m_mainEngine->updateWriteComp(writeConf);
     }
 }
@@ -206,7 +206,7 @@ void StaticDisplaySystem::updateMenuEntryFullscreen(bool displayMenufullscreenMo
 }
 
 //===================================================================
-std::string StaticDisplaySystem::getStringKeyAssociated(uint32_t key)const
+std::string StaticDisplaySystem::getKeyboardStringKeyAssociated(uint32_t key)const
 {
     std::map<uint32_t, std::string>::const_iterator it = m_inputKeyboardKeyString.find(key);
     if(it == m_inputKeyboardKeyString.end())
@@ -222,7 +222,7 @@ void StaticDisplaySystem::updateNewInputKey(ControlKey_e currentSelectedKey, uin
     WriteComponent *writeComp = stairwayToComponentManager().searchComponentByType<WriteComponent>(
                 m_inputMenuWriteKeysEntities[static_cast<uint32_t>(currentSelectedKey)], Components_e::WRITE_COMPONENT);
     assert(writeComp);
-    writeComp->m_str = getStringKeyAssociated(glKey);
+    writeComp->m_str = getKeyboardStringKeyAssociated(glKey);
     m_mainEngine->updateWriteComp(writeComp);
 }
 
@@ -256,8 +256,7 @@ void StaticDisplaySystem::drawWriteVertex(uint32_t numEntity, VertexID_e type, c
     WriteComponent *writeComp = stairwayToComponentManager().
                 searchComponentByType<WriteComponent>(numEntity, Components_e::WRITE_COMPONENT);
     PositionVertexComponent *posComp = stairwayToComponentManager().
-                searchComponentByType<PositionVertexComponent>(numEntity,
-                                                               Components_e::POSITION_VERTEX_COMPONENT);
+                searchComponentByType<PositionVertexComponent>(numEntity, Components_e::POSITION_VERTEX_COMPONENT);
     assert(writeComp);
     assert(posComp);
     if(!value.empty())

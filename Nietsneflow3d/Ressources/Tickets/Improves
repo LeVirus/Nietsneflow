@@ -2,14 +2,12 @@ IMPROVE=========================================================================
 ==========================================================================================================
 
 ))
-In static system see Vertex ID
-
-))
 MENU_______________
 	-On key modif write current modified action====================================================OK
 	-After set a new key in input menu put the cursor at previous position=========================OK
 	-Add menu title at top screen==================================================================OK
 	-Add pad key settings on same screen as keyboards add shortcut
+	-Add question if return without saving in input menu
 
 1)
 Weapon movement on begin and end movement
