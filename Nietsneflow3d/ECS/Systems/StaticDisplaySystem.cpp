@@ -113,6 +113,7 @@ void StaticDisplaySystem::displayMenu()
                     searchComponentByType<PlayerConfComponent>(mVectNumEntity[i], Components_e::PLAYER_CONF_COMPONENT);
         assert(playerComp);
         drawWriteVertex(playerComp->m_menuEntity, VertexID_e::MENU_WRITE);
+        drawWriteVertex(playerComp->m_titleMenuEntity, VertexID_e::MENU_WRITE);
         SpriteTextureComponent *spriteComp = stairwayToComponentManager().
                 searchComponentByType<SpriteTextureComponent>(playerComp->m_menuCursorEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
         assert(spriteComp);

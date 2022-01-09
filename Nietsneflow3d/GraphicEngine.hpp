@@ -38,6 +38,7 @@ public:
                      StaticDisplaySystem *staticDisplaySystem);
     void updateAmmoCount(WriteComponent *writeComp, WeaponComponent *weaponComp);
     void updatePlayerLife(WriteComponent *writeComp, PlayerConfComponent *playerComp);
+    void fillTitleMenuWrite(WriteComponent *writeComp, MenuMode_e menuEntry);
     void fillMenuWrite(WriteComponent *writeComp, MenuMode_e menuEntry, uint32_t cursorPos = 0);
     void confWriteComponent(WriteComponent *writeComp);
     void updateStringWriteEntitiesInputMenu();

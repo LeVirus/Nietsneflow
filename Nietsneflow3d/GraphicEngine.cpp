@@ -155,6 +155,31 @@ void GraphicEngine::updatePlayerLife(WriteComponent *writeComp, PlayerConfCompon
 }
 
 //===================================================================
+void GraphicEngine::fillTitleMenuWrite(WriteComponent *writeComp, MenuMode_e menuEntry)
+{
+    switch (menuEntry)
+    {
+    case MenuMode_e::BASE:
+        writeComp->m_str = "MAIN MENU";
+        break;
+    case MenuMode_e::DISPLAY:
+        writeComp->m_str = "GRAPHIC MENU";
+        break;
+    case MenuMode_e::INPUT:
+    case MenuMode_e::NEW_KEY:
+        writeComp->m_str = "INPUT MENU";
+        break;
+    case MenuMode_e::SOUND:
+        writeComp->m_str = "AUDIO MENU";
+        break;
+    case MenuMode_e::TRANSITION_LEVEL:
+        writeComp->m_str = "";
+        break;
+    }
+    writeComp->m_fontSpriteData = m_ptrFontData->getWriteData(writeComp->m_str, writeComp->m_numTexture);
+}
+
+//===================================================================
 void GraphicEngine::fillMenuWrite(WriteComponent *writeComp, MenuMode_e menuEntry, uint32_t cursorPos)
 {
     std::map<MenuMode_e, PairPairFloatStr_t>::const_iterator it = MAP_MENU_DATA.find(menuEntry);

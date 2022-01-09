@@ -360,7 +360,7 @@ inline const std::map<MenuMode_e, PairPairFloatStr_t> MAP_MENU_DATA =
     {MenuMode_e::DISPLAY,
      PairPairFloatStr_t{{-0.7f, 0.5f}, "SET RESOLUTION\\SET PICTURE QUALITY\\FULLSCREEN\\RETURN\\VALID"}},
     {MenuMode_e::INPUT,
-     PairPairFloatStr_t{{-0.7f, 0.8f}, "MOVE FORWARD\\MOVE BACKWARD\\STRAFE LEFT\\"
+     PairPairFloatStr_t{{-0.7f, 0.7f}, "MOVE FORWARD\\MOVE BACKWARD\\STRAFE LEFT\\"
          "STRAFE RIGHT\\TURN LEFT\\TURN RIGHT\\ACTION\\SHOOT\\PREVIOUS WEAPON\\NEXT WEAPON\\DEFAULT\\RETURN\\VALID"}
     },
     {MenuMode_e::NEW_KEY,

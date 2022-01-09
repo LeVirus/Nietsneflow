@@ -1098,8 +1098,7 @@ uint32_t MainEngine::createAmmoEntity(CollisionTag_e collTag, bool visibleShot)
         ammoNum = createVisibleShotEntity();
     }
     GeneralCollisionComponent *genColl = m_ecsManager.getComponentManager().
-            searchComponentByType<GeneralCollisionComponent>(ammoNum,
-                                                             Components_e::GENERAL_COLLISION_COMPONENT);
+            searchComponentByType<GeneralCollisionComponent>(ammoNum,Components_e::GENERAL_COLLISION_COMPONENT);
     assert(genColl);
     genColl->m_active = false;
     genColl->m_tagA = collTag;
@@ -1114,6 +1113,12 @@ uint32_t MainEngine::createAmmoEntity(CollisionTag_e collTag, bool visibleShot)
 //===================================================================
 void MainEngine::setMenuEntries(PlayerConfComponent *playerComp)
 {
+    //TITLE MENU
+    WriteComponent *writeComp = m_ecsManager.getComponentManager().
+            searchComponentByType<WriteComponent>(playerComp->m_titleMenuEntity, Components_e::WRITE_COMPONENT);
+    assert(writeComp);
+    m_graphicEngine.fillTitleMenuWrite(writeComp, playerComp->m_menuMode);
+    //MENU ENTRIES
     m_writeConf->m_upLeftPositionGL = MAP_MENU_DATA.at(playerComp->m_menuMode).first;
     m_graphicEngine.fillMenuWrite(m_writeConf, playerComp->m_menuMode, playerComp->m_currentCursorPos);
     if(playerComp->m_menuMode == MenuMode_e::NEW_KEY)
@@ -1849,7 +1854,7 @@ void MainEngine::confPlayerVisibleShotsSprite(const std::vector<SpriteData> &vec
 void MainEngine::confWriteEntities()
 {
     uint32_t numAmmoWrite = createWriteEntity(), numInfoWrite = createWriteEntity(), numLifeWrite = createWriteEntity(),
-            numMenuWrite = createWriteEntity();
+            numMenuWrite = createWriteEntity(), numTitleMenuWrite = createWriteEntity();
     //INFO
     WriteComponent *writeConf = m_ecsManager.getComponentManager().
             searchComponentByType<WriteComponent>(numInfoWrite, Components_e::WRITE_COMPONENT);
@@ -1876,11 +1881,19 @@ void MainEngine::confWriteEntities()
     assert(writeConf);
     m_writeConf = writeConf;
     writeConf->m_fontSize = MENU_FONT_SIZE;
+    //TITLE MENU
+    writeConf = m_ecsManager.getComponentManager().
+            searchComponentByType<WriteComponent>(numTitleMenuWrite, Components_e::WRITE_COMPONENT);
+    assert(writeConf);
+    writeConf->m_upLeftPositionGL = {-0.3f, 0.9f};
+    writeConf->m_fontSize = MENU_FONT_SIZE;
+
     confWriteEntitiesDisplayMenu();
     confWriteEntitiesInputMenu();
     m_playerConf->m_menuMode = MenuMode_e::BASE;
-    setMenuEntries(m_playerConf);
     m_playerConf->m_menuEntity = numMenuWrite;
+    m_playerConf->m_titleMenuEntity = numTitleMenuWrite;
+    setMenuEntries(m_playerConf);
     m_playerConf->m_ammoWriteEntity = numAmmoWrite;
     m_playerConf->m_lifeWriteEntity = numLifeWrite;
     m_playerConf->m_numInfoWriteEntity = numInfoWrite;
@@ -1907,7 +1920,6 @@ void MainEngine::confWriteEntitiesDisplayMenu()
     assert(writeConfB);
     writeConfB->m_upLeftPositionGL = {writeConfA->m_upLeftPositionGL.first, writeConfA->m_upLeftPositionGL.second - MENU_FONT_SIZE};
     writeConfB->m_fontSize = MENU_FONT_SIZE;
-    writeConfB->m_str = "MEDIUM";
     m_graphicEngine.confWriteComponent(writeConfB);
     //Fullscreen
     writeConfB = m_ecsManager.getComponentManager().
