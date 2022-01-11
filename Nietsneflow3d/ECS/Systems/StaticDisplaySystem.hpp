@@ -50,7 +50,8 @@ public:
     void updateDisplayMenuQuality(const std::string &str);
     void updateMenuEntryFullscreen(bool displayMenufullscreenMode);
     std::string getKeyboardStringKeyAssociated(uint32_t key)const;
-    std::string getGamepadStringKeyAssociated(uint32_t key)const;
+    std::string getGamepadStringKeyButtonAssociated(uint32_t key)const;
+    std::string getGamepadStringKeyAxesAssociated(uint32_t key, bool axesSense)const;
     void updateNewInputKey(ControlKey_e currentSelectedKey, uint32_t glKey);
     void updateStringWriteEntitiesInputMenu(bool keyboardInputMenuMode);
     inline void linkMainEngine(MainEngine *mainEngine)
@@ -76,7 +77,7 @@ public:
     }
     inline const std::map<uint32_t, std::string> &getGamepadInputKeys()const
     {
-        return m_inputGamepadKeyString;
+        return m_inputGamepadSimpleButtonKeyString;
     }
 private:
     void fillCursorMenuVertex(PlayerConfComponent *playerComp);
@@ -194,7 +195,7 @@ private:
         {GLFW_KEY_RIGHT_SUPER, "RIGHT SUPER"},
         {GLFW_KEY_MENU, "MENU"}
     },
-    m_inputGamepadKeyString = {
+    m_inputGamepadSimpleButtonKeyString = {
         {GLFW_GAMEPAD_BUTTON_A, "BUTTON A"},
         {GLFW_GAMEPAD_BUTTON_B, "BUTTON B"},
         {GLFW_GAMEPAD_BUTTON_X, "BUTTON X"},
@@ -210,7 +211,8 @@ private:
         {GLFW_GAMEPAD_BUTTON_DPAD_RIGHT, "DPAD RIGHT"},
         {GLFW_GAMEPAD_BUTTON_DPAD_DOWN, "DPAD DOWN"},
         {GLFW_GAMEPAD_BUTTON_DPAD_LEFT, "DPAD LEFT"},
-
+    },
+    m_inputGamepadAxesKeyString = {
         {GLFW_GAMEPAD_AXIS_LEFT_X, "AXIS LEFT X"},
         {GLFW_GAMEPAD_AXIS_LEFT_Y, "AXIS LEFT Y"},
         {GLFW_GAMEPAD_AXIS_RIGHT_X, "AXIS RIGHT X"},

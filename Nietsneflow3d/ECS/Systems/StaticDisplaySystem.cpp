@@ -187,7 +187,15 @@ void StaticDisplaySystem::updateStringWriteEntitiesInputMenu(bool keyboardInputM
             writeConf = stairwayToComponentManager().
                     searchComponentByType<WriteComponent>(m_inputMenuGamepadWriteKeysEntities[i], Components_e::WRITE_COMPONENT);
             assert(writeConf);
-            writeConf->m_str = getGamepadStringKeyAssociated(map.at(static_cast<ControlKey_e>(i)).m_keyID);
+            if(map.at(static_cast<ControlKey_e>(i)).m_standardButton)
+            {
+                writeConf->m_str = getGamepadStringKeyButtonAssociated(map.at(static_cast<ControlKey_e>(i)).m_keyID);
+            }
+            else
+            {
+                writeConf->m_str = getGamepadStringKeyAxesAssociated(map.at(static_cast<ControlKey_e>(i)).m_keyID,
+                                                                     (*map.at(static_cast<ControlKey_e>(i)).m_axesPos));
+            }
             m_mainEngine->updateWriteComp(writeConf);
         }
     }
@@ -247,10 +255,28 @@ std::string StaticDisplaySystem::getKeyboardStringKeyAssociated(uint32_t key)con
 }
 
 //===================================================================
-std::string StaticDisplaySystem::getGamepadStringKeyAssociated(uint32_t key) const
+std::string StaticDisplaySystem::getGamepadStringKeyAxesAssociated(uint32_t key, bool axesSense)const
 {
-    std::map<uint32_t, std::string>::const_iterator it = m_inputGamepadKeyString.find(key);
-    if(it == m_inputGamepadKeyString.end())
+    std::map<uint32_t, std::string>::const_iterator it = m_inputGamepadAxesKeyString.find(key);
+    if(it == m_inputGamepadAxesKeyString.end())
+    {
+        return "";
+    }
+    if(axesSense)
+    {
+        return it->second + " +";
+    }
+    else
+    {
+        return it->second + " -";
+    }
+}
+
+//===================================================================
+std::string StaticDisplaySystem::getGamepadStringKeyButtonAssociated(uint32_t key) const
+{
+    std::map<uint32_t, std::string>::const_iterator it = m_inputGamepadSimpleButtonKeyString.find(key);
+    if(it == m_inputGamepadSimpleButtonKeyString.end())
     {
         return "";
     }
