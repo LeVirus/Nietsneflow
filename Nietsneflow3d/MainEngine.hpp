@@ -53,7 +53,7 @@ public:
     uint32_t createAmmoEntity(CollisionTag_e collTag, bool visibleShot);
     void setMenuEntries(PlayerConfComponent *playerComp);
     void updateWriteComp(WriteComponent *writeComp);
-    void updateStringWriteEntitiesInputMenu();
+    void updateStringWriteEntitiesInputMenu(bool keyboardInputMenuMode);
     inline void validDisplayMenu()
     {
         m_graphicEngine.validDisplayMenu();

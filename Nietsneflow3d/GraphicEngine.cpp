@@ -206,9 +206,9 @@ void GraphicEngine::confWriteComponent(WriteComponent *writeComp)
 }
 
 //===================================================================
-void GraphicEngine::updateStringWriteEntitiesInputMenu()
+void GraphicEngine::updateStringWriteEntitiesInputMenu(bool keyboardInputMenuMode)
 {
-    m_staticDisplaySystem->updateStringWriteEntitiesInputMenu();
+    m_staticDisplaySystem->updateStringWriteEntitiesInputMenu(keyboardInputMenuMode);
 }
 
 //===================================================================

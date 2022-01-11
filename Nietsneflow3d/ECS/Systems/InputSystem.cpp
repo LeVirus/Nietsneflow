@@ -376,12 +376,12 @@ void InputSystem::treatMenu(uint32_t playerEntity)
             m_mainEngine->setMenuEntries(playerComp);
         }
     }
-    treatReleaseDirectionalInputMenu();
+    treatReleaseInputMenu();
     treatGeneralKeysMenu(playerComp);
 }
 
 //===================================================================
-void InputSystem::treatReleaseDirectionalInputMenu()
+void InputSystem::treatReleaseInputMenu()
 {
     //UP
     if(m_keyUpPressed && glfwGetKey(m_window, GLFW_KEY_UP) == GLFW_RELEASE)
@@ -419,6 +419,15 @@ void InputSystem::treatReleaseDirectionalInputMenu()
     {
         m_keyGamepadRightPressed = false;
     }
+    //TOOGLE GAMEPAD KEYBOARD INPUT MENU
+    if(m_keyKeyboardGPressed && glfwGetKey(m_window, GLFW_KEY_G) == GLFW_RELEASE)
+    {
+        m_keyKeyboardGPressed = false;
+    }
+    if(m_keyGamepadButtonRightBumperPressed && checkStandardButtonGamepadKeyStatus(GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER, GLFW_RELEASE))
+    {
+        m_keyGamepadButtonRightBumperPressed = false;
+    }
 }
 
 //===================================================================
@@ -448,7 +457,9 @@ void InputSystem::treatGeneralKeysMenu(PlayerConfComponent *playerComp)
         uint32_t index = playerComp->m_currentCursorPos;
         if(index == maxMenuIndex)
         {
-            playerComp->m_currentCursorPos = 0;
+            playerComp->m_currentCursorPos = 0;    std::cerr << (playerComp->m_menuMode == MenuMode_e::INPUT && (glfwGetKey(m_window, GLFW_KEY_R) == GLFW_PRESS ||
+                                                                                                                 checkStandardButtonGamepadKeyStatus(GLFW_GAMEPAD_BUTTON_DPAD_RIGHT, GLFW_PRESS)))
+                                                              << "  " << checkStandardButtonGamepadKeyStatus(GLFW_GAMEPAD_BUTTON_DPAD_RIGHT, GLFW_PRESS) << " dkjfgb\n";
         }
         else
         {
@@ -469,6 +480,23 @@ void InputSystem::treatGeneralKeysMenu(PlayerConfComponent *playerComp)
     {
         treatRightPressedMenu(playerComp);
     }
+    else if(!m_keyKeyboardGPressed && !m_keyGamepadButtonRightBumperPressed &&
+            playerComp->m_menuMode == MenuMode_e::INPUT && (glfwGetKey(m_window, GLFW_KEY_G) == GLFW_PRESS ||
+                                                            checkStandardButtonGamepadKeyStatus(GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER, GLFW_PRESS)))
+    {
+        toogleInputMenuGamepadKeyboard(playerComp);
+    }
+}
+
+//===================================================================
+void InputSystem::toogleInputMenuGamepadKeyboard(PlayerConfComponent *playerComp)
+{
+    m_keyKeyboardGPressed = true;
+    m_keyGamepadButtonRightBumperPressed = true;
+    playerComp->m_keyboardInputMenuMode = !playerComp->m_keyboardInputMenuMode;
+    mptrSystemManager->searchSystemByType<StaticDisplaySystem>(
+                    static_cast<uint32_t>(Systems_e::STATIC_DISPLAY_SYSTEM))->
+            updateStringWriteEntitiesInputMenu(playerComp->m_keyboardInputMenuMode);
 }
 
 //===================================================================
@@ -637,7 +665,7 @@ void InputSystem::treatEnterPressedMainMenu(PlayerConfComponent *playerComp)
         playerComp->m_menuMode = MenuMode_e::INPUT;
         m_mainEngine->setMenuEntries(playerComp);
         m_mapKeyboardTmpAssociatedKey = m_mapKeyboardCurrentAssociatedKey;
-        m_mainEngine->updateStringWriteEntitiesInputMenu();
+        m_mainEngine->updateStringWriteEntitiesInputMenu(playerComp->m_keyboardInputMenuMode);
         break;
     case MainMenuCursorPos_e::NEW_GAME:
         break;
@@ -706,14 +734,14 @@ void InputSystem::treatEnterPressedInputMenu(PlayerConfComponent *playerComp)
     {
         m_mapKeyboardTmpAssociatedKey = m_mapKeyboardCurrentAssociatedKey;
         m_mapKeyboardCurrentAssociatedKey = m_mapKeyboardDefaultAssociatedKey;
-        m_mainEngine->updateStringWriteEntitiesInputMenu();
+        m_mainEngine->updateStringWriteEntitiesInputMenu(playerComp->m_keyboardInputMenuMode);
         m_mapKeyboardCurrentAssociatedKey = m_mapKeyboardTmpAssociatedKey;
         m_mapKeyboardTmpAssociatedKey = m_mapKeyboardDefaultAssociatedKey;
     }
     else if(menuPos == InputMenuCursorPos_e::VALID)
     {
         m_mapKeyboardCurrentAssociatedKey = m_mapKeyboardTmpAssociatedKey;
-        m_mainEngine->updateStringWriteEntitiesInputMenu();
+        m_mainEngine->updateStringWriteEntitiesInputMenu(playerComp->m_keyboardInputMenuMode);
         playerComp->m_menuMode = MenuMode_e::BASE;
         m_mainEngine->setMenuEntries(playerComp);
     }

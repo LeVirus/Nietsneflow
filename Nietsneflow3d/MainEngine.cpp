@@ -1143,9 +1143,9 @@ void MainEngine::updateWriteComp(WriteComponent *writeComp)
 }
 
 //===================================================================
-void MainEngine::updateStringWriteEntitiesInputMenu()
+void MainEngine::updateStringWriteEntitiesInputMenu(bool keyboardInputMenuMode)
 {
-    m_graphicEngine.updateStringWriteEntitiesInputMenu();
+    m_graphicEngine.updateStringWriteEntitiesInputMenu(keyboardInputMenuMode);
 }
 
 //===================================================================
@@ -1936,21 +1936,30 @@ void MainEngine::confWriteEntitiesDisplayMenu()
 //===================================================================
 void MainEngine::confWriteEntitiesInputMenu()
 {
-    ArrayControlKey_t memEntities;
+    ArrayControlKey_t memKeyboardEntities, memGamepadEntities;
+    WriteComponent *writeConf;
     PairFloat_t currentUpLeftPos = {MAP_MENU_DATA.at(MenuMode_e::INPUT).first.first + 1.0f, MAP_MENU_DATA.at(MenuMode_e::INPUT).first.second};
-    for(uint32_t i = 0; i < memEntities.size(); ++i)
+    for(uint32_t i = 0; i < memKeyboardEntities.size(); ++i)
     {
-        memEntities[i] = createWriteEntity();
-        WriteComponent *writeConf = m_ecsManager.getComponentManager().
-                searchComponentByType<WriteComponent>(memEntities[i], Components_e::WRITE_COMPONENT);
+        //KEYBOARD
+        memKeyboardEntities[i] = createWriteEntity();
+        writeConf = m_ecsManager.getComponentManager().
+                searchComponentByType<WriteComponent>(memKeyboardEntities[i], Components_e::WRITE_COMPONENT);
+        assert(writeConf);
+        writeConf->m_upLeftPositionGL = currentUpLeftPos;
+        writeConf->m_fontSize = MENU_FONT_SIZE;
+        //GAMEPAD
+        memGamepadEntities[i] = createWriteEntity();
+        writeConf = m_ecsManager.getComponentManager().
+                searchComponentByType<WriteComponent>(memGamepadEntities[i], Components_e::WRITE_COMPONENT);
         assert(writeConf);
         writeConf->m_upLeftPositionGL = currentUpLeftPos;
         writeConf->m_fontSize = MENU_FONT_SIZE;
         currentUpLeftPos.second -= MENU_FONT_SIZE;
     }
     m_ecsManager.getSystemManager().searchSystemByType<StaticDisplaySystem>(static_cast<uint32_t>(Systems_e::STATIC_DISPLAY_SYSTEM))->
-            memInputMenuEntities(memEntities);
-    updateStringWriteEntitiesInputMenu();
+            memInputMenuEntities(memKeyboardEntities, memGamepadEntities);
+    updateStringWriteEntitiesInputMenu(true);
 }
 
 //===================================================================

@@ -140,26 +140,55 @@ void StaticDisplaySystem::displayMenu()
         }
         else if(playerComp->m_menuMode == MenuMode_e::INPUT)
         {
-            for(uint32_t j = 0; j < m_inputMenuWriteKeysEntities.size(); ++j)
+            if(playerComp->m_keyboardInputMenuMode)
             {
-                drawWriteVertex(m_inputMenuWriteKeysEntities[j], VertexID_e::INPUT);
+                for(uint32_t j = 0; j < m_inputMenuKeyboardWriteKeysEntities.size(); ++j)
+                {
+                    drawWriteVertex(m_inputMenuKeyboardWriteKeysEntities[j], VertexID_e::INPUT);
+                }
+            }
+            else
+            {
+                for(uint32_t j = 0; j < m_inputMenuGamepadWriteKeysEntities.size(); ++j)
+                {
+                    drawWriteVertex(m_inputMenuGamepadWriteKeysEntities[j], VertexID_e::INPUT);
+                }
             }
         }
     }
 }
 
 //===================================================================
-void StaticDisplaySystem::updateStringWriteEntitiesInputMenu()
+void StaticDisplaySystem::updateStringWriteEntitiesInputMenu(bool keyboardInputMenuMode)
 {
-    const std::map<ControlKey_e, uint32_t> &map = mptrSystemManager->searchSystemByType<InputSystem>(
-                static_cast<uint32_t>(Systems_e::INPUT_SYSTEM))->getMapCurrentDefaultAssociatedKey();
-    for(uint32_t i = 0; i < m_inputMenuWriteKeysEntities.size(); ++i)
+    WriteComponent *writeConf;
+    //KEYBOARD
+    if(keyboardInputMenuMode)
     {
-        WriteComponent *writeConf = stairwayToComponentManager().
-                searchComponentByType<WriteComponent>(m_inputMenuWriteKeysEntities[i], Components_e::WRITE_COMPONENT);
-        assert(writeConf);
-        writeConf->m_str = getKeyboardStringKeyAssociated(map.at(static_cast<ControlKey_e>(i)));
-        m_mainEngine->updateWriteComp(writeConf);
+        const std::map<ControlKey_e, uint32_t> &map = mptrSystemManager->searchSystemByType<InputSystem>(
+                    static_cast<uint32_t>(Systems_e::INPUT_SYSTEM))->getMapCurrentDefaultKeyboardAssociatedKey();
+        for(uint32_t i = 0; i < m_inputMenuKeyboardWriteKeysEntities.size(); ++i)
+        {
+            writeConf = stairwayToComponentManager().
+                    searchComponentByType<WriteComponent>(m_inputMenuKeyboardWriteKeysEntities[i], Components_e::WRITE_COMPONENT);
+            assert(writeConf);
+            writeConf->m_str = getKeyboardStringKeyAssociated(map.at(static_cast<ControlKey_e>(i)));
+            m_mainEngine->updateWriteComp(writeConf);
+        }
+    }
+    //GAMEPAD
+    else
+    {
+        const std::map<ControlKey_e, GamepadInputState_t> &map = mptrSystemManager->searchSystemByType<InputSystem>(
+                    static_cast<uint32_t>(Systems_e::INPUT_SYSTEM))->getMapCurrentDefaultGamepadAssociatedKey();
+        for(uint32_t i = 0; i < m_inputMenuGamepadWriteKeysEntities.size(); ++i)
+        {
+            writeConf = stairwayToComponentManager().
+                    searchComponentByType<WriteComponent>(m_inputMenuGamepadWriteKeysEntities[i], Components_e::WRITE_COMPONENT);
+            assert(writeConf);
+            writeConf->m_str = getGamepadStringKeyAssociated(map.at(static_cast<ControlKey_e>(i)).m_keyID);
+            m_mainEngine->updateWriteComp(writeConf);
+        }
     }
 }
 
@@ -217,10 +246,21 @@ std::string StaticDisplaySystem::getKeyboardStringKeyAssociated(uint32_t key)con
 }
 
 //===================================================================
+std::string StaticDisplaySystem::getGamepadStringKeyAssociated(uint32_t key) const
+{
+    std::map<uint32_t, std::string>::const_iterator it = m_inputGamepadKeyString.find(key);
+    if(it == m_inputGamepadKeyString.end())
+    {
+        return "";
+    }
+    return it->second;
+}
+
+//===================================================================
 void StaticDisplaySystem::updateNewInputKey(ControlKey_e currentSelectedKey, uint32_t glKey)
 {
     WriteComponent *writeComp = stairwayToComponentManager().searchComponentByType<WriteComponent>(
-                m_inputMenuWriteKeysEntities[static_cast<uint32_t>(currentSelectedKey)], Components_e::WRITE_COMPONENT);
+                m_inputMenuKeyboardWriteKeysEntities[static_cast<uint32_t>(currentSelectedKey)], Components_e::WRITE_COMPONENT);
     assert(writeComp);
     writeComp->m_str = getKeyboardStringKeyAssociated(glKey);
     m_mainEngine->updateWriteComp(writeComp);

@@ -50,8 +50,9 @@ public:
     void updateDisplayMenuQuality(const std::string &str);
     void updateMenuEntryFullscreen(bool displayMenufullscreenMode);
     std::string getKeyboardStringKeyAssociated(uint32_t key)const;
+    std::string getGamepadStringKeyAssociated(uint32_t key)const;
     void updateNewInputKey(ControlKey_e currentSelectedKey, uint32_t glKey);
-    void updateStringWriteEntitiesInputMenu();
+    void updateStringWriteEntitiesInputMenu(bool keyboardInputMenuMode);
     inline void linkMainEngine(MainEngine *mainEngine)
     {
         m_mainEngine = mainEngine;
@@ -64,9 +65,10 @@ public:
     {
         m_fontDataPtr = fontData;
     }
-    inline void memInputMenuEntities(const ArrayControlKey_t &memEntities)
+    inline void memInputMenuEntities(const ArrayControlKey_t &memKeyboardEntities, const ArrayControlKey_t &memGamepadEntities)
     {
-        m_inputMenuWriteKeysEntities = memEntities;
+        m_inputMenuKeyboardWriteKeysEntities = memKeyboardEntities;
+        m_inputMenuGamepadWriteKeysEntities = memGamepadEntities;
     }
     inline const std::map<uint32_t, std::string> &getKeyboardInputKeys()const
     {
@@ -107,7 +109,7 @@ private:
     //FORCE UPDATE AT LAUNCH
     uint32_t m_currentCursorPos = static_cast<uint32_t>(MainMenuCursorPos_e::TOTAL), m_resolutionDisplayMenuEntity, m_qualityMenuEntity,
     m_fullscreenMenuEntity;
-    ArrayControlKey_t m_inputMenuWriteKeysEntities;
+    ArrayControlKey_t m_inputMenuKeyboardWriteKeysEntities, m_inputMenuGamepadWriteKeysEntities;
     const std::map<uint32_t, std::string> m_inputKeyboardKeyString = {
         {GLFW_KEY_SPACE, "SPACE"},
         {GLFW_KEY_APOSTROPHE, "APOSTROPHE"},

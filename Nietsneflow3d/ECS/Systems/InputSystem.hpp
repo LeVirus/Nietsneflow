@@ -46,9 +46,13 @@ public:
     {
         return m_toggleSignal;
     }
-    inline const std::map<ControlKey_e, uint32_t> &getMapCurrentDefaultAssociatedKey()const
+    inline const std::map<ControlKey_e, uint32_t> &getMapCurrentDefaultKeyboardAssociatedKey()const
     {
         return m_mapKeyboardCurrentAssociatedKey;
+    }
+    inline const std::map<ControlKey_e, GamepadInputState_t> &getMapCurrentDefaultGamepadAssociatedKey()const
+    {
+        return m_mapGamepadCurrentAssociatedKey;
     }
 private:
     void gamepadInit();
@@ -60,8 +64,9 @@ private:
     void treatPlayerInput();
     bool checkPlayerKeyTriggered(ControlKey_e key);
     void treatMenu(uint32_t playerEntity);
-    void treatReleaseDirectionalInputMenu();
+    void treatReleaseInputMenu();
     void treatGeneralKeysMenu(PlayerConfComponent *playerComp);
+    void toogleInputMenuGamepadKeyboard(PlayerConfComponent *playerComp);
     bool treatNewKey();
     void treatEnterPressedMenu(PlayerConfComponent *playerComp);
     void treatLeftPressedMenu(PlayerConfComponent *playerComp);
@@ -78,7 +83,8 @@ private:
     bool m_keyEspapePressed = false, m_keyLeftPressed = false, m_keyRightPressed = false,
     m_keyUpPressed = false, m_keyDownPressed = false, m_F12Pressed = false, m_enterPressed = false,
     m_keyGamepadButtonBPressed = false, m_keyGamepadLeftPressed = false, m_keyGamepadRightPressed = false,
-        m_keyGamepadUpPressed = false, m_keyGamepadDownPressed = false, m_keyGamepadButtonAPressed = false;
+        m_keyGamepadUpPressed = false, m_keyGamepadDownPressed = false, m_keyGamepadButtonAPressed = false,
+    m_keyKeyboardGPressed = false, m_keyGamepadButtonRightBumperPressed = false;
     const std::map<MenuMode_e, uint32_t> m_mapMenuSize = {
         {MenuMode_e::BASE, static_cast<uint32_t>(MainMenuCursorPos_e::TOTAL) - 1},
         {MenuMode_e::DISPLAY, static_cast<uint32_t>(DisplayMenuCursorPos_e::TOTAL) - 1},
