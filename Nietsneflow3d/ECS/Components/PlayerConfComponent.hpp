@@ -29,7 +29,7 @@ struct PlayerConfComponent : public ecs::Component
     std::pair<bool, std::string> m_infoWriteData = {false, ""};
     std::set<uint32_t> m_card;
     uint32_t m_weaponEntity, m_ammoWriteEntity, m_titleMenuEntity, m_menuEntity, m_menuCursorEntity,
-    m_actionEntity, m_hitMeleeEntity, m_lifeWriteEntity, m_numInfoWriteEntity,
+    m_actionEntity, m_hitMeleeEntity, m_lifeWriteEntity, m_numInfoWriteEntity, m_inputMenuModeWriteEntity,
     m_life = 100, m_displayTeleportEntity;
     uint32_t m_currentCursorPos = 0;
     MenuMode_e m_menuMode;

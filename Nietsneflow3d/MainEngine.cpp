@@ -1127,6 +1127,7 @@ void MainEngine::setMenuEntries(PlayerConfComponent *playerComp)
     }
     else if(playerComp->m_menuMode == MenuMode_e::INPUT)
     {
+        updateInputMenuInfo(playerComp);
         playerComp->m_currentCursorPos = m_memInputCursorPos;
         m_memInputCursorPos = 0;
     }
@@ -1134,6 +1135,17 @@ void MainEngine::setMenuEntries(PlayerConfComponent *playerComp)
     {
         playerComp->m_currentCursorPos = 0;
     }
+}
+
+//===================================================================
+void MainEngine::updateInputMenuInfo(PlayerConfComponent *playerComp)
+{
+    WriteComponent *writeComp = m_ecsManager.getComponentManager().
+            searchComponentByType<WriteComponent>(playerComp->m_inputMenuModeWriteEntity, Components_e::WRITE_COMPONENT);
+    assert(writeComp);
+    writeComp->m_str = playerComp->m_keyboardInputMenuMode ? "KEYBOARD\\SWITCH GAMEPAD : G OR RL" :
+                                                             "GAMEPAD\\SWITCH KEYBOARD : G OR RL";
+    m_graphicEngine.confWriteComponent(writeComp);
 }
 
 //===================================================================
@@ -1854,7 +1866,7 @@ void MainEngine::confPlayerVisibleShotsSprite(const std::vector<SpriteData> &vec
 void MainEngine::confWriteEntities()
 {
     uint32_t numAmmoWrite = createWriteEntity(), numInfoWrite = createWriteEntity(), numLifeWrite = createWriteEntity(),
-            numMenuWrite = createWriteEntity(), numTitleMenuWrite = createWriteEntity();
+            numMenuWrite = createWriteEntity(), numTitleMenuWrite = createWriteEntity(), numInputModeMenuWrite = createWriteEntity();
     //INFO
     WriteComponent *writeConf = m_ecsManager.getComponentManager().
             searchComponentByType<WriteComponent>(numInfoWrite, Components_e::WRITE_COMPONENT);
@@ -1887,12 +1899,18 @@ void MainEngine::confWriteEntities()
     assert(writeConf);
     writeConf->m_upLeftPositionGL = {-0.3f, 0.9f};
     writeConf->m_fontSize = MENU_FONT_SIZE;
-
+    //INPUT MENU MODE
+    writeConf = m_ecsManager.getComponentManager().
+            searchComponentByType<WriteComponent>(numInputModeMenuWrite, Components_e::WRITE_COMPONENT);
+    assert(writeConf);
+    writeConf->m_upLeftPositionGL = {-0.6f, -0.7f};
+    writeConf->m_fontSize = MENU_FONT_SIZE;
     confWriteEntitiesDisplayMenu();
     confWriteEntitiesInputMenu();
     m_playerConf->m_menuMode = MenuMode_e::BASE;
     m_playerConf->m_menuEntity = numMenuWrite;
     m_playerConf->m_titleMenuEntity = numTitleMenuWrite;
+    m_playerConf->m_inputMenuModeWriteEntity = numInputModeMenuWrite;
     setMenuEntries(m_playerConf);
     m_playerConf->m_ammoWriteEntity = numAmmoWrite;
     m_playerConf->m_lifeWriteEntity = numLifeWrite;

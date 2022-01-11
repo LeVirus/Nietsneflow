@@ -140,6 +140,7 @@ void StaticDisplaySystem::displayMenu()
         }
         else if(playerComp->m_menuMode == MenuMode_e::INPUT)
         {
+            drawWriteVertex(playerComp->m_inputMenuModeWriteEntity, VertexID_e::INPUT);
             if(playerComp->m_keyboardInputMenuMode)
             {
                 for(uint32_t j = 0; j < m_inputMenuKeyboardWriteKeysEntities.size(); ++j)

@@ -457,9 +457,7 @@ void InputSystem::treatGeneralKeysMenu(PlayerConfComponent *playerComp)
         uint32_t index = playerComp->m_currentCursorPos;
         if(index == maxMenuIndex)
         {
-            playerComp->m_currentCursorPos = 0;    std::cerr << (playerComp->m_menuMode == MenuMode_e::INPUT && (glfwGetKey(m_window, GLFW_KEY_R) == GLFW_PRESS ||
-                                                                                                                 checkStandardButtonGamepadKeyStatus(GLFW_GAMEPAD_BUTTON_DPAD_RIGHT, GLFW_PRESS)))
-                                                              << "  " << checkStandardButtonGamepadKeyStatus(GLFW_GAMEPAD_BUTTON_DPAD_RIGHT, GLFW_PRESS) << " dkjfgb\n";
+            playerComp->m_currentCursorPos = 0;
         }
         else
         {
@@ -494,6 +492,7 @@ void InputSystem::toogleInputMenuGamepadKeyboard(PlayerConfComponent *playerComp
     m_keyKeyboardGPressed = true;
     m_keyGamepadButtonRightBumperPressed = true;
     playerComp->m_keyboardInputMenuMode = !playerComp->m_keyboardInputMenuMode;
+    m_mainEngine->updateInputMenuInfo(playerComp);
     mptrSystemManager->searchSystemByType<StaticDisplaySystem>(
                     static_cast<uint32_t>(Systems_e::STATIC_DISPLAY_SYSTEM))->
             updateStringWriteEntitiesInputMenu(playerComp->m_keyboardInputMenuMode);
