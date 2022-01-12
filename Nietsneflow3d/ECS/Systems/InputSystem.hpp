@@ -10,6 +10,7 @@ struct MapCoordComponent;
 class MainEngine;
 struct WeaponComponent;
 
+//pair const uint8_t* :: buttons, const float* :: axes
 using MapGamepadInputData_t = std::map<uint32_t, std::pair<const uint8_t*, const float*>>;
 
 struct GamepadInputState_t
@@ -57,7 +58,6 @@ public:
 private:
     void gamepadInit();
     bool checkStandardButtonGamepadKeyStatus(uint32_t key, uint32_t status);
-    //positive for value > 0.5f
     bool checkAxisGamepadKeyStatus(uint32_t key, bool positive);
     void setUsedComponents();
     void getGamepadInputs();
@@ -67,7 +67,7 @@ private:
     void treatReleaseInputMenu();
     void treatGeneralKeysMenu(PlayerConfComponent *playerComp);
     void toogleInputMenuGamepadKeyboard(PlayerConfComponent *playerComp);
-    bool treatNewKey();
+    bool treatNewKey(PlayerConfComponent *playerComp);
     void treatEnterPressedMenu(PlayerConfComponent *playerComp);
     void treatLeftPressedMenu(PlayerConfComponent *playerComp);
     void treatRightPressedMenu(PlayerConfComponent *playerComp);

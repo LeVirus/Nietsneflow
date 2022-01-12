@@ -52,7 +52,7 @@ public:
     std::string getKeyboardStringKeyAssociated(uint32_t key)const;
     std::string getGamepadStringKeyButtonAssociated(uint32_t key)const;
     std::string getGamepadStringKeyAxesAssociated(uint32_t key, bool axesSense)const;
-    void updateNewInputKey(ControlKey_e currentSelectedKey, uint32_t glKey);
+    void updateNewInputKey(ControlKey_e currentSelectedKey, uint32_t glKey, bool keyboardMode);
     void updateStringWriteEntitiesInputMenu(bool keyboardInputMenuMode);
     inline void linkMainEngine(MainEngine *mainEngine)
     {
@@ -75,9 +75,13 @@ public:
     {
         return m_inputKeyboardKeyString;
     }
-    inline const std::map<uint32_t, std::string> &getGamepadInputKeys()const
+    inline const std::map<uint32_t, std::string> &getGamepadButtonsInputKeys()const
     {
         return m_inputGamepadSimpleButtonKeyString;
+    }
+    inline const std::map<uint32_t, std::string> &getGamepadAxesInputKeys()const
+    {
+        return m_inputGamepadAxesKeyString;
     }
 private:
     void fillCursorMenuVertex(PlayerConfComponent *playerComp);

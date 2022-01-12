@@ -284,12 +284,14 @@ std::string StaticDisplaySystem::getGamepadStringKeyButtonAssociated(uint32_t ke
 }
 
 //===================================================================
-void StaticDisplaySystem::updateNewInputKey(ControlKey_e currentSelectedKey, uint32_t glKey)
+void StaticDisplaySystem::updateNewInputKey(ControlKey_e currentSelectedKey, uint32_t glKey, bool keyboardMode)
 {
+    uint32_t entityWrite = keyboardMode ? m_inputMenuKeyboardWriteKeysEntities[static_cast<uint32_t>(currentSelectedKey)] :
+            m_inputMenuGamepadWriteKeysEntities[static_cast<uint32_t>(currentSelectedKey)];
     WriteComponent *writeComp = stairwayToComponentManager().searchComponentByType<WriteComponent>(
-                m_inputMenuKeyboardWriteKeysEntities[static_cast<uint32_t>(currentSelectedKey)], Components_e::WRITE_COMPONENT);
+                entityWrite, Components_e::WRITE_COMPONENT);
     assert(writeComp);
-    writeComp->m_str = getKeyboardStringKeyAssociated(glKey);
+    writeComp->m_str = keyboardMode ? getKeyboardStringKeyAssociated(glKey) : getGamepadStringKeyButtonAssociated(glKey);
     m_mainEngine->updateWriteComp(writeComp);
 }
 
