@@ -193,8 +193,8 @@ void StaticDisplaySystem::updateStringWriteEntitiesInputMenu(bool keyboardInputM
             }
             else
             {
-                writeConf->m_str = getGamepadStringKeyAxesAssociated(map.at(static_cast<ControlKey_e>(i)).m_keyID,
-                                                                     (*map.at(static_cast<ControlKey_e>(i)).m_axesPos));
+                writeConf->m_str = getGamepadStringKeyAxisAssociated(map.at(static_cast<ControlKey_e>(i)).m_keyID,
+                                                                     (*map.at(static_cast<ControlKey_e>(i)).m_axisPos));
             }
             m_mainEngine->updateWriteComp(writeConf);
         }
@@ -255,14 +255,14 @@ std::string StaticDisplaySystem::getKeyboardStringKeyAssociated(uint32_t key)con
 }
 
 //===================================================================
-std::string StaticDisplaySystem::getGamepadStringKeyAxesAssociated(uint32_t key, bool axesSense)const
+std::string StaticDisplaySystem::getGamepadStringKeyAxisAssociated(uint32_t key, bool axisSense)const
 {
-    std::map<uint32_t, std::string>::const_iterator it = m_inputGamepadAxesKeyString.find(key);
-    if(it == m_inputGamepadAxesKeyString.end())
+    std::map<uint32_t, std::string>::const_iterator it = m_inputGamepadAxisKeyString.find(key);
+    if(it == m_inputGamepadAxisKeyString.end())
     {
         return "";
     }
-    if(axesSense)
+    if(axisSense)
     {
         return it->second + " +";
     }

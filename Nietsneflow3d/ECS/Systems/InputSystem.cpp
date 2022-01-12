@@ -33,13 +33,13 @@ void InputSystem::gamepadInit()
             m_vectGamepadID.insert({i, {nullptr, nullptr}});
         }
     }
-    m_gamepadKeyPressed.fill(false);
+    m_gamepadButtonsKeyPressed.fill(false);
 }
 
 //===================================================================
 bool InputSystem::checkStandardButtonGamepadKeyStatus(uint32_t key, uint32_t status)
 {
-    //pair const uint8_t* :: buttons, const float* :: axes
+    //pair const uint8_t* :: buttons, const float* :: axis
     for(MapGamepadInputData_t::const_iterator it = m_vectGamepadID.begin(); it != m_vectGamepadID.end(); ++it)
     {
         if(!it->second.first)
@@ -219,7 +219,7 @@ bool InputSystem::checkPlayerKeyTriggered(ControlKey_e key)
     //GAMEPAD
     if(m_mapGamepadCurrentAssociatedKey[key].m_standardButton)
     {
-        if(m_gamepadKeyPressed[m_mapGamepadCurrentAssociatedKey[key].m_keyID])
+        if(m_gamepadButtonsKeyPressed[m_mapGamepadCurrentAssociatedKey[key].m_keyID])
         {
             return false;
         }
@@ -230,8 +230,8 @@ bool InputSystem::checkPlayerKeyTriggered(ControlKey_e key)
     }
     else
     {
-        assert(m_mapGamepadCurrentAssociatedKey[key].m_axesPos);
-        if(checkAxisGamepadKeyStatus(m_mapGamepadCurrentAssociatedKey[key].m_keyID, *m_mapGamepadCurrentAssociatedKey[key].m_axesPos))
+        assert(m_mapGamepadCurrentAssociatedKey[key].m_axisPos);
+        if(checkAxisGamepadKeyStatus(m_mapGamepadCurrentAssociatedKey[key].m_keyID, *m_mapGamepadCurrentAssociatedKey[key].m_axisPos))
         {
             return true;
         }
@@ -340,9 +340,9 @@ void InputSystem::treatMenu(uint32_t playerEntity)
     }
     if(checkStandardButtonGamepadKeyStatus(GLFW_GAMEPAD_BUTTON_A, GLFW_RELEASE))
     {
-        m_gamepadKeyPressed[GLFW_GAMEPAD_BUTTON_A] = false;
+        m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_A] = false;
     }
-    if(m_enterPressed || m_gamepadKeyPressed[GLFW_GAMEPAD_BUTTON_A])
+    if(m_enterPressed || m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_A])
     {
         return;
     }
@@ -352,13 +352,13 @@ void InputSystem::treatMenu(uint32_t playerEntity)
     }
     if(checkStandardButtonGamepadKeyStatus(GLFW_GAMEPAD_BUTTON_B, GLFW_RELEASE))
     {
-        m_gamepadKeyPressed[GLFW_GAMEPAD_BUTTON_B] = false;
+        m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_B] = false;
     }
     if((!m_keyEspapePressed && glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_PRESS) ||
-            (!m_gamepadKeyPressed[GLFW_GAMEPAD_BUTTON_B] && checkStandardButtonGamepadKeyStatus(GLFW_GAMEPAD_BUTTON_B, GLFW_PRESS)))
+            (!m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_B] && checkStandardButtonGamepadKeyStatus(GLFW_GAMEPAD_BUTTON_B, GLFW_PRESS)))
     {
         m_keyEspapePressed = true;
-        m_gamepadKeyPressed[GLFW_GAMEPAD_BUTTON_B] = true;
+        m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_B] = true;
         if(playerComp->m_menuMode == MenuMode_e::BASE || playerComp->m_menuMode == MenuMode_e::TRANSITION_LEVEL)
         {
             m_mainEngine->setUnsetPaused();
@@ -378,14 +378,32 @@ void InputSystem::treatMenu(uint32_t playerEntity)
     }
     if(playerComp->m_menuMode == MenuMode_e::NEW_KEY)
     {
+        treatAxisRelease();
         if(treatNewKey(playerComp))
         {
             playerComp->m_menuMode = MenuMode_e::INPUT;
             m_mainEngine->setMenuEntries(playerComp);
+            m_gamepadAxisKeyPressed.fill({false, false});
         }
     }
     treatReleaseInputMenu();
     treatGeneralKeysMenu(playerComp);
+}
+
+//===================================================================
+void InputSystem::treatAxisRelease()
+{
+    for(uint32_t i = 0; i < m_gamepadAxisKeyPressed.size(); ++i)
+    {
+        if(!checkAxisGamepadKeyStatus(i, true))
+        {
+            m_gamepadAxisKeyPressed[i].first = false;
+        }
+        if(!checkAxisGamepadKeyStatus(i, false))
+        {
+            m_gamepadAxisKeyPressed[i].second = false;
+        }
+    }
 }
 
 //===================================================================
@@ -396,45 +414,45 @@ void InputSystem::treatReleaseInputMenu()
     {
         m_keyUpPressed = false;
     }
-    if(m_gamepadKeyPressed[GLFW_GAMEPAD_BUTTON_DPAD_UP] && checkStandardButtonGamepadKeyStatus(GLFW_GAMEPAD_BUTTON_DPAD_UP, GLFW_RELEASE))
+    if(m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_DPAD_UP] && checkStandardButtonGamepadKeyStatus(GLFW_GAMEPAD_BUTTON_DPAD_UP, GLFW_RELEASE))
     {
-        m_gamepadKeyPressed[GLFW_GAMEPAD_BUTTON_DPAD_UP] = false;
+        m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_DPAD_UP] = false;
     }
     //DOWN
     if(m_keyDownPressed && glfwGetKey(m_window, GLFW_KEY_DOWN) == GLFW_RELEASE)
     {
         m_keyDownPressed = false;
     }
-    if(m_gamepadKeyPressed[GLFW_GAMEPAD_BUTTON_DPAD_DOWN] && checkStandardButtonGamepadKeyStatus(GLFW_GAMEPAD_BUTTON_DPAD_DOWN, GLFW_RELEASE))
+    if(m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_DPAD_DOWN] && checkStandardButtonGamepadKeyStatus(GLFW_GAMEPAD_BUTTON_DPAD_DOWN, GLFW_RELEASE))
     {
-        m_gamepadKeyPressed[GLFW_GAMEPAD_BUTTON_DPAD_DOWN] = false;
+        m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_DPAD_DOWN] = false;
     }
     //LEFT
     if(m_keyLeftPressed && glfwGetKey(m_window, GLFW_KEY_LEFT) == GLFW_RELEASE)
     {
         m_keyLeftPressed = false;
     }
-    if(m_gamepadKeyPressed[GLFW_GAMEPAD_BUTTON_DPAD_LEFT] && checkStandardButtonGamepadKeyStatus(GLFW_GAMEPAD_BUTTON_DPAD_LEFT, GLFW_RELEASE))
+    if(m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_DPAD_LEFT] && checkStandardButtonGamepadKeyStatus(GLFW_GAMEPAD_BUTTON_DPAD_LEFT, GLFW_RELEASE))
     {
-        m_gamepadKeyPressed[GLFW_GAMEPAD_BUTTON_DPAD_LEFT] = false;
+        m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_DPAD_LEFT] = false;
     }
     //RIGHT
     if(m_keyRightPressed && glfwGetKey(m_window, GLFW_KEY_RIGHT) == GLFW_RELEASE)
     {
         m_keyRightPressed = false;
     }
-    if(m_gamepadKeyPressed[GLFW_GAMEPAD_BUTTON_DPAD_RIGHT] && checkStandardButtonGamepadKeyStatus(GLFW_GAMEPAD_BUTTON_DPAD_RIGHT, GLFW_RELEASE))
+    if(m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_DPAD_RIGHT] && checkStandardButtonGamepadKeyStatus(GLFW_GAMEPAD_BUTTON_DPAD_RIGHT, GLFW_RELEASE))
     {
-        m_gamepadKeyPressed[GLFW_GAMEPAD_BUTTON_DPAD_RIGHT] = false;
+        m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_DPAD_RIGHT] = false;
     }
     //TOOGLE GAMEPAD KEYBOARD INPUT MENU
     if(m_keyKeyboardGPressed && glfwGetKey(m_window, GLFW_KEY_G) == GLFW_RELEASE)
     {
         m_keyKeyboardGPressed = false;
     }
-    if(m_gamepadKeyPressed[GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER] && checkStandardButtonGamepadKeyStatus(GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER, GLFW_RELEASE))
+    if(m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER] && checkStandardButtonGamepadKeyStatus(GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER, GLFW_RELEASE))
     {
-        m_gamepadKeyPressed[GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER] = false;
+        m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER] = false;
     }
 }
 
@@ -443,11 +461,11 @@ void InputSystem::treatGeneralKeysMenu(PlayerConfComponent *playerComp)
 {
     uint32_t maxMenuIndex = m_mapMenuSize.at(playerComp->m_menuMode);
     if(!m_modeTransition && ((!m_keyUpPressed && glfwGetKey(m_window, GLFW_KEY_UP) == GLFW_PRESS) ||
-                             (!m_gamepadKeyPressed[GLFW_GAMEPAD_BUTTON_DPAD_UP] &&
+                             (!m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_DPAD_UP] &&
                               checkStandardButtonGamepadKeyStatus(GLFW_GAMEPAD_BUTTON_DPAD_UP, GLFW_PRESS))))
     {
         m_keyUpPressed = true;
-        m_gamepadKeyPressed[GLFW_GAMEPAD_BUTTON_DPAD_UP] = true;
+        m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_DPAD_UP] = true;
         uint32_t index = playerComp->m_currentCursorPos;
         if(index == 0)
         {
@@ -459,10 +477,10 @@ void InputSystem::treatGeneralKeysMenu(PlayerConfComponent *playerComp)
         }
     }
     else if(!m_modeTransition && ((!m_keyDownPressed && (glfwGetKey(m_window, GLFW_KEY_DOWN) == GLFW_PRESS)) ||
-                                  (!m_gamepadKeyPressed[GLFW_GAMEPAD_BUTTON_DPAD_DOWN] && checkStandardButtonGamepadKeyStatus(GLFW_GAMEPAD_BUTTON_DPAD_DOWN, GLFW_PRESS))))
+                                  (!m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_DPAD_DOWN] && checkStandardButtonGamepadKeyStatus(GLFW_GAMEPAD_BUTTON_DPAD_DOWN, GLFW_PRESS))))
     {
         m_keyDownPressed = true;
-        m_gamepadKeyPressed[GLFW_GAMEPAD_BUTTON_DPAD_DOWN] = true;
+        m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_DPAD_DOWN] = true;
         uint32_t index = playerComp->m_currentCursorPos;
         if(index == maxMenuIndex)
         {
@@ -478,16 +496,16 @@ void InputSystem::treatGeneralKeysMenu(PlayerConfComponent *playerComp)
         treatEnterPressedMenu(playerComp);
     }
     else if((!m_keyLeftPressed && (glfwGetKey(m_window, GLFW_KEY_LEFT) == GLFW_PRESS)) ||
-             (!m_gamepadKeyPressed[GLFW_GAMEPAD_BUTTON_DPAD_LEFT] && checkStandardButtonGamepadKeyStatus(GLFW_GAMEPAD_BUTTON_DPAD_LEFT, GLFW_PRESS)))
+             (!m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_DPAD_LEFT] && checkStandardButtonGamepadKeyStatus(GLFW_GAMEPAD_BUTTON_DPAD_LEFT, GLFW_PRESS)))
     {
         treatLeftPressedMenu(playerComp);
     }
     else if((!m_keyRightPressed && (glfwGetKey(m_window, GLFW_KEY_RIGHT) == GLFW_PRESS)) ||
-             (!m_gamepadKeyPressed[GLFW_GAMEPAD_BUTTON_DPAD_RIGHT] && checkStandardButtonGamepadKeyStatus(GLFW_GAMEPAD_BUTTON_DPAD_RIGHT, GLFW_PRESS)))
+             (!m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_DPAD_RIGHT] && checkStandardButtonGamepadKeyStatus(GLFW_GAMEPAD_BUTTON_DPAD_RIGHT, GLFW_PRESS)))
     {
         treatRightPressedMenu(playerComp);
     }
-    else if(!m_keyKeyboardGPressed && !m_gamepadKeyPressed[GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER] &&
+    else if(!m_keyKeyboardGPressed && !m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER] &&
             playerComp->m_menuMode == MenuMode_e::INPUT && (glfwGetKey(m_window, GLFW_KEY_G) == GLFW_PRESS ||
                                                             checkStandardButtonGamepadKeyStatus(GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER, GLFW_PRESS)))
     {
@@ -499,7 +517,7 @@ void InputSystem::treatGeneralKeysMenu(PlayerConfComponent *playerComp)
 void InputSystem::toogleInputMenuGamepadKeyboard(PlayerConfComponent *playerComp)
 {
     m_keyKeyboardGPressed = true;
-    m_gamepadKeyPressed[GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER] = true;
+    m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER] = true;
     playerComp->m_keyboardInputMenuMode = !playerComp->m_keyboardInputMenuMode;
     m_mainEngine->updateInputMenuInfo(playerComp);
     mptrSystemManager->searchSystemByType<StaticDisplaySystem>(static_cast<uint32_t>(Systems_e::STATIC_DISPLAY_SYSTEM))->
@@ -533,28 +551,36 @@ bool InputSystem::treatNewKey(PlayerConfComponent *playerComp)
             if(checkStandardButtonGamepadKeyStatus(it->first, GLFW_PRESS))
             {
                 m_mapGamepadTmpAssociatedKey[m_currentSelectedKey].m_standardButton = true;
-                m_mapGamepadTmpAssociatedKey[m_currentSelectedKey].m_axesPos = {};
+                m_mapGamepadTmpAssociatedKey[m_currentSelectedKey].m_axisPos = {};
                 m_mapGamepadTmpAssociatedKey[m_currentSelectedKey].m_keyID = it->first;
                 staticSystem->updateNewInputKey(m_currentSelectedKey, it->first, false);
                 if(it->first == GLFW_GAMEPAD_BUTTON_B)
                 {
-                    m_gamepadKeyPressed[GLFW_GAMEPAD_BUTTON_B] = true;
+                    m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_B] = true;
                 }
                 else if(it->first == GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER)
                 {
-                    m_gamepadKeyPressed[GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER] = true;
+                    m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER] = true;
                 }
                 return true;
             }
         }
-        //AXES
-        const std::map<uint32_t, std::string> &mapAxes = staticSystem->getGamepadAxesInputKeys();
-        for(std::map<uint32_t, std::string>::const_iterator it = mapAxes.begin(); it != mapAxes.end(); ++it)
+        //AXIS
+        const std::map<uint32_t, std::string> &mapAxis = staticSystem->getGamepadAxisInputKeys();
+        for(std::map<uint32_t, std::string>::const_iterator it = mapAxis.begin(); it != mapAxis.end(); ++it)
         {
-            if(checkAxisGamepadKeyStatus(it->first, true))
+            if(!m_gamepadAxisKeyPressed[it->first].first && checkAxisGamepadKeyStatus(it->first, true))
             {
                 m_mapGamepadTmpAssociatedKey[m_currentSelectedKey].m_standardButton = false;
-                m_mapGamepadTmpAssociatedKey[m_currentSelectedKey].m_axesPos = true;
+                m_mapGamepadTmpAssociatedKey[m_currentSelectedKey].m_axisPos = true;
+                m_mapGamepadTmpAssociatedKey[m_currentSelectedKey].m_keyID = it->first;
+                staticSystem->updateNewInputKey(m_currentSelectedKey, it->first, false);
+                return true;
+            }
+            else if(!m_gamepadAxisKeyPressed[it->first].second && checkAxisGamepadKeyStatus(it->first, false))
+            {
+                m_mapGamepadTmpAssociatedKey[m_currentSelectedKey].m_standardButton = false;
+                m_mapGamepadTmpAssociatedKey[m_currentSelectedKey].m_axisPos = false;
                 m_mapGamepadTmpAssociatedKey[m_currentSelectedKey].m_keyID = it->first;
                 staticSystem->updateNewInputKey(m_currentSelectedKey, it->first, false);
                 return true;
@@ -568,7 +594,7 @@ bool InputSystem::treatNewKey(PlayerConfComponent *playerComp)
 void InputSystem::treatEnterPressedMenu(PlayerConfComponent *playerComp)
 {
     m_enterPressed = true;
-    m_gamepadKeyPressed[GLFW_GAMEPAD_BUTTON_A] = true;
+    m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_A] = true;
     switch (playerComp->m_menuMode)
     {
     case MenuMode_e::BASE:
@@ -617,7 +643,7 @@ void InputSystem::treatLeftPressedMenu(PlayerConfComponent *playerComp)
     else if(playerComp->m_menuMode == MenuMode_e::DISPLAY)
     {
         m_keyLeftPressed = true;
-        m_gamepadKeyPressed[GLFW_GAMEPAD_BUTTON_DPAD_LEFT] = true;
+        m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_DPAD_LEFT] = true;
         DisplayMenuCursorPos_e displayCursorPos = static_cast<DisplayMenuCursorPos_e>(playerComp->m_currentCursorPos);
         if(displayCursorPos == DisplayMenuCursorPos_e::RESOLUTION_SETTING)
         {
@@ -668,7 +694,7 @@ void InputSystem::treatRightPressedMenu(PlayerConfComponent *playerComp)
     else if(playerComp->m_menuMode == MenuMode_e::DISPLAY)
     {
         m_keyRightPressed = true;
-        m_gamepadKeyPressed[GLFW_GAMEPAD_BUTTON_DPAD_RIGHT] = true;
+        m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_DPAD_RIGHT] = true;
         DisplayMenuCursorPos_e displayCursorPos = static_cast<DisplayMenuCursorPos_e>(playerComp->m_currentCursorPos);
         if(displayCursorPos == DisplayMenuCursorPos_e::RESOLUTION_SETTING)
         {
@@ -768,6 +794,7 @@ void InputSystem::treatEnterPressedInputMenu(PlayerConfComponent *playerComp)
     InputMenuCursorPos_e menuPos = static_cast<InputMenuCursorPos_e>(playerComp->m_currentCursorPos);
     if(menuPos != InputMenuCursorPos_e::RETURN && menuPos != InputMenuCursorPos_e::VALID && menuPos != InputMenuCursorPos_e::DEFAULT)
     {
+        m_gamepadAxisKeyPressed.fill({true, true});
         playerComp->m_menuMode = MenuMode_e::NEW_KEY;
         m_mainEngine->setMenuEntries(playerComp);
         m_currentSelectedKey = m_mapInputControl.at(menuPos);

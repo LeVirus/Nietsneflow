@@ -10,16 +10,16 @@ struct MapCoordComponent;
 class MainEngine;
 struct WeaponComponent;
 
-//pair const uint8_t* :: buttons, const float* :: axes
+//pair const uint8_t* :: buttons, const float* :: axis
 using MapGamepadInputData_t = std::map<uint32_t, std::pair<const uint8_t*, const float*>>;
 
 struct GamepadInputState_t
 {
-    //true == standard button, false == axes
+    //true == standard button, false == axis
     bool m_standardButton;
     uint32_t m_keyID;
     //if m_standardButton == false, indicate the sense
-    std::optional<bool> m_axesPos;
+    std::optional<bool> m_axisPos;
 };
 
 class InputSystem : public ecs::System
@@ -64,6 +64,7 @@ private:
     void treatPlayerInput();
     bool checkPlayerKeyTriggered(ControlKey_e key);
     void treatMenu(uint32_t playerEntity);
+    void treatAxisRelease();
     void treatReleaseInputMenu();
     void treatGeneralKeysMenu(PlayerConfComponent *playerComp);
     void toogleInputMenuGamepadKeyboard(PlayerConfComponent *playerComp);
@@ -83,7 +84,9 @@ private:
     bool m_keyEspapePressed = false, m_keyLeftPressed = false, m_keyRightPressed = false,
     m_keyUpPressed = false, m_keyDownPressed = false, m_F12Pressed = false, m_enterPressed = false,
     m_keyKeyboardGPressed = false;
-    std::array<bool, GLFW_GAMEPAD_BUTTON_LAST + 1> m_gamepadKeyPressed;
+    std::array<bool, GLFW_GAMEPAD_BUTTON_LAST + 1> m_gamepadButtonsKeyPressed;
+    //first == axis + second == axis -
+    std::array<std::pair<bool, bool>, GLFW_GAMEPAD_AXIS_LAST + 1> m_gamepadAxisKeyPressed;
     const std::map<MenuMode_e, uint32_t> m_mapMenuSize = {
         {MenuMode_e::BASE, static_cast<uint32_t>(MainMenuCursorPos_e::TOTAL) - 1},
         {MenuMode_e::DISPLAY, static_cast<uint32_t>(DisplayMenuCursorPos_e::TOTAL) - 1},
