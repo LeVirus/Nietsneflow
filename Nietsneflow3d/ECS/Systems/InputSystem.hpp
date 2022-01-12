@@ -82,9 +82,8 @@ private:
     MainEngine *m_mainEngine = nullptr;
     bool m_keyEspapePressed = false, m_keyLeftPressed = false, m_keyRightPressed = false,
     m_keyUpPressed = false, m_keyDownPressed = false, m_F12Pressed = false, m_enterPressed = false,
-    m_keyGamepadButtonBPressed = false, m_keyGamepadLeftPressed = false, m_keyGamepadRightPressed = false,
-        m_keyGamepadUpPressed = false, m_keyGamepadDownPressed = false, m_keyGamepadButtonAPressed = false,
-    m_keyKeyboardGPressed = false, m_keyGamepadButtonRightBumperPressed = false;
+    m_keyKeyboardGPressed = false;
+    std::array<bool, GLFW_GAMEPAD_BUTTON_LAST + 1> m_gamepadKeyPressed;
     const std::map<MenuMode_e, uint32_t> m_mapMenuSize = {
         {MenuMode_e::BASE, static_cast<uint32_t>(MainMenuCursorPos_e::TOTAL) - 1},
         {MenuMode_e::DISPLAY, static_cast<uint32_t>(DisplayMenuCursorPos_e::TOTAL) - 1},
