@@ -47,13 +47,13 @@ public:
     {
         return m_toggleSignal;
     }
-    inline const std::map<ControlKey_e, uint32_t> &getMapCurrentDefaultKeyboardAssociatedKey()const
+    inline const std::map<ControlKey_e, uint32_t> &getMapTmpKeyboardAssociatedKey()const
     {
-        return m_mapKeyboardCurrentAssociatedKey;
+        return m_mapKeyboardTmpAssociatedKey;
     }
-    inline const std::map<ControlKey_e, GamepadInputState_t> &getMapCurrentDefaultGamepadAssociatedKey()const
+    inline const std::map<ControlKey_e, GamepadInputState_t> &getMapTmpGamepadAssociatedKey()const
     {
-        return m_mapGamepadCurrentAssociatedKey;
+        return m_mapGamepadTmpAssociatedKey;
     }
 private:
     void gamepadInit();

@@ -738,6 +738,7 @@ void InputSystem::treatEnterPressedMainMenu(PlayerConfComponent *playerComp)
         playerComp->m_menuMode = MenuMode_e::INPUT;
         m_mainEngine->setMenuEntries(playerComp);
         m_mapKeyboardTmpAssociatedKey = m_mapKeyboardCurrentAssociatedKey;
+        m_mapGamepadTmpAssociatedKey = m_mapGamepadCurrentAssociatedKey;
         m_mainEngine->updateStringWriteEntitiesInputMenu(playerComp->m_keyboardInputMenuMode);
         break;
     case MainMenuCursorPos_e::NEW_GAME:
