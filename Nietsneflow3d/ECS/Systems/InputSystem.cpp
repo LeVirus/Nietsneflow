@@ -369,11 +369,15 @@ void InputSystem::treatMenu(uint32_t playerEntity)
             playerComp->m_menuMode = MenuMode_e::INPUT;
             m_mainEngine->setMenuEntries(playerComp);
         }
-        else
+        else if(playerComp->m_inputModified && playerComp->m_menuMode == MenuMode_e::INPUT)
+        {
+            playerComp->m_menuMode = MenuMode_e::CONFIRM_QUIT_INPUT_FORM;
+            m_mainEngine->setMenuEntries(playerComp);
+        }
+        else if(playerComp->m_menuMode != MenuMode_e::CONFIRM_QUIT_INPUT_FORM)
         {
             playerComp->m_menuMode = MenuMode_e::BASE;
             m_mainEngine->setMenuEntries(playerComp);
-            return;
         }
         return;
     }
@@ -382,6 +386,7 @@ void InputSystem::treatMenu(uint32_t playerEntity)
         treatAxisRelease();
         if(treatNewKey(playerComp))
         {
+            playerComp->m_inputModified = true;
             playerComp->m_menuMode = MenuMode_e::INPUT;
             m_mainEngine->setMenuEntries(playerComp);
             m_gamepadAxisKeyPressed.fill({false, false});
@@ -646,6 +651,18 @@ void InputSystem::treatEnterPressedMenu(PlayerConfComponent *playerComp)
         break;
     case MenuMode_e::NEW_KEY:
         break;
+    case MenuMode_e::CONFIRM_QUIT_INPUT_FORM:
+        ConfirmQuitInputCursorPos_e menuEntry = static_cast<ConfirmQuitInputCursorPos_e>(playerComp->m_currentCursorPos);
+        if(menuEntry == ConfirmQuitInputCursorPos_e::TRUE)
+        {
+            validInputMenu(playerComp);
+        }
+        else
+        {
+            playerComp->m_menuMode = MenuMode_e::BASE;
+            m_mainEngine->setMenuEntries(playerComp);
+        }
+        break;
     }
 }
 
@@ -767,6 +784,7 @@ void InputSystem::treatEnterPressedMainMenu(PlayerConfComponent *playerComp)
         m_mainEngine->setMenuEntries(playerComp);
         break;
     case MainMenuCursorPos_e::INPUT_CONF:
+        playerComp->m_inputModified = false;
         playerComp->m_menuMode = MenuMode_e::INPUT;
         m_mainEngine->setMenuEntries(playerComp);
         m_mapKeyboardTmpAssociatedKey = m_mapKeyboardCurrentAssociatedKey;
@@ -858,18 +876,24 @@ void InputSystem::treatEnterPressedInputMenu(PlayerConfComponent *playerComp)
     }
     else if(menuPos == InputMenuCursorPos_e::VALID)
     {
-        if(playerComp->m_keyboardInputMenuMode)
-        {
-            m_mapKeyboardCurrentAssociatedKey = m_mapKeyboardTmpAssociatedKey;
-        }
-        else
-        {
-            m_mapGamepadCurrentAssociatedKey = m_mapGamepadTmpAssociatedKey;
-        }
-        m_mainEngine->updateStringWriteEntitiesInputMenu(playerComp->m_keyboardInputMenuMode);
-        playerComp->m_menuMode = MenuMode_e::BASE;
-        m_mainEngine->setMenuEntries(playerComp);
+        validInputMenu(playerComp);
     }
+}
+
+//===================================================================
+void InputSystem::validInputMenu(PlayerConfComponent *playerComp)
+{
+    if(playerComp->m_keyboardInputMenuMode)
+    {
+        m_mapKeyboardCurrentAssociatedKey = m_mapKeyboardTmpAssociatedKey;
+    }
+    else
+    {
+        m_mapGamepadCurrentAssociatedKey = m_mapGamepadTmpAssociatedKey;
+    }
+    m_mainEngine->updateStringWriteEntitiesInputMenu(playerComp->m_keyboardInputMenuMode);
+    playerComp->m_menuMode = MenuMode_e::BASE;
+    m_mainEngine->setMenuEntries(playerComp);
 }
 
 //===================================================================

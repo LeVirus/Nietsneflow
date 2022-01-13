@@ -1131,6 +1131,11 @@ void MainEngine::setMenuEntries(PlayerConfComponent *playerComp)
         playerComp->m_currentCursorPos = m_memInputCursorPos;
         m_memInputCursorPos = 0;
     }
+    else if(playerComp->m_menuMode == MenuMode_e::CONFIRM_QUIT_INPUT_FORM)
+    {
+        updateInputMenuInfo(playerComp);
+        playerComp->m_currentCursorPos = 0;
+    }
     else if(playerComp->m_menuMode != MenuMode_e::NEW_KEY)
     {
         playerComp->m_currentCursorPos = 0;
@@ -1143,8 +1148,17 @@ void MainEngine::updateInputMenuInfo(PlayerConfComponent *playerComp)
     WriteComponent *writeComp = m_ecsManager.getComponentManager().
             searchComponentByType<WriteComponent>(playerComp->m_inputMenuModeWriteEntity, Components_e::WRITE_COMPONENT);
     assert(writeComp);
-    writeComp->m_str = playerComp->m_keyboardInputMenuMode ? "PRESS ESCAPE FOR CANCEL\\KEYBOARD\\SWITCH GAMEPAD : G OR RL" :
-                                                             "PRESS ESCAPE FOR CANCEL\\GAMEPAD\\SWITCH KEYBOARD : G OR RL";
+    if(playerComp->m_menuMode == MenuMode_e::INPUT)
+    {
+        writeComp->m_upLeftPositionGL = {-0.6f, -0.7f};
+        writeComp->m_str = playerComp->m_keyboardInputMenuMode ? "KEYBOARD\\SWITCH GAMEPAD : G OR RL" :
+                                                                 "GAMEPAD\\SWITCH KEYBOARD : G OR RL";
+    }
+    else if(playerComp->m_menuMode == MenuMode_e::CONFIRM_QUIT_INPUT_FORM)
+    {
+        writeComp->m_upLeftPositionGL = {-0.6f, 0.3f};
+        writeComp->m_str = "DO YOU WANT TO SAVE CHANGES?";
+    }
     m_graphicEngine.confWriteComponent(writeComp);
 }
 

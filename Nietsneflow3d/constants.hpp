@@ -74,6 +74,13 @@ enum Components_e
     TOTAL_COMPONENTS
 };
 
+enum class ConfirmQuitInputCursorPos_e
+{
+    TRUE,
+    FALSE,
+    TOTAL
+};
+
 enum class MainMenuCursorPos_e
 {
     RETURN_TO_GAME,
@@ -306,6 +313,7 @@ enum class MenuMode_e
     DISPLAY,
     SOUND,
     INPUT,
+    CONFIRM_QUIT_INPUT_FORM,
     NEW_KEY
 };
 
@@ -363,8 +371,11 @@ inline const std::map<MenuMode_e, PairPairFloatStr_t> MAP_MENU_DATA =
      PairPairFloatStr_t{{-0.7f, 0.7f}, "MOVE FORWARD\\MOVE BACKWARD\\STRAFE LEFT\\"
          "STRAFE RIGHT\\TURN LEFT\\TURN RIGHT\\ACTION\\SHOOT\\PREVIOUS WEAPON\\NEXT WEAPON\\DEFAULT\\RETURN\\VALID"}
     },
+    {MenuMode_e::CONFIRM_QUIT_INPUT_FORM,
+     PairPairFloatStr_t{{-0.1f, 0.0f}, "YES\\NO"}
+    },
     {MenuMode_e::NEW_KEY,
-     PairPairFloatStr_t{{-0.6f, 0.1f}, "ENTER NEW KEY FOR ACTION :\\"}
+     PairPairFloatStr_t{{-0.6f, 0.1f}, "PRESS ESCAPE FOR CANCEL\\ENTER NEW KEY FOR ACTION :\\"}
     }
 };
 inline const std::map<Shader_e, std::string> SHADER_ID_MAP

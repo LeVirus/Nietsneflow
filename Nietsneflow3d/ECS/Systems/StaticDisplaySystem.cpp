@@ -156,6 +156,10 @@ void StaticDisplaySystem::displayMenu()
                 }
             }
         }
+        else if(playerComp->m_menuMode == MenuMode_e::CONFIRM_QUIT_INPUT_FORM)
+        {
+            drawWriteVertex(playerComp->m_inputMenuModeWriteEntity, VertexID_e::INPUT);
+        }
     }
 }
 

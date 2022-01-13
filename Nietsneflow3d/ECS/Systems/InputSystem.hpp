@@ -84,6 +84,7 @@ private:
     void treatEnterPressedSoundMenu(PlayerConfComponent *playerComp);
     void treatEnterPressedDisplayMenu(PlayerConfComponent *playerComp);
     void treatEnterPressedInputMenu(PlayerConfComponent *playerComp);
+    void validInputMenu(PlayerConfComponent *playerComp);
     void treatPlayerMove(PlayerConfComponent *playerComp, MoveableComponent *moveComp, MapCoordComponent *mapComp);
 private:
     MapGamepadInputData_t m_vectGamepadID;
@@ -101,6 +102,7 @@ private:
         {MenuMode_e::INPUT, static_cast<uint32_t>(InputMenuCursorPos_e::TOTAL) - 1},
         {MenuMode_e::TRANSITION_LEVEL, 1},
         {MenuMode_e::SOUND, static_cast<uint32_t>(SoundMenuCursorPos_e::TOTAL) - 1},
+        {MenuMode_e::CONFIRM_QUIT_INPUT_FORM, static_cast<uint32_t>(ConfirmQuitInputCursorPos_e::TOTAL) - 1},
         {MenuMode_e::NEW_KEY, 0}
     };
     const std::map<ControlKey_e, uint32_t> m_mapKeyboardDefaultAssociatedKey = {
@@ -125,18 +127,18 @@ private:
 //        {ControlKey_e::TURN_LEFT, GamepadInputState_t{false, GLFW_GAMEPAD_AXIS_RIGHT_X, false}},
 //        {ControlKey_e::TURN_RIGHT, GamepadInputState_t{false, GLFW_GAMEPAD_AXIS_RIGHT_X, true}},
 //        {ControlKey_e::ACTION, GamepadInputState_t{true, GLFW_GAMEPAD_BUTTON_A, {}}},
-//        {ControlKey_e::SHOOT, GamepadInputState_t{true, GLFW_GAMEPAD_BUTTON_RIGHT_THUMB, {}}},
+//        {ControlKey_e::SHOOT, GamepadInputState_t{true, GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER, {}}},
 //        {ControlKey_e::PREVIOUS_WEAPON, GamepadInputState_t{true, GLFW_GAMEPAD_BUTTON_Y, {}}},
 //        {ControlKey_e::NEXT_WEAPON, GamepadInputState_t{true, GLFW_GAMEPAD_BUTTON_B, {}}}
 //    };
     //!!!WARNING!!!
     // GLFW_GAMEPAD_AXIS_LEFT_X --> OK
-    // GLFW_GAMEPAD_AXIS_LEFT_Y --> OK
+    // GLFW_GAMEPAD_AXIS_LEFT_Y --> POS & NEG REVERSED
     // GLFW_GAMEPAD_AXIS_LEFT_TRIGGER --> GLFW_GAMEPAD_AXIS_RIGHT_Y
     // GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER --> OK
     // GLFW_GAMEPAD_AXIS_RIGHT_X --> GLFW_GAMEPAD_AXIS_LEFT_TRIGGER
     // GLFW_GAMEPAD_AXIS_RIGHT_Y --> GLFW_GAMEPAD_AXIS_RIGHT_X
-    const std::map<ControlKey_e, GamepadInputState_t> m_mapGamepadDefaultAssociatedKey= {
+    const std::map<ControlKey_e, GamepadInputState_t> m_mapGamepadDefaultAssociatedKey = {
         {ControlKey_e::MOVE_FORWARD, GamepadInputState_t{false, GLFW_GAMEPAD_AXIS_LEFT_Y, false}},
         {ControlKey_e::MOVE_BACKWARD, GamepadInputState_t{false, GLFW_GAMEPAD_AXIS_LEFT_Y, true}},
         {ControlKey_e::STRAFE_LEFT, GamepadInputState_t{false, GLFW_GAMEPAD_AXIS_LEFT_X, false}},
@@ -145,8 +147,8 @@ private:
         {ControlKey_e::TURN_RIGHT, GamepadInputState_t{false, GLFW_GAMEPAD_AXIS_RIGHT_Y, true}},
         {ControlKey_e::ACTION, GamepadInputState_t{true, GLFW_GAMEPAD_BUTTON_A, {}}},
         {ControlKey_e::SHOOT, GamepadInputState_t{true, GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER, {}}},
-        {ControlKey_e::PREVIOUS_WEAPON, GamepadInputState_t{true, GLFW_GAMEPAD_BUTTON_Y, {}}},
-        {ControlKey_e::NEXT_WEAPON, GamepadInputState_t{true, GLFW_GAMEPAD_BUTTON_B, {}}}
+        {ControlKey_e::PREVIOUS_WEAPON, GamepadInputState_t{true, GLFW_GAMEPAD_BUTTON_DPAD_LEFT, {}}},
+        {ControlKey_e::NEXT_WEAPON, GamepadInputState_t{true, GLFW_GAMEPAD_BUTTON_DPAD_RIGHT, {}}}
     };
     std::map<ControlKey_e, GamepadInputState_t> m_mapGamepadCurrentAssociatedKey = m_mapGamepadDefaultAssociatedKey,
         m_mapGamepadTmpAssociatedKey = m_mapGamepadCurrentAssociatedKey;
