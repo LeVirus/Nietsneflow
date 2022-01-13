@@ -284,14 +284,26 @@ std::string StaticDisplaySystem::getGamepadStringKeyButtonAssociated(uint32_t ke
 }
 
 //===================================================================
-void StaticDisplaySystem::updateNewInputKey(ControlKey_e currentSelectedKey, uint32_t glKey, bool keyboardMode)
+void StaticDisplaySystem::updateNewInputKey(ControlKey_e currentSelectedKey, uint32_t glKey, InputType_e keyboardMode, bool axisSense)
 {
-    uint32_t entityWrite = keyboardMode ? m_inputMenuKeyboardWriteKeysEntities[static_cast<uint32_t>(currentSelectedKey)] :
+    uint32_t entityWrite = (keyboardMode == InputType_e::KEYBOARD) ?
+                m_inputMenuKeyboardWriteKeysEntities[static_cast<uint32_t>(currentSelectedKey)] :
             m_inputMenuGamepadWriteKeysEntities[static_cast<uint32_t>(currentSelectedKey)];
     WriteComponent *writeComp = stairwayToComponentManager().searchComponentByType<WriteComponent>(
                 entityWrite, Components_e::WRITE_COMPONENT);
     assert(writeComp);
-    writeComp->m_str = keyboardMode ? getKeyboardStringKeyAssociated(glKey) : getGamepadStringKeyButtonAssociated(glKey);
+    if(keyboardMode == InputType_e::KEYBOARD)
+    {
+        writeComp->m_str = getKeyboardStringKeyAssociated(glKey);
+    }
+    else if(keyboardMode == InputType_e::GAMEPAD_BUTTONS)
+    {
+        writeComp->m_str = getGamepadStringKeyButtonAssociated(glKey);
+    }
+    else if(keyboardMode == InputType_e::GAMEPAD_AXIS)
+    {
+        writeComp->m_str = getGamepadStringKeyAxisAssociated(glKey, axisSense);
+    }
     m_mainEngine->updateWriteComp(writeComp);
 }
 

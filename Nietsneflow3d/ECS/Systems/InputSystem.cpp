@@ -355,7 +355,8 @@ void InputSystem::treatMenu(uint32_t playerEntity)
         m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_B] = false;
     }
     if((!m_keyEspapePressed && glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_PRESS) ||
-            (!m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_B] && checkStandardButtonGamepadKeyStatus(GLFW_GAMEPAD_BUTTON_B, GLFW_PRESS)))
+            (!m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_B] && playerComp->m_menuMode != MenuMode_e::NEW_KEY &&
+             checkStandardButtonGamepadKeyStatus(GLFW_GAMEPAD_BUTTON_B, GLFW_PRESS)))
     {
         m_keyEspapePressed = true;
         m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_B] = true;
@@ -491,7 +492,8 @@ void InputSystem::treatGeneralKeysMenu(PlayerConfComponent *playerComp)
             playerComp->m_currentCursorPos = index + 1;
         }
     }
-    else if(glfwGetKey(m_window, GLFW_KEY_ENTER) == GLFW_PRESS || checkStandardButtonGamepadKeyStatus(GLFW_GAMEPAD_BUTTON_A, GLFW_PRESS))
+    else if((!m_enterPressed&& glfwGetKey(m_window, GLFW_KEY_ENTER) == GLFW_PRESS) ||
+            (!m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_A] && checkStandardButtonGamepadKeyStatus(GLFW_GAMEPAD_BUTTON_A, GLFW_PRESS)))
     {
         treatEnterPressedMenu(playerComp);
     }
@@ -536,8 +538,24 @@ bool InputSystem::treatNewKey(PlayerConfComponent *playerComp)
         {
             if(glfwGetKey(m_window, it->first) == GLFW_PRESS)
             {
+                if(it->first == GLFW_KEY_G)
+                {
+                    m_keyKeyboardGPressed = true;
+                }
+                else if(it->first == GLFW_KEY_UP)
+                {
+                    m_keyUpPressed = true;
+                }
+                else if(it->first == GLFW_KEY_DOWN)
+                {
+                    m_keyDownPressed = true;
+                }
+                else if(it->first == GLFW_KEY_ENTER)
+                {
+                    m_enterPressed = true;
+                }
                 m_mapKeyboardTmpAssociatedKey[m_currentSelectedKey] = it->first;
-                staticSystem->updateNewInputKey(m_currentSelectedKey, it->first, true);
+                staticSystem->updateNewInputKey(m_currentSelectedKey, it->first, InputType_e::KEYBOARD);
                 return true;
             }
         }
@@ -553,7 +571,7 @@ bool InputSystem::treatNewKey(PlayerConfComponent *playerComp)
                 m_mapGamepadTmpAssociatedKey[m_currentSelectedKey].m_standardButton = true;
                 m_mapGamepadTmpAssociatedKey[m_currentSelectedKey].m_axisPos = {};
                 m_mapGamepadTmpAssociatedKey[m_currentSelectedKey].m_keyID = it->first;
-                staticSystem->updateNewInputKey(m_currentSelectedKey, it->first, false);
+                staticSystem->updateNewInputKey(m_currentSelectedKey, it->first, InputType_e::GAMEPAD_BUTTONS);
                 if(it->first == GLFW_GAMEPAD_BUTTON_B)
                 {
                     m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_B] = true;
@@ -562,6 +580,18 @@ bool InputSystem::treatNewKey(PlayerConfComponent *playerComp)
                 {
                     m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER] = true;
                 }
+                else if(it->first == GLFW_GAMEPAD_BUTTON_DPAD_UP)
+                {
+                    m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_DPAD_UP] = true;
+                }
+                else if(it->first == GLFW_GAMEPAD_BUTTON_DPAD_DOWN)
+                {
+                    m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_DPAD_DOWN] = true;
+                }
+                else if(it->first == GLFW_GAMEPAD_BUTTON_A)
+                {
+                    m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_A] = true;
+                }
                 return true;
             }
         }
@@ -569,20 +599,22 @@ bool InputSystem::treatNewKey(PlayerConfComponent *playerComp)
         const std::map<uint32_t, std::string> &mapAxis = staticSystem->getGamepadAxisInputKeys();
         for(std::map<uint32_t, std::string>::const_iterator it = mapAxis.begin(); it != mapAxis.end(); ++it)
         {
+            //POS
             if(!m_gamepadAxisKeyPressed[it->first].first && checkAxisGamepadKeyStatus(it->first, true))
             {
                 m_mapGamepadTmpAssociatedKey[m_currentSelectedKey].m_standardButton = false;
                 m_mapGamepadTmpAssociatedKey[m_currentSelectedKey].m_axisPos = true;
                 m_mapGamepadTmpAssociatedKey[m_currentSelectedKey].m_keyID = it->first;
-                staticSystem->updateNewInputKey(m_currentSelectedKey, it->first, false);
+                staticSystem->updateNewInputKey(m_currentSelectedKey, it->first, InputType_e::GAMEPAD_AXIS, true);
                 return true;
             }
+            //NEG
             else if(!m_gamepadAxisKeyPressed[it->first].second && checkAxisGamepadKeyStatus(it->first, false))
             {
                 m_mapGamepadTmpAssociatedKey[m_currentSelectedKey].m_standardButton = false;
                 m_mapGamepadTmpAssociatedKey[m_currentSelectedKey].m_axisPos = false;
                 m_mapGamepadTmpAssociatedKey[m_currentSelectedKey].m_keyID = it->first;
-                staticSystem->updateNewInputKey(m_currentSelectedKey, it->first, false);
+                staticSystem->updateNewInputKey(m_currentSelectedKey, it->first, InputType_e::GAMEPAD_AXIS, false);
                 return true;
             }
         }

@@ -18,6 +18,13 @@ class MainEngine;
 
 using ArrayControlKey_t = std::array<uint32_t, static_cast<uint32_t>(ControlKey_e::TOTAL)>;
 
+enum class InputType_e
+{
+    KEYBOARD,
+    GAMEPAD_BUTTONS,
+    GAMEPAD_AXIS
+};
+
 enum class VertexID_e
 {
     WEAPON,
@@ -52,7 +59,7 @@ public:
     std::string getKeyboardStringKeyAssociated(uint32_t key)const;
     std::string getGamepadStringKeyButtonAssociated(uint32_t key)const;
     std::string getGamepadStringKeyAxisAssociated(uint32_t key, bool axisSense)const;
-    void updateNewInputKey(ControlKey_e currentSelectedKey, uint32_t glKey, bool keyboardMode);
+    void updateNewInputKey(ControlKey_e currentSelectedKey, uint32_t glKey, InputType_e keyboardMode, bool axisSense = false);
     void updateStringWriteEntitiesInputMenu(bool keyboardInputMenuMode);
     inline void linkMainEngine(MainEngine *mainEngine)
     {
