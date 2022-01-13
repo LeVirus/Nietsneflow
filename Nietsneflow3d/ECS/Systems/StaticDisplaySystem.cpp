@@ -160,14 +160,16 @@ void StaticDisplaySystem::displayMenu()
 }
 
 //===================================================================
-void StaticDisplaySystem::updateStringWriteEntitiesInputMenu(bool keyboardInputMenuMode)
+void StaticDisplaySystem::updateStringWriteEntitiesInputMenu(bool keyboardInputMenuMode, bool defaultInput)
 {
     WriteComponent *writeConf;
     //KEYBOARD
     if(keyboardInputMenuMode)
     {
-        const std::map<ControlKey_e, uint32_t> &map = mptrSystemManager->searchSystemByType<InputSystem>(
-                    static_cast<uint32_t>(Systems_e::INPUT_SYSTEM))->getMapTmpKeyboardAssociatedKey();
+        const std::map<ControlKey_e, uint32_t> &map = defaultInput ? mptrSystemManager->searchSystemByType<InputSystem>(
+                    static_cast<uint32_t>(Systems_e::INPUT_SYSTEM))->getMapDefaultKeyboardAssociatedKey() :
+                    mptrSystemManager->searchSystemByType<InputSystem>(
+                        static_cast<uint32_t>(Systems_e::INPUT_SYSTEM))->getMapTmpKeyboardAssociatedKey();
         for(uint32_t i = 0; i < m_inputMenuKeyboardWriteKeysEntities.size(); ++i)
         {
             writeConf = stairwayToComponentManager().
@@ -180,8 +182,11 @@ void StaticDisplaySystem::updateStringWriteEntitiesInputMenu(bool keyboardInputM
     //GAMEPAD
     else
     {
-        const std::map<ControlKey_e, GamepadInputState_t> &map = mptrSystemManager->searchSystemByType<InputSystem>(
-                    static_cast<uint32_t>(Systems_e::INPUT_SYSTEM))->getMapTmpGamepadAssociatedKey();
+        const std::map<ControlKey_e, GamepadInputState_t> &map = defaultInput ?
+                    mptrSystemManager->searchSystemByType<InputSystem>(
+                        static_cast<uint32_t>(Systems_e::INPUT_SYSTEM))->getMapDefaultGamepadAssociatedKey() :
+                    mptrSystemManager->searchSystemByType<InputSystem>(
+                        static_cast<uint32_t>(Systems_e::INPUT_SYSTEM))->getMapTmpGamepadAssociatedKey();
         for(uint32_t i = 0; i < m_inputMenuGamepadWriteKeysEntities.size(); ++i)
         {
             writeConf = stairwayToComponentManager().

@@ -41,7 +41,7 @@ public:
     void fillTitleMenuWrite(WriteComponent *writeComp, MenuMode_e menuEntry);
     void fillMenuWrite(WriteComponent *writeComp, MenuMode_e menuEntry, uint32_t cursorPos = 0);
     void confWriteComponent(WriteComponent *writeComp);
-    void updateStringWriteEntitiesInputMenu(bool keyboardInputMenuMode);
+    void updateStringWriteEntitiesInputMenu(bool keyboardInputMenuMode, bool defaultInput = true);
     inline MapDisplaySystem &getMapSystem()
     {
         return *m_mapSystem;

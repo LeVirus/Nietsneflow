@@ -51,9 +51,17 @@ public:
     {
         return m_mapKeyboardTmpAssociatedKey;
     }
+    inline const std::map<ControlKey_e, uint32_t> &getMapDefaultKeyboardAssociatedKey()const
+    {
+        return m_mapKeyboardDefaultAssociatedKey;
+    }
     inline const std::map<ControlKey_e, GamepadInputState_t> &getMapTmpGamepadAssociatedKey()const
     {
         return m_mapGamepadTmpAssociatedKey;
+    }
+    inline const std::map<ControlKey_e, GamepadInputState_t> &getMapDefaultGamepadAssociatedKey()const
+    {
+        return m_mapGamepadDefaultAssociatedKey;
     }
 private:
     void gamepadInit();

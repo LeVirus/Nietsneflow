@@ -54,7 +54,7 @@ public:
     void setMenuEntries(PlayerConfComponent *playerComp);
     void updateInputMenuInfo(PlayerConfComponent *playerComp);
     void updateWriteComp(WriteComponent *writeComp);
-    void updateStringWriteEntitiesInputMenu(bool keyboardInputMenuMode);
+    void updateStringWriteEntitiesInputMenu(bool keyboardInputMenuMode, bool defaultInput = true);
     inline void validDisplayMenu()
     {
         m_graphicEngine.validDisplayMenu();

@@ -523,7 +523,7 @@ void InputSystem::toogleInputMenuGamepadKeyboard(PlayerConfComponent *playerComp
     playerComp->m_keyboardInputMenuMode = !playerComp->m_keyboardInputMenuMode;
     m_mainEngine->updateInputMenuInfo(playerComp);
     mptrSystemManager->searchSystemByType<StaticDisplaySystem>(static_cast<uint32_t>(Systems_e::STATIC_DISPLAY_SYSTEM))->
-            updateStringWriteEntitiesInputMenu(playerComp->m_keyboardInputMenuMode);
+            updateStringWriteEntitiesInputMenu(playerComp->m_keyboardInputMenuMode, false);
 }
 
 //===================================================================
@@ -771,7 +771,7 @@ void InputSystem::treatEnterPressedMainMenu(PlayerConfComponent *playerComp)
         m_mainEngine->setMenuEntries(playerComp);
         m_mapKeyboardTmpAssociatedKey = m_mapKeyboardCurrentAssociatedKey;
         m_mapGamepadTmpAssociatedKey = m_mapGamepadCurrentAssociatedKey;
-        m_mainEngine->updateStringWriteEntitiesInputMenu(playerComp->m_keyboardInputMenuMode);
+        m_mainEngine->updateStringWriteEntitiesInputMenu(playerComp->m_keyboardInputMenuMode, false);
         break;
     case MainMenuCursorPos_e::NEW_GAME:
         break;

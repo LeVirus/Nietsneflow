@@ -60,7 +60,7 @@ public:
     std::string getGamepadStringKeyButtonAssociated(uint32_t key)const;
     std::string getGamepadStringKeyAxisAssociated(uint32_t key, bool axisSense)const;
     void updateNewInputKey(ControlKey_e currentSelectedKey, uint32_t glKey, InputType_e keyboardMode, bool axisSense = false);
-    void updateStringWriteEntitiesInputMenu(bool keyboardInputMenuMode);
+    void updateStringWriteEntitiesInputMenu(bool keyboardInputMenuMode, bool defaultInput = true);
     inline void linkMainEngine(MainEngine *mainEngine)
     {
         m_mainEngine = mainEngine;

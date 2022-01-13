@@ -1155,9 +1155,9 @@ void MainEngine::updateWriteComp(WriteComponent *writeComp)
 }
 
 //===================================================================
-void MainEngine::updateStringWriteEntitiesInputMenu(bool keyboardInputMenuMode)
+void MainEngine::updateStringWriteEntitiesInputMenu(bool keyboardInputMenuMode, bool defaultInput)
 {
-    m_graphicEngine.updateStringWriteEntitiesInputMenu(keyboardInputMenuMode);
+    m_graphicEngine.updateStringWriteEntitiesInputMenu(keyboardInputMenuMode, defaultInput);
 }
 
 //===================================================================
