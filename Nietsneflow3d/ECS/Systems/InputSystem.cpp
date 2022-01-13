@@ -105,6 +105,10 @@ void InputSystem::treatPlayerInput()
         {
             m_F12Pressed = false;
         }
+        if(checkStandardButtonGamepadKeyStatus(GLFW_GAMEPAD_BUTTON_B, GLFW_RELEASE))
+        {
+            m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_B] = false;
+        }
         if(m_mainEngine->isGamePaused())
         {
             treatMenu(mVectNumEntity[i]);
@@ -350,10 +354,6 @@ void InputSystem::treatMenu(uint32_t playerEntity)
     {
         m_keyEspapePressed = false;
     }
-    if(checkStandardButtonGamepadKeyStatus(GLFW_GAMEPAD_BUTTON_B, GLFW_RELEASE))
-    {
-        m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_B] = false;
-    }
     if((!m_keyEspapePressed && glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_PRESS) ||
             (!m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_B] && playerComp->m_menuMode != MenuMode_e::NEW_KEY &&
              checkStandardButtonGamepadKeyStatus(GLFW_GAMEPAD_BUTTON_B, GLFW_PRESS)))
@@ -497,7 +497,7 @@ void InputSystem::treatGeneralKeysMenu(PlayerConfComponent *playerComp)
             playerComp->m_currentCursorPos = index + 1;
         }
     }
-    else if((!m_enterPressed&& glfwGetKey(m_window, GLFW_KEY_ENTER) == GLFW_PRESS) ||
+    else if((!m_enterPressed && glfwGetKey(m_window, GLFW_KEY_ENTER) == GLFW_PRESS) ||
             (!m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_A] && checkStandardButtonGamepadKeyStatus(GLFW_GAMEPAD_BUTTON_A, GLFW_PRESS)))
     {
         treatEnterPressedMenu(playerComp);
@@ -852,8 +852,16 @@ void InputSystem::treatEnterPressedInputMenu(PlayerConfComponent *playerComp)
     }
     else if(menuPos == InputMenuCursorPos_e::RETURN)
     {
-        playerComp->m_menuMode = MenuMode_e::BASE;
-        m_mainEngine->setMenuEntries(playerComp);
+        if(playerComp->m_inputModified)
+        {
+            playerComp->m_menuMode = MenuMode_e::CONFIRM_QUIT_INPUT_FORM;
+            m_mainEngine->setMenuEntries(playerComp);
+        }
+        else
+        {
+            playerComp->m_menuMode = MenuMode_e::BASE;
+            m_mainEngine->setMenuEntries(playerComp);
+        }
     }
     else if(menuPos == InputMenuCursorPos_e::DEFAULT)
     {
