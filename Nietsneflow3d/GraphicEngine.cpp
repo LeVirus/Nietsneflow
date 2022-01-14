@@ -187,11 +187,9 @@ void GraphicEngine::fillMenuWrite(WriteComponent *writeComp, MenuMode_e menuEntr
     writeComp->m_str = it->second.second;
     if(menuEntry == MenuMode_e::DISPLAY)
     {
-        m_currentDisplayedQuality = m_currentQuality;
         m_currentDisplayedResolution = m_currentResolution;
         m_displayMenuFullscreenMode = m_fullscreenMode;
         setCurrentMenuResolution(m_currentDisplayedResolution);
-        m_staticDisplaySystem->updateDisplayMenuQuality(m_qualityResolution[m_currentDisplayedQuality]);
     }
     else if(menuEntry == MenuMode_e::NEW_KEY)
     {
@@ -210,34 +208,6 @@ void GraphicEngine::confWriteComponent(WriteComponent *writeComp)
 void GraphicEngine::updateStringWriteEntitiesInputMenu(bool keyboardInputMenuMode, bool defaultInput)
 {
     m_staticDisplaySystem->updateStringWriteEntitiesInputMenu(keyboardInputMenuMode, defaultInput);
-}
-
-//===================================================================
-void GraphicEngine::decreaseMenuDisplayQuality()
-{
-    if(m_currentDisplayedQuality == 0)
-    {
-        m_currentDisplayedQuality = m_qualityResolution.size() - 1;
-    }
-    else
-    {
-        --m_currentDisplayedQuality;
-    }
-    m_staticDisplaySystem->updateDisplayMenuQuality(m_qualityResolution[m_currentDisplayedQuality]);
-}
-
-//===================================================================
-void GraphicEngine::increaseMenuDisplayQuality()
-{
-    if(m_currentDisplayedQuality == m_qualityResolution.size() - 1)
-    {
-        m_currentDisplayedQuality = 0;
-    }
-    else
-    {
-        ++m_currentDisplayedQuality;
-    }
-    m_staticDisplaySystem->updateDisplayMenuQuality(m_qualityResolution[m_currentDisplayedQuality]);
 }
 
 //===================================================================
@@ -262,10 +232,6 @@ void GraphicEngine::validDisplayMenu()
         m_currentResolution = m_currentDisplayedResolution;
         glfwSetWindowSize(m_window, m_memGraphicResolution[m_currentResolution].first.first,
                           m_memGraphicResolution[m_currentResolution].first.second);
-    }
-    if(m_currentQuality != m_currentDisplayedQuality)
-    {
-        m_currentQuality = m_currentDisplayedQuality;
     }
     if(m_fullscreenMode != m_displayMenuFullscreenMode)
     {

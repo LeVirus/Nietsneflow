@@ -706,10 +706,6 @@ void InputSystem::treatLeftPressedMenu(PlayerConfComponent *playerComp)
                 m_mainEngine->setCurrentResolution(--index);
             }
         }
-        else if(displayCursorPos == DisplayMenuCursorPos_e::QUALITY_SETTING)
-        {
-            m_mainEngine->decreaseDisplayQuality();
-        }
         else if(displayCursorPos == DisplayMenuCursorPos_e::FULLSCREEN)
         {
             m_mainEngine->toogleMenuEntryFullscreen();
@@ -756,10 +752,6 @@ void InputSystem::treatRightPressedMenu(PlayerConfComponent *playerComp)
             {
                 m_mainEngine->setCurrentResolution(++index);
             }
-        }
-        else if(displayCursorPos == DisplayMenuCursorPos_e::QUALITY_SETTING)
-        {
-            m_mainEngine->increaseDisplayQuality();
         }
         else if(displayCursorPos == DisplayMenuCursorPos_e::FULLSCREEN)
         {

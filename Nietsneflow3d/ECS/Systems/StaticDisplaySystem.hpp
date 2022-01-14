@@ -34,7 +34,6 @@ enum class VertexID_e
     MENU_CURSOR,
     INFO,
     RESOLUTION_DISPLAY_MENU,
-    QUALITY_DISPLAY_MENU,
     FULLSCREEN,
     INPUT,
     TOTAL
@@ -52,9 +51,8 @@ public:
     void displayMenu();
     void setShader(Shader &shader);
     void setWeaponSprite(uint32_t weaponEntity, uint32_t weaponNumSprite);
-    void memDisplayMenuEntities(uint32_t numMenuResolutionWrite, uint32_t numMenuQualityWrite, uint32_t numFullscreenMenuEntity);
+    void memDisplayMenuEntities(uint32_t numMenuResolutionWrite, uint32_t numFullscreenMenuEntity);
     void updateDisplayMenuResolution(const std::string &str);
-    void updateDisplayMenuQuality(const std::string &str);
     void updateMenuEntryFullscreen(bool displayMenufullscreenMode);
     std::string getKeyboardStringKeyAssociated(uint32_t key)const;
     std::string getGamepadStringKeyButtonAssociated(uint32_t key)const;
@@ -119,7 +117,7 @@ private:
     float m_middleWeaponMovementX = m_forkWeaponMovementX.first + (m_forkWeaponMovementX.second -
                                                                    m_forkWeaponMovementX.first) / 2.0f;
     //FORCE UPDATE AT LAUNCH
-    uint32_t m_currentCursorPos = static_cast<uint32_t>(MainMenuCursorPos_e::TOTAL), m_resolutionDisplayMenuEntity, m_qualityMenuEntity,
+    uint32_t m_currentCursorPos = static_cast<uint32_t>(MainMenuCursorPos_e::TOTAL), m_resolutionDisplayMenuEntity,
     m_fullscreenMenuEntity;
     ArrayControlKey_t m_inputMenuKeyboardWriteKeysEntities, m_inputMenuGamepadWriteKeysEntities;
     const std::map<uint32_t, std::string> m_inputKeyboardKeyString = {

@@ -103,7 +103,6 @@ enum class SoundMenuCursorPos_e
 enum class DisplayMenuCursorPos_e
 {
     RESOLUTION_SETTING,
-    QUALITY_SETTING,
     FULLSCREEN,
     RETURN,
     VALID,
@@ -366,7 +365,7 @@ inline const std::map<MenuMode_e, PairPairFloatStr_t> MAP_MENU_DATA =
     {MenuMode_e::SOUND,
      PairPairFloatStr_t{{-0.7f, 0.5f}, "MUSIC VOLUME\\EFFECTS VOLUME\\RETURN"}},
     {MenuMode_e::DISPLAY,
-     PairPairFloatStr_t{{-0.7f, 0.5f}, "SET RESOLUTION\\SET PICTURE QUALITY\\FULLSCREEN\\RETURN\\VALID"}},
+     PairPairFloatStr_t{{-0.7f, 0.5f}, "SET RESOLUTION\\FULLSCREEN\\RETURN\\VALID"}},
     {MenuMode_e::INPUT,
      PairPairFloatStr_t{{-0.7f, 0.7f}, "MOVE FORWARD\\MOVE BACKWARD\\STRAFE LEFT\\"
          "STRAFE RIGHT\\TURN LEFT\\TURN RIGHT\\ACTION\\SHOOT\\PREVIOUS WEAPON\\NEXT WEAPON\\DEFAULT\\RETURN\\VALID"}

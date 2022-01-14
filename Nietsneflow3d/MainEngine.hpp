@@ -94,14 +94,6 @@ public:
     {
         return m_graphicEngine.getMaxResolutionNum();
     }
-    inline void decreaseDisplayQuality()
-    {
-        m_graphicEngine.decreaseMenuDisplayQuality();
-    }
-    inline void increaseDisplayQuality()
-    {
-        m_graphicEngine.increaseMenuDisplayQuality();
-    }
     inline void toogleMenuEntryFullscreen()
     {
         m_graphicEngine.toogleMenuEntryFullscreen();

@@ -70,8 +70,6 @@ public:
     {
         return m_memGraphicResolution.size() - 1;
     }
-    void decreaseMenuDisplayQuality();
-    void increaseMenuDisplayQuality();
     void toogleMenuEntryFullscreen();
     void setCurrentMenuResolution(uint32_t resolution);
     void updateMusicVolumeBar(uint32_t volume);
@@ -98,14 +96,12 @@ private:
     void loadSprites(const std::vector<SpriteData> &vectSprites, const FontData &fontData);
 private:
     GLFWwindow* m_window = nullptr;
-    uint32_t m_currentResolution = 0, m_currentDisplayedResolution = m_currentResolution,
-    m_currentQuality = 1, m_currentDisplayedQuality = m_currentQuality;
+    uint32_t m_currentResolution = 0, m_currentDisplayedResolution = m_currentResolution;
     std::vector<Shader> m_vectShader;
     //PictureData
     std::vector<Texture> m_vectTexture;
     std::vector<SpriteData> const *m_ptrSpriteData = nullptr;
     std::vector<std::pair<pairI_t, std::string>> m_memGraphicResolution;
-    std::vector<std::string> m_qualityResolution = {"LOW", "MEDIUM", "HIGH"};
     FontData const *m_ptrFontData = nullptr;
     //Systems
     ColorDisplaySystem *m_colorSystem = nullptr;

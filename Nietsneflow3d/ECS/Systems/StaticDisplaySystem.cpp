@@ -135,7 +135,6 @@ void StaticDisplaySystem::displayMenu()
         else if(playerComp->m_menuMode == MenuMode_e::DISPLAY)
         {
             drawWriteVertex(m_resolutionDisplayMenuEntity, VertexID_e::RESOLUTION_DISPLAY_MENU);
-            drawWriteVertex(m_qualityMenuEntity, VertexID_e::QUALITY_DISPLAY_MENU);
             drawWriteVertex(m_fullscreenMenuEntity, VertexID_e::FULLSCREEN);
         }
         else if(playerComp->m_menuMode == MenuMode_e::INPUT)
@@ -219,20 +218,6 @@ void StaticDisplaySystem::updateDisplayMenuResolution(const std::string &str)
     writeComp->m_str = str;
     PositionVertexComponent *posComp = stairwayToComponentManager().
                 searchComponentByType<PositionVertexComponent>(m_resolutionDisplayMenuEntity, Components_e::POSITION_VERTEX_COMPONENT);
-    assert(posComp);
-    writeComp->m_fontSpriteData = m_fontDataPtr->getWriteData(str, writeComp->m_numTexture);
-    confWriteVertex(writeComp, posComp, VertexID_e::RESOLUTION_DISPLAY_MENU);
-}
-
-//===================================================================
-void StaticDisplaySystem::updateDisplayMenuQuality(const std::string &str)
-{
-    WriteComponent *writeComp = stairwayToComponentManager().
-                searchComponentByType<WriteComponent>(m_qualityMenuEntity, Components_e::WRITE_COMPONENT);
-    assert(writeComp);
-    writeComp->m_str = str;
-    PositionVertexComponent *posComp = stairwayToComponentManager().
-                searchComponentByType<PositionVertexComponent>(m_qualityMenuEntity, Components_e::POSITION_VERTEX_COMPONENT);
     assert(posComp);
     writeComp->m_fontSpriteData = m_fontDataPtr->getWriteData(str, writeComp->m_numTexture);
     confWriteVertex(writeComp, posComp, VertexID_e::RESOLUTION_DISPLAY_MENU);
@@ -687,9 +672,8 @@ void StaticDisplaySystem::setWeaponSprite(uint32_t weaponEntity, uint32_t weapon
 }
 
 //===================================================================
-void StaticDisplaySystem::memDisplayMenuEntities(uint32_t numMenuResolutionWrite, uint32_t numMenuQualityWrite, uint32_t numFullscreenMenuEntity)
+void StaticDisplaySystem::memDisplayMenuEntities(uint32_t numMenuResolutionWrite, uint32_t numFullscreenMenuEntity)
 {
     m_resolutionDisplayMenuEntity = numMenuResolutionWrite;
-    m_qualityMenuEntity = numMenuQualityWrite;
     m_fullscreenMenuEntity = numFullscreenMenuEntity;
 }
