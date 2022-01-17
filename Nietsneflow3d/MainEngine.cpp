@@ -1178,10 +1178,26 @@ void MainEngine::updateStringWriteEntitiesInputMenu(bool keyboardInputMenuMode, 
 void MainEngine::confGlobalSettings(const SettingsData &settingsData)
 {
     //AUDIO
-    m_audioEngine.updateMusicVolume(settingsData.m_musicVolume);
-    m_graphicEngine.updateMusicVolumeBar(settingsData.m_musicVolume);
-    m_audioEngine.updateEffectsVolume(settingsData.m_effectsVolume, false);
-    m_graphicEngine.updateEffectsVolumeBar(settingsData.m_effectsVolume);
+    if(settingsData.m_musicVolume > 100)
+    {
+        m_audioEngine.updateMusicVolume(100);
+        m_graphicEngine.updateMusicVolumeBar(100);
+    }
+    else
+    {
+        m_audioEngine.updateMusicVolume(settingsData.m_musicVolume);
+        m_graphicEngine.updateMusicVolumeBar(settingsData.m_musicVolume);
+    }
+    if(settingsData.m_effectsVolume > 100)
+    {
+        m_audioEngine.updateEffectsVolume(100, false);
+        m_graphicEngine.updateEffectsVolumeBar(100);
+    }
+    else
+    {
+        m_audioEngine.updateEffectsVolume(settingsData.m_effectsVolume, false);
+        m_graphicEngine.updateEffectsVolumeBar(settingsData.m_effectsVolume);
+    }
     //DISPLAY
     if(settingsData.m_fullscreen)
     {
