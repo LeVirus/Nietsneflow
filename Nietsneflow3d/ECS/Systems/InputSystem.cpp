@@ -571,7 +571,7 @@ bool InputSystem::treatNewKey(PlayerConfComponent *playerComp)
         const std::map<uint32_t, std::string> &mapButtons = staticSystem->getGamepadButtonsInputKeys();
         for(std::map<uint32_t, std::string>::const_iterator it = mapButtons.begin(); it != mapButtons.end(); ++it)
         {
-            if(checkStandardButtonGamepadKeyStatus(it->first, GLFW_PRESS))
+            if(it->first != GLFW_GAMEPAD_BUTTON_START && checkStandardButtonGamepadKeyStatus(it->first, GLFW_PRESS))
             {
                 m_mapGamepadTmpAssociatedKey[m_currentSelectedKey].m_standardButton = true;
                 m_mapGamepadTmpAssociatedKey[m_currentSelectedKey].m_axisPos = {};
@@ -987,6 +987,10 @@ void InputSystem::updateNewInputKey(ControlKey_e currentSelectedKey, uint32_t gl
     {
         if(inputType == InputType_e::GAMEPAD_BUTTONS)
         {
+            if(glKey == GLFW_GAMEPAD_BUTTON_START)
+            {
+                return;
+            }
             m_mapGamepadCurrentAssociatedKey[currentSelectedKey].m_standardButton = true;
         }
         else

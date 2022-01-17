@@ -1,9 +1,6 @@
 BUGS======================================================================
 
 ))
-Forbid start button assignation in input menu
-
-))
 In input gamepad menu bug in GLFW in AXIS
 
 ))
@@ -26,6 +23,9 @@ assert à CollisionSystem.cpp::770  ==============??
 assert à CollisionSystem.cpp::1286 =======================COMMENT
 assert MainEngine.cpp::1916
 
+
+))
+Forbid start button assignation in input menu=========================OK
 
 ))
 If audio volume > 100 issue==============================OK
