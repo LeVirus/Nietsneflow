@@ -1179,7 +1179,9 @@ void MainEngine::confGlobalSettings(const SettingsData &settingsData)
 {
     //AUDIO
     m_audioEngine.updateMusicVolume(settingsData.m_musicVolume);
+    m_graphicEngine.updateMusicVolumeBar(settingsData.m_musicVolume);
     m_audioEngine.updateEffectsVolume(settingsData.m_effectsVolume, false);
+    m_graphicEngine.updateEffectsVolumeBar(settingsData.m_effectsVolume);
     //DISPLAY
     if(settingsData.m_fullscreen)
     {

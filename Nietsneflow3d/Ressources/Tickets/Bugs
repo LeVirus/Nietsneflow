@@ -1,9 +1,6 @@
 BUGS======================================================================
 
 ))
-When setting audio outside menu bad visual update in menu
-
-))
 Forbid start button assignation in input menu
 
 ))
@@ -29,6 +26,9 @@ assert à CollisionSystem.cpp::770  ==============??
 assert à CollisionSystem.cpp::1286 =======================COMMENT
 assert MainEngine.cpp::1916
 
+
+))
+When setting audio outside menu bad visual update in menu==============================OK
 
 ))
 Door eject issue=====================================OK
