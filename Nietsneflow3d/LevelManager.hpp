@@ -66,7 +66,7 @@ struct SettingsData
     int m_resolutionWidth, m_resolutionHeight;
     //INPUT
     std::array<uint32_t, static_cast<uint32_t>(ControlKey_e::TOTAL)> m_arrayKeyboard;
-    std::array<GamepadInputState_t, static_cast<uint32_t>(ControlKey_e::TOTAL)> m_arrayGamepad;
+    std::array<GamepadInputState, static_cast<uint32_t>(ControlKey_e::TOTAL)> m_arrayGamepad;
 };
 
 class LevelManager
@@ -322,7 +322,7 @@ private:
         {"RIGHT SUPER", GLFW_KEY_RIGHT_SUPER},
         {"MENU", GLFW_KEY_MENU}
     };
-    const std::map<std::string, GamepadInputState_t> m_inputGamepadKeyString = {
+    const std::map<std::string, GamepadInputState> m_inputGamepadKeyString = {
         {"ButtonA", {true, GLFW_GAMEPAD_BUTTON_A, {}}},
         {"ButtonB", {true, GLFW_GAMEPAD_BUTTON_B, {}}},
         {"ButtonX", {true, GLFW_GAMEPAD_BUTTON_X, {}}},

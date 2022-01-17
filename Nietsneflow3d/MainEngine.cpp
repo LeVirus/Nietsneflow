@@ -92,7 +92,7 @@ bool MainEngine::mainLoop(bool &memGameOver)
         }
         m_graphicEngine.runIteration(m_gamePaused);
         //MUUUUUSSSSSS
-        //m_audioEngine.runIteration();
+//        m_audioEngine.runIteration();
         if(!m_exitColl->m_active)
         {
             //end level
@@ -566,9 +566,9 @@ void MainEngine::loadLevel(const LevelManager &levelManager)
     loadWallEntities(levelManager.getMoveableWallData(), levelManager.getPictureData().getSpriteData());
     loadDoorEntities(levelManager);
     loadEnemiesEntities(levelManager);
-    //MMUUUUUUUUUUUUSSSSS
-    //m_audioEngine.loadMusicFromFile(levelManager.getLevel().getMusicFilename());
-    //m_audioEngine.playMusic();
+    //MUUUUUUUUUUUUSSSSS
+//    m_audioEngine.loadMusicFromFile(levelManager.getLevel().getMusicFilename());
+//    m_audioEngine.playMusic();
 }
 
 //===================================================================
@@ -1189,7 +1189,10 @@ void MainEngine::confGlobalSettings(const SettingsData &settingsData)
     }
     m_graphicEngine.setSizeResolution({settingsData.m_resolutionWidth, settingsData.m_resolutionHeight});
     //INPUT
-
+    //KEYBOARD
+    m_physicalEngine.setKeyboardKey(settingsData.m_arrayKeyboard);
+    //GAMEPAD
+    m_physicalEngine.setGamepadKey(settingsData.m_arrayGamepad);
 }
 
 //===================================================================

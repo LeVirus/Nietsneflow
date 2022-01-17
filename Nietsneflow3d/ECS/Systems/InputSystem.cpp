@@ -975,3 +975,25 @@ void InputSystem::execSystem()
     System::execSystem();
     treatPlayerInput();
 }
+
+//===================================================================
+void InputSystem::updateNewInputKey(ControlKey_e currentSelectedKey, uint32_t glKey, InputType_e inputType, bool axisSense)
+{
+    if(inputType == InputType_e::KEYBOARD)
+    {
+        m_mapKeyboardCurrentAssociatedKey[currentSelectedKey] = glKey;
+    }
+    else
+    {
+        if(inputType == InputType_e::GAMEPAD_BUTTONS)
+        {
+            m_mapGamepadCurrentAssociatedKey[currentSelectedKey].m_standardButton = true;
+        }
+        else
+        {
+            m_mapGamepadCurrentAssociatedKey[currentSelectedKey].m_standardButton = false;
+            m_mapGamepadCurrentAssociatedKey[currentSelectedKey].m_axisPos = axisSense;
+        }
+        m_mapGamepadCurrentAssociatedKey[currentSelectedKey].m_keyID = glKey;
+    }
+}

@@ -184,7 +184,7 @@ void StaticDisplaySystem::updateStringWriteEntitiesInputMenu(bool keyboardInputM
     //GAMEPAD
     else
     {
-        const std::map<ControlKey_e, GamepadInputState_t> &map = defaultInput ?
+        const std::map<ControlKey_e, GamepadInputState> &map = defaultInput ?
                     MAP_GAMEPAD_DEFAULT_KEY :
                     mptrSystemManager->searchSystemByType<InputSystem>(
                         static_cast<uint32_t>(Systems_e::INPUT_SYSTEM))->getMapTmpGamepadAssociatedKey();
@@ -276,23 +276,23 @@ std::string StaticDisplaySystem::getGamepadStringKeyButtonAssociated(uint32_t ke
 }
 
 //===================================================================
-void StaticDisplaySystem::updateNewInputKey(ControlKey_e currentSelectedKey, uint32_t glKey, InputType_e keyboardMode, bool axisSense)
+void StaticDisplaySystem::updateNewInputKey(ControlKey_e currentSelectedKey, uint32_t glKey, InputType_e inputType, bool axisSense)
 {
-    uint32_t entityWrite = (keyboardMode == InputType_e::KEYBOARD) ?
+    uint32_t entityWrite = (inputType == InputType_e::KEYBOARD) ?
                 m_inputMenuKeyboardWriteKeysEntities[static_cast<uint32_t>(currentSelectedKey)] :
             m_inputMenuGamepadWriteKeysEntities[static_cast<uint32_t>(currentSelectedKey)];
     WriteComponent *writeComp = stairwayToComponentManager().searchComponentByType<WriteComponent>(
                 entityWrite, Components_e::WRITE_COMPONENT);
     assert(writeComp);
-    if(keyboardMode == InputType_e::KEYBOARD)
+    if(inputType == InputType_e::KEYBOARD)
     {
         writeComp->m_str = getKeyboardStringKeyAssociated(glKey);
     }
-    else if(keyboardMode == InputType_e::GAMEPAD_BUTTONS)
+    else if(inputType == InputType_e::GAMEPAD_BUTTONS)
     {
         writeComp->m_str = getGamepadStringKeyButtonAssociated(glKey);
     }
-    else if(keyboardMode == InputType_e::GAMEPAD_AXIS)
+    else if(inputType == InputType_e::GAMEPAD_AXIS)
     {
         writeComp->m_str = getGamepadStringKeyAxisAssociated(glKey, axisSense);
     }

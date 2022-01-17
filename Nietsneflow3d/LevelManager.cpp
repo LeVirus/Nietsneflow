@@ -1116,7 +1116,7 @@ void LevelManager::loadSettingsData()
     m_settingsData.m_resolutionHeight = reader.GetInteger("Display", "resolutionHeight", 0);
     //INPUT
     std::map<std::string, uint32_t>::const_iterator kbIt;
-    std::map<std::string, GamepadInputState_t>::const_iterator gpIt;
+    std::map<std::string, GamepadInputState>::const_iterator gpIt;
     ControlKey_e currentKey;
     for(uint32_t i = 0; i < m_settingsData.m_arrayKeyboard.size(); ++i)
     {

@@ -6,6 +6,7 @@
 #include <ECS/Components/MoveableComponent.hpp>
 #include <ECS/Components/VisionComponent.hpp>
 #include <ECS/Components/WeaponComponent.hpp>
+#include <ECS/Systems/StaticDisplaySystem.hpp>
 #include <ECS/Systems/DoorWallSystem.hpp>
 #include <ECS/Systems/IASystem.hpp>
 #include <cassert>
@@ -63,6 +64,35 @@ void PhysicalEngine::setModeTransitionMenu(bool transition)
 void PhysicalEngine::clearSystems()
 {
     m_doorSystem->clearSystem();
+}
+
+//===================================================================
+void PhysicalEngine::setKeyboardKey(const std::array<uint32_t, static_cast<uint32_t>(ControlKey_e::TOTAL)> &keyboardArray)
+{
+    for(uint32_t i = 0; i < keyboardArray.size(); ++i)
+    {
+        m_inputSystem->updateNewInputKey(static_cast<ControlKey_e>(i), keyboardArray[i], InputType_e::KEYBOARD);
+    }
+}
+
+//===================================================================
+void PhysicalEngine::setGamepadKey(const std::array<GamepadInputState, static_cast<uint32_t>(ControlKey_e::TOTAL)> &gamepadArray)
+{
+    InputType_e inputType;
+    bool axisSense = false;
+    for(uint32_t i = 0; i < gamepadArray.size(); ++i)
+    {
+        if(gamepadArray[i].m_standardButton)
+        {
+            inputType = InputType_e::GAMEPAD_BUTTONS;
+        }
+        else
+        {
+            axisSense = *gamepadArray[i].m_axisPos;
+            inputType = InputType_e::GAMEPAD_AXIS;
+        }
+        m_inputSystem->updateNewInputKey(static_cast<ControlKey_e>(i), gamepadArray[i].m_keyID, inputType, axisSense);
+    }
 }
 
 //===================================================================
