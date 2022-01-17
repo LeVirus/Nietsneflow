@@ -3,6 +3,8 @@
 #include <Level.hpp>
 #include <PictureData.hpp>
 #include <FontData.hpp>
+#include <ECS/Systems/StaticDisplaySystem.hpp>
+#include <ECS/Systems/InputSystem.hpp>
 #include <set>
 
 class INIReader;
@@ -55,6 +57,18 @@ struct MoveableWallData
     std::optional<PairUI_t> m_groundTriggerPos;
 };
 
+struct SettingsData
+{
+    //AUDIO
+    uint32_t m_musicVolume, m_effectsVolume;
+    //DISPLAY
+    bool m_fullscreen;
+    int m_resolutionWidth, m_resolutionHeight;
+    //INPUT
+    std::array<uint32_t, static_cast<uint32_t>(ControlKey_e::TOTAL)> m_arrayKeyboard;
+    std::array<GamepadInputState_t, static_cast<uint32_t>(ControlKey_e::TOTAL)> m_arrayGamepad;
+};
+
 class LevelManager
 {
 public:
@@ -62,6 +76,7 @@ public:
     void loadTextureData(const std::string &INIFileName);
     void loadStandardData(const std::string &INIFileName);
     void loadFontData(const std::string &INIFileName);
+    void loadSettingsData();
     void loadLevel(const std::string &INIFileName, uint32_t levelNum);
     void clearExistingPositionsElement();
     inline const PictureData &getPictureData()const {return m_pictureData;}
@@ -74,11 +89,17 @@ public:
         return m_mainWallData;
     }
     inline const std::map<std::string, StaticLevelElementData> &getGroundData()const
-    {return m_groundElement;}
+    {
+        return m_groundElement;
+    }
     inline const std::map<std::string, StaticLevelElementData> &getCeilingData()const
-    {return m_ceilingElement;}
+    {
+        return m_ceilingElement;
+    }
     inline const std::map<std::string, StaticLevelElementData> &getObjectData()const
-    {return m_objectElement;}
+    {
+        return m_objectElement;
+    }
     inline const std::map<std::string, StaticLevelElementData> &getTeleportData()const
     {
         return m_teleportElement;
@@ -134,6 +155,10 @@ public:
     inline std::string getTeleportSoundFile()const
     {
         return m_teleportSound;
+    }
+    inline const SettingsData &getSettingsData()const
+    {
+        return m_settingsData;
     }
 private:
     //texture and sprite loading
@@ -208,7 +233,125 @@ private:
     //first moving Shot sprite, all other destruct phase sprites
     MapVisibleShotData_t m_visibleShootINIData;
     MapImpactData_t m_impactINIData;
+    SettingsData m_settingsData;
     std::string m_pickObjectSound, m_doorOpeningSound, m_hitSound, m_teleportSound;
+    const std::array<std::string, static_cast<uint32_t>(ControlKey_e::TOTAL)> m_inputIDString = {
+        "moveForward", "moveBackward", "strafeLeft", "strafeRight", "turnLeft", "turnRight", "action", "shoot", "previousWeapon", "nextWeapon"
+    };
+    const std::map<std::string, uint32_t> m_inputKeyboardKeyString = {
+        {"SPACE", GLFW_KEY_SPACE},
+        {"APOSTROPHE", GLFW_KEY_APOSTROPHE},
+        {"COMMA", GLFW_KEY_COMMA},
+        {"MINUS", GLFW_KEY_MINUS},
+        {"PERIOD", GLFW_KEY_PERIOD},
+        {"SLASH", GLFW_KEY_SLASH},
+        {"0", GLFW_KEY_0},
+        {"1", GLFW_KEY_1},
+        {"2", GLFW_KEY_2},
+        {"3", GLFW_KEY_3},
+        {"4", GLFW_KEY_4},
+        {"5", GLFW_KEY_5},
+        {"6", GLFW_KEY_6},
+        {"7", GLFW_KEY_7},
+        {"8", GLFW_KEY_8},
+        {"9", GLFW_KEY_9},
+        {"SEMICOLON", GLFW_KEY_SEMICOLON},
+        {"EQUAL", GLFW_KEY_EQUAL},
+        {"A", GLFW_KEY_A},
+        {"B", GLFW_KEY_B},
+        {"C", GLFW_KEY_C},
+        {"D", GLFW_KEY_D},
+        {"E", GLFW_KEY_E},
+        {"F", GLFW_KEY_F},
+        {"G", GLFW_KEY_G},
+        {"H", GLFW_KEY_H},
+        {"I", GLFW_KEY_I},
+        {"J", GLFW_KEY_J},
+        {"K", GLFW_KEY_K},
+        {"L", GLFW_KEY_L},
+        {"M", GLFW_KEY_M},
+        {"N", GLFW_KEY_N},
+        {"O", GLFW_KEY_O},
+        {"P", GLFW_KEY_P},
+        {"Q", GLFW_KEY_Q},
+        {"R", GLFW_KEY_R},
+        {"S", GLFW_KEY_S},
+        {"T", GLFW_KEY_T},
+        {"U", GLFW_KEY_U},
+        {"V", GLFW_KEY_V},
+        {"W", GLFW_KEY_W},
+        {"X", GLFW_KEY_X},
+        {"Y", GLFW_KEY_Y},
+        {"Z", GLFW_KEY_Z},
+        {"LEFT BRACKET", GLFW_KEY_LEFT_BRACKET},
+        {"BACKSLASH", GLFW_KEY_BACKSLASH},
+        {"RIGHT BRACKET", GLFW_KEY_RIGHT_BRACKET},
+        {"GRAVE ACCENT", GLFW_KEY_GRAVE_ACCENT},
+        {"INSERT", GLFW_KEY_INSERT},
+        {"RIGHT", GLFW_KEY_RIGHT},
+        {"LEFT", GLFW_KEY_LEFT},
+        {"DOWN", GLFW_KEY_DOWN},
+        {"UP", GLFW_KEY_UP},
+        {"PAGE UP", GLFW_KEY_PAGE_UP},
+        {"PAGE DOWN", GLFW_KEY_PAGE_DOWN},
+        {"HOME", GLFW_KEY_HOME},
+        {"END", GLFW_KEY_END},
+        {"KP 0", GLFW_KEY_KP_0},
+        {"KP 1", GLFW_KEY_KP_1},
+        {"KP 2", GLFW_KEY_KP_2},
+        {"KP 3", GLFW_KEY_KP_3},
+        {"KP 4", GLFW_KEY_KP_4},
+        {"KP 5", GLFW_KEY_KP_5},
+        {"KP 6", GLFW_KEY_KP_6},
+        {"KP 7", GLFW_KEY_KP_7},
+        {"KP 8", GLFW_KEY_KP_8},
+        {"KP 9", GLFW_KEY_KP_9},
+        {"KP DECIMAL", GLFW_KEY_KP_DECIMAL},
+        {"KP DIVIDE", GLFW_KEY_KP_DIVIDE},
+        {"KP MULTIPLY", GLFW_KEY_KP_MULTIPLY},
+        {"KP SUBTRACT", GLFW_KEY_KP_SUBTRACT},
+        {"KP ADD", GLFW_KEY_KP_ADD},
+        {"KP EQUAL", GLFW_KEY_KP_EQUAL},
+        {"LEFT SHIFT", GLFW_KEY_LEFT_SHIFT},
+        {"LEFT CONTROL", GLFW_KEY_LEFT_CONTROL},
+        {"LEFT ALT", GLFW_KEY_LEFT_ALT},
+        {"LEFT SUPER", GLFW_KEY_LEFT_SUPER},
+        {"RIGHT SHIFT", GLFW_KEY_RIGHT_SHIFT},
+        {"RIGHT CONTROL", GLFW_KEY_RIGHT_CONTROL},
+        {"RIGHT ALT", GLFW_KEY_RIGHT_ALT},
+        {"RIGHT SUPER", GLFW_KEY_RIGHT_SUPER},
+        {"MENU", GLFW_KEY_MENU}
+    };
+    const std::map<std::string, GamepadInputState_t> m_inputGamepadKeyString = {
+        {"ButtonA", {true, GLFW_GAMEPAD_BUTTON_A, {}}},
+        {"ButtonB", {true, GLFW_GAMEPAD_BUTTON_B, {}}},
+        {"ButtonX", {true, GLFW_GAMEPAD_BUTTON_X, {}}},
+        {"ButtonY", {true, GLFW_GAMEPAD_BUTTON_Y, {}}},
+        {"ButtonLeftBumper", {true, GLFW_GAMEPAD_BUTTON_LEFT_BUMPER, {}}},
+        {"ButtonRightBumper", {true, GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER, {}}},
+        {"ButtonBack", {true, GLFW_GAMEPAD_BUTTON_BACK, {}}},
+        {"ButtonStart", {true, GLFW_GAMEPAD_BUTTON_START, {}}},
+        {"ButtonGuide", {true, GLFW_GAMEPAD_BUTTON_GUIDE, {}}},
+        {"ButtonLeftThumb", {true, GLFW_GAMEPAD_BUTTON_LEFT_THUMB, {}}},
+        {"ButtonRightThumb", {true, GLFW_GAMEPAD_BUTTON_RIGHT_THUMB, {}}},
+        {"ButtonUp", {true, GLFW_GAMEPAD_BUTTON_DPAD_UP, {}}},
+        {"ButtonDown", {true, GLFW_GAMEPAD_BUTTON_DPAD_RIGHT, {}}},
+        {"ButtonLeft", {true, GLFW_GAMEPAD_BUTTON_DPAD_DOWN, {}}},
+        {"ButtonRight", {true, GLFW_GAMEPAD_BUTTON_DPAD_LEFT, {}}},
+
+        {"AxisLeftY-", {false, GLFW_GAMEPAD_AXIS_LEFT_X, false}},
+        {"AxisLeftY+", {false, GLFW_GAMEPAD_AXIS_LEFT_X, true}},
+        {"AxisLeftX-", {false, GLFW_GAMEPAD_AXIS_LEFT_Y, false}},
+        {"AxisLeftX+", {false, GLFW_GAMEPAD_AXIS_LEFT_Y, true}},
+        {"AxisRightY-", {false, GLFW_GAMEPAD_AXIS_RIGHT_Y, false}},
+        {"AxisRightY+", {false, GLFW_GAMEPAD_AXIS_RIGHT_Y, true}},
+        {"AxisRightX-", {false, GLFW_GAMEPAD_AXIS_RIGHT_X, false}},
+        {"AxisRightX+", {false, GLFW_GAMEPAD_AXIS_RIGHT_X, true}},
+        {"AxisLeftTrigger+", {false, GLFW_GAMEPAD_AXIS_LEFT_TRIGGER, true}},
+        {"AxisLeftTrigger-", {false, GLFW_GAMEPAD_AXIS_LEFT_TRIGGER, false}},
+        {"AxisRightTrigger+", {false, GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER, true}},
+        {"AxisRightTrigger-", {false, GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER, false}}
+    };
 };
 
 VectPairUI_t getPositionData(const INIReader &reader, const std::string & sectionName, const std::string &propertyName);

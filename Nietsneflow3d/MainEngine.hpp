@@ -24,6 +24,7 @@ class FontData;
 struct EnemyData;
 struct EnemyConfComponent;
 struct WeaponComponent;
+struct SettingsData;
 
 struct MemPlayerConf
 {
@@ -55,6 +56,7 @@ public:
     void updateInputMenuInfo(PlayerConfComponent *playerComp);
     void updateWriteComp(WriteComponent *writeComp);
     void updateStringWriteEntitiesInputMenu(bool keyboardInputMenuMode, bool defaultInput = true);
+    void confGlobalSettings(const SettingsData &settingsData);
     inline void validDisplayMenu()
     {
         m_graphicEngine.validDisplayMenu();
@@ -79,7 +81,7 @@ public:
     }
     inline void setCurrentResolution(uint32_t resolution)
     {
-        m_graphicEngine.setCurrentMenuResolution(resolution);
+        m_graphicEngine.setCurrentResolution(resolution);
     }
     inline uint32_t getCurrentResolutionNum()const
     {

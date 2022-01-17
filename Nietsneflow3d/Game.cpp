@@ -10,6 +10,14 @@ void Game::loadStandardData()
     m_mainEngine.confSystems();
 }
 
+//===================================================================
+void Game::loadSavedSettingsData()
+{
+    m_levelManager.loadSettingsData();
+    m_mainEngine.confGlobalSettings(m_levelManager.getSettingsData());
+}
+
+//===================================================================
 void Game::clearLevel()
 {
     m_mainEngine.clearLevel();

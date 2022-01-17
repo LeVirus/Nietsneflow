@@ -71,7 +71,8 @@ public:
         return m_memGraphicResolution.size() - 1;
     }
     void toogleMenuEntryFullscreen();
-    void setCurrentMenuResolution(uint32_t resolution);
+    void setCurrentResolution(uint32_t resolution);
+    void setSizeResolution(const pairI_t &resolution);
     void updateMusicVolumeBar(uint32_t volume);
     void updateEffectsVolumeBar(uint32_t volume);
     void clearSystems();

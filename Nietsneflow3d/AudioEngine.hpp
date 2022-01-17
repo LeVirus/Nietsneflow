@@ -41,9 +41,9 @@ public:
         m_musicVolume = volume;
         alSourcef(m_musicElement->first, AL_GAIN, static_cast<float>(m_musicVolume) / 100.0f);
     }
-    inline void updateEffectsVolume(uint32_t volume)
+    inline void updateEffectsVolume(uint32_t volume, bool playEffect = true)
     {
-        m_soundSystem->updateEffectsVolume(volume);
+        m_soundSystem->updateEffectsVolume(volume, playEffect);
     }
     inline uint32_t getMusicVolume()const
     {

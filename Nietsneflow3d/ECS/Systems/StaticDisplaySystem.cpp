@@ -169,8 +169,7 @@ void StaticDisplaySystem::updateStringWriteEntitiesInputMenu(bool keyboardInputM
     //KEYBOARD
     if(keyboardInputMenuMode)
     {
-        const std::map<ControlKey_e, uint32_t> &map = defaultInput ? mptrSystemManager->searchSystemByType<InputSystem>(
-                    static_cast<uint32_t>(Systems_e::INPUT_SYSTEM))->getMapDefaultKeyboardAssociatedKey() :
+        const std::map<ControlKey_e, uint32_t> &map = defaultInput ? MAP_KEYBOARD_DEFAULT_KEY :
                     mptrSystemManager->searchSystemByType<InputSystem>(
                         static_cast<uint32_t>(Systems_e::INPUT_SYSTEM))->getMapTmpKeyboardAssociatedKey();
         for(uint32_t i = 0; i < m_inputMenuKeyboardWriteKeysEntities.size(); ++i)
@@ -186,8 +185,7 @@ void StaticDisplaySystem::updateStringWriteEntitiesInputMenu(bool keyboardInputM
     else
     {
         const std::map<ControlKey_e, GamepadInputState_t> &map = defaultInput ?
-                    mptrSystemManager->searchSystemByType<InputSystem>(
-                        static_cast<uint32_t>(Systems_e::INPUT_SYSTEM))->getMapDefaultGamepadAssociatedKey() :
+                    MAP_GAMEPAD_DEFAULT_KEY :
                     mptrSystemManager->searchSystemByType<InputSystem>(
                         static_cast<uint32_t>(Systems_e::INPUT_SYSTEM))->getMapTmpGamepadAssociatedKey();
         for(uint32_t i = 0; i < m_inputMenuGamepadWriteKeysEntities.size(); ++i)

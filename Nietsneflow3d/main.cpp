@@ -6,10 +6,15 @@ int main()
     Game game;
     game.initEngine();
     game.loadStandardData();
-    bool memGameOver;
+    bool memGameOver, gameLoaded = false;
     for(uint32_t i = 1; i < 3; ++i)
     {
         game.loadLevelData(i);
+        if(!gameLoaded)
+        {
+            game.loadSavedSettingsData();
+            gameLoaded = true;
+        }
         if(!game.launchGame(memGameOver))
         {
             break;

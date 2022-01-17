@@ -1,0 +1,158 @@
+# General settings
+
+#==========================================================SOUND
+
+[Audio]
+#volume between 0 and 100
+musicVolume=100
+effectsVolume=100
+
+#==========================================================DISPLAY
+
+[Display]
+fullscreen=false
+#resolution from system
+resolutionWidth=720
+resolutionHeight=400
+
+#==========================================================INPUT
+
+#---------------------Gamepad Entries
+
+# ButtonA
+# ButtonB
+# ButtonX
+# ButtonY
+# ButtonLeftBumper
+# ButtonRightBumper
+# ButtonBack
+# ButtonStart
+# ButtonGuide
+# ButtonLeftThumb
+# ButtonRightThumb
+# ButtonUp
+# ButtonDown
+# ButtonLeft
+# ButtonRight
+
+# AxisLeftY-
+# AxisLeftY+
+# AxisLeftX-
+# AxisLeftX+
+# AxisRightY-
+# AxisRightY+
+# AxisRightX-
+# AxisRightX+
+# AxisLeftTrigger-
+# AxisLeftTrigger+
+# AxisRightTrigger-
+# AxisRightTrigger+
+
+[Gamepad]
+moveForward="AxisLeftY-"
+moveBackward="AxisLeftY+"
+strafeLeft="AxisLeftX-"
+strafeRight="AxisLeftX+"
+turnLeft="AxisRightY-"
+turnRight="AxisRightY+"
+action="ButtonA"
+shoot="ButtonRightBumper"
+previousWeapon="ButtonDpadLeft"
+nextWeapon="ButtonDpadRight"
+
+#---------------------Gamepad Entries
+
+# SPACE
+# APOSTROPHE	/* ' */		
+# COMMA			/* , */
+# MINUS			/* - */
+# PERIOD		/* . */
+# SLASH			/* / */
+# 0
+# 1
+# 2
+# 3
+# 4
+# 5
+# 6
+# 7
+# 8
+# 9
+# SEMICOLON		/* ; */
+# EQUAL			/* = */
+# A
+# B
+# C
+# D
+# E
+# F
+# G
+# H
+# I
+# J
+# K
+# L
+# M
+# N
+# O
+# P
+# Q
+# R
+# S
+# T
+# U
+# V
+# W
+# X
+# Y
+# Z
+# LEFT BRACKET		/* [ */
+# BACKSLASH			/* \ */
+# RIGHT BRACKET		/* ] */
+# GRAVE ACCENT		/* ` */
+# INSERT
+# RIGHT
+# LEFT
+# DOWN
+# UP
+# PAGE UP
+# PAGE DOWN
+# HOME
+# END
+# KP 0			; numeric keypad
+# KP 1
+# KP 2
+# KP 3
+# KP 4
+# KP 5
+# KP 6
+# KP 7
+# KP 8
+# KP 9
+# KP DECIMAL	
+# KP DIVIDE
+# KP MULTIPLY
+# KP SUBTRACT
+# KP ADD
+# KP EQUAL
+# LEFT SHIFT
+# LEFT CONTROL
+# LEFT ALT
+# LEFT SUPER
+# RIGHT SHIFT
+# RIGHT CONTROL
+# RIGHT ALT
+# RIGHT SUPER
+# MENU
+
+[Keyboard]
+moveForward="UP"
+moveBackward="DOWN"
+strafeLeft="Q"
+strafeRight="W"
+turnLeft="LEFT"
+turnRight="RIGHT"
+action="SPACE"
+shoot="LEFTSHIFT"
+previousWeapon="E"
+nextWeapon="R"

@@ -1175,6 +1175,22 @@ void MainEngine::updateStringWriteEntitiesInputMenu(bool keyboardInputMenuMode, 
 }
 
 //===================================================================
+void MainEngine::confGlobalSettings(const SettingsData &settingsData)
+{
+    //AUDIO
+    m_audioEngine.updateMusicVolume(settingsData.m_musicVolume);
+    m_audioEngine.updateEffectsVolume(settingsData.m_effectsVolume, false);
+    //DISPLAY
+    if(settingsData.m_fullscreen)
+    {
+        m_graphicEngine.toogleFullScreen();
+    }
+    m_graphicEngine.setSizeResolution({settingsData.m_resolutionWidth, settingsData.m_resolutionHeight});
+    //INPUT
+
+}
+
+//===================================================================
 void MainEngine::createPlayerVisibleShotEntity(WeaponComponent *weaponConf)
 {
     for(uint32_t i = 0; i < weaponConf->m_weaponsData.size(); ++i)

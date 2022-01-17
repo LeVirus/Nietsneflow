@@ -2,15 +2,6 @@ NEW FUNCTIONALITIES=============================================================
 ========================================================================================================================
 
 ))
-CREATE CONF MENU
-	Sound=========================OK
-	Reassign keys=================OK
-	Resolution====================OK
-
-))
-Add joypad support
-
-))
 Add encryption for conf level file
 
 ))
@@ -30,8 +21,17 @@ Optionnel :: afficher l'inventaire dans le menu
 
 
 
+))
+CREATE CONF MENU
+	Sound=========================OK
+	Reassign keys=================OK
+	Resolution====================OK
+
 6)
 Ajouter armure=====================NO
+
+))
+Add joypad support=======================================================OK
 
 +++12)
 Create a visual level designer===============================================OK

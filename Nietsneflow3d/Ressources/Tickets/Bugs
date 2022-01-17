@@ -1,10 +1,21 @@
 BUGS======================================================================
 
 ))
+When setting audio outside menu bad visual update in menu
+
+))
+Forbid start button assignation in input menu
+
+))
+In input gamepad menu bug in GLFW in AXIS
+
+))
 Assert after setting music sound in menu and next level
 
 ))
 Eject issue on moveable wall lateral
+
+
 
 
 ))

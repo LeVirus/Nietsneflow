@@ -10,6 +10,7 @@ public:
     void loadLevelData(uint32_t levelNum);
     void initEngine();
     void loadStandardData();
+    void loadSavedSettingsData();
     void clearLevel();
     bool launchGame(bool &memGameOver);
 private:

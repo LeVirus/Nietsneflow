@@ -189,7 +189,7 @@ void GraphicEngine::fillMenuWrite(WriteComponent *writeComp, MenuMode_e menuEntr
     {
         m_currentDisplayedResolution = m_currentResolution;
         m_displayMenuFullscreenMode = m_fullscreenMode;
-        setCurrentMenuResolution(m_currentDisplayedResolution);
+        setCurrentResolution(m_currentDisplayedResolution);
     }
     else if(menuEntry == MenuMode_e::NEW_KEY)
     {
@@ -218,10 +218,25 @@ void GraphicEngine::toogleMenuEntryFullscreen()
 }
 
 //===================================================================
-void GraphicEngine::setCurrentMenuResolution(uint32_t resolution)
+void GraphicEngine::setCurrentResolution(uint32_t resolution)
 {
     m_currentDisplayedResolution = resolution;
     m_staticDisplaySystem->updateDisplayMenuResolution(m_memGraphicResolution[m_currentDisplayedResolution].second);
+}
+
+//===================================================================
+void GraphicEngine::setSizeResolution(const pairI_t &resolution)
+{
+    for(uint32_t i = 0; i < m_memGraphicResolution.size(); ++i)
+    {
+        if(m_memGraphicResolution[i].first == resolution)
+        {
+            m_currentResolution = i;
+            glfwSetWindowSize(m_window, m_memGraphicResolution[m_currentResolution].first.first,
+                              m_memGraphicResolution[m_currentResolution].first.second);
+            break;
+        }
+    }
 }
 
 //===================================================================

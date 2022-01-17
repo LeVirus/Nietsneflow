@@ -20,7 +20,7 @@ public:
     {
         m_playerEntity = entityNum;
     }
-    void updateEffectsVolume(uint32_t volume);
+    void updateEffectsVolume(uint32_t volume, bool playEffect = true);
     inline uint32_t getEffectsVolume()const
     {
         return m_effectsVolume;

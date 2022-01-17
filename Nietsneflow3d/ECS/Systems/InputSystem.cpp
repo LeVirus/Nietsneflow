@@ -860,18 +860,18 @@ void InputSystem::treatEnterPressedInputMenu(PlayerConfComponent *playerComp)
         if(playerComp->m_keyboardInputMenuMode)
         {
             m_mapKeyboardTmpAssociatedKey = m_mapKeyboardCurrentAssociatedKey;
-            m_mapKeyboardCurrentAssociatedKey = m_mapKeyboardDefaultAssociatedKey;
+            m_mapKeyboardCurrentAssociatedKey = MAP_KEYBOARD_DEFAULT_KEY;
             m_mainEngine->updateStringWriteEntitiesInputMenu(playerComp->m_keyboardInputMenuMode);
             m_mapKeyboardCurrentAssociatedKey = m_mapKeyboardTmpAssociatedKey;
-            m_mapKeyboardTmpAssociatedKey = m_mapKeyboardDefaultAssociatedKey;
+            m_mapKeyboardTmpAssociatedKey = MAP_KEYBOARD_DEFAULT_KEY;
         }
         else
         {
             m_mapGamepadTmpAssociatedKey = m_mapGamepadCurrentAssociatedKey;
-            m_mapGamepadCurrentAssociatedKey = m_mapGamepadDefaultAssociatedKey;
+            m_mapGamepadCurrentAssociatedKey = MAP_GAMEPAD_DEFAULT_KEY;
             m_mainEngine->updateStringWriteEntitiesInputMenu(playerComp->m_keyboardInputMenuMode);
             m_mapGamepadCurrentAssociatedKey = m_mapGamepadTmpAssociatedKey;
-            m_mapGamepadTmpAssociatedKey = m_mapGamepadDefaultAssociatedKey;
+            m_mapGamepadTmpAssociatedKey = MAP_GAMEPAD_DEFAULT_KEY;
         }
     }
     else if(menuPos == InputMenuCursorPos_e::VALID)

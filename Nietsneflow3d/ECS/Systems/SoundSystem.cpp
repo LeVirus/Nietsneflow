@@ -101,12 +101,14 @@ ALuint SoundSystem::createSource(ALuint memSoundBuffer)
 }
 
 //===================================================================
-void SoundSystem::updateEffectsVolume(uint32_t volume)
+void SoundSystem::updateEffectsVolume(uint32_t volume, bool playEffect)
 {
     m_effectsVolume = volume;
-    alSourcef(m_sourceMenuAudio, AL_GAIN,
-              static_cast<float>(m_effectsVolume) / 100.0f);
-    play(m_sourceMenuAudio);
+    alSourcef(m_sourceMenuAudio, AL_GAIN, static_cast<float>(m_effectsVolume) / 100.0f);
+    if(playEffect)
+    {
+        play(m_sourceMenuAudio);
+    }
 }
 
 //===================================================================
