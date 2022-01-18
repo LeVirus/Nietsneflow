@@ -156,121 +156,145 @@ template<class CharT>
 class Ini
 {
 public:
-	using String = std::basic_string<CharT>;
-	using Section = std::map<String, String>;
-	using Sections = std::map<String, Section>;
-
-	Sections sections;
-	std::list<String> errors;
-	std::shared_ptr<Format<CharT>> format;
+    using MapStrStr = std::map<std::basic_string<CharT>, std::basic_string<CharT>>;
+    using MapStrMapStrStr = std::map<std::basic_string<CharT>, MapStrStr>;
 
 	static const int max_interpolation_depth = 10;
 
-	Ini() : format(std::make_shared<Format<CharT>>()) {};
-	Ini(std::shared_ptr<Format<CharT>> fmt) : format(fmt) {};
+    Ini() : m_format(std::make_shared<Format<CharT>>()) {};
+    Ini(std::shared_ptr<Format<CharT>> fmt) : m_format(fmt) {};
 
-	void generate(std::basic_ostream<CharT>& os) const {
-		for (auto const & sec : sections) {
-			os << format->char_section_start << sec.first << format->char_section_end << std::endl;
+    void generate(std::basic_ostream<CharT>& os) const
+    {
+        for (auto const & sec : m_sections) {
+            os << m_format->char_section_start << sec.first << m_format->char_section_end << std::endl;
 			for (auto const & val : sec.second) {
-				os << val.first << format->char_assign << val.second << std::endl;
+                os << val.first << m_format->char_assign << val.second << std::endl;
 			}
 			os << std::endl;
 		}
 	}
 
-	void parse(std::basic_istream<CharT> & is) {
-		String line;
-		String section;
+    void parse(std::basic_istream<CharT> & is)
+    {
+        std::basic_string<CharT> line;
+        std::basic_string<CharT> section;
 		const std::locale loc{"C"};
 		while (std::getline(is, line)) {
 			detail::ltrim(line, loc);
 			detail::rtrim(line, loc);
 			const auto length = line.length();
 			if (length > 0) {
-				const auto pos = std::find_if(line.begin(), line.end(), [this](CharT ch) { return format->is_assign(ch); });
+                const auto pos = std::find_if(line.begin(), line.end(), [this](CharT ch) { return m_format->is_assign(ch); });
 				const auto & front = line.front();
-				if (format->is_comment(front)) {
+                if (m_format->is_comment(front)) {
 				}
-				else if (format->is_section_start(front)) {
-					if (format->is_section_end(line.back()))
+                else if (m_format->is_section_start(front)) {
+                    if (m_format->is_section_end(line.back()))
 						section = line.substr(1, length - 2);
 					else
-						errors.push_back(line);
+                        m_errors.push_back(line);
 				}
 				else if (pos != line.begin() && pos != line.end()) {
-					String variable(line.begin(), pos);
-					String value(pos + 1, line.end());
+                    std::basic_string<CharT> variable(line.begin(), pos);
+                    std::basic_string<CharT> value(pos + 1, line.end());
 					detail::rtrim(variable, loc);
 					detail::ltrim(value, loc);
-					auto & sec = sections[section];
+                    auto & sec = m_sections[section];
 					if (sec.find(variable) == sec.end())
 						sec.insert(std::make_pair(variable, value));
 					else
-						errors.push_back(line);
+                        m_errors.push_back(line);
 				}
 				else {
-					errors.push_back(line);
+                    m_errors.push_back(line);
 				}
 			}
 		}
 	}
 
-	void interpolate() {
+    void interpolate()
+    {
 		int global_iteration = 0;
 		auto changed = false;
 		// replace each "${variable}" by "${section:variable}"
-		for (auto & sec : sections)
+        for (auto & sec : m_sections)
 			replace_symbols(local_symbols(sec.first, sec.second), sec.second);
 		// replace each "${section:variable}" by its value
 		do {
 			changed = false;
 			const auto syms = global_symbols();
-			for (auto & sec : sections)
+            for (auto & sec : m_sections)
 				changed |= replace_symbols(syms, sec.second);
 		} while (changed && (max_interpolation_depth > global_iteration++));
 	}
 
-	void default_section(const Section & sec) {
-		for (auto & sec2 : sections)
+    void default_section(const MapStrStr & sec)
+    {
+        for (auto & sec2 : m_sections)
 			for (const auto & val : sec)
 				sec2.second.insert(val);
 	}
 
-	void strip_trailing_comments() {
+    void strip_trailing_comments()
+    {
 		const std::locale loc{ "C" };
-		for (auto & sec : sections)
+        for (auto & sec : m_sections)
 			for (auto & val : sec.second) {
-				detail::rtrim2(val.second, [this](CharT ch) { return format->is_comment(ch); });
+                detail::rtrim2(val.second, [this](CharT ch) { return m_format->is_comment(ch); });
 				detail::rtrim(val.second, loc);
 			}
 	}
 
-	void clear() {
-		sections.clear();
-		errors.clear();
+    void clear()
+    {
+        m_sections.clear();
+        m_errors.clear();
 	}
-
+    void setValue(std::string_view section, std::string_view name, std::string_view value)
+    {
+        typename MapStrMapStrStr::iterator it = m_sections.find(std::string(section));
+        if(it == m_sections.end())
+        {
+            m_sections.insert({std::basic_string<CharT>(section), MapStrStr()});
+            m_sections[std::basic_string<CharT>(section)].insert({std::basic_string<CharT>(name), std::basic_string<CharT>(value)});
+        }
+        else
+        {
+            typename MapStrStr::iterator itt = it->second.find(std::string(name));
+            if(itt == it->second.end())
+            {
+                it->second.insert({std::basic_string<CharT>(name), std::basic_string<CharT>(value)});
+            }
+            else
+            {
+                itt->second = value;
+            }
+        }
+    }
 private:
-	using Symbols = std::list<std::pair<String, String>>;
+    MapStrMapStrStr m_sections;
+    std::list<std::basic_string<CharT>> m_errors;
+    std::shared_ptr<Format<CharT>> m_format;
+    using Symbols = std::list<std::pair<std::basic_string<CharT>, std::basic_string<CharT>>>;
 
-	const Symbols local_symbols(const String & sec_name, const Section & sec) const {
+    const Symbols local_symbols(const std::basic_string<CharT> &sec_name, const MapStrStr &sec) const {
 		Symbols result;
 		for (const auto & val : sec)
-			result.push_back(std::make_pair(format->local_symbol(val.first), format->global_symbol(sec_name, val.first)));
+            result.push_back(std::make_pair(m_format->local_symbol(val.first), m_format->global_symbol(sec_name, val.first)));
 		return result;
 	}
 
 	const Symbols global_symbols() const {
 		Symbols result;
-		for (const auto & sec : sections)
+        for (const auto & sec : m_sections)
 			for (const auto & val : sec.second)
 				result.push_back(
-					std::make_pair(format->global_symbol(sec.first, val.first), val.second));
+                    std::make_pair(m_format->global_symbol(sec.first, val.first), val.second));
 		return result;
 	}
 
-	bool replace_symbols(const Symbols & syms, Section & sec) const {
+    bool replace_symbols(const Symbols & syms, MapStrStr & sec) const {
 		auto changed = false;
 		for (auto & sym : syms)
 			for (auto & val : sec)
