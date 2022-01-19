@@ -1,9 +1,11 @@
 #include <LevelManager.hpp>
 #include <inireader.h>
+#include <iniwriter.h>
 #include <cassert>
 #include <sstream>
 #include <iostream>
 #include <iterator>
+#include <fstream>
 
 //===================================================================
 LevelManager::LevelManager()
@@ -1247,4 +1249,31 @@ void LevelManager::clearExistingPositionsElement()
         it->second.m_TileGamePosition.clear();
     }
     m_barrelElement.m_TileGamePosition.clear();
+}
+
+//===================================================================
+void LevelManager::saveAudioSettings(uint32_t musicVolume, uint32_t effectVolume)
+{
+    inipp::Ini<char> ini;
+    std::ifstream stream(LEVEL_RESSOURCES_DIR_STR + "Saves/Settingss.ini", std::ios::out | std::ios::in);
+    ini.parse(stream);
+    ini.setValue("Audio", "musicVolume", std::to_string(musicVolume));
+    ini.setValue("Audio", "effectVolume", std::to_string(effectVolume));
+    std::ofstream streamm(LEVEL_RESSOURCES_DIR_STR + "Saves/Settings.ini");
+    ini.generate(streamm);
+    stream.close();
+    streamm.close();
+}
+
+//===================================================================
+void LevelManager::saveDisplaySettings(const pairI_t &resolution, bool fullscreen)
+{
+
+}
+
+//===================================================================
+void LevelManager::saveInputSettings(const std::map<ControlKey_e, GamepadInputState> &gamepadArray,
+                                     const std::map<ControlKey_e, uint32_t> &keyboardArray)
+{
+
 }

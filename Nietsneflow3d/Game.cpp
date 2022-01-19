@@ -34,11 +34,31 @@ void Game::loadLevelData(uint32_t levelNum)
 //===================================================================
 void Game::initEngine()
 {
-    m_mainEngine.init();
+    m_mainEngine.init(this);
 }
 
 //===================================================================
 bool Game::launchGame(bool &memGameOver)
 {
     return m_mainEngine.mainLoop(memGameOver);
+}
+
+//===================================================================
+void Game::saveAudioSettings(uint32_t musicVolume, uint32_t effectVolume)
+{
+    m_levelManager.saveAudioSettings(musicVolume, effectVolume);
+}
+
+//===================================================================
+void Game::saveDisplaySettings(const pairI_t &resolution, bool fullscreen)
+{
+    m_levelManager.saveDisplaySettings(resolution, fullscreen);
+
+}
+
+//===================================================================
+void Game::saveInputSettings(const std::map<ControlKey_e, GamepadInputState> &gamepadArray,
+                             const std::map<ControlKey_e, uint32_t> &keyboardArray)
+{
+    m_levelManager.saveInputSettings(gamepadArray, keyboardArray);
 }

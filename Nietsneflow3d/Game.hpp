@@ -13,6 +13,10 @@ public:
     void loadSavedSettingsData();
     void clearLevel();
     bool launchGame(bool &memGameOver);
+    void saveAudioSettings(uint32_t musicVolume, uint32_t effectVolume);
+    void saveDisplaySettings(const pairI_t &resolution, bool fullscreen);
+    void saveInputSettings(const std::map<ControlKey_e, GamepadInputState> &gamepadArray,
+                                  const std::map<ControlKey_e, uint32_t> &keyboardArray);
 private:
     MainEngine m_mainEngine;
     LevelManager m_levelManager;

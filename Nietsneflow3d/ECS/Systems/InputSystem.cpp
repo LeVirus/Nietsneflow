@@ -376,6 +376,10 @@ void InputSystem::treatMenu(uint32_t playerEntity)
         }
         else if(playerComp->m_menuMode != MenuMode_e::CONFIRM_QUIT_INPUT_FORM)
         {
+            if(playerComp->m_menuMode == MenuMode_e::SOUND)
+            {
+                m_mainEngine->saveAudioSettings();
+            }
             playerComp->m_menuMode = MenuMode_e::BASE;
             m_mainEngine->setMenuEntries(playerComp);
         }
@@ -807,6 +811,7 @@ void InputSystem::treatEnterPressedSoundMenu(PlayerConfComponent *playerComp)
     case SoundMenuCursorPos_e::EFFECTS_VOLUME:
         break;
     case SoundMenuCursorPos_e::RETURN:
+        m_mainEngine->saveAudioSettings();
         playerComp->m_menuMode = MenuMode_e::BASE;
         m_mainEngine->setMenuEntries(playerComp);
         break;
@@ -891,6 +896,7 @@ void InputSystem::validInputMenu(PlayerConfComponent *playerComp)
     {
         m_mapGamepadCurrentAssociatedKey = m_mapGamepadTmpAssociatedKey;
     }
+    m_mainEngine->saveInputSettings(m_mapGamepadCurrentAssociatedKey, m_mapKeyboardCurrentAssociatedKey);
     m_mainEngine->updateStringWriteEntitiesInputMenu(playerComp->m_keyboardInputMenuMode);
     playerComp->m_menuMode = MenuMode_e::BASE;
     m_mainEngine->setMenuEntries(playerComp);

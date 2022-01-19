@@ -70,6 +70,10 @@ public:
     {
         return m_memGraphicResolution.size() - 1;
     }
+    inline bool fullscreenMode()const
+    {
+        return m_fullscreenMode;
+    }
     void toogleMenuEntryFullscreen();
     void setCurrentResolution(uint32_t resolution);
     void setSizeResolution(const pairI_t &resolution);

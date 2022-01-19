@@ -1,4 +1,5 @@
 #include "MainEngine.hpp"
+#include "Game.hpp"
 #include "constants.hpp"
 #include <ECS/Components/PositionVertexComponent.hpp>
 #include <ECS/Components/ColorVertexComponent.hpp>
@@ -38,7 +39,7 @@
 #include <bitset>
 
 //===================================================================
-void MainEngine::init()
+void MainEngine::init(Game *refGame)
 {
     std::srand(std::time(nullptr));
     m_ecsManager.init();
@@ -46,6 +47,7 @@ void MainEngine::init()
     linkSystemsToPhysicalEngine();
     linkSystemsToSoundEngine();
     m_audioEngine.initOpenAL();
+    m_refGame = refGame;
 }
 
 //===================================================================
@@ -1209,6 +1211,27 @@ void MainEngine::confGlobalSettings(const SettingsData &settingsData)
     m_physicalEngine.setKeyboardKey(settingsData.m_arrayKeyboard);
     //GAMEPAD
     m_physicalEngine.setGamepadKey(settingsData.m_arrayGamepad);
+}
+
+//===================================================================
+void MainEngine::validDisplayMenu()
+{
+    m_refGame->saveDisplaySettings(m_graphicEngine.getResolutions()[m_graphicEngine.getCurrentResolutionNum()].first,
+            m_graphicEngine.fullscreenMode());
+    m_graphicEngine.validDisplayMenu();
+}
+
+//===================================================================
+void MainEngine::saveAudioSettings()
+{
+    m_refGame->saveAudioSettings(getMusicVolume(), getEffectsVolume());
+}
+
+//===================================================================
+void MainEngine::saveInputSettings(const std::map<ControlKey_e, GamepadInputState> &gamepadArray,
+                                   const std::map<ControlKey_e, uint32_t> &keyboardArray)
+{
+    m_refGame->saveInputSettings(gamepadArray, keyboardArray);
 }
 
 //===================================================================

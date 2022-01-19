@@ -19,6 +19,7 @@ struct MemSpriteData
 using MapVisibleShotData_t = std::map<std::string, std::pair<std::string ,std::vector<MemSpriteData>>>;
 using PairImpactData_t = std::pair<std::vector<MemSpriteData>, MemSpriteData>;
 using MapImpactData_t = std::map<std::string, PairImpactData_t>;
+using pairI_t = std::pair<int, int>;
 
 struct WeaponINIData
 {
@@ -79,6 +80,10 @@ public:
     void loadSettingsData();
     void loadLevel(const std::string &INIFileName, uint32_t levelNum);
     void clearExistingPositionsElement();
+    void saveAudioSettings(uint32_t musicVolume, uint32_t effectVolume);
+    void saveDisplaySettings(const pairI_t &resolution, bool fullscreen);
+    void saveInputSettings(const std::map<ControlKey_e, GamepadInputState> &gamepadArray,
+                                  const std::map<ControlKey_e, uint32_t> &keyboardArray);
     inline const PictureData &getPictureData()const {return m_pictureData;}
     inline const Level &getLevel()const {return m_level;}
     inline const FontData &getFontData()const {return m_fontData;}

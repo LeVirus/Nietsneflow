@@ -21,6 +21,7 @@ using MapVisibleShotData_t = std::map<std::string, std::pair<std::string ,std::v
 class LevelManager;
 class Level;
 class FontData;
+class Game;
 struct EnemyData;
 struct EnemyConfComponent;
 struct WeaponComponent;
@@ -39,7 +40,7 @@ class MainEngine
 public:
     MainEngine() = default;
     void loadGraphicPicture(const PictureData &picData, const FontData &fontData);
-    void init();
+    void init(Game *refGame);
     void loadLevel(const LevelManager &levelManager);
     bool mainLoop(bool &memGameOver);
     void playerAttack(uint32_t playerEntity, PlayerConfComponent *playerComp,
@@ -57,10 +58,7 @@ public:
     void updateWriteComp(WriteComponent *writeComp);
     void updateStringWriteEntitiesInputMenu(bool keyboardInputMenuMode, bool defaultInput = true);
     void confGlobalSettings(const SettingsData &settingsData);
-    inline void validDisplayMenu()
-    {
-        m_graphicEngine.validDisplayMenu();
-    }
+    void validDisplayMenu();
     inline void updateMusicVolume(uint32_t volume)
     {
         m_audioEngine.updateMusicVolume(volume);
@@ -100,6 +98,9 @@ public:
     {
         m_graphicEngine.toogleMenuEntryFullscreen();
     }
+    void saveAudioSettings();
+    void saveInputSettings(const std::map<ControlKey_e, GamepadInputState> &gamepadArray,
+                                  const std::map<ControlKey_e, uint32_t> &keyboardArray);
 private:
     void clearObjectToDelete();
     void savePlayerGear();
@@ -209,6 +210,7 @@ private:
     PhysicalEngine m_physicalEngine;
     AudioEngine m_audioEngine;
     ECSManager m_ecsManager;
+    Game *m_refGame = nullptr;
     std::vector<std::pair<uint32_t, time_t>> m_vectMemPausedTimer;
     bool m_gamePaused = false, m_playerMem = false;
     SpriteData const *m_memCursorSpriteData = nullptr, *m_memVisibleShotA = nullptr;
