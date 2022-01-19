@@ -6,6 +6,8 @@
 #include <ECS/Systems/StaticDisplaySystem.hpp>
 #include <ECS/Systems/InputSystem.hpp>
 #include <set>
+#include <iniwriter.h>
+#include <fstream>
 
 class INIReader;
 using SetStr_t = std::set<std::string>;
@@ -219,6 +221,8 @@ private:
     std::vector<PairFloat_t> getVectSpriteGLSize(const INIReader &reader, const std::string_view section, const std::string_view weightParam,
                                                   const std::string_view heightParam);
 private:
+    inipp::Ini<char> m_ini;
+    std::ofstream m_outputStream;
     PictureData m_pictureData;
     FontData m_fontData;
     Level m_level;
@@ -356,6 +360,33 @@ private:
         {"AxisLeftTrigger-", {false, GLFW_GAMEPAD_AXIS_LEFT_TRIGGER, false}},
         {"AxisRightTrigger+", {false, GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER, true}},
         {"AxisRightTrigger-", {false, GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER, false}}
+    };
+
+    const std::map<uint32_t, std::string> m_inputGamepadSimpleButtons = {
+        {GLFW_GAMEPAD_BUTTON_A, "ButtonA"},
+        {GLFW_GAMEPAD_BUTTON_B, "ButtonB"},
+        {GLFW_GAMEPAD_BUTTON_X, "ButtonX"},
+        {GLFW_GAMEPAD_BUTTON_Y, "ButtonY"},
+        {GLFW_GAMEPAD_BUTTON_LEFT_BUMPER, "ButtonLeftBumper"},
+        {GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER, "ButtonRightBumper"},
+        {GLFW_GAMEPAD_BUTTON_BACK, "ButtonBack"},
+        {GLFW_GAMEPAD_BUTTON_START, "ButtonStart"},
+        {GLFW_GAMEPAD_BUTTON_GUIDE, "ButtonGuide"},
+        {GLFW_GAMEPAD_BUTTON_LEFT_THUMB, "ButtonLeftThumb"},
+        {GLFW_GAMEPAD_BUTTON_RIGHT_THUMB, "ButtonRightThumb"},
+        {GLFW_GAMEPAD_BUTTON_DPAD_UP, "ButtonUp"},
+        {GLFW_GAMEPAD_BUTTON_DPAD_RIGHT, "ButtonRight"},
+        {GLFW_GAMEPAD_BUTTON_DPAD_DOWN, "ButtonDown"},
+        {GLFW_GAMEPAD_BUTTON_DPAD_LEFT, "ButtonLeft"},
+    };
+
+    const std::map<uint32_t, std::string> m_inputGamepadAxis = {
+        {GLFW_GAMEPAD_AXIS_LEFT_X, "AxisLeftX"},
+        {GLFW_GAMEPAD_AXIS_LEFT_Y, "AxisLeftY"},
+        {GLFW_GAMEPAD_AXIS_RIGHT_X, "AxisRightX"},
+        {GLFW_GAMEPAD_AXIS_RIGHT_Y, "AxisRightY"},
+        {GLFW_GAMEPAD_AXIS_LEFT_TRIGGER, "AxisLeftTrigger"},
+        {GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER, "AxisRightTrigger"}
     };
 };
 

@@ -542,8 +542,7 @@ bool InputSystem::treatNewKey(PlayerConfComponent *playerComp)
                 static_cast<uint32_t>(Systems_e::STATIC_DISPLAY_SYSTEM));
     if(playerComp->m_keyboardInputMenuMode)
     {
-        const std::map<uint32_t, std::string> &map = staticSystem->getKeyboardInputKeys();
-        for(std::map<uint32_t, std::string>::const_iterator it = map.begin(); it != map.end(); ++it)
+        for(std::map<uint32_t, std::string>::const_iterator it = INPUT_KEYBOARD_KEY_STRING.begin(); it != INPUT_KEYBOARD_KEY_STRING.end(); ++it)
         {
             if(glfwGetKey(m_window, it->first) == GLFW_PRESS)
             {
@@ -572,8 +571,8 @@ bool InputSystem::treatNewKey(PlayerConfComponent *playerComp)
     else
     {
         //BUTTONS
-        const std::map<uint32_t, std::string> &mapButtons = staticSystem->getGamepadButtonsInputKeys();
-        for(std::map<uint32_t, std::string>::const_iterator it = mapButtons.begin(); it != mapButtons.end(); ++it)
+        for(std::map<uint32_t, std::string>::const_iterator it = INPUT_GAMEPAD_SIMPLE_BUTTONS_STRING.begin();
+            it != INPUT_GAMEPAD_SIMPLE_BUTTONS_STRING.end(); ++it)
         {
             if(it->first != GLFW_GAMEPAD_BUTTON_START && checkStandardButtonGamepadKeyStatus(it->first, GLFW_PRESS))
             {
@@ -605,8 +604,7 @@ bool InputSystem::treatNewKey(PlayerConfComponent *playerComp)
             }
         }
         //AXIS
-        const std::map<uint32_t, std::string> &mapAxis = staticSystem->getGamepadAxisInputKeys();
-        for(std::map<uint32_t, std::string>::const_iterator it = mapAxis.begin(); it != mapAxis.end(); ++it)
+        for(std::map<uint32_t, std::string>::const_iterator it = INPUT_GAMEPAD_AXIS_STRING.begin(); it != INPUT_GAMEPAD_AXIS_STRING.end(); ++it)
         {
             //POS
             if(!m_gamepadAxisKeyPressed[it->first].first && checkAxisGamepadKeyStatus(it->first, true))

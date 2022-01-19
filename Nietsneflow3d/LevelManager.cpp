@@ -1,16 +1,16 @@
 #include <LevelManager.hpp>
 #include <inireader.h>
-#include <iniwriter.h>
 #include <cassert>
 #include <sstream>
 #include <iostream>
 #include <iterator>
-#include <fstream>
 
 //===================================================================
-LevelManager::LevelManager()
+LevelManager::LevelManager()/*: m_outputStream(LEVEL_RESSOURCES_DIR_STR + "Saves/Settings.ini")*/
 {
-
+    std::ifstream inStream(LEVEL_RESSOURCES_DIR_STR + "Saves/Settings.ini");
+    m_ini.parse(inStream);
+    inStream.close();
 }
 
 //===================================================================
@@ -1254,26 +1254,57 @@ void LevelManager::clearExistingPositionsElement()
 //===================================================================
 void LevelManager::saveAudioSettings(uint32_t musicVolume, uint32_t effectVolume)
 {
-    inipp::Ini<char> ini;
-    std::ifstream stream(LEVEL_RESSOURCES_DIR_STR + "Saves/Settingss.ini", std::ios::out | std::ios::in);
-    ini.parse(stream);
-    ini.setValue("Audio", "musicVolume", std::to_string(musicVolume));
-    ini.setValue("Audio", "effectVolume", std::to_string(effectVolume));
-    std::ofstream streamm(LEVEL_RESSOURCES_DIR_STR + "Saves/Settings.ini");
-    ini.generate(streamm);
-    stream.close();
-    streamm.close();
+    m_outputStream.open(LEVEL_RESSOURCES_DIR_STR + "Saves/Settings.ini");
+    m_ini.setValue("Audio", "musicVolume", std::to_string(musicVolume));
+    m_ini.setValue("Audio", "effectsVolume", std::to_string(effectVolume));
+    m_ini.generate(m_outputStream);
+    m_outputStream.close();
 }
 
 //===================================================================
 void LevelManager::saveDisplaySettings(const pairI_t &resolution, bool fullscreen)
 {
-
+    m_outputStream.open(LEVEL_RESSOURCES_DIR_STR + "Saves/Settings.ini");
+    m_ini.setValue("Display", "resolutionWidth", std::to_string(resolution.first));
+    m_ini.setValue("Display", "resolutionHeight", std::to_string(resolution.second));
+    m_ini.setValue("Display", "fullscreen", fullscreen ? "true" : "false");
+    m_ini.generate(m_outputStream);
+    m_outputStream.close();
 }
 
 //===================================================================
 void LevelManager::saveInputSettings(const std::map<ControlKey_e, GamepadInputState> &gamepadArray,
                                      const std::map<ControlKey_e, uint32_t> &keyboardArray)
 {
-
+    m_outputStream.open(LEVEL_RESSOURCES_DIR_STR + "Saves/Settings.ini");
+    uint32_t currentIndex;
+    std::string valStr;
+    for(std::map<ControlKey_e, GamepadInputState>::const_iterator it = gamepadArray.begin(); it != gamepadArray.end(); ++it)
+    {
+        currentIndex = static_cast<uint32_t>(it->first);
+        if(it->second.m_standardButton)
+        {
+            valStr = m_inputGamepadSimpleButtons.at(it->second.m_keyID);
+        }
+        else
+        {
+            valStr = m_inputGamepadAxis.at(it->second.m_keyID);
+            if(*it->second.m_axisPos)
+            {
+                valStr += '+';
+            }
+            else
+            {
+                valStr += '-';
+            }
+        }
+        m_ini.setValue("Gamepad", m_inputIDString[currentIndex], valStr);
+    }
+    for(std::map<ControlKey_e, uint32_t>::const_iterator it = keyboardArray.begin(); it != keyboardArray.end(); ++it)
+    {
+        currentIndex = static_cast<uint32_t>(it->first);
+        m_ini.setValue("Keyboard", m_inputIDString[currentIndex] , INPUT_KEYBOARD_KEY_STRING.at(it->second));
+    }
+    m_ini.generate(m_outputStream);
+    m_outputStream.close();
 }

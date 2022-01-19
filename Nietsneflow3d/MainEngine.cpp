@@ -1216,9 +1216,9 @@ void MainEngine::confGlobalSettings(const SettingsData &settingsData)
 //===================================================================
 void MainEngine::validDisplayMenu()
 {
+    m_graphicEngine.validDisplayMenu();
     m_refGame->saveDisplaySettings(m_graphicEngine.getResolutions()[m_graphicEngine.getCurrentResolutionNum()].first,
             m_graphicEngine.fullscreenMode());
-    m_graphicEngine.validDisplayMenu();
 }
 
 //===================================================================

@@ -238,8 +238,8 @@ void StaticDisplaySystem::updateMenuEntryFullscreen(bool displayMenufullscreenMo
 //===================================================================
 std::string StaticDisplaySystem::getKeyboardStringKeyAssociated(uint32_t key)const
 {
-    std::map<uint32_t, std::string>::const_iterator it = m_inputKeyboardKeyString.find(key);
-    if(it == m_inputKeyboardKeyString.end())
+    std::map<uint32_t, std::string>::const_iterator it = INPUT_KEYBOARD_KEY_STRING.find(key);
+    if(it == INPUT_KEYBOARD_KEY_STRING.end())
     {
         return "";
     }
@@ -249,8 +249,8 @@ std::string StaticDisplaySystem::getKeyboardStringKeyAssociated(uint32_t key)con
 //===================================================================
 std::string StaticDisplaySystem::getGamepadStringKeyAxisAssociated(uint32_t key, bool axisSense)const
 {
-    std::map<uint32_t, std::string>::const_iterator it = m_inputGamepadAxisKeyString.find(key);
-    if(it == m_inputGamepadAxisKeyString.end())
+    std::map<uint32_t, std::string>::const_iterator it = INPUT_GAMEPAD_AXIS_STRING.find(key);
+    if(it == INPUT_GAMEPAD_AXIS_STRING.end())
     {
         return "";
     }
@@ -267,8 +267,8 @@ std::string StaticDisplaySystem::getGamepadStringKeyAxisAssociated(uint32_t key,
 //===================================================================
 std::string StaticDisplaySystem::getGamepadStringKeyButtonAssociated(uint32_t key) const
 {
-    std::map<uint32_t, std::string>::const_iterator it = m_inputGamepadSimpleButtonKeyString.find(key);
-    if(it == m_inputGamepadSimpleButtonKeyString.end())
+    std::map<uint32_t, std::string>::const_iterator it = INPUT_GAMEPAD_SIMPLE_BUTTONS_STRING.find(key);
+    if(it == INPUT_GAMEPAD_SIMPLE_BUTTONS_STRING.end())
     {
         return "";
     }
