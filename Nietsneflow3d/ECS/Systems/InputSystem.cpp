@@ -860,6 +860,7 @@ void InputSystem::treatEnterPressedInputMenu(PlayerConfComponent *playerComp)
     }
     else if(menuPos == InputMenuCursorPos_e::DEFAULT)
     {
+        playerComp->m_inputModified = true;
         if(playerComp->m_keyboardInputMenuMode)
         {
             m_mapKeyboardTmpAssociatedKey = m_mapKeyboardCurrentAssociatedKey;

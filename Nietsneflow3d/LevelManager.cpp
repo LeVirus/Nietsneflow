@@ -1243,7 +1243,6 @@ void LevelManager::loadSettingsData()
         gpIt = m_inputGamepadKeyString.find(reader.Get("Gamepad", m_inputIDString[i], ""));
         if(gpIt != m_inputGamepadKeyString.end())
         {
-            std::cerr << gpIt->second.m_keyID << "  " << gpIt->first << " LOAD " << m_inputIDString[i] <<  "\n";
             m_settingsData.m_arrayGamepad[i] = gpIt->second;
         }
         //default
