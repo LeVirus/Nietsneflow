@@ -348,10 +348,10 @@ private:
         {"ButtonLeft", {true, GLFW_GAMEPAD_BUTTON_DPAD_LEFT, {}}},
         {"ButtonRight", {true, GLFW_GAMEPAD_BUTTON_DPAD_RIGHT, {}}},
 
-        {"AxisLeftY-", {false, GLFW_GAMEPAD_AXIS_LEFT_X, false}},
-        {"AxisLeftY+", {false, GLFW_GAMEPAD_AXIS_LEFT_X, true}},
-        {"AxisLeftX-", {false, GLFW_GAMEPAD_AXIS_LEFT_Y, false}},
-        {"AxisLeftX+", {false, GLFW_GAMEPAD_AXIS_LEFT_Y, true}},
+        {"AxisLeftY-", {false, GLFW_GAMEPAD_AXIS_LEFT_Y, false}},
+        {"AxisLeftY+", {false, GLFW_GAMEPAD_AXIS_LEFT_Y, true}},
+        {"AxisLeftX-", {false, GLFW_GAMEPAD_AXIS_LEFT_X, false}},
+        {"AxisLeftX+", {false, GLFW_GAMEPAD_AXIS_LEFT_X, true}},
         {"AxisRightY-", {false, GLFW_GAMEPAD_AXIS_RIGHT_Y, false}},
         {"AxisRightY+", {false, GLFW_GAMEPAD_AXIS_RIGHT_Y, true}},
         {"AxisRightX-", {false, GLFW_GAMEPAD_AXIS_RIGHT_X, false}},
@@ -380,15 +380,6 @@ private:
         {GLFW_GAMEPAD_BUTTON_DPAD_LEFT, "ButtonLeft"},
     };
 
-//    const std::map<uint32_t, std::string> m_inputGamepadAxis = {
-//        {GLFW_GAMEPAD_AXIS_LEFT_X, "AxisLeftX"},
-//        {GLFW_GAMEPAD_AXIS_LEFT_Y, "AxisLeftY"},
-//        {GLFW_GAMEPAD_AXIS_RIGHT_X, "AxisRightX"},
-//        {GLFW_GAMEPAD_AXIS_RIGHT_Y, "AxisRightY"},
-//        {GLFW_GAMEPAD_AXIS_LEFT_TRIGGER, "AxisLeftTrigger"},
-//        {GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER, "AxisRightTrigger"}
-//    };
-
     //!!!WARNING!!!
     // GLFW_GAMEPAD_AXIS_LEFT_X --> OK
     // GLFW_GAMEPAD_AXIS_LEFT_Y --> POS & NEG REVERSED
@@ -396,15 +387,23 @@ private:
     // GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER --> OK
     // GLFW_GAMEPAD_AXIS_RIGHT_X --> GLFW_GAMEPAD_AXIS_LEFT_TRIGGER
     // GLFW_GAMEPAD_AXIS_RIGHT_Y --> GLFW_GAMEPAD_AXIS_RIGHT_X
-
     const std::map<uint32_t, std::string> m_inputGamepadAxis = {
         {GLFW_GAMEPAD_AXIS_LEFT_X, "AxisLeftX"},
         {GLFW_GAMEPAD_AXIS_LEFT_Y, "AxisLeftY"},
-        {GLFW_GAMEPAD_AXIS_RIGHT_X, "AxisLeftTrigger"},
-        {GLFW_GAMEPAD_AXIS_RIGHT_Y, "AxisRightX"},
-        {GLFW_GAMEPAD_AXIS_LEFT_TRIGGER, "AxisRightY"},
+        {GLFW_GAMEPAD_AXIS_RIGHT_X, "AxisRightX"},
+        {GLFW_GAMEPAD_AXIS_RIGHT_Y, "AxisRightY"},
+        {GLFW_GAMEPAD_AXIS_LEFT_TRIGGER, "AxisLeftTrigger"},
         {GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER, "AxisRightTrigger"}
     };
+
+//    const std::map<uint32_t, std::string> m_inputGamepadAxis = {
+//        {GLFW_GAMEPAD_AXIS_LEFT_X, "AxisLeftX"},
+//        {GLFW_GAMEPAD_AXIS_LEFT_Y, "AxisLeftY"},
+//        {GLFW_GAMEPAD_AXIS_RIGHT_X, "AxisLeftTrigger"},
+//        {GLFW_GAMEPAD_AXIS_RIGHT_Y, "AxisRightX"},
+//        {GLFW_GAMEPAD_AXIS_LEFT_TRIGGER, "AxisRightY"},
+//        {GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER, "AxisRightTrigger"}
+//    };
 };
 
 VectPairUI_t getPositionData(const INIReader &reader, const std::string & sectionName, const std::string &propertyName);

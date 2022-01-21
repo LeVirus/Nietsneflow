@@ -1244,6 +1244,10 @@ bool LevelManager::loadSettingsData()
         if(gpIt != m_inputGamepadKeyString.end())
         {
             m_settingsData.m_arrayGamepad[i] = gpIt->second;
+            if(!gpIt->second.m_standardButton)
+            {
+                std::cerr << gpIt->second.m_keyID << "\n";
+            }
         }
         //default
         else
