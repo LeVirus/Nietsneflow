@@ -1101,50 +1101,6 @@ void LevelManager::loadFontData(const std::string &INIFileName)
     loadSpriteData(reader, "", true);
 }
 
-//===================================================================
-void LevelManager::loadSettingsData()
-{
-    INIReader reader(LEVEL_RESSOURCES_DIR_STR + "Saves/Settings.ini");
-    if(reader.ParseError() < 0)
-    {
-        return;
-    }
-    //AUDIO
-    m_settingsData.m_musicVolume = reader.GetInteger("Audio", "musicVolume", 100);
-    m_settingsData.m_effectsVolume = reader.GetInteger("Audio", "effectsVolume", 100);
-    //DISPLAY
-    m_settingsData.m_fullscreen = reader.GetBoolean("Display", "fullscreen", false);
-    m_settingsData.m_resolutionWidth = reader.GetInteger("Display", "resolutionWidth", 0);
-    m_settingsData.m_resolutionHeight = reader.GetInteger("Display", "resolutionHeight", 0);
-    //INPUT
-    std::map<std::string, uint32_t>::const_iterator kbIt;
-    std::map<std::string, GamepadInputState>::const_iterator gpIt;
-    ControlKey_e currentKey;
-    for(uint32_t i = 0; i < m_settingsData.m_arrayKeyboard.size(); ++i)
-    {
-        currentKey = static_cast<ControlKey_e>(i);
-        //KEYBOARD
-        kbIt = m_inputKeyboardKeyString.find(reader.Get("Keyboard", m_inputIDString[i], ""));
-        if(kbIt != m_inputKeyboardKeyString.end())
-        {
-            m_settingsData.m_arrayKeyboard[i] = kbIt->second;
-        }
-        else
-        {
-            m_settingsData.m_arrayKeyboard[i] = MAP_KEYBOARD_DEFAULT_KEY.at(currentKey);
-        }
-        //GAMEPAD
-        gpIt = m_inputGamepadKeyString.find(reader.Get("Gamepad", m_inputIDString[i], ""));
-        if(gpIt != m_inputGamepadKeyString.end())
-        {
-            m_settingsData.m_arrayGamepad[i] = gpIt->second;
-        }
-        else
-        {
-            m_settingsData.m_arrayGamepad[i] = MAP_GAMEPAD_DEFAULT_KEY.at(currentKey);
-        }
-    }
-}
 
 //===================================================================
 void LevelManager::loadPositionStaticElements(const INIReader &reader)
@@ -1249,6 +1205,53 @@ void LevelManager::clearExistingPositionsElement()
         it->second.m_TileGamePosition.clear();
     }
     m_barrelElement.m_TileGamePosition.clear();
+}
+
+//===================================================================
+void LevelManager::loadSettingsData()
+{
+    INIReader reader(LEVEL_RESSOURCES_DIR_STR + "Saves/Settings.ini");
+    if(reader.ParseError() < 0)
+    {
+        return;
+    }
+    //AUDIO
+    m_settingsData.m_musicVolume = reader.GetInteger("Audio", "musicVolume", 100);
+    m_settingsData.m_effectsVolume = reader.GetInteger("Audio", "effectsVolume", 100);
+    //DISPLAY
+    m_settingsData.m_fullscreen = reader.GetBoolean("Display", "fullscreen", false);
+    m_settingsData.m_resolutionWidth = reader.GetInteger("Display", "resolutionWidth", 0);
+    m_settingsData.m_resolutionHeight = reader.GetInteger("Display", "resolutionHeight", 0);
+    //INPUT
+    std::map<std::string, uint32_t>::const_iterator kbIt;
+    std::map<std::string, GamepadInputState>::const_iterator gpIt;
+    ControlKey_e currentKey;
+    for(uint32_t i = 0; i < m_settingsData.m_arrayKeyboard.size(); ++i)
+    {
+        currentKey = static_cast<ControlKey_e>(i);
+        //KEYBOARD
+        kbIt = m_inputKeyboardKeyString.find(reader.Get("Keyboard", m_inputIDString[i], ""));
+        if(kbIt != m_inputKeyboardKeyString.end())
+        {
+            m_settingsData.m_arrayKeyboard[i] = kbIt->second;
+        }
+        else
+        {
+            m_settingsData.m_arrayKeyboard[i] = MAP_KEYBOARD_DEFAULT_KEY.at(currentKey);
+        }
+        //GAMEPAD
+        gpIt = m_inputGamepadKeyString.find(reader.Get("Gamepad", m_inputIDString[i], ""));
+        if(gpIt != m_inputGamepadKeyString.end())
+        {
+            std::cerr << gpIt->second.m_keyID << "  " << gpIt->first << " LOAD " << m_inputIDString[i] <<  "\n";
+            m_settingsData.m_arrayGamepad[i] = gpIt->second;
+        }
+        //default
+        else
+        {
+            m_settingsData.m_arrayGamepad[i] = MAP_GAMEPAD_DEFAULT_KEY.at(currentKey);
+        }
+    }
 }
 
 //===================================================================

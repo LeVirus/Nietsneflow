@@ -344,9 +344,9 @@ private:
         {"ButtonLeftThumb", {true, GLFW_GAMEPAD_BUTTON_LEFT_THUMB, {}}},
         {"ButtonRightThumb", {true, GLFW_GAMEPAD_BUTTON_RIGHT_THUMB, {}}},
         {"ButtonUp", {true, GLFW_GAMEPAD_BUTTON_DPAD_UP, {}}},
-        {"ButtonDown", {true, GLFW_GAMEPAD_BUTTON_DPAD_RIGHT, {}}},
-        {"ButtonLeft", {true, GLFW_GAMEPAD_BUTTON_DPAD_DOWN, {}}},
-        {"ButtonRight", {true, GLFW_GAMEPAD_BUTTON_DPAD_LEFT, {}}},
+        {"ButtonDown", {true, GLFW_GAMEPAD_BUTTON_DPAD_DOWN, {}}},
+        {"ButtonLeft", {true, GLFW_GAMEPAD_BUTTON_DPAD_LEFT, {}}},
+        {"ButtonRight", {true, GLFW_GAMEPAD_BUTTON_DPAD_RIGHT, {}}},
 
         {"AxisLeftY-", {false, GLFW_GAMEPAD_AXIS_LEFT_X, false}},
         {"AxisLeftY+", {false, GLFW_GAMEPAD_AXIS_LEFT_X, true}},
