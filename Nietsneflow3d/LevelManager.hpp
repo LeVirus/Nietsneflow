@@ -79,7 +79,7 @@ public:
     void loadTextureData(const std::string &INIFileName);
     void loadStandardData(const std::string &INIFileName);
     void loadFontData(const std::string &INIFileName);
-    void loadSettingsData();
+    bool loadSettingsData();
     void loadLevel(const std::string &INIFileName, uint32_t levelNum);
     void clearExistingPositionsElement();
     void saveAudioSettings(uint32_t musicVolume, uint32_t effectVolume);
@@ -380,12 +380,29 @@ private:
         {GLFW_GAMEPAD_BUTTON_DPAD_LEFT, "ButtonLeft"},
     };
 
+//    const std::map<uint32_t, std::string> m_inputGamepadAxis = {
+//        {GLFW_GAMEPAD_AXIS_LEFT_X, "AxisLeftX"},
+//        {GLFW_GAMEPAD_AXIS_LEFT_Y, "AxisLeftY"},
+//        {GLFW_GAMEPAD_AXIS_RIGHT_X, "AxisRightX"},
+//        {GLFW_GAMEPAD_AXIS_RIGHT_Y, "AxisRightY"},
+//        {GLFW_GAMEPAD_AXIS_LEFT_TRIGGER, "AxisLeftTrigger"},
+//        {GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER, "AxisRightTrigger"}
+//    };
+
+    //!!!WARNING!!!
+    // GLFW_GAMEPAD_AXIS_LEFT_X --> OK
+    // GLFW_GAMEPAD_AXIS_LEFT_Y --> POS & NEG REVERSED
+    // GLFW_GAMEPAD_AXIS_LEFT_TRIGGER --> GLFW_GAMEPAD_AXIS_RIGHT_Y
+    // GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER --> OK
+    // GLFW_GAMEPAD_AXIS_RIGHT_X --> GLFW_GAMEPAD_AXIS_LEFT_TRIGGER
+    // GLFW_GAMEPAD_AXIS_RIGHT_Y --> GLFW_GAMEPAD_AXIS_RIGHT_X
+
     const std::map<uint32_t, std::string> m_inputGamepadAxis = {
         {GLFW_GAMEPAD_AXIS_LEFT_X, "AxisLeftX"},
         {GLFW_GAMEPAD_AXIS_LEFT_Y, "AxisLeftY"},
-        {GLFW_GAMEPAD_AXIS_RIGHT_X, "AxisRightX"},
-        {GLFW_GAMEPAD_AXIS_RIGHT_Y, "AxisRightY"},
-        {GLFW_GAMEPAD_AXIS_LEFT_TRIGGER, "AxisLeftTrigger"},
+        {GLFW_GAMEPAD_AXIS_RIGHT_X, "AxisLeftTrigger"},
+        {GLFW_GAMEPAD_AXIS_RIGHT_Y, "AxisRightX"},
+        {GLFW_GAMEPAD_AXIS_LEFT_TRIGGER, "AxisRightY"},
         {GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER, "AxisRightTrigger"}
     };
 };

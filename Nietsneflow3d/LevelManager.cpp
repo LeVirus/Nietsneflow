@@ -1208,12 +1208,12 @@ void LevelManager::clearExistingPositionsElement()
 }
 
 //===================================================================
-void LevelManager::loadSettingsData()
+bool LevelManager::loadSettingsData()
 {
     INIReader reader(LEVEL_RESSOURCES_DIR_STR + "Saves/Settings.ini");
     if(reader.ParseError() < 0)
     {
-        return;
+        return false;
     }
     //AUDIO
     m_settingsData.m_musicVolume = reader.GetInteger("Audio", "musicVolume", 100);
@@ -1251,6 +1251,7 @@ void LevelManager::loadSettingsData()
             m_settingsData.m_arrayGamepad[i] = MAP_GAMEPAD_DEFAULT_KEY.at(currentKey);
         }
     }
+    return true;
 }
 
 //===================================================================

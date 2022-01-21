@@ -13,7 +13,10 @@ void Game::loadStandardData()
 //===================================================================
 void Game::loadSavedSettingsData()
 {
-    m_levelManager.loadSettingsData();
+    if(!m_levelManager.loadSettingsData())
+    {
+        return;
+    }
     m_mainEngine.confGlobalSettings(m_levelManager.getSettingsData());
 }
 
