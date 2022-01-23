@@ -1,6 +1,9 @@
 BUGS======================================================================
 
 ))
+Crash if audio unactivated and second level does not have music and first yes
+
+))
 In input gamepad menu bug in GLFW in AXIS
 
 ))

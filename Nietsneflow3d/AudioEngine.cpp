@@ -115,8 +115,8 @@ std::optional<ALuint> AudioEngine::loadBufferFromFile(const std::string &filenam
     if(error != AL_NO_ERROR)
     {
         printALError(error);
+        assert(false);
     }
-    assert(error == AL_NO_ERROR);
     // Remplissage avec les échantillons lus
     alBufferData(memMusicBuffer, format, &samples[0],
             nbSamples * sizeof(ALushort), sampleRate);

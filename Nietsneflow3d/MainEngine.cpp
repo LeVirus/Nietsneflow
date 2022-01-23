@@ -51,10 +51,9 @@ void MainEngine::init(Game *refGame)
 }
 
 //===================================================================
-bool MainEngine::mainLoop(bool &memGameOver)
+std::pair<bool, bool> MainEngine::mainLoop()
 {
     m_memInputCursorPos = 0;
-    memGameOver = false;
     m_graphicEngine.getMapSystem().confLevelData();
     if(m_playerMem)
     {
@@ -102,17 +101,16 @@ bool MainEngine::mainLoop(bool &memGameOver)
             savePlayerGear();
             m_graphicEngine.setTransition(m_gamePaused);
             displayTransitionMenu();
-            return true;
+            return {true, false};
         }
         if(!m_playerConf->m_life)
         {
-            memGameOver = true;
             m_graphicEngine.setTransition(m_gamePaused);
             displayTransitionMenu();
-            return true;
+            return {true, true};
         }
     }while(!m_graphicEngine.windowShouldClose());
-    return false;
+    return {false, true};
 }
 
 //===================================================================

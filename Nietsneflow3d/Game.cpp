@@ -41,9 +41,9 @@ void Game::initEngine()
 }
 
 //===================================================================
-bool Game::launchGame(bool &memGameOver)
+std::pair<bool, bool> Game::launchGame()
 {
-    return m_mainEngine.mainLoop(memGameOver);
+    return m_mainEngine.mainLoop();
 }
 
 //===================================================================

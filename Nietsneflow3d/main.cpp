@@ -6,7 +6,8 @@ int main()
     Game game;
     game.initEngine();
     game.loadStandardData();
-    bool memGameOver, gameLoaded = false;
+    bool gameLoaded = false;
+    std::pair<bool, bool> pair;
     for(uint32_t i = 1; i < 3; ++i)
     {
         game.loadLevelData(i);
@@ -15,11 +16,14 @@ int main()
             game.loadSavedSettingsData();
             gameLoaded = true;
         }
-        if(!game.launchGame(memGameOver))
+        pair = game.launchGame();
+        //quit
+        if(!pair.first)
         {
             break;
         }
-        if(memGameOver)
+        //game over
+        if(pair.second)
         {
             --i;
         }

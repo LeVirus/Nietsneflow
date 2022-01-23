@@ -143,6 +143,7 @@ private:
         {MenuMode_e::INPUT, static_cast<uint32_t>(InputMenuCursorPos_e::TOTAL) - 1},
         {MenuMode_e::TRANSITION_LEVEL, 1},
         {MenuMode_e::SOUND, static_cast<uint32_t>(SoundMenuCursorPos_e::TOTAL) - 1},
+        {MenuMode_e::NEW_GAME, static_cast<uint32_t>(LoadGame_e::TOTAL) - 1},
         {MenuMode_e::CONFIRM_QUIT_INPUT_FORM, static_cast<uint32_t>(ConfirmQuitInputCursorPos_e::TOTAL) - 1},
         {MenuMode_e::NEW_KEY, 0}
     };

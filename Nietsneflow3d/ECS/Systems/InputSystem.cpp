@@ -653,6 +653,9 @@ void InputSystem::treatEnterPressedMenu(PlayerConfComponent *playerComp)
         break;
     case MenuMode_e::NEW_KEY:
         break;
+    case MenuMode_e::NEW_GAME:
+
+        break;
     case MenuMode_e::CONFIRM_QUIT_INPUT_FORM:
         ConfirmQuitInputCursorPos_e menuEntry = static_cast<ConfirmQuitInputCursorPos_e>(playerComp->m_currentCursorPos);
         if(menuEntry == ConfirmQuitInputCursorPos_e::TRUE)
@@ -786,6 +789,9 @@ void InputSystem::treatEnterPressedMainMenu(PlayerConfComponent *playerComp)
         m_mainEngine->updateStringWriteEntitiesInputMenu(playerComp->m_keyboardInputMenuMode, false);
         break;
     case MainMenuCursorPos_e::NEW_GAME:
+    case MainMenuCursorPos_e::LOAD_GAME:
+        playerComp->m_menuMode = MenuMode_e::NEW_GAME;
+        m_mainEngine->setMenuEntries(playerComp);
         break;
     case MainMenuCursorPos_e::QUIT_GAME:
         glfwSetWindowShouldClose(m_window, true);

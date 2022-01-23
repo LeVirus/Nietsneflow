@@ -42,7 +42,8 @@ public:
     void loadGraphicPicture(const PictureData &picData, const FontData &fontData);
     void init(Game *refGame);
     void loadLevel(const LevelManager &levelManager);
-    bool mainLoop(bool &memGameOver);
+    //first quit, second gameover
+    std::pair<bool, bool> mainLoop();
     void playerAttack(uint32_t playerEntity, PlayerConfComponent *playerComp,
                       const PairFloat_t &point, float degreeAngle);
     void setUnsetPaused();

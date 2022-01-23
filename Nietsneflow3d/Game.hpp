@@ -12,7 +12,7 @@ public:
     void loadStandardData();
     void loadSavedSettingsData();
     void clearLevel();
-    bool launchGame(bool &memGameOver);
+    std::pair<bool, bool> launchGame();
     void saveAudioSettings(uint32_t musicVolume, uint32_t effectVolume);
     void saveDisplaySettings(const pairI_t &resolution, bool fullscreen);
     void saveInputSettings(const std::map<ControlKey_e, GamepadInputState> &gamepadArray,

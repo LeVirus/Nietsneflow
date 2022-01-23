@@ -89,6 +89,7 @@ enum class MainMenuCursorPos_e
     DISPLAY_CONF,
     INPUT_CONF,
     NEW_GAME,
+    LOAD_GAME,
     QUIT_GAME,
     TOTAL
 };
@@ -98,6 +99,14 @@ enum class SoundMenuCursorPos_e
     MUSIC_VOLUME,
     EFFECTS_VOLUME,
     RETURN,
+    TOTAL
+};
+
+enum class LoadGame_e
+{
+    FIRST,
+    SECOND,
+    THIRD,
     TOTAL
 };
 
@@ -313,6 +322,7 @@ enum class MenuMode_e
     DISPLAY,
     SOUND,
     INPUT,
+    NEW_GAME,
     CONFIRM_QUIT_INPUT_FORM,
     NEW_KEY
 };
@@ -360,7 +370,7 @@ inline const std::map<MenuMode_e, PairPairFloatStr_t> MAP_MENU_DATA =
 {
     {MenuMode_e::BASE,
      PairPairFloatStr_t{{-0.5f, 0.5f},
-      "RETURN TO GAME\\SOUND CONF\\DISPLAY CONF\\INPUT CONF\\NEW GAME\\EXIT GAME"}},
+      "RETURN TO GAME\\SOUND CONF\\DISPLAY CONF\\INPUT CONF\\NEW GAME\\LOAD GAME\\EXIT GAME"}},
     {MenuMode_e::TRANSITION_LEVEL,
      PairPairFloatStr_t{{-0.5f, 0.5f}, "CONTINUE"}},
     {MenuMode_e::SOUND,
@@ -370,6 +380,9 @@ inline const std::map<MenuMode_e, PairPairFloatStr_t> MAP_MENU_DATA =
     {MenuMode_e::INPUT,
      PairPairFloatStr_t{{-0.7f, 0.7f}, "MOVE FORWARD\\MOVE BACKWARD\\STRAFE LEFT\\"
          "STRAFE RIGHT\\TURN LEFT\\TURN RIGHT\\ACTION\\SHOOT\\PREVIOUS WEAPON\\NEXT WEAPON\\DEFAULT\\RETURN\\VALID"}
+    },
+    {MenuMode_e::NEW_GAME,
+     PairPairFloatStr_t{{-0.7f, 0.7f}, "1\\2\\3"}
     },
     {MenuMode_e::CONFIRM_QUIT_INPUT_FORM,
      PairPairFloatStr_t{{-0.1f, 0.0f}, "YES\\NO"}
