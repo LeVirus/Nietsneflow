@@ -41,9 +41,9 @@ void Game::initEngine()
 }
 
 //===================================================================
-std::pair<bool, bool> Game::launchGame()
+std::tuple<bool, bool, std::optional<uint32_t>> Game::launchGame(uint32_t levelNum)
 {
-    return m_mainEngine.mainLoop();
+    return m_mainEngine.mainLoop(levelNum);
 }
 
 //===================================================================
@@ -64,4 +64,10 @@ void Game::saveInputSettings(const std::map<ControlKey_e, GamepadInputState> &ga
                              const std::map<ControlKey_e, uint32_t> &keyboardArray)
 {
     m_levelManager.saveInputSettings(gamepadArray, keyboardArray);
+}
+
+//===================================================================
+void Game::saveGameProgress(const MemPlayerConf &playerConf, uint32_t levelNum)
+{
+    m_levelManager.saveGameProgress(playerConf, levelNum);
 }

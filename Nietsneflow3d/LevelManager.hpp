@@ -10,6 +10,7 @@
 #include <fstream>
 
 class INIReader;
+struct MemPlayerConf;
 using SetStr_t = std::set<std::string>;
 
 struct MemSpriteData
@@ -86,6 +87,8 @@ public:
     void saveDisplaySettings(const pairI_t &resolution, bool fullscreen);
     void saveInputSettings(const std::map<ControlKey_e, GamepadInputState> &gamepadArray,
                                   const std::map<ControlKey_e, uint32_t> &keyboardArray);
+    void saveGameProgress(const MemPlayerConf &playerConf, uint32_t levelNum);
+    std::optional<std::pair<uint32_t, MemPlayerConf>> loadSavedGame(uint32_t saveNum);
     inline const PictureData &getPictureData()const {return m_pictureData;}
     inline const Level &getLevel()const {return m_level;}
     inline const FontData &getFontData()const {return m_fontData;}
@@ -221,6 +224,7 @@ private:
     std::vector<PairFloat_t> getVectSpriteGLSize(const INIReader &reader, const std::string_view section, const std::string_view weightParam,
                                                   const std::string_view heightParam);
 private:
+    uint32_t m_currentSave = 1;
     inipp::Ini<char> m_ini;
     std::ofstream m_outputStream;
     PictureData m_pictureData;

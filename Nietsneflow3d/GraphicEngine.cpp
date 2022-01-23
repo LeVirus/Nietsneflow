@@ -162,6 +162,12 @@ void GraphicEngine::fillTitleMenuWrite(WriteComponent *writeComp, MenuMode_e men
     case MenuMode_e::BASE:
         writeComp->m_str = "MAIN MENU";
         break;
+    case MenuMode_e::LOAD_GAME:
+        writeComp->m_str = "LOAD GAME";
+        break;
+    case MenuMode_e::NEW_GAME:
+        writeComp->m_str = "NEW GAME";
+        break;
     case MenuMode_e::DISPLAY:
         writeComp->m_str = "GRAPHIC MENU";
         break;

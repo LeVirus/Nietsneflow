@@ -654,7 +654,10 @@ void InputSystem::treatEnterPressedMenu(PlayerConfComponent *playerComp)
     case MenuMode_e::NEW_KEY:
         break;
     case MenuMode_e::NEW_GAME:
-
+        treatEnterPressedNewGameMenu(playerComp);
+        break;
+    case MenuMode_e::LOAD_GAME:
+        treatEnterPressedLoadGameMenu(playerComp);
         break;
     case MenuMode_e::CONFIRM_QUIT_INPUT_FORM:
         ConfirmQuitInputCursorPos_e menuEntry = static_cast<ConfirmQuitInputCursorPos_e>(playerComp->m_currentCursorPos);
@@ -789,8 +792,11 @@ void InputSystem::treatEnterPressedMainMenu(PlayerConfComponent *playerComp)
         m_mainEngine->updateStringWriteEntitiesInputMenu(playerComp->m_keyboardInputMenuMode, false);
         break;
     case MainMenuCursorPos_e::NEW_GAME:
-    case MainMenuCursorPos_e::LOAD_GAME:
         playerComp->m_menuMode = MenuMode_e::NEW_GAME;
+        m_mainEngine->setMenuEntries(playerComp);
+        break;
+    case MainMenuCursorPos_e::LOAD_GAME:
+        playerComp->m_menuMode = MenuMode_e::LOAD_GAME;
         m_mainEngine->setMenuEntries(playerComp);
         break;
     case MainMenuCursorPos_e::QUIT_GAME:
@@ -887,6 +893,39 @@ void InputSystem::treatEnterPressedInputMenu(PlayerConfComponent *playerComp)
     else if(menuPos == InputMenuCursorPos_e::VALID)
     {
         validInputMenu(playerComp);
+    }
+}
+
+//===================================================================
+void InputSystem::treatEnterPressedNewGameMenu(PlayerConfComponent *playerComp)
+{
+    NewGameMenuCursorPos_e menuPos = static_cast<NewGameMenuCursorPos_e>(playerComp->m_currentCursorPos);
+    if(menuPos == NewGameMenuCursorPos_e::RETURN)
+    {
+        playerComp->m_menuMode = MenuMode_e::BASE;
+        m_mainEngine->setMenuEntries(playerComp);
+    }
+    else
+    {
+
+    }
+}
+
+//===================================================================
+void InputSystem::treatEnterPressedLoadGameMenu(PlayerConfComponent *playerComp)
+{
+    LoadGameMenuCursorPos_e menuPos = static_cast<LoadGameMenuCursorPos_e>(playerComp->m_currentCursorPos);
+    if(menuPos == LoadGameMenuCursorPos_e::RETURN)
+    {
+        playerComp->m_menuMode = MenuMode_e::BASE;
+        m_mainEngine->setMenuEntries(playerComp);
+    }
+    else
+    {
+        if(m_mainEngine->loadSavedGame(playerComp->m_currentCursorPos + 1))
+        {
+            m_mainEngine->setUnsetPaused();
+        }
     }
 }
 

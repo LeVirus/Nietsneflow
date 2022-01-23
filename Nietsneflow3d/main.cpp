@@ -7,7 +7,7 @@ int main()
     game.initEngine();
     game.loadStandardData();
     bool gameLoaded = false;
-    std::pair<bool, bool> pair;
+    std::tuple<bool, bool, std::optional<uint32_t>> tuple;
     for(uint32_t i = 1; i < 3; ++i)
     {
         game.loadLevelData(i);
@@ -16,16 +16,20 @@ int main()
             game.loadSavedSettingsData();
             gameLoaded = true;
         }
-        pair = game.launchGame();
+        tuple = game.launchGame(i);
         //quit
-        if(!pair.first)
+        if(!std::get<0>(tuple))
         {
             break;
         }
         //game over
-        if(pair.second)
+        if(std::get<1>(tuple))
         {
             --i;
+        }
+        if(std::get<2>(tuple))
+        {
+            i = *std::get<2>(tuple) - 1;
         }
         game.clearLevel();
     }

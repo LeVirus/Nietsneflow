@@ -43,7 +43,7 @@ public:
     void init(Game *refGame);
     void loadLevel(const LevelManager &levelManager);
     //first quit, second gameover
-    std::pair<bool, bool> mainLoop();
+    std::tuple<bool, bool, std::optional<uint32_t> > mainLoop(uint32_t levelNum);
     void playerAttack(uint32_t playerEntity, PlayerConfComponent *playerComp,
                       const PairFloat_t &point, float degreeAngle);
     void setUnsetPaused();
@@ -90,7 +90,6 @@ public:
     {
         return m_graphicEngine.getCurrentDisplayedResolutionNum();
     }
-
     inline uint32_t getMaxResolutionNum()const
     {
         return m_graphicEngine.getMaxResolutionNum();
@@ -101,7 +100,8 @@ public:
     }
     void saveAudioSettings();
     void saveInputSettings(const std::map<ControlKey_e, GamepadInputState> &gamepadArray,
-                                  const std::map<ControlKey_e, uint32_t> &keyboardArray);
+                           const std::map<ControlKey_e, uint32_t> &keyboardArray);
+    bool loadSavedGame(uint32_t saveNum);
 private:
     void clearObjectToDelete();
     void savePlayerGear();
@@ -222,6 +222,7 @@ private:
     MemPlayerConf m_memPlayerConf;
     std::set<PairUI_t> m_memWall;
     std::map<PairUI_t, uint32_t> m_memTriggerCreated, m_memWallPos;
+    std::optional<uint32_t> m_levelToLoad;
 };
 
 void insertEnemySpriteFromType(const std::vector<SpriteData> &vectSprite, mapEnemySprite_t &mapSpriteAssociate,

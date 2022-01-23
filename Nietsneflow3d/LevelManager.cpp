@@ -1,4 +1,5 @@
 #include <LevelManager.hpp>
+#include <MainEngine.hpp>
 #include <inireader.h>
 #include <cassert>
 #include <sstream>
@@ -6,7 +7,7 @@
 #include <iterator>
 
 //===================================================================
-LevelManager::LevelManager()/*: m_outputStream(LEVEL_RESSOURCES_DIR_STR + "Saves/Settings.ini")*/
+LevelManager::LevelManager()
 {
     std::ifstream inStream(LEVEL_RESSOURCES_DIR_STR + "Saves/Settings.ini");
     m_ini.parse(inStream);
@@ -1261,6 +1262,7 @@ void LevelManager::saveAudioSettings(uint32_t musicVolume, uint32_t effectVolume
     m_ini.setValue("Audio", "musicVolume", std::to_string(musicVolume));
     m_ini.setValue("Audio", "effectsVolume", std::to_string(effectVolume));
     m_ini.generate(m_outputStream);
+    m_ini.clear();
     m_outputStream.close();
 }
 
@@ -1272,6 +1274,7 @@ void LevelManager::saveDisplaySettings(const pairI_t &resolution, bool fullscree
     m_ini.setValue("Display", "resolutionHeight", std::to_string(resolution.second));
     m_ini.setValue("Display", "fullscreen", fullscreen ? "true" : "false");
     m_ini.generate(m_outputStream);
+    m_ini.clear();
     m_outputStream.close();
 }
 
@@ -1309,5 +1312,55 @@ void LevelManager::saveInputSettings(const std::map<ControlKey_e, GamepadInputSt
         m_ini.setValue("Keyboard", m_inputIDString[currentIndex] , INPUT_KEYBOARD_KEY_STRING.at(it->second));
     }
     m_ini.generate(m_outputStream);
+    m_ini.clear();
     m_outputStream.close();
+}
+
+//===================================================================
+void LevelManager::saveGameProgress(const MemPlayerConf &playerConf, uint32_t levelNum)
+{
+    m_outputStream.open(LEVEL_RESSOURCES_DIR_STR + "Saves/save" + std::to_string(m_currentSave) + ".ini");
+    m_ini.clear();
+    m_ini.setValue("Level", "levelNum", std::to_string(levelNum));
+    m_ini.setValue("Player", "life", std::to_string(playerConf.m_life));
+    m_ini.setValue("Player", "previousWeapon", std::to_string(playerConf.m_previousWeapon));
+    m_ini.setValue("Player", "currentWeapon", std::to_string(playerConf.m_currentWeapon));
+    std::string weaponPosses, weaponAmmoCount;
+    assert(playerConf.m_ammunationsCount.size() == playerConf.m_weapons.size());
+    for(uint32_t i = 0; i < playerConf.m_ammunationsCount.size(); ++i)
+    {
+        weaponAmmoCount += std::to_string(playerConf.m_ammunationsCount[i]) + " ";
+        weaponPosses += std::to_string(playerConf.m_weapons[i]) + " ";
+    }
+    m_ini.setValue("Player", "weaponPossess", weaponPosses);
+    m_ini.setValue("Player", "weaponAmmoCount", weaponAmmoCount);
+    m_ini.generate(m_outputStream);
+    m_outputStream.close();
+}
+
+//===================================================================
+std::optional<std::pair<uint32_t, MemPlayerConf>> LevelManager::loadSavedGame(uint32_t saveNum)
+{
+    INIReader reader(LEVEL_RESSOURCES_DIR_STR + "Saves/save" + std::to_string(saveNum) + ".ini");
+    if(saveNum == 0 || reader.ParseError() < 0)
+    {
+        return {};
+    }
+    MemPlayerConf playerConf;
+    std::string str;
+    uint32_t levelNum = reader.GetInteger("Level", "levelNum", 0);
+    if(levelNum == 0)
+    {
+        return {};
+    }
+    playerConf.m_life = reader.GetInteger("Player", "life", 100);
+    playerConf.m_currentWeapon = reader.GetInteger("Player", "currentWeapon", 100);
+    playerConf.m_previousWeapon = reader.GetInteger("Player", "previousWeapon", 100);
+    playerConf.m_ammunationsCount = convertStrToVectUI(reader.Get("Player", "weaponAmmoCount", ""));
+    playerConf.m_weapons = convertStrToVectBool(reader.Get("Player", "weaponPossess", ""));
+    if(playerConf.m_ammunationsCount.size() != playerConf.m_weapons.size())
+    {
+        return {};
+    }
+    return std::pair<uint32_t, MemPlayerConf>{levelNum, playerConf};
 }

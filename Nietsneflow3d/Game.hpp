@@ -12,11 +12,16 @@ public:
     void loadStandardData();
     void loadSavedSettingsData();
     void clearLevel();
-    std::pair<bool, bool> launchGame();
+    std::tuple<bool, bool, std::optional<uint32_t> > launchGame(uint32_t levelNum);
     void saveAudioSettings(uint32_t musicVolume, uint32_t effectVolume);
     void saveDisplaySettings(const pairI_t &resolution, bool fullscreen);
     void saveInputSettings(const std::map<ControlKey_e, GamepadInputState> &gamepadArray,
                                   const std::map<ControlKey_e, uint32_t> &keyboardArray);
+    void saveGameProgress(const MemPlayerConf &playerConf, uint32_t levelNum);
+    inline std::optional<std::pair<uint32_t, MemPlayerConf>> loadSavedGame(uint32_t levelNum)
+    {
+        return m_levelManager.loadSavedGame(levelNum);
+    }
 private:
     MainEngine m_mainEngine;
     LevelManager m_levelManager;

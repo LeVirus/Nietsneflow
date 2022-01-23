@@ -51,7 +51,7 @@ void MainEngine::init(Game *refGame)
 }
 
 //===================================================================
-std::pair<bool, bool> MainEngine::mainLoop()
+std::tuple<bool, bool, std::optional<uint32_t>> MainEngine::mainLoop(uint32_t levelNum)
 {
     m_memInputCursorPos = 0;
     m_graphicEngine.getMapSystem().confLevelData();
@@ -92,25 +92,32 @@ std::pair<bool, bool> MainEngine::mainLoop()
             m_physicalEngine.reinitToggleFullScreen();
         }
         m_graphicEngine.runIteration(m_gamePaused);
-        //MUUUUUSSSSSS
+        //MUUUUUUUUUUUUSSSSS
 //        m_audioEngine.runIteration();
         if(!m_exitColl->m_active)
         {
             //end level
             m_playerConf->m_inMovement = false;
             savePlayerGear();
+            m_refGame->saveGameProgress(m_memPlayerConf, levelNum + 1);
             m_graphicEngine.setTransition(m_gamePaused);
             displayTransitionMenu();
-            return {true, false};
+            return {true, false, {}};
         }
-        if(!m_playerConf->m_life)
+        else if(!m_playerConf->m_life)
         {
             m_graphicEngine.setTransition(m_gamePaused);
             displayTransitionMenu();
-            return {true, true};
+            return {true, true, {}};
+        }
+        else if(m_levelToLoad)
+        {
+            uint32_t levelToLoad = *m_levelToLoad;
+            m_levelToLoad = {};
+            return {true, false, levelToLoad};
         }
     }while(!m_graphicEngine.windowShouldClose());
-    return {false, true};
+    return {false, true, {}};
 }
 
 //===================================================================
@@ -1230,6 +1237,19 @@ void MainEngine::saveInputSettings(const std::map<ControlKey_e, GamepadInputStat
                                    const std::map<ControlKey_e, uint32_t> &keyboardArray)
 {
     m_refGame->saveInputSettings(gamepadArray, keyboardArray);
+}
+
+//===================================================================
+bool MainEngine::loadSavedGame(uint32_t saveNum)
+{
+    std::optional<std::pair<uint32_t, MemPlayerConf>> savedData = m_refGame->loadSavedGame(saveNum);
+    if(!savedData)
+    {
+        return false;
+    }
+    m_memPlayerConf = savedData->second;
+    m_levelToLoad = savedData->first;
+    return true;
 }
 
 //===================================================================
