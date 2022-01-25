@@ -44,7 +44,7 @@ void StaticDisplaySystem::updateMenuCursorPosition(PlayerConfComponent *playerCo
                                                                Components_e::POSITION_VERTEX_COMPONENT);
     assert(posComp);
     WriteComponent *writeMenuComp = stairwayToComponentManager().
-                searchComponentByType<WriteComponent>(playerComp->m_menuEntity,
+                searchComponentByType<WriteComponent>(playerComp->m_menuEntriesEntity,
                                                                Components_e::WRITE_COMPONENT);
     assert(writeMenuComp);
     float upPos = writeMenuComp->m_upLeftPositionGL.second -
@@ -112,7 +112,7 @@ void StaticDisplaySystem::displayMenu()
         PlayerConfComponent *playerComp = stairwayToComponentManager().
                     searchComponentByType<PlayerConfComponent>(mVectNumEntity[i], Components_e::PLAYER_CONF_COMPONENT);
         assert(playerComp);
-        drawWriteVertex(playerComp->m_menuEntity, VertexID_e::MENU_WRITE);
+        drawWriteVertex(playerComp->m_menuEntriesEntity, VertexID_e::MENU_WRITE);
         drawWriteVertex(playerComp->m_titleMenuEntity, VertexID_e::MENU_WRITE);
         SpriteTextureComponent *spriteComp = stairwayToComponentManager().
                 searchComponentByType<SpriteTextureComponent>(playerComp->m_menuCursorEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
@@ -139,7 +139,7 @@ void StaticDisplaySystem::displayMenu()
         }
         else if(playerComp->m_menuMode == MenuMode_e::INPUT)
         {
-            drawWriteVertex(playerComp->m_inputMenuModeWriteEntity, VertexID_e::INPUT);
+            drawWriteVertex(playerComp->m_menuInfoWriteEntity, VertexID_e::INPUT);
             if(playerComp->m_keyboardInputMenuMode)
             {
                 for(uint32_t j = 0; j < m_inputMenuKeyboardWriteKeysEntities.size(); ++j)
@@ -155,9 +155,9 @@ void StaticDisplaySystem::displayMenu()
                 }
             }
         }
-        else if(playerComp->m_menuMode == MenuMode_e::CONFIRM_QUIT_INPUT_FORM)
+        else if(playerComp->m_menuMode == MenuMode_e::CONFIRM_QUIT_INPUT_FORM || playerComp->m_menuMode == MenuMode_e::CONFIRM_LOADING_GAME_FORM)
         {
-            drawWriteVertex(playerComp->m_inputMenuModeWriteEntity, VertexID_e::INPUT);
+            drawWriteVertex(playerComp->m_menuInfoWriteEntity, VertexID_e::INPUT);
         }
     }
 }

@@ -335,6 +335,7 @@ enum class MenuMode_e
     NEW_GAME,
     LOAD_GAME,
     CONFIRM_QUIT_INPUT_FORM,
+    CONFIRM_LOADING_GAME_FORM,
     NEW_KEY
 };
 
@@ -399,6 +400,9 @@ inline const std::map<MenuMode_e, PairPairFloatStr_t> MAP_MENU_DATA =
      PairPairFloatStr_t{{-0.7f, 0.7f}, "1\\2\\3\\RETURN"}
     },
     {MenuMode_e::CONFIRM_QUIT_INPUT_FORM,
+     PairPairFloatStr_t{{-0.1f, 0.0f}, "YES\\NO"}
+    },
+    {MenuMode_e::CONFIRM_LOADING_GAME_FORM,
      PairPairFloatStr_t{{-0.1f, 0.0f}, "YES\\NO"}
     },
     {MenuMode_e::NEW_KEY,

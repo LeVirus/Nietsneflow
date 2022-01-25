@@ -28,10 +28,11 @@ struct PlayerConfComponent : public ecs::Component
     m_pickItem = false, m_crush = false, m_frozen = false, m_teleported, m_insideWall = false, m_keyboardInputMenuMode = true;
     std::pair<bool, std::string> m_infoWriteData = {false, ""};
     std::set<uint32_t> m_card;
-    uint32_t m_weaponEntity, m_ammoWriteEntity, m_titleMenuEntity, m_menuEntity, m_menuCursorEntity,
-    m_actionEntity, m_hitMeleeEntity, m_lifeWriteEntity, m_numInfoWriteEntity, m_inputMenuModeWriteEntity,
+    uint32_t m_weaponEntity, m_ammoWriteEntity,
+    m_titleMenuEntity, m_menuEntriesEntity, m_menuCursorEntity, m_menuInfoWriteEntity,
+    m_actionEntity, m_hitMeleeEntity, m_lifeWriteEntity, m_numInfoWriteEntity,
     m_life = 100, m_displayTeleportEntity;
     uint32_t m_currentCursorPos = 0;
-    MenuMode_e m_menuMode;
+    MenuMode_e m_menuMode, m_previousMenuMode;
     virtual ~PlayerConfComponent() = default;
 };

@@ -1140,13 +1140,13 @@ void MainEngine::setMenuEntries(PlayerConfComponent *playerComp)
     }
     else if(playerComp->m_menuMode == MenuMode_e::INPUT)
     {
-        updateInputMenuInfo(playerComp);
+        updateMenuInfo(playerComp);
         playerComp->m_currentCursorPos = m_memInputCursorPos;
         m_memInputCursorPos = 0;
     }
-    else if(playerComp->m_menuMode == MenuMode_e::CONFIRM_QUIT_INPUT_FORM)
+    else if(playerComp->m_menuMode == MenuMode_e::CONFIRM_QUIT_INPUT_FORM || playerComp->m_menuMode == MenuMode_e::CONFIRM_LOADING_GAME_FORM)
     {
-        updateInputMenuInfo(playerComp);
+        updateMenuInfo(playerComp);
         playerComp->m_currentCursorPos = 0;
     }
     else if(playerComp->m_menuMode != MenuMode_e::NEW_KEY)
@@ -1156,10 +1156,10 @@ void MainEngine::setMenuEntries(PlayerConfComponent *playerComp)
 }
 
 //===================================================================
-void MainEngine::updateInputMenuInfo(PlayerConfComponent *playerComp)
+void MainEngine::updateMenuInfo(PlayerConfComponent *playerComp)
 {
     WriteComponent *writeComp = m_ecsManager.getComponentManager().
-            searchComponentByType<WriteComponent>(playerComp->m_inputMenuModeWriteEntity, Components_e::WRITE_COMPONENT);
+            searchComponentByType<WriteComponent>(playerComp->m_menuInfoWriteEntity, Components_e::WRITE_COMPONENT);
     assert(writeComp);
     if(playerComp->m_menuMode == MenuMode_e::INPUT)
     {
@@ -1171,6 +1171,16 @@ void MainEngine::updateInputMenuInfo(PlayerConfComponent *playerComp)
     {
         writeComp->m_upLeftPositionGL = {-0.6f, 0.3f};
         writeComp->m_str = "DO YOU WANT TO SAVE CHANGES?";
+    }
+    else if(playerComp->m_menuMode == MenuMode_e::CONFIRM_LOADING_GAME_FORM)
+    {
+        writeComp->m_upLeftPositionGL = {-0.6f, 0.3f};
+        writeComp->m_str = "ALL YOUR PROGRESS UNTIL LAST SAVE WILL BE LOST\\";
+        if(playerComp->m_previousMenuMode == MenuMode_e::NEW_GAME && checkSavedGameExists(playerComp->m_currentCursorPos + 1))
+        {
+            writeComp->m_str += "PREVIOUS FILE WILL BE ERASED\\";
+        }
+        writeComp->m_str += "CONTINUE ANYWAY?";
     }
     m_graphicEngine.confWriteComponent(writeComp);
 }
@@ -2012,9 +2022,9 @@ void MainEngine::confWriteEntities()
     confWriteEntitiesDisplayMenu();
     confWriteEntitiesInputMenu();
     m_playerConf->m_menuMode = MenuMode_e::BASE;
-    m_playerConf->m_menuEntity = numMenuWrite;
+    m_playerConf->m_menuEntriesEntity = numMenuWrite;
     m_playerConf->m_titleMenuEntity = numTitleMenuWrite;
-    m_playerConf->m_inputMenuModeWriteEntity = numInputModeMenuWrite;
+    m_playerConf->m_menuInfoWriteEntity = numInputModeMenuWrite;
     setMenuEntries(m_playerConf);
     m_playerConf->m_ammoWriteEntity = numAmmoWrite;
     m_playerConf->m_lifeWriteEntity = numLifeWrite;

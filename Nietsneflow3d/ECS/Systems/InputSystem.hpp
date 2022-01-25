@@ -148,6 +148,7 @@ private:
         {MenuMode_e::NEW_GAME, static_cast<uint32_t>(NewGameMenuCursorPos_e::TOTAL) - 1},
         {MenuMode_e::LOAD_GAME, static_cast<uint32_t>(LoadGameMenuCursorPos_e::TOTAL) - 1},
         {MenuMode_e::CONFIRM_QUIT_INPUT_FORM, static_cast<uint32_t>(ConfirmQuitInputCursorPos_e::TOTAL) - 1},
+        {MenuMode_e::CONFIRM_LOADING_GAME_FORM, static_cast<uint32_t>(ConfirmQuitInputCursorPos_e::TOTAL) - 1},
         {MenuMode_e::NEW_KEY, 0}
     };
     std::map<ControlKey_e, uint32_t> m_mapKeyboardCurrentAssociatedKey = MAP_KEYBOARD_DEFAULT_KEY,
