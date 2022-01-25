@@ -67,7 +67,7 @@ void Game::saveInputSettings(const std::map<ControlKey_e, GamepadInputState> &ga
 }
 
 //===================================================================
-void Game::saveGameProgress(const MemPlayerConf &playerConf, uint32_t levelNum)
+void Game::saveGameProgress(const MemPlayerConf &playerConf, uint32_t levelNum, std::optional<uint32_t> numSaveFile)
 {
-    m_levelManager.saveGameProgress(playerConf, levelNum);
+    m_levelManager.saveGameProgress(playerConf, levelNum, numSaveFile);
 }

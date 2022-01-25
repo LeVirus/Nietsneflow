@@ -93,13 +93,13 @@ std::tuple<bool, bool, std::optional<uint32_t>> MainEngine::mainLoop(uint32_t le
         }
         m_graphicEngine.runIteration(m_gamePaused);
         //MUUUUUUUUUUUUSSSSS
-//        m_audioEngine.runIteration();
+        m_audioEngine.runIteration();
         if(!m_exitColl->m_active)
         {
             //end level
             m_playerConf->m_inMovement = false;
             savePlayerGear();
-            m_refGame->saveGameProgress(m_memPlayerConf, levelNum + 1);
+            saveGameProgress(levelNum + 1);
             m_graphicEngine.setTransition(m_gamePaused);
             displayTransitionMenu();
             return {true, false, {}};
@@ -118,6 +118,12 @@ std::tuple<bool, bool, std::optional<uint32_t>> MainEngine::mainLoop(uint32_t le
         }
     }while(!m_graphicEngine.windowShouldClose());
     return {false, true, {}};
+}
+
+//===================================================================
+void MainEngine::saveGameProgress(uint32_t levelNum, std::optional<uint32_t> numSaveFile)
+{
+    m_refGame->saveGameProgress(m_memPlayerConf, levelNum, numSaveFile);
 }
 
 //===================================================================
@@ -574,8 +580,8 @@ void MainEngine::loadLevel(const LevelManager &levelManager)
     loadDoorEntities(levelManager);
     loadEnemiesEntities(levelManager);
     //MUUUUUUUUUUUUSSSSS
-//    m_audioEngine.loadMusicFromFile(levelManager.getLevel().getMusicFilename());
-//    m_audioEngine.playMusic();
+    m_audioEngine.loadMusicFromFile(levelManager.getLevel().getMusicFilename());
+    m_audioEngine.playMusic();
 }
 
 //===================================================================
@@ -1250,6 +1256,12 @@ bool MainEngine::loadSavedGame(uint32_t saveNum)
     m_memPlayerConf = savedData->second;
     m_levelToLoad = savedData->first;
     return true;
+}
+
+//===================================================================
+bool MainEngine::checkSavedGameExists(uint32_t saveNum)const
+{
+    return m_refGame->checkSavedGameExists(saveNum);
 }
 
 //===================================================================

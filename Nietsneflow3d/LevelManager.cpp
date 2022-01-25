@@ -5,6 +5,7 @@
 #include <sstream>
 #include <iostream>
 #include <iterator>
+#include <filesystem>
 
 //===================================================================
 LevelManager::LevelManager()
@@ -1317,8 +1318,12 @@ void LevelManager::saveInputSettings(const std::map<ControlKey_e, GamepadInputSt
 }
 
 //===================================================================
-void LevelManager::saveGameProgress(const MemPlayerConf &playerConf, uint32_t levelNum)
+void LevelManager::saveGameProgress(const MemPlayerConf &playerConf, uint32_t levelNum, std::optional<uint32_t> numSaveFile)
 {
+    if(numSaveFile)
+    {
+        m_currentSave = *numSaveFile;
+    }
     m_outputStream.open(LEVEL_RESSOURCES_DIR_STR + "Saves/save" + std::to_string(m_currentSave) + ".ini");
     m_ini.clear();
     m_ini.setValue("Level", "levelNum", std::to_string(levelNum));
@@ -1363,4 +1368,10 @@ std::optional<std::pair<uint32_t, MemPlayerConf>> LevelManager::loadSavedGame(ui
         return {};
     }
     return std::pair<uint32_t, MemPlayerConf>{levelNum, playerConf};
+}
+
+//===================================================================
+bool LevelManager::checkSavedGameExists(uint32_t saveNum)const
+{
+    return std::filesystem::exists(LEVEL_RESSOURCES_DIR_STR + "Saves/save" + std::to_string(saveNum) + ".ini");
 }

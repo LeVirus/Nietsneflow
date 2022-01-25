@@ -87,7 +87,7 @@ public:
     void saveDisplaySettings(const pairI_t &resolution, bool fullscreen);
     void saveInputSettings(const std::map<ControlKey_e, GamepadInputState> &gamepadArray,
                                   const std::map<ControlKey_e, uint32_t> &keyboardArray);
-    void saveGameProgress(const MemPlayerConf &playerConf, uint32_t levelNum);
+    void saveGameProgress(const MemPlayerConf &playerConf, uint32_t levelNum, std::optional<uint32_t> numSaveFile = {});
     std::optional<std::pair<uint32_t, MemPlayerConf>> loadSavedGame(uint32_t saveNum);
     inline const PictureData &getPictureData()const {return m_pictureData;}
     inline const Level &getLevel()const {return m_level;}
@@ -170,6 +170,7 @@ public:
     {
         return m_settingsData;
     }
+    bool checkSavedGameExists(uint32_t saveNum) const;
 private:
     //texture and sprite loading
     void loadTexturePath(const INIReader &reader);

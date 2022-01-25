@@ -44,6 +44,7 @@ public:
     void loadLevel(const LevelManager &levelManager);
     //first quit, second gameover
     std::tuple<bool, bool, std::optional<uint32_t> > mainLoop(uint32_t levelNum);
+    void saveGameProgress(uint32_t levelNum, std::optional<uint32_t> numSaveFile = {});
     void playerAttack(uint32_t playerEntity, PlayerConfComponent *playerComp,
                       const PairFloat_t &point, float degreeAngle);
     void setUnsetPaused();
@@ -102,6 +103,7 @@ public:
     void saveInputSettings(const std::map<ControlKey_e, GamepadInputState> &gamepadArray,
                            const std::map<ControlKey_e, uint32_t> &keyboardArray);
     bool loadSavedGame(uint32_t saveNum);
+    bool checkSavedGameExists(uint32_t saveNum)const;
 private:
     void clearObjectToDelete();
     void savePlayerGear();

@@ -907,7 +907,21 @@ void InputSystem::treatEnterPressedNewGameMenu(PlayerConfComponent *playerComp)
     }
     else
     {
+        if(m_mainEngine->checkSavedGameExists(playerComp->m_currentCursorPos + 1))
+        {
 
+        }
+        else
+        {
+            uint32_t numSaveFile = playerComp->m_currentCursorPos + 1;
+            m_mainEngine->saveGameProgress(1, numSaveFile);
+            if(!m_mainEngine->loadSavedGame(numSaveFile))
+            {
+                assert(false);
+            }
+            //OOOOK Improve TRANSITION
+            m_mainEngine->setUnsetPaused();
+        }
     }
 }
 
