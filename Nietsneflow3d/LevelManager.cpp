@@ -1318,13 +1318,9 @@ void LevelManager::saveInputSettings(const std::map<ControlKey_e, GamepadInputSt
 }
 
 //===================================================================
-void LevelManager::saveGameProgress(const MemPlayerConf &playerConf, uint32_t levelNum, std::optional<uint32_t> numSaveFile)
+void LevelManager::saveGameProgress(const MemPlayerConf &playerConf, uint32_t levelNum, uint32_t numSaveFile)
 {
-    if(numSaveFile)
-    {
-        m_currentSave = *numSaveFile;
-    }
-    m_outputStream.open(LEVEL_RESSOURCES_DIR_STR + "Saves/save" + std::to_string(m_currentSave) + ".ini");
+    m_outputStream.open(LEVEL_RESSOURCES_DIR_STR + "Saves/save" + std::to_string(numSaveFile) + ".ini");
     m_ini.clear();
     m_ini.setValue("Level", "levelNum", std::to_string(levelNum));
     m_ini.setValue("Player", "life", std::to_string(playerConf.m_life));

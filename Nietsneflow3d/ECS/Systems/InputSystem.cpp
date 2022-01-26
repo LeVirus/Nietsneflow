@@ -683,9 +683,11 @@ void InputSystem::treatEnterPressedMenu(PlayerConfComponent *playerComp)
         ConfirmQuitInputCursorPos_e menuEntry = static_cast<ConfirmQuitInputCursorPos_e>(playerComp->m_currentCursorPos);
         if(menuEntry == ConfirmQuitInputCursorPos_e::TRUE)
         {
+            //NEW GAME
             if(playerComp->m_previousMenuMode == MenuMode_e::NEW_GAME)
             {
-                uint32_t numSaveFile = playerComp->m_currentCursorPos + 1;
+                uint32_t numSaveFile = playerComp->m_currentSelectedSaveFile;
+                //init or reinit save file
                 m_mainEngine->saveGameProgress(1, numSaveFile);
                 if(m_mainEngine->loadSavedGame(numSaveFile))
                 {
@@ -696,7 +698,7 @@ void InputSystem::treatEnterPressedMenu(PlayerConfComponent *playerComp)
             //LOAD
             else
             {
-                if(m_mainEngine->loadSavedGame(playerComp->m_currentCursorPos + 1))
+                if(m_mainEngine->loadSavedGame(playerComp->m_currentSelectedSaveFile))
                 {
                     m_mainEngine->setUnsetPaused();
                 }
@@ -946,6 +948,7 @@ void InputSystem::treatEnterPressedNewGameMenu(PlayerConfComponent *playerComp)
     else
     {
         playerComp->m_previousMenuMode = playerComp->m_menuMode;
+        playerComp->m_currentSelectedSaveFile = playerComp->m_currentCursorPos + 1;
         m_mainEngine->updateMenuInfo(playerComp);
         playerComp->m_menuMode = MenuMode_e::CONFIRM_LOADING_GAME_FORM;
         m_mainEngine->setMenuEntries(playerComp);
@@ -963,6 +966,11 @@ void InputSystem::treatEnterPressedLoadGameMenu(PlayerConfComponent *playerComp)
     }
     else
     {
+        if(!m_mainEngine->checkSavedGameExists(playerComp->m_currentCursorPos + 1))
+        {
+            return;
+        }
+        playerComp->m_currentSelectedSaveFile = playerComp->m_currentCursorPos + 1;
         playerComp->m_previousMenuMode = playerComp->m_menuMode;
         m_mainEngine->updateMenuInfo(playerComp);
         playerComp->m_menuMode = MenuMode_e::CONFIRM_LOADING_GAME_FORM;

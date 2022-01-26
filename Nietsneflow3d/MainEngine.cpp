@@ -123,7 +123,8 @@ std::tuple<bool, bool, std::optional<uint32_t>> MainEngine::mainLoop(uint32_t le
 //===================================================================
 void MainEngine::saveGameProgress(uint32_t levelNum, std::optional<uint32_t> numSaveFile)
 {
-    m_refGame->saveGameProgress(m_memPlayerConf, levelNum, numSaveFile);
+    uint32_t saveNum = numSaveFile ? *numSaveFile : m_currentSave;
+    m_refGame->saveGameProgress(m_memPlayerConf, levelNum, saveNum);
 }
 
 //===================================================================
@@ -1174,7 +1175,7 @@ void MainEngine::updateMenuInfo(PlayerConfComponent *playerComp)
     }
     else if(playerComp->m_menuMode == MenuMode_e::CONFIRM_LOADING_GAME_FORM)
     {
-        writeComp->m_upLeftPositionGL = {-0.6f, 0.3f};
+        writeComp->m_upLeftPositionGL = {-0.9f, 0.3f};
         writeComp->m_str = "ALL YOUR PROGRESS UNTIL LAST SAVE WILL BE LOST\\";
         if(playerComp->m_previousMenuMode == MenuMode_e::NEW_GAME && checkSavedGameExists(playerComp->m_currentCursorPos + 1))
         {
@@ -1263,6 +1264,7 @@ bool MainEngine::loadSavedGame(uint32_t saveNum)
     {
         return false;
     }
+    m_currentSave = saveNum;
     m_memPlayerConf = savedData->second;
     m_levelToLoad = savedData->first;
     return true;

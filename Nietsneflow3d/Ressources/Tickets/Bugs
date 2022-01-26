@@ -1,6 +1,12 @@
 BUGS======================================================================
 
 ))
+After loading level action is not working until go into menu and go back to game
+
+))
+After loading level moveable wall have bad display if previous level is different (workflow)
+
+))
 First time launching level does not play music
 
 ))
