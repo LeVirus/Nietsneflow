@@ -13,12 +13,6 @@ Issue after modifying settings other section are deleted
 Issue on menu while pad is deconnected
 
 ))
-Crash if audio unactivated and second level does not have music and first yes
-
-))
-Assert after setting music sound in menu and next level
-
-))
 Eject issue on moveable wall lateral
 
 
@@ -29,6 +23,13 @@ In input gamepad menu bug in GLFW in AXIS===============================~
 ))
 Enemy eject issue!!!!!!!!!!!
 Marines go into wall=====NOT REPRODUCT
+
+
+))
+Crash if audio unactivated and second level does not have music and first yes=====================================OK
+
+))
+Assert after setting music sound in menu and next level=====================================OK
 
 ))
 First time launching level does not play music====================================OK?

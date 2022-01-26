@@ -73,8 +73,7 @@ void AudioEngine::cleanUpBuffer(ALuint buffer)
 }
 
 //===================================================================
-std::optional<ALuint> AudioEngine::loadBufferFromFile(const std::string &filename,
-                                                      bool soundEffect)
+std::optional<ALuint> AudioEngine::loadBufferFromFile(const std::string &filename, bool soundEffect)
 {
     std::string bufferFile = (soundEffect) ?
                 LEVEL_RESSOURCES_DIR_STR + "Audio/SoundEffect/" + filename :
@@ -82,7 +81,7 @@ std::optional<ALuint> AudioEngine::loadBufferFromFile(const std::string &filenam
     SF_INFO fileInfos;
     SNDFILE *currentFile;
     currentFile = sf_open(bufferFile.c_str(), SFM_READ, &fileInfos);
-    if (!currentFile)
+    if(!currentFile)
     {
         return {};
     }

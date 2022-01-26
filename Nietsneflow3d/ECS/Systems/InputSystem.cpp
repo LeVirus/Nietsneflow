@@ -639,7 +639,7 @@ void InputSystem::treatEnterPressedMenu(PlayerConfComponent *playerComp)
 {
     m_enterPressed = true;
     m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_A] = true;
-    switch (playerComp->m_menuMode)
+    switch(playerComp->m_menuMode)
     {
     case MenuMode_e::BASE:
         treatEnterPressedMainMenu(playerComp);
