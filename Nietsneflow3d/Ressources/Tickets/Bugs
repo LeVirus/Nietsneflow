@@ -1,25 +1,19 @@
 BUGS======================================================================
 
 ))
-After loading level action is not working until go into menu and go back to game
+After loading level (on gamepad only) action is not working until go into menu and go back to game
 
 ))
 After loading level moveable wall have bad display if previous level is different (workflow)
 
 ))
-First time launching level does not play music
-
-))
 Issue after modifying settings other section are deleted
 
 ))
-Issue onmenu while pad is deconnected
+Issue on menu while pad is deconnected
 
 ))
 Crash if audio unactivated and second level does not have music and first yes
-
-))
-In input gamepad menu bug in GLFW in AXIS
 
 ))
 Assert after setting music sound in menu and next level
@@ -29,10 +23,15 @@ Eject issue on moveable wall lateral
 
 
 
+))
+In input gamepad menu bug in GLFW in AXIS===============================~
 
 ))
 Enemy eject issue!!!!!!!!!!!
 Marines go into wall=====NOT REPRODUCT
+
+))
+First time launching level does not play music====================================OK?
 
 1)
 assert(elementCase); FistPersonSystem.cpp::232===========================OK?

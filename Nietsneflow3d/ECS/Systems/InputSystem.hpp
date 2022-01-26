@@ -127,6 +127,8 @@ private:
     void treatEnterPressedInputMenu(PlayerConfComponent *playerComp);
     void treatEnterPressedNewGameMenu(PlayerConfComponent *playerComp);
     void treatEnterPressedLoadGameMenu(PlayerConfComponent *playerComp);
+    void treatEnterPressedConfirmInputMenu(PlayerConfComponent *playerComp);
+    void treatEnterPressedConfirmLoadGameMenu(PlayerConfComponent *playerComp);
     void validInputMenu(PlayerConfComponent *playerComp);
     void treatPlayerMove(PlayerConfComponent *playerComp, MoveableComponent *moveComp, MapCoordComponent *mapComp);
 private:

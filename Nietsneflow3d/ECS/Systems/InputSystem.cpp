@@ -665,52 +665,60 @@ void InputSystem::treatEnterPressedMenu(PlayerConfComponent *playerComp)
         treatEnterPressedLoadGameMenu(playerComp);
         break;
     case MenuMode_e::CONFIRM_QUIT_INPUT_FORM:
-    {
-        ConfirmQuitInputCursorPos_e menuEntry = static_cast<ConfirmQuitInputCursorPos_e>(playerComp->m_currentCursorPos);
-        if(menuEntry == ConfirmQuitInputCursorPos_e::TRUE)
-        {
-            validInputMenu(playerComp);
-        }
-        else
-        {
-            playerComp->m_menuMode = MenuMode_e::BASE;
-            m_mainEngine->setMenuEntries(playerComp);
-        }
+        treatEnterPressedConfirmInputMenu(playerComp);
         break;
-    }
     case MenuMode_e::CONFIRM_LOADING_GAME_FORM:
-    {
-        ConfirmQuitInputCursorPos_e menuEntry = static_cast<ConfirmQuitInputCursorPos_e>(playerComp->m_currentCursorPos);
-        if(menuEntry == ConfirmQuitInputCursorPos_e::TRUE)
-        {
-            //NEW GAME
-            if(playerComp->m_previousMenuMode == MenuMode_e::NEW_GAME)
-            {
-                uint32_t numSaveFile = playerComp->m_currentSelectedSaveFile;
-                //init or reinit save file
-                m_mainEngine->saveGameProgress(1, numSaveFile);
-                if(m_mainEngine->loadSavedGame(numSaveFile))
-                {
-                    //OOOOK Improve TRANSITION
-                    m_mainEngine->setUnsetPaused();
-                }
-            }
-            //LOAD
-            else
-            {
-                if(m_mainEngine->loadSavedGame(playerComp->m_currentSelectedSaveFile))
-                {
-                    m_mainEngine->setUnsetPaused();
-                }
-            }
-        }
-        else
-        {
-            playerComp->m_menuMode = playerComp->m_previousMenuMode;
-            m_mainEngine->setMenuEntries(playerComp);
-        }
+        treatEnterPressedConfirmLoadGameMenu(playerComp);
         break;
     }
+}
+
+//===================================================================
+void InputSystem::treatEnterPressedConfirmInputMenu(PlayerConfComponent *playerComp)
+{
+    ConfirmQuitInputCursorPos_e menuEntry = static_cast<ConfirmQuitInputCursorPos_e>(playerComp->m_currentCursorPos);
+    if(menuEntry == ConfirmQuitInputCursorPos_e::TRUE)
+    {
+        validInputMenu(playerComp);
+    }
+    else
+    {
+        playerComp->m_menuMode = MenuMode_e::BASE;
+        m_mainEngine->setMenuEntries(playerComp);
+    }
+}
+
+//===================================================================
+void InputSystem::treatEnterPressedConfirmLoadGameMenu(PlayerConfComponent *playerComp)
+{
+    ConfirmQuitInputCursorPos_e menuEntry = static_cast<ConfirmQuitInputCursorPos_e>(playerComp->m_currentCursorPos);
+    if(menuEntry == ConfirmQuitInputCursorPos_e::TRUE)
+    {
+        //NEW GAME
+        if(playerComp->m_previousMenuMode == MenuMode_e::NEW_GAME)
+        {
+            uint32_t numSaveFile = playerComp->m_currentSelectedSaveFile;
+            //init or reinit save file
+            m_mainEngine->saveGameProgress(1, numSaveFile);
+            if(m_mainEngine->loadSavedGame(numSaveFile))
+            {
+                //OOOOK Improve TRANSITION
+                m_mainEngine->setUnsetPaused();
+            }
+        }
+        //LOAD
+        else
+        {
+            if(m_mainEngine->loadSavedGame(playerComp->m_currentSelectedSaveFile))
+            {
+                m_mainEngine->setUnsetPaused();
+            }
+        }
+    }
+    else
+    {
+        playerComp->m_menuMode = playerComp->m_previousMenuMode;
+        m_mainEngine->setMenuEntries(playerComp);
     }
 }
 
