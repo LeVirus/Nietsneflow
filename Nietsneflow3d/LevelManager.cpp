@@ -1263,7 +1263,6 @@ void LevelManager::saveAudioSettings(uint32_t musicVolume, uint32_t effectVolume
     m_ini.setValue("Audio", "musicVolume", std::to_string(musicVolume));
     m_ini.setValue("Audio", "effectsVolume", std::to_string(effectVolume));
     m_ini.generate(m_outputStream);
-    m_ini.clear();
     m_outputStream.close();
 }
 
@@ -1275,7 +1274,6 @@ void LevelManager::saveDisplaySettings(const pairI_t &resolution, bool fullscree
     m_ini.setValue("Display", "resolutionHeight", std::to_string(resolution.second));
     m_ini.setValue("Display", "fullscreen", fullscreen ? "true" : "false");
     m_ini.generate(m_outputStream);
-    m_ini.clear();
     m_outputStream.close();
 }
 
@@ -1313,7 +1311,6 @@ void LevelManager::saveInputSettings(const std::map<ControlKey_e, GamepadInputSt
         m_ini.setValue("Keyboard", m_inputIDString[currentIndex] , INPUT_KEYBOARD_KEY_STRING.at(it->second));
     }
     m_ini.generate(m_outputStream);
-    m_ini.clear();
     m_outputStream.close();
 }
 
