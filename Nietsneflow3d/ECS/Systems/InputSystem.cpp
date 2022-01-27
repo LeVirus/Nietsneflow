@@ -539,7 +539,10 @@ void InputSystem::treatGeneralKeysMenu(PlayerConfComponent *playerComp)
 void InputSystem::toogleInputMenuGamepadKeyboard(PlayerConfComponent *playerComp)
 {
     m_keyKeyboardGPressed = true;
-    m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER] = true;
+    if(!m_vectGamepadID.empty())
+    {
+        m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER] = true;
+    }
     playerComp->m_keyboardInputMenuMode = !playerComp->m_keyboardInputMenuMode;
     m_mainEngine->updateMenuInfo(playerComp);
     mptrSystemManager->searchSystemByType<StaticDisplaySystem>(static_cast<uint32_t>(Systems_e::STATIC_DISPLAY_SYSTEM))->
@@ -644,7 +647,10 @@ bool InputSystem::treatNewKey(PlayerConfComponent *playerComp)
 void InputSystem::treatEnterPressedMenu(PlayerConfComponent *playerComp)
 {
     m_enterPressed = true;
-    m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_A] = true;
+    if(!m_vectGamepadID.empty())
+    {
+        m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_A] = true;
+    }
     switch(playerComp->m_menuMode)
     {
     case MenuMode_e::BASE:
@@ -754,7 +760,10 @@ void InputSystem::treatLeftPressedMenu(PlayerConfComponent *playerComp)
     else if(playerComp->m_menuMode == MenuMode_e::DISPLAY)
     {
         m_keyLeftPressed = true;
-        m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_DPAD_LEFT] = true;
+        if(!m_vectGamepadID.empty())
+        {
+            m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_DPAD_LEFT] = true;
+        }
         DisplayMenuCursorPos_e displayCursorPos = static_cast<DisplayMenuCursorPos_e>(playerComp->m_currentCursorPos);
         if(displayCursorPos == DisplayMenuCursorPos_e::RESOLUTION_SETTING)
         {
@@ -801,7 +810,10 @@ void InputSystem::treatRightPressedMenu(PlayerConfComponent *playerComp)
     else if(playerComp->m_menuMode == MenuMode_e::DISPLAY)
     {
         m_keyRightPressed = true;
-        m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_DPAD_RIGHT] = true;
+        if(!m_vectGamepadID.empty())
+        {
+            m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_DPAD_RIGHT] = true;
+        }
         DisplayMenuCursorPos_e displayCursorPos = static_cast<DisplayMenuCursorPos_e>(playerComp->m_currentCursorPos);
         if(displayCursorPos == DisplayMenuCursorPos_e::RESOLUTION_SETTING)
         {
