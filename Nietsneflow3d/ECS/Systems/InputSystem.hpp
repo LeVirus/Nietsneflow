@@ -104,8 +104,10 @@ public:
         return m_mapGamepadTmpAssociatedKey;
     }
     void updateNewInputKey(ControlKey_e currentSelectedKey, uint32_t glKey, InputType_e inputType, bool axisSense = false);
+    static void removeGamepad(int gamepadID);
+    static void addGamepad(int gamepadID);
 private:
-    void gamepadInit();
+    void gamepadUpdate();
     bool checkStandardButtonGamepadKeyStatus(uint32_t key, uint32_t status);
     bool checkAxisGamepadKeyStatus(uint32_t key, bool positive);
     void setUsedComponents();
@@ -132,7 +134,7 @@ private:
     void validInputMenu(PlayerConfComponent *playerComp);
     void treatPlayerMove(PlayerConfComponent *playerComp, MoveableComponent *moveComp, MapCoordComponent *mapComp);
 private:
-    MapGamepadInputData_t m_vectGamepadID;
+    static MapGamepadInputData_t m_vectGamepadID;
     GLFWwindow *m_window = nullptr;
     MainEngine *m_mainEngine = nullptr;
     bool m_keyEspapePressed = false, m_keyLeftPressed = false, m_keyRightPressed = false,
@@ -176,3 +178,4 @@ private:
 void changePlayerWeapon(WeaponComponent &weaponComp, bool next);
 void changeToTopPlayerWeapon(WeaponComponent &weaponComp);
 void setPlayerWeapon(WeaponComponent &weaponComp, uint32_t weapon);
+void joystick_callback(int jid, int event);

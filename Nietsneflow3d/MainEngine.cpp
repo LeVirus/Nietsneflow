@@ -93,7 +93,7 @@ std::tuple<bool, bool, std::optional<uint32_t>> MainEngine::mainLoop(uint32_t le
         }
         m_graphicEngine.runIteration(m_gamePaused);
         //MUUUUUUUUUUUUSSSSS
-        m_audioEngine.runIteration();
+//        m_audioEngine.runIteration();
         if(!m_exitColl->m_active)
         {
             //end level
@@ -581,8 +581,8 @@ void MainEngine::loadLevel(const LevelManager &levelManager)
     loadDoorEntities(levelManager);
     loadEnemiesEntities(levelManager);
     //MUUUUUUUUUUUUSSSSS
-    m_audioEngine.loadMusicFromFile(levelManager.getLevel().getMusicFilename());
-    m_audioEngine.playMusic();
+//    m_audioEngine.loadMusicFromFile(levelManager.getLevel().getMusicFilename());
+//    m_audioEngine.playMusic();
 }
 
 //===================================================================

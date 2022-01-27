@@ -14,16 +14,18 @@
 #include <MainEngine.hpp>
 #include <cassert>
 
+MapGamepadInputData_t InputSystem::m_vectGamepadID;
 
 //===================================================================
 InputSystem::InputSystem()
 {
     setUsedComponents();
-    gamepadInit();
+    gamepadUpdate();
+    glfwSetJoystickCallback(joystick_callback);
 }
 
 //===================================================================
-void InputSystem::gamepadInit()
+void InputSystem::gamepadUpdate()
 {
     m_vectGamepadID.clear();
     for(uint32_t i = 0; i <= GLFW_JOYSTICK_LAST; ++i)
@@ -105,9 +107,13 @@ void InputSystem::treatPlayerInput()
         {
             m_F12Pressed = false;
         }
-        if(checkStandardButtonGamepadKeyStatus(GLFW_GAMEPAD_BUTTON_B, GLFW_RELEASE))
+        if(m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_B] && checkStandardButtonGamepadKeyStatus(GLFW_GAMEPAD_BUTTON_B, GLFW_RELEASE))
         {
             m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_B] = false;
+        }
+        if(m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_A] && checkStandardButtonGamepadKeyStatus(GLFW_GAMEPAD_BUTTON_A, GLFW_RELEASE))
+        {
+            m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_A] = false;
         }
         if(m_mainEngine->isGamePaused())
         {
@@ -342,7 +348,7 @@ void InputSystem::treatMenu(uint32_t playerEntity)
     {
         m_enterPressed = false;
     }
-    if(checkStandardButtonGamepadKeyStatus(GLFW_GAMEPAD_BUTTON_A, GLFW_RELEASE))
+    if(m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_A] && checkStandardButtonGamepadKeyStatus(GLFW_GAMEPAD_BUTTON_A, GLFW_RELEASE))
     {
         m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_A] = false;
     }
@@ -1106,5 +1112,37 @@ void InputSystem::updateNewInputKey(ControlKey_e currentSelectedKey, uint32_t gl
             m_mapGamepadCurrentAssociatedKey[currentSelectedKey].m_axisPos = axisSense;
         }
         m_mapGamepadCurrentAssociatedKey[currentSelectedKey].m_keyID = glKey;
+    }
+}
+
+//===================================================================
+void InputSystem::addGamepad(int gamepadID)
+{
+    if(m_vectGamepadID.find(gamepadID) == m_vectGamepadID.end())
+    {
+        m_vectGamepadID.insert({gamepadID, {nullptr, nullptr}});
+    }
+}
+
+//===================================================================
+void InputSystem::removeGamepad(int gamepadID)
+{
+    MapGamepadInputData_t::iterator it = m_vectGamepadID.find(gamepadID);
+    if(it != m_vectGamepadID.end())
+    {
+        m_vectGamepadID.erase(it);
+    }
+}
+
+//===================================================================
+void joystick_callback(int jid, int event)
+{
+    if(event == GLFW_CONNECTED)
+    {
+        InputSystem::addGamepad(jid);
+    }
+    else if(event == GLFW_DISCONNECTED)
+    {
+        InputSystem::removeGamepad(jid);
     }
 }
