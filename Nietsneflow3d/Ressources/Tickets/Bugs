@@ -1,12 +1,6 @@
 BUGS======================================================================
 
 ))
-Input menu does not display input
-
-))
-After loading level moveable wall have bad display if previous level is different (workflow)
-
-))
 Eject issue on moveable wall lateral
 
 
@@ -18,6 +12,15 @@ In input gamepad menu bug in GLFW in AXIS===============================~
 Enemy eject issue!!!!!!!!!!!
 Marines go into wall=====NOT REPRODUCT
 
+
+))
+Input menu does not display input====================================OK??
+
+))
+First time launching level does not play music====================================OK?
+
+))
+After loading level moveable wall have bad display if previous level is different (workflow)=============================OK
 
 ))
 Issue after modifying settings other section are deleted==============================OK
@@ -33,9 +36,6 @@ Crash if audio unactivated and second level does not have music and first yes===
 
 ))
 Assert after setting music sound in menu and next level=====================================OK
-
-))
-First time launching level does not play music====================================OK?
 
 1)
 assert(elementCase); FistPersonSystem.cpp::232===========================OK?

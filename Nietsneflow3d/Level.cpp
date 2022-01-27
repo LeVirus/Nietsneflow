@@ -143,7 +143,7 @@ bool Level::removeStaticMoveWallElementCase(const PairUI_t &tilePosition, uint32
     ElementRaycast &element = m_levelCaseType[getLevelCaseIndex(tilePosition)];
     if(!element.m_memStaticMoveableWall)
     {
-        return !element.m_memStaticMoveableWall->empty();
+        return false;
     }
     std::set<uint32_t>::iterator it = element.m_memStaticMoveableWall->find(numEntity);
     if(it == element.m_memStaticMoveableWall->end())
