@@ -10,7 +10,7 @@
 //===================================================================
 LevelManager::LevelManager()
 {
-    std::ifstream inStream(LEVEL_RESSOURCES_DIR_STR + "Saves/Settings.ini");
+    std::ifstream inStream(LEVEL_RESSOURCES_DIR_STR + "Saves/CustomSettings.ini");
     m_ini.parse(inStream);
     inStream.close();
 }
@@ -1212,7 +1212,7 @@ void LevelManager::clearExistingPositionsElement()
 //===================================================================
 bool LevelManager::loadSettingsData()
 {
-    INIReader reader(LEVEL_RESSOURCES_DIR_STR + "Saves/Settings.ini");
+    INIReader reader(LEVEL_RESSOURCES_DIR_STR + "Saves/CustomSettings.ini");
     if(reader.ParseError() < 0)
     {
         return false;
@@ -1259,7 +1259,7 @@ bool LevelManager::loadSettingsData()
 //===================================================================
 void LevelManager::saveAudioSettings(uint32_t musicVolume, uint32_t effectVolume)
 {
-    m_outputStream.open(LEVEL_RESSOURCES_DIR_STR + "Saves/Settings.ini");
+    m_outputStream.open(LEVEL_RESSOURCES_DIR_STR + "Saves/CustomSettings.ini");
     m_ini.setValue("Audio", "musicVolume", std::to_string(musicVolume));
     m_ini.setValue("Audio", "effectsVolume", std::to_string(effectVolume));
     m_ini.generate(m_outputStream);
@@ -1269,7 +1269,7 @@ void LevelManager::saveAudioSettings(uint32_t musicVolume, uint32_t effectVolume
 //===================================================================
 void LevelManager::saveDisplaySettings(const pairI_t &resolution, bool fullscreen)
 {
-    m_outputStream.open(LEVEL_RESSOURCES_DIR_STR + "Saves/Settings.ini");
+    m_outputStream.open(LEVEL_RESSOURCES_DIR_STR + "Saves/CustomSettings.ini");
     m_ini.setValue("Display", "resolutionWidth", std::to_string(resolution.first));
     m_ini.setValue("Display", "resolutionHeight", std::to_string(resolution.second));
     m_ini.setValue("Display", "fullscreen", fullscreen ? "true" : "false");
@@ -1281,7 +1281,7 @@ void LevelManager::saveDisplaySettings(const pairI_t &resolution, bool fullscree
 void LevelManager::saveInputSettings(const std::map<ControlKey_e, GamepadInputState> &gamepadArray,
                                      const std::map<ControlKey_e, uint32_t> &keyboardArray)
 {
-    m_outputStream.open(LEVEL_RESSOURCES_DIR_STR + "Saves/Settings.ini");
+    m_outputStream.open(LEVEL_RESSOURCES_DIR_STR + "Saves/CustomSettings.ini");
     uint32_t currentIndex;
     std::string valStr;
     for(std::map<ControlKey_e, GamepadInputState>::const_iterator it = gamepadArray.begin(); it != gamepadArray.end(); ++it)
