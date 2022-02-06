@@ -410,6 +410,9 @@ private:
 //    };
 };
 
+std::string encryptQ(const std::string &str);
+std::string decryptQ(const std::string &str);
+
 VectPairUI_t getPositionData(const INIReader &reader, const std::string & sectionName, const std::string &propertyName);
 std::vector<uint32_t> convertStrToVectUI(const std::string &str);
 std::optional<std::vector<uint32_t> > getBrutPositionData(const INIReader &reader, const std::string & sectionName, const std::string &propertyName);

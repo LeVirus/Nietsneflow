@@ -1317,6 +1317,8 @@ void LevelManager::saveInputSettings(const std::map<ControlKey_e, GamepadInputSt
 //===================================================================
 void LevelManager::saveGameProgress(const MemPlayerConf &playerConf, uint32_t levelNum, uint32_t numSaveFile)
 {
+    std::stringstream m_stringStream;
+    std::string str;
     m_outputStream.open(LEVEL_RESSOURCES_DIR_STR + "Saves/save" + std::to_string(numSaveFile) + ".ini");
     m_ini.clear();
     m_ini.setValue("Level", "levelNum", std::to_string(levelNum));
@@ -1332,7 +1334,9 @@ void LevelManager::saveGameProgress(const MemPlayerConf &playerConf, uint32_t le
     }
     m_ini.setValue("Player", "weaponPossess", weaponPosses);
     m_ini.setValue("Player", "weaponAmmoCount", weaponAmmoCount);
-    m_ini.generate(m_outputStream);
+    m_ini.generate(/*m_outputStream*/m_stringStream);
+    str = encryptQ(m_stringStream.str());
+    m_outputStream << str;
     m_outputStream.close();
 }
 
@@ -1367,4 +1371,26 @@ std::optional<std::pair<uint32_t, MemPlayerConf>> LevelManager::loadSavedGame(ui
 bool LevelManager::checkSavedGameExists(uint32_t saveNum)const
 {
     return std::filesystem::exists(LEVEL_RESSOURCES_DIR_STR + "Saves/save" + std::to_string(saveNum) + ".ini");
+}
+
+//===================================================================
+std::string encryptQ(const std::string &str)
+{
+    std::string strR = str;
+    for(uint32_t i = 0; i < strR.size(); ++i)
+    {
+        strR[i] += ENCRYPT_KEY;
+    }
+    return strR;
+}
+
+//===================================================================
+std::string decryptQ(const std::string &str)
+{
+    std::string strR = str;
+    for(uint32_t i = 0; i < strR.size(); ++i)
+    {
+        strR[i] -= ENCRYPT_KEY;
+    }
+    return strR;
 }
