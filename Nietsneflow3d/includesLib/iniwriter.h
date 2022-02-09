@@ -250,7 +250,23 @@ public:
     {
         m_sections.clear();
         m_errors.clear();
-	}
+    }
+
+    std::optional<std::string> getValue(std::string_view section, std::string_view name)const
+    {
+        typename MapStrMapStrStr::const_iterator it = m_sections.find(std::string(section));
+        if(it == m_sections.end())
+        {
+            return {};
+        }
+        typename MapStrStr::const_iterator itt = it->second.find(std::string(name));
+        if(itt == it->second.end())
+        {
+            return {};
+        }
+        return itt->second;
+    }
+
     void setValue(std::string_view section, std::string_view name, std::string_view value)
     {
         typename MapStrMapStrStr::iterator it = m_sections.find(std::string(section));
