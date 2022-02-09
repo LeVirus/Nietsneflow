@@ -227,6 +227,7 @@ private:
 private:
     inipp::Ini<char> m_ini;
     std::ofstream m_outputStream;
+    std::ifstream m_inputStream;
     PictureData m_pictureData;
     FontData m_fontData;
     Level m_level;
