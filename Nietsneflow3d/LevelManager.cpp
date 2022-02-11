@@ -64,9 +64,10 @@ void LevelManager::loadSpriteData(const INIReader &reader, const std::string &se
 }
 
 //===================================================================
-void LevelManager::loadBackgroundData(const INIReader &reader)
+void LevelManager::loadBackgroundData()
 {
-    std::vector<std::string> sections = reader.getSectionNamesContaining("GroundBackground");
+    std::optional<std::string> val;
+    std::vector<std::string> sections = m_ini.getSectionNamesContaining("GroundBackground");
     GroundCeilingData groundData, ceilingData;
     uint32_t colorIndex = static_cast<uint32_t>(DisplayType_e::COLOR),
             simpleTextureIndex = static_cast<uint32_t>(DisplayType_e::SIMPLE_TEXTURE),
@@ -78,9 +79,15 @@ void LevelManager::loadBackgroundData(const INIReader &reader)
         if(sections[i] == "ColorGroundBackground")
         {
             std::vector<float> colorR, colorG, colorB;
-            colorR = convertStrToVectFloat(reader.Get(sections[i], "colorR", ""));
-            colorG = convertStrToVectFloat(reader.Get(sections[i], "colorG", ""));
-            colorB = convertStrToVectFloat(reader.Get(sections[i], "colorB", ""));
+            val = m_ini.getValue(sections[i], "colorR");
+            assert(val);
+            colorR = convertStrToVectFloat(*val);
+            val = m_ini.getValue(sections[i], "colorR");
+            assert(val);
+            colorG = convertStrToVectFloat(*val);
+            val = m_ini.getValue(sections[i], "colorR");
+            assert(val);
+            colorB = convertStrToVectFloat(*val);
             for(uint32_t j = 0; j < 4 ; ++j)
             {
                 groundData.m_color[j] = tupleFloat_t{colorR[j], colorG[j], colorB[j]};
@@ -89,28 +96,38 @@ void LevelManager::loadBackgroundData(const INIReader &reader)
         }
         else if(sections[i] == "SimpleTextureGroundBackground")
         {
-            std::optional<uint8_t> picNum = m_pictureData.getIdentifier(reader.Get(sections[i], "sprite", ""));
+            val = m_ini.getValue(sections[i], "sprite");
+            assert(val);
+            std::optional<uint8_t> picNum = m_pictureData.getIdentifier(*val);
             assert(picNum);
             groundData.m_spriteSimpleTextNum = *picNum;
             groundData.m_apparence[simpleTextureIndex] = true;
         }
         else if(sections[i] == "TiledTextureGroundBackground")
         {
-            std::optional<uint8_t> picNum = m_pictureData.getIdentifier(reader.Get(sections[i], "sprite", ""));
+            val = m_ini.getValue(sections[i], "sprite");
+            assert(val);
+            std::optional<uint8_t> picNum = m_pictureData.getIdentifier(*val);
             assert(picNum);
             groundData.m_spriteTiledTextNum = *picNum;
             groundData.m_apparence[tiledTextureIndex] = true;
         }
     }
-    sections = reader.getSectionNamesContaining("CeilingBackground");
+    sections = m_ini.getSectionNamesContaining("CeilingBackground");
     for(uint32_t i = 0; i < sections.size() ; ++i)
     {
         if(sections[i] == "ColorCeilingBackground")
         {
             std::vector<float> colorR, colorG, colorB;
-            colorR = convertStrToVectFloat(reader.Get(sections[i], "colorR", ""));
-            colorG = convertStrToVectFloat(reader.Get(sections[i], "colorG", ""));
-            colorB = convertStrToVectFloat(reader.Get(sections[i], "colorB", ""));
+            val = m_ini.getValue(sections[i], "colorR");
+            assert(val);
+            colorR = convertStrToVectFloat(*val);
+            val = m_ini.getValue(sections[i], "colorG");
+            assert(val);
+            colorG = convertStrToVectFloat(*val);
+            val = m_ini.getValue(sections[i], "colorB");
+            assert(val);
+            colorB = convertStrToVectFloat(*val);
             for(uint32_t j = 0; j < 4 ; ++j)
             {
                 ceilingData.m_color[j] = tupleFloat_t{colorR[j], colorG[j], colorB[j]};
@@ -119,14 +136,18 @@ void LevelManager::loadBackgroundData(const INIReader &reader)
         }
         else if(sections[i] == "SimpleTextureCeilingBackground")
         {
-            std::optional<uint8_t> picNum = m_pictureData.getIdentifier(reader.Get(sections[i], "sprite", ""));
+            val = m_ini.getValue(sections[i], "sprite");
+            assert(val);
+            std::optional<uint8_t> picNum = m_pictureData.getIdentifier(*val);
             assert(picNum);
             ceilingData.m_spriteSimpleTextNum = *picNum;
             ceilingData.m_apparence[simpleTextureIndex] = true;
         }
         else if(sections[i] == "TiledTextureCeilingBackground")
         {
-            std::optional<uint8_t> picNum = m_pictureData.getIdentifier(reader.Get(sections[i], "sprite", ""));
+            val = m_ini.getValue(sections[i], "sprite");
+            assert(val);
+            std::optional<uint8_t> picNum = m_pictureData.getIdentifier(*val);
             assert(picNum);
             ceilingData.m_spriteTiledTextNum = *picNum;
             ceilingData.m_apparence[tiledTextureIndex] = true;
@@ -136,25 +157,34 @@ void LevelManager::loadBackgroundData(const INIReader &reader)
 }
 
 //===================================================================
-void LevelManager::loadMusicData(const INIReader &reader)
+void LevelManager::loadMusicData()
 {
-    m_level.setMusicFile(reader.Get("Level", "music", ""));
+    std::optional<std::string> val = m_ini.getValue("Level", "music");
+    assert(val);
+    m_level.setMusicFile(*val);
 }
 
 //===================================================================
-void LevelManager::loadLevelData(const INIReader &reader)
+void LevelManager::loadLevelData()
 {
-     m_level.setLevelSize({reader.GetInteger("Level", "weight", 10),
-                           reader.GetInteger("Level", "height", 10)});
+    std::optional<std::string> valWeight = m_ini.getValue("Level", "weight");
+    std::optional<std::string> valHeight = m_ini.getValue("Level", "height");
+    assert(valWeight);
+    assert(valHeight);
+    m_level.setLevelSize({std::stoi(*valWeight), std::stoi(*valHeight)});
 }
 
 //===================================================================
-void LevelManager::loadPositionPlayerData(const INIReader &reader)
+void LevelManager::loadPositionPlayerData()
 {
-    m_level.setPlayerInitData({reader.GetInteger("PlayerInit", "playerDepartureX", 0),
-                               reader.GetInteger("PlayerInit", "playerDepartureY", 0)},
-                              static_cast<Direction_e>(reader.GetInteger("PlayerInit",
-                                                                         "PlayerOrientation", 0)));
+    std::optional<std::string> playerDepartureX = m_ini.getValue("PlayerInit", "playerDepartureX");
+    std::optional<std::string> playerDepartureY = m_ini.getValue("PlayerInit", "playerDepartureY");
+    std::optional<std::string> PlayerOrientation = m_ini.getValue("PlayerInit", "PlayerOrientation");
+    assert(playerDepartureX);
+    assert(playerDepartureY);
+    assert(PlayerOrientation);
+    m_level.setPlayerInitData({std::stoi(*playerDepartureX), std::stoi(*playerDepartureY)},
+                              static_cast<Direction_e>(std::stoi(*PlayerOrientation)));
 }
 
 //===================================================================
@@ -247,6 +277,36 @@ std::vector<PairFloat_t> LevelManager::getVectSpriteGLSize(const INIReader &read
 }
 
 //===================================================================
+std::optional<std::vector<uint32_t>> LevelManager::getBrutPositionData(const std::string &sectionName,
+                                                                       const std::string &propertyName)
+{
+    std::optional<std::string> pos = m_ini.getValue(sectionName, propertyName);
+    if(!pos || (*pos).empty())
+    {
+        return {};
+    }
+    return convertStrToVectUI(*pos);
+}
+
+//===================================================================
+VectPairUI_t LevelManager::getPositionData(const std::string &sectionName, const std::string &propertyName)
+{
+    VectPairUI_t vectRet;
+    std::optional<std::vector<uint32_t>> resultsPos = getBrutPositionData(sectionName.data(), propertyName.data());
+    if(!resultsPos)
+    {
+        return {};
+    }
+    assert((*resultsPos).size() % 2 == 0);
+    vectRet.reserve((*resultsPos).size() / 2);
+    for(uint32_t i = 0; i < (*resultsPos).size(); ++i)
+    {
+        vectRet.emplace_back(PairUI_t{(*resultsPos)[i], (*resultsPos)[i + 1]});
+    }
+    return vectRet;
+}
+
+//===================================================================
 void LevelManager::loadExit(const INIReader &reader)
 {
     std::vector<std::string> vectINISections;
@@ -302,14 +362,15 @@ void LevelManager::loadTriggerElements(const INIReader &reader)
 }
 
 //===================================================================
-void LevelManager::loadPositionExit(const INIReader &reader)
+void LevelManager::loadPositionExit()
 {
     std::vector<std::string> vectINISections;
-    vectINISections = reader.getSectionNamesContaining("Exit");
+    vectINISections = m_ini.getSectionNamesContaining("Exit");
     assert(!vectINISections.empty());
-    std::string gamePositions = reader.Get(vectINISections[0], "GamePosition", "");
-    assert(!gamePositions.empty() && "Error while getting positions.");
-    std::vector<uint32_t> results = convertStrToVectUI(gamePositions);
+    std::optional<std::string> gamePositions = m_ini.getValue(vectINISections[0], "GamePosition");
+    assert(gamePositions);
+    assert(!(*gamePositions).empty() && "Error while getting positions.");
+    std::vector<uint32_t> results = convertStrToVectUI(*gamePositions);
     for(uint32_t i = 0; i < results.size(); i += 2)
     {
         m_exitStaticElement.m_TileGamePosition.push_back({results[i], results[i + 1]});
@@ -361,22 +422,11 @@ void LevelManager::readStandardStaticElement(const INIReader &reader, StaticLeve
     }
 }
 
-//===================================================================
-std::optional<std::vector<uint32_t>> getBrutPositionData(const INIReader &reader, const std::string &sectionName,
-                                                         const std::string &propertyName)
-{
-    std::string gamePositions = reader.Get(sectionName, propertyName, "");
-    if(gamePositions.empty())
-    {
-        return {};
-    }
-    return convertStrToVectUI(gamePositions);
-}
 
 //===================================================================
-void LevelManager::fillStandartPositionVect(const INIReader &reader, const std::string &sectionName, VectPairUI_t &vectPos)
+void LevelManager::fillStandartPositionVect(const std::string &sectionName, VectPairUI_t &vectPos)
 {
-    std::optional<std::vector<uint32_t>> results = getBrutPositionData(reader, sectionName, "GamePosition");
+    std::optional<std::vector<uint32_t>> results = getBrutPositionData(sectionName, "GamePosition");
     if(!results)
     {
         return;
@@ -393,10 +443,10 @@ void LevelManager::fillStandartPositionVect(const INIReader &reader, const std::
 }
 
 //===================================================================
-void LevelManager::fillTeleportPositions(const INIReader &reader, const std::string &sectionName)
+void LevelManager::fillTeleportPositions(const std::string &sectionName)
 {
-    std::optional<std::vector<uint32_t>> resultsPosA = getBrutPositionData(reader, sectionName, "PosA"),
-            resultsPosB = getBrutPositionData(reader, sectionName, "PosB");
+    std::optional<std::vector<uint32_t>> resultsPosA = getBrutPositionData(sectionName, "PosA"),
+            resultsPosB = getBrutPositionData(sectionName, "PosB");
     if(!resultsPosA)
     {
         return;
@@ -407,8 +457,9 @@ void LevelManager::fillTeleportPositions(const INIReader &reader, const std::str
     assert((*resultsPosB).size() == (*resultsPosA).size());
     uint32_t vectSize = (*resultsPosA).size() / 2;
     m_teleportElement[sectionName].m_teleportData = TeleportData();
-    m_teleportElement[sectionName].m_teleportData->m_biDirection =
-            convertStrToVectBool(reader.Get(sectionName, "BiDirection", ""));
+    std::optional<std::string> val = m_ini.getValue(sectionName, "BiDirection");
+    assert(val);
+    m_teleportElement[sectionName].m_teleportData->m_biDirection = convertStrToVectBool(*val);
     assert(m_teleportElement[sectionName].m_teleportData->m_biDirection.size() == vectSize);
     VectPairUI_t &vect = m_teleportElement[sectionName].m_teleportData->m_targetTeleport;
     vect.reserve(vectSize);
@@ -430,10 +481,10 @@ void LevelManager::fillTeleportPositions(const INIReader &reader, const std::str
 }
 
 //===================================================================
-std::optional<PairUI_t> LevelManager::getPosition(const INIReader &reader,
-                                                  const std::string_view sectionName, const std::string_view propertyName)
+std::optional<PairUI_t> LevelManager::getPosition(const std::string_view sectionName,
+                                                  const std::string_view propertyName)
 {
-    std::optional<std::vector<uint32_t>> results = getBrutPositionData(reader, sectionName.data(), propertyName.data());
+    std::optional<std::vector<uint32_t>> results = getBrutPositionData(sectionName.data(), propertyName.data());
     if(!results || results->size() != 2)
     {
         return {};
@@ -457,12 +508,11 @@ void LevelManager::deleteWall(const PairUI_t &coord)
 }
 
 //===================================================================
-bool LevelManager::fillWallPositionVect(const INIReader &reader,
-                                        const std::string &sectionName,
+bool LevelManager::fillWallPositionVect(const std::string &sectionName,
                                         const std::string &propertyName,
                                         std::set<PairUI_t> &vectPos)
 {
-    std::optional<std::vector<uint32_t>> results = getBrutPositionData(reader, sectionName, propertyName);
+    std::optional<std::vector<uint32_t>> results = getBrutPositionData(sectionName, propertyName);
     if(!results || (*results).empty())
     {
         return false;
@@ -790,32 +840,31 @@ void LevelManager::loadWallData(const INIReader &reader)
 }
 
 //===================================================================
-void LevelManager::loadPositionWall(const INIReader &reader)
+void LevelManager::loadPositionWall()
 {
-    std::vector<std::string> vectINISections = reader.getSectionNamesContaining("WallShape");
+    std::vector<std::string> vectINISections = m_ini.getSectionNamesContaining("WallShape");
     std::map<std::string, WallData>::iterator it;
-    std::string direction, moveNumber;
+    std::optional<std::string> direction, moveNumber, val;
     for(uint32_t i = 0; i < vectINISections.size(); ++i)
     {
-        direction = reader.Get(vectINISections[i], "Direction", "");
-        it = m_wallData.find(reader.Get(vectINISections[i], "WallDisplayID", ""));
+        it = m_wallData.find(*m_ini.getValue(vectINISections[i], "WallDisplayID"));
         assert(it != m_wallData.end());
         //Moveable wall
         m_mainWallData.insert({vectINISections[i], MoveableWallData()});
         m_mainWallData[vectINISections[i]].m_sprites = it->second.m_sprites;
-        fillWallPositionVect(reader, vectINISections[i], "GamePosition",
+        fillWallPositionVect(vectINISections[i], "GamePosition",
                              m_mainWallData[vectINISections[i]].m_TileGamePosition);
-        fillWallPositionVect(reader, vectINISections[i], "RemovePosition",
+        fillWallPositionVect(vectINISections[i], "RemovePosition",
                              m_mainWallData[vectINISections[i]].m_removeGamePosition);
-        if(direction.empty())
+        direction = m_ini.getValue(vectINISections[i], "Direction");
+        if(!direction)
         {
             continue;
         }
-        moveNumber = reader.Get(vectINISections[i], "NumberOfMove", "");
-        assert(!direction.empty());
-        assert(!moveNumber.empty());
-        std::vector<uint32_t> vectDir = convertStrToVectUI(direction);
-        std::vector<uint32_t> vectMov = convertStrToVectUI(moveNumber);
+        moveNumber = m_ini.getValue(vectINISections[i], "NumberOfMove");
+        assert(moveNumber);
+        std::vector<uint32_t> vectDir = convertStrToVectUI(*direction);
+        std::vector<uint32_t> vectMov = convertStrToVectUI(*moveNumber);
         assert(vectDir.size() == vectMov.size());
         m_mainWallData[vectINISections[i]].m_directionMove.reserve(vectDir.size());
         for(uint32_t j = 0; j < vectDir.size(); ++j)
@@ -823,36 +872,46 @@ void LevelManager::loadPositionWall(const INIReader &reader)
             m_mainWallData[vectINISections[i]].m_directionMove.emplace_back(
                         std::pair<Direction_e, uint32_t>{static_cast<Direction_e>(vectDir[j]), vectMov[j]});
         }
-        m_mainWallData[vectINISections[i]].m_velocity = reader.GetReal(vectINISections[i], "Velocity", 1.0f);
-        m_mainWallData[vectINISections[i]].m_triggerType =
-                static_cast<TriggerWallMoveType_e>(reader.GetInteger(vectINISections[i], "TriggerType", 0));
+        val = m_ini.getValue(vectINISections[i], "Velocity");
+        assert(val);
+        m_mainWallData[vectINISections[i]].m_velocity = std::stof(*val);
+
+        val = m_ini.getValue(vectINISections[i], "TriggerType");
+        if(val)
+        {
+            m_mainWallData[vectINISections[i]].m_triggerType =
+                    static_cast<TriggerWallMoveType_e>(std::stoi(*val));
+        }
+        val = m_ini.getValue(vectINISections[i], "TriggerBehaviourType");
+        assert(val);
         m_mainWallData[vectINISections[i]].m_triggerBehaviourType =
-                static_cast<TriggerBehaviourType_e>(reader.GetInteger(vectINISections[i], "TriggerBehaviourType", 0));
+                static_cast<TriggerBehaviourType_e>(std::stoi(*val));
         if(m_mainWallData[vectINISections[i]].m_triggerType == TriggerWallMoveType_e::BUTTON)
         {
-            loadTriggerLevelData(reader, vectINISections[i]);
+            loadTriggerLevelData(vectINISections[i]);
         }
         else if(m_mainWallData[vectINISections[i]].m_triggerType == TriggerWallMoveType_e::GROUND)
         {
             m_mainWallData[vectINISections[i]].m_groundTriggerPos = PairUI_t();
             m_mainWallData[vectINISections[i]].m_groundTriggerPos =
-                    *getPosition(reader,  vectINISections[i], "TriggerGamePosition");
+                    *getPosition(vectINISections[i], "TriggerGamePosition");
         }
     }
 }
 
 //===================================================================
-void LevelManager::loadTriggerLevelData(const INIReader &reader, const std::string &sectionName)
+void LevelManager::loadTriggerLevelData(const std::string &sectionName)
 {
-    std::string str;
+    std::optional<std::string> str;
     std::map<std::string, MemSpriteData>::iterator it;
     m_mainWallData[sectionName].m_associatedTriggerData = AssociatedTriggerData();
-    str = reader.Get(sectionName, "TriggerDisplayID", "");
-    it = m_triggerDisplayData.find(str);
+    str = m_ini.getValue(sectionName, "TriggerDisplayID");
+    assert(str);
+    it = m_triggerDisplayData.find(*str);
     assert(it != m_triggerDisplayData.end());
     m_mainWallData[sectionName].m_associatedTriggerData->m_displayData = it->second;
     m_mainWallData[sectionName].m_associatedTriggerData->m_pos =
-            *getPosition(reader,  sectionName, "TriggerGamePosition");
+            *getPosition(sectionName, "TriggerGamePosition");
 }
 
 //===================================================================
@@ -880,16 +939,16 @@ void LevelManager::loadDoorData(const INIReader &reader)
 }
 
 //===================================================================
-void LevelManager::loadPositionDoorData(const INIReader &reader)
+void LevelManager::loadPositionDoorData()
 {
     std::vector<std::string> vectINISections;
-    vectINISections = reader.getSectionNamesContaining("Door");
+    vectINISections = m_ini.getSectionNamesContaining("Door");
     std::map<std::string, DoorData>::iterator it;
     for(uint32_t i = 0; i < vectINISections.size(); ++i)
     {
         it = m_doorData.find(vectINISections[i]);
         assert(it != m_doorData.end());
-        fillStandartPositionVect(reader, vectINISections[i], it->second.m_TileGamePosition);
+        fillStandartPositionVect(vectINISections[i], it->second.m_TileGamePosition);
     }
 }
 
@@ -932,16 +991,16 @@ void LevelManager::loadEnemyData(const INIReader &reader)
 }
 
 //===================================================================
-void LevelManager::loadPositionEnemyData(const INIReader &reader)
+void LevelManager::loadPositionEnemyData()
 {
     std::vector<std::string> vectINISections;
-    vectINISections = reader.getSectionNamesContaining("Enemy");
+    vectINISections = m_ini.getSectionNamesContaining("Enemy");
     std::map<std::string, EnemyData>::iterator it;
     for(uint32_t i = 0; i < vectINISections.size(); ++i)
     {
         it = m_enemyData.find(vectINISections[i]);
         assert(it != m_enemyData.end());
-        fillStandartPositionVect(reader, vectINISections[i], it->second.m_TileGamePosition);
+        fillStandartPositionVect(vectINISections[i], it->second.m_TileGamePosition);
     }
 }
 
@@ -1105,73 +1164,63 @@ void LevelManager::loadFontData(const std::string &INIFileName)
 
 
 //===================================================================
-void LevelManager::loadPositionStaticElements(const INIReader &reader)
+void LevelManager::loadPositionStaticElements()
 {
     std::map<std::string, StaticLevelElementData>::iterator it = m_groundElement.begin();
     for(; it != m_groundElement.end(); ++it)
     {
-        fillStandartPositionVect(reader, it->first, it->second.m_TileGamePosition);
+        fillStandartPositionVect(it->first, it->second.m_TileGamePosition);
     }
     for(it = m_ceilingElement.begin(); it != m_ceilingElement.end(); ++it)
     {
-        fillStandartPositionVect(reader, it->first, it->second.m_TileGamePosition);
+        fillStandartPositionVect(it->first, it->second.m_TileGamePosition);
     }
     for(it = m_objectElement.begin(); it != m_objectElement.end(); ++it)
     {
-        fillStandartPositionVect(reader, it->first, it->second.m_TileGamePosition);
+        fillStandartPositionVect(it->first, it->second.m_TileGamePosition);
     }
     //OOOOK only one teleport element
     for(it = m_teleportElement.begin(); it != m_teleportElement.end(); ++it)
     {
-        fillTeleportPositions(reader, it->first);
+        fillTeleportPositions(it->first);
     }
 }
 
 //===================================================================
-void LevelManager::loadBarrelElements(const INIReader &reader)
+void LevelManager::loadBarrelElements()
 {
     //OOOOK refact pos
-    m_barrelElement.m_TileGamePosition = getPositionData(reader, "Barrel", "GamePosition");
+    m_barrelElement.m_TileGamePosition = getPositionData("Barrel", "GamePosition");
 }
 
 //===================================================================
-VectPairUI_t getPositionData(const INIReader &reader, const std::string &sectionName, const std::string &propertyName)
-{
-    VectPairUI_t vectRet;
-    std::optional<std::vector<uint32_t>> resultsPos = getBrutPositionData(reader, sectionName.data(), propertyName.data());
-    if(!resultsPos)
-    {
-        return {};
-    }
-    assert((*resultsPos).size() % 2 == 0);
-    vectRet.reserve((*resultsPos).size() / 2);
-    for(uint32_t i = 0; i < (*resultsPos).size(); ++i)
-    {
-        vectRet.emplace_back(PairUI_t{(*resultsPos)[i], (*resultsPos)[i + 1]});
-    }
-    return vectRet;
-}
+
 
 //===================================================================
 void LevelManager::loadLevel(const std::string &INIFileName, uint32_t levelNum)
 {
-    INIReader reader(LEVEL_RESSOURCES_DIR_STR + std::string("Level") +
-                     std::to_string(levelNum) + std::string ("/") + INIFileName);
-    if(reader.ParseError() != 0)
+    std::string path = LEVEL_RESSOURCES_DIR_STR + std::string("Level") +
+            std::to_string(levelNum) + std::string ("/") + INIFileName;
+    if(!std::filesystem::exists(path))
+    {
+        return;
+    }
+    //OOOOOOOOOK set different encryption for standard and custom level
+    if(!loadIniFile(path, {}/*ENCRYPT_KEY_LEVEL*/))
     {
         assert("Error while reading INI file.");
     }
     m_mainWallData.clear();
-    loadLevelData(reader);
-    loadPositionPlayerData(reader);
-    loadPositionWall(reader);
-    loadPositionStaticElements(reader);
-    loadBarrelElements(reader);
-    loadPositionExit(reader);
-    loadPositionDoorData(reader);
-    loadPositionEnemyData(reader);
-    loadBackgroundData(reader);
-    loadMusicData(reader);
+    loadLevelData();
+    loadPositionPlayerData();
+    loadPositionWall();
+    loadPositionStaticElements();
+    loadBarrelElements();
+    loadPositionExit();
+    loadPositionDoorData();
+    loadPositionEnemyData();
+    loadBackgroundData();
+    loadMusicData();
 }
 
 //===================================================================
@@ -1335,9 +1384,28 @@ void LevelManager::saveGameProgress(const MemPlayerConf &playerConf, uint32_t le
     m_ini.setValue("Player", "weaponPossess", weaponPosses);
     m_ini.setValue("Player", "weaponAmmoCount", weaponAmmoCount);
     m_ini.generate(stringStream);
-    str = encryptQ(stringStream.str());
+    str = encrypt(stringStream.str());
     m_outputStream << str;
     m_outputStream.close();
+}
+
+//===================================================================
+bool LevelManager::loadIniFile(std::string_view path, std::optional<uint32_t> encryptKey)
+{
+    m_inputStream.open(path.data());
+    if(m_inputStream.fail())
+    {
+        m_inputStream.close();
+        return false;
+    }
+    std::ostringstream ostringStream;
+    ostringStream << m_inputStream.rdbuf();
+    m_inputStream.close();
+    m_ini.clear();
+    std::string dataString = encryptKey ? decrypt(ostringStream.str(), *encryptKey) : ostringStream.str();
+    std::istringstream istringStream(dataString);
+    m_ini.parse(istringStream);
+    return true;
 }
 
 //===================================================================
@@ -1348,18 +1416,19 @@ std::optional<std::pair<uint32_t, MemPlayerConf>> LevelManager::loadSavedGame(ui
     {
         return {};
     }
-    m_inputStream.open(path);
-    if(m_inputStream.fail())
-    {
-        m_inputStream.close();
-        return {};
-    }
-    std::ostringstream ostringStream;
-    ostringStream << m_inputStream.rdbuf();
-    m_inputStream.close();
-    std::istringstream istringStream(decryptQ(ostringStream.str()));
-    m_ini.clear();
-    m_ini.parse(istringStream);
+    loadIniFile(path, ENCRYPT_KEY);
+//    m_inputStream.open(path);
+//    if(m_inputStream.fail())
+//    {
+//        m_inputStream.close();
+//        return {};
+//    }
+//    std::ostringstream ostringStream;
+//    ostringStream << m_inputStream.rdbuf();
+//    m_inputStream.close();
+//    std::istringstream istringStream(decrypt(ostringStream.str()));
+//    m_ini.clear();
+//    m_ini.parse(istringStream);
 
     MemPlayerConf playerConf;
     std::optional<std::string> val;
@@ -1414,23 +1483,23 @@ bool LevelManager::checkSavedGameExists(uint32_t saveNum)const
 }
 
 //===================================================================
-std::string encryptQ(const std::string &str)
+std::string encrypt(const std::string &str, uint32_t key)
 {
     std::string strR = str;
     for(uint32_t i = 0; i < strR.size(); ++i)
     {
-        strR[i] += ENCRYPT_KEY;
+        strR[i] += key;
     }
     return strR;
 }
 
 //===================================================================
-std::string decryptQ(const std::string &str)
+std::string decrypt(const std::string &str, uint32_t key)
 {
     std::string strR = str;
     for(uint32_t i = 0; i < strR.size(); ++i)
     {
-        strR[i] -= ENCRYPT_KEY;
+        strR[i] -= key;
     }
     return strR;
 }

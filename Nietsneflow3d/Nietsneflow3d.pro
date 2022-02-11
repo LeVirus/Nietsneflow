@@ -105,5 +105,6 @@ HEADERS += \
     ECS/Systems/StaticDisplaySystem.hpp \
     ECS/Components/MemPositionsVertexComponents.hpp \
     ECS/Components/ObjectConfComponent.hpp \
-    ECS/Components/ImpactShotComponent.hpp
+    ECS/Components/ImpactShotComponent.hpp \
+    includesLib/iniwriter.h
 

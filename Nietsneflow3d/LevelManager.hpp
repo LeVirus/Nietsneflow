@@ -89,6 +89,8 @@ public:
                                   const std::map<ControlKey_e, uint32_t> &keyboardArray);
     void saveGameProgress(const MemPlayerConf &playerConf, uint32_t levelNum, uint32_t numSaveFile);
     std::optional<std::pair<uint32_t, MemPlayerConf>> loadSavedGame(uint32_t saveNum);
+    //if encryptKey is nullopt no encryption
+    bool loadIniFile(std::string_view path, std::optional<uint32_t> encryptKey);
     inline const PictureData &getPictureData()const {return m_pictureData;}
     inline const Level &getLevel()const {return m_level;}
     inline const FontData &getFontData()const {return m_fontData;}
@@ -176,23 +178,23 @@ private:
     void loadTexturePath(const INIReader &reader);
     void loadSpriteData(const INIReader &reader, const std::string &sectionName = "Sprite",
                         bool font = false);
-    void loadBackgroundData(const INIReader &reader);
-    void loadMusicData(const INIReader &reader);
+    void loadBackgroundData();
+    void loadMusicData();
     //Level element datas loading
-    void loadLevelData(const INIReader &reader);
-    void loadPositionPlayerData(const INIReader &reader);
+    void loadLevelData();
+    void loadPositionPlayerData();
     void loadGeneralStaticElements(const INIReader &reader,
                                    LevelStaticElementType_e elementType);
-    void loadPositionStaticElements(const INIReader &reader);
-    void loadBarrelElements(const INIReader &reader);
+    void loadPositionStaticElements();
+    void loadBarrelElements();
     void readStandardStaticElement(const INIReader &reader, StaticLevelElementData &staticElement,
                                    const std::string &sectionName,
                                    LevelStaticElementType_e elementType);
-    void fillStandartPositionVect(const INIReader &reader, const std::string &sectionName,
+    void fillStandartPositionVect(const std::string &sectionName,
                                   VectPairUI_t &vectPos);
-    void fillTeleportPositions(const INIReader &reader, const std::string &sectionName);
-    std::optional<PairUI_t> getPosition(const INIReader &reader, const std::string_view sectionName, const std::string_view propertyName);
-    bool fillWallPositionVect(const INIReader &reader, const std::string &sectionName, const std::string &propertyName,
+    void fillTeleportPositions(const std::string &sectionName);
+    std::optional<PairUI_t> getPosition(const std::string_view sectionName, const std::string_view propertyName);
+    bool fillWallPositionVect(const std::string &sectionName, const std::string &propertyName,
                               std::set<PairUI_t> &setPos);
     uint8_t getSpriteId(const INIReader &reader, const std::string &sectionName);
     void loadVisibleShotDisplayData(const INIReader &reader);
@@ -210,20 +212,23 @@ private:
     void loadWeaponData(const INIReader &reader,
                         std::string_view sectionName, uint32_t numIt);
     void loadWallData(const INIReader &reader);
-    void loadPositionWall(const INIReader &reader);
-    void loadTriggerLevelData(const INIReader &reader, const std::string &sectionName);
+    void loadPositionWall();
+    void loadTriggerLevelData(const std::string &sectionName);
     void loadDoorData(const INIReader &reader);
-    void loadPositionDoorData(const INIReader &reader);
+    void loadPositionDoorData();
     void loadEnemyData(const INIReader &reader);
-    void loadPositionEnemyData(const INIReader &reader);
+    void loadPositionEnemyData();
     void loadUtilsData(const INIReader &reader);
     void loadEnemySprites(const INIReader &reader, const std::string &sectionName,
                           EnemySpriteElementType_e spriteTypeEnum, EnemyData &enemyData);
     void deleteWall(const PairUI_t &coord);
-    void loadPositionExit(const INIReader &reader);
+    void loadPositionExit();
     std::vector<uint8_t> getVectSpriteNum(const INIReader &reader, const std::string_view section, const std::string_view param);
     std::vector<PairFloat_t> getVectSpriteGLSize(const INIReader &reader, const std::string_view section, const std::string_view weightParam,
                                                   const std::string_view heightParam);
+    std::optional<std::vector<uint32_t>> getBrutPositionData(const std::string & sectionName,
+                                                              const std::string &propertyName);
+    VectPairUI_t getPositionData(const std::string & sectionName, const std::string &propertyName);
 private:
     inipp::Ini<char> m_ini;
     std::ofstream m_outputStream;
@@ -411,12 +416,9 @@ private:
 //    };
 };
 
-std::string encryptQ(const std::string &str);
-std::string decryptQ(const std::string &str);
-
-VectPairUI_t getPositionData(const INIReader &reader, const std::string & sectionName, const std::string &propertyName);
+std::string encrypt(const std::string &str, uint32_t key = ENCRYPT_KEY);
+std::string decrypt(const std::string &str, uint32_t key = ENCRYPT_KEY);
 std::vector<uint32_t> convertStrToVectUI(const std::string &str);
-std::optional<std::vector<uint32_t> > getBrutPositionData(const INIReader &reader, const std::string & sectionName, const std::string &propertyName);
 std::vector<float> convertStrToVectFloat(const std::string &str);
 std::vector<bool> convertStrToVectBool(const std::string &str);
 std::vector<std::string> convertStrToVectStr(const std::string &str);
