@@ -252,41 +252,55 @@ public:
         m_errors.clear();
     }
 
+    std::vector<std::string> getSectionNamesContaining(const std::string &str)const
+    {
+	    std::vector<std::string> final;
+        typename MapStrMapStrStr::const_iterator it = m_sections.begin();
+        for(; it != m_sections.end(); ++it)
+        {
+            if(it->first.find(str) != std::string::npos)
+            {
+                final.emplace_back(it->first);
+            }
+        }
+	    return final;
+    }
+
     std::optional<std::string> getValue(std::string_view section, std::string_view name)const
     {
-        typename MapStrMapStrStr::const_iterator it = m_sections.find(std::string(section));
-        if(it == m_sections.end())
-        {
-            return {};
-        }
-        typename MapStrStr::const_iterator itt = it->second.find(std::string(name));
-        if(itt == it->second.end())
-        {
-            return {};
-        }
-        return itt->second;
+	    typename MapStrMapStrStr::const_iterator it = m_sections.find(std::string(section));
+	    if(it == m_sections.end())
+	    {
+		    return {};
+	    }
+	    typename MapStrStr::const_iterator itt = it->second.find(std::string(name));
+	    if(itt == it->second.end())
+	    {
+		    return {};
+	    }
+	    return itt->second;
     }
 
     void setValue(std::string_view section, std::string_view name, std::string_view value)
     {
-        typename MapStrMapStrStr::iterator it = m_sections.find(std::string(section));
-        if(it == m_sections.end())
-        {
-            m_sections.insert({std::basic_string<CharT>(section), MapStrStr()});
-            m_sections[std::basic_string<CharT>(section)].insert({std::basic_string<CharT>(name), std::basic_string<CharT>(value)});
-        }
-        else
-        {
-            typename MapStrStr::iterator itt = it->second.find(std::string(name));
-            if(itt == it->second.end())
-            {
-                it->second.insert({std::basic_string<CharT>(name), std::basic_string<CharT>(value)});
-            }
-            else
-            {
-                itt->second = value;
-            }
-        }
+	    typename MapStrMapStrStr::iterator it = m_sections.find(std::string(section));
+	    if(it == m_sections.end())
+	    {
+		    m_sections.insert({std::basic_string<CharT>(section), MapStrStr()});
+		    m_sections[std::basic_string<CharT>(section)].insert({std::basic_string<CharT>(name), std::basic_string<CharT>(value)});
+	    }
+	    else
+	    {
+		    typename MapStrStr::iterator itt = it->second.find(std::string(name));
+		    if(itt == it->second.end())
+		    {
+			    it->second.insert({std::basic_string<CharT>(name), std::basic_string<CharT>(value)});
+		    }
+		    else
+		    {
+			    itt->second = value;
+		    }
+	    }
     }
 private:
     MapStrMapStrStr m_sections;
@@ -295,28 +309,28 @@ private:
     using Symbols = std::list<std::pair<std::basic_string<CharT>, std::basic_string<CharT>>>;
 
     const Symbols local_symbols(const std::basic_string<CharT> &sec_name, const MapStrStr &sec) const {
-		Symbols result;
-		for (const auto & val : sec)
-            result.push_back(std::make_pair(m_format->local_symbol(val.first), m_format->global_symbol(sec_name, val.first)));
-		return result;
-	}
+	    Symbols result;
+	    for (const auto & val : sec)
+		    result.push_back(std::make_pair(m_format->local_symbol(val.first), m_format->global_symbol(sec_name, val.first)));
+	    return result;
+    }
 
-	const Symbols global_symbols() const {
-		Symbols result;
-        for (const auto & sec : m_sections)
-			for (const auto & val : sec.second)
-				result.push_back(
-                    std::make_pair(m_format->global_symbol(sec.first, val.first), val.second));
-		return result;
-	}
+    const Symbols global_symbols() const {
+	    Symbols result;
+	    for (const auto & sec : m_sections)
+		    for (const auto & val : sec.second)
+			    result.push_back(
+					    std::make_pair(m_format->global_symbol(sec.first, val.first), val.second));
+	    return result;
+    }
 
     bool replace_symbols(const Symbols & syms, MapStrStr & sec) const {
-		auto changed = false;
-		for (auto & sym : syms)
-			for (auto & val : sec)
-				changed |= detail::replace(val.second, sym.first, sym.second);
-		return changed;
-	}
+	    auto changed = false;
+	    for (auto & sym : syms)
+		    for (auto & val : sec)
+			    changed |= detail::replace(val.second, sym.first, sym.second);
+	    return changed;
+    }
 };
 
 } // namespace inipp
