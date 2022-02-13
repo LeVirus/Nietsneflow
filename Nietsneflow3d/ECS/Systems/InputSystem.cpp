@@ -227,23 +227,26 @@ bool InputSystem::checkPlayerKeyTriggered(ControlKey_e key)
         return true;
     }
     //GAMEPAD
-    if(m_mapGamepadCurrentAssociatedKey[key].m_standardButton)
+    if(!m_vectGamepadID.empty())
     {
-        if(m_gamepadButtonsKeyPressed[m_mapGamepadCurrentAssociatedKey[key].m_keyID])
+        if(m_mapGamepadCurrentAssociatedKey[key].m_standardButton)
         {
-            return false;
+            if(m_gamepadButtonsKeyPressed[m_mapGamepadCurrentAssociatedKey[key].m_keyID])
+            {
+                return false;
+            }
+            if(checkStandardButtonGamepadKeyStatus(m_mapGamepadCurrentAssociatedKey[key].m_keyID, GLFW_PRESS))
+            {
+                return true;
+            }
         }
-        if(checkStandardButtonGamepadKeyStatus(m_mapGamepadCurrentAssociatedKey[key].m_keyID, GLFW_PRESS))
+        else
         {
-            return true;
-        }
-    }
-    else
-    {
-        assert(m_mapGamepadCurrentAssociatedKey[key].m_axisPos);
-        if(checkAxisGamepadKeyStatus(m_mapGamepadCurrentAssociatedKey[key].m_keyID, *m_mapGamepadCurrentAssociatedKey[key].m_axisPos))
-        {
-            return true;
+            assert(m_mapGamepadCurrentAssociatedKey[key].m_axisPos);
+            if(checkAxisGamepadKeyStatus(m_mapGamepadCurrentAssociatedKey[key].m_keyID, *m_mapGamepadCurrentAssociatedKey[key].m_axisPos))
+            {
+                return true;
+            }
         }
     }
     return false;

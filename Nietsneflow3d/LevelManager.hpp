@@ -175,19 +175,18 @@ public:
     bool checkSavedGameExists(uint32_t saveNum) const;
 private:
     //texture and sprite loading
-    void loadTexturePath(const INIReader &reader);
-    void loadSpriteData(const INIReader &reader, const std::string &sectionName = "Sprite",
+    void loadTexturePath();
+    void loadSpriteData(const std::string &sectionName = "Sprite",
                         bool font = false);
     void loadBackgroundData();
     void loadMusicData();
     //Level element datas loading
     void loadLevelData();
     void loadPositionPlayerData();
-    void loadGeneralStaticElements(const INIReader &reader,
-                                   LevelStaticElementType_e elementType);
+    void loadGeneralStaticElements(LevelStaticElementType_e elementType);
     void loadPositionStaticElements();
     void loadBarrelElements();
-    void readStandardStaticElement(const INIReader &reader, StaticLevelElementData &staticElement,
+    void readStandardStaticElement(StaticLevelElementData &staticElement,
                                    const std::string &sectionName,
                                    LevelStaticElementType_e elementType);
     void fillStandartPositionVect(const std::string &sectionName,
@@ -196,35 +195,33 @@ private:
     std::optional<PairUI_t> getPosition(const std::string_view sectionName, const std::string_view propertyName);
     bool fillWallPositionVect(const std::string &sectionName, const std::string &propertyName,
                               std::set<PairUI_t> &setPos);
-    uint8_t getSpriteId(const INIReader &reader, const std::string &sectionName);
-    void loadVisibleShotDisplayData(const INIReader &reader);
-    void loadShotImpactDisplayData(const INIReader &reader);
-    void loadWeaponsData(const INIReader &reader);
-    void loadGeneralSoundData(const INIReader &reader);
-    void loadBarrelsData(const INIReader &reader);
-    void loadExit(const INIReader &reader);
-    void loadVisualTeleportData(const INIReader &reader);
-    void loadTriggerElements(const INIReader &reader);
-    void loadSpriteData(const INIReader &reader, const std::string &sectionName,
+    uint8_t getSpriteId(const std::string &sectionName);
+    void loadVisibleShotDisplayData();
+    void loadShotImpactDisplayData();
+    void loadWeaponsData();
+    void loadGeneralSoundData();
+    void loadBarrelsData();
+    void loadExit();
+    void loadVisualTeleportData();
+    void loadTriggerElements();
+    void loadSpriteData(const std::string &sectionName,
                         StaticLevelElementData &staticElement);
-    void loadDisplayData(const INIReader &reader,
-                         std::string_view sectionName, std::string_view subSectionName);
-    void loadWeaponData(const INIReader &reader,
-                        std::string_view sectionName, uint32_t numIt);
-    void loadWallData(const INIReader &reader);
+    void loadDisplayData(std::string_view sectionName, std::string_view subSectionName);
+    void loadWeaponData(std::string_view sectionName, uint32_t numIt);
+    void loadWallData();
     void loadPositionWall();
     void loadTriggerLevelData(const std::string &sectionName);
-    void loadDoorData(const INIReader &reader);
+    void loadDoorData();
     void loadPositionDoorData();
-    void loadEnemyData(const INIReader &reader);
+    void loadEnemyData();
     void loadPositionEnemyData();
-    void loadUtilsData(const INIReader &reader);
-    void loadEnemySprites(const INIReader &reader, const std::string &sectionName,
+    void loadUtilsData();
+    void loadEnemySprites(const std::string &sectionName,
                           EnemySpriteElementType_e spriteTypeEnum, EnemyData &enemyData);
     void deleteWall(const PairUI_t &coord);
     void loadPositionExit();
-    std::vector<uint8_t> getVectSpriteNum(const INIReader &reader, const std::string_view section, const std::string_view param);
-    std::vector<PairFloat_t> getVectSpriteGLSize(const INIReader &reader, const std::string_view section, const std::string_view weightParam,
+    std::vector<uint8_t> getVectSpriteNum(const std::string_view section, const std::string_view param);
+    std::vector<PairFloat_t> getVectSpriteGLSize(const std::string_view section, const std::string_view weightParam,
                                                   const std::string_view heightParam);
     std::optional<std::vector<uint32_t>> getBrutPositionData(const std::string & sectionName,
                                                               const std::string &propertyName);
@@ -416,6 +413,7 @@ private:
 //    };
 };
 
+std::optional<bool> toBool(const std::string &str);
 std::string encrypt(const std::string &str, uint32_t key = ENCRYPT_KEY);
 std::string decrypt(const std::string &str, uint32_t key = ENCRYPT_KEY);
 std::vector<uint32_t> convertStrToVectUI(const std::string &str);
