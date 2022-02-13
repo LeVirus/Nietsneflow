@@ -160,8 +160,10 @@ void LevelManager::loadBackgroundData()
 void LevelManager::loadMusicData()
 {
     std::optional<std::string> val = m_ini.getValue("Level", "music");
-    assert(val);
-    m_level.setMusicFile(*val);
+    if(val)
+    {
+        m_level.setMusicFile(*val);
+    }
 }
 
 //===================================================================
