@@ -1,6 +1,5 @@
 #include <LevelManager.hpp>
 #include <MainEngine.hpp>
-#include <inireader.h>
 #include <cassert>
 #include <sstream>
 #include <iostream>

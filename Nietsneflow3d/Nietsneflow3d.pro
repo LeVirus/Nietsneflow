@@ -66,7 +66,6 @@ HEADERS += \
     ECS/includesLib/entity.hpp \
     ECS/includesLib/system.hpp \
     ECS/includesLib/systemmanager.hpp \
-    includesLib/inireader.h \
     includesLib/BaseECS/component.hpp \
     includesLib/BaseECS/componentmanager.hpp \
     includesLib/BaseECS/engine.hpp \
