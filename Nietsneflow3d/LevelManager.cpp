@@ -862,6 +862,10 @@ void LevelManager::loadWeaponData(std::string_view sectionName, uint32_t numIt)
     {
         m_vectWeaponsINIData[numIt].m_simultaneousShots = std::stoi(*val);
     }
+    else
+    {
+        m_vectWeaponsINIData[numIt].m_simultaneousShots = 1;
+    }
     val = m_ini.getValue(sectionName.data(), "AnimationType");
     assert(val);
     m_vectWeaponsINIData[numIt].m_animMode = static_cast<AnimationMode_e>(std::stoi(*val));
