@@ -14,7 +14,7 @@
 #include <MainEngine.hpp>
 #include <cassert>
 
-MapGamepadInputData_t InputSystem::m_vectGamepadID;
+MapGamepadInputData_t InputSystem::m_mapGamepadID;
 
 //===================================================================
 InputSystem::InputSystem()
@@ -27,12 +27,12 @@ InputSystem::InputSystem()
 //===================================================================
 void InputSystem::gamepadUpdate()
 {
-    m_vectGamepadID.clear();
+    m_mapGamepadID.clear();
     for(uint32_t i = 0; i <= GLFW_JOYSTICK_LAST; ++i)
     {
         if(glfwJoystickPresent(i) == GLFW_TRUE)
         {
-            m_vectGamepadID.insert({i, {nullptr, nullptr}});
+            m_mapGamepadID.insert({i, {nullptr, nullptr}});
         }
     }
     m_gamepadButtonsKeyPressed.fill(false);
@@ -42,7 +42,7 @@ void InputSystem::gamepadUpdate()
 bool InputSystem::checkStandardButtonGamepadKeyStatus(uint32_t key, uint32_t status)
 {
     //pair const uint8_t* :: buttons, const float* :: axis
-    for(MapGamepadInputData_t::const_iterator it = m_vectGamepadID.begin(); it != m_vectGamepadID.end(); ++it)
+    for(MapGamepadInputData_t::const_iterator it = m_mapGamepadID.begin(); it != m_mapGamepadID.end(); ++it)
     {
         if(!it->second.first)
         {
@@ -60,7 +60,7 @@ bool InputSystem::checkStandardButtonGamepadKeyStatus(uint32_t key, uint32_t sta
 bool InputSystem::checkAxisGamepadKeyStatus(uint32_t key, bool positive)
 {
     bool ok;
-    for(MapGamepadInputData_t::const_iterator it = m_vectGamepadID.begin(); it != m_vectGamepadID.end(); ++it)
+    for(MapGamepadInputData_t::const_iterator it = m_mapGamepadID.begin(); it != m_mapGamepadID.end(); ++it)
     {
         if(!it->second.second)
         {
@@ -85,7 +85,7 @@ void InputSystem::setUsedComponents()
 void InputSystem::getGamepadInputs()
 {
     int count;
-    for(MapGamepadInputData_t::iterator it = m_vectGamepadID.begin(); it != m_vectGamepadID.end(); ++it)
+    for(MapGamepadInputData_t::iterator it = m_mapGamepadID.begin(); it != m_mapGamepadID.end(); ++it)
     {
        it->second.first = glfwGetJoystickButtons(it->first, &count);
        it->second.second = glfwGetJoystickAxes(it->first, &count);
@@ -227,7 +227,7 @@ bool InputSystem::checkPlayerKeyTriggered(ControlKey_e key)
         return true;
     }
     //GAMEPAD
-    if(!m_vectGamepadID.empty())
+    if(!m_mapGamepadID.empty())
     {
         if(m_mapGamepadCurrentAssociatedKey[key].m_standardButton)
         {
@@ -542,7 +542,7 @@ void InputSystem::treatGeneralKeysMenu(PlayerConfComponent *playerComp)
 void InputSystem::toogleInputMenuGamepadKeyboard(PlayerConfComponent *playerComp)
 {
     m_keyKeyboardGPressed = true;
-    if(!m_vectGamepadID.empty())
+    if(!m_mapGamepadID.empty())
     {
         m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER] = true;
     }
@@ -650,7 +650,7 @@ bool InputSystem::treatNewKey(PlayerConfComponent *playerComp)
 void InputSystem::treatEnterPressedMenu(PlayerConfComponent *playerComp)
 {
     m_enterPressed = true;
-    if(!m_vectGamepadID.empty())
+    if(!m_mapGamepadID.empty())
     {
         m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_A] = true;
     }
@@ -763,7 +763,7 @@ void InputSystem::treatLeftPressedMenu(PlayerConfComponent *playerComp)
     else if(playerComp->m_menuMode == MenuMode_e::DISPLAY)
     {
         m_keyLeftPressed = true;
-        if(!m_vectGamepadID.empty())
+        if(!m_mapGamepadID.empty())
         {
             m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_DPAD_LEFT] = true;
         }
@@ -813,7 +813,7 @@ void InputSystem::treatRightPressedMenu(PlayerConfComponent *playerComp)
     else if(playerComp->m_menuMode == MenuMode_e::DISPLAY)
     {
         m_keyRightPressed = true;
-        if(!m_vectGamepadID.empty())
+        if(!m_mapGamepadID.empty())
         {
             m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_DPAD_RIGHT] = true;
         }
@@ -1133,19 +1133,19 @@ void InputSystem::updateNewInputKey(ControlKey_e currentSelectedKey, uint32_t gl
 //===================================================================
 void InputSystem::addGamepad(int gamepadID)
 {
-    if(m_vectGamepadID.find(gamepadID) == m_vectGamepadID.end())
+    if(m_mapGamepadID.find(gamepadID) == m_mapGamepadID.end())
     {
-        m_vectGamepadID.insert({gamepadID, {nullptr, nullptr}});
+        m_mapGamepadID.insert({gamepadID, {nullptr, nullptr}});
     }
 }
 
 //===================================================================
 void InputSystem::removeGamepad(int gamepadID)
 {
-    MapGamepadInputData_t::iterator it = m_vectGamepadID.find(gamepadID);
-    if(it != m_vectGamepadID.end())
+    MapGamepadInputData_t::iterator it = m_mapGamepadID.find(gamepadID);
+    if(it != m_mapGamepadID.end())
     {
-        m_vectGamepadID.erase(it);
+        m_mapGamepadID.erase(it);
     }
 }
 

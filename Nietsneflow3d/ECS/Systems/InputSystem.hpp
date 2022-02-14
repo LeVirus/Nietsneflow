@@ -134,7 +134,7 @@ private:
     void validInputMenu(PlayerConfComponent *playerComp);
     void treatPlayerMove(PlayerConfComponent *playerComp, MoveableComponent *moveComp, MapCoordComponent *mapComp);
 private:
-    static MapGamepadInputData_t m_vectGamepadID;
+    static MapGamepadInputData_t m_mapGamepadID;
     GLFWwindow *m_window = nullptr;
     MainEngine *m_mainEngine = nullptr;
     bool m_keyEspapePressed = false, m_keyLeftPressed = false, m_keyRightPressed = false,

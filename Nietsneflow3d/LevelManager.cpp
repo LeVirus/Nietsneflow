@@ -1512,6 +1512,10 @@ bool LevelManager::loadSettingsData()
                 m_settingsData.m_arrayKeyboard[i] = MAP_KEYBOARD_DEFAULT_KEY.at(currentKey);
             }
         }
+        else
+        {
+            m_settingsData.m_arrayKeyboard[i] = MAP_KEYBOARD_DEFAULT_KEY.at(currentKey);
+        }
         //GAMEPAD
         val = m_ini.getValue("Gamepad", m_inputIDString[i]);
         if(val)
@@ -1526,6 +1530,10 @@ bool LevelManager::loadSettingsData()
             {
                 m_settingsData.m_arrayGamepad[i] = MAP_GAMEPAD_DEFAULT_KEY.at(currentKey);
             }
+        }
+        else
+        {
+            m_settingsData.m_arrayGamepad[i] = MAP_GAMEPAD_DEFAULT_KEY.at(currentKey);
         }
     }
     return true;
