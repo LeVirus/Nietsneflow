@@ -414,8 +414,8 @@ private:
 };
 
 std::optional<bool> toBool(const std::string &str);
-std::string encrypt(const std::string &str, uint32_t key = ENCRYPT_KEY);
-std::string decrypt(const std::string &str, uint32_t key = ENCRYPT_KEY);
+std::string encrypt(const std::string &str, uint32_t key);
+std::string decrypt(const std::string &str, uint32_t key);
 std::vector<uint32_t> convertStrToVectUI(const std::string &str);
 std::vector<float> convertStrToVectFloat(const std::string &str);
 std::vector<bool> convertStrToVectBool(const std::string &str);

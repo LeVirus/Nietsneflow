@@ -339,7 +339,7 @@ enum class MenuMode_e
     NEW_KEY
 };
 inline const uint32_t ENCRYPT_KEY = 17;
-inline const uint32_t ENCRYPT_KEY_LEVEL = 42;
+inline const uint32_t ENCRYPT_KEY_CONF_FILE = 42;
 inline const float MAX_SOUND_DISTANCE = 1000.0f;
 inline const float EJECT_TIME = 0.5F;
 inline const float RAYCAST_VERTICAL_SIZE = 1.0f;

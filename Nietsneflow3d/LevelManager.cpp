@@ -1315,7 +1315,7 @@ std::vector<std::string> convertStrToVectStr(const std::string &str)
 //===================================================================
 void LevelManager::loadTextureData(const std::string &INIFileName)
 {
-    if(!loadIniFile(LEVEL_RESSOURCES_DIR_STR + INIFileName, {}/*ENCRYPT_KEY_LEVEL*/))
+    if(!loadIniFile(LEVEL_RESSOURCES_DIR_STR + INIFileName, /*{}*/ENCRYPT_KEY_CONF_FILE))
     {
         assert("Error while reading INI file.");
     }
@@ -1327,7 +1327,7 @@ void LevelManager::loadTextureData(const std::string &INIFileName)
 //===================================================================
 void LevelManager::loadStandardData(const std::string &INIFileName)
 {
-    if(!loadIniFile(LEVEL_RESSOURCES_DIR_STR + INIFileName, {}/*ENCRYPT_KEY_LEVEL*/))
+    if(!loadIniFile(LEVEL_RESSOURCES_DIR_STR + INIFileName, /*{}*/ENCRYPT_KEY_CONF_FILE))
     {
         assert("Error while reading INI file.");
     }
@@ -1354,7 +1354,7 @@ void LevelManager::loadStandardData(const std::string &INIFileName)
 //===================================================================
 void LevelManager::loadFontData(const std::string &INIFileName)
 {
-    if(!loadIniFile(LEVEL_RESSOURCES_DIR_STR + INIFileName, {}/*ENCRYPT_KEY_LEVEL*/))
+    if(!loadIniFile(LEVEL_RESSOURCES_DIR_STR + INIFileName, /*{}*/ENCRYPT_KEY_CONF_FILE))
     {
         assert("Error while reading INI file.");
     }
@@ -1621,7 +1621,7 @@ void LevelManager::saveGameProgress(const MemPlayerConf &playerConf, uint32_t le
     m_ini.setValue("Player", "weaponPossess", weaponPosses);
     m_ini.setValue("Player", "weaponAmmoCount", weaponAmmoCount);
     m_ini.generate(stringStream);
-    str = encrypt(stringStream.str());
+    str = encrypt(stringStream.str(), ENCRYPT_KEY);
     m_outputStream << str;
     m_outputStream.close();
 }
