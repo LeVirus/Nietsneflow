@@ -1393,13 +1393,13 @@ void LevelManager::loadBarrelElements()
 }
 
 //===================================================================
-void LevelManager::loadLevel(const std::string &INIFileName, uint32_t levelNum)
+bool LevelManager::loadLevel(const std::string &INIFileName, uint32_t levelNum)
 {
     std::string path = LEVEL_RESSOURCES_DIR_STR + std::string("Level") +
             std::to_string(levelNum) + std::string ("/") + INIFileName;
     if(!std::filesystem::exists(path))
     {
-        return;
+        return false;
     }
     //OOOOOOOOOK set different encryption for standard and custom level
     if(!loadIniFile(path, {}/*ENCRYPT_KEY_LEVEL*/))
@@ -1417,6 +1417,7 @@ void LevelManager::loadLevel(const std::string &INIFileName, uint32_t levelNum)
     loadPositionEnemyData();
     loadBackgroundData();
     loadMusicData();
+    return true;
 }
 
 //===================================================================
@@ -1621,7 +1622,7 @@ void LevelManager::saveGameProgress(const MemPlayerConf &playerConf, uint32_t le
     m_ini.setValue("Player", "weaponPossess", weaponPosses);
     m_ini.setValue("Player", "weaponAmmoCount", weaponAmmoCount);
     m_ini.generate(stringStream);
-    str = encrypt(stringStream.str(), ENCRYPT_KEY);
+    str = encrypt(stringStream.str(), ENCRYPT_KEY_CONF_FILE);
     m_outputStream << str;
     m_outputStream.close();
 }
@@ -1653,7 +1654,7 @@ std::optional<std::pair<uint32_t, MemPlayerConf>> LevelManager::loadSavedGame(ui
     {
         return {};
     }
-    loadIniFile(path, ENCRYPT_KEY);
+    loadIniFile(path, ENCRYPT_KEY_CONF_FILE);
     MemPlayerConf playerConf;
     std::optional<std::string> val;
     val = m_ini.getValue("Level", "levelNum");

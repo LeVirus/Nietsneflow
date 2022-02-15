@@ -28,10 +28,14 @@ void Game::clearLevel()
 }
 
 //===================================================================
-void Game::loadLevelData(uint32_t levelNum)
+bool Game::loadLevelData(uint32_t levelNum)
 {
-    m_levelManager.loadLevel("level.ini", levelNum);
+    if(!m_levelManager.loadLevel("level.ini", levelNum))
+    {
+        return false;
+    }
     m_mainEngine.loadLevel(m_levelManager);
+    return true;
 }
 
 //===================================================================

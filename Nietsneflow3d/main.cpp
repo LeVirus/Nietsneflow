@@ -10,7 +10,10 @@ int main()
     std::tuple<bool, bool, std::optional<uint32_t>> tuple;
     for(uint32_t i = 1; i < 3; ++i)
     {
-        game.loadLevelData(i);
+        if(!game.loadLevelData(i))
+        {
+            break;
+        }
         if(!gameLoaded)
         {
             game.loadSavedSettingsData();
