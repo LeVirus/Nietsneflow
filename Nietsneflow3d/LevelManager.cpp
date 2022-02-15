@@ -1402,7 +1402,7 @@ bool LevelManager::loadLevel(const std::string &INIFileName, uint32_t levelNum)
         return false;
     }
     //OOOOOOOOOK set different encryption for standard and custom level
-    if(!loadIniFile(path, {}/*ENCRYPT_KEY_LEVEL*/))
+    if(!loadIniFile(path, ENCRYPT_KEY_STANDARD_LEVEL))
     {
         assert("Error while reading INI file.");
     }
