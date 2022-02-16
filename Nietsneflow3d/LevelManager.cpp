@@ -1315,7 +1315,7 @@ std::vector<std::string> convertStrToVectStr(const std::string &str)
 //===================================================================
 void LevelManager::loadTextureData(const std::string &INIFileName)
 {
-    if(!loadIniFile(LEVEL_RESSOURCES_DIR_STR + INIFileName, /*{}*/ENCRYPT_KEY_CONF_FILE))
+    if(!loadIniFile(LEVEL_RESSOURCES_DIR_STR + INIFileName, ENCRYPT_KEY_CONF_FILE))
     {
         assert("Error while reading INI file.");
     }
@@ -1327,7 +1327,7 @@ void LevelManager::loadTextureData(const std::string &INIFileName)
 //===================================================================
 void LevelManager::loadStandardData(const std::string &INIFileName)
 {
-    if(!loadIniFile(LEVEL_RESSOURCES_DIR_STR + INIFileName, /*{}*/ENCRYPT_KEY_CONF_FILE))
+    if(!loadIniFile(LEVEL_RESSOURCES_DIR_STR + INIFileName, ENCRYPT_KEY_CONF_FILE))
     {
         assert("Error while reading INI file.");
     }

@@ -2,6 +2,9 @@ IMPROVE=========================================================================
 ==========================================================================================================
 
 ))
+Set scratch damage for enemies
+
+))
 Prevent door to close if an element is on the way
 
 ))
@@ -12,6 +15,8 @@ Display saved files in menu
 
 ))
 Add machine gun to weapon
+
+
 
 1)
 Weapon movement on begin and end movement

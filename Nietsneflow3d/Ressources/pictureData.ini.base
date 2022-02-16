@@ -1,13 +1,6 @@
 [PathToTexture]
 textures = walltest.jpg	Global.png FontTexture.png demon.png GeneralSprites.png Marine.png Stars.jpg
 
-#https://spritedatabase.net/game/760
-
-;Sprites have picture information
-;All Sprite section have to begin by Sprite
-;All sprites datas are stored at the end of the files
-
-#================================================TELEPORT
 [SpriteTeleport]
 texture = 1
 texturePosX = 0.67812
@@ -15,7 +8,6 @@ texturePosY = 0.0
 textureWeight = 0.04270
 textureHeight = 0.06026
 
-#1100 2505  1138 2539
 [SpriteAnimTeleportA]
 texture = 4
 texturePosX = 0.24685
@@ -23,7 +15,6 @@ texturePosY = 0.83222
 textureWeight = 0.00852
 textureHeight = 0.01129
 
-#1140 2509  1170 2539
 [SpriteAnimTeleportB]
 texture = 4
 texturePosX = 0.25583
@@ -31,7 +22,6 @@ texturePosY = 0.83355
 textureWeight = 0.00673
 textureHeight = 0.00996
 
-#================================================TRIGGER
 [SpriteTriggerA]
 texture = 4
 texturePosX = 0.03096
@@ -39,16 +29,12 @@ texturePosY = 0.93421
 textureWeight = 0.00763
 textureHeight = 0.01362
 
-#================================================BACKGROUND
-
 [SpriteBackStars]
 texture = 6
 texturePosX = 0.0
 texturePosY = 0.0
 textureWeight = 1.0
 textureHeight = 1.0
-
-#================================================WALL
 
 [SpriteWallA]
 texture = 0
@@ -78,8 +64,6 @@ texturePosY = 0.78017
 textureWeight = 0.115217
 textureHeight = 0.04057
 
-#================================================DOOR
-
 [SpriteDoorA]
 texture = 1
 texturePosX = 0.81445
@@ -94,9 +78,6 @@ texturePosY = 0.57142
 textureWeight = 0.06562
 textureHeight = 0.07031
 
-#================================================ITEM
-
-# Plasma Rifle
 [SpritePRO]
 texture = 4
 texturePosX = 0.07001
@@ -104,7 +85,6 @@ texturePosY = 0.73089
 textureWeight = 0.0123
 textureHeight = 0.0059
 
-# Plasma Rifle Ammo
 [SpritePRAm]
 texture = 4
 texturePosX = 0.04892
@@ -126,7 +106,6 @@ texturePosY = 0.76674
 textureWeight = 0.0177
 textureHeight = 0.01339
 
-# Shotgun
 [SpriteSO]
 texture = 1
 texturePosX = 0.0
@@ -141,8 +120,6 @@ texturePosY = 0.84709
 textureWeight = 0.01979
 textureHeight = 0.00892
 
-# Bazooka
-# 240 2201  303 2218
 [SpriteItemBazooka]
 texture = 4
 texturePosX = 0.05385
@@ -164,8 +141,6 @@ texturePosY = 0.47209
 textureWeight = 0.04166
 textureHeight = 0.02232
 
-#=============================================SHOT
-
 [SpriteShotImpactA]
 texture = 1
 texturePosX = 0.81666
@@ -180,8 +155,6 @@ texturePosY = 0.083705
 textureWeight = 0.04270
 textureHeight = 0.04241
 
-# 4456  3010
-# 4097 1291	4153 1353
 [SpriteShotImpactTouched]
 texture = 4
 texturePosX = 0.91943
@@ -224,9 +197,6 @@ texturePosY = 0.78906
 textureWeight = 0.06666
 textureHeight = 0.05580
 
-#====================================BAZOOKA SHOT
-
-# 3114 2017  3130 2032
 [SpriteBazookaShot]
 texture = 4
 texturePosX = 0.69883
@@ -234,7 +204,6 @@ texturePosY = 0.67009
 textureWeight = 0.00359
 textureHeight = 0.00498
 
-# 3184 1971  3258 2032 
 [SpriteBazookaShotDA]
 texture = 4
 texturePosX = 0.71454
@@ -242,7 +211,6 @@ texturePosY = 0.65481
 textureWeight = 0.01660
 textureHeight = 0.02026
 
-# 3260 1959  3349 2032
 [SpriteBazookaShotDB]
 texture = 4
 texturePosX = 0.73159
@@ -250,7 +218,6 @@ texturePosY = 0.65083
 textureWeight = 0.01997
 textureHeight = 0.02425
 
-# 3351 1945  3455 2032
 [SpriteBazookaShotDC]
 texture = 4
 texturePosX = 0.75201
@@ -258,10 +225,6 @@ texturePosY = 0.64617
 textureWeight = 0.02333
 textureHeight = 0.02890
 
-#====================================BARREL EXPLOSIF
-
-# Static
-# 29 2738  52 2772
 [SpriteBarrelsSA]
 texture = 4
 texturePosX = 0.00650
@@ -269,7 +232,6 @@ texturePosY = 0.90963
 textureWeight = 0.00538
 textureHeight = 0.01129
 
-# 55 2740  78 2772
 [SpriteBarrelsSB]
 texture = 4
 texturePosX = 0.01234
@@ -277,8 +239,6 @@ texturePosY = 0.90963
 textureWeight = 0.00538
 textureHeight = 0.01129
 
-# Destruct
-# 277 2735  318 2772
 [SpriteBarrelsDA]
 texture = 4
 texturePosX = 0.06216
@@ -286,7 +246,6 @@ texturePosY = 0.90863
 textureWeight = 0.00920
 textureHeight = 0.01229
 
-# 320 2722  377 2772
 [SpriteBarrelsDB]
 texture = 4
 texturePosX = 0.07181
@@ -294,15 +253,12 @@ texturePosY = 0.90431
 textureWeight = 0.01279
 textureHeight = 0.01661
 
-# 379 2718  440 2772
 [SpriteBarrelsDC]
 texture = 4
 texturePosX = 0.08505
 texturePosY = 0.90299
 textureWeight = 0.01368
 textureHeight = 0.01794
-
-#====================================GENERAL LEVEL ELEMENT
 
 [SpriteGroundStorage]
 texture = 1
@@ -338,9 +294,7 @@ texturePosX = 0.6708
 texturePosY = 0.60602
 textureWeight = 0.05729
 textureHeight = 0.03236
-#==================================================SHOTGUN
 
-# Static
 [SpriteSSt] 
 texture = 4
 texturePosX = 0.20870
@@ -348,7 +302,6 @@ texturePosY = 0.62425
 textureWeight = 0.0181
 textureHeight = 0.0505
 
-# Shoot
 [SpriteSSh] 
 texture = 4
 texturePosX = 0.30587
@@ -356,7 +309,6 @@ texturePosY = 0.62425
 textureWeight = 0.0181
 textureHeight = 0.0505
 
-# Reload 
 [SpriteSRA] 
 texture = 4
 texturePosX = 0.22710
@@ -378,9 +330,6 @@ texturePosY = 0.62425
 textureWeight = 0.0255
 textureHeight = 0.0505
 
-#=========================================DEMON
-
-#Front
 [SpriteDFA]
 texture = 3
 texturePosX = 0.01303
@@ -395,7 +344,6 @@ texturePosY = 0.32069
 textureWeight = 0.08260
 textureHeight = 0.03030
 
-# Mid Front Left
 [SpriteDMFLA]
 texture = 3
 texturePosX = 0.11174
@@ -410,7 +358,6 @@ texturePosY = 0.32089
 textureWeight = 0.08725
 textureHeight = 0.02907
 
-#Mid Front Right
 [SpriteDMFRA]
 texture = 3
 texturePosX = 0.61086
@@ -425,7 +372,6 @@ texturePosY = 0.35387
 textureWeight = 0.09565
 textureHeight = 0.02773
 
-#Mid Back Left
 [SpriteDMBLA]
 texture = 3
 texturePosX = 0.29782
@@ -440,7 +386,6 @@ texturePosY = 0.35387
 textureWeight = 0.06304
 textureHeight = 0.02311
 
-#Mid Back Right
 [SpriteDMBRA]
 texture = 3
 texturePosX = 0.46086
@@ -455,7 +400,6 @@ texturePosY = 0.35387
 textureWeight = 0.06956
 textureHeight = 0.02362
 
-#Right
 [SpriteDRA]
 texture = 3
 texturePosX = 0.53260
@@ -470,7 +414,6 @@ texturePosY = 0.35387
 textureWeight = 0.08043
 textureHeight = 0.02568
 
-#Left
 [SpriteDLA]
 texture = 3
 texturePosX = 0.20869
@@ -485,7 +428,6 @@ texturePosY = 0.35387
 textureWeight = 0.08260
 textureHeight = 0.02413
 
-#Back
 [SpriteDBA]
 texture = 3
 texturePosX = 0.37391
@@ -500,7 +442,6 @@ texturePosY = 0.35387
 textureWeight = 0.06956
 textureHeight = 0.02465
 
-#Touch Front
 [SpriteDTF]
 texture = 4
 texturePosX = 0.83034
@@ -508,7 +449,6 @@ texturePosY = 0.43122
 textureWeight = 0.00897
 textureHeight = 0.01860
 
-#Touch Left
 [SpriteDTL]
 texture = 4
 texturePosX = 0.82989
@@ -516,7 +456,6 @@ texturePosY = 0.45581
 textureWeight = 0.00740
 textureHeight = 0.01926
 
-#Touch Right
 [SpriteDTR]
 texture = 4
 texturePosX = 0.83236
@@ -524,7 +463,6 @@ texturePosY = 0.48172
 textureWeight = 0.00763
 textureHeight = 0.01926
 
-# Death Animation
 [SpriteDDAA]
 texture = 4
 texturePosX = 0.84201
@@ -553,7 +491,6 @@ texturePosY = 0.42857
 textureWeight = 0.01099
 textureHeight = 0.02093
 
-# Dead
 [SpriteDDAE]
 texture = 1
 texturePosX = 0.13333
@@ -561,7 +498,6 @@ texturePosY = 0.87066
 textureWeight = 0.06458
 textureHeight = 0.05566
 
-# Attack
 [SpriteEAA]
 texture = 1
 texturePosX = 0.136458
@@ -583,7 +519,6 @@ texturePosY = 0.42890
 textureWeight = 0.00964
 textureHeight = 0.02026
 
-#=======================================================FIST
 [SpriteFS]
 texture = 4
 texturePosX = 0.0015
@@ -591,7 +526,6 @@ texturePosY = 0.6485
 textureWeight = 0.0260
 textureHeight = 0.0262
 
-# Attack
 [SpriteFAA]
 texture = 4
 texturePosX = 0.0278
@@ -613,9 +547,6 @@ texturePosY = 0.6485
 textureWeight = 0.0334
 textureHeight = 0.0262
 
-#====================================================BAZOOKA
-# Static
-#2903 1953  2991 2033
 [SpriteBSt] 
 texture = 4
 texturePosX = 0.65148
@@ -623,8 +554,6 @@ texturePosY = 0.64883
 textureWeight = 0.01974
 textureHeight = 0.02654
 
-# Attack 
-#2674 2119  103 2209
 [SpriteBAA]
 texture = 4
 texturePosX = 0.60008
@@ -632,7 +561,6 @@ texturePosY = 0.70398
 textureWeight = 0.02311
 textureHeight = 0.02990
 
-#2788 2108  103 2209
 [SpriteBAB]
 texture = 4
 texturePosX = 0.62567
@@ -640,7 +568,6 @@ texturePosY = 0.70033
 textureWeight = 0.02311
 textureHeight = 0.03355
 
-#2902 2102  103 2209
 [SpriteBAC]
 texture = 4
 texturePosX = 0.65125
@@ -648,7 +575,6 @@ texturePosY = 0.69833
 textureWeight = 0.02311
 textureHeight = 0.03554
 
-#3016 2089  3122 2209
 [SpriteBAD]
 texture = 4
 texturePosX = 0.67684
@@ -656,8 +582,6 @@ texturePosY = 0.69401
 textureWeight = 0.02378
 textureHeight = 0.03986
 
-#====================================================GUN
-# Static
 [SpriteGSt] 
 texture = 4
 texturePosX = 0.1117
@@ -665,7 +589,6 @@ texturePosY = 0.6408
 textureWeight = 0.0132
 textureHeight = 0.0342
 
-# Shoot
 [SpriteGSh] 
 texture = 4
 texturePosX = 0.1252
@@ -673,7 +596,6 @@ texturePosY = 0.6408
 textureWeight = 0.0181
 textureHeight = 0.0342
 
-# Attack 
 [SpriteGAA]
 texture = 4
 texturePosX = 0.1734
@@ -695,9 +617,6 @@ texturePosY = 0.6408
 textureWeight = 0.0139
 textureHeight = 0.0342
 
-#=========================================PLASMA RIFLE 
-
-# Static
 [SpritePRS]
 texture = 4
 texturePosX = 0.78209
@@ -705,7 +624,6 @@ texturePosY = 0.63820
 textureWeight = 0.01885
 textureHeight = 0.03710
 
-# Attack
 [SpritePRAA]
 texture = 4
 texturePosX = 0.82607
@@ -720,7 +638,6 @@ texturePosY = 0.63820
 textureWeight = 0.01952
 textureHeight = 0.03710
 
-# Reload
 [SpritePRR]
 texture = 4
 texturePosX = 0.80116
@@ -729,9 +646,6 @@ textureWeight = 0.02378
 textureHeight = 0.03710
 
 
-#========================================MARINE
-#Front
-# 135 4  179 59
 [SpriteMFA]
 texture = 5
 texturePosX = 0.19911
@@ -739,7 +653,6 @@ texturePosY = 0.00831
 textureWeight = 0.06489
 textureHeight = 0.11434
 
-# 262 4  302 59
 [SpriteMFB]
 texture = 5
 texturePosX = 0.38643
@@ -747,8 +660,6 @@ texturePosY = 0.00831
 textureWeight = 0.05899
 textureHeight = 0.11434
 
-#Attack 
-# 305 4  331 59
 [SpriteMAA]
 texture = 5
 texturePosX = 0.44985
@@ -756,7 +667,6 @@ texturePosY = 0.00831
 textureWeight = 0.03834
 textureHeight = 0.11434
 
-# 334 4  360 59
 [SpriteMAB]
 texture = 5
 texturePosX = 0.49262
@@ -764,8 +674,6 @@ texturePosY = 0.00831
 textureWeight = 0.03834
 textureHeight = 0.11434
 
-#Front Left
-# 17 62  53 117
 [SpriteMFLA]
 texture = 5
 texturePosX = 0.02507
@@ -773,7 +681,6 @@ texturePosY = 0.12889
 textureWeight = 0.05309
 textureHeight = 0.11434
 
-# 133 62  168 117
 [SpriteMFLB]
 texture = 5
 texturePosX = 0.19616
@@ -781,8 +688,6 @@ texturePosY = 0.12889
 textureWeight = 0.05162
 textureHeight = 0.11434
 
-# Front Right 
-# 368  62  404 117
 [SpriteMFRA]
 texture = 5
 texturePosX = 0.54277
@@ -790,7 +695,6 @@ texturePosY = 0.12889
 textureWeight = 0.05309
 textureHeight = 0.11434
 
-# 484 62  519 117
 [SpriteMFRB]
 texture = 5
 texturePosX = 0.71386
@@ -798,8 +702,6 @@ texturePosY = 0.12889
 textureWeight = 0.05162
 textureHeight = 0.11434
 
-# Left
-# 5 121  47 174
 [SpriteMLA]
 texture = 5
 texturePosX = 0.00737
@@ -807,7 +709,6 @@ texturePosY = 0.24948
 textureWeight = 0.06194
 textureHeight = 0.11018
 
-# 129 121  164 174
 [SpriteMLB]
 texture = 5
 texturePosX = 0.19026
@@ -815,8 +716,6 @@ texturePosY = 0.24948
 textureWeight = 0.05662
 textureHeight = 0.11018
 
-# Right
-# 396 120  430 174
 [SpriteMRA]
 texture = 5
 texturePosX = 0.58407
@@ -824,7 +723,6 @@ texturePosY = 0.24948
 textureWeight = 0.05014
 textureHeight = 0.11018
 
-# 513 129  555 164
 [SpriteMRB]
 texture = 5
 texturePosX = 0.75663
@@ -832,8 +730,6 @@ texturePosY = 0.24948
 textureWeight = 0.06489
 textureHeight = 0.11018
 
-# Back Left
-# 8 177  53 232  
 [SpriteMBLA]
 texture = 5
 texturePosX = 0.01179
@@ -841,7 +737,6 @@ texturePosY = 0.36798
 textureWeight = 0.06637
 textureHeight = 0.11434
 
-# 144 177  184 232  
 [SpriteMBLB]
 texture = 5
 texturePosX = 0.21238
@@ -849,8 +744,6 @@ texturePosY = 0.36798
 textureWeight = 0.05899
 textureHeight = 0.11434
 
-# Back Right
-# 366 177  406 232
 [SpriteMBRA]
 texture = 5
 texturePosX = 0.53982
@@ -858,7 +751,6 @@ texturePosY = 0.36798
 textureWeight = 0.05899
 textureHeight = 0.11434
 
-# 497 181  542 232  
 [SpriteMBRB]
 texture = 5
 texturePosX = 0.73303
@@ -866,8 +758,6 @@ texturePosY = 0.36798
 textureWeight = 0.06637
 textureHeight = 0.11434
 
-# Back
-# 147 239  183 289
 [SpriteMBA]
 texture = 5
 texturePosX = 0.21681
@@ -875,7 +765,6 @@ texturePosY = 0.48856
 textureWeight = 0.05309
 textureHeight = 0.11226
 
-# 185 235  220 289
 [SpriteMBB]
 texture = 5
 texturePosX = 0.27286
@@ -883,8 +772,6 @@ texturePosY = 0.48856
 textureWeight = 0.05162
 textureHeight = 0.11226
 
-# Touch
-# 139 293  179 349
 [SpriteMT]
 texture = 5
 texturePosX = 0.20501
@@ -892,8 +779,6 @@ texturePosY = 0.60914
 textureWeight = 0.05899
 textureHeight = 0.11642
 
-### DEATH ANIM
-# 68 351  119 401
 [SpriteMDAA]
 texture = 5
 texturePosX = 0.10029
@@ -901,7 +786,6 @@ texturePosY = 0.72972
 textureWeight = 0.07522
 textureHeight = 0.10395
 
-# 119 351  155 401
 [SpriteMDAB]
 texture = 5
 texturePosX = 0.17551
@@ -909,7 +793,6 @@ texturePosY = 0.72972
 textureWeight = 0.05309
 textureHeight = 0.10395
 
-# 157 351  194 401
 [SpriteMDAC]
 texture = 5
 texturePosX = 0.23156
@@ -917,7 +800,6 @@ texturePosY = 0.72972
 textureWeight = 0.05457
 textureHeight = 0.10395
 
-# 195 351  238 401
 [SpriteMDAD]
 texture = 5
 texturePosX = 0.2890
@@ -925,7 +807,6 @@ texturePosY = 0.72972
 textureWeight = 0.06342
 textureHeight = 0.10395
 
-# 241 351  292 401
 [SpriteMDAE]
 texture = 5
 texturePosX = 0.35545
@@ -933,7 +814,6 @@ texturePosY = 0.72972
 textureWeight = 0.07522
 textureHeight = 0.10395
 
-# 349 351  400 401
 [SpriteMDAF]
 texture = 5
 texturePosX = 0.51474

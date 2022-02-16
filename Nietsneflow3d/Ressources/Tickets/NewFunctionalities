@@ -5,8 +5,8 @@ NEW FUNCTIONALITIES=============================================================
 Add encryption for conf level file
 	-saved advancement============================OK
 	-level========================================OK
-	-picture settings
-	-standard settings
+	-picture settings=============================OK
+	-standard settings============================OK
 
 ))
 For custom level add menu
@@ -14,7 +14,7 @@ For custom level add menu
 ))
 Set saving system
 	Game advancement===========================OK
-		Set multi games saved (like zelda)
+		Set multi games saved (like zelda)============OK
 	Settings===========================OK
 
 3)
