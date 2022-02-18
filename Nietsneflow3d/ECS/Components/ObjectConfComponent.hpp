@@ -20,6 +20,7 @@ struct ObjectConfComponent : public ecs::Component
     }
     ObjectType_e m_type;
     uint32_t m_containing;
+    std::string m_cardName;
     std::optional<uint32_t> m_weaponID = std::nullopt, m_cardID = std::nullopt;
     virtual ~ObjectConfComponent() = default;
 };

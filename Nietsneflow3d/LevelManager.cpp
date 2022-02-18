@@ -461,6 +461,9 @@ void LevelManager::readStandardStaticElement(StaticLevelElementData &staticEleme
             val = m_ini.getValue(sectionName, "CardID");
             assert(val);
             staticElement.m_cardID = std::stoi(*val);
+            val = m_ini.getValue(sectionName, "CardName");
+            assert(val);
+            staticElement.m_cardName = *val;
             m_cardINIAssociated.insert({sectionName, *staticElement.m_cardID});
         }
     }
@@ -898,6 +901,9 @@ void LevelManager::loadWeaponData(std::string_view sectionName, uint32_t numIt)
     val = m_ini.getValue(sectionName.data(), "Damage");
     assert(val);
     m_vectWeaponsINIData[numIt].m_damage = std::stoi(*val);
+    val = m_ini.getValue(sectionName.data(), "WeaponName");
+    assert(val);
+    m_vectWeaponsINIData[numIt].m_weaponName = *val;
     val = m_ini.getValue(sectionName.data(), "ShotImpactID");
     if(val)
     {

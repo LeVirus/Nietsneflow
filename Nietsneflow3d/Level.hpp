@@ -39,6 +39,7 @@ struct StaticLevelElementData
     bool m_traversable = true;
     //OBJECT
     std::optional<uint32_t> m_weaponID, m_cardID = std::nullopt;
+    std::string m_cardName;
     uint32_t m_containing;
     //TELEPORT
     std::optional<TeleportData> m_teleportData;

@@ -2,10 +2,10 @@ IMPROVE=========================================================================
 ==========================================================================================================
 
 ))
-Set scratch damage for enemies
+Display possess card
 
 ))
-When pick up object display!!!
+Set scratch damage for enemies
 
 ))
 Display saved files in menu
@@ -28,6 +28,9 @@ Animation move while shooting===========================~
 Enemy animations========================~
 
 
+
+))
+When pick up object display!!!=================================================OK
 
 ))
 Prevent door to close if an element is on the way===========================OK

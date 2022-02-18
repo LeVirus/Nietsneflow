@@ -12,7 +12,7 @@ struct WeaponData
     PairUI_t m_memPosSprite;
     bool m_posses = false;
     std::optional<std::vector<uint32_t>> m_visibleShootEntities, m_segmentShootEntities;
-    std::string m_visibleShotID, m_impactID;
+    std::string m_visibleShotID, m_impactID, m_weaponName;
     std::optional<float> m_damageRay;
     float m_latency, m_shotVelocity;
 };

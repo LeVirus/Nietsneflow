@@ -961,19 +961,26 @@ void CollisionSystem::treatPlayerPickObject(CollisionArgs &args)
     assert(weaponComp);
     assert(playerComp);
     assert(objectComp);
+    std::string info;
     switch (objectComp->m_type)
     {
     case ObjectType_e::AMMO_WEAPON:
+    {
         if(!pickUpAmmo(*objectComp->m_weaponID, weaponComp, objectComp->m_containing))
         {
             return;
         }
+        info = weaponComp->m_weaponsData[*objectComp->m_weaponID].m_weaponName + " AMMO PICKED UP";
+    }
         break;
     case ObjectType_e::WEAPON:
+    {
         if(!pickUpWeapon(*objectComp->m_weaponID, weaponComp, objectComp->m_containing))
         {
             return;
         }
+        info = weaponComp->m_weaponsData[*objectComp->m_weaponID].m_weaponName + " PICKED UP";
+    }
         break;
     case ObjectType_e::HEAL:
     {
@@ -986,15 +993,24 @@ void CollisionSystem::treatPlayerPickObject(CollisionArgs &args)
         {
             playerComp->m_life = 100;
         }
+        info = "HEAL PICKED UP";
         break;
     }
     case ObjectType_e::CARD:
+    {
         playerComp->m_card.insert(*objectComp->m_cardID);
+        info = objectComp->m_cardName + " PICKED UP";
         break;
+    }
     case ObjectType_e::TOTAL:
         assert(false);
         break;
     }
+    playerComp->m_infoWriteData = {true, info};
+    TimerComponent *timerComp = stairwayToComponentManager().
+            searchComponentByType<TimerComponent>(m_playerComp->muiGetIdEntityAssociated(), Components_e::TIMER_COMPONENT);
+    assert(timerComp);
+    timerComp->m_clockA = std::chrono::system_clock::now();
     playerComp->m_pickItem = true;
     activeSound(args.entityNumA);
     m_vectEntitiesToDelete.push_back(args.entityNumB);

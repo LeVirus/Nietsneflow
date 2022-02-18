@@ -90,6 +90,7 @@ DetectBehaviourSound = DemonDetect.wav
 AttackSound = DemonAttack.wav
 
 [WeaponFist]
+WeaponName = FIST
 Possess = true
 BaseAmmo = 1
 Order = 0
@@ -105,6 +106,7 @@ AnimationType = 1
 LastAnimNum = 1
 
 [WeaponGun]
+WeaponName = GUN
 Possess = true
 BaseAmmo = 20
 Order = 1
@@ -122,6 +124,7 @@ LastAnimNum = 1
 SoundEffect = GunShotTMP.wav
 
 [WeaponShotgun]
+WeaponName = SHOTGUN
 Order = 2
 StaticSprite = SpriteSSt
 AttackSprite = SpriteSSh SpriteSRA SpriteSRB SpriteSRC
@@ -139,6 +142,7 @@ SoundEffect = Western-Gunshot.wav
 ReloadSound = ShotgunReload.wav
 
 [WeaponPlasmaRifle]
+WeaponName = PLASMA RIFLE
 Order = 3
 StaticSprite = SpritePRS 
 AttackSprite = SpritePRAA SpritePRAB SpritePRR
@@ -155,6 +159,7 @@ LastAnimNum = 1
 SoundEffect = LaserShotTMP.wav
 
 [WeaponBazooka]
+WeaponName = BAZOOKA
 Order = 4
 BaseAmmo = 20
 StaticSprite = SpriteBSt 
@@ -266,6 +271,7 @@ Type = 2
 Containing = 10
 
 [ObjectRedCard]
+CardName = RED CARD
 Sprite = SpriteItemCard
 SpriteWeightGame = 0.2 ; value in %
 SpriteHeightGame = 0.5

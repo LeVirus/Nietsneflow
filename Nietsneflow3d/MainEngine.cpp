@@ -640,6 +640,7 @@ uint32_t MainEngine::loadWeaponsEntity(const LevelManager &levelManager)
         weaponComp->m_weaponsData[weaponToTreat].m_animMode = vectWeapons[i].m_animMode;
         weaponComp->m_weaponsData[weaponToTreat].m_latency = vectWeapons[i].m_animationLatency;
         weaponComp->m_weaponsData[weaponToTreat].m_visibleShotID = vectWeapons[i].m_visibleShootID;
+        weaponComp->m_weaponsData[weaponToTreat].m_weaponName = vectWeapons[i].m_weaponName;
         weaponComp->m_weaponsData[weaponToTreat].m_impactID = vectWeapons[i].m_impactID;
         weaponComp->m_weaponsData[weaponToTreat].m_shotVelocity = vectWeapons[i].m_shotVelocity;
         weaponComp->m_weaponsData[weaponToTreat].m_maxAmmunations = vectWeapons[i].m_maxAmmo;
@@ -2371,6 +2372,7 @@ uint32_t MainEngine::confObjectEntity(const StaticLevelElementData &objectData)
     }
     else if(objComp->m_type == ObjectType_e::CARD)
     {
+        objComp->m_cardName = objectData.m_cardName;
         objComp->m_cardID = objectData.m_cardID;
     }
     return entityNum;
