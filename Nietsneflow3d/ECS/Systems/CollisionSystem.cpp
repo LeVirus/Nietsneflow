@@ -752,7 +752,7 @@ bool CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args, bool shotEx
             timerComp->m_clockB = std::chrono::system_clock::now();
             shotConfComp->m_destructPhase = true;
             shotConfComp->m_spriteShotNum = 1;
-            if(limitLevelDestruct || shotConfComp->m_damageCircleRayData)
+            if(limitLevelDestruct || shotConfComp->m_damageCircleRayData || circleDamageObstructed(args))
             {
                 return true;
             }
@@ -762,7 +762,7 @@ bool CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args, bool shotEx
             }
             else if(args.tagCompA->m_tagA == CollisionTag_e::BULLET_ENEMY_CT && args.tagCompB->m_tagA == CollisionTag_e::PLAYER_CT)
             {
-                PlayerConfComponent * playerConf = stairwayToComponentManager().
+                PlayerConfComponent *playerConf = stairwayToComponentManager().
                         searchComponentByType<PlayerConfComponent>(args.entityNumB, Components_e::PLAYER_CONF_COMPONENT);
                 assert(playerConf);
                 playerConf->takeDamage(shotConfComp->m_damage);
@@ -779,12 +779,7 @@ bool CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args, bool shotEx
 //===================================================================
 void CollisionSystem::treatExplosionColl(CollisionArgs &args)
 {
-    float radiantAngle = getTrigoAngle(args.mapCompA.m_absoluteMapPositionPX, args.mapCompB.m_absoluteMapPositionPX, false);
-    optionalTargetRaycast_t result = mptrSystemManager->searchSystemByType<FirstPersonDisplaySystem>(
-                static_cast<uint32_t>(Systems_e::FIRST_PERSON_DISPLAY_SYSTEM))->
-            calcLineSegmentRaycast(radiantAngle, args.mapCompA.m_absoluteMapPositionPX, false);
-    if(result && std::get<1>(*result) > 0.1f && getDistance(std::get<0>(*result), args.mapCompB.m_absoluteMapPositionPX) <
-            getDistance(args.mapCompA.m_absoluteMapPositionPX, args.mapCompB.m_absoluteMapPositionPX))
+    if(circleDamageObstructed(args))
     {
         return;
     }
@@ -823,6 +818,21 @@ void CollisionSystem::treatExplosionColl(CollisionArgs &args)
     {
         treatBarrelShots(args.entityNumB, shotConfComp->m_damage);
     }
+}
+
+//===================================================================
+bool CollisionSystem::circleDamageObstructed(const CollisionArgs &args)const
+{
+    float radiantAngle = getTrigoAngle(args.mapCompA.m_absoluteMapPositionPX, args.mapCompB.m_absoluteMapPositionPX, false);
+    optionalTargetRaycast_t result = mptrSystemManager->searchSystemByType<FirstPersonDisplaySystem>(
+                static_cast<uint32_t>(Systems_e::FIRST_PERSON_DISPLAY_SYSTEM))->
+            calcLineSegmentRaycast(radiantAngle, args.mapCompA.m_absoluteMapPositionPX, false);
+    if(result && std::get<1>(*result) > 0.1f && getDistance(std::get<0>(*result), args.mapCompB.m_absoluteMapPositionPX) <
+            getDistance(args.mapCompA.m_absoluteMapPositionPX, args.mapCompB.m_absoluteMapPositionPX))
+    {
+        return true;
+    }
+    return false;
 }
 
 //===================================================================

@@ -1,18 +1,14 @@
 BUGS======================================================================
 
 ))
-Enemy Visible shot make damage if player is behind door
-
-))
 Issue on display limit enemy and static element
 
 ))
 Issue on display transition when loading game
 
+
 ))
 Eject issue on moveable wall lateral
-
-
 
 ))
 In input gamepad menu bug in GLFW in AXIS===============================~
@@ -21,6 +17,9 @@ In input gamepad menu bug in GLFW in AXIS===============================~
 Enemy eject issue!!!!!!!!!!!
 Marines go into wall=====NOT REPRODUCT
 
+
+))
+Enemy Visible shot make damage if player is behind door=============================OK
 
 ))
 Input menu does not display input====================================OK??
