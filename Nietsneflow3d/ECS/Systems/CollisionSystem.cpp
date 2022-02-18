@@ -227,7 +227,7 @@ void CollisionSystem::treatGeneralCrushing(uint32_t entityNum)
 }
 
 //===================================================================
-void CollisionSystem::treatEnemyShooted(uint32_t enemyEntityNum, uint32_t damage)
+void CollisionSystem::treatEnemyTakeDamage(uint32_t enemyEntityNum, uint32_t damage)
 {
     EnemyConfComponent *enemyConfCompB = stairwayToComponentManager().
             searchComponentByType<EnemyConfComponent>(enemyEntityNum, Components_e::ENEMY_CONF_COMPONENT);
@@ -293,7 +293,7 @@ void CollisionSystem::treatSegmentShots()
             assert(shotConfComp);
             if(tagCompTarget->m_tagA == CollisionTag_e::ENEMY_CT)
             {
-                treatEnemyShooted(m_vectMemShots[i].second, shotConfComp->m_damage);
+                treatEnemyTakeDamage(m_vectMemShots[i].second, shotConfComp->m_damage);
             }
             else if(tagCompTarget->m_tagA == CollisionTag_e::BARREL_CT)
             {
@@ -471,7 +471,7 @@ void CollisionSystem::initArrayTag()
     m_tagArray.insert({CollisionTag_e::IMPACT_CT, CollisionTag_e::ENEMY_CT});
 
     m_tagArray.insert({CollisionTag_e::DEAD_CORPSE_CT, CollisionTag_e::DOOR_CT});
-    m_tagArray.insert({CollisionTag_e::DEAD_CORPSE_CT, CollisionTag_e::WALL_CT});
+//    m_tagArray.insert({CollisionTag_e::DEAD_CORPSE_CT, CollisionTag_e::WALL_CT});
     //    m_tagArray.insert({CollisionTag_e::OBJECT_CT, CollisionTag_e::PLAYER_CT});
 }
 
@@ -675,7 +675,7 @@ bool CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args, bool shotEx
                 if(args.tagCompB->m_tagA == CollisionTag_e::ENEMY_CT)
                 {
                     activeSound(args.entityNumA);
-                    treatEnemyShooted(args.entityNumB, shotConfComp->m_damage);
+                    treatEnemyTakeDamage(args.entityNumB, shotConfComp->m_damage);
                     return false;
                 }
             }
@@ -787,7 +787,7 @@ bool CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args, bool shotEx
             }
             if(args.tagCompA->m_tagA == CollisionTag_e::BULLET_PLAYER_CT && args.tagCompB->m_tagA == CollisionTag_e::ENEMY_CT)
             {
-                treatEnemyShooted(args.entityNumB, shotConfComp->m_damage);
+                treatEnemyTakeDamage(args.entityNumB, shotConfComp->m_damage);
             }
             else if(args.tagCompA->m_tagA == CollisionTag_e::BULLET_ENEMY_CT && args.tagCompB->m_tagA == CollisionTag_e::PLAYER_CT)
             {
@@ -841,7 +841,7 @@ void CollisionSystem::treatExplosionColl(CollisionArgs &args)
     }
     else if(args.tagCompB->m_tagA == CollisionTag_e::ENEMY_CT)
     {
-        treatEnemyShooted(args.entityNumB, shotConfComp->m_damage);
+        treatEnemyTakeDamage(args.entityNumB, shotConfComp->m_damage);
     }
     else if(args.tagCompB->m_tagA == CollisionTag_e::BARREL_CT)
     {
@@ -1078,9 +1078,7 @@ void CollisionSystem::treatCrushing(uint32_t entityNum)
                 searchComponentByType<EnemyConfComponent>(entityNum, Components_e::ENEMY_CONF_COMPONENT);
         if(enemyComp)
         {
-//                            enemyComp->m_crush = true;
-//                            enemyComp->m_frozen = true;
-            enemyComp->takeDamage(1);
+            treatEnemyTakeDamage(entityNum, 1);
         }
     }
 }

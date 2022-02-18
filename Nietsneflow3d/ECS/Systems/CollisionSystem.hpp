@@ -80,7 +80,7 @@ private:
                                     GeneralCollisionComponent *tagCompB,
                                     MapCoordComponent &mapCompB);
     void calcBulletSegment(SegmentCollisionComponent &segmentCompA);
-    void treatEnemyShooted(uint32_t enemyEntityNum, uint32_t damage = 1);
+    void treatEnemyTakeDamage(uint32_t enemyEntityNum, uint32_t damage = 1);
     void confDropedObject(uint32_t objectEntity, uint32_t enemyEntity);
     void activeSound(uint32_t entityNum);
     bool checkEnemyRemoveCollisionMask(uint32_t entityNum);

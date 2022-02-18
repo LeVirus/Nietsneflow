@@ -5,9 +5,6 @@ IMPROVE=========================================================================
 Display possess card
 
 ))
-Set scratch damage for enemies
-
-))
 Display saved files in menu
 
 ))
@@ -28,6 +25,9 @@ Animation move while shooting===========================~
 Enemy animations========================~
 
 
+
+))
+Set scratch damage for enemies===============================OK
 
 ))
 When pick up object display!!!=================================================OK
