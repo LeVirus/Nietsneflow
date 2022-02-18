@@ -45,11 +45,13 @@ private:
                         GeneralCollisionComponent *tagCompB, bool shotExplosionEject = false);
     //Collisions detection
     void treatCollisionFirstRect(CollisionArgs &args);
+    bool treatDoorCollisionFirstCircle(CollisionArgs &args, const CircleCollisionComponent &circleCompA,
+                                       const RectangleCollisionComponent &rectCompB);
     bool treatCollisionFirstCircle(CollisionArgs &args, bool shotExplosionEject = false);
     void treatActionPlayerRect(CollisionArgs &args);
     void treatExplosionColl(CollisionArgs &args);
     //Check if explosion or visible shot have element between attack and target
-    bool circleDamageObstructed(const CollisionArgs &args) const;
+    bool circleDamageObstructed(const CollisionArgs &args)const;
     void setDamageCircle(uint32_t shotEntity, bool active, uint32_t baseEntity = 0);
     void treatActionPlayerCircle(CollisionArgs &args);
     void treatPlayerPickObject(CollisionArgs &args);

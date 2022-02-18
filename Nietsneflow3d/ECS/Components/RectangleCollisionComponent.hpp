@@ -9,6 +9,6 @@ struct RectangleCollisionComponent : public ecs::Component
     {
         muiTypeComponent = Components_e::RECTANGLE_COLLISION_COMPONENT;
     }
-    std::pair<float, float> m_size;
+    PairFloat_t m_size;
     virtual ~RectangleCollisionComponent() = default;
 };

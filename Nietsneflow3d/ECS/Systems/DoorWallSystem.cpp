@@ -2,6 +2,7 @@
 #include "constants.hpp"
 #include <Level.hpp>
 #include <ECS/ECSManager.hpp>
+#include <CollisionUtils.hpp>
 #include <ECS/Components/DoorComponent.hpp>
 #include <ECS/Components/TimerComponent.hpp>
 #include <ECS/Components/MapCoordComponent.hpp>
@@ -51,8 +52,7 @@ void DoorWallSystem::treatDoors()
     for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
     {
         DoorComponent *doorComp = stairwayToComponentManager().
-                searchComponentByType<DoorComponent>(mVectNumEntity[i],
-                                                     Components_e::DOOR_COMPONENT);
+                searchComponentByType<DoorComponent>(mVectNumEntity[i], Components_e::DOOR_COMPONENT);
         assert(doorComp);
         if(doorComp->m_currentState == DoorState_e::STATIC_CLOSED)
         {
@@ -67,9 +67,17 @@ void DoorWallSystem::treatDoors()
         {
             if(elapsed_seconds.count() > m_timeDoorClosed)
             {
-                doorComp->m_currentState = DoorState_e::MOVE_CLOSE;
-                activeDoorSound(mVectNumEntity[i]);
-                timerComp->m_clockA = std::chrono::system_clock::now();
+                if(doorComp->m_obstruct)
+                {
+                    timerComp->m_clockA = std::chrono::system_clock::now();
+                    doorComp->m_obstruct = false;
+                }
+                else
+                {
+                    doorComp->m_currentState = DoorState_e::MOVE_CLOSE;
+                    activeDoorSound(mVectNumEntity[i]);
+                    timerComp->m_clockA = std::chrono::system_clock::now();
+                }
             }
             continue;
         }

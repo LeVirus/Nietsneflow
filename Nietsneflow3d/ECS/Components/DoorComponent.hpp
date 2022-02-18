@@ -18,7 +18,7 @@ struct DoorComponent : public ecs::Component
         muiTypeComponent = Components_e::DOOR_COMPONENT;
     }
     DoorState_e m_currentState = DoorState_e::STATIC_CLOSED;
-    bool m_vertical;
+    bool m_vertical, m_obstruct = false;
     double m_speedMove = 0.01;
     std::optional<std::pair<uint32_t, std::string>> m_cardID = std::nullopt;
     std::pair<bool, bool> m_verticalPosDisplay;

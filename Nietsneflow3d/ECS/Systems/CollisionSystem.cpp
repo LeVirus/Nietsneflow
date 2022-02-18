@@ -562,6 +562,26 @@ void CollisionSystem::writePlayerInfo(const std::string &info)
 }
 
 //===================================================================
+bool CollisionSystem::treatDoorCollisionFirstCircle(CollisionArgs &args, const CircleCollisionComponent &circleCompA,
+                                                    const RectangleCollisionComponent &rectCompB)
+{
+    DoorComponent *doorComp = stairwayToComponentManager().
+            searchComponentByType<DoorComponent>(args.entityNumB, Components_e::DOOR_COMPONENT);
+    assert(doorComp);
+    PairFloat_t size = rectCompB.m_size;
+    if(doorComp->m_vertical)
+    {
+        size.second = LEVEL_TILE_SIZE_PX;
+    }
+    else
+    {
+        size.first = LEVEL_TILE_SIZE_PX;
+    }
+    return checkCircleRectCollision(args.mapCompA.m_absoluteMapPositionPX, circleCompA.m_ray,
+                                    args.mapCompB.m_absoluteMapPositionPX, size);
+}
+
+//===================================================================
 bool CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args, bool shotExplosionEject)
 {
     if(args.tagCompA->m_tagA == CollisionTag_e::PLAYER_ACTION_CT ||
@@ -575,9 +595,17 @@ bool CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args, bool shotEx
     {
     case CollisionShape_e::RECTANGLE_C:
     {
-        RectangleCollisionComponent &rectCompB = getRectangleComponent(args.entityNumB);
-        collision = checkCircleRectCollision(args.mapCompA.m_absoluteMapPositionPX, circleCompA.m_ray,
-                                 args.mapCompB.m_absoluteMapPositionPX, rectCompB.m_size);
+        RectangleCollisionComponent &rectCompB = getRectangleComponent(args.entityNumB);        
+        if(args.tagCompB->m_tagA == CollisionTag_e::DOOR_CT)
+        {
+            collision = treatDoorCollisionFirstCircle(args, circleCompA, rectCompB);
+        }
+        else
+        {
+            collision = checkCircleRectCollision(args.mapCompA.m_absoluteMapPositionPX, circleCompA.m_ray,
+                                                 args.mapCompB.m_absoluteMapPositionPX, rectCompB.m_size);
+        }
+
         if(collision)
         {
             if(args.tagCompA->m_tagA == CollisionTag_e::PLAYER_ACTION_CT)
@@ -591,6 +619,7 @@ bool CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args, bool shotEx
                     DoorComponent *doorComp = stairwayToComponentManager().
                             searchComponentByType<DoorComponent>(args.entityNumB, Components_e::DOOR_COMPONENT);
                     assert(doorComp);
+                    doorComp->m_obstruct = true;
                     if(doorComp->m_currentState == DoorState_e::MOVE_CLOSE)
                     {
                         doorComp->m_currentState = DoorState_e::MOVE_OPEN;

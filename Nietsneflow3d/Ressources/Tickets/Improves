@@ -5,9 +5,6 @@ IMPROVE=========================================================================
 Set scratch damage for enemies
 
 ))
-Prevent door to close if an element is on the way
-
-))
 When pick up object display!!!
 
 ))
@@ -31,6 +28,9 @@ Animation move while shooting===========================~
 Enemy animations========================~
 
 
+
+))
+Prevent door to close if an element is on the way===========================OK
 
 ))
 MENU_______________
