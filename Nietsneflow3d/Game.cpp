@@ -45,9 +45,9 @@ void Game::initEngine()
 }
 
 //===================================================================
-std::tuple<bool, bool, std::optional<uint32_t>> Game::launchGame(uint32_t levelNum)
+std::tuple<bool, bool, std::optional<uint32_t>> Game::launchGame(uint32_t levelNum, bool gameLoad)
 {
-    return m_mainEngine.mainLoop(levelNum);
+    return m_mainEngine.mainLoop(levelNum, gameLoad);
 }
 
 //===================================================================

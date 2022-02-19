@@ -717,8 +717,7 @@ void InputSystem::treatEnterPressedConfirmLoadGameMenu(PlayerConfComponent *play
             m_mainEngine->saveGameProgress(1, numSaveFile);
             if(m_mainEngine->loadSavedGame(numSaveFile))
             {
-                //OOOOK Improve TRANSITION
-                m_mainEngine->setUnsetPaused();
+                m_mainEngine->setTransition(true);
             }
         }
         //LOAD
@@ -726,7 +725,7 @@ void InputSystem::treatEnterPressedConfirmLoadGameMenu(PlayerConfComponent *play
         {
             if(m_mainEngine->loadSavedGame(playerComp->m_currentSelectedSaveFile))
             {
-                m_mainEngine->setUnsetPaused();
+                m_mainEngine->setTransition(true);
             }
         }
     }

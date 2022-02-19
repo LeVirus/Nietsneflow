@@ -51,7 +51,7 @@ void MainEngine::init(Game *refGame)
 }
 
 //===================================================================
-std::tuple<bool, bool, std::optional<uint32_t>> MainEngine::mainLoop(uint32_t levelNum)
+std::tuple<bool, bool, std::optional<uint32_t>> MainEngine::mainLoop(uint32_t levelNum, bool gameLoad)
 {
     m_memInputCursorPos = 0;
     m_graphicEngine.getMapSystem().confLevelData();
@@ -64,10 +64,14 @@ std::tuple<bool, bool, std::optional<uint32_t>> MainEngine::mainLoop(uint32_t le
         savePlayerGear();
     }
     std::chrono::duration<double> elapsed_seconds;
-
     //display FPS
 //    std::chrono::duration<double> fps;
 //    std::chrono::time_point<std::chrono::system_clock> clockFrame  = std::chrono::system_clock::now();
+    if(gameLoad)
+    {
+        m_vectMemPausedTimer.clear();
+        setUnsetPaused();
+    }
     m_graphicEngine.unsetTransition(m_gamePaused);
     std::chrono::time_point<std::chrono::system_clock> clock;
     clock = std::chrono::system_clock::now();
@@ -82,9 +86,14 @@ std::tuple<bool, bool, std::optional<uint32_t>> MainEngine::mainLoop(uint32_t le
 //        fps = std::chrono::system_clock::now() - clockFrame;
 //        std::cout << 1.0f / fps.count() << "  " << fps.count() << " FPS\n";
 //        clockFrame = std::chrono::system_clock::now();
-
         clock = std::chrono::system_clock::now();
         m_physicalEngine.runIteration(m_gamePaused);
+        if(m_levelToLoad)
+        {
+            uint32_t levelToLoad = *m_levelToLoad;
+            m_levelToLoad = {};
+            return {true, false, levelToLoad};
+        }
         clearObjectToDelete();
         if(m_physicalEngine.toogledFullScreenSignal())
         {
@@ -109,12 +118,6 @@ std::tuple<bool, bool, std::optional<uint32_t>> MainEngine::mainLoop(uint32_t le
             m_graphicEngine.setTransition(m_gamePaused);
             displayTransitionMenu();
             return {true, true, {}};
-        }
-        else if(m_levelToLoad)
-        {
-            uint32_t levelToLoad = *m_levelToLoad;
-            m_levelToLoad = {};
-            return {true, false, levelToLoad};
         }
     }while(!m_graphicEngine.windowShouldClose());
     return {false, true, {}};

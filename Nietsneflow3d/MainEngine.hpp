@@ -43,7 +43,7 @@ public:
     void init(Game *refGame);
     void loadLevel(const LevelManager &levelManager);
     //first quit, second gameover
-    std::tuple<bool, bool, std::optional<uint32_t> > mainLoop(uint32_t levelNum);
+    std::tuple<bool, bool, std::optional<uint32_t> > mainLoop(uint32_t levelNum, bool gameLoad);
     void saveGameProgress(uint32_t levelNum, std::optional<uint32_t> numSaveFile = {});
     void playerAttack(uint32_t playerEntity, PlayerConfComponent *playerComp,
                       const PairFloat_t &point, float degreeAngle);
@@ -61,6 +61,14 @@ public:
     void updateStringWriteEntitiesInputMenu(bool keyboardInputMenuMode, bool defaultInput = true);
     void confGlobalSettings(const SettingsData &settingsData);
     void validDisplayMenu();
+    inline void unsetTransition(bool transition)
+    {
+        m_graphicEngine.unsetTransition(transition);
+    }
+    inline void setTransition(bool transition)
+    {
+        m_graphicEngine.setTransition(transition);
+    }
     inline void updateMusicVolume(uint32_t volume)
     {
         m_audioEngine.updateMusicVolume(volume);
