@@ -104,6 +104,10 @@ public:
     {
         return m_graphicEngine.getMaxResolutionNum();
     }
+    inline uint32_t getCurrentSaveNum()const
+    {
+        return m_currentSave;
+    }
     inline void toogleMenuEntryFullscreen()
     {
         m_graphicEngine.toogleMenuEntryFullscreen();

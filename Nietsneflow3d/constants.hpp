@@ -75,7 +75,7 @@ enum Components_e
     TOTAL_COMPONENTS
 };
 
-enum class ConfirmQuitInputCursorPos_e
+enum class ConfirmCursorPos_e
 {
     TRUE,
     FALSE,
@@ -90,6 +90,7 @@ enum class MainMenuCursorPos_e
     INPUT_CONF,
     NEW_GAME,
     LOAD_GAME,
+    RESTART_LEVEL,
     QUIT_GAME,
     TOTAL
 };
@@ -336,6 +337,7 @@ enum class MenuMode_e
     LOAD_GAME,
     CONFIRM_QUIT_INPUT_FORM,
     CONFIRM_LOADING_GAME_FORM,
+    CONFIRM_RESTART_LEVEL,
     NEW_KEY
 };
 inline const uint32_t ENCRYPT_KEY_STANDARD_LEVEL = 17;
@@ -383,7 +385,7 @@ inline const std::map<MenuMode_e, PairPairFloatStr_t> MAP_MENU_DATA =
 {
     {MenuMode_e::BASE,
      PairPairFloatStr_t{{-0.5f, 0.5f},
-      "RETURN TO GAME\\SOUND CONF\\DISPLAY CONF\\INPUT CONF\\NEW GAME\\LOAD GAME\\EXIT GAME"}},
+      "RETURN TO GAME\\SOUND CONF\\DISPLAY CONF\\INPUT CONF\\NEW GAME\\LOAD GAME\\RESTART LEVEL\\EXIT GAME"}},
     {MenuMode_e::TRANSITION_LEVEL,
      PairPairFloatStr_t{{-0.5f, 0.5f}, "CONTINUE"}},
     {MenuMode_e::SOUND,
@@ -404,6 +406,9 @@ inline const std::map<MenuMode_e, PairPairFloatStr_t> MAP_MENU_DATA =
      PairPairFloatStr_t{{-0.1f, 0.0f}, "YES\\NO"}
     },
     {MenuMode_e::CONFIRM_LOADING_GAME_FORM,
+     PairPairFloatStr_t{{-0.1f, 0.0f}, "YES\\NO"}
+    },
+    {MenuMode_e::CONFIRM_RESTART_LEVEL,
      PairPairFloatStr_t{{-0.1f, 0.0f}, "YES\\NO"}
     },
     {MenuMode_e::NEW_KEY,

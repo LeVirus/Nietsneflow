@@ -1156,7 +1156,8 @@ void MainEngine::setMenuEntries(PlayerConfComponent *playerComp)
         playerComp->m_currentCursorPos = m_memInputCursorPos;
         m_memInputCursorPos = 0;
     }
-    else if(playerComp->m_menuMode == MenuMode_e::CONFIRM_QUIT_INPUT_FORM || playerComp->m_menuMode == MenuMode_e::CONFIRM_LOADING_GAME_FORM)
+    else if(playerComp->m_menuMode == MenuMode_e::CONFIRM_QUIT_INPUT_FORM || playerComp->m_menuMode == MenuMode_e::CONFIRM_LOADING_GAME_FORM ||
+            playerComp->m_menuMode == MenuMode_e::CONFIRM_RESTART_LEVEL)
     {
         updateMenuInfo(playerComp);
         playerComp->m_currentCursorPos = 0;
@@ -1184,15 +1185,18 @@ void MainEngine::updateMenuInfo(PlayerConfComponent *playerComp)
         writeComp->m_upLeftPositionGL = {-0.6f, 0.3f};
         writeComp->m_str = "DO YOU WANT TO SAVE CHANGES?";
     }
-    else if(playerComp->m_menuMode == MenuMode_e::CONFIRM_LOADING_GAME_FORM)
+    else if(playerComp->m_menuMode == MenuMode_e::CONFIRM_LOADING_GAME_FORM || playerComp->m_menuMode == MenuMode_e::CONFIRM_RESTART_LEVEL)
     {
         writeComp->m_upLeftPositionGL = {-0.9f, 0.3f};
         writeComp->m_str = "ALL YOUR PROGRESS UNTIL LAST SAVE WILL BE LOST\\";
-        if(playerComp->m_previousMenuMode == MenuMode_e::NEW_GAME && checkSavedGameExists(playerComp->m_currentCursorPos + 1))
+        if(playerComp->m_menuMode == MenuMode_e::CONFIRM_LOADING_GAME_FORM)
         {
-            writeComp->m_str += "PREVIOUS FILE WILL BE ERASED\\";
+            if(playerComp->m_previousMenuMode == MenuMode_e::NEW_GAME && checkSavedGameExists(playerComp->m_currentCursorPos + 1))
+            {
+                writeComp->m_str += "PREVIOUS FILE WILL BE ERASED\\";
+            }
+            writeComp->m_str += "CONTINUE ANYWAY?";
         }
-        writeComp->m_str += "CONTINUE ANYWAY?";
     }
     m_graphicEngine.confWriteComponent(writeComp);
 }
@@ -1278,6 +1282,7 @@ bool MainEngine::loadSavedGame(uint32_t saveNum)
     m_currentSave = saveNum;
     m_memPlayerConf = savedData->second;
     m_levelToLoad = savedData->first;
+    m_playerMem = true;
     return true;
 }
 

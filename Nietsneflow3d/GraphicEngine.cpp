@@ -201,6 +201,7 @@ void GraphicEngine::fillTitleMenuWrite(WriteComponent *writeComp, MenuMode_e men
         writeComp->m_str = "INPUT MENU";
         break;
     case MenuMode_e::CONFIRM_LOADING_GAME_FORM:
+    case MenuMode_e::CONFIRM_RESTART_LEVEL:
         break;
     case MenuMode_e::SOUND:
         writeComp->m_str = "AUDIO MENU";

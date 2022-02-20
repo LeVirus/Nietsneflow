@@ -155,7 +155,9 @@ void StaticDisplaySystem::displayMenu()
                 }
             }
         }
-        else if(playerComp->m_menuMode == MenuMode_e::CONFIRM_QUIT_INPUT_FORM || playerComp->m_menuMode == MenuMode_e::CONFIRM_LOADING_GAME_FORM)
+        else if(playerComp->m_menuMode == MenuMode_e::CONFIRM_QUIT_INPUT_FORM ||
+                playerComp->m_menuMode == MenuMode_e::CONFIRM_LOADING_GAME_FORM ||
+                playerComp->m_menuMode == MenuMode_e::CONFIRM_RESTART_LEVEL)
         {
             drawWriteVertex(playerComp->m_menuInfoWriteEntity, VertexID_e::INPUT);
         }

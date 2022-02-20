@@ -685,14 +685,17 @@ void InputSystem::treatEnterPressedMenu(PlayerConfComponent *playerComp)
     case MenuMode_e::CONFIRM_LOADING_GAME_FORM:
         treatEnterPressedConfirmLoadGameMenu(playerComp);
         break;
+    case MenuMode_e::CONFIRM_RESTART_LEVEL:
+        treatEnterPressedConfirmRestartLevelMenu(playerComp);
+        break;
     }
 }
 
 //===================================================================
 void InputSystem::treatEnterPressedConfirmInputMenu(PlayerConfComponent *playerComp)
 {
-    ConfirmQuitInputCursorPos_e menuEntry = static_cast<ConfirmQuitInputCursorPos_e>(playerComp->m_currentCursorPos);
-    if(menuEntry == ConfirmQuitInputCursorPos_e::TRUE)
+    ConfirmCursorPos_e menuEntry = static_cast<ConfirmCursorPos_e>(playerComp->m_currentCursorPos);
+    if(menuEntry == ConfirmCursorPos_e::TRUE)
     {
         validInputMenu(playerComp);
     }
@@ -704,10 +707,28 @@ void InputSystem::treatEnterPressedConfirmInputMenu(PlayerConfComponent *playerC
 }
 
 //===================================================================
+void InputSystem::treatEnterPressedConfirmRestartLevelMenu(PlayerConfComponent *playerComp)
+{
+    ConfirmCursorPos_e menuEntry = static_cast<ConfirmCursorPos_e>(playerComp->m_currentCursorPos);
+    if(menuEntry == ConfirmCursorPos_e::TRUE)
+    {
+        if(m_mainEngine->loadSavedGame(m_mainEngine->getCurrentSaveNum()))
+        {
+            m_mainEngine->setTransition(true);
+        }
+    }
+    else
+    {
+        playerComp->m_menuMode = MenuMode_e::BASE;
+        m_mainEngine->setMenuEntries(playerComp);
+    }
+}
+
+//===================================================================
 void InputSystem::treatEnterPressedConfirmLoadGameMenu(PlayerConfComponent *playerComp)
 {
-    ConfirmQuitInputCursorPos_e menuEntry = static_cast<ConfirmQuitInputCursorPos_e>(playerComp->m_currentCursorPos);
-    if(menuEntry == ConfirmQuitInputCursorPos_e::TRUE)
+    ConfirmCursorPos_e menuEntry = static_cast<ConfirmCursorPos_e>(playerComp->m_currentCursorPos);
+    if(menuEntry == ConfirmCursorPos_e::TRUE)
     {
         //NEW GAME
         if(playerComp->m_previousMenuMode == MenuMode_e::NEW_GAME)
@@ -865,6 +886,10 @@ void InputSystem::treatEnterPressedMainMenu(PlayerConfComponent *playerComp)
         break;
     case MainMenuCursorPos_e::LOAD_GAME:
         playerComp->m_menuMode = MenuMode_e::LOAD_GAME;
+        m_mainEngine->setMenuEntries(playerComp);
+        break;
+    case MainMenuCursorPos_e::RESTART_LEVEL:
+        playerComp->m_menuMode = MenuMode_e::CONFIRM_RESTART_LEVEL;
         m_mainEngine->setMenuEntries(playerComp);
         break;
     case MainMenuCursorPos_e::QUIT_GAME:

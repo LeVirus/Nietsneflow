@@ -131,6 +131,7 @@ private:
     void treatEnterPressedLoadGameMenu(PlayerConfComponent *playerComp);
     void treatEnterPressedConfirmInputMenu(PlayerConfComponent *playerComp);
     void treatEnterPressedConfirmLoadGameMenu(PlayerConfComponent *playerComp);
+    void treatEnterPressedConfirmRestartLevelMenu(PlayerConfComponent *playerComp);
     void validInputMenu(PlayerConfComponent *playerComp);
     void treatPlayerMove(PlayerConfComponent *playerComp, MoveableComponent *moveComp, MapCoordComponent *mapComp);
 private:
@@ -151,8 +152,9 @@ private:
         {MenuMode_e::SOUND, static_cast<uint32_t>(SoundMenuCursorPos_e::TOTAL) - 1},
         {MenuMode_e::NEW_GAME, static_cast<uint32_t>(NewGameMenuCursorPos_e::TOTAL) - 1},
         {MenuMode_e::LOAD_GAME, static_cast<uint32_t>(LoadGameMenuCursorPos_e::TOTAL) - 1},
-        {MenuMode_e::CONFIRM_QUIT_INPUT_FORM, static_cast<uint32_t>(ConfirmQuitInputCursorPos_e::TOTAL) - 1},
-        {MenuMode_e::CONFIRM_LOADING_GAME_FORM, static_cast<uint32_t>(ConfirmQuitInputCursorPos_e::TOTAL) - 1},
+        {MenuMode_e::CONFIRM_QUIT_INPUT_FORM, static_cast<uint32_t>(ConfirmCursorPos_e::TOTAL) - 1},
+        {MenuMode_e::CONFIRM_LOADING_GAME_FORM, static_cast<uint32_t>(ConfirmCursorPos_e::TOTAL) - 1},
+        {MenuMode_e::CONFIRM_RESTART_LEVEL, static_cast<uint32_t>(ConfirmCursorPos_e::TOTAL) - 1},
         {MenuMode_e::NEW_KEY, 0}
     };
     std::map<ControlKey_e, uint32_t> m_mapKeyboardCurrentAssociatedKey = MAP_KEYBOARD_DEFAULT_KEY,
