@@ -29,10 +29,12 @@ class GraphicEngine
 {
 public:
     GraphicEngine();
+    void loadExistingLevelNumSaves(const std::array<std::optional<uint32_t>, 3> &existingLevelNum);
     void confSystems();
     void loadPictureData(const PictureData &pictureData, const FontData &fontData);
     void runIteration(bool gamePaused);
     bool windowShouldClose();
+    void updateSaveNum(uint32_t levelNum, uint32_t saveNum);
     void linkSystems(ColorDisplaySystem *colorSystem, MapDisplaySystem *mapSystem,
                      FirstPersonDisplaySystem *firstPersonSystem, VisionSystem *visionSystem,
                      StaticDisplaySystem *staticDisplaySystem);
@@ -115,6 +117,8 @@ private:
     VisionSystem *m_visionSystem = nullptr;
     StaticDisplaySystem *m_staticDisplaySystem = nullptr;
     uint32_t m_transitionFrameNumber = 30;
+    std::array<std::optional<uint32_t>, 3> m_memExistingLevelSave;
+    std::string m_saveMenuWrite;
     bool m_fullscreenMode = false, m_displayMenuFullscreenMode = m_fullscreenMode;
     const std::map<InputMenuCursorPos_e, std::string> m_mapInputActionStringAssociated = {
         {InputMenuCursorPos_e::ACTION, "ACTION"},

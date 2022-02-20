@@ -2,10 +2,7 @@ IMPROVE=========================================================================
 ==========================================================================================================
 
 ))
-Display possess card
-
-))
-Display saved files in menu
+Add restart level menu option
 
 ))
 Add machine gun to weapon
@@ -18,6 +15,9 @@ Weapon movement on begin and end movement
 4) 
 Improve Enemy behaviour
 
+))
+Display possess card===========~~A VOIR
+
 -9)
 Animation move while shooting===========================~
 
@@ -25,6 +25,9 @@ Animation move while shooting===========================~
 Enemy animations========================~
 
 
+
+))
+Display saved files in menu===================================OK
 
 ))
 Set scratch damage for enemies===============================OK

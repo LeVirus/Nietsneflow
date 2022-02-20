@@ -40,6 +40,7 @@ class MainEngine
 public:
     MainEngine() = default;
     void loadGraphicPicture(const PictureData &picData, const FontData &fontData);
+    void loadExistingLevelNumSaves(const std::array<std::optional<uint32_t>, 3> &existingLevelNum);
     void init(Game *refGame);
     void loadLevel(const LevelManager &levelManager);
     //first quit, second gameover

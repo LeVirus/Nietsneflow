@@ -22,6 +22,23 @@ GraphicEngine::GraphicEngine()
 }
 
 //===================================================================
+void GraphicEngine::loadExistingLevelNumSaves(const std::array<std::optional<uint32_t>, 3> &existingLevelNum)
+{
+    m_memExistingLevelSave = existingLevelNum;
+    m_saveMenuWrite.clear();
+    for(uint32_t i = 1; i < 4; ++i)
+    {
+        m_saveMenuWrite += std::to_string(i);
+        if(existingLevelNum[i - 1])
+        {
+            m_saveMenuWrite += "  LEVEL " + std::to_string(*existingLevelNum[i - 1]);
+        }
+        m_saveMenuWrite += "\\";
+    }
+    m_saveMenuWrite += "RETURN";
+}
+
+//===================================================================
 void GraphicEngine::confSystems()
 {
     setShaderToLocalSystems();
@@ -125,6 +142,13 @@ bool GraphicEngine::windowShouldClose()
 }
 
 //===================================================================
+void GraphicEngine::updateSaveNum(uint32_t levelNum, uint32_t saveNum)
+{
+    m_memExistingLevelSave[saveNum - 1] = levelNum;
+    loadExistingLevelNumSaves(m_memExistingLevelSave);
+}
+
+//===================================================================
 void GraphicEngine::linkSystems(ColorDisplaySystem *colorSystem, MapDisplaySystem *mapSystem,
                                 FirstPersonDisplaySystem *firstPersonSystem, VisionSystem *visionSystem,
                                 StaticDisplaySystem *staticDisplaySystem)
@@ -191,8 +215,15 @@ void GraphicEngine::fillTitleMenuWrite(WriteComponent *writeComp, MenuMode_e men
 //===================================================================
 void GraphicEngine::fillMenuWrite(WriteComponent *writeComp, MenuMode_e menuEntry, uint32_t cursorPos)
 {
-    std::map<MenuMode_e, PairPairFloatStr_t>::const_iterator it = MAP_MENU_DATA.find(menuEntry);
-    writeComp->m_str = it->second.second;
+    if(menuEntry == MenuMode_e::LOAD_GAME || menuEntry == MenuMode_e::NEW_GAME)
+    {
+        writeComp->m_str = m_saveMenuWrite;
+    }
+    else
+    {
+        std::map<MenuMode_e, PairPairFloatStr_t>::const_iterator it = MAP_MENU_DATA.find(menuEntry);
+        writeComp->m_str = it->second.second;
+    }
     if(menuEntry == MenuMode_e::DISPLAY)
     {
         m_currentDisplayedResolution = m_currentResolution;

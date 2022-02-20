@@ -127,6 +127,7 @@ std::tuple<bool, bool, std::optional<uint32_t>> MainEngine::mainLoop(uint32_t le
 void MainEngine::saveGameProgress(uint32_t levelNum, std::optional<uint32_t> numSaveFile)
 {
     uint32_t saveNum = numSaveFile ? *numSaveFile : m_currentSave;
+    m_graphicEngine.updateSaveNum(levelNum, saveNum);
     m_refGame->saveGameProgress(m_memPlayerConf, levelNum, saveNum);
 }
 
@@ -564,6 +565,12 @@ uint32_t MainEngine::createBackgroundEntity(bool color)
 void MainEngine::loadGraphicPicture(const PictureData &picData, const FontData &fontData)
 {
     m_graphicEngine.loadPictureData(picData, fontData);
+}
+
+//===================================================================
+void MainEngine::loadExistingLevelNumSaves(const std::array<std::optional<uint32_t>, 3> &existingLevelNum)
+{
+    m_graphicEngine.loadExistingLevelNumSaves(existingLevelNum);
 }
 
 //===================================================================

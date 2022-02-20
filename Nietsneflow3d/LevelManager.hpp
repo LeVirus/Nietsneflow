@@ -89,6 +89,7 @@ public:
                                   const std::map<ControlKey_e, uint32_t> &keyboardArray);
     void saveGameProgress(const MemPlayerConf &playerConf, uint32_t levelNum, uint32_t numSaveFile);
     std::optional<std::pair<uint32_t, MemPlayerConf>> loadSavedGame(uint32_t saveNum);
+    std::array<std::optional<uint32_t>, 3> getExistingLevelNumSaves();
     //if encryptKey is nullopt no encryption
     bool loadIniFile(std::string_view path, std::optional<uint32_t> encryptKey);
     inline const PictureData &getPictureData()const {return m_pictureData;}

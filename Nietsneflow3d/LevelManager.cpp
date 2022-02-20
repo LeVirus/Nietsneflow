@@ -1708,6 +1708,25 @@ std::optional<std::pair<uint32_t, MemPlayerConf>> LevelManager::loadSavedGame(ui
 }
 
 //===================================================================
+std::array<std::optional<uint32_t>, 3> LevelManager::getExistingLevelNumSaves()
+{
+    std::string path;
+    std::array<std::optional<uint32_t>, 3> ret;
+    for(uint32_t i = 1; i < 4; ++i)
+    {
+        path = LEVEL_RESSOURCES_DIR_STR + "Saves/save" + std::to_string(i) + ".ini";
+        if(std::filesystem::exists(path))
+        {
+            loadIniFile(path, ENCRYPT_KEY_CONF_FILE);
+            std::optional<std::string> val = m_ini.getValue("Level", "levelNum");
+            assert(val);
+            ret[i - 1] = std::stoi(*val);
+        }
+    }
+    return ret;
+}
+
+//===================================================================
 bool LevelManager::checkSavedGameExists(uint32_t saveNum)const
 {
     return std::filesystem::exists(LEVEL_RESSOURCES_DIR_STR + "Saves/save" + std::to_string(saveNum) + ".ini");
