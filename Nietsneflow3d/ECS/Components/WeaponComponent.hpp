@@ -6,7 +6,7 @@
 
 struct WeaponData
 {
-    uint32_t m_ammunationsCount, m_simultaneousShots, m_maxAmmunations, m_lastAnimNum, m_weaponPower;
+    uint32_t m_ammunationsCount, m_simultaneousShots, m_maxAmmunations, m_lastAnimNum, m_weaponPower, m_currentBullet = 0;
     AttackType_e m_attackType;
     AnimationMode_e m_animMode;
     PairUI_t m_memPosSprite;

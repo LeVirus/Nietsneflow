@@ -228,9 +228,24 @@ void MainEngine::playerAttack(uint32_t playerEntity, PlayerConfComponent *player
     }
     else if(attackType == AttackType_e::BULLETS)
     {
-        for(uint32_t i = 0; i < currentWeapon.m_simultaneousShots; ++i)
+        if(currentWeapon.m_simultaneousShots == 1)
         {
-            confPlayerBullet(playerComp, point, degreeAngle, i);
+            confPlayerBullet(playerComp, point, degreeAngle, currentWeapon.m_currentBullet);
+            if(currentWeapon.m_currentBullet < MAX_SHOTS - 1)
+            {
+                ++currentWeapon.m_currentBullet;
+            }
+            else
+            {
+                currentWeapon.m_currentBullet = 0;
+            }
+        }
+        else
+        {
+            for(uint32_t i = 0; i < currentWeapon.m_simultaneousShots; ++i)
+            {
+                confPlayerBullet(playerComp, point, degreeAngle, i);
+            }
         }
     }
     else if(attackType == AttackType_e::VISIBLE_SHOTS)
