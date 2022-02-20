@@ -875,8 +875,10 @@ void LevelManager::loadWeaponData(std::string_view sectionName, uint32_t numIt)
     assert(val);
     m_vectWeaponsINIData[numIt].m_order = std::stoi(*val);
     val = m_ini.getValue(sectionName.data(), "LastAnimNum");
-    assert(val);
-    m_vectWeaponsINIData[numIt].m_lastAnimNum = std::stoi(*val);
+    if(val)
+    {
+        m_vectWeaponsINIData[numIt].m_lastAnimNum = std::stoi(*val);
+    }
     val = m_ini.getValue(sectionName.data(), "NumberOfShots");
     if(val)
     {

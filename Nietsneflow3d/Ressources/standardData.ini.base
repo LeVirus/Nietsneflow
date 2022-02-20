@@ -177,6 +177,23 @@ AnimationType = 0
 LastAnimNum = 1
 SoundEffect = Explosion.wav
 
+[WeaponMachineGun]
+WeaponName = MACHINE GUN
+Order = 5
+BaseAmmo = 0
+StaticSprite = SpriteMGSt 
+AttackSprite = SpriteMGAA SpriteMGAB
+SpriteWeightGame = 0.5 0.5 0.5
+SpriteHeightGame = 0.5 0.65 0.65
+AnimationLatency = 0.08
+ShotImpactID = ImpactStd
+AttackType = 1
+MaxAmmo = 100
+LastAnimNum = 2
+Damage = 2
+AnimationType = 2
+SoundEffect = GunShotTMP.wav
+
 [ImpactShotgun]
 SpritesStd = SpriteShotImpactA SpriteShotImpactB
 SpriteTouched = SpriteShotImpactTouched
@@ -229,6 +246,22 @@ SpriteWeightGame = 0.4 ; value in %
 SpriteHeightGame = 0.4
 Type = 0
 WeaponID = WeaponBazooka
+Containing = 1
+
+[ObjectMachineGunAmmo]
+Sprite = SpriteItemMachineGunAmmo
+SpriteWeightGame = 0.2 ; value in %
+SpriteHeightGame = 0.5
+Type = 1
+WeaponID = WeaponMachineGun
+Containing = 20
+
+[ObjectMachineGun]
+Sprite = SpriteItemMachineGun
+SpriteWeightGame = 0.4 ; value in %
+SpriteHeightGame = 0.4
+Type = 0
+WeaponID = WeaponMachineGun
 Containing = 1
 
 [ObjectShotgunAmmo]

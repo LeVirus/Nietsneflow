@@ -386,8 +386,7 @@ void StaticDisplaySystem::confWeaponsVertexFromComponent(PlayerConfComponent *pl
         {
             std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() -
                     timerComp->m_clockA;
-            treatWeaponShootAnimation(elapsed_seconds.count(),
-                                      playerComp, timerComp);
+            treatWeaponShootAnimation(elapsed_seconds.count(), playerComp, timerComp);
         }
         else if(!weaponComp->m_timerShootActive)
         {
@@ -409,53 +408,67 @@ void StaticDisplaySystem::treatWeaponShootAnimation(float elapsedSeconds,
                                                    Components_e::WEAPON_COMPONENT);
     assert(weaponComp);
     const WeaponData &currentWeapon = weaponComp->m_weaponsData[weaponComp->m_currentWeapon];
-    uint32_t spriteFirstAnim = currentWeapon.m_memPosSprite.first, spriteNumLastAnim;
-    spriteNumLastAnim = currentWeapon.m_lastAnimNum;
+    uint32_t spriteFirstAnim = currentWeapon.m_memPosSprite.first, spriteNumLastAnim = currentWeapon.m_lastAnimNum;
     if(elapsedSeconds > currentWeapon.m_latency)
     {
-        if(weaponComp->m_shootFirstPhase)
+        if(currentWeapon.m_animMode == AnimationMode_e::CONSTANT)
         {
-            if(weaponComp->m_numWeaponSprite == currentWeapon.m_memPosSprite.second)
+            if(weaponComp->m_numWeaponSprite == spriteNumLastAnim)
             {
-                if(currentWeapon.m_animMode == AnimationMode_e::STANDART)
-                {
-                    weaponComp->m_numWeaponSprite = spriteFirstAnim;
-                    weaponComp->m_timerShootActive = false;
-                }
-                else
-                {
-                    --weaponComp->m_numWeaponSprite;
-                }
-                weaponComp->m_shootFirstPhase = false;
+                weaponComp->m_numWeaponSprite = spriteFirstAnim;
+                weaponComp->m_timerShootActive = false;
             }
             else
             {
-                if(weaponComp->m_numWeaponSprite == currentWeapon.m_memPosSprite.first + 2)
-                {
-                    AudioComponent *audioComp = stairwayToComponentManager().
-                            searchComponentByType<AudioComponent>(playerComp->m_weaponEntity, Components_e::AUDIO_COMPONENT);
-                    assert(audioComp);
-                    audioComp->m_soundElements[weaponComp->m_reloadSoundAssociated[
-                            weaponComp->m_currentWeapon]]->m_toPlay = true;
-                }
                 ++weaponComp->m_numWeaponSprite;
             }
         }
         else
         {
-            if(currentWeapon.m_animMode == AnimationMode_e::RETURN && weaponComp->m_numWeaponSprite == spriteNumLastAnim)
+            if(weaponComp->m_shootFirstPhase)
             {
-                weaponComp->m_timerShootActive = false;
-                weaponComp->m_numWeaponSprite = spriteFirstAnim;
-            }
-            else if(currentWeapon.m_animMode == AnimationMode_e::STANDART && weaponComp->m_numWeaponSprite == spriteFirstAnim)
-            {
-                weaponComp->m_timerShootActive = false;
-                return;
+                if(weaponComp->m_numWeaponSprite == currentWeapon.m_memPosSprite.second)
+                {
+                    if(currentWeapon.m_animMode == AnimationMode_e::STANDART)
+                    {
+                        weaponComp->m_numWeaponSprite = spriteFirstAnim;
+                        weaponComp->m_timerShootActive = false;
+                    }
+                    else if(currentWeapon.m_animMode == AnimationMode_e::RETURN)
+                    {
+                        --weaponComp->m_numWeaponSprite;
+                    }
+                    weaponComp->m_shootFirstPhase = false;
+                }
+                else
+                {
+                    if(weaponComp->m_numWeaponSprite == currentWeapon.m_memPosSprite.first + 2)
+                    {
+                        AudioComponent *audioComp = stairwayToComponentManager().
+                                searchComponentByType<AudioComponent>(playerComp->m_weaponEntity, Components_e::AUDIO_COMPONENT);
+                        assert(audioComp);
+                        audioComp->m_soundElements[weaponComp->m_reloadSoundAssociated[
+                                weaponComp->m_currentWeapon]]->m_toPlay = true;
+                    }
+                    ++weaponComp->m_numWeaponSprite;
+                }
             }
             else
             {
-                --weaponComp->m_numWeaponSprite;
+                if(currentWeapon.m_animMode == AnimationMode_e::RETURN && weaponComp->m_numWeaponSprite == spriteNumLastAnim)
+                {
+                    weaponComp->m_timerShootActive = false;
+                    weaponComp->m_numWeaponSprite = spriteFirstAnim;
+                }
+                else if(currentWeapon.m_animMode == AnimationMode_e::STANDART && weaponComp->m_numWeaponSprite == spriteFirstAnim)
+                {
+                    weaponComp->m_timerShootActive = false;
+                    return;
+                }
+                else
+                {
+                    --weaponComp->m_numWeaponSprite;
+                }
             }
         }
         setWeaponSprite(playerComp->m_weaponEntity, weaponComp->m_numWeaponSprite);

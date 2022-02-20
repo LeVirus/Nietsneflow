@@ -134,6 +134,22 @@ texturePosY = 0.75847
 textureWeight = 0.00314
 textureHeight = 0.00930
 
+
+[SpriteItemMachineGun]
+texture = 4
+texturePosX = 0.0388
+texturePosY = 0.7308
+textureWeight = 0.0123
+textureHeight = 0.0056
+
+[SpriteItemMachineGunAmmo]
+texture = 4
+texturePosX = 0.0273
+texturePosY = 0.7584
+textureWeight = 0.0065
+textureHeight = 0.0056
+
+
 [SpriteItemHeal]
 texture = 1
 texturePosX = 0.61145
@@ -581,6 +597,27 @@ texturePosX = 0.67684
 texturePosY = 0.69401
 textureWeight = 0.02378
 textureHeight = 0.03986
+
+[SpriteMGSt]
+texture = 4
+texturePosX = 0.4757
+texturePosY = 0.6471
+textureWeight = 0.0258
+textureHeight = 0.0279
+
+[SpriteMGAA]
+texture = 4
+texturePosX = 0.4757
+texturePosY = 0.6890
+textureWeight = 0.0258
+textureHeight = 0.0345
+
+[SpriteMGAB]
+texture = 4
+texturePosX = 0.5020
+texturePosY = 0.6890
+textureWeight = 0.0258
+textureHeight = 0.0345
 
 [SpriteGSt] 
 texture = 4

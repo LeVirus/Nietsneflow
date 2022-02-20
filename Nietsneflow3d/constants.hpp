@@ -16,7 +16,8 @@ using PairPairFloatStr_t = std::pair<PairFloat_t, std::string>;
 enum class AnimationMode_e
 {
     STANDART,
-    RETURN
+    RETURN,
+    CONSTANT
 };
 
 enum class ControlKey_e
