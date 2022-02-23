@@ -35,6 +35,12 @@ struct MemPlayerConf
     uint32_t m_life;
 };
 
+struct MemCheckpointLevelState
+{
+    uint32_t m_levelNum;
+    PairUI_t m_playerPos;
+};
+
 class MainEngine
 {
 public:
@@ -43,8 +49,10 @@ public:
     void loadExistingLevelNumSaves(const std::array<std::optional<uint32_t>, 3> &existingLevelNum);
     void init(Game *refGame);
     void loadLevel(const LevelManager &levelManager);
+    void loadGameProgressCheckpoint();
     //first quit, second gameover
     std::tuple<bool, bool, std::optional<uint32_t> > mainLoop(uint32_t levelNum, bool gameLoad);
+    void saveGameProgressCheckpoint(uint32_t levelNum, const PairUI_t &checkpointReached);
     void saveGameProgress(uint32_t levelNum, std::optional<uint32_t> numSaveFile = {});
     void playerAttack(uint32_t playerEntity, PlayerConfComponent *playerComp,
                       const PairFloat_t &point, float degreeAngle);
@@ -244,7 +252,8 @@ private:
     std::set<PairUI_t> m_memWall;
     std::map<PairUI_t, uint32_t> m_memTriggerCreated, m_memWallPos;
     std::optional<uint32_t> m_levelToLoad;
-    uint32_t m_currentCheckpointMem;
+    std::optional<MemCheckpointLevelState> m_memCheckpointLevelState;
+    uint32_t m_currentCheckpointMem, m_playerEntity;
 };
 
 void insertEnemySpriteFromType(const std::vector<SpriteData> &vectSprite, mapEnemySprite_t &mapSpriteAssociate,

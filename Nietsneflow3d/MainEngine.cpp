@@ -73,6 +73,10 @@ std::tuple<bool, bool, std::optional<uint32_t>> MainEngine::mainLoop(uint32_t le
         m_vectMemPausedTimer.clear();
         setUnsetPaused();
     }
+    else if(m_memCheckpointLevelState)
+    {
+        loadGameProgressCheckpoint();
+    }
     m_graphicEngine.unsetTransition(m_gamePaused);
     std::chrono::time_point<std::chrono::system_clock> clock;
     clock = std::chrono::system_clock::now();
@@ -104,8 +108,14 @@ std::tuple<bool, bool, std::optional<uint32_t>> MainEngine::mainLoop(uint32_t le
         m_graphicEngine.runIteration(m_gamePaused);
         //MUUUUUUUUUUUUSSSSS
         m_audioEngine.runIteration();
+        if(m_playerConf->m_checkpointReached)
+        {
+            saveGameProgressCheckpoint(levelNum, *m_playerConf->m_checkpointReached);
+            m_playerConf->m_checkpointReached = {};
+        }
         if(!m_exitColl->m_active)
         {
+            m_memCheckpointLevelState = {};
             //end level
             m_playerConf->m_inMovement = false;
             savePlayerGear();
@@ -122,6 +132,14 @@ std::tuple<bool, bool, std::optional<uint32_t>> MainEngine::mainLoop(uint32_t le
         }
     }while(!m_graphicEngine.windowShouldClose());
     return {false, true, {}};
+}
+
+//===================================================================
+void MainEngine::saveGameProgressCheckpoint(uint32_t levelNum, const PairUI_t &checkpointReached)
+{
+    m_memCheckpointLevelState = {levelNum, checkpointReached};
+    //OOOK SAVE GEAR BEGIN LEVEL
+    savePlayerGear();
 }
 
 //===================================================================
@@ -634,6 +652,15 @@ void MainEngine::loadLevel(const LevelManager &levelManager)
     //MUUUUUUUUUUUUSSSSS
     m_audioEngine.loadMusicFromFile(levelManager.getLevel().getMusicFilename());
     m_audioEngine.playMusic();
+}
+
+//===================================================================
+void MainEngine::loadGameProgressCheckpoint()
+{
+    MapCoordComponent *mapComp = m_ecsManager.getComponentManager().
+            searchComponentByType<MapCoordComponent>(m_playerEntity, Components_e::MAP_COORD_COMPONENT);
+    assert(mapComp);
+    mapComp->m_absoluteMapPositionPX = getCenteredAbsolutePosition(m_memCheckpointLevelState->m_playerPos);
 }
 
 //===================================================================
@@ -1876,6 +1903,7 @@ void MainEngine::confPlayerEntity(const LevelManager &levelManager,
                                   uint32_t entityNum, const Level &level,
                                   uint32_t numWeaponEntity, uint32_t numDisplayTeleportEntity)
 {
+    m_playerEntity = entityNum;
     const std::vector<SpriteData> &vectSpriteData =
             levelManager.getPictureData().getSpriteData();
     PositionVertexComponent *pos = m_ecsManager.getComponentManager().

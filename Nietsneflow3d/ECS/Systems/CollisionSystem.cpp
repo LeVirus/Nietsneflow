@@ -822,6 +822,10 @@ bool CollisionSystem::treatCollisionPlayer(CollisionArgs &args, CircleCollisionC
         assert(checkpointComp);
         if(!playerComp->m_currentCheckpoint || checkpointComp->m_checkpointNumber > playerComp->m_currentCheckpoint)
         {
+            MapCoordComponent *mapComp = stairwayToComponentManager().
+                    searchComponentByType<MapCoordComponent>(args.entityNumB, Components_e::MAP_COORD_COMPONENT);
+            assert(mapComp);
+            playerComp->m_checkpointReached = mapComp->m_coord;
             playerComp->m_currentCheckpoint = checkpointComp->m_checkpointNumber;
             writePlayerInfo("CHECKPOINT REACHED");
         }
