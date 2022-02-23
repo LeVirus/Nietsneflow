@@ -19,6 +19,7 @@
 #include <ECS/Components/SpriteTextureComponent.hpp>
 #include <ECS/Components/WeaponComponent.hpp>
 #include <ECS/Components/BarrelComponent.hpp>
+#include <ECS/Components/CheckpointComponent.hpp>
 #include <ECS/Components/TriggerComponent.hpp>
 #include <ECS/Components/MoveableWallConfComponent.hpp>
 #include <ECS/Systems/FirstPersonDisplaySystem.hpp>
@@ -428,6 +429,8 @@ void CollisionSystem::initArrayTag()
     m_tagArray.insert({CollisionTag_e::PLAYER_CT, CollisionTag_e::TRIGGER_CT});
     m_tagArray.insert({CollisionTag_e::PLAYER_CT, CollisionTag_e::TELEPORT_CT});
     m_tagArray.insert({CollisionTag_e::PLAYER_CT, CollisionTag_e::BARREL_CT});
+    m_tagArray.insert({CollisionTag_e::PLAYER_CT, CollisionTag_e::CHECKPOINT_CT});
+    m_tagArray.insert({CollisionTag_e::PLAYER_CT, CollisionTag_e::SECRET_CT});
 
     m_tagArray.insert({CollisionTag_e::BARREL_CT, CollisionTag_e::BARREL_CT});
 
@@ -502,7 +505,6 @@ bool CollisionSystem::checkTag(CollisionTag_e entityTagA, CollisionTag_e entityT
 bool CollisionSystem::treatCollision(uint32_t entityNumA, uint32_t entityNumB, GeneralCollisionComponent *tagCompA,
                                      GeneralCollisionComponent *tagCompB, bool shotExplosionEject)
 {
-
 //    if(tagCompA->m_shape == CollisionShape_e::RECTANGLE_C)
 //    {
 //        checkCollisionFirstRect(args);
@@ -605,7 +607,6 @@ bool CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args, bool shotEx
             collision = checkCircleRectCollision(args.mapCompA.m_absoluteMapPositionPX, circleCompA.m_ray,
                                                  args.mapCompB.m_absoluteMapPositionPX, rectCompB.m_size);
         }
-
         if(collision)
         {
             if(args.tagCompA->m_tagA == CollisionTag_e::PLAYER_ACTION_CT)
@@ -614,20 +615,10 @@ bool CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args, bool shotEx
             }
             else if(args.tagCompA->m_tagA == CollisionTag_e::PLAYER_CT)
             {
-                if(args.tagCompB->m_tagA == CollisionTag_e::DOOR_CT)
+                if(treatCollisionPlayer(args, circleCompA, rectCompB))
                 {
-                    DoorComponent *doorComp = stairwayToComponentManager().
-                            searchComponentByType<DoorComponent>(args.entityNumB, Components_e::DOOR_COMPONENT);
-                    assert(doorComp);
-                    doorComp->m_obstruct = true;
-                    if(doorComp->m_currentState == DoorState_e::MOVE_CLOSE)
-                    {
-                        doorComp->m_currentState = DoorState_e::MOVE_OPEN;
-                        activeSound(args.entityNumB);
-                        return true;
-                    }
+                    return true;
                 }
-                collisionCircleRectEject(args, circleCompA.m_ray, rectCompB);
             }
             else if(args.tagCompA->m_tagA == CollisionTag_e::ENEMY_CT)
             {
@@ -803,6 +794,58 @@ bool CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args, bool shotEx
         }
     }
     return true;
+}
+
+//===================================================================
+bool CollisionSystem::treatCollisionPlayer(CollisionArgs &args, CircleCollisionComponent &circleCompA, RectangleCollisionComponent &rectCompB)
+{
+    if(args.tagCompB->m_tagA == CollisionTag_e::DOOR_CT)
+    {
+        DoorComponent *doorComp = stairwayToComponentManager().
+                searchComponentByType<DoorComponent>(args.entityNumB, Components_e::DOOR_COMPONENT);
+        assert(doorComp);
+        doorComp->m_obstruct = true;
+        if(doorComp->m_currentState == DoorState_e::MOVE_CLOSE)
+        {
+            doorComp->m_currentState = DoorState_e::MOVE_OPEN;
+            activeSound(args.entityNumB);
+            return true;
+        }
+    }
+    else if(args.tagCompB->m_tagA == CollisionTag_e::CHECKPOINT_CT)
+    {
+        PlayerConfComponent *playerComp = stairwayToComponentManager().
+                searchComponentByType<PlayerConfComponent>(args.entityNumA, Components_e::PLAYER_CONF_COMPONENT);
+        assert(playerComp);
+        CheckpointComponent *checkpointComp = stairwayToComponentManager().
+                searchComponentByType<CheckpointComponent>(args.entityNumB, Components_e::CHECKPOINT_COMPONENT);
+        assert(checkpointComp);
+        if(!playerComp->m_currentCheckpoint || checkpointComp->m_checkpointNumber > playerComp->m_currentCheckpoint)
+        {
+            playerComp->m_currentCheckpoint = checkpointComp->m_checkpointNumber;
+            writePlayerInfo("CHECKPOINT REACHED");
+        }
+        m_vectEntitiesToDelete.push_back(args.entityNumB);
+        return true;
+    }
+    else if(args.tagCompB->m_tagA == CollisionTag_e::SECRET_CT)
+    {
+        PlayerConfComponent *playerComp = stairwayToComponentManager().
+                searchComponentByType<PlayerConfComponent>(args.entityNumA, Components_e::PLAYER_CONF_COMPONENT);
+        assert(playerComp);
+        writePlayerInfo("SECRET FOUND");
+        if(!playerComp->m_secretFound)
+        {
+            playerComp->m_secretFound = 1;
+        }
+        else
+        {
+            ++(*playerComp->m_secretFound);
+        }
+        m_vectEntitiesToDelete.push_back(args.entityNumB);
+    }
+    collisionCircleRectEject(args, circleCompA.m_ray, rectCompB);
+    return false;
 }
 
 //===================================================================

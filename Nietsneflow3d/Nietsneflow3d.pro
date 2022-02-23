@@ -38,6 +38,7 @@ HEADERS += \
     AudioEngine.hpp \
     ECS/Components/AudioComponent.hpp \
     ECS/Components/BarrelComponent.hpp \
+    ECS/Components/CheckpointComponent.hpp \
     ECS/Components/EnemyConfComponent.hpp \
     ECS/Components/FPSVisibleStaticElementComponent.hpp \
     ECS/Components/MemFPSGLSizeComponent.hpp \

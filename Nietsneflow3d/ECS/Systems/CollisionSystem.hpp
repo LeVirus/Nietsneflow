@@ -48,6 +48,7 @@ private:
     bool treatDoorCollisionFirstCircle(CollisionArgs &args, const CircleCollisionComponent &circleCompA,
                                        const RectangleCollisionComponent &rectCompB);
     bool treatCollisionFirstCircle(CollisionArgs &args, bool shotExplosionEject = false);
+    bool treatCollisionPlayer(CollisionArgs &args, CircleCollisionComponent &circleCompA, RectangleCollisionComponent &rectCompB);
     void treatActionPlayerRect(CollisionArgs &args);
     void treatExplosionColl(CollisionArgs &args);
     //Check if explosion or visible shot have element between attack and target

@@ -173,6 +173,14 @@ public:
     {
         return m_settingsData;
     }
+    inline const std::vector<PairUI_t> &getCheckpointsData()const
+    {
+        return m_checkpointsPos;
+    }
+    inline const std::vector<PairUI_t> &getSecretsData()const
+    {
+        return m_secretsPos;
+    }
     bool checkSavedGameExists(uint32_t saveNum) const;
 private:
     //texture and sprite loading
@@ -216,6 +224,8 @@ private:
     void loadPositionDoorData();
     void loadEnemyData();
     void loadPositionEnemyData();
+    void loadPositionCheckpointsData();
+    void loadPositionSecretsData();
     void loadUtilsData();
     void loadEnemySprites(const std::string &sectionName,
                           EnemySpriteElementType_e spriteTypeEnum, EnemyData &enemyData);
@@ -245,6 +255,7 @@ private:
     std::map<std::string, EnemyData> m_enemyData;
     std::map<std::string, MemSpriteData> m_triggerDisplayData;
     std::vector<MemSpriteData> m_displayTeleportData;
+    std::vector<PairUI_t> m_checkpointsPos, m_secretsPos;
     //store the sprite number and the screen display size
     std::vector<WeaponINIData> m_vectWeaponsINIData;
     //first moving Shot sprite, all other destruct phase sprites

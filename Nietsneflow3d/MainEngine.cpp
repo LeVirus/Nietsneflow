@@ -14,6 +14,7 @@
 #include <ECS/Components/VisionComponent.hpp>
 #include <ECS/Components/MemFPSGLSizeComponent.hpp>
 #include <ECS/Components/DoorComponent.hpp>
+#include <ECS/Components/CheckpointComponent.hpp>
 #include <ECS/Components/TeleportComponent.hpp>
 #include <ECS/Components/PlayerConfComponent.hpp>
 #include <ECS/Components/MemPositionsVertexComponents.hpp>
@@ -505,6 +506,28 @@ uint32_t MainEngine::createColorEntity()
     return m_ecsManager.addEntity(bitsetComponents);
 }
 
+//===================================================================
+uint32_t MainEngine::createCheckpointEntity()
+{
+    std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComponents;
+    bitsetComponents[Components_e::CHECKPOINT_COMPONENT] = true;
+    bitsetComponents[Components_e::MAP_COORD_COMPONENT] = true;
+    bitsetComponents[Components_e::GENERAL_COLLISION_COMPONENT] = true;
+    bitsetComponents[Components_e::RECTANGLE_COLLISION_COMPONENT] = true;
+    return m_ecsManager.addEntity(bitsetComponents);
+}
+
+//===================================================================
+uint32_t MainEngine::createSecretEntity()
+{
+    std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComponents;
+    bitsetComponents[Components_e::MAP_COORD_COMPONENT] = true;
+    bitsetComponents[Components_e::GENERAL_COLLISION_COMPONENT] = true;
+    bitsetComponents[Components_e::RECTANGLE_COLLISION_COMPONENT] = true;
+    return m_ecsManager.addEntity(bitsetComponents);
+}
+
+//===================================================================
 uint32_t MainEngine::createTextureEntity()
 {
     std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComponents;
@@ -591,6 +614,7 @@ void MainEngine::loadExistingLevelNumSaves(const std::array<std::optional<uint32
 //===================================================================
 void MainEngine::loadLevel(const LevelManager &levelManager)
 {
+    m_currentCheckpointMem = 0;
     m_memWallPos.clear();
     loadBackgroundEntities(levelManager.getPictureData().getGroundData(),
                            levelManager.getPictureData().getCeilingData(),
@@ -605,6 +629,8 @@ void MainEngine::loadLevel(const LevelManager &levelManager)
     loadWallEntities(levelManager.getMoveableWallData(), levelManager.getPictureData().getSpriteData());
     loadDoorEntities(levelManager);
     loadEnemiesEntities(levelManager);
+    loadCheckpointsEntities(levelManager);
+    loadSecretsEntities(levelManager);
     //MUUUUUUUUUUUUSSSSS
     m_audioEngine.loadMusicFromFile(levelManager.getLevel().getMusicFilename());
     m_audioEngine.playMusic();
@@ -990,6 +1016,55 @@ void MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
             timerComponent->m_clockC = std::chrono::system_clock::now();
         }
     }
+}
+
+//===================================================================
+void MainEngine::loadCheckpointsEntities(const LevelManager &levelManager)
+{
+    const std::vector<PairUI_t> &container = levelManager.getCheckpointsData();
+    uint32_t entityNum;
+    for(uint32_t i = 0; i < container.size(); ++i)
+    {
+        entityNum = createCheckpointEntity();
+        initStdCollisionCase(entityNum, container[i], CollisionTag_e::CHECKPOINT_CT);
+        CheckpointComponent *checkComponent = m_ecsManager.getComponentManager().
+                searchComponentByType<CheckpointComponent>(entityNum, Components_e::CHECKPOINT_COMPONENT);
+        assert(checkComponent);
+        checkComponent->m_checkpointNumber = m_currentCheckpointMem++;
+    }
+}
+
+
+//===================================================================
+void MainEngine::loadSecretsEntities(const LevelManager &levelManager)
+{
+    const std::vector<PairUI_t> &container = levelManager.getSecretsData();
+    m_currentLevelSecretsNumber = container.size();
+    uint32_t entityNum;
+    for(uint32_t i = 0; i < container.size(); ++i)
+    {
+        entityNum = createCheckpointEntity();
+        initStdCollisionCase(entityNum, container[i], CollisionTag_e::SECRET_CT);
+    }
+}
+
+//===================================================================
+void MainEngine::initStdCollisionCase(uint32_t entityNum, const PairUI_t &mapPos, CollisionTag_e tag)
+{
+    MapCoordComponent *mapComponent = m_ecsManager.getComponentManager().
+            searchComponentByType<MapCoordComponent>(entityNum, Components_e::MAP_COORD_COMPONENT);
+    assert(mapComponent);
+    mapComponent->m_coord = mapPos;
+    mapComponent->m_absoluteMapPositionPX = {mapPos.first * LEVEL_TILE_SIZE_PX, mapPos.second * LEVEL_TILE_SIZE_PX};
+    GeneralCollisionComponent *genCompComponent = m_ecsManager.getComponentManager().
+            searchComponentByType<GeneralCollisionComponent>(entityNum, Components_e::GENERAL_COLLISION_COMPONENT);
+    assert(genCompComponent);
+    genCompComponent->m_shape = CollisionShape_e::RECTANGLE_C;
+    genCompComponent->m_tagA = tag;
+    RectangleCollisionComponent *rectComponent = m_ecsManager.getComponentManager().
+            searchComponentByType<RectangleCollisionComponent>(entityNum, Components_e::RECTANGLE_COLLISION_COMPONENT);
+    assert(rectComponent);
+    rectComponent->m_size = {LEVEL_TILE_SIZE_PX, LEVEL_TILE_SIZE_PX};
 }
 
 //===================================================================

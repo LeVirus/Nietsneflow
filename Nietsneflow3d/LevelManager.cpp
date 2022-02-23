@@ -1211,6 +1211,28 @@ void LevelManager::loadPositionEnemyData()
 }
 
 //===================================================================
+void LevelManager::loadPositionCheckpointsData()
+{
+    std::vector<std::string> vectINISections;
+    vectINISections = m_ini.getSectionNamesContaining("Checkpoints");
+    if(!vectINISections.empty())
+    {
+        fillStandartPositionVect(vectINISections[0], m_checkpointsPos);
+    }
+}
+
+//===================================================================
+void LevelManager::loadPositionSecretsData()
+{
+    std::vector<std::string> vectINISections;
+    vectINISections = m_ini.getSectionNamesContaining("Secrets");
+    if(!vectINISections.empty())
+    {
+        fillStandartPositionVect(vectINISections[0], m_secretsPos);
+    }
+}
+
+//===================================================================
 void LevelManager::loadUtilsData()
 {
     std::vector<std::string> vectINISections;
@@ -1423,6 +1445,8 @@ bool LevelManager::loadLevel(const std::string &INIFileName, uint32_t levelNum)
     loadPositionExit();
     loadPositionDoorData();
     loadPositionEnemyData();
+    loadPositionCheckpointsData();
+    loadPositionSecretsData();
     loadBackgroundData();
     loadMusicData();
     return true;

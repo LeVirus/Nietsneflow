@@ -32,6 +32,7 @@ struct PlayerConfComponent : public ecs::Component
     m_titleMenuEntity, m_menuEntriesEntity, m_menuCursorEntity, m_menuInfoWriteEntity,
     m_actionEntity, m_hitMeleeEntity, m_lifeWriteEntity, m_numInfoWriteEntity,
     m_life = 100, m_displayTeleportEntity;
+    std::optional<uint32_t> m_currentCheckpoint, m_secretFound;
     MenuMode_e m_menuMode, m_previousMenuMode;
     virtual ~PlayerConfComponent() = default;
 };

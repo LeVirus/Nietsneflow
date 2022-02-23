@@ -26,6 +26,7 @@
 #include <ECS/Components/ShotConfComponent.hpp>
 #include <ECS/Components/ObjectConfComponent.hpp>
 #include <ECS/Components/ImpactShotComponent.hpp>
+#include <ECS/Components/CheckpointComponent.hpp>
 #include <ECS/Components/TriggerComponent.hpp>
 #include <ECS/Components/AudioComponent.hpp>
 #include <ECS/Systems/ColorDisplaySystem.hpp>
@@ -144,174 +145,142 @@ void ECSManager::syncComponentsFromEntities(uint32_t numEntity, const std::vecto
             break;
         case Components_e::SPRITE_TEXTURE_COMPONENT:
         {
-            m_componentManager->instanciateExternComponent(
-                        numEntity,
-                        std::make_unique<SpriteTextureComponent>());
+            m_componentManager->instanciateExternComponent(numEntity, std::make_unique<SpriteTextureComponent>());
         }
             break;
         case Components_e::MAP_COORD_COMPONENT:
         {
-            m_componentManager->instanciateExternComponent(
-                        numEntity,
-                        std::make_unique<MapCoordComponent>());
+            m_componentManager->instanciateExternComponent(numEntity, std::make_unique<MapCoordComponent>());
         }
             break;
         case Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT:
         {
-            m_componentManager->instanciateExternComponent(
-                        numEntity,
-                        std::make_unique<FPSVisibleStaticElementComponent>());
+            m_componentManager->instanciateExternComponent(numEntity, std::make_unique<FPSVisibleStaticElementComponent>());
         }
             break;
         case Components_e::MOVEABLE_COMPONENT:
         {
-            m_componentManager->instanciateExternComponent(
-                        numEntity,
-                        std::make_unique<MoveableComponent>());
+            m_componentManager->instanciateExternComponent(numEntity, std::make_unique<MoveableComponent>());
         }
             break;
         case Components_e::INPUT_COMPONENT:
         {
-            m_componentManager->instanciateExternComponent(
-                        numEntity,
-                        std::make_unique<InputComponent>());
+            m_componentManager->instanciateExternComponent(numEntity, std::make_unique<InputComponent>());
         }
             break;
         case Components_e::GENERAL_COLLISION_COMPONENT:
         {
-            m_componentManager->instanciateExternComponent(
-                        numEntity,
-                        std::make_unique<GeneralCollisionComponent>());
+            m_componentManager->instanciateExternComponent(numEntity, std::make_unique<GeneralCollisionComponent>());
         }
             break;
         case Components_e::CIRCLE_COLLISION_COMPONENT:
         {
-            m_componentManager->instanciateExternComponent(
-                        numEntity,
-                        std::make_unique<CircleCollisionComponent>());
+            m_componentManager->instanciateExternComponent(numEntity, std::make_unique<CircleCollisionComponent>());
+        }
+            break;
+        case Components_e::CHECKPOINT_COMPONENT:
+        {
+            m_componentManager->instanciateExternComponent(numEntity, std::make_unique<CheckpointComponent>());
         }
             break;
         case Components_e::SEGMENT_COLLISION_COMPONENT:
         {
-            m_componentManager->instanciateExternComponent(
-                        numEntity,
-                        std::make_unique<SegmentCollisionComponent>());
+            m_componentManager->instanciateExternComponent(numEntity, std::make_unique<SegmentCollisionComponent>());
         }
             break;
         case Components_e::RECTANGLE_COLLISION_COMPONENT:
         {
-            m_componentManager->instanciateExternComponent(
-                        numEntity,
-                        std::make_unique<RectangleCollisionComponent>());
+            m_componentManager->instanciateExternComponent(numEntity, std::make_unique<RectangleCollisionComponent>());
         }
             break;
         case Components_e::VISION_COMPONENT:
         {
-            m_componentManager->instanciateExternComponent(
-                        numEntity,
-                        std::make_unique<VisionComponent>());
+            m_componentManager->instanciateExternComponent(numEntity, std::make_unique<VisionComponent>());
         }
             break;
         case Components_e::MEM_SPRITE_DATA_COMPONENT:
         {
-            m_componentManager->instanciateExternComponent(numEntity,
-                        std::make_unique<MemSpriteDataComponent>());
+            m_componentManager->instanciateExternComponent(numEntity, std::make_unique<MemSpriteDataComponent>());
         }
             break;
         case Components_e::TIMER_COMPONENT:
         {
-            m_componentManager->instanciateExternComponent(numEntity,
-                        std::make_unique<TimerComponent>());
+            m_componentManager->instanciateExternComponent(numEntity, std::make_unique<TimerComponent>());
         }
             break;
         case Components_e::TRIGGER_COMPONENT:
         {
-            m_componentManager->instanciateExternComponent(numEntity,
-                        std::make_unique<TriggerComponent>());
+            m_componentManager->instanciateExternComponent(numEntity, std::make_unique<TriggerComponent>());
         }
             break;
         case Components_e::DOOR_COMPONENT:
         {
-            m_componentManager->instanciateExternComponent(numEntity,
-                        std::make_unique<DoorComponent>());
+            m_componentManager->instanciateExternComponent(numEntity, std::make_unique<DoorComponent>());
         }
             break;
         case Components_e::PLAYER_CONF_COMPONENT:
         {
-            m_componentManager->instanciateExternComponent(numEntity,
-                        std::make_unique<PlayerConfComponent>());
+            m_componentManager->instanciateExternComponent(numEntity, std::make_unique<PlayerConfComponent>());
         }
             break;
         case Components_e::MEM_POSITIONS_VERTEX_COMPONENT:
         {
-            m_componentManager->instanciateExternComponent(numEntity,
-                        std::make_unique<MemPositionsVertexComponents>());
+            m_componentManager->instanciateExternComponent(numEntity, std::make_unique<MemPositionsVertexComponents>());
         }
             break;
         case Components_e::ENEMY_CONF_COMPONENT:
         {
-            m_componentManager->instanciateExternComponent(numEntity,
-                        std::make_unique<EnemyConfComponent>());
+            m_componentManager->instanciateExternComponent(numEntity, std::make_unique<EnemyConfComponent>());
         }
             break;
         case Components_e::WRITE_COMPONENT:
         {
-            m_componentManager->instanciateExternComponent(numEntity,
-                                                           std::make_unique<WriteComponent>());
+            m_componentManager->instanciateExternComponent(numEntity, std::make_unique<WriteComponent>());
         }
             break;
         case Components_e::SHOT_CONF_COMPONENT:
         {
-            m_componentManager->instanciateExternComponent(numEntity,
-                                                           std::make_unique<ShotConfComponent>());
+            m_componentManager->instanciateExternComponent(numEntity, std::make_unique<ShotConfComponent>());
         }
             break;
         case Components_e::OBJECT_CONF_COMPONENT:
         {
-            m_componentManager->instanciateExternComponent(numEntity,
-                                                           std::make_unique<ObjectConfComponent>());
+            m_componentManager->instanciateExternComponent(numEntity, std::make_unique<ObjectConfComponent>());
         }
             break;
         case Components_e::IMPACT_CONF_COMPONENT:
         {
-            m_componentManager->instanciateExternComponent(numEntity,
-                                                           std::make_unique<ImpactShotComponent>());
+            m_componentManager->instanciateExternComponent(numEntity, std::make_unique<ImpactShotComponent>());
         }
             break;
         case Components_e::WEAPON_COMPONENT:
         {
-            m_componentManager->instanciateExternComponent(numEntity,
-                                                           std::make_unique<WeaponComponent>());
+            m_componentManager->instanciateExternComponent(numEntity, std::make_unique<WeaponComponent>());
         }
             break;
         case Components_e::MOVEABLE_WALL_CONF_COMPONENT:
         {
-            m_componentManager->instanciateExternComponent(numEntity,
-                                                           std::make_unique<MoveableWallConfComponent>());
+            m_componentManager->instanciateExternComponent(numEntity, std::make_unique<MoveableWallConfComponent>());
         }
             break;
         case Components_e::TELEPORT_COMPONENT:
         {
-            m_componentManager->instanciateExternComponent(numEntity,
-                                                           std::make_unique<TeleportComponent>());
+            m_componentManager->instanciateExternComponent(numEntity, std::make_unique<TeleportComponent>());
         }
             break;
         case Components_e::MEM_FPS_GLSIZE_COMPONENT:
         {
-            m_componentManager->instanciateExternComponent(numEntity,
-                                                           std::make_unique<MemFPSGLSizeComponent>());
+            m_componentManager->instanciateExternComponent(numEntity, std::make_unique<MemFPSGLSizeComponent>());
         }
             break;
         case Components_e::BARREL_COMPONENT:
         {
-            m_componentManager->instanciateExternComponent(numEntity,
-                                                           std::make_unique<BarrelComponent>());
+            m_componentManager->instanciateExternComponent(numEntity, std::make_unique<BarrelComponent>());
         }
             break;
         case Components_e::AUDIO_COMPONENT:
         {
-            m_componentManager->instanciateExternComponent(numEntity,
-                                                           std::make_unique<AudioComponent>());
+            m_componentManager->instanciateExternComponent(numEntity, std::make_unique<AudioComponent>());
         }
             break;
         case Components_e::TOTAL_COMPONENTS:

@@ -73,6 +73,7 @@ enum Components_e
     MEM_FPS_GLSIZE_COMPONENT,
     BARREL_COMPONENT,
     AUDIO_COMPONENT,
+    CHECKPOINT_COMPONENT,
     TOTAL_COMPONENTS
 };
 
@@ -307,6 +308,8 @@ enum class CollisionTag_e
     TELEPORT_CT,
     IMPACT_CT,
     BARREL_CT,
+    CHECKPOINT_CT,
+    SECRET_CT,
     TELEPORT_ANIM_CT,
     DEAD_CORPSE_CT
 };

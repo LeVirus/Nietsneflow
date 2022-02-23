@@ -151,6 +151,9 @@ private:
                           const std::vector<SpriteData> &vectSprite, TriggerBehaviourType_e triggerType, bool moveable = false);
     void loadDoorEntities(const LevelManager &levelManager);
     void loadEnemiesEntities(const LevelManager &levelManager);
+    void loadCheckpointsEntities(const LevelManager &levelManager);
+    void initStdCollisionCase(uint32_t entityNum, const PairUI_t &mapPos, CollisionTag_e tag);
+    void loadSecretsEntities(const LevelManager &levelManager);
     void loadTriggerEntityData(const MoveableWallData &moveWallData, const std::vector<uint32_t> &vectPosition, const std::vector<SpriteData> &vectSprite, TriggerWallMoveType_e type);
     void confVisibleAmmo(uint32_t ammoEntity);
     void loadStaticElementEntities(const LevelManager &levelManager);
@@ -170,6 +173,8 @@ private:
     uint32_t confShotImpactEntity(const std::vector<SpriteData> &vectSpriteData, const PairImpactData_t &shootDisplayData);
     uint32_t createTriggerEntity(bool visible);
     uint32_t createColorEntity();
+    uint32_t createCheckpointEntity();
+    uint32_t createSecretEntity();
     uint32_t createTextureEntity();
     uint32_t createEnemyDropObject(const LevelManager &levelManager, const EnemyData &enemyData, uint32_t iterationNum);
     uint32_t createStaticElementEntity(LevelStaticElementType_e elementType, const StaticLevelElementData &staticElementData,
@@ -238,6 +243,7 @@ private:
     std::set<PairUI_t> m_memWall;
     std::map<PairUI_t, uint32_t> m_memTriggerCreated, m_memWallPos;
     std::optional<uint32_t> m_levelToLoad;
+    uint32_t m_currentCheckpointMem;
 };
 
 void insertEnemySpriteFromType(const std::vector<SpriteData> &vectSprite, mapEnemySprite_t &mapSpriteAssociate,
