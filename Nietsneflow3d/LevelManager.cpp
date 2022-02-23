@@ -324,7 +324,7 @@ VectPairUI_t LevelManager::getPositionData(const std::string &sectionName, const
     }
     assert((*resultsPos).size() % 2 == 0);
     vectRet.reserve((*resultsPos).size() / 2);
-    for(uint32_t i = 0; i < (*resultsPos).size(); ++i)
+    for(uint32_t i = 0; i < (*resultsPos).size(); i += 2)
     {
         vectRet.emplace_back(PairUI_t{(*resultsPos)[i], (*resultsPos)[i + 1]});
     }

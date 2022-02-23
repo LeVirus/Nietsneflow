@@ -240,6 +240,7 @@ private:
     PlayerConfComponent *m_playerConf = nullptr;
     WeaponComponent *m_weaponComp;
     MemPlayerConf m_memPlayerConf;
+    uint32_t m_currentLevelSecretsNumber;
     std::set<PairUI_t> m_memWall;
     std::map<PairUI_t, uint32_t> m_memTriggerCreated, m_memWallPos;
     std::optional<uint32_t> m_levelToLoad;
