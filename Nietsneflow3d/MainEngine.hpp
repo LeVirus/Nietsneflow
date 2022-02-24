@@ -249,7 +249,7 @@ private:
     WeaponComponent *m_weaponComp;
     MemPlayerConf m_memPlayerConf;
     uint32_t m_currentLevelSecretsNumber;
-    std::set<PairUI_t> m_memWall;
+    std::set<PairUI_t> m_memWall, m_memStaticEntitiesDeletedFromCheckpoint, m_currentEntitiesDeletedFromCheckpoint;
     std::map<PairUI_t, uint32_t> m_memTriggerCreated, m_memWallPos;
     std::optional<uint32_t> m_levelToLoad;
     std::optional<MemCheckpointLevelState> m_memCheckpointLevelState;

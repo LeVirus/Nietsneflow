@@ -77,6 +77,11 @@ std::tuple<bool, bool, std::optional<uint32_t>> MainEngine::mainLoop(uint32_t le
     {
         loadGameProgressCheckpoint();
     }
+    if(!m_memCheckpointLevelState)
+    {
+        m_memStaticEntitiesDeletedFromCheckpoint.clear();
+        m_currentEntitiesDeletedFromCheckpoint.clear();
+    }
     m_graphicEngine.unsetTransition(m_gamePaused);
     std::chrono::time_point<std::chrono::system_clock> clock;
     clock = std::chrono::system_clock::now();
@@ -110,6 +115,7 @@ std::tuple<bool, bool, std::optional<uint32_t>> MainEngine::mainLoop(uint32_t le
         m_audioEngine.runIteration();
         if(m_playerConf->m_checkpointReached)
         {
+            m_currentEntitiesDeletedFromCheckpoint = m_memStaticEntitiesDeletedFromCheckpoint;
             saveGameProgressCheckpoint(levelNum, *m_playerConf->m_checkpointReached);
             m_playerConf->m_checkpointReached = {};
         }
@@ -365,13 +371,18 @@ void MainEngine::confSystems()
 //===================================================================
 void MainEngine::clearObjectToDelete()
 {
-    const std::vector<uint32_t> &vect = m_physicalEngine.getObjectEntityToDelete();
+    const std::vector<uint32_t> &vect = m_physicalEngine.getStaticEntitiesToDelete();
     if(vect.empty())
     {
         return;
     }
     for(uint32_t i = 0; i < vect.size(); ++i)
     {
+        MapCoordComponent *mapComp = m_ecsManager.getComponentManager().
+                searchComponentByType<MapCoordComponent>(vect[i], Components_e::MAP_COORD_COMPONENT);
+        assert(mapComp);
+        std::cerr << mapComp->m_coord.first << "  " << mapComp->m_coord.second << "\n";
+        m_memStaticEntitiesDeletedFromCheckpoint.insert(mapComp->m_coord);
         m_ecsManager.bRmEntity(vect[i]);
     }
     m_physicalEngine.clearVectObjectToDelete();

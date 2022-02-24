@@ -22,7 +22,7 @@ class CollisionSystem : public ecs::System
 public:
     CollisionSystem();
     void execSystem()override;
-    inline const std::vector<uint32_t> &getObjectEntityToDelete()const
+    inline const std::vector<uint32_t> &getStaticEntitiesToDelete()const
     {
         return m_vectEntitiesToDelete;
     }

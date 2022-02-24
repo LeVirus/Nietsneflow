@@ -26,9 +26,9 @@ public:
     void clearSystems();
     void setKeyboardKey(const std::array<uint32_t, static_cast<uint32_t>(ControlKey_e::TOTAL)> &keyboardArray);
     void setGamepadKey(const std::array<GamepadInputState, static_cast<uint32_t>(ControlKey_e::TOTAL)> &gamepadArray);
-    inline const std::vector<uint32_t> &getObjectEntityToDelete()const
+    inline const std::vector<uint32_t> &getStaticEntitiesToDelete()const
     {
-        return m_collisionSystem->getObjectEntityToDelete();
+        return m_collisionSystem->getStaticEntitiesToDelete();
     }
     inline void clearVectObjectToDelete()
     {
