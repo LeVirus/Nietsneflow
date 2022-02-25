@@ -185,8 +185,9 @@ private:
     uint32_t createSecretEntity();
     uint32_t createTextureEntity();
     uint32_t createEnemyDropObject(const LevelManager &levelManager, const EnemyData &enemyData, uint32_t iterationNum);
-    uint32_t createStaticElementEntity(LevelStaticElementType_e elementType, const StaticLevelElementData &staticElementData,
-                                       const std::vector<SpriteData> &vectSpriteData, uint32_t iterationNum, const std::string &soundFile = "");
+    std::optional<uint32_t> createStaticElementEntity(LevelStaticElementType_e elementType, const StaticLevelElementData &staticElementData,
+                                                      const std::vector<SpriteData> &vectSpriteData, uint32_t iterationNum,
+                                                      bool enemyDrop = false, const std::string &soundFile = "");
     uint32_t confObjectEntity(const StaticLevelElementData &objectData);
     uint32_t confTeleportEntity(const StaticLevelElementData &teleportData, uint32_t iterationNum, const std::string &soundFile);
     uint32_t createMeleeAttackEntity(bool sound = false);

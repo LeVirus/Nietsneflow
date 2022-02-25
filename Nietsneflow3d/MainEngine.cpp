@@ -115,6 +115,7 @@ std::tuple<bool, bool, std::optional<uint32_t>> MainEngine::mainLoop(uint32_t le
         m_audioEngine.runIteration();
         if(m_playerConf->m_checkpointReached)
         {
+            //MEM ENTITIES TO DELETE WHEN CHECKPOINT IS REACHED
             m_currentEntitiesDeletedFromCheckpoint = m_memStaticEntitiesDeletedFromCheckpoint;
             saveGameProgressCheckpoint(levelNum, *m_playerConf->m_checkpointReached);
             m_playerConf->m_checkpointReached = {};
@@ -381,7 +382,6 @@ void MainEngine::clearObjectToDelete()
         MapCoordComponent *mapComp = m_ecsManager.getComponentManager().
                 searchComponentByType<MapCoordComponent>(vect[i], Components_e::MAP_COORD_COMPONENT);
         assert(mapComp);
-        std::cerr << mapComp->m_coord.first << "  " << mapComp->m_coord.second << "\n";
         m_memStaticEntitiesDeletedFromCheckpoint.insert(mapComp->m_coord);
         m_ecsManager.bRmEntity(vect[i]);
     }
@@ -1185,13 +1185,14 @@ uint32_t MainEngine::createEnemyDropObject(const LevelManager &levelManager, con
 {
     std::map<std::string, StaticLevelElementData>::const_iterator itt = levelManager.getObjectData().find(enemyData.m_dropedObjectID);
     assert(itt != levelManager.getObjectData().end());
-    uint32_t objectEntity = createStaticElementEntity(LevelStaticElementType_e::OBJECT, itt->second,
-                                                      levelManager.getPictureSpriteData(), iterationNum);
+    std::optional<uint32_t> objectEntity = createStaticElementEntity(LevelStaticElementType_e::OBJECT, itt->second,
+                                                      levelManager.getPictureSpriteData(), iterationNum, true);
+    assert(objectEntity);
     GeneralCollisionComponent *genComp = m_ecsManager.getComponentManager().
-            searchComponentByType<GeneralCollisionComponent>(objectEntity, Components_e::GENERAL_COLLISION_COMPONENT);
+            searchComponentByType<GeneralCollisionComponent>(*objectEntity, Components_e::GENERAL_COLLISION_COMPONENT);
     assert(genComp);
     genComp->m_active = false;
-    return objectEntity;
+    return *objectEntity;
 }
 
 //===================================================================
@@ -2428,18 +2429,23 @@ void MainEngine::loadStaticElementGroup(const std::vector<SpriteData> &vectSprit
     {
         for(uint32_t j = 0; j < it->second.m_TileGamePosition.size(); ++j)
         {
-            createStaticElementEntity(elementType, it->second, vectSpriteData, j, soundFile);
+            createStaticElementEntity(elementType, it->second, vectSpriteData, j, false, soundFile);
         }
     }
 }
 
 //===================================================================
-uint32_t MainEngine::createStaticElementEntity(LevelStaticElementType_e elementType, const StaticLevelElementData &staticElementData,
-                                               const std::vector<SpriteData> &vectSpriteData, uint32_t iterationNum, const std::string &soundFile)
+std::optional<uint32_t> MainEngine::createStaticElementEntity(LevelStaticElementType_e elementType, const StaticLevelElementData &staticElementData,
+                                                              const std::vector<SpriteData> &vectSpriteData, uint32_t iterationNum, bool enemyDrop, const std::string &soundFile)
 {
     CollisionTag_e tag;
     uint32_t entityNum;
     const SpriteData &memSpriteData = vectSpriteData[staticElementData.m_numSprite];
+    if(!enemyDrop && m_currentEntitiesDeletedFromCheckpoint.find(staticElementData.m_TileGamePosition[0]) !=
+            m_currentEntitiesDeletedFromCheckpoint.end())
+    {
+        return {};
+    }
     if(elementType == LevelStaticElementType_e::OBJECT)
     {
         tag = CollisionTag_e::OBJECT_CT;
