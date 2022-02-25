@@ -37,7 +37,7 @@ struct MemPlayerConf
 
 struct MemCheckpointLevelState
 {
-    uint32_t m_levelNum;
+    uint32_t m_levelNum, m_checkpointNum;
     PairUI_t m_playerPos;
 };
 
@@ -52,7 +52,7 @@ public:
     void loadGameProgressCheckpoint();
     //first quit, second gameover
     std::tuple<bool, bool, std::optional<uint32_t> > mainLoop(uint32_t levelNum, bool gameLoad);
-    void saveGameProgressCheckpoint(uint32_t levelNum, const PairUI_t &checkpointReached);
+    void saveGameProgressCheckpoint(uint32_t levelNum, const PairUI_t &checkpointReached, uint32_t checkpointNum);
     void saveGameProgress(uint32_t levelNum, std::optional<uint32_t> numSaveFile = {});
     void playerAttack(uint32_t playerEntity, PlayerConfComponent *playerComp,
                       const PairFloat_t &point, float degreeAngle);

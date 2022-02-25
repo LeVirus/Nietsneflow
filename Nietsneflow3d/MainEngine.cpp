@@ -117,7 +117,7 @@ std::tuple<bool, bool, std::optional<uint32_t>> MainEngine::mainLoop(uint32_t le
         {
             //MEM ENTITIES TO DELETE WHEN CHECKPOINT IS REACHED
             m_currentEntitiesDeletedFromCheckpoint = m_memStaticEntitiesDeletedFromCheckpoint;
-            saveGameProgressCheckpoint(levelNum, *m_playerConf->m_checkpointReached);
+            saveGameProgressCheckpoint(levelNum, *m_playerConf->m_checkpointReached, *m_playerConf->m_currentCheckpoint);
             m_playerConf->m_checkpointReached = {};
         }
         if(!m_exitColl->m_active)
@@ -142,9 +142,9 @@ std::tuple<bool, bool, std::optional<uint32_t>> MainEngine::mainLoop(uint32_t le
 }
 
 //===================================================================
-void MainEngine::saveGameProgressCheckpoint(uint32_t levelNum, const PairUI_t &checkpointReached)
+void MainEngine::saveGameProgressCheckpoint(uint32_t levelNum, const PairUI_t &checkpointReached, uint32_t checkpointNum)
 {
-    m_memCheckpointLevelState = {levelNum, checkpointReached};
+    m_memCheckpointLevelState = {levelNum, checkpointNum, checkpointReached};
     //OOOK SAVE GEAR BEGIN LEVEL
     savePlayerGear();
 }
@@ -672,6 +672,8 @@ void MainEngine::loadGameProgressCheckpoint()
             searchComponentByType<MapCoordComponent>(m_playerEntity, Components_e::MAP_COORD_COMPONENT);
     assert(mapComp);
     mapComp->m_absoluteMapPositionPX = getCenteredAbsolutePosition(m_memCheckpointLevelState->m_playerPos);
+    m_memStaticEntitiesDeletedFromCheckpoint = m_currentEntitiesDeletedFromCheckpoint;
+    m_playerConf->m_currentCheckpoint = m_memCheckpointLevelState->m_checkpointNum;
 }
 
 //===================================================================
@@ -1063,6 +1065,11 @@ void MainEngine::loadCheckpointsEntities(const LevelManager &levelManager)
     uint32_t entityNum;
     for(uint32_t i = 0; i < container.size(); ++i)
     {
+        if(m_currentEntitiesDeletedFromCheckpoint.find(container[i]) !=
+                m_currentEntitiesDeletedFromCheckpoint.end())
+        {
+            continue;
+        }
         entityNum = createCheckpointEntity();
         initStdCollisionCase(entityNum, container[i], CollisionTag_e::CHECKPOINT_CT);
         CheckpointComponent *checkComponent = m_ecsManager.getComponentManager().
@@ -1081,6 +1088,11 @@ void MainEngine::loadSecretsEntities(const LevelManager &levelManager)
     uint32_t entityNum;
     for(uint32_t i = 0; i < container.size(); ++i)
     {
+        if(m_currentEntitiesDeletedFromCheckpoint.find(container[i]) !=
+                m_currentEntitiesDeletedFromCheckpoint.end())
+        {
+            continue;
+        }
         entityNum = createCheckpointEntity();
         initStdCollisionCase(entityNum, container[i], CollisionTag_e::SECRET_CT);
     }
