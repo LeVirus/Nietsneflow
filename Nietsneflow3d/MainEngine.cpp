@@ -166,10 +166,11 @@ void MainEngine::saveGameProgressCheckpoint(uint32_t levelNum, const PairUI_t &c
         m_memEnemiesStateFromCheckpoint[i].m_objectPickedUp = false;
         if(enemyComp->m_dropedObjectEntity)
         {
+            //check if entity still exists
             GeneralCollisionComponent *genCompObject = m_ecsManager.getComponentManager().
                     searchComponentByType<GeneralCollisionComponent>(*enemyComp->m_dropedObjectEntity,
                     Components_e::GENERAL_COLLISION_COMPONENT);
-            if(genCompObject && !genCompObject->m_active)
+            if(!genCompObject)
             {
                 m_memEnemiesStateFromCheckpoint[i].m_objectPickedUp = true;
             }

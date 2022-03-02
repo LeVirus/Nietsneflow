@@ -13,7 +13,9 @@ public:
     uint32_t addEntity(const std::bitset<Components_e::TOTAL_COMPONENTS> &bitsetComponents);
     inline bool bRmEntity(uint32_t numEntity)
     {
-        return m_ecsEngine.bRmEntity(numEntity);
+        bool ret = m_ecsEngine.bRmEntity(numEntity);
+        m_componentManager->updateComponentFromEntity();
+        return ret;
     }
     std::vector<uint32_t> getEntitiesContainingComponents(const std::bitset<Components_e::TOTAL_COMPONENTS> &bitsetComponents)const;
     inline ecs::Engine &getEngine(){return m_ecsEngine;}
