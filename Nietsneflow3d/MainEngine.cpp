@@ -99,6 +99,7 @@ std::tuple<bool, bool, std::optional<uint32_t>> MainEngine::mainLoop(uint32_t le
 //        clockFrame = std::chrono::system_clock::now();
         clock = std::chrono::system_clock::now();
         m_physicalEngine.runIteration(m_gamePaused);
+        //load
         if(m_levelToLoad)
         {
             m_memEnemiesStateFromCheckpoint.clear();
@@ -122,6 +123,7 @@ std::tuple<bool, bool, std::optional<uint32_t>> MainEngine::mainLoop(uint32_t le
             saveGameProgressCheckpoint(levelNum, *m_playerConf->m_checkpointReached, *m_playerConf->m_currentCheckpoint);
             m_playerConf->m_checkpointReached = {};
         }
+        //level end
         if(!m_exitColl->m_active)
         {
             m_memEnemiesStateFromCheckpoint.clear();
@@ -134,6 +136,7 @@ std::tuple<bool, bool, std::optional<uint32_t>> MainEngine::mainLoop(uint32_t le
             displayTransitionMenu();
             return {true, false, {}};
         }
+        //Player dead
         else if(!m_playerConf->m_life)
         {
             m_graphicEngine.setTransition(m_gamePaused);
@@ -1497,7 +1500,7 @@ void MainEngine::saveInputSettings(const std::map<ControlKey_e, GamepadInputStat
 }
 
 //===================================================================
-bool MainEngine::loadSavedGame(uint32_t saveNum)
+bool MainEngine::loadSavedGame(uint32_t saveNum, bool restartLevelMode)
 {
     std::optional<std::pair<uint32_t, MemPlayerConf>> savedData = m_refGame->loadSavedGame(saveNum);
     if(!savedData)
@@ -1507,6 +1510,10 @@ bool MainEngine::loadSavedGame(uint32_t saveNum)
     m_currentSave = saveNum;
     m_memPlayerConf = savedData->second;
     m_levelToLoad = savedData->first;
+    if(restartLevelMode)
+    {
+        --*m_levelToLoad;
+    }
     m_playerMem = true;
     return true;
 }

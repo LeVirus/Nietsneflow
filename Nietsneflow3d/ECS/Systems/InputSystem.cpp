@@ -712,7 +712,7 @@ void InputSystem::treatEnterPressedConfirmRestartLevelMenu(PlayerConfComponent *
     ConfirmCursorPos_e menuEntry = static_cast<ConfirmCursorPos_e>(playerComp->m_currentCursorPos);
     if(menuEntry == ConfirmCursorPos_e::TRUE)
     {
-        if(m_mainEngine->loadSavedGame(m_mainEngine->getCurrentSaveNum()))
+        if(m_mainEngine->loadSavedGame(m_mainEngine->getCurrentSaveNum(), true))
         {
             m_mainEngine->setTransition(true);
         }

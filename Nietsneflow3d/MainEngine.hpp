@@ -130,7 +130,7 @@ public:
     void saveAudioSettings();
     void saveInputSettings(const std::map<ControlKey_e, GamepadInputState> &gamepadArray,
                            const std::map<ControlKey_e, uint32_t> &keyboardArray);
-    bool loadSavedGame(uint32_t saveNum);
+    bool loadSavedGame(uint32_t saveNum, bool restartLevelMode = false);
     bool checkSavedGameExists(uint32_t saveNum)const;
 private:
     void clearObjectToDelete();
