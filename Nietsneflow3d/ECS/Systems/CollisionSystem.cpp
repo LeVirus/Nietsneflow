@@ -1066,7 +1066,6 @@ void CollisionSystem::treatPlayerPickObject(CollisionArgs &args)
 //===================================================================
 void CollisionSystem::treatPlayerTeleport(CollisionArgs &args)
 {
-
     PlayerConfComponent *playerComp = stairwayToComponentManager().
             searchComponentByType<PlayerConfComponent>(args.entityNumA, Components_e::PLAYER_CONF_COMPONENT);
     assert(playerComp);

@@ -1,9 +1,6 @@
 BUGS======================================================================
 
 ))
-When reload or repop to checkpoint sound set to max
-
-))
 Eject issue on moveable wall lateral
 
 ))
@@ -13,6 +10,9 @@ In input gamepad menu bug in GLFW in AXIS===============================~
 Enemy eject issue!!!!!!!!!!!
 Marines go into wall=====NOT REPRODUCT
 
+
+))
+When reload or repop to checkpoint sound set to max===============================OK
 
 ))
 Issue on display limit enemy and static element=============================OK

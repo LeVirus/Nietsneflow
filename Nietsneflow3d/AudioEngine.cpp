@@ -134,6 +134,7 @@ void AudioEngine::playMusic()
 {
     if(m_musicElement)
     {
+        updateMusicVolume(m_musicVolume);
         m_soundSystem->play(m_musicElement->first);
     }
 }
