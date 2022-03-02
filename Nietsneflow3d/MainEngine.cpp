@@ -72,6 +72,7 @@ std::tuple<bool, bool, std::optional<uint32_t>> MainEngine::mainLoop(uint32_t le
     {
         m_vectMemPausedTimer.clear();
         setUnsetPaused();
+//        m_memEnemiesStateFromCheckpoint.clear();
     }
     else if(m_memCheckpointLevelState)
     {
@@ -100,6 +101,7 @@ std::tuple<bool, bool, std::optional<uint32_t>> MainEngine::mainLoop(uint32_t le
         m_physicalEngine.runIteration(m_gamePaused);
         if(m_levelToLoad)
         {
+            m_memEnemiesStateFromCheckpoint.clear();
             uint32_t levelToLoad = *m_levelToLoad;
             m_levelToLoad = {};
             return {true, false, levelToLoad};
@@ -122,6 +124,7 @@ std::tuple<bool, bool, std::optional<uint32_t>> MainEngine::mainLoop(uint32_t le
         }
         if(!m_exitColl->m_active)
         {
+            m_memEnemiesStateFromCheckpoint.clear();
             m_memCheckpointLevelState = {};
             //end level
             m_playerConf->m_inMovement = false;
@@ -147,6 +150,31 @@ void MainEngine::saveGameProgressCheckpoint(uint32_t levelNum, const PairUI_t &c
     m_memCheckpointLevelState = {levelNum, checkpointNum, checkpointReached};
     //OOOK SAVE GEAR BEGIN LEVEL
     savePlayerGear();
+    for(uint32_t i = 0; i < m_memEnemiesStateFromCheckpoint.size(); ++i)
+    {
+        EnemyConfComponent *enemyComp = m_ecsManager.getComponentManager().
+                searchComponentByType<EnemyConfComponent>(m_memEnemiesStateFromCheckpoint[i].m_entityNum,
+                Components_e::ENEMY_CONF_COMPONENT);
+        assert(enemyComp);
+        MapCoordComponent *mapComp = m_ecsManager.getComponentManager().
+                searchComponentByType<MapCoordComponent>(m_memEnemiesStateFromCheckpoint[i].m_entityNum,
+                Components_e::MAP_COORD_COMPONENT);
+        assert(mapComp);
+        m_memEnemiesStateFromCheckpoint[i].m_dead = (enemyComp->m_behaviourMode == EnemyBehaviourMode_e::DEAD ||
+                                                     enemyComp->m_behaviourMode == EnemyBehaviourMode_e::DYING);
+        m_memEnemiesStateFromCheckpoint[i].m_enemyPos = mapComp->m_absoluteMapPositionPX;
+        m_memEnemiesStateFromCheckpoint[i].m_objectPickedUp = false;
+        if(enemyComp->m_dropedObjectEntity)
+        {
+            GeneralCollisionComponent *genCompObject = m_ecsManager.getComponentManager().
+                    searchComponentByType<GeneralCollisionComponent>(*enemyComp->m_dropedObjectEntity,
+                    Components_e::GENERAL_COLLISION_COMPONENT);
+            if(genCompObject && !genCompObject->m_active)
+            {
+                m_memEnemiesStateFromCheckpoint[i].m_objectPickedUp = true;
+            }
+        }
+    }
 }
 
 //===================================================================
@@ -979,7 +1007,9 @@ void MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
 {
     const std::map<std::string, EnemyData> &enemiesData = levelManager.getEnemiesData();
     float collisionRay;
+    bool loadFromCheckpoint = (!m_memEnemiesStateFromCheckpoint.empty());
     std::map<std::string, EnemyData>::const_iterator it = enemiesData.begin();
+    uint32_t cmpt = 0;
     for(; it != enemiesData.end(); ++it)
     {
         collisionRay = it->second.m_inGameSpriteSize.first * LEVEL_TWO_THIRD_TILE_SIZE_PX;
@@ -1011,30 +1041,20 @@ void MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
             }
             if(!it->second.m_dropedObjectID.empty())
             {
-                enemyComp->m_dropedObjectEntity = createEnemyDropObject(levelManager, it->second, j);
+                enemyComp->m_dropedObjectEntity = createEnemyDropObject(levelManager, it->second, j, loadFromCheckpoint, cmpt);
             }
             if(enemyComp->m_visibleShot)
             {
-                enemyComp->m_visibleAmmo.resize(4);
-                confAmmoEntities(enemyComp->m_visibleAmmo, CollisionTag_e::BULLET_ENEMY_CT,
-                                 enemyComp->m_visibleShot, (*it).second.m_attackPower, (*it).second.m_shotVelocity);
+                if(!loadFromCheckpoint || !m_memEnemiesStateFromCheckpoint[j].m_dead)
+                {
+                    enemyComp->m_visibleAmmo.resize(4);
+                    confAmmoEntities(enemyComp->m_visibleAmmo, CollisionTag_e::BULLET_ENEMY_CT,
+                                     enemyComp->m_visibleShot, (*it).second.m_attackPower, (*it).second.m_shotVelocity);
+                }
             }
             else
             {
-                enemyComp->m_stdAmmo.resize(MAX_SHOTS);
-                confAmmoEntities(enemyComp->m_stdAmmo, CollisionTag_e::BULLET_ENEMY_CT, enemyComp->m_visibleShot,
-                                 (*it).second.m_attackPower);
-                const MapImpactData_t &map = levelManager.getImpactDisplayData();
-                MapImpactData_t::const_iterator itt = map.find(it->second.m_impactID);
-                assert(itt != map.end());
-                for(uint32_t j = 0; j < enemyComp->m_stdAmmo.size(); ++j)
-                {
-                    ShotConfComponent *shotComp = m_ecsManager.getComponentManager().
-                            searchComponentByType<ShotConfComponent>(enemyComp->m_stdAmmo[j],
-                                                                     Components_e::SHOT_CONF_COMPONENT);
-                    assert(shotComp);
-                    shotComp->m_impactEntity = confShotImpactEntity(levelManager.getPictureSpriteData(), itt->second);
-                }
+                loadNonVisibleEnemyAmmoStuff(loadFromCheckpoint, j, it->second, levelManager, enemyComp);
             }
             loadEnemySprites(levelManager.getPictureData().getSpriteData(),
                              it->second, numEntity, enemyComp, levelManager.getVisibleShootDisplayData());
@@ -1054,7 +1074,60 @@ void MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
                     searchComponentByType<TimerComponent>(numEntity, Components_e::TIMER_COMPONENT);
             assert(timerComponent);
             timerComponent->m_clockC = std::chrono::system_clock::now();
+            treatCheckpointEnemiesData(loadFromCheckpoint, numEntity, cmpt);
+            ++cmpt;
         }
+    }
+}
+
+//===================================================================
+void MainEngine::loadNonVisibleEnemyAmmoStuff(bool loadFromCheckpoint, uint32_t currentEnemy,
+                                              const EnemyData &enemyData, const LevelManager &levelManager,
+                                              EnemyConfComponent *enemyComp)
+{
+    if(loadFromCheckpoint && m_memEnemiesStateFromCheckpoint[currentEnemy].m_dead)
+    {
+        return;
+    }
+    enemyComp->m_stdAmmo.resize(MAX_SHOTS);
+    confAmmoEntities(enemyComp->m_stdAmmo, CollisionTag_e::BULLET_ENEMY_CT, enemyComp->m_visibleShot,
+                     enemyData.m_attackPower);
+    const MapImpactData_t &map = levelManager.getImpactDisplayData();
+    MapImpactData_t::const_iterator itt = map.find(enemyData.m_impactID);
+    assert(itt != map.end());
+    for(uint32_t j = 0; j < enemyComp->m_stdAmmo.size(); ++j)
+    {
+        ShotConfComponent *shotComp = m_ecsManager.getComponentManager().
+                searchComponentByType<ShotConfComponent>(enemyComp->m_stdAmmo[j],
+                                                         Components_e::SHOT_CONF_COMPONENT);
+        assert(shotComp);
+        shotComp->m_impactEntity = confShotImpactEntity(levelManager.getPictureSpriteData(), itt->second);
+    }
+}
+
+//===================================================================
+void MainEngine::treatCheckpointEnemiesData(bool loadFromCheckpoint, uint32_t enemyEntity, uint32_t cmpt)
+{
+    if(loadFromCheckpoint)
+    {
+        m_memEnemiesStateFromCheckpoint[cmpt].m_entityNum = enemyEntity;
+        MapCoordComponent *mapComp = m_ecsManager.getComponentManager().
+                searchComponentByType<MapCoordComponent>(enemyEntity, Components_e::MAP_COORD_COMPONENT);
+        assert(mapComp);
+        EnemyConfComponent *enemyComp = m_ecsManager.getComponentManager().
+                searchComponentByType<EnemyConfComponent>(enemyEntity, Components_e::ENEMY_CONF_COMPONENT);
+        assert(enemyComp);
+        mapComp->m_absoluteMapPositionPX = m_memEnemiesStateFromCheckpoint[cmpt].m_enemyPos;
+        if(m_memEnemiesStateFromCheckpoint[cmpt].m_dead)
+        {
+            enemyComp->m_displayMode = EnemyDisplayMode_e::DEAD;
+            enemyComp->m_behaviourMode = EnemyBehaviourMode_e::DEAD;
+            enemyComp->m_currentSprite = enemyComp->m_mapSpriteAssociate.find(EnemySpriteType_e::DYING)->second.second;
+        }
+    }
+    else
+    {
+        m_memEnemiesStateFromCheckpoint.push_back({enemyEntity, false, false, {}});
     }
 }
 
@@ -1193,7 +1266,8 @@ void MainEngine::loadTriggerEntityData(const MoveableWallData &moveWallData,
 }
 
 //===================================================================
-uint32_t MainEngine::createEnemyDropObject(const LevelManager &levelManager, const EnemyData &enemyData, uint32_t iterationNum)
+uint32_t MainEngine::createEnemyDropObject(const LevelManager &levelManager, const EnemyData &enemyData,
+                                           uint32_t iterationNum, bool loadFromCheckpoint, uint32_t cmpt)
 {
     std::map<std::string, StaticLevelElementData>::const_iterator itt = levelManager.getObjectData().find(enemyData.m_dropedObjectID);
     assert(itt != levelManager.getObjectData().end());
@@ -1204,6 +1278,15 @@ uint32_t MainEngine::createEnemyDropObject(const LevelManager &levelManager, con
             searchComponentByType<GeneralCollisionComponent>(*objectEntity, Components_e::GENERAL_COLLISION_COMPONENT);
     assert(genComp);
     genComp->m_active = false;
+    if(loadFromCheckpoint && m_memEnemiesStateFromCheckpoint[cmpt].m_dead &&
+            !m_memEnemiesStateFromCheckpoint[cmpt].m_objectPickedUp)
+    {
+        genComp->m_active = true;
+        MapCoordComponent *mapComp = m_ecsManager.getComponentManager().
+                searchComponentByType<MapCoordComponent>(*objectEntity, Components_e::MAP_COORD_COMPONENT);
+        assert(mapComp);
+        mapComp->m_absoluteMapPositionPX = m_memEnemiesStateFromCheckpoint[cmpt].m_enemyPos;
+    }
     return *objectEntity;
 }
 

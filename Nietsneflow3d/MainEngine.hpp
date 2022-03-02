@@ -41,6 +41,13 @@ struct MemCheckpointLevelState
     PairUI_t m_playerPos;
 };
 
+struct MemCheckpointEnemiesState
+{
+    uint32_t m_entityNum;
+    bool m_dead, m_objectPickedUp;
+    PairFloat_t m_enemyPos;
+};
+
 class MainEngine
 {
 public:
@@ -159,6 +166,10 @@ private:
                           const std::vector<SpriteData> &vectSprite, TriggerBehaviourType_e triggerType, bool moveable = false);
     void loadDoorEntities(const LevelManager &levelManager);
     void loadEnemiesEntities(const LevelManager &levelManager);
+    void loadNonVisibleEnemyAmmoStuff(bool loadFromCheckpoint, uint32_t currentEnemy,
+                                      const EnemyData &enemyData, const LevelManager &levelManager,
+                                      EnemyConfComponent *enemyComp);
+    void treatCheckpointEnemiesData(bool loadFromCheckpoint, uint32_t enemyEntity, uint32_t cmpt);
     void loadCheckpointsEntities(const LevelManager &levelManager);
     void initStdCollisionCase(uint32_t entityNum, const PairUI_t &mapPos, CollisionTag_e tag);
     void loadSecretsEntities(const LevelManager &levelManager);
@@ -184,7 +195,7 @@ private:
     uint32_t createCheckpointEntity();
     uint32_t createSecretEntity();
     uint32_t createTextureEntity();
-    uint32_t createEnemyDropObject(const LevelManager &levelManager, const EnemyData &enemyData, uint32_t iterationNum);
+    uint32_t createEnemyDropObject(const LevelManager &levelManager, const EnemyData &enemyData, uint32_t iterationNum, bool loadFromCheckpoint, uint32_t cmpt);
     std::optional<uint32_t> createStaticElementEntity(LevelStaticElementType_e elementType, const StaticLevelElementData &staticElementData,
                                                       const std::vector<SpriteData> &vectSpriteData, uint32_t iterationNum,
                                                       bool enemyDrop = false, const std::string &soundFile = "");
@@ -255,6 +266,7 @@ private:
     std::optional<uint32_t> m_levelToLoad;
     std::optional<MemCheckpointLevelState> m_memCheckpointLevelState;
     uint32_t m_currentCheckpointMem, m_playerEntity;
+    std::vector<MemCheckpointEnemiesState> m_memEnemiesStateFromCheckpoint;
 };
 
 void insertEnemySpriteFromType(const std::vector<SpriteData> &vectSprite, mapEnemySprite_t &mapSpriteAssociate,
