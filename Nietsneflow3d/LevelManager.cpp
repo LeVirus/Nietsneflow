@@ -1634,12 +1634,8 @@ void LevelManager::saveInputSettings(const std::map<ControlKey_e, GamepadInputSt
 }
 
 //===================================================================
-void LevelManager::saveGameProgress(const MemPlayerConf &playerConf, uint32_t levelNum, uint32_t numSaveFile)
+void LevelManager::saveLevelGameProgress(const MemPlayerConf &playerConf, uint32_t levelNum)
 {
-    std::stringstream stringStream;
-    std::string str;
-    m_outputStream.open(LEVEL_RESSOURCES_DIR_STR + "Saves/save" + std::to_string(numSaveFile) + ".ini");
-    m_ini.clear();
     m_ini.setValue("Level", "levelNum", std::to_string(levelNum));
     m_ini.setValue("Player", "life", std::to_string(playerConf.m_life));
     m_ini.setValue("Player", "previousWeapon", std::to_string(playerConf.m_previousWeapon));
@@ -1653,7 +1649,15 @@ void LevelManager::saveGameProgress(const MemPlayerConf &playerConf, uint32_t le
     }
     m_ini.setValue("Player", "weaponPossess", weaponPosses);
     m_ini.setValue("Player", "weaponAmmoCount", weaponAmmoCount);
+}
+
+//===================================================================
+void LevelManager::generateSavedFile(uint32_t numSaveFile)
+{
+    std::string str;
+    std::stringstream stringStream;
     m_ini.generate(stringStream);
+    m_outputStream.open(LEVEL_RESSOURCES_DIR_STR + "Saves/save" + std::to_string(numSaveFile) + ".ini");
     str = encrypt(stringStream.str(), ENCRYPT_KEY_CONF_FILE);
     m_outputStream << str;
     m_outputStream.close();
@@ -1676,6 +1680,19 @@ bool LevelManager::loadIniFile(std::string_view path, std::optional<uint32_t> en
     std::istringstream istringStream(dataString);
     m_ini.parse(istringStream);
     return true;
+}
+
+//===================================================================
+void LevelManager::saveGameProgress(const MemPlayerConf &playerConf, uint32_t levelNum, uint32_t numSaveFile,
+                                    const MemCheckpointElementsState *checkpointData)
+{
+    m_ini.clear();
+    saveLevelGameProgress(playerConf, levelNum);
+    if(checkpointData)
+    {
+
+    }
+    generateSavedFile(numSaveFile);
 }
 
 //===================================================================

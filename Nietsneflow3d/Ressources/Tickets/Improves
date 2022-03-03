@@ -1,9 +1,9 @@
 IMPROVE===================================================================================================
 ==========================================================================================================
 
-
 ))
-In loading menu add date for save file
+On loading menu add date and checkpoint for save file
+
 
 1)
 Weapon movement on begin and end movement
@@ -21,6 +21,9 @@ Animation move while shooting===========================~
 Enemy animations========================~
 
 
+
+))
+Add enemies life for checkpoint save===========================OK
 
 ))
 Add machine gun to weapon====================================OK

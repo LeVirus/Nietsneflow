@@ -54,6 +54,7 @@ void MainEngine::init(Game *refGame)
 //===================================================================
 std::tuple<bool, bool, std::optional<uint32_t>> MainEngine::mainLoop(uint32_t levelNum, bool gameLoad)
 {
+    m_currentLevel = levelNum;
     m_memInputCursorPos = 0;
     m_graphicEngine.getMapSystem().confLevelData();
     if(m_playerMem)
@@ -72,7 +73,6 @@ std::tuple<bool, bool, std::optional<uint32_t>> MainEngine::mainLoop(uint32_t le
     {
         m_vectMemPausedTimer.clear();
         setUnsetPaused();
-//        m_memEnemiesStateFromCheckpoint.clear();
     }
     else if(m_memCheckpointLevelState)
     {
@@ -167,6 +167,7 @@ void MainEngine::saveGameProgressCheckpoint(uint32_t levelNum, const PairUI_t &c
                                                      enemyComp->m_behaviourMode == EnemyBehaviourMode_e::DYING);
         m_memEnemiesStateFromCheckpoint[i].m_enemyPos = mapComp->m_absoluteMapPositionPX;
         m_memEnemiesStateFromCheckpoint[i].m_objectPickedUp = false;
+        m_memEnemiesStateFromCheckpoint[i].m_life = enemyComp->m_life;
         if(enemyComp->m_dropedObjectEntity)
         {
             //check if entity still exists
@@ -179,14 +180,16 @@ void MainEngine::saveGameProgressCheckpoint(uint32_t levelNum, const PairUI_t &c
             }
         }
     }
+//    saveGameProgress(m_currentLevel, m_currentSave);
 }
 
 //===================================================================
-void MainEngine::saveGameProgress(uint32_t levelNum, std::optional<uint32_t> numSaveFile)
+void MainEngine::saveGameProgress(uint32_t levelNum, std::optional<uint32_t> numSaveFile,
+                                  const MemCheckpointElementsState *checkpointData)
 {
     uint32_t saveNum = numSaveFile ? *numSaveFile : m_currentSave;
     m_graphicEngine.updateSaveNum(levelNum, saveNum);
-    m_refGame->saveGameProgress(m_memPlayerConf, levelNum, saveNum);
+    m_refGame->saveGameProgress(m_memPlayerConf, levelNum, saveNum, checkpointData);
 }
 
 //===================================================================
@@ -1122,6 +1125,7 @@ void MainEngine::treatCheckpointEnemiesData(bool loadFromCheckpoint, uint32_t en
                 searchComponentByType<EnemyConfComponent>(enemyEntity, Components_e::ENEMY_CONF_COMPONENT);
         assert(enemyComp);
         mapComp->m_absoluteMapPositionPX = m_memEnemiesStateFromCheckpoint[cmpt].m_enemyPos;
+        enemyComp->m_life = m_memEnemiesStateFromCheckpoint[cmpt].m_life;
         if(m_memEnemiesStateFromCheckpoint[cmpt].m_dead)
         {
             enemyComp->m_displayMode = EnemyDisplayMode_e::DEAD;
@@ -1131,7 +1135,7 @@ void MainEngine::treatCheckpointEnemiesData(bool loadFromCheckpoint, uint32_t en
     }
     else
     {
-        m_memEnemiesStateFromCheckpoint.push_back({enemyEntity, false, false, {}});
+        m_memEnemiesStateFromCheckpoint.push_back({enemyEntity, 0, false, false, {}});
     }
 }
 

@@ -11,6 +11,7 @@
 
 class INIReader;
 struct MemPlayerConf;
+struct MemCheckpointElementsState;
 using SetStr_t = std::set<std::string>;
 
 struct MemSpriteData
@@ -87,11 +88,12 @@ public:
     void saveDisplaySettings(const pairI_t &resolution, bool fullscreen);
     void saveInputSettings(const std::map<ControlKey_e, GamepadInputState> &gamepadArray,
                                   const std::map<ControlKey_e, uint32_t> &keyboardArray);
-    void saveGameProgress(const MemPlayerConf &playerConf, uint32_t levelNum, uint32_t numSaveFile);
     std::optional<std::pair<uint32_t, MemPlayerConf>> loadSavedGame(uint32_t saveNum);
     std::array<std::optional<uint32_t>, 3> getExistingLevelNumSaves();
     //if encryptKey is nullopt no encryption
     bool loadIniFile(std::string_view path, std::optional<uint32_t> encryptKey);
+    void saveGameProgress(const MemPlayerConf &playerConf, uint32_t levelNum,
+                          uint32_t numSaveFile, const MemCheckpointElementsState *checkpointData);
     inline const PictureData &getPictureData()const {return m_pictureData;}
     inline const Level &getLevel()const {return m_level;}
     inline const FontData &getFontData()const {return m_fontData;}
@@ -195,6 +197,8 @@ private:
     void loadGeneralStaticElements(LevelStaticElementType_e elementType);
     void loadPositionStaticElements();
     void loadBarrelElements();
+    void saveLevelGameProgress(const MemPlayerConf &playerConf, uint32_t levelNum);
+    void generateSavedFile(uint32_t numSaveFile);
     void readStandardStaticElement(StaticLevelElementData &staticElement,
                                    const std::string &sectionName,
                                    LevelStaticElementType_e elementType);

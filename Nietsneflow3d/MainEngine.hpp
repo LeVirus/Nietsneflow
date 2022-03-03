@@ -43,9 +43,16 @@ struct MemCheckpointLevelState
 
 struct MemCheckpointEnemiesState
 {
-    uint32_t m_entityNum;
+    uint32_t m_entityNum, m_life;
     bool m_dead, m_objectPickedUp;
     PairFloat_t m_enemyPos;
+};
+
+struct MemCheckpointElementsState
+{
+    uint32_t m_checkpointNum;
+    PairUI_t m_checkpointPos;
+    std::vector<MemCheckpointEnemiesState> m_enemiesData;
 };
 
 class MainEngine
@@ -58,9 +65,10 @@ public:
     void loadLevel(const LevelManager &levelManager);
     void loadGameProgressCheckpoint();
     //first quit, second gameover
-    std::tuple<bool, bool, std::optional<uint32_t> > mainLoop(uint32_t levelNum, bool gameLoad);
+    std::tuple<bool, bool, std::optional<uint32_t>> mainLoop(uint32_t levelNum, bool gameLoad);
     void saveGameProgressCheckpoint(uint32_t levelNum, const PairUI_t &checkpointReached, uint32_t checkpointNum);
-    void saveGameProgress(uint32_t levelNum, std::optional<uint32_t> numSaveFile = {});
+    void saveGameProgress(uint32_t levelNum, std::optional<uint32_t> numSaveFile = {},
+                          const MemCheckpointElementsState *checkpointData = nullptr);
     void playerAttack(uint32_t playerEntity, PlayerConfComponent *playerComp,
                       const PairFloat_t &point, float degreeAngle);
     void setUnsetPaused();
@@ -245,7 +253,7 @@ private:
         m_graphicEngine.memGroundBackgroundFPSSystemEntity(entity, simpleTexture);
     }
 private:
-    uint32_t m_memInputCursorPos, m_currentSave = 1;
+    uint32_t m_memInputCursorPos, m_currentSave = 1, m_currentLevel = 0;
     float m_fpsValue = 1.0f / 60.0f;
     GraphicEngine m_graphicEngine;
     PhysicalEngine m_physicalEngine;

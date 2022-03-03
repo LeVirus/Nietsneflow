@@ -17,7 +17,8 @@ public:
     void saveDisplaySettings(const pairI_t &resolution, bool fullscreen);
     void saveInputSettings(const std::map<ControlKey_e, GamepadInputState> &gamepadArray,
                                   const std::map<ControlKey_e, uint32_t> &keyboardArray);
-    void saveGameProgress(const MemPlayerConf &playerConf, uint32_t levelNum, uint32_t numSaveFile);
+    void saveGameProgress(const MemPlayerConf &playerConf, uint32_t levelNum, uint32_t numSaveFile,
+                          const MemCheckpointElementsState *checkpointData = nullptr);
     inline std::optional<std::pair<uint32_t, MemPlayerConf>> loadSavedGame(uint32_t saveNum)
     {
         return m_levelManager.loadSavedGame(saveNum);
