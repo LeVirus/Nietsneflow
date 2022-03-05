@@ -197,6 +197,11 @@ void MainEngine::saveGameProgress(uint32_t levelNum, std::optional<uint32_t> num
 {
     uint32_t saveNum = numSaveFile ? *numSaveFile : m_currentSave;
     m_graphicEngine.updateSaveNum(levelNum, saveNum);
+    if(!checkpointData)
+    {
+        m_memCheckpointLevelState = {};
+        m_currentCheckpointMem = 0;
+    }
     m_refGame->saveGameProgress(m_memPlayerConf, levelNum, saveNum, checkpointData);
 }
 
