@@ -53,6 +53,14 @@ struct MemCheckpointElementsState
     uint32_t m_checkpointNum;
     PairUI_t m_checkpointPos;
     std::vector<MemCheckpointEnemiesState> m_enemiesData;
+    std::set<PairUI_t> m_staticElementDeleted;
+};
+
+struct MemLevelLoadedData
+{
+    uint32_t m_levelNum;
+    MemPlayerConf m_playerConf;
+    std::unique_ptr<MemCheckpointElementsState> m_checkpointLevelData;
 };
 
 class MainEngine
@@ -139,6 +147,7 @@ public:
     void saveInputSettings(const std::map<ControlKey_e, GamepadInputState> &gamepadArray,
                            const std::map<ControlKey_e, uint32_t> &keyboardArray);
     bool loadSavedGame(uint32_t saveNum, bool restartLevelMode = false);
+    void loadCheckpointSavedGame(const MemCheckpointElementsState &checkpointData);
     bool checkSavedGameExists(uint32_t saveNum)const;
 private:
     void clearObjectToDelete();
@@ -261,7 +270,7 @@ private:
     ECSManager m_ecsManager;
     Game *m_refGame = nullptr;
     std::vector<std::pair<uint32_t, time_t>> m_vectMemPausedTimer;
-    bool m_gamePaused = false, m_playerMem = false;
+    bool m_gamePaused = false, m_playerMemGear = false;
     SpriteData const *m_memCursorSpriteData = nullptr, *m_memVisibleShotA = nullptr;
     GeneralCollisionComponent *m_exitColl = nullptr;
     WriteComponent *m_writeConf = nullptr;
@@ -269,7 +278,7 @@ private:
     WeaponComponent *m_weaponComp;
     MemPlayerConf m_memPlayerConf;
     uint32_t m_currentLevelSecretsNumber;
-    std::set<PairUI_t> m_memWall, m_memStaticEntitiesDeletedFromCheckpoint, m_currentEntitiesDeletedFromCheckpoint;
+    std::set<PairUI_t> m_memWall, m_memStaticEntitiesDeletedFromCheckpoint, m_currentEntitiesDelete;
     std::map<PairUI_t, uint32_t> m_memTriggerCreated, m_memWallPos;
     std::optional<uint32_t> m_levelToLoad;
     std::optional<MemCheckpointLevelState> m_memCheckpointLevelState;

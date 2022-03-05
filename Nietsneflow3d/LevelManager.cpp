@@ -93,10 +93,10 @@ void LevelManager::loadBackgroundData()
             val = m_ini.getValue(sections[i], "colorR");
             assert(val);
             colorR = convertStrToVectFloat(*val);
-            val = m_ini.getValue(sections[i], "colorR");
+            val = m_ini.getValue(sections[i], "colorG");
             assert(val);
             colorG = convertStrToVectFloat(*val);
-            val = m_ini.getValue(sections[i], "colorR");
+            val = m_ini.getValue(sections[i], "colorB");
             assert(val);
             colorB = convertStrToVectFloat(*val);
             for(uint32_t j = 0; j < 4 ; ++j)
@@ -1652,6 +1652,48 @@ void LevelManager::saveLevelGameProgress(const MemPlayerConf &playerConf, uint32
 }
 
 //===================================================================
+void LevelManager::saveElementsGameProgress(const MemCheckpointElementsState &checkpointData)
+{
+    m_ini.setValue("Checkpoint", "Num", std::to_string(checkpointData.m_checkpointNum));
+    m_ini.setValue("Checkpoint", "PosX", std::to_string(checkpointData.m_checkpointPos.first));
+    m_ini.setValue("Checkpoint", "PosY", std::to_string(checkpointData.m_checkpointPos.second));
+    saveEnemiesDataGameProgress(checkpointData.m_enemiesData);
+    saveStaticElementsDataGameProgress(checkpointData.m_staticElementDeleted);
+}
+
+//===================================================================
+void LevelManager::saveEnemiesDataGameProgress(const std::vector<MemCheckpointEnemiesState> &enemiesData)
+{
+    std::string strPos, strDead, strObjectPickedUp, strLife, strTmp;
+    for(uint32_t i = 0; i < enemiesData.size(); ++i)
+    {
+        strTmp = enemiesData[i].m_dead ? "1" : "0";
+        strDead += strTmp + " ";
+        strTmp = enemiesData[i].m_objectPickedUp ? "1" : "0";
+        strObjectPickedUp += strTmp + " ";
+        strPos += std::to_string(enemiesData[i].m_enemyPos.first) + " " +
+                std::to_string(enemiesData[i].m_enemyPos.second) + " ";
+        strLife += std::to_string(enemiesData[i].m_life) + " ";
+    }
+    m_ini.setValue("Enemies", "Dead", strDead);
+    m_ini.setValue("Enemies", "ObjectPickedUp", strObjectPickedUp);
+    m_ini.setValue("Enemies", "Pos", strPos);
+    m_ini.setValue("Enemies", "Life", strLife);
+}
+
+//===================================================================
+void LevelManager::saveStaticElementsDataGameProgress(const std::set<PairUI_t> &staticElementData)
+{
+    std::string strPos;
+    for(std::set<PairUI_t>::const_iterator it = staticElementData.begin();
+        it != staticElementData.end(); ++it)
+    {
+        strPos += std::to_string(it->first) + " " + std::to_string(it->second) + " ";
+    }
+    m_ini.setValue("StaticElements", "Pos", strPos);
+}
+
+//===================================================================
 void LevelManager::generateSavedFile(uint32_t numSaveFile)
 {
     std::string str;
@@ -1690,13 +1732,13 @@ void LevelManager::saveGameProgress(const MemPlayerConf &playerConf, uint32_t le
     saveLevelGameProgress(playerConf, levelNum);
     if(checkpointData)
     {
-
+        saveElementsGameProgress(*checkpointData);
     }
     generateSavedFile(numSaveFile);
 }
 
 //===================================================================
-std::optional<std::pair<uint32_t, MemPlayerConf>> LevelManager::loadSavedGame(uint32_t saveNum)
+std::optional<MemLevelLoadedData> LevelManager::loadSavedGame(uint32_t saveNum)
 {
     std::string path = LEVEL_RESSOURCES_DIR_STR + "Saves/save" + std::to_string(saveNum) + ".ini";
     if(saveNum == 0 || !std::filesystem::exists(path))
@@ -1747,7 +1789,83 @@ std::optional<std::pair<uint32_t, MemPlayerConf>> LevelManager::loadSavedGame(ui
     {
         return {};
     }
-    return std::pair<uint32_t, MemPlayerConf>{levelNum, playerConf};
+    return MemLevelLoadedData{levelNum, playerConf, loadCheckpointDataSavedGame()};
+}
+
+//===================================================================
+std::unique_ptr<MemCheckpointElementsState> LevelManager::loadCheckpointDataSavedGame()
+{
+    uint32_t checkpointNum;
+    PairUI_t pos;
+    std::optional<std::string> val;
+    val = m_ini.getValue("Checkpoint", "Num");
+    if(!val)
+    {
+        return nullptr;
+    }
+    checkpointNum = std::stoi(*val);
+    val = m_ini.getValue("Checkpoint", "PosX");
+    assert(val);
+    pos.first = std::stoi(*val);
+    val = m_ini.getValue("Checkpoint", "PosY");
+    assert(val);
+    pos.second = std::stoi(*val);
+    return std::make_unique<MemCheckpointElementsState>(MemCheckpointElementsState{checkpointNum, pos,
+                                                                                   loadEnemiesDataGameProgress(), loadStaticElementsDataGameProgress()});
+}
+
+//===================================================================
+std::vector<MemCheckpointEnemiesState> LevelManager::loadEnemiesDataGameProgress()
+{
+    std::vector<MemCheckpointEnemiesState> vectData;
+    std::optional<std::string> val;
+    std::vector<PairFloat_t> vectPairPos;
+    //dead
+    val = m_ini.getValue("Enemies", "Dead");
+    assert(val);
+    std::vector<bool> vectDead = convertStrToVectBool(*val);
+    //object picked up
+    val = m_ini.getValue("Enemies", "ObjectPickedUp");
+    assert(val);
+    std::vector<bool> vectObject = convertStrToVectBool(*val);
+    //pos
+    val = m_ini.getValue("Enemies", "Pos");
+    assert(val);
+    std::vector<float> vectPos = convertStrToVectFloat(*val);
+    assert(vectPos.size() % 2 == 0);
+    vectPairPos.reserve(vectPos.size() / 2);
+    for(uint32_t i = 0; i < vectPos.size(); i += 2)
+    {
+        vectPairPos.emplace_back(PairFloat_t{vectPos[i], vectPos[i + 1]});
+    }
+    //life
+    val = m_ini.getValue("Enemies", "Life");
+    assert(val);
+    std::vector<uint32_t> vectLife = convertStrToVectUI(*val);
+    assert(vectDead.size() == vectObject.size());
+    assert(vectDead.size() == vectPairPos.size());
+    assert(vectDead.size() == vectLife.size());
+    for(uint32_t i = 0; i < vectDead.size(); ++i)
+    {
+        vectData.emplace_back(MemCheckpointEnemiesState{0, vectLife[i], vectDead[i],
+                                                        vectObject[i], vectPairPos[i]});
+    }
+    return vectData;
+}
+
+//===================================================================
+std::set<PairUI_t> LevelManager::loadStaticElementsDataGameProgress()
+{
+    std::set<PairUI_t> pairPos;
+    std::optional<std::string> val = m_ini.getValue("StaticElements", "Pos");
+    assert(val);
+    std::vector<uint32_t> vectPos = convertStrToVectUI(*val);
+    assert(vectPos.size() % 2 == 0);
+    for(uint32_t i = 0; i < vectPos.size(); i += 2)
+    {
+        pairPos.insert(PairUI_t{vectPos[i], vectPos[i + 1]});
+    }
+    return pairPos;
 }
 
 //===================================================================

@@ -12,7 +12,8 @@
 class INIReader;
 struct MemPlayerConf;
 struct MemCheckpointElementsState;
-using SetStr_t = std::set<std::string>;
+struct MemCheckpointEnemiesState;
+struct MemLevelLoadedData;
 
 struct MemSpriteData
 {
@@ -20,6 +21,7 @@ struct MemSpriteData
     PairFloat_t m_GLSize;
 };
 
+using SetStr_t = std::set<std::string>;
 using MapVisibleShotData_t = std::map<std::string, std::pair<std::string ,std::vector<MemSpriteData>>>;
 using PairImpactData_t = std::pair<std::vector<MemSpriteData>, MemSpriteData>;
 using MapImpactData_t = std::map<std::string, PairImpactData_t>;
@@ -88,7 +90,8 @@ public:
     void saveDisplaySettings(const pairI_t &resolution, bool fullscreen);
     void saveInputSettings(const std::map<ControlKey_e, GamepadInputState> &gamepadArray,
                                   const std::map<ControlKey_e, uint32_t> &keyboardArray);
-    std::optional<std::pair<uint32_t, MemPlayerConf>> loadSavedGame(uint32_t saveNum);
+    std::optional<MemLevelLoadedData> loadSavedGame(uint32_t saveNum);
+    std::unique_ptr<MemCheckpointElementsState> loadCheckpointDataSavedGame();
     std::array<std::optional<uint32_t>, 3> getExistingLevelNumSaves();
     //if encryptKey is nullopt no encryption
     bool loadIniFile(std::string_view path, std::optional<uint32_t> encryptKey);
@@ -198,6 +201,11 @@ private:
     void loadPositionStaticElements();
     void loadBarrelElements();
     void saveLevelGameProgress(const MemPlayerConf &playerConf, uint32_t levelNum);
+    void saveElementsGameProgress(const MemCheckpointElementsState &checkpointData);
+    void saveEnemiesDataGameProgress(const std::vector<MemCheckpointEnemiesState> &enemiesData);
+    std::vector<MemCheckpointEnemiesState> loadEnemiesDataGameProgress();
+    void saveStaticElementsDataGameProgress(const std::set<PairUI_t> &staticElementData);
+    std::set<PairUI_t> loadStaticElementsDataGameProgress();
     void generateSavedFile(uint32_t numSaveFile);
     void readStandardStaticElement(StaticLevelElementData &staticElement,
                                    const std::string &sectionName,
