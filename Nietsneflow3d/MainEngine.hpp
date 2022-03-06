@@ -27,6 +27,17 @@ struct EnemyConfComponent;
 struct WeaponComponent;
 struct SettingsData;
 
+enum class LevelState_e
+{
+    EXIT,
+    NEW_GAME,
+    RESTART_LEVEL,
+    RESTART_FROM_CHECKPOINT,
+    LOAD_GAME,
+    LEVEL_END,
+    GAME_OVER
+};
+
 struct MemPlayerConf
 {
     uint32_t m_currentWeapon, m_previousWeapon;
@@ -63,6 +74,12 @@ struct MemLevelLoadedData
     std::unique_ptr<MemCheckpointElementsState> m_checkpointLevelData;
 };
 
+struct LevelState
+{
+    LevelState_e m_levelState;
+    std::optional<uint32_t> m_levelToLoad;
+};
+
 class MainEngine
 {
 public:
@@ -73,7 +90,7 @@ public:
     void loadLevel(const LevelManager &levelManager);
     void loadGameProgressCheckpoint();
     //first quit, second gameover
-    std::tuple<bool, bool, std::optional<uint32_t>> mainLoop(uint32_t levelNum, bool gameLoad);
+    LevelState mainLoop(uint32_t levelNum, LevelState_e levelState);
     void saveGameProgressCheckpoint(uint32_t levelNum, const PairUI_t &checkpointReached, uint32_t checkpointNum);
     void saveGameProgress(uint32_t levelNum, std::optional<uint32_t> numSaveFile = {},
                           const MemCheckpointElementsState *checkpointData = nullptr);
@@ -146,7 +163,7 @@ public:
     void saveAudioSettings();
     void saveInputSettings(const std::map<ControlKey_e, GamepadInputState> &gamepadArray,
                            const std::map<ControlKey_e, uint32_t> &keyboardArray);
-    bool loadSavedGame(uint32_t saveNum, bool restartLevelMode = false);
+    bool loadSavedGame(uint32_t saveNum, LevelState_e levelMode);
     void loadCheckpointSavedGame(const MemCheckpointElementsState &checkpointData);
     bool checkSavedGameExists(uint32_t saveNum)const;
 private:
@@ -262,6 +279,7 @@ private:
         m_graphicEngine.memGroundBackgroundFPSSystemEntity(entity, simpleTexture);
     }
 private:
+    LevelState_e m_currentLevelState;
     uint32_t m_memInputCursorPos, m_currentSave = 1, m_currentLevel = 0;
     float m_fpsValue = 1.0f / 60.0f;
     GraphicEngine m_graphicEngine;

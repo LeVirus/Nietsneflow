@@ -712,7 +712,7 @@ void InputSystem::treatEnterPressedConfirmRestartLevelMenu(PlayerConfComponent *
     ConfirmCursorPos_e menuEntry = static_cast<ConfirmCursorPos_e>(playerComp->m_currentCursorPos);
     if(menuEntry == ConfirmCursorPos_e::TRUE)
     {
-        if(m_mainEngine->loadSavedGame(m_mainEngine->getCurrentSaveNum(), true))
+        if(m_mainEngine->loadSavedGame(m_mainEngine->getCurrentSaveNum(), LevelState_e::RESTART_LEVEL))
         {
             m_mainEngine->setTransition(true);
         }
@@ -736,7 +736,7 @@ void InputSystem::treatEnterPressedConfirmLoadGameMenu(PlayerConfComponent *play
             uint32_t numSaveFile = playerComp->m_currentSelectedSaveFile;
             //init or reinit save file
             m_mainEngine->saveGameProgress(1, numSaveFile);
-            if(m_mainEngine->loadSavedGame(numSaveFile))
+            if(m_mainEngine->loadSavedGame(numSaveFile, LevelState_e::NEW_GAME))
             {
                 m_mainEngine->setTransition(true);
             }
@@ -744,7 +744,7 @@ void InputSystem::treatEnterPressedConfirmLoadGameMenu(PlayerConfComponent *play
         //LOAD
         else
         {
-            if(m_mainEngine->loadSavedGame(playerComp->m_currentSelectedSaveFile))
+            if(m_mainEngine->loadSavedGame(playerComp->m_currentSelectedSaveFile, LevelState_e::LOAD_GAME))
             {
                 m_mainEngine->setTransition(true);
             }

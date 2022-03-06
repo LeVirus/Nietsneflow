@@ -52,8 +52,9 @@ void MainEngine::init(Game *refGame)
 }
 
 //===================================================================
-std::tuple<bool, bool, std::optional<uint32_t>> MainEngine::mainLoop(uint32_t levelNum, bool gameLoad)
+LevelState MainEngine::mainLoop(uint32_t levelNum, LevelState_e levelState)
 {
+    m_currentLevelState = levelState;
     m_currentLevel = levelNum;
     m_memInputCursorPos = 0;
     m_graphicEngine.getMapSystem().confLevelData();
@@ -69,7 +70,10 @@ std::tuple<bool, bool, std::optional<uint32_t>> MainEngine::mainLoop(uint32_t le
     //display FPS
 //    std::chrono::duration<double> fps;
 //    std::chrono::time_point<std::chrono::system_clock> clockFrame  = std::chrono::system_clock::now();
-    if(gameLoad)
+    //OOOOK after main menu added uncomment NEW_GAME
+    if(/*m_currentLevelState == LevelState_e::NEW_GAME || */
+            m_currentLevelState == LevelState_e::LOAD_GAME || m_currentLevelState == LevelState_e::RESTART_LEVEL ||
+            m_currentLevelState == LevelState_e::RESTART_FROM_CHECKPOINT)
     {
         m_vectMemPausedTimer.clear();
         setUnsetPaused();
@@ -108,7 +112,7 @@ std::tuple<bool, bool, std::optional<uint32_t>> MainEngine::mainLoop(uint32_t le
             }
             uint32_t levelToLoad = *m_levelToLoad;
             m_levelToLoad = {};
-            return {true, false, levelToLoad};
+            return {LevelState_e::LOAD_GAME, levelToLoad};
         }
         clearObjectToDelete();
         if(m_physicalEngine.toogledFullScreenSignal())
@@ -137,17 +141,17 @@ std::tuple<bool, bool, std::optional<uint32_t>> MainEngine::mainLoop(uint32_t le
             saveGameProgress(levelNum + 1);
             m_graphicEngine.setTransition(m_gamePaused);
             displayTransitionMenu();
-            return {true, false, {}};
+            return {LevelState_e::LEVEL_END, {}};
         }
         //Player dead
         else if(!m_playerConf->m_life)
         {
             m_graphicEngine.setTransition(m_gamePaused);
             displayTransitionMenu();
-            return {true, true, {}};
+            return {LevelState_e::GAME_OVER, {}};
         }
     }while(!m_graphicEngine.windowShouldClose());
-    return {false, true, {}};
+    return {LevelState_e::EXIT, {}};
 }
 
 //===================================================================
@@ -1517,19 +1521,27 @@ void MainEngine::saveInputSettings(const std::map<ControlKey_e, GamepadInputStat
 }
 
 //===================================================================
-bool MainEngine::loadSavedGame(uint32_t saveNum, bool restartLevelMode)
+bool MainEngine::loadSavedGame(uint32_t saveNum, LevelState_e levelMode)
 {
     std::optional<MemLevelLoadedData> savedData = m_refGame->loadSavedGame(saveNum);
     if(!savedData)
     {
         return false;
     }
+    m_currentLevelState = levelMode;
     m_currentSave = saveNum;
     m_memPlayerConf = savedData->m_playerConf;
-    m_levelToLoad = savedData->m_levelNum;
-    if(restartLevelMode)
+    if(m_currentLevelState == LevelState_e::NEW_GAME)
     {
-        --*m_levelToLoad;
+        m_levelToLoad = 1;
+    }
+    else if(m_currentLevelState == LevelState_e::RESTART_LEVEL)
+    {
+        m_levelToLoad = m_currentLevel;
+    }
+    else if(m_currentLevelState == LevelState_e::LOAD_GAME)
+    {
+        m_levelToLoad = savedData->m_levelNum;
     }
     m_playerMemGear = true;
     if(savedData->m_checkpointLevelData)
