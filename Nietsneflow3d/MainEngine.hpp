@@ -70,7 +70,7 @@ struct MemCheckpointElementsState
 struct MemLevelLoadedData
 {
     uint32_t m_levelNum;
-    MemPlayerConf m_playerConf;
+    std::optional<MemPlayerConf> m_playerConfBeginLevel, m_playerConfCheckpoint;
     std::unique_ptr<MemCheckpointElementsState> m_checkpointLevelData;
 };
 
@@ -167,9 +167,10 @@ public:
     void loadCheckpointSavedGame(const MemCheckpointElementsState &checkpointData);
     bool checkSavedGameExists(uint32_t saveNum)const;
 private:
+    bool loadFromLevelBegin(LevelState_e levelState)const;
     void clearObjectToDelete();
-    void savePlayerGear();
-    void loadPlayerGear();
+    void savePlayerGear(bool beginLevel);
+    void loadPlayerGear(bool beginLevel);
     void displayTransitionMenu();
     void loadColorEntities();
     void confSoundMenuEntities(uint32_t musicEntity, uint32_t effectEntity);
@@ -294,7 +295,7 @@ private:
     WriteComponent *m_writeConf = nullptr;
     PlayerConfComponent *m_playerConf = nullptr;
     WeaponComponent *m_weaponComp;
-    MemPlayerConf m_memPlayerConf;
+    MemPlayerConf m_memPlayerConfBeginLevel, m_memPlayerConfCheckpoint;
     uint32_t m_currentLevelSecretsNumber;
     std::set<PairUI_t> m_memWall, m_memStaticEntitiesDeletedFromCheckpoint, m_currentEntitiesDelete;
     std::map<PairUI_t, uint32_t> m_memTriggerCreated, m_memWallPos;

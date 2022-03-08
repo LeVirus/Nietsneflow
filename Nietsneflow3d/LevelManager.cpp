@@ -1634,21 +1634,35 @@ void LevelManager::saveInputSettings(const std::map<ControlKey_e, GamepadInputSt
 }
 
 //===================================================================
-void LevelManager::saveLevelGameProgress(const MemPlayerConf &playerConf, uint32_t levelNum)
+void LevelManager::saveLevelGameProgress(const MemPlayerConf &playerConfBeginLevel, const MemPlayerConf &playerConfCheckpoint,
+                                         uint32_t levelNum, bool beginLevel)
 {
+    std::string sectionName = beginLevel ? "PlayerBeginLevel" : "PlayerCheckpoint";
     m_ini.setValue("Level", "levelNum", std::to_string(levelNum));
-    m_ini.setValue("Player", "life", std::to_string(playerConf.m_life));
-    m_ini.setValue("Player", "previousWeapon", std::to_string(playerConf.m_previousWeapon));
-    m_ini.setValue("Player", "currentWeapon", std::to_string(playerConf.m_currentWeapon));
+    savePlayerGear(true, playerConfBeginLevel);
+    if(!beginLevel)
+    {
+        savePlayerGear(false, playerConfCheckpoint);
+    }
+}
+
+//===================================================================
+void LevelManager::savePlayerGear(bool beginLevel, const MemPlayerConf &playerConf)
+{
+    std::string sectionName = beginLevel ? "PlayerBeginLevel" : "PlayerCheckpoint";
+    m_ini.setValue(sectionName, "life", std::to_string(playerConf.m_life));
+    m_ini.setValue(sectionName, "previousWeapon", std::to_string(playerConf.m_previousWeapon));
+    m_ini.setValue(sectionName, "currentWeapon", std::to_string(playerConf.m_currentWeapon));
     std::string weaponPosses, weaponAmmoCount;
+    assert(!playerConf.m_ammunationsCount.empty());
     assert(playerConf.m_ammunationsCount.size() == playerConf.m_weapons.size());
     for(uint32_t i = 0; i < playerConf.m_ammunationsCount.size(); ++i)
     {
         weaponAmmoCount += std::to_string(playerConf.m_ammunationsCount[i]) + " ";
         weaponPosses += std::to_string(playerConf.m_weapons[i]) + " ";
     }
-    m_ini.setValue("Player", "weaponPossess", weaponPosses);
-    m_ini.setValue("Player", "weaponAmmoCount", weaponAmmoCount);
+    m_ini.setValue(sectionName, "weaponPossess", weaponPosses);
+    m_ini.setValue(sectionName, "weaponAmmoCount", weaponAmmoCount);
 }
 
 //===================================================================
@@ -1725,11 +1739,11 @@ bool LevelManager::loadIniFile(std::string_view path, std::optional<uint32_t> en
 }
 
 //===================================================================
-void LevelManager::saveGameProgress(const MemPlayerConf &playerConf, uint32_t levelNum, uint32_t numSaveFile,
-                                    const MemCheckpointElementsState *checkpointData)
+void LevelManager::saveGameProgress(const MemPlayerConf &playerConfBeginLevel, const MemPlayerConf &playerConfCheckpoint,
+                                    uint32_t levelNum, uint32_t numSaveFile, const MemCheckpointElementsState *checkpointData)
 {
     m_ini.clear();
-    saveLevelGameProgress(playerConf, levelNum);
+    saveLevelGameProgress(playerConfBeginLevel, playerConfCheckpoint,  levelNum, !checkpointData);
     if(checkpointData)
     {
         saveElementsGameProgress(*checkpointData);
@@ -1746,7 +1760,6 @@ std::optional<MemLevelLoadedData> LevelManager::loadSavedGame(uint32_t saveNum)
         return {};
     }
     loadIniFile(path, ENCRYPT_KEY_CONF_FILE);
-    MemPlayerConf playerConf;
     std::optional<std::string> val;
     val = m_ini.getValue("Level", "levelNum");
     if(!val)
@@ -1754,42 +1767,55 @@ std::optional<MemLevelLoadedData> LevelManager::loadSavedGame(uint32_t saveNum)
         return {};
     }
     uint32_t levelNum = std::stoi(*val);
+    std::optional<MemPlayerConf> playerConfBeginLevel = loadPlayerConf(true), playerConfCheckpoint = loadPlayerConf(false);
+    if(!playerConfBeginLevel || playerConfBeginLevel->m_ammunationsCount.size() != playerConfBeginLevel->m_weapons.size())
+    {
+        return {};
+    }
+    if(playerConfCheckpoint && playerConfCheckpoint->m_ammunationsCount.size() != playerConfCheckpoint->m_weapons.size())
+    {
+        return {};
+    }
+    return MemLevelLoadedData{levelNum, playerConfBeginLevel, playerConfCheckpoint, loadCheckpointDataSavedGame()};
+}
 
-    val = m_ini.getValue("Player", "life");
+//===================================================================
+std::optional<MemPlayerConf> LevelManager::loadPlayerConf(bool beginLevel)
+{
+    std::string sectionName = beginLevel ? "PlayerBeginLevel" : "PlayerCheckpoint";
+    MemPlayerConf playerConf;
+    std::optional<std::string> val;
+    val = m_ini.getValue(sectionName, "life");
     if(!val)
     {
         return {};
     }
     playerConf.m_life = std::stoi(*val);
-    val = m_ini.getValue("Player", "currentWeapon");
+    val = m_ini.getValue(sectionName, "currentWeapon");
     if(!val)
     {
         return {};
     }
     playerConf.m_currentWeapon = std::stoi(*val);
-    val = m_ini.getValue("Player", "previousWeapon");
+    val = m_ini.getValue(sectionName, "previousWeapon");
     if(!val)
     {
         return {};
     }
     playerConf.m_previousWeapon = std::stoi(*val);
-    val = m_ini.getValue("Player", "weaponAmmoCount");
+    val = m_ini.getValue(sectionName, "weaponAmmoCount");
     if(!val)
     {
         return {};
     }
     playerConf.m_ammunationsCount = convertStrToVectUI(*val);
-    val = m_ini.getValue("Player", "weaponPossess");
+    val = m_ini.getValue(sectionName, "weaponPossess");
     if(!val)
     {
         return {};
     }
     playerConf.m_weapons = convertStrToVectBool(*val);
-    if(playerConf.m_ammunationsCount.size() != playerConf.m_weapons.size())
-    {
-        return {};
-    }
-    return MemLevelLoadedData{levelNum, playerConf, loadCheckpointDataSavedGame()};
+    return playerConf;
 }
 
 //===================================================================

@@ -58,25 +58,30 @@ LevelState MainEngine::mainLoop(uint32_t levelNum, LevelState_e levelState)
     m_currentLevel = levelNum;
     m_memInputCursorPos = 0;
     m_graphicEngine.getMapSystem().confLevelData();
+    bool beginLevel = loadFromLevelBegin(m_currentLevelState);
     if(m_playerMemGear)
     {
-        loadPlayerGear();
+        loadPlayerGear(beginLevel);
     }
     else
     {
-        savePlayerGear();
+        savePlayerGear(beginLevel);
+        saveGameProgress(m_currentLevel);
     }
     std::chrono::duration<double> elapsed_seconds;
     //display FPS
 //    std::chrono::duration<double> fps;
 //    std::chrono::time_point<std::chrono::system_clock> clockFrame  = std::chrono::system_clock::now();
     //OOOOK after main menu added uncomment NEW_GAME
-    if(/*m_currentLevelState == LevelState_e::NEW_GAME || */
+    if(m_currentLevelState == LevelState_e::NEW_GAME ||
             m_currentLevelState == LevelState_e::LOAD_GAME || m_currentLevelState == LevelState_e::RESTART_LEVEL ||
             m_currentLevelState == LevelState_e::RESTART_FROM_CHECKPOINT)
     {
         m_vectMemPausedTimer.clear();
-        setUnsetPaused();
+        if(m_gamePaused)
+        {
+            setUnsetPaused();
+        }
     }
     if(m_memCheckpointLevelState)
     {
@@ -103,7 +108,7 @@ LevelState MainEngine::mainLoop(uint32_t levelNum, LevelState_e levelState)
 //        clockFrame = std::chrono::system_clock::now();
         clock = std::chrono::system_clock::now();
         m_physicalEngine.runIteration(m_gamePaused);
-        //load
+        //LOAD
         if(m_levelToLoad)
         {
             if(!m_memCheckpointLevelState)
@@ -112,7 +117,13 @@ LevelState MainEngine::mainLoop(uint32_t levelNum, LevelState_e levelState)
             }
             uint32_t levelToLoad = *m_levelToLoad;
             m_levelToLoad = {};
-            return {LevelState_e::LOAD_GAME, levelToLoad};
+            if(m_currentLevelState == LevelState_e::NEW_GAME || m_currentLevelState == LevelState_e::RESTART_LEVEL)
+            {
+                m_memCheckpointLevelState = {};
+                m_memStaticEntitiesDeletedFromCheckpoint.clear();
+                m_currentEntitiesDelete.clear();
+            }
+            return {m_currentLevelState, levelToLoad};
         }
         clearObjectToDelete();
         if(m_physicalEngine.toogledFullScreenSignal())
@@ -133,15 +144,16 @@ LevelState MainEngine::mainLoop(uint32_t levelNum, LevelState_e levelState)
         //level end
         if(!m_exitColl->m_active)
         {
+            m_currentLevelState = LevelState_e::LEVEL_END;
             m_memEnemiesStateFromCheckpoint.clear();
             m_memCheckpointLevelState = {};
             //end level
             m_playerConf->m_inMovement = false;
-            savePlayerGear();
+            savePlayerGear(true);
             saveGameProgress(levelNum + 1);
             m_graphicEngine.setTransition(m_gamePaused);
             displayTransitionMenu();
-            return {LevelState_e::LEVEL_END, {}};
+            return {m_currentLevelState, {}};
         }
         //Player dead
         else if(!m_playerConf->m_life)
@@ -160,7 +172,7 @@ void MainEngine::saveGameProgressCheckpoint(uint32_t levelNum, const PairUI_t &c
     std::vector<MemCheckpointEnemiesState> vectEnemiesData;
     m_memCheckpointLevelState = {levelNum, checkpointNum, checkpointReached};
     //OOOK SAVE GEAR BEGIN LEVEL
-    savePlayerGear();
+    savePlayerGear(false);
     vectEnemiesData.reserve(m_memEnemiesStateFromCheckpoint.size());
     for(uint32_t i = 0; i < m_memEnemiesStateFromCheckpoint.size(); ++i)
     {
@@ -206,42 +218,46 @@ void MainEngine::saveGameProgress(uint32_t levelNum, std::optional<uint32_t> num
         m_memCheckpointLevelState = {};
         m_currentCheckpointMem = 0;
     }
-    m_refGame->saveGameProgress(m_memPlayerConf, levelNum, saveNum, checkpointData);
+    m_refGame->saveGameProgress(m_memPlayerConfBeginLevel, m_memPlayerConfCheckpoint, levelNum, saveNum, checkpointData);
 }
 
 //===================================================================
-void MainEngine::savePlayerGear()
+void MainEngine::savePlayerGear(bool beginLevel)
 {
     assert(m_playerConf);
-    m_memPlayerConf.m_ammunationsCount.resize(m_weaponComp->m_weaponsData.size());
-    m_memPlayerConf.m_weapons.resize(m_weaponComp->m_weaponsData.size());
-    for(uint32_t i = 0; i < m_memPlayerConf.m_ammunationsCount.size(); ++i)
+    MemPlayerConf &playerConf = beginLevel ? m_memPlayerConfBeginLevel : m_memPlayerConfCheckpoint;
+    playerConf.m_ammunationsCount.resize(m_weaponComp->m_weaponsData.size());
+    playerConf.m_weapons.resize(m_weaponComp->m_weaponsData.size());
+    for(uint32_t i = 0; i < playerConf.m_ammunationsCount.size(); ++i)
     {
-        m_memPlayerConf.m_ammunationsCount[i] =
+        playerConf.m_ammunationsCount[i] =
                 m_weaponComp->m_weaponsData[i].m_ammunationsCount;
-        m_memPlayerConf.m_weapons[i] = m_weaponComp->m_weaponsData[i].m_posses;
+        playerConf.m_weapons[i] = m_weaponComp->m_weaponsData[i].m_posses;
     }
-    m_memPlayerConf.m_currentWeapon = m_weaponComp->m_currentWeapon;
-    m_memPlayerConf.m_previousWeapon = m_weaponComp->m_previousWeapon;
-    m_memPlayerConf.m_life = m_playerConf->m_life;
+    playerConf.m_currentWeapon = m_weaponComp->m_currentWeapon;
+    playerConf.m_previousWeapon = m_weaponComp->m_previousWeapon;
+    playerConf.m_life = m_playerConf->m_life;
     m_playerMemGear = true;
+    if(beginLevel)
+    {
+        m_memCheckpointLevelState = {};
+    }
 }
 
 //===================================================================
-void MainEngine::loadPlayerGear()
+void MainEngine::loadPlayerGear(bool beginLevel)
 {
     assert(m_playerConf);
-    assert(m_memPlayerConf.m_ammunationsCount.size() ==
-           m_weaponComp->m_weaponsData.size());
-    for(uint32_t i = 0; i < m_memPlayerConf.m_ammunationsCount.size(); ++i)
+    MemPlayerConf &playerConf = beginLevel ? m_memPlayerConfBeginLevel : m_memPlayerConfCheckpoint;
+    assert(playerConf.m_ammunationsCount.size() == m_weaponComp->m_weaponsData.size());
+    for(uint32_t i = 0; i < playerConf.m_ammunationsCount.size(); ++i)
     {
-        m_weaponComp->m_weaponsData[i].m_ammunationsCount =
-                m_memPlayerConf.m_ammunationsCount[i];
-        m_weaponComp->m_weaponsData[i].m_posses = m_memPlayerConf.m_weapons[i];
+        m_weaponComp->m_weaponsData[i].m_ammunationsCount = playerConf.m_ammunationsCount[i];
+        m_weaponComp->m_weaponsData[i].m_posses = playerConf.m_weapons[i];
     }
-    m_weaponComp->m_currentWeapon = m_memPlayerConf.m_currentWeapon;
-    m_weaponComp->m_previousWeapon = m_memPlayerConf.m_previousWeapon;
-    m_playerConf->m_life = m_memPlayerConf.m_life;
+    m_weaponComp->m_currentWeapon = playerConf.m_currentWeapon;
+    m_weaponComp->m_previousWeapon = playerConf.m_previousWeapon;
+    m_playerConf->m_life = playerConf.m_life;
     m_playerMemGear = false;
     StaticDisplaySystem *staticDisplay = m_ecsManager.getSystemManager().
             searchSystemByType<StaticDisplaySystem>(static_cast<uint32_t>(Systems_e::STATIC_DISPLAY_SYSTEM));
@@ -1523,19 +1539,25 @@ void MainEngine::saveInputSettings(const std::map<ControlKey_e, GamepadInputStat
 //===================================================================
 bool MainEngine::loadSavedGame(uint32_t saveNum, LevelState_e levelMode)
 {
+    m_currentLevelState = levelMode;
+    m_currentSave = saveNum;
+    if(m_currentLevelState == LevelState_e::NEW_GAME)
+    {
+        m_levelToLoad = 1;
+        return true;
+    }
     std::optional<MemLevelLoadedData> savedData = m_refGame->loadSavedGame(saveNum);
     if(!savedData)
     {
         return false;
     }
-    m_currentLevelState = levelMode;
-    m_currentSave = saveNum;
-    m_memPlayerConf = savedData->m_playerConf;
-    if(m_currentLevelState == LevelState_e::NEW_GAME)
+    m_memPlayerConfBeginLevel = *savedData->m_playerConfBeginLevel;
+    assert(!m_memPlayerConfBeginLevel.m_ammunationsCount.empty());
+    if(savedData->m_playerConfCheckpoint)
     {
-        m_levelToLoad = 1;
+        m_memPlayerConfCheckpoint = *savedData->m_playerConfCheckpoint;
     }
-    else if(m_currentLevelState == LevelState_e::RESTART_LEVEL)
+    if(m_currentLevelState == LevelState_e::RESTART_LEVEL)
     {
         m_levelToLoad = m_currentLevel;
     }
@@ -1563,6 +1585,17 @@ void MainEngine::loadCheckpointSavedGame(const MemCheckpointElementsState &check
 bool MainEngine::checkSavedGameExists(uint32_t saveNum)const
 {
     return m_refGame->checkSavedGameExists(saveNum);
+}
+
+//===================================================================
+bool MainEngine::loadFromLevelBegin(LevelState_e levelState)const
+{
+    if(levelState == LevelState_e::RESTART_FROM_CHECKPOINT ||
+            (m_memCheckpointLevelState && (levelState == LevelState_e::GAME_OVER || levelState == LevelState_e::LOAD_GAME)))
+    {
+        return false;
+    }
+    return true;
 }
 
 //===================================================================
