@@ -1100,6 +1100,8 @@ void MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
                     searchComponentByType<MoveableComponent>(numEntity, Components_e::MOVEABLE_COMPONENT);
             assert(moveComp);
             moveComp->m_velocity = it->second.m_velocity;
+            moveComp->m_currentDegreeMoveDirection = 0.0f;
+            moveComp->m_degreeOrientation = 0.0f;
             AudioComponent *audiocomponent = m_ecsManager.getComponentManager().
                     searchComponentByType<AudioComponent>(numEntity, Components_e::AUDIO_COMPONENT);
             assert(audiocomponent);

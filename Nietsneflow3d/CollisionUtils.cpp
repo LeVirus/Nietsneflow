@@ -319,8 +319,14 @@ float getTrigoAngle(const PairFloat_t &pointA, const PairFloat_t &pointB, bool d
 //===================================================================
 float getRectTriangleSide(float adj, float hyp)
 {
+    if(hyp < adj)
+    {
+        std::swap(adj, hyp);
+    }
     float radAngle = std::acos(adj / hyp);
-    return std::sin(radAngle) * hyp;
+    float result = std::sin(radAngle) * hyp;
+    assert(result < LEVEL_TILE_SIZE_PX * 3);
+    return result;
 }
 
 //===================================================================
