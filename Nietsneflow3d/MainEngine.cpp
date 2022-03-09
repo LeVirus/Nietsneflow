@@ -72,10 +72,8 @@ LevelState MainEngine::mainLoop(uint32_t levelNum, LevelState_e levelState)
     //display FPS
 //    std::chrono::duration<double> fps;
 //    std::chrono::time_point<std::chrono::system_clock> clockFrame  = std::chrono::system_clock::now();
-    //OOOOK after main menu added uncomment NEW_GAME
-    if(m_currentLevelState == LevelState_e::NEW_GAME ||
-            m_currentLevelState == LevelState_e::LOAD_GAME || m_currentLevelState == LevelState_e::RESTART_LEVEL ||
-            m_currentLevelState == LevelState_e::RESTART_FROM_CHECKPOINT)
+    if(m_currentLevelState == LevelState_e::NEW_GAME || m_currentLevelState == LevelState_e::LOAD_GAME ||
+            m_currentLevelState == LevelState_e::RESTART_LEVEL || m_currentLevelState == LevelState_e::RESTART_FROM_CHECKPOINT)
     {
         m_vectMemPausedTimer.clear();
         if(m_gamePaused)
@@ -2618,7 +2616,7 @@ std::optional<uint32_t> MainEngine::createStaticElementEntity(LevelStaticElement
     CollisionTag_e tag;
     uint32_t entityNum;
     const SpriteData &memSpriteData = vectSpriteData[staticElementData.m_numSprite];
-    if(!enemyDrop && m_currentEntitiesDelete.find(staticElementData.m_TileGamePosition[0]) !=
+    if(!enemyDrop && m_currentEntitiesDelete.find(staticElementData.m_TileGamePosition[iterationNum]) !=
             m_currentEntitiesDelete.end())
     {
         return {};
