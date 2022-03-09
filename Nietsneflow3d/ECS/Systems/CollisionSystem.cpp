@@ -847,6 +847,7 @@ bool CollisionSystem::treatCollisionPlayer(CollisionArgs &args, CircleCollisionC
             ++(*playerComp->m_secretFound);
         }
         m_vectEntitiesToDelete.push_back(args.entityNumB);
+        return true;
     }
     collisionCircleRectEject(args, circleCompA.m_ray, rectCompB);
     return false;

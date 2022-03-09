@@ -4,13 +4,12 @@ BUGS======================================================================
 General Conf discard some time
 
 ))
-Secret reject player after load
-
-))
 Eject issue for marines
 
 ))
 assert on FirstPerson:610
+
+
 
 ))
 Eject issue on moveable wall lateral
@@ -26,6 +25,9 @@ Marines go into wall=====NOT REPRODUCT
 When loading game from checkpoint AND DIE AFTER strange behaviour : Missing enemies, door still open, 
 	-->If reload when this strange behaviour ::OpenAL iSSUe
 	-->Not happen if we previously restart the level
+
+))
+Secret reject player after load==================================OK
 
 ))
 When reload game (new game or load) some time static object or enemies does not load=======================OK
