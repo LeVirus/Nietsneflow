@@ -627,6 +627,11 @@ bool CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args, bool shotEx
                     DoorComponent *doorComp = stairwayToComponentManager().
                             searchComponentByType<DoorComponent>(args.entityNumB, Components_e::DOOR_COMPONENT);
                     assert(doorComp);
+                    doorComp->m_obstruct = true;
+                    if(doorComp->m_currentState == DoorState_e::STATIC_OPEN)
+                    {
+                        return true;
+                    }
                     if(!doorComp->m_cardID)
                     {
                         DoorState_e initState = doorComp->m_currentState;
@@ -805,6 +810,10 @@ bool CollisionSystem::treatCollisionPlayer(CollisionArgs &args, CircleCollisionC
                 searchComponentByType<DoorComponent>(args.entityNumB, Components_e::DOOR_COMPONENT);
         assert(doorComp);
         doorComp->m_obstruct = true;
+        if(doorComp->m_currentState == DoorState_e::STATIC_OPEN)
+        {
+            return true;
+        }
         if(doorComp->m_currentState == DoorState_e::MOVE_CLOSE)
         {
             doorComp->m_currentState = DoorState_e::MOVE_OPEN;

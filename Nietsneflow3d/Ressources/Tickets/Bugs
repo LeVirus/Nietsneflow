@@ -4,9 +4,6 @@ BUGS======================================================================
 Display issue on traversable static element
 
 ))
-Collision issue on door
-
-))
 Eject issue for marines
 
 
@@ -16,6 +13,9 @@ Eject issue on moveable wall lateral
 
 ))
 In input gamepad menu bug in GLFW in AXIS===============================~
+
+))
+Collision issue on door=============================OK
 
 ))
 assert on FirstPerson:610===================================OK
