@@ -13,6 +13,7 @@ using pairLong_t = std::pair<long, long>;
 using PairFloat_t = std::pair<float, float>;
 using PairDouble_t = std::pair<double, double>;
 using PairPairFloatStr_t = std::pair<PairFloat_t, std::string>;
+
 enum class AnimationMode_e
 {
     STANDART,
@@ -374,7 +375,7 @@ inline const float CONE_VISION = 60.0f;
 inline const float MAX_SOUND_MENU_SIZE = 0.7f;
 inline const float HALF_CONE_VISION = CONE_VISION / 2.0f;
 inline const float DOUBLE_CONE_VISION = CONE_VISION * 2.0f;
-inline const uint32_t RAYCAST_LINE_NUMBER = 200, RAYCAST_DEPTH = 20, MAX_SHOTS = 5,
+inline const uint32_t RAYCAST_LINE_NUMBER = 300, RAYCAST_DEPTH = 20, MAX_SHOTS = 5,
 RAYCAST_GROUND_CEILING_NUMBER = RAYCAST_LINE_NUMBER / 2.0f;
 inline const float SCREEN_VERT_BACKGROUND_GL_STEP = 1.0f / RAYCAST_GROUND_CEILING_NUMBER;
 inline const float SCREEN_HORIZ_BACKGROUND_GL_STEP = 2.0f / RAYCAST_LINE_NUMBER;

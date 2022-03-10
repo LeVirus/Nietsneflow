@@ -21,6 +21,9 @@ Sprite = SpriteWallB
 [WallC]
 Sprite = SpriteWallC
 
+[WallLogo]
+Sprite = SpriteSimetraLogo
+
 [DoorVertical]
 Sprite = SpriteDoorA
 Vertical = true

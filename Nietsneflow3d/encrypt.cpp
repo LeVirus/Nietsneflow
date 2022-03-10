@@ -2,7 +2,9 @@
 #include <sstream>
 #include <iostream>
 
+//ENCRYPT_KEY_CONF_FILE
 const uint32_t KEY = 42;
+//STANDARD LEVEL
 //const uint32_t KEY = 17;
 
 //===================================================================
