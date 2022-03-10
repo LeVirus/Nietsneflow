@@ -602,11 +602,10 @@ void FirstPersonDisplaySystem::confNormalEntityVertex(uint32_t numEntity, Vision
         }
         upPos = downPos + fpsStaticComp->m_inGameSpriteSize.second / distanceFactor;
     }
-    else if(fpsStaticComp->m_levelElementType == LevelStaticElementType_e::IMPACT)
+    else if(tag == CollisionTag_e::IMPACT_CT && fpsStaticComp->m_levelElementType == LevelStaticElementType_e::IMPACT)
     {
         ImpactShotComponent *impactComp = stairwayToComponentManager().
-            searchComponentByType<ImpactShotComponent>(numEntity,
-                                                       Components_e::IMPACT_CONF_COMPONENT);
+            searchComponentByType<ImpactShotComponent>(numEntity, Components_e::IMPACT_CONF_COMPONENT);
         assert(impactComp);
         downPos = (-0.3f + impactComp->m_moveUp) / distanceFactor;
         upPos = downPos + fpsStaticComp->m_inGameSpriteSize.second / distanceFactor;

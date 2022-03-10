@@ -1067,6 +1067,7 @@ void MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
             assert(enemyComp);
             assert(fpsStaticComp);
             fpsStaticComp->m_inGameSpriteSize = it->second.m_inGameSpriteSize;
+            fpsStaticComp->m_levelElementType = LevelStaticElementType_e::GROUND;
             CircleCollisionComponent *circleComp = m_ecsManager.getComponentManager().
                     searchComponentByType<CircleCollisionComponent>(numEntity, Components_e::CIRCLE_COLLISION_COMPONENT);
             assert(circleComp);
@@ -1768,6 +1769,7 @@ void MainEngine::loadVisibleShotData(const std::vector<SpriteData> &vectSprite, 
             memFPSGLSizeComp->m_memGLSizeData.emplace_back(it->second.second[l].m_GLSize);
         }
         fpsStaticComp->m_inGameSpriteSize = it->second.second[0].m_GLSize;
+        fpsStaticComp->m_levelElementType = LevelStaticElementType_e::GROUND;
         spriteComp->m_spriteData = memSpriteComp->m_vectSpriteData[0];
         float maxWidth = memFPSGLSizeComp->m_memGLSizeData[0].first;
         for(uint32_t i = 1; i < memFPSGLSizeComp->m_memGLSizeData.size(); ++i)
@@ -2597,6 +2599,7 @@ void MainEngine::loadExitElement(const LevelManager &levelManager,
                 entityNum, Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
     assert(fpsStaticComp);
     fpsStaticComp->m_inGameSpriteSize = exit.m_inGameSpriteSize;
+    fpsStaticComp->m_levelElementType = LevelStaticElementType_e::CEILING;
     assert(!exit.m_TileGamePosition.empty());
     //mem exit comp determine when level is over
     m_exitColl = m_ecsManager.getComponentManager().
@@ -2664,6 +2667,7 @@ std::optional<uint32_t> MainEngine::createStaticElementEntity(LevelStaticElement
             searchComponentByType<FPSVisibleStaticElementComponent>(entityNum, Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
     assert(fpsStaticComp);
     fpsStaticComp->m_inGameSpriteSize = staticElementData.m_inGameSpriteSize;
+    fpsStaticComp->m_levelElementType = elementType;
     //Enemy dropable object case
     if(iterationNum >= staticElementData.m_TileGamePosition.size())
     {
