@@ -1489,8 +1489,11 @@ void MainEngine::confGlobalSettings(const SettingsData &settingsData)
     }
     else
     {
-        m_audioEngine.updateMusicVolume(settingsData.m_musicVolume);
-        m_graphicEngine.updateMusicVolumeBar(settingsData.m_musicVolume);
+        if(settingsData.m_musicVolume)
+        {
+            m_audioEngine.updateMusicVolume(*settingsData.m_musicVolume);
+            m_graphicEngine.updateMusicVolumeBar(*settingsData.m_musicVolume);
+        }
     }
     if(settingsData.m_effectsVolume > 100)
     {
@@ -1499,20 +1502,32 @@ void MainEngine::confGlobalSettings(const SettingsData &settingsData)
     }
     else
     {
-        m_audioEngine.updateEffectsVolume(settingsData.m_effectsVolume, false);
-        m_graphicEngine.updateEffectsVolumeBar(settingsData.m_effectsVolume);
+        if(settingsData.m_musicVolume)
+        {
+            m_audioEngine.updateEffectsVolume(*settingsData.m_effectsVolume, false);
+            m_graphicEngine.updateEffectsVolumeBar(*settingsData.m_effectsVolume);
+        }
     }
     //DISPLAY
     if(settingsData.m_fullscreen)
     {
         m_graphicEngine.toogleFullScreen();
     }
-    m_graphicEngine.setSizeResolution({settingsData.m_resolutionWidth, settingsData.m_resolutionHeight});
+    if(settingsData.m_resolutionWidth && settingsData.m_resolutionHeight)
+    {
+        m_graphicEngine.setSizeResolution({*settingsData.m_resolutionWidth, *settingsData.m_resolutionHeight});
+    }
     //INPUT
     //KEYBOARD
-    m_physicalEngine.setKeyboardKey(settingsData.m_arrayKeyboard);
+    if(settingsData.m_arrayKeyboard)
+    {
+        m_physicalEngine.setKeyboardKey(*settingsData.m_arrayKeyboard);
+    }
     //GAMEPAD
-    m_physicalEngine.setGamepadKey(settingsData.m_arrayGamepad);
+    if(settingsData.m_arrayGamepad)
+    {
+        m_physicalEngine.setGamepadKey(*settingsData.m_arrayGamepad);
+    }
 }
 
 //===================================================================

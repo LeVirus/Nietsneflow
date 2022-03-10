@@ -1,9 +1,6 @@
 BUGS======================================================================
 
 ))
-General Conf discard some time
-
-))
 Eject issue for marines
 
 ))
@@ -18,8 +15,7 @@ Eject issue on moveable wall lateral
 In input gamepad menu bug in GLFW in AXIS===============================~
 
 ))
-Enemy eject issue!!!!!!!!!!!
-Marines go into wall=====NOT REPRODUCT
+General Conf discard some time==============================OK
 
 ))=====================================================OK
 When loading game from checkpoint AND DIE AFTER strange behaviour : Missing enemies, door still open, 

@@ -67,13 +67,13 @@ struct MoveableWallData
 struct SettingsData
 {
     //AUDIO
-    uint32_t m_musicVolume, m_effectsVolume;
+    std::optional<uint32_t> m_musicVolume, m_effectsVolume;
     //DISPLAY
-    bool m_fullscreen;
-    int m_resolutionWidth, m_resolutionHeight;
+    std::optional<bool> m_fullscreen;
+    std::optional<int> m_resolutionWidth, m_resolutionHeight;
     //INPUT
-    std::array<uint32_t, static_cast<uint32_t>(ControlKey_e::TOTAL)> m_arrayKeyboard;
-    std::array<GamepadInputState, static_cast<uint32_t>(ControlKey_e::TOTAL)> m_arrayGamepad;
+    std::optional<std::array<uint32_t, static_cast<uint32_t>(ControlKey_e::TOTAL)>> m_arrayKeyboard;
+    std::optional<std::array<GamepadInputState, static_cast<uint32_t>(ControlKey_e::TOTAL)>> m_arrayGamepad;
 };
 
 class LevelManager
@@ -189,6 +189,8 @@ public:
     }
     bool checkSavedGameExists(uint32_t saveNum) const;
 private:
+    std::string getGamepadKeyIniString(const GamepadInputState &gamepadInputState) const;
+    void fillSettingsFileFromMemory();
     //texture and sprite loading
     void loadTexturePath();
     void loadSpriteData(const std::string &sectionName = "Sprite",

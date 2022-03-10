@@ -1490,7 +1490,7 @@ void LevelManager::clearExistingPositionsElement()
 //===================================================================
 bool LevelManager::loadSettingsData()
 {
-    if(!loadIniFile(LEVEL_RESSOURCES_DIR_STR + "Saves/CustomSettings.ini", {}/*ENCRYPT_KEY_LEVEL*/))
+    if(!loadIniFile(LEVEL_RESSOURCES_DIR_STR + "Saves/CustomSettings.ini", {}))
     {
         assert("Error while reading INI file.");
     }
@@ -1511,11 +1511,11 @@ bool LevelManager::loadSettingsData()
     {
         std::optional<bool> resBool = toBool(*val);
         assert(resBool);
-        m_settingsData.m_fullscreen = *resBool;
+        *m_settingsData.m_fullscreen = *resBool;
     }
     else
     {
-        m_settingsData.m_fullscreen = false;
+        *m_settingsData.m_fullscreen = false;
     }
     val = m_ini.getValue("Display", "resolutionWidth");
     if(val)
@@ -1531,7 +1531,11 @@ bool LevelManager::loadSettingsData()
     std::map<std::string, uint32_t>::const_iterator kbIt;
     std::map<std::string, GamepadInputState>::const_iterator gpIt;
     ControlKey_e currentKey;
-    for(uint32_t i = 0; i < m_settingsData.m_arrayKeyboard.size(); ++i)
+    if(!m_settingsData.m_arrayKeyboard)
+    {
+        m_settingsData.m_arrayKeyboard = std::array<uint32_t, static_cast<uint32_t>(ControlKey_e::TOTAL)>();
+    }
+    for(uint32_t i = 0; i < m_settingsData.m_arrayKeyboard->size(); ++i)
     {
         currentKey = static_cast<ControlKey_e>(i);
         //KEYBOARD
@@ -1541,17 +1545,24 @@ bool LevelManager::loadSettingsData()
             kbIt = m_inputKeyboardKeyString.find(*val);
             if(kbIt != m_inputKeyboardKeyString.end())
             {
-                m_settingsData.m_arrayKeyboard[i] = kbIt->second;
+                m_settingsData.m_arrayKeyboard->at(i) = kbIt->second;
             }
             else
             {
-                m_settingsData.m_arrayKeyboard[i] = MAP_KEYBOARD_DEFAULT_KEY.at(currentKey);
+                m_settingsData.m_arrayKeyboard->at(i) = MAP_KEYBOARD_DEFAULT_KEY.at(currentKey);
             }
         }
         else
         {
-            m_settingsData.m_arrayKeyboard[i] = MAP_KEYBOARD_DEFAULT_KEY.at(currentKey);
+            m_settingsData.m_arrayKeyboard->at(i) = MAP_KEYBOARD_DEFAULT_KEY.at(currentKey);
         }
+    }
+    if(!m_settingsData.m_arrayGamepad)
+    {
+        m_settingsData.m_arrayGamepad = std::array<GamepadInputState, static_cast<uint32_t>(ControlKey_e::TOTAL)>();
+    }
+    for(uint32_t i = 0; i < m_settingsData.m_arrayGamepad->size(); ++i)
+    {
         //GAMEPAD
         val = m_ini.getValue("Gamepad", m_inputIDString[i]);
         if(val)
@@ -1559,28 +1570,72 @@ bool LevelManager::loadSettingsData()
             gpIt = m_inputGamepadKeyString.find(*val);
             if(gpIt != m_inputGamepadKeyString.end())
             {
-                m_settingsData.m_arrayGamepad[i] = gpIt->second;
+                m_settingsData.m_arrayGamepad->at(i) = gpIt->second;
             }
             //default
             else
             {
-                m_settingsData.m_arrayGamepad[i] = MAP_GAMEPAD_DEFAULT_KEY.at(currentKey);
+                m_settingsData.m_arrayGamepad->at(i) = MAP_GAMEPAD_DEFAULT_KEY.at(currentKey);
             }
         }
         else
         {
-            m_settingsData.m_arrayGamepad[i] = MAP_GAMEPAD_DEFAULT_KEY.at(currentKey);
+            m_settingsData.m_arrayGamepad->at(i) = MAP_GAMEPAD_DEFAULT_KEY.at(currentKey);
         }
     }
     return true;
 }
 
 //===================================================================
+void LevelManager::fillSettingsFileFromMemory()
+{
+    //AUDIO
+    if(m_settingsData.m_musicVolume)
+    {
+        m_ini.setValue("Audio", "musicVolume", std::to_string(*m_settingsData.m_musicVolume));
+    }
+    if(m_settingsData.m_effectsVolume)
+    {
+        m_ini.setValue("Audio", "effectsVolume", std::to_string(*m_settingsData.m_effectsVolume));
+    }
+    //DISPLAY
+    if(m_settingsData.m_resolutionWidth)
+    {
+        m_ini.setValue("Display", "resolutionWidth", std::to_string(*m_settingsData.m_resolutionWidth));
+    }
+    if(m_settingsData.m_resolutionHeight)
+    {
+        m_ini.setValue("Display", "resolutionHeight", std::to_string(*m_settingsData.m_resolutionHeight));
+    }
+    if(m_settingsData.m_fullscreen)
+    {
+        m_ini.setValue("Display", "fullscreen", *m_settingsData.m_fullscreen ? "true" : "false");
+    }
+    if(m_settingsData.m_arrayKeyboard)
+    {
+        for(uint32_t i = 0; i < m_settingsData.m_arrayKeyboard->size(); ++i)
+        {
+            m_ini.setValue("Keyboard", m_inputIDString[i] , INPUT_KEYBOARD_KEY_STRING.at(m_settingsData.m_arrayKeyboard->at(i)));
+        }
+    }
+    if(m_settingsData.m_arrayGamepad)
+    {
+        for(uint32_t i = 0; i < m_settingsData.m_arrayGamepad->size(); ++i)
+        {
+            m_ini.setValue("Gamepad", m_inputIDString[i], getGamepadKeyIniString(m_settingsData.m_arrayGamepad->at(i)));
+        }
+    }
+}
+
+//===================================================================
 void LevelManager::saveAudioSettings(uint32_t musicVolume, uint32_t effectVolume)
 {
     m_outputStream.open(LEVEL_RESSOURCES_DIR_STR + "Saves/CustomSettings.ini");
+    fillSettingsFileFromMemory();
     m_ini.setValue("Audio", "musicVolume", std::to_string(musicVolume));
     m_ini.setValue("Audio", "effectsVolume", std::to_string(effectVolume));
+    m_settingsData.m_musicVolume = musicVolume;
+    m_settingsData.m_effectsVolume = effectVolume;
     m_ini.generate(m_outputStream);
     m_outputStream.close();
 }
@@ -1589,9 +1644,13 @@ void LevelManager::saveAudioSettings(uint32_t musicVolume, uint32_t effectVolume
 void LevelManager::saveDisplaySettings(const pairI_t &resolution, bool fullscreen)
 {
     m_outputStream.open(LEVEL_RESSOURCES_DIR_STR + "Saves/CustomSettings.ini");
+    fillSettingsFileFromMemory();
     m_ini.setValue("Display", "resolutionWidth", std::to_string(resolution.first));
     m_ini.setValue("Display", "resolutionHeight", std::to_string(resolution.second));
     m_ini.setValue("Display", "fullscreen", fullscreen ? "true" : "false");
+    m_settingsData.m_resolutionWidth = resolution.first;
+    m_settingsData.m_resolutionHeight = resolution.second;
+    m_settingsData.m_fullscreen = fullscreen;
     m_ini.generate(m_outputStream);
     m_outputStream.close();
 }
@@ -1601,36 +1660,49 @@ void LevelManager::saveInputSettings(const std::map<ControlKey_e, GamepadInputSt
                                      const std::map<ControlKey_e, uint32_t> &keyboardArray)
 {
     m_outputStream.open(LEVEL_RESSOURCES_DIR_STR + "Saves/CustomSettings.ini");
+    fillSettingsFileFromMemory();
     uint32_t currentIndex;
     std::string valStr;
-    for(std::map<ControlKey_e, GamepadInputState>::const_iterator it = gamepadArray.begin(); it != gamepadArray.end(); ++it)
+    uint32_t cmpt = 0;
+    for(std::map<ControlKey_e, GamepadInputState>::const_iterator it = gamepadArray.begin(); it != gamepadArray.end(); ++it, ++cmpt)
     {
         currentIndex = static_cast<uint32_t>(it->first);
-        if(it->second.m_standardButton)
-        {
-            valStr = m_inputGamepadSimpleButtons.at(it->second.m_keyID);
-        }
-        else
-        {
-            valStr = m_inputGamepadAxis.at(it->second.m_keyID);
-            if(*it->second.m_axisPos)
-            {
-                valStr += '+';
-            }
-            else
-            {
-                valStr += '-';
-            }
-        }
+        getGamepadKeyIniString(it->second);
         m_ini.setValue("Gamepad", m_inputIDString[currentIndex], valStr);
+        m_settingsData.m_arrayGamepad->at(cmpt) = it->second;
     }
-    for(std::map<ControlKey_e, uint32_t>::const_iterator it = keyboardArray.begin(); it != keyboardArray.end(); ++it)
+    cmpt = 0;
+    for(std::map<ControlKey_e, uint32_t>::const_iterator it = keyboardArray.begin(); it != keyboardArray.end(); ++it, ++cmpt)
     {
         currentIndex = static_cast<uint32_t>(it->first);
         m_ini.setValue("Keyboard", m_inputIDString[currentIndex] , INPUT_KEYBOARD_KEY_STRING.at(it->second));
+        m_settingsData.m_arrayKeyboard->at(cmpt) = it->second;
     }
     m_ini.generate(m_outputStream);
     m_outputStream.close();
+}
+
+//===================================================================
+std::string LevelManager::getGamepadKeyIniString(const GamepadInputState &gamepadInputState)const
+{
+    std::string valStr;
+    if(gamepadInputState.m_standardButton)
+    {
+        valStr = m_inputGamepadSimpleButtons.at(gamepadInputState.m_keyID);
+    }
+    else
+    {
+        valStr = m_inputGamepadAxis.at(gamepadInputState.m_keyID);
+        if(*gamepadInputState.m_axisPos)
+        {
+            valStr += '+';
+        }
+        else
+        {
+            valStr += '-';
+        }
+    }
+    return valStr;
 }
 
 //===================================================================
