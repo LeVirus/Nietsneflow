@@ -1,7 +1,7 @@
 BUGS======================================================================
 
 ))
-Corpse ejected by door and WALL
+When 2 level exists stop at end of first
 
 ))
 Display issue on traversable static element
@@ -13,6 +13,9 @@ Eject issue for marines
 
 ))
 Eject issue on moveable wall lateral
+
+))
+Corpse ejected by door and WALL==============================~~
 
 ))
 In input gamepad menu bug in GLFW in AXIS===============================~

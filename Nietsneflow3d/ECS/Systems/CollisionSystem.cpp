@@ -474,7 +474,7 @@ void CollisionSystem::initArrayTag()
     m_tagArray.insert({CollisionTag_e::IMPACT_CT, CollisionTag_e::ENEMY_CT});
 
     m_tagArray.insert({CollisionTag_e::DEAD_CORPSE_CT, CollisionTag_e::DOOR_CT});
-//    m_tagArray.insert({CollisionTag_e::DEAD_CORPSE_CT, CollisionTag_e::WALL_CT});
+    m_tagArray.insert({CollisionTag_e::DEAD_CORPSE_CT, CollisionTag_e::WALL_CT});
     //    m_tagArray.insert({CollisionTag_e::OBJECT_CT, CollisionTag_e::PLAYER_CT});
 }
 
@@ -645,9 +645,18 @@ bool CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args, bool shotEx
                 }
                 collisionCircleRectEject(args, circleCompA.m_ray, rectCompB);
             }
-            else if(args.tagCompA->m_tagA == CollisionTag_e::IMPACT_CT || args.tagCompA->m_tagA == CollisionTag_e::DEAD_CORPSE_CT)
+            else if(args.tagCompA->m_tagA == CollisionTag_e::IMPACT_CT)
             {
                 collisionCircleRectEject(args, circleCompA.m_ray, rectCompB);
+            }
+            if(args.tagCompA->m_tagA == CollisionTag_e::DEAD_CORPSE_CT)
+            {
+                //if the wall is static or door
+                if(!stairwayToComponentManager().searchComponentByType<MoveableWallConfComponent>(
+                            args.entityNumB, Components_e::MOVEABLE_WALL_CONF_COMPONENT))
+                {
+                    collisionCircleRectEject(args, circleCompA.m_ray, rectCompB);
+                }
             }
         }
     }
