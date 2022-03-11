@@ -1,10 +1,10 @@
 BUGS======================================================================
 
 ))
-Bad collision visible shot in door
+Raycast picture reverse display in some orientation
 
 ))
-Display issue on traversable static element
+Bad collision visible shot in door
 
 ))
 Eject issue for marines
@@ -19,6 +19,9 @@ Corpse ejected by door and WALL==============================~~
 
 ))
 In input gamepad menu bug in GLFW in AXIS===============================~
+
+))
+Display issue on traversable static element==========================OK
 
 ))
 Collision issue on door=============================OK

@@ -234,6 +234,11 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
     float trigoAngle = getTrigoAngle(mapCompA->m_absoluteMapPositionPX, centerPosB);
     //get lateral pos from angle
     float lateralPos = getLateralAngle(degreeObserverAngle, trigoAngle);
+    //quickfix
+    if(cameraDistance < 10.0f)
+    {
+        return;
+    }
     confNormalEntityVertex(numEntity, visionComp, genCollComp->m_tagA, lateralPos, cameraDistance);
     fillVertexFromEntity(numEntity, numIteration, displayDistance);
 }
@@ -577,13 +582,13 @@ void FirstPersonDisplaySystem::confNormalEntityVertex(uint32_t numEntity, Vision
     assert(fpsStaticComp);
     assert(positionComp);
     assert(visionComp);
+    //quickfix
+    if(distance < 15.0f)
+    {
+        distance = 15.0f;
+    }
     positionComp->m_vertex.resize(4);
     //convert to GL context
-    //quickfix
-    if(distance < 1.0f)
-    {
-        distance = 1.0f;
-    }
     float distanceFactor = distance / LEVEL_TILE_SIZE_PX;
     float halfLateralSize = fpsStaticComp->m_inGameSpriteSize.first  / distanceFactor,
             downPos, upPos;
