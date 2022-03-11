@@ -10,12 +10,10 @@ int main()
     LevelState levelState = {LevelState_e::NEW_GAME, {}};
     for(uint32_t i = 1; i < 3; ++i)
     {
-        std::cerr << i << " DDD\n";
         if(!game.loadLevelData(i))
         {
             break;
         }
-        std::cerr << i << " LOAD\n";
         if(!gameLoaded)
         {
             game.loadSavedSettingsData();
