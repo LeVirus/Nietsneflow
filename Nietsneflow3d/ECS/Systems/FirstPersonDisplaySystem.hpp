@@ -78,7 +78,7 @@ private:
     optionalTargetRaycast_t calcMovingWallSegmentRaycast(float radiantAngle, std::optional<float> lateralLeadCoef,
                                                          std::optional<float> verticalLeadCoef, PairFloat_t &currentPoint,
                                                          const ElementRaycast &element);
-    optionalTargetRaycast_t getTextureLimitCase(float lateralLeadCoef, float verticalLeadCoef,
+    optionalTargetRaycast_t getTextureLimitCase(float radiantAngle, float lateralLeadCoef, float verticalLeadCoef,
                                                 const PairUI_t &currentCoord,
                                                 const PairFloat_t &currentPoint, bool lateral);
     std::optional<float> getCloserRaycastDistance(const MapCoordComponent *mapCompObserver, const MapCoordComponent *mapCompTarget, float distance,
@@ -126,6 +126,8 @@ private:
     std::optional<std::array<float, RAYCAST_GROUND_CEILING_NUMBER>> m_memBackgroundDistance;
 };
 
+float getRaycastTexturePos(float radiantObserverAngle, bool lateral, const PairFloat_t &pos);
+float getDoorRaycastTexturePos(float textDoor, float radiantObserverAngle, bool lateral, const PairFloat_t &pos);
 //if player pos is on limit case modify position to prevent display issue
 PairFloat_t getCorrectedPosition(const PairFloat_t &initPos, float radiantAngle);
 float getQuarterAngle(float angle);

@@ -769,7 +769,6 @@ bool FirstPersonDisplaySystem::rayCasting(uint32_t observerEntity)
     for(uint32_t j = 0; j < RAYCAST_LINE_NUMBER; ++j)
     {
         //mem ground and ceiling
-        //??
         targetPoint = calcLineSegmentRaycast(currentRadiantAngle, mapCompCamera->m_absoluteMapPositionPX, true, playerComp->m_frozen);
         if(targetPoint)
         {
@@ -922,8 +921,7 @@ optionalTargetRaycast_t FirstPersonDisplaySystem::calcLineSegmentRaycast(float r
         {
             if(element->m_type == LevelCaseType_e::WALL_LC)
             {
-                textPos = lateral ? std::fmod(currentPoint.first, LEVEL_TILE_SIZE_PX) :
-                                    std::fmod(currentPoint.second, LEVEL_TILE_SIZE_PX);
+                textPos = getRaycastTexturePos(radiantAngle, lateral, currentPoint);
                 return tupleTargetRaycast_t{currentPoint, textPos, element->m_numEntity};
             }
             else if(element->m_type == LevelCaseType_e::DOOR_LC)
@@ -950,7 +948,7 @@ optionalTargetRaycast_t FirstPersonDisplaySystem::calcLineSegmentRaycast(float r
                         std::fmod(currentPoint.second, LEVEL_TILE_SIZE_PX) < 0.01f)
                 {
                     optionalTargetRaycast_t result =
-                            getTextureLimitCase(*lateralLeadCoef, *verticalLeadCoef, *currentCoord, currentPoint, lateral);
+                            getTextureLimitCase(radiantAngle, *lateralLeadCoef, *verticalLeadCoef, *currentCoord, currentPoint, lateral);
                     if(result)
                     {
                         return result;
@@ -970,7 +968,34 @@ optionalTargetRaycast_t FirstPersonDisplaySystem::calcLineSegmentRaycast(float r
 }
 
 //===================================================================
-optionalTargetRaycast_t FirstPersonDisplaySystem::getTextureLimitCase(float lateralLeadCoef, float verticalLeadCoef,
+float getRaycastTexturePos(float radiantObserverAngle, bool lateral, const PairFloat_t &pos)
+{
+    if(lateral)
+    {
+        if(std::sin(radiantObserverAngle) >= 0.0f)
+        {
+            return std::fmod(pos.first, LEVEL_TILE_SIZE_PX);
+        }
+        else
+        {
+            return std::abs(std::fmod(pos.first, LEVEL_TILE_SIZE_PX) - LEVEL_TILE_SIZE_PX);
+        }
+    }
+    else
+    {
+        if(std::cos(radiantObserverAngle) >= 0.0f)
+        {
+            return std::fmod(pos.second, LEVEL_TILE_SIZE_PX);
+        }
+        else
+        {
+            return std::abs(std::fmod(pos.second, LEVEL_TILE_SIZE_PX) - LEVEL_TILE_SIZE_PX);
+        }
+    }
+}
+
+//===================================================================
+optionalTargetRaycast_t FirstPersonDisplaySystem::getTextureLimitCase(float radiantAngle, float lateralLeadCoef, float verticalLeadCoef,
                                                                       const PairUI_t &currentCoord,
                                                                       const PairFloat_t &currentPoint, bool lateral)
 {
@@ -988,8 +1013,7 @@ optionalTargetRaycast_t FirstPersonDisplaySystem::getTextureLimitCase(float late
             (elementB && (elementB->m_type == LevelCaseType_e::WALL_LC ||
                           (elementB->m_type == LevelCaseType_e::WALL_MOVE_LC && elementB->m_moveableWallStopped))))
     {
-        textPos = lateral ? std::fmod(currentPoint.first + 1.0f, LEVEL_TILE_SIZE_PX) :
-                            std::fmod(currentPoint.second + 1.0f, LEVEL_TILE_SIZE_PX);
+        textPos = getRaycastTexturePos(radiantAngle, lateral, {currentPoint.first + 1.0f, currentPoint.second + 1.0f});
         return tupleTargetRaycast_t{currentPoint, textPos, elementA->m_numEntity};
     }
     return {};
@@ -1047,9 +1071,9 @@ optionalTargetRaycast_t FirstPersonDisplaySystem::calcMovingWallSegmentRaycast(f
         }
         if(textPosWall)
         {
-            float textPosWall = lateralColl ?
-                        std::abs(wallPos[0].first - currentPoint.first) :
-                std::abs(wallPos[1].first - currentPoint.second);
+            float textPosWall = getRaycastTexturePos(radiantAngle, lateralColl,
+            {std::abs(wallPos[0].first - currentPoint.first),
+             std::abs(wallPos[1].first - currentPoint.second)});
             if(element.m_memMoveWall->size() > 1)
             {
                 memDistance = getDistance(currentPoint, memBase);
@@ -1092,10 +1116,7 @@ optionalTargetRaycast_t FirstPersonDisplaySystem::calcDoorSegmentRaycast(float r
         }
         else
         {
-            textPosDoor = (textLateral == textFace) ? std::fmod(currentPoint.first,
-                                                            LEVEL_TILE_SIZE_PX) + *textPosDoor :
-                                    std::fmod(currentPoint.second, LEVEL_TILE_SIZE_PX)
-                                                  + *textPosDoor;
+            textPosDoor = getDoorRaycastTexturePos(*textPosDoor, radiantAngle, textLateral, currentPoint);
         }
         return tupleTargetRaycast_t{currentPoint, *textPosDoor, element.m_numEntity};
     }
@@ -1553,4 +1574,19 @@ PairFloat_t getCorrectedPosition(const PairFloat_t &initPos, float radiantAngle)
         }
     }
     return finalPos;
+}
+
+//===================================================================
+float getDoorRaycastTexturePos(float textDoor, float radiantObserverAngle, bool lateral, const PairFloat_t &pos)
+{
+    float textPos = getRaycastTexturePos(radiantObserverAngle, lateral, pos);
+    if((lateral && std::sin(radiantObserverAngle) >= 0.0f) ||
+            (!lateral && std::cos(radiantObserverAngle) >= 0.0f))
+    {
+        return textPos + textDoor;
+    }
+    else
+    {
+        return textPos - textDoor;
+    }
 }
