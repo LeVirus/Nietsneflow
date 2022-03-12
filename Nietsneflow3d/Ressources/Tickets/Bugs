@@ -1,10 +1,6 @@
 BUGS======================================================================
 
 ))
-When die without checkpoint enemies repop at bad place
-And weapon set to standard
-
-))
 Eject issue for marines
 
 
@@ -18,6 +14,10 @@ Corpse ejected by door and WALL==============================~~
 ))
 In input gamepad menu bug in GLFW in AXIS===============================~
 
+
+))
+When die without checkpoint enemies repop at bad place===================OK
+And weapon set to standard======================OK
 
 ))
 Explosion bad eject on moveable wall============================OK

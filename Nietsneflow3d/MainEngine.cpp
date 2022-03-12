@@ -151,6 +151,7 @@ LevelState MainEngine::mainLoop(uint32_t levelNum, LevelState_e levelState)
             saveGameProgress(levelNum + 1);
             m_graphicEngine.setTransition(m_gamePaused);
             displayTransitionMenu();
+            m_memEnemiesStateFromCheckpoint.clear();
             return {m_currentLevelState, {}};
         }
         //Player dead
@@ -256,7 +257,6 @@ void MainEngine::loadPlayerGear(bool beginLevel)
     m_weaponComp->m_currentWeapon = playerConf.m_currentWeapon;
     m_weaponComp->m_previousWeapon = playerConf.m_previousWeapon;
     m_playerConf->m_life = playerConf.m_life;
-    m_playerMemGear = false;
     StaticDisplaySystem *staticDisplay = m_ecsManager.getSystemManager().
             searchSystemByType<StaticDisplaySystem>(static_cast<uint32_t>(Systems_e::STATIC_DISPLAY_SYSTEM));
     assert(staticDisplay);
