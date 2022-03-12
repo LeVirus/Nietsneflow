@@ -571,13 +571,18 @@ bool CollisionSystem::treatDoorCollisionFirstCircle(CollisionArgs &args, const C
             searchComponentByType<DoorComponent>(args.entityNumB, Components_e::DOOR_COMPONENT);
     assert(doorComp);
     PairFloat_t size = rectCompB.m_size;
-    if(doorComp->m_vertical)
+    //Fix visible shot issue
+    if(args.tagCompA->m_tagA != CollisionTag_e::BULLET_ENEMY_CT &&
+            args.tagCompA->m_tagA != CollisionTag_e::BULLET_PLAYER_CT)
     {
-        size.second = LEVEL_TILE_SIZE_PX;
-    }
-    else
-    {
-        size.first = LEVEL_TILE_SIZE_PX;
+        if(doorComp->m_vertical)
+        {
+            size.second = LEVEL_TILE_SIZE_PX;
+        }
+        else
+        {
+            size.first = LEVEL_TILE_SIZE_PX;
+        }
     }
     return checkCircleRectCollision(args.mapCompA.m_absoluteMapPositionPX, circleCompA.m_ray,
                                     args.mapCompB.m_absoluteMapPositionPX, size);
@@ -737,6 +742,10 @@ bool CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args, bool shotEx
         ShotConfComponent *shotConfComp = stairwayToComponentManager().
                 searchComponentByType<ShotConfComponent>(args.entityNumA, Components_e::SHOT_CONF_COMPONENT);
         assert(shotConfComp);
+        if(shotConfComp->m_destructPhase)
+        {
+            return true;
+        }
         if(!shotConfComp->m_destructPhase && (args.mapCompA.m_absoluteMapPositionPX.first < -LEVEL_THIRD_TILE_SIZE_PX ||
                 args.mapCompA.m_absoluteMapPositionPX.second < -LEVEL_THIRD_TILE_SIZE_PX))
         {
