@@ -737,8 +737,8 @@ bool CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args, bool shotEx
         ShotConfComponent *shotConfComp = stairwayToComponentManager().
                 searchComponentByType<ShotConfComponent>(args.entityNumA, Components_e::SHOT_CONF_COMPONENT);
         assert(shotConfComp);
-        if(args.mapCompA.m_absoluteMapPositionPX.first < -LEVEL_THIRD_TILE_SIZE_PX ||
-                args.mapCompA.m_absoluteMapPositionPX.second < -LEVEL_THIRD_TILE_SIZE_PX)
+        if(!shotConfComp->m_destructPhase && (args.mapCompA.m_absoluteMapPositionPX.first < -LEVEL_THIRD_TILE_SIZE_PX ||
+                args.mapCompA.m_absoluteMapPositionPX.second < -LEVEL_THIRD_TILE_SIZE_PX))
         {
             shotConfComp->m_destructPhase = true;
             if(shotConfComp->m_damageCircleRayData)
