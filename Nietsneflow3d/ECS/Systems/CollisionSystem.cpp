@@ -733,18 +733,18 @@ bool CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args, bool shotEx
     //TREAT VISIBLE SHOT
     if((args.tagCompA->m_tagA == CollisionTag_e::BULLET_ENEMY_CT) || (args.tagCompA->m_tagA == CollisionTag_e::BULLET_PLAYER_CT))
     {
-        bool limitLevelDestruct = false;
         //limit level case
+        ShotConfComponent *shotConfComp = stairwayToComponentManager().
+                searchComponentByType<ShotConfComponent>(args.entityNumA, Components_e::SHOT_CONF_COMPONENT);
+        assert(shotConfComp);
         if(args.mapCompA.m_absoluteMapPositionPX.first < LEVEL_THIRD_TILE_SIZE_PX ||
                 args.mapCompA.m_absoluteMapPositionPX.second < LEVEL_THIRD_TILE_SIZE_PX)
         {
-            limitLevelDestruct = true;
+            shotConfComp->m_destructPhase = true;
+            return true;
         }
-        if(limitLevelDestruct || collision)
+        if(collision)
         {
-            ShotConfComponent *shotConfComp = stairwayToComponentManager().
-                    searchComponentByType<ShotConfComponent>(args.entityNumA, Components_e::SHOT_CONF_COMPONENT);
-            assert(shotConfComp);
             if(args.tagCompB->m_shape == CollisionShape_e::RECTANGLE_C)
             {
                 if(shotExplosionEject)
@@ -786,7 +786,7 @@ bool CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args, bool shotEx
             timerComp->m_clockB = std::chrono::system_clock::now();
             shotConfComp->m_destructPhase = true;
             shotConfComp->m_spriteShotNum = 1;
-            if(limitLevelDestruct || shotConfComp->m_damageCircleRayData || circleDamageObstructed(args))
+            if(shotConfComp->m_damageCircleRayData || circleDamageObstructed(args))
             {
                 return true;
             }
@@ -1319,6 +1319,7 @@ float CollisionSystem::getVerticalCircleRectEject(const EjectYArgs& args, bool &
     if(args.angleMode)
     {
         adj = std::abs(args.circlePosX - args.elementPosX);
+        //args.elementPosX == 150 ??
         diffYA = getRectTriangleSide(adj, args.ray);
         //EJECT UP
         if(args.circlePosY < args.elementPosY ||
