@@ -2,9 +2,6 @@ IMPROVE=========================================================================
 ==========================================================================================================
 
 ))
-Save fullscreen mode in file when press F12
-
-))
 Add restart from last checkpoint menu entry
 
 ))
@@ -15,7 +12,7 @@ On loading menu add date and checkpoint for save file
 Weapon movement on begin and end movement
 
 4) 
-Improve Enemy behaviour
+Improve Enemy ===!!!!!!
 
 ))
 Display possess card===========~~A VOIR
@@ -27,6 +24,9 @@ Animation move while shooting===========================~
 Enemy animations========================~
 
 
+
+))
+Save fullscreen mode in file when press F12=========================OK
 
 ))
 Add enemies life for checkpoint save===========================OK

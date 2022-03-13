@@ -127,6 +127,7 @@ LevelState MainEngine::mainLoop(uint32_t levelNum, LevelState_e levelState)
         if(m_physicalEngine.toogledFullScreenSignal())
         {
             m_graphicEngine.toogleFullScreen();
+            validDisplayMenu();
             m_physicalEngine.reinitToggleFullScreen();
         }
         m_graphicEngine.runIteration(m_gamePaused);
