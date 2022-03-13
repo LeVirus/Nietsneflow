@@ -207,8 +207,8 @@ void CollisionSystem::treatGeneralCrushing(uint32_t entityNum)
         if(m_memCrush.size() < 3 || !std::get<3>(m_memCrush[i]) ||
                 *std::get<3>(m_memCrush[i]) != std::get<2>(m_memCrush[i]))
         {
-            mapComp->m_absoluteMapPositionPX.second += std::get<0>(m_memCrush[i]).second;
             mapComp->m_absoluteMapPositionPX.first += std::get<0>(m_memCrush[i]).first;
+            mapComp->m_absoluteMapPositionPX.second += std::get<0>(m_memCrush[i]).second;
         }
         //3 == direction
         if(!crush && !std::get<1>(m_memCrush[i]))
@@ -1257,7 +1257,7 @@ void CollisionSystem::collisionCircleRectEject(CollisionArgs &args, float circle
     MoveableComponent *moveComp = stairwayToComponentManager().
             searchComponentByType<MoveableComponent>(args.entityNumA, Components_e::MOVEABLE_COMPONENT);
     assert(moveComp);
-    float radiantObserverAngle = getRadiantAngle(moveComp->m_currentDegreeMoveDirection);
+    float radiantEjectedAngle = getRadiantAngle(moveComp->m_currentDegreeMoveDirection);
     float circlePosX = args.mapCompA.m_absoluteMapPositionPX.first;
     float circlePosY = args.mapCompA.m_absoluteMapPositionPX.second;
     float elementPosX = args.mapCompB.m_absoluteMapPositionPX.first;
@@ -1276,9 +1276,9 @@ void CollisionSystem::collisionCircleRectEject(CollisionArgs &args, float circle
     float diffY, diffX = EPSILON_FLOAT;
     bool visibleShot = (args.tagCompA->m_tagA == CollisionTag_e::BULLET_ENEMY_CT || args.tagCompA->m_tagA == CollisionTag_e::BULLET_PLAYER_CT);
     diffY = getVerticalCircleRectEject({circlePosX, circlePosY, pointElementX, elementPosY,
-                                        elementSecondPosY, circleRay, radiantObserverAngle, angleBehavior}, limitEjectY, visibleShot);
+                                        elementSecondPosY, circleRay, radiantEjectedAngle, angleBehavior}, limitEjectY, visibleShot);
     diffX = getHorizontalCircleRectEject({circlePosX, circlePosY, pointElementY, elementPosX, elementSecondPosX,
-                                          circleRay, radiantObserverAngle, angleBehavior}, limitEjectX, visibleShot);
+                                          circleRay, radiantEjectedAngle, angleBehavior}, limitEjectX, visibleShot);
     if(!visibleShotFirstEject && args.tagCompA->m_tagA != CollisionTag_e::PLAYER_CT &&
             std::min(std::abs(diffX), std::abs(diffY)) > LEVEL_THIRD_TILE_SIZE_PX)
     {
@@ -1447,10 +1447,7 @@ void CollisionSystem::collisionEject(MapCoordComponent &mapComp, float diffX, fl
         {
             std::get<0>(m_memCrush.back()).second = diffY;
         }
-        else
-        {
-            mapComp.m_absoluteMapPositionPX.second += diffY;
-        }
+        mapComp.m_absoluteMapPositionPX.second += diffY;
     }
     if(!limitEjectY && (limitEjectX || std::abs(diffY) > std::abs(diffX)))
     {
@@ -1458,10 +1455,7 @@ void CollisionSystem::collisionEject(MapCoordComponent &mapComp, float diffX, fl
         {
             std::get<0>(m_memCrush.back()).first = diffX;
         }
-        else
-        {
-            mapComp.m_absoluteMapPositionPX.first += diffX;
-        }
+        mapComp.m_absoluteMapPositionPX.first += diffX;
     }
 }
 

@@ -1,12 +1,9 @@
 BUGS======================================================================
 
-))
-Eject issue for marines
-
 
 
 ))
-Eject issue on moveable wall lateral
+Eject issue on moveable wall lateral====================~~
 
 ))
 Corpse ejected by door and WALL==============================~~
@@ -14,6 +11,9 @@ Corpse ejected by door and WALL==============================~~
 ))
 In input gamepad menu bug in GLFW in AXIS===============================~
 
+
+))
+Eject issue for marines========================OK
 
 ))
 When die without checkpoint enemies repop at bad place===================OK
