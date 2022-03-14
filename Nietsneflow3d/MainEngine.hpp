@@ -160,6 +160,10 @@ public:
     {
         m_graphicEngine.toogleMenuEntryFullscreen();
     }
+    inline bool checkpointActive()const
+    {
+        return m_memCheckpointLevelState != std::nullopt;
+    }
     void saveAudioSettings();
     void saveInputSettings(const std::map<ControlKey_e, GamepadInputState> &gamepadArray,
                            const std::map<ControlKey_e, uint32_t> &keyboardArray);

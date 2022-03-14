@@ -490,14 +490,12 @@ void InputSystem::treatGeneralKeysMenu(PlayerConfComponent *playerComp)
     {
         m_keyUpPressed = true;
         m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_DPAD_UP] = true;
-        uint32_t index = playerComp->m_currentCursorPos;
-        if(index == 0)
+        decrementMenuPosition(playerComp, maxMenuIndex);
+        if(playerComp->m_menuMode == MenuMode_e::BASE &&
+                static_cast<MainMenuCursorPos_e>(playerComp->m_currentCursorPos) ==
+                MainMenuCursorPos_e::RESTART_FROM_LAST_CHECKPOINT && !m_mainEngine->checkpointActive())
         {
-            playerComp->m_currentCursorPos = maxMenuIndex;
-        }
-        else
-        {
-            playerComp->m_currentCursorPos = index - 1;
+            decrementMenuPosition(playerComp, maxMenuIndex);
         }
     }
     else if(!m_modeTransition && ((!m_keyDownPressed && (glfwGetKey(m_window, GLFW_KEY_DOWN) == GLFW_PRESS)) ||
@@ -505,14 +503,12 @@ void InputSystem::treatGeneralKeysMenu(PlayerConfComponent *playerComp)
     {
         m_keyDownPressed = true;
         m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_DPAD_DOWN] = true;
-        uint32_t index = playerComp->m_currentCursorPos;
-        if(index == maxMenuIndex)
+        incrementMenuPosition(playerComp, maxMenuIndex);
+        if(playerComp->m_menuMode == MenuMode_e::BASE &&
+                static_cast<MainMenuCursorPos_e>(playerComp->m_currentCursorPos) ==
+                MainMenuCursorPos_e::RESTART_FROM_LAST_CHECKPOINT && !m_mainEngine->checkpointActive())
         {
-            playerComp->m_currentCursorPos = 0;
-        }
-        else
-        {
-            playerComp->m_currentCursorPos = index + 1;
+            incrementMenuPosition(playerComp, maxMenuIndex);
         }
     }
     else if((!m_enterPressed && glfwGetKey(m_window, GLFW_KEY_ENTER) == GLFW_PRESS) ||
@@ -688,6 +684,9 @@ void InputSystem::treatEnterPressedMenu(PlayerConfComponent *playerComp)
     case MenuMode_e::CONFIRM_RESTART_LEVEL:
         treatEnterPressedConfirmRestartLevelMenu(playerComp);
         break;
+    case MenuMode_e::CONFIRM_RESTART_FROM_LAST_CHECKPOINT:
+        treatEnterPressedConfirmRestartFromLastCheckpointMenu(playerComp);
+        break;
     }
 }
 
@@ -713,6 +712,24 @@ void InputSystem::treatEnterPressedConfirmRestartLevelMenu(PlayerConfComponent *
     if(menuEntry == ConfirmCursorPos_e::TRUE)
     {
         if(m_mainEngine->loadSavedGame(m_mainEngine->getCurrentSaveNum(), LevelState_e::RESTART_LEVEL))
+        {
+            m_mainEngine->setTransition(true);
+        }
+    }
+    else
+    {
+        playerComp->m_menuMode = MenuMode_e::BASE;
+        m_mainEngine->setMenuEntries(playerComp);
+    }
+}
+
+//===================================================================
+void InputSystem::treatEnterPressedConfirmRestartFromLastCheckpointMenu(PlayerConfComponent *playerComp)
+{
+    ConfirmCursorPos_e menuEntry = static_cast<ConfirmCursorPos_e>(playerComp->m_currentCursorPos);
+    if(menuEntry == ConfirmCursorPos_e::TRUE)
+    {
+        if(m_mainEngine->loadSavedGame(m_mainEngine->getCurrentSaveNum(), LevelState_e::RESTART_FROM_CHECKPOINT))
         {
             m_mainEngine->setTransition(true);
         }
@@ -886,6 +903,10 @@ void InputSystem::treatEnterPressedMainMenu(PlayerConfComponent *playerComp)
         break;
     case MainMenuCursorPos_e::LOAD_GAME:
         playerComp->m_menuMode = MenuMode_e::LOAD_GAME;
+        m_mainEngine->setMenuEntries(playerComp);
+        break;
+    case MainMenuCursorPos_e::RESTART_FROM_LAST_CHECKPOINT:
+        playerComp->m_menuMode = MenuMode_e::CONFIRM_RESTART_FROM_LAST_CHECKPOINT;
         m_mainEngine->setMenuEntries(playerComp);
         break;
     case MainMenuCursorPos_e::RESTART_LEVEL:
@@ -1183,5 +1204,33 @@ void joystick_callback(int jid, int event)
     else if(event == GLFW_DISCONNECTED)
     {
         InputSystem::removeGamepad(jid);
+    }
+}
+
+//===================================================================
+void decrementMenuPosition(PlayerConfComponent *playerConf, uint32_t maxIndex)
+{
+    uint32_t index = playerConf->m_currentCursorPos;
+    if(index == 0)
+    {
+        playerConf->m_currentCursorPos = maxIndex;
+    }
+    else
+    {
+        playerConf->m_currentCursorPos = index - 1;
+    }
+}
+
+//===================================================================
+void incrementMenuPosition(PlayerConfComponent *playerConf, uint32_t maxIndex)
+{
+    uint32_t index = playerConf->m_currentCursorPos;
+    if(index == maxIndex)
+    {
+        playerConf->m_currentCursorPos = 0;
+    }
+    else
+    {
+        playerConf->m_currentCursorPos = index + 1;
     }
 }

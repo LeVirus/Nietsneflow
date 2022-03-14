@@ -181,12 +181,14 @@ void GraphicEngine::updatePlayerLife(WriteComponent *writeComp, PlayerConfCompon
 //===================================================================
 void GraphicEngine::fillTitleMenuWrite(WriteComponent *writeComp, MenuMode_e menuEntry)
 {
+    writeComp->m_upLeftPositionGL.first = -0.3f;
     switch (menuEntry)
     {
     case MenuMode_e::BASE:
         writeComp->m_str = "MAIN MENU";
         break;
     case MenuMode_e::LOAD_GAME:
+    case MenuMode_e::CONFIRM_LOADING_GAME_FORM:
         writeComp->m_str = "LOAD GAME";
         break;
     case MenuMode_e::NEW_GAME:
@@ -200,8 +202,12 @@ void GraphicEngine::fillTitleMenuWrite(WriteComponent *writeComp, MenuMode_e men
     case MenuMode_e::CONFIRM_QUIT_INPUT_FORM:
         writeComp->m_str = "INPUT MENU";
         break;
-    case MenuMode_e::CONFIRM_LOADING_GAME_FORM:
     case MenuMode_e::CONFIRM_RESTART_LEVEL:
+        writeComp->m_str = "RESTART LEVEL";
+        break;
+    case MenuMode_e::CONFIRM_RESTART_FROM_LAST_CHECKPOINT:
+        writeComp->m_upLeftPositionGL.first = -0.5f;
+        writeComp->m_str = "RESTART FROM LAST CHECKPOINT";
         break;
     case MenuMode_e::SOUND:
         writeComp->m_str = "AUDIO MENU";

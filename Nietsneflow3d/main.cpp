@@ -33,8 +33,6 @@ int main()
             --i;
             break;
         case LevelState_e::RESTART_FROM_CHECKPOINT:
-            break;
-            break;
         case LevelState_e::RESTART_LEVEL:
         case LevelState_e::LOAD_GAME:
         {

@@ -1405,6 +1405,11 @@ uint32_t MainEngine::createAmmoEntity(CollisionTag_e collTag, bool visibleShot)
 //===================================================================
 void MainEngine::setMenuEntries(PlayerConfComponent *playerComp)
 {
+    if(playerComp->m_menuMode == MenuMode_e::CONFIRM_RESTART_FROM_LAST_CHECKPOINT && !m_memCheckpointLevelState)
+    {
+        playerComp->m_menuMode = MenuMode_e::BASE;
+        return;
+    }
     //TITLE MENU
     WriteComponent *writeComp = m_ecsManager.getComponentManager().
             searchComponentByType<WriteComponent>(playerComp->m_titleMenuEntity, Components_e::WRITE_COMPONENT);
@@ -1423,8 +1428,10 @@ void MainEngine::setMenuEntries(PlayerConfComponent *playerComp)
         playerComp->m_currentCursorPos = m_memInputCursorPos;
         m_memInputCursorPos = 0;
     }
-    else if(playerComp->m_menuMode == MenuMode_e::CONFIRM_QUIT_INPUT_FORM || playerComp->m_menuMode == MenuMode_e::CONFIRM_LOADING_GAME_FORM ||
-            playerComp->m_menuMode == MenuMode_e::CONFIRM_RESTART_LEVEL)
+    else if(playerComp->m_menuMode == MenuMode_e::CONFIRM_QUIT_INPUT_FORM ||
+            playerComp->m_menuMode == MenuMode_e::CONFIRM_LOADING_GAME_FORM ||
+            playerComp->m_menuMode == MenuMode_e::CONFIRM_RESTART_LEVEL ||
+            playerComp->m_menuMode == MenuMode_e::CONFIRM_RESTART_FROM_LAST_CHECKPOINT)
     {
         updateMenuInfo(playerComp);
         playerComp->m_currentCursorPos = 0;
@@ -1452,7 +1459,9 @@ void MainEngine::updateMenuInfo(PlayerConfComponent *playerComp)
         writeComp->m_upLeftPositionGL = {-0.6f, 0.3f};
         writeComp->m_str = "DO YOU WANT TO SAVE CHANGES?";
     }
-    else if(playerComp->m_menuMode == MenuMode_e::CONFIRM_LOADING_GAME_FORM || playerComp->m_menuMode == MenuMode_e::CONFIRM_RESTART_LEVEL)
+    else if(playerComp->m_menuMode == MenuMode_e::CONFIRM_LOADING_GAME_FORM ||
+            playerComp->m_menuMode == MenuMode_e::CONFIRM_RESTART_LEVEL ||
+            playerComp->m_menuMode == MenuMode_e::CONFIRM_RESTART_FROM_LAST_CHECKPOINT)
     {
         writeComp->m_upLeftPositionGL = {-0.9f, 0.3f};
         writeComp->m_str = "ALL YOUR PROGRESS UNTIL LAST SAVE WILL BE LOST\\";
@@ -1574,7 +1583,7 @@ bool MainEngine::loadSavedGame(uint32_t saveNum, LevelState_e levelMode)
     {
         m_memPlayerConfCheckpoint = *savedData->m_playerConfCheckpoint;
     }
-    if(m_currentLevelState == LevelState_e::RESTART_LEVEL)
+    if(m_currentLevelState == LevelState_e::RESTART_LEVEL || m_currentLevelState == LevelState_e::RESTART_FROM_CHECKPOINT)
     {
         m_levelToLoad = m_currentLevel;
     }

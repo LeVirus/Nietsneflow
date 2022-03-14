@@ -132,6 +132,7 @@ private:
     void treatEnterPressedConfirmInputMenu(PlayerConfComponent *playerComp);
     void treatEnterPressedConfirmLoadGameMenu(PlayerConfComponent *playerComp);
     void treatEnterPressedConfirmRestartLevelMenu(PlayerConfComponent *playerComp);
+    void treatEnterPressedConfirmRestartFromLastCheckpointMenu(PlayerConfComponent *playerComp);
     void validInputMenu(PlayerConfComponent *playerComp);
     void treatPlayerMove(PlayerConfComponent *playerComp, MoveableComponent *moveComp, MapCoordComponent *mapComp);
 private:
@@ -155,6 +156,7 @@ private:
         {MenuMode_e::CONFIRM_QUIT_INPUT_FORM, static_cast<uint32_t>(ConfirmCursorPos_e::TOTAL) - 1},
         {MenuMode_e::CONFIRM_LOADING_GAME_FORM, static_cast<uint32_t>(ConfirmCursorPos_e::TOTAL) - 1},
         {MenuMode_e::CONFIRM_RESTART_LEVEL, static_cast<uint32_t>(ConfirmCursorPos_e::TOTAL) - 1},
+        {MenuMode_e::CONFIRM_RESTART_FROM_LAST_CHECKPOINT, static_cast<uint32_t>(ConfirmCursorPos_e::TOTAL) - 1},
         {MenuMode_e::NEW_KEY, 0}
     };
     std::map<ControlKey_e, uint32_t> m_mapKeyboardCurrentAssociatedKey = MAP_KEYBOARD_DEFAULT_KEY,
@@ -177,6 +179,8 @@ private:
     bool m_modeTransition = false, m_toggleSignal = false;
 };
 
+void decrementMenuPosition(PlayerConfComponent *playerConf, uint32_t maxIndex);
+void incrementMenuPosition(PlayerConfComponent *playerConf, uint32_t maxIndex);
 void changePlayerWeapon(WeaponComponent &weaponComp, bool next);
 void changeToTopPlayerWeapon(WeaponComponent &weaponComp);
 void setPlayerWeapon(WeaponComponent &weaponComp, uint32_t weapon);
