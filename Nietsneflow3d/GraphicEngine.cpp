@@ -27,7 +27,7 @@ void GraphicEngine::loadExistingLevelNumSaves(const std::array<std::optional<Dat
 {
     m_memExistingLevelSave = existingLevelNum;
     m_saveMenuWrite.clear();
-    std::string date, checkpoint;
+    std::string checkpoint;
     for(uint32_t i = 1; i < 4; ++i)
     {
         m_saveMenuWrite += std::to_string(i);
@@ -35,11 +35,8 @@ void GraphicEngine::loadExistingLevelNumSaves(const std::array<std::optional<Dat
         {
             checkpoint = (existingLevelNum[i - 1]->m_checkpointNum == 0) ? "" :
                 " CHCKPT " + std::to_string(existingLevelNum[i - 1]->m_checkpointNum);
-            date = existingLevelNum[i - 1]->m_date;
-            //toupper C version
-            std::transform(date.begin(), date.end(), date.begin(), ::toupper);
             m_saveMenuWrite += "  LVL " + std::to_string(existingLevelNum[i - 1]->m_levelNum) +
-                    checkpoint + " " + date;
+                    checkpoint + " " + existingLevelNum[i - 1]->m_date;
         }
         m_saveMenuWrite += "\\";
     }
@@ -150,9 +147,14 @@ bool GraphicEngine::windowShouldClose()
 }
 
 //===================================================================
-void GraphicEngine::updateSaveNum(uint32_t levelNum, uint32_t saveNum, std::optional<uint32_t> checkpointNum)
+void GraphicEngine::updateSaveNum(uint32_t levelNum, uint32_t saveNum, std::optional<uint32_t> checkpointNum,
+                                  const std::string &date)
 {
     m_memExistingLevelSave[saveNum - 1]->m_levelNum = levelNum;
+    if(!date.empty())
+    {
+        m_memExistingLevelSave[saveNum - 1]->m_date = date;
+    }
     if(checkpointNum)
     {
         m_memExistingLevelSave[saveNum - 1]->m_checkpointNum = *checkpointNum;

@@ -1,9 +1,6 @@
 IMPROVE===================================================================================================
 ==========================================================================================================
 
-))
-On loading menu add date and checkpoint for save file
-
 
 1)
 Weapon movement on begin and end movement
@@ -21,6 +18,9 @@ Animation move while shooting===========================~
 Enemy animations========================~
 
 
+
+))
+On loading menu add date and checkpoint for save file=================================OK
 
 ))
 Add restart from last checkpoint menu entry=========================OK

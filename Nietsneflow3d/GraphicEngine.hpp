@@ -35,7 +35,8 @@ public:
     void loadPictureData(const PictureData &pictureData, const FontData &fontData);
     void runIteration(bool gamePaused);
     bool windowShouldClose();
-    void updateSaveNum(uint32_t levelNum, uint32_t saveNum, std::optional<uint32_t> checkpointNum);
+    void updateSaveNum(uint32_t levelNum, uint32_t saveNum, std::optional<uint32_t> checkpointNum,
+                       const std::string &date = "");
     void linkSystems(ColorDisplaySystem *colorSystem, MapDisplaySystem *mapSystem,
                      FirstPersonDisplaySystem *firstPersonSystem, VisionSystem *visionSystem,
                      StaticDisplaySystem *staticDisplaySystem);

@@ -1709,17 +1709,21 @@ std::string LevelManager::getGamepadKeyIniString(const GamepadInputState &gamepa
 }
 
 //===================================================================
-void LevelManager::saveLevelGameProgress(const MemPlayerConf &playerConfBeginLevel, const MemPlayerConf &playerConfCheckpoint,
+std::string LevelManager::saveLevelGameProgress(const MemPlayerConf &playerConfBeginLevel, const MemPlayerConf &playerConfCheckpoint,
                                          uint32_t levelNum, bool beginLevel)
 {
     std::string sectionName = beginLevel ? "PlayerBeginLevel" : "PlayerCheckpoint";
+    std::string date = getStrDate();
+    //remove \n
+    date.pop_back();
     m_ini.setValue("Level", "levelNum", std::to_string(levelNum));
-    m_ini.setValue("Level", "date", getStrDate());
+    m_ini.setValue("Level", "date", date);
     savePlayerGear(true, playerConfBeginLevel);
     if(!beginLevel)
     {
         savePlayerGear(false, playerConfCheckpoint);
     }
+    return date;
 }
 
 //===================================================================
@@ -1815,16 +1819,17 @@ bool LevelManager::loadIniFile(std::string_view path, std::optional<uint32_t> en
 }
 
 //===================================================================
-void LevelManager::saveGameProgress(const MemPlayerConf &playerConfBeginLevel, const MemPlayerConf &playerConfCheckpoint,
+std::string LevelManager::saveGameProgress(const MemPlayerConf &playerConfBeginLevel, const MemPlayerConf &playerConfCheckpoint,
                                     uint32_t levelNum, uint32_t numSaveFile, const MemCheckpointElementsState *checkpointData)
 {
     m_ini.clear();
-    saveLevelGameProgress(playerConfBeginLevel, playerConfCheckpoint,  levelNum, !checkpointData);
+    std::string date = saveLevelGameProgress(playerConfBeginLevel, playerConfCheckpoint,  levelNum, !checkpointData);
     if(checkpointData)
     {
         saveElementsGameProgress(*checkpointData);
     }
     generateSavedFile(numSaveFile);
+    return date;
 }
 
 //===================================================================
@@ -2051,5 +2056,6 @@ std::string getStrDate()
     std::time_t end_time = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
     std::string str = std::ctime(&end_time), ret;
     ret += str.erase(0, str.find(' '));
+    std::transform(ret.begin(), ret.end(), ret.begin(), ::toupper);
     return ret;
 }

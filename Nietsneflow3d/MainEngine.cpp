@@ -233,8 +233,8 @@ void MainEngine::saveGameProgress(uint32_t levelNum, std::optional<uint32_t> num
     {
         m_graphicEngine.updateGraphicCheckpointData(checkpointData, saveNum);
     }
-    m_graphicEngine.updateSaveNum(levelNum, saveNum, {});
-    m_refGame->saveGameProgress(m_memPlayerConfBeginLevel, m_memPlayerConfCheckpoint, levelNum, saveNum, checkpointData);
+    std::string date = m_refGame->saveGameProgress(m_memPlayerConfBeginLevel, m_memPlayerConfCheckpoint, levelNum, saveNum, checkpointData);
+    m_graphicEngine.updateSaveNum(levelNum, saveNum, {}, date);
 }
 
 //===================================================================

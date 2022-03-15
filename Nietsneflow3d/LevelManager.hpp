@@ -102,7 +102,7 @@ public:
     std::array<std::optional<DataLevelWriteMenu>, 3> getExistingLevelNumSaves();
     //if encryptKey is nullopt no encryption
     bool loadIniFile(std::string_view path, std::optional<uint32_t> encryptKey);
-    void saveGameProgress(const MemPlayerConf &playerConfBeginLevel, const MemPlayerConf &playerConfCheckpoint, uint32_t levelNum,
+    std::string saveGameProgress(const MemPlayerConf &playerConfBeginLevel, const MemPlayerConf &playerConfCheckpoint, uint32_t levelNum,
                           uint32_t numSaveFile, const MemCheckpointElementsState *checkpointData);
     inline const PictureData &getPictureData()const {return m_pictureData;}
     inline const Level &getLevel()const {return m_level;}
@@ -209,7 +209,7 @@ private:
     void loadGeneralStaticElements(LevelStaticElementType_e elementType);
     void loadPositionStaticElements();
     void loadBarrelElements();
-    void saveLevelGameProgress(const MemPlayerConf &playerConfBeginLevel, const MemPlayerConf &playerConfCheckpoint, uint32_t levelNum, bool beginLevel);
+    std::string saveLevelGameProgress(const MemPlayerConf &playerConfBeginLevel, const MemPlayerConf &playerConfCheckpoint, uint32_t levelNum, bool beginLevel);
     void savePlayerGear(bool beginLevel, const MemPlayerConf &playerConf);
     void saveElementsGameProgress(const MemCheckpointElementsState &checkpointData);
     void saveEnemiesDataGameProgress(const std::vector<MemCheckpointEnemiesState> &enemiesData);
