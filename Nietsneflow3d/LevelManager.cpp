@@ -5,6 +5,7 @@
 #include <iostream>
 #include <iterator>
 #include <filesystem>
+#include <ctime>
 
 //===================================================================
 LevelManager::LevelManager()
@@ -1214,6 +1215,7 @@ void LevelManager::loadPositionEnemyData()
 void LevelManager::loadPositionCheckpointsData()
 {
     std::vector<std::string> vectINISections;
+    m_checkpointsPos.clear();
     vectINISections = m_ini.getSectionNamesContaining("Checkpoints");
     if(!vectINISections.empty())
     {
@@ -1225,6 +1227,7 @@ void LevelManager::loadPositionCheckpointsData()
 void LevelManager::loadPositionSecretsData()
 {
     std::vector<std::string> vectINISections;
+    m_secretsPos.clear();
     vectINISections = m_ini.getSectionNamesContaining("Secrets");
     if(!vectINISections.empty())
     {
@@ -1711,6 +1714,7 @@ void LevelManager::saveLevelGameProgress(const MemPlayerConf &playerConfBeginLev
 {
     std::string sectionName = beginLevel ? "PlayerBeginLevel" : "PlayerCheckpoint";
     m_ini.setValue("Level", "levelNum", std::to_string(levelNum));
+    m_ini.setValue("Level", "date", getStrDate());
     savePlayerGear(true, playerConfBeginLevel);
     if(!beginLevel)
     {
@@ -1967,19 +1971,32 @@ std::set<PairUI_t> LevelManager::loadStaticElementsDataGameProgress()
 }
 
 //===================================================================
-std::array<std::optional<uint32_t>, 3> LevelManager::getExistingLevelNumSaves()
+std::array<std::optional<DataLevelWriteMenu>, 3> LevelManager::getExistingLevelNumSaves()
 {
     std::string path;
-    std::array<std::optional<uint32_t>, 3> ret;
+    std::array<std::optional<DataLevelWriteMenu>, 3> ret;
     for(uint32_t i = 1; i < 4; ++i)
     {
         path = LEVEL_RESSOURCES_DIR_STR + "Saves/save" + std::to_string(i) + ".ini";
         if(std::filesystem::exists(path))
         {
+            ret[i - 1] = DataLevelWriteMenu();
             loadIniFile(path, ENCRYPT_KEY_CONF_FILE);
             std::optional<std::string> val = m_ini.getValue("Level", "levelNum");
             assert(val);
-            ret[i - 1] = std::stoi(*val);
+            ret[i - 1]->m_levelNum = std::stoi(*val);
+            val = m_ini.getValue("Level", "date");
+            assert(val);
+            ret[i - 1]->m_date = *val;
+            val = m_ini.getValue("Checkpoint", "Num");
+            if(val)
+            {
+                ret[i - 1]->m_checkpointNum = std::stoi(*val);
+            }
+            else
+            {
+                ret[i - 1]->m_checkpointNum = 0;
+            }
         }
     }
     return ret;
@@ -2025,4 +2042,14 @@ std::optional<bool> toBool(const std::string &str)
         return false;
     }
     return {};
+}
+
+//===================================================================
+//Mon Mar 14 11:51:56 2022
+std::string getStrDate()
+{
+    std::time_t end_time = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+    std::string str = std::ctime(&end_time), ret;
+    ret += str.erase(0, str.find(' '));
+    return ret;
 }

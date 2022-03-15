@@ -1,5 +1,6 @@
 #include "GraphicEngine.hpp"
 #include "FontData.hpp"
+#include "MainEngine.hpp"
 #include <iostream>
 #include <cassert>
 #include <constants.hpp>
@@ -22,16 +23,23 @@ GraphicEngine::GraphicEngine()
 }
 
 //===================================================================
-void GraphicEngine::loadExistingLevelNumSaves(const std::array<std::optional<uint32_t>, 3> &existingLevelNum)
+void GraphicEngine::loadExistingLevelNumSaves(const std::array<std::optional<DataLevelWriteMenu>, 3> &existingLevelNum)
 {
     m_memExistingLevelSave = existingLevelNum;
     m_saveMenuWrite.clear();
+    std::string date, checkpoint;
     for(uint32_t i = 1; i < 4; ++i)
     {
         m_saveMenuWrite += std::to_string(i);
         if(existingLevelNum[i - 1])
         {
-            m_saveMenuWrite += "  LEVEL " + std::to_string(*existingLevelNum[i - 1]);
+            checkpoint = (existingLevelNum[i - 1]->m_checkpointNum == 0) ? "" :
+                " CHCKPT " + std::to_string(existingLevelNum[i - 1]->m_checkpointNum);
+            date = existingLevelNum[i - 1]->m_date;
+            //toupper C version
+            std::transform(date.begin(), date.end(), date.begin(), ::toupper);
+            m_saveMenuWrite += "  LVL " + std::to_string(existingLevelNum[i - 1]->m_levelNum) +
+                    checkpoint + " " + date;
         }
         m_saveMenuWrite += "\\";
     }
@@ -142,9 +150,13 @@ bool GraphicEngine::windowShouldClose()
 }
 
 //===================================================================
-void GraphicEngine::updateSaveNum(uint32_t levelNum, uint32_t saveNum)
+void GraphicEngine::updateSaveNum(uint32_t levelNum, uint32_t saveNum, std::optional<uint32_t> checkpointNum)
 {
-    m_memExistingLevelSave[saveNum - 1] = levelNum;
+    m_memExistingLevelSave[saveNum - 1]->m_levelNum = levelNum;
+    if(checkpointNum)
+    {
+        m_memExistingLevelSave[saveNum - 1]->m_checkpointNum = *checkpointNum;
+    }
     loadExistingLevelNumSaves(m_memExistingLevelSave);
 }
 
@@ -400,6 +412,13 @@ void GraphicEngine::initGlad()
     {
         std::cout << "Failed to initialize GLAD" << std::endl;
     }
+}
+
+//===================================================================
+void GraphicEngine::updateGraphicCheckpointData(const MemCheckpointElementsState *checkpointData,
+                                                uint32_t numSaveFile)
+{
+    m_memExistingLevelSave[numSaveFile - 1]->m_checkpointNum = checkpointData->m_checkpointNum;
 }
 
 //===================================================================

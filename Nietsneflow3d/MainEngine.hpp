@@ -85,7 +85,7 @@ class MainEngine
 public:
     MainEngine() = default;
     void loadGraphicPicture(const PictureData &picData, const FontData &fontData);
-    void loadExistingLevelNumSaves(const std::array<std::optional<uint32_t>, 3> &existingLevelNum);
+    void loadExistingLevelNumSaves(const std::array<std::optional<DataLevelWriteMenu>, 3> &existingLevelNum);
     void init(Game *refGame);
     void loadLevel(const LevelManager &levelManager);
     void loadGameProgressCheckpoint();
@@ -171,7 +171,7 @@ public:
     void loadCheckpointSavedGame(const MemCheckpointElementsState &checkpointData);
     bool checkSavedGameExists(uint32_t saveNum)const;
 private:
-    bool loadFromLevelBegin(LevelState_e levelState)const;
+    bool isLoadFromLevelBegin(LevelState_e levelState)const;
     void clearObjectToDelete();
     void savePlayerGear(bool beginLevel);
     void loadPlayerGear(bool beginLevel);
@@ -305,7 +305,7 @@ private:
     std::map<PairUI_t, uint32_t> m_memTriggerCreated, m_memWallPos;
     std::optional<uint32_t> m_levelToLoad;
     std::optional<MemCheckpointLevelState> m_memCheckpointLevelState;
-    uint32_t m_currentCheckpointMem, m_playerEntity;
+    uint32_t m_playerEntity;
     std::vector<MemCheckpointEnemiesState> m_memEnemiesStateFromCheckpoint;
 };
 

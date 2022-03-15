@@ -58,7 +58,20 @@ LevelState MainEngine::mainLoop(uint32_t levelNum, LevelState_e levelState)
     m_currentLevel = levelNum;
     m_memInputCursorPos = 0;
     m_graphicEngine.getMapSystem().confLevelData();
-    bool beginLevel = loadFromLevelBegin(m_currentLevelState);
+    bool beginLevel = isLoadFromLevelBegin(m_currentLevelState);
+    if(beginLevel)
+    {
+        m_memCheckpointLevelState = {};
+        m_playerConf->m_currentCheckpoint = 0;
+        if(levelState == LevelState_e::NEW_GAME)
+        {
+            m_graphicEngine.updateSaveNum(levelNum, m_currentSave, 0);
+        }
+        else
+        {
+            m_graphicEngine.updateSaveNum(levelNum, m_currentSave, {});
+        }
+    }
     if(m_playerMemGear)
     {
         loadPlayerGear(beginLevel);
@@ -212,12 +225,15 @@ void MainEngine::saveGameProgress(uint32_t levelNum, std::optional<uint32_t> num
                                   const MemCheckpointElementsState *checkpointData)
 {
     uint32_t saveNum = numSaveFile ? *numSaveFile : m_currentSave;
-    m_graphicEngine.updateSaveNum(levelNum, saveNum);
     if(!checkpointData)
     {
         m_memCheckpointLevelState = {};
-        m_currentCheckpointMem = 0;
     }
+    if(checkpointData)
+    {
+        m_graphicEngine.updateGraphicCheckpointData(checkpointData, saveNum);
+    }
+    m_graphicEngine.updateSaveNum(levelNum, saveNum, {});
     m_refGame->saveGameProgress(m_memPlayerConfBeginLevel, m_memPlayerConfCheckpoint, levelNum, saveNum, checkpointData);
 }
 
@@ -702,7 +718,7 @@ void MainEngine::loadGraphicPicture(const PictureData &picData, const FontData &
 }
 
 //===================================================================
-void MainEngine::loadExistingLevelNumSaves(const std::array<std::optional<uint32_t>, 3> &existingLevelNum)
+void MainEngine::loadExistingLevelNumSaves(const std::array<std::optional<DataLevelWriteMenu>, 3> &existingLevelNum)
 {
     m_graphicEngine.loadExistingLevelNumSaves(existingLevelNum);
 }
@@ -710,7 +726,6 @@ void MainEngine::loadExistingLevelNumSaves(const std::array<std::optional<uint32
 //===================================================================
 void MainEngine::loadLevel(const LevelManager &levelManager)
 {
-    m_currentCheckpointMem = 0;
     m_memWallPos.clear();
     loadBackgroundEntities(levelManager.getPictureData().getGroundData(),
                            levelManager.getPictureData().getCeilingData(),
@@ -1191,7 +1206,7 @@ void MainEngine::loadCheckpointsEntities(const LevelManager &levelManager)
         CheckpointComponent *checkComponent = m_ecsManager.getComponentManager().
                 searchComponentByType<CheckpointComponent>(entityNum, Components_e::CHECKPOINT_COMPONENT);
         assert(checkComponent);
-        checkComponent->m_checkpointNumber = m_currentCheckpointMem++;
+        checkComponent->m_checkpointNumber = i + 1;
     }
 }
 
@@ -1578,6 +1593,10 @@ bool MainEngine::loadSavedGame(uint32_t saveNum, LevelState_e levelMode)
         return false;
     }
     m_memPlayerConfBeginLevel = *savedData->m_playerConfBeginLevel;
+    if(savedData->m_checkpointLevelData)
+    {
+        m_playerConf->m_currentCheckpoint = savedData->m_checkpointLevelData->m_checkpointNum;
+    }
     assert(!m_memPlayerConfBeginLevel.m_ammunationsCount.empty());
     if(savedData->m_playerConfCheckpoint)
     {
@@ -1614,7 +1633,7 @@ bool MainEngine::checkSavedGameExists(uint32_t saveNum)const
 }
 
 //===================================================================
-bool MainEngine::loadFromLevelBegin(LevelState_e levelState)const
+bool MainEngine::isLoadFromLevelBegin(LevelState_e levelState)const
 {
     if(levelState == LevelState_e::RESTART_FROM_CHECKPOINT ||
             (m_memCheckpointLevelState && (levelState == LevelState_e::GAME_OVER || levelState == LevelState_e::LOAD_GAME)))

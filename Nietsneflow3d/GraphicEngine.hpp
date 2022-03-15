@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <PictureData.hpp>
+#include <LevelManager.hpp>
 #include <OpenGLUtils/Shader.hpp>
 #include <OpenGLUtils/Texture.hpp>
 
@@ -29,12 +30,12 @@ class GraphicEngine
 {
 public:
     GraphicEngine();
-    void loadExistingLevelNumSaves(const std::array<std::optional<uint32_t>, 3> &existingLevelNum);
+    void loadExistingLevelNumSaves(const std::array<std::optional<DataLevelWriteMenu>, 3> &existingLevelNum);
     void confSystems();
     void loadPictureData(const PictureData &pictureData, const FontData &fontData);
     void runIteration(bool gamePaused);
     bool windowShouldClose();
-    void updateSaveNum(uint32_t levelNum, uint32_t saveNum);
+    void updateSaveNum(uint32_t levelNum, uint32_t saveNum, std::optional<uint32_t> checkpointNum);
     void linkSystems(ColorDisplaySystem *colorSystem, MapDisplaySystem *mapSystem,
                      FirstPersonDisplaySystem *firstPersonSystem, VisionSystem *visionSystem,
                      StaticDisplaySystem *staticDisplaySystem);
@@ -90,6 +91,7 @@ public:
     void mainDisplay(bool gamePaused);
     void toogleFullScreen();
     void validDisplayMenu();
+    void updateGraphicCheckpointData(const MemCheckpointElementsState *checkpointData, uint32_t numSaveFile);
 private:
     void preDisplay();
     void postDisplay();
@@ -117,7 +119,7 @@ private:
     VisionSystem *m_visionSystem = nullptr;
     StaticDisplaySystem *m_staticDisplaySystem = nullptr;
     uint32_t m_transitionFrameNumber = 30;
-    std::array<std::optional<uint32_t>, 3> m_memExistingLevelSave;
+    std::array<std::optional<DataLevelWriteMenu>, 3> m_memExistingLevelSave;
     std::string m_saveMenuWrite;
     bool m_fullscreenMode = false, m_displayMenuFullscreenMode = m_fullscreenMode;
     const std::map<InputMenuCursorPos_e, std::string> m_mapInputActionStringAssociated = {

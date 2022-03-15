@@ -76,6 +76,12 @@ struct SettingsData
     std::optional<std::array<GamepadInputState, static_cast<uint32_t>(ControlKey_e::TOTAL)>> m_arrayGamepad;
 };
 
+struct DataLevelWriteMenu
+{
+    std::string m_date;
+    uint32_t m_levelNum, m_checkpointNum;
+};
+
 class LevelManager
 {
 public:
@@ -93,7 +99,7 @@ public:
     std::optional<MemLevelLoadedData> loadSavedGame(uint32_t saveNum);
     std::optional<MemPlayerConf> loadPlayerConf(bool beginLevel);
     std::unique_ptr<MemCheckpointElementsState> loadCheckpointDataSavedGame();
-    std::array<std::optional<uint32_t>, 3> getExistingLevelNumSaves();
+    std::array<std::optional<DataLevelWriteMenu>, 3> getExistingLevelNumSaves();
     //if encryptKey is nullopt no encryption
     bool loadIniFile(std::string_view path, std::optional<uint32_t> encryptKey);
     void saveGameProgress(const MemPlayerConf &playerConfBeginLevel, const MemPlayerConf &playerConfCheckpoint, uint32_t levelNum,
@@ -440,7 +446,7 @@ private:
 //        {GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER, "AxisRightTrigger"}
 //    };
 };
-
+std::string getStrDate();
 std::optional<bool> toBool(const std::string &str);
 std::string encrypt(const std::string &str, uint32_t key);
 std::string decrypt(const std::string &str, uint32_t key);
