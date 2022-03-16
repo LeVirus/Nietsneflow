@@ -45,7 +45,7 @@ void StaticDisplaySystem::updateMenuCursorPosition(PlayerConfComponent *playerCo
     assert(posComp);
     WriteComponent *writeMenuComp = stairwayToComponentManager().
                 searchComponentByType<WriteComponent>(playerComp->m_menuEntriesEntity,
-                                                               Components_e::WRITE_COMPONENT);
+                                                      Components_e::WRITE_COMPONENT);
     assert(writeMenuComp);
     float upPos = writeMenuComp->m_upLeftPositionGL.second -
             static_cast<float>(playerComp->m_currentCursorPos) * writeMenuComp->m_fontSize,

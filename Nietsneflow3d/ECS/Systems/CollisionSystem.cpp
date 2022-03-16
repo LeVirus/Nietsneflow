@@ -243,6 +243,10 @@ void CollisionSystem::treatEnemyTakeDamage(uint32_t enemyEntityNum, uint32_t dam
             searchComponentByType<TimerComponent>(enemyEntityNum, Components_e::TIMER_COMPONENT);
     assert(enemyConfCompB);
     assert(timerComp);
+    if(enemyConfCompB->m_behaviourMode == EnemyBehaviourMode_e::DYING)
+    {
+        return;
+    }
     enemyConfCompB->m_touched = true;
     timerComp->m_clockC = std::chrono::system_clock::now();
     timerComp->m_clockB = std::chrono::system_clock::now();
@@ -250,6 +254,14 @@ void CollisionSystem::treatEnemyTakeDamage(uint32_t enemyEntityNum, uint32_t dam
     //if enemy dead
     if(!enemyConfCompB->takeDamage(damage))
     {
+        if(!m_playerComp->m_enemiesKilled)
+        {
+            m_playerComp->m_enemiesKilled = 1;
+        }
+        else
+        {
+            ++(*m_playerComp->m_enemiesKilled);
+        }
         enemyConfCompB->m_behaviourMode = EnemyBehaviourMode_e::DYING;
         enemyConfCompB->m_touched = false;
         if(enemyConfCompB->m_dropedObjectEntity)

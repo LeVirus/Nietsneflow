@@ -1063,7 +1063,8 @@ void MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
     float collisionRay;
     bool loadFromCheckpoint = (!m_memEnemiesStateFromCheckpoint.empty());
     std::map<std::string, EnemyData>::const_iterator it = enemiesData.begin();
-    uint32_t cmpt = 0;
+    m_currentLevelEnemiesNumber = 0;
+    m_currentLevelEnemiesKilled = 0;
     for(; it != enemiesData.end(); ++it)
     {
         collisionRay = it->second.m_inGameSpriteSize.first * LEVEL_TWO_THIRD_TILE_SIZE_PX;
@@ -1096,7 +1097,7 @@ void MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
             }
             if(!it->second.m_dropedObjectID.empty())
             {
-                enemyComp->m_dropedObjectEntity = createEnemyDropObject(levelManager, it->second, j, loadFromCheckpoint, cmpt);
+                enemyComp->m_dropedObjectEntity = createEnemyDropObject(levelManager, it->second, j, loadFromCheckpoint, m_currentLevelEnemiesNumber);
             }
             if(enemyComp->m_visibleShot)
             {
@@ -1131,8 +1132,8 @@ void MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
                     searchComponentByType<TimerComponent>(numEntity, Components_e::TIMER_COMPONENT);
             assert(timerComponent);
             timerComponent->m_clockC = std::chrono::system_clock::now();
-            treatCheckpointEnemiesData(loadFromCheckpoint, numEntity, cmpt);
-            ++cmpt;
+            treatCheckpointEnemiesData(loadFromCheckpoint, numEntity, m_currentLevelEnemiesNumber);
+            ++m_currentLevelEnemiesNumber;
         }
     }
 }
@@ -1432,7 +1433,8 @@ void MainEngine::setMenuEntries(PlayerConfComponent *playerComp)
     m_graphicEngine.fillTitleMenuWrite(writeComp, playerComp->m_menuMode);
     //MENU ENTRIES
     m_writeConf->m_upLeftPositionGL = MAP_MENU_DATA.at(playerComp->m_menuMode).first;
-    m_graphicEngine.fillMenuWrite(m_writeConf, playerComp->m_menuMode, playerComp->m_currentCursorPos);
+    m_graphicEngine.fillMenuWrite(m_writeConf, playerComp->m_menuMode, playerComp->m_currentCursorPos,
+    {playerComp, m_currentLevelSecretsNumber, m_currentLevelEnemiesNumber});
     if(playerComp->m_menuMode == MenuMode_e::NEW_KEY)
     {
         m_memInputCursorPos = playerComp->m_currentCursorPos;

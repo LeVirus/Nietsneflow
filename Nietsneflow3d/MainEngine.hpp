@@ -300,7 +300,7 @@ private:
     PlayerConfComponent *m_playerConf = nullptr;
     WeaponComponent *m_weaponComp;
     MemPlayerConf m_memPlayerConfBeginLevel, m_memPlayerConfCheckpoint;
-    uint32_t m_currentLevelSecretsNumber;
+    uint32_t m_currentLevelSecretsNumber, m_currentLevelEnemiesNumber, m_currentLevelEnemiesKilled;
     std::set<PairUI_t> m_memWall, m_memStaticEntitiesDeletedFromCheckpoint, m_currentEntitiesDelete;
     std::map<PairUI_t, uint32_t> m_memTriggerCreated, m_memWallPos;
     std::optional<uint32_t> m_levelToLoad;

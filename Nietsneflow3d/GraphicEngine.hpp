@@ -43,7 +43,9 @@ public:
     void updateAmmoCount(WriteComponent *writeComp, WeaponComponent *weaponComp);
     void updatePlayerLife(WriteComponent *writeComp, PlayerConfComponent *playerComp);
     void fillTitleMenuWrite(WriteComponent *writeComp, MenuMode_e menuEntry);
-    void fillMenuWrite(WriteComponent *writeComp, MenuMode_e menuEntry, uint32_t cursorPos = 0);
+    //tuple second == secrets, third == enemies killed
+    void fillMenuWrite(WriteComponent *writeComp, MenuMode_e menuEntry,
+                       uint32_t cursorPos = 0, const std::tuple<const PlayerConfComponent *, uint32_t, uint32_t> &endLevelData = {});
     void confWriteComponent(WriteComponent *writeComp);
     void updateStringWriteEntitiesInputMenu(bool keyboardInputMenuMode, bool defaultInput = true);
     inline MapDisplaySystem &getMapSystem()
@@ -137,4 +139,5 @@ private:
     };
 };
 
+std::string getEndLevelMenuStr(const std::tuple<const PlayerConfComponent *, uint32_t, uint32_t> &endLevelData);
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);

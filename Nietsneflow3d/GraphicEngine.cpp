@@ -234,18 +234,18 @@ void GraphicEngine::fillTitleMenuWrite(WriteComponent *writeComp, MenuMode_e men
 }
 
 //===================================================================
-void GraphicEngine::fillMenuWrite(WriteComponent *writeComp, MenuMode_e menuEntry, uint32_t cursorPos)
+void GraphicEngine::fillMenuWrite(WriteComponent *writeComp, MenuMode_e menuEntry, uint32_t cursorPos,
+                                  const std::tuple<const PlayerConfComponent*, uint32_t, uint32_t> &endLevelData)
 {
     if(menuEntry == MenuMode_e::LOAD_GAME || menuEntry == MenuMode_e::NEW_GAME)
     {
         writeComp->m_str = m_saveMenuWrite;
     }
-    else
+    else if(menuEntry == MenuMode_e::TRANSITION_LEVEL)
     {
-        std::map<MenuMode_e, PairPairFloatStr_t>::const_iterator it = MAP_MENU_DATA.find(menuEntry);
-        writeComp->m_str = it->second.second;
+        writeComp->m_str = getEndLevelMenuStr(endLevelData);
     }
-    if(menuEntry == MenuMode_e::DISPLAY)
+    else if(menuEntry == MenuMode_e::DISPLAY)
     {
         m_currentDisplayedResolution = m_currentResolution;
         m_displayMenuFullscreenMode = m_fullscreenMode;
@@ -254,6 +254,11 @@ void GraphicEngine::fillMenuWrite(WriteComponent *writeComp, MenuMode_e menuEntr
     else if(menuEntry == MenuMode_e::NEW_KEY)
     {
         writeComp->m_str += " " + m_mapInputActionStringAssociated.at(static_cast<InputMenuCursorPos_e>(cursorPos));
+    }
+    else
+    {
+        std::map<MenuMode_e, PairPairFloatStr_t>::const_iterator it = MAP_MENU_DATA.find(menuEntry);
+        writeComp->m_str = it->second.second;
     }
     writeComp->m_fontSpriteData = m_ptrFontData->getWriteData(writeComp->m_str, writeComp->m_numTexture);
 }
@@ -476,4 +481,16 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
   // make sure the viewport matches the new window dimensions; note that width and
   // height will be significantly larger than specified on retina displays.
   glViewport(0, 0, width, height);
+}
+
+//===================================================================
+std::string getEndLevelMenuStr(const std::tuple<const PlayerConfComponent*, uint32_t, uint32_t> &endLevelData)
+{
+    float enemiesKilledPercent = static_cast<float>(*std::get<0>(endLevelData)->m_enemiesKilled) /
+            static_cast<float>(std::get<2>(endLevelData)) * 100.0f,
+            secretsFoundPercent = static_cast<float>(*std::get<0>(endLevelData)->m_secretFound) /
+                                                     static_cast<float>(std::get<1>(endLevelData)) * 100.0f;
+    return "ENEMIES KILLED :         " + std::to_string(static_cast<uint32_t>(enemiesKilledPercent)) +
+       "%\\\\SECRETS FOUND :         " + std::to_string(static_cast<uint32_t>(secretsFoundPercent)) +
+                    "%\\\\PRESS ENTER TO CONTINUE";
 }
