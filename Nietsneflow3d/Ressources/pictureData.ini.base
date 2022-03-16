@@ -1,11 +1,19 @@
 [PathToTexture]
 textures = walltest.jpg	Global.png FontTexture.png demon.png GeneralSprites.png Marine.png Stars.jpg Simetra_green.png
 
+[SpriteSimetraWrite]
+texture = 7
+texturePosX = 0.4906
+texturePosY = 0.0
+textureWeight = 0.4924
+textureHeight = 1.0
+
+118
 [SpriteSimetraLogo]
 texture = 7
-texturePosX = 0.0
+texturePosX = 0.0276
 texturePosY = 0.0
-textureWeight = 1.0
+textureWeight = 0.4553
 textureHeight = 1.0
 
 [SpriteAnimTeleportA]

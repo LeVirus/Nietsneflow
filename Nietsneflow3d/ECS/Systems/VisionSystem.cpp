@@ -164,7 +164,7 @@ void VisionSystem::updateWallSprites()
         assert(memSpriteComp);
         std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() -
                 timerComp->m_clockA;
-        if(elapsed_seconds.count() > 0.20)
+        if(elapsed_seconds.count() > 0.80)
         {
             ++memSpriteComp->m_current;
             if(memSpriteComp->m_current >= memSpriteComp->m_vectSpriteData.size())

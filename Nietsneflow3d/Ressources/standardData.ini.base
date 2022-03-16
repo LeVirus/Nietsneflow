@@ -21,6 +21,9 @@ Sprite = SpriteWallB
 [WallC]
 Sprite = SpriteWallC
 
+[WallScreen]
+Sprite = SpriteSimetraLogo SpriteSimetraWrite
+
 [WallLogo]
 Sprite = SpriteSimetraLogo
 
