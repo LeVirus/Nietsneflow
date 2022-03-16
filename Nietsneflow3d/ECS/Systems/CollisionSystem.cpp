@@ -201,14 +201,21 @@ void CollisionSystem::treatGeneralCrushing(uint32_t entityNum)
     MapCoordComponent *mapComp = stairwayToComponentManager().
             searchComponentByType<MapCoordComponent>(entityNum, Components_e::MAP_COORD_COMPONENT);
     assert(mapComp);
+    GeneralCollisionComponent *collComp = stairwayToComponentManager().
+            searchComponentByType<GeneralCollisionComponent>(entityNum, Components_e::GENERAL_COLLISION_COMPONENT);
+    assert(collComp);
     bool crush = false;
     for(uint32_t i = 0; i < m_memCrush.size(); ++i)
     {
-        if(m_memCrush.size() < 3 || !std::get<3>(m_memCrush[i]) ||
-                *std::get<3>(m_memCrush[i]) != std::get<2>(m_memCrush[i]))
+        //QuickFix
+        if(collComp->m_tagA != CollisionTag_e::PLAYER_CT)
         {
-            mapComp->m_absoluteMapPositionPX.first += std::get<0>(m_memCrush[i]).first;
-            mapComp->m_absoluteMapPositionPX.second += std::get<0>(m_memCrush[i]).second;
+            if(m_memCrush.size() < 3 || !std::get<3>(m_memCrush[i]) ||
+                    *std::get<3>(m_memCrush[i]) != std::get<2>(m_memCrush[i]))
+            {
+                mapComp->m_absoluteMapPositionPX.first += std::get<0>(m_memCrush[i]).first;
+                mapComp->m_absoluteMapPositionPX.second += std::get<0>(m_memCrush[i]).second;
+            }
         }
         //3 == direction
         if(!crush && !std::get<1>(m_memCrush[i]))

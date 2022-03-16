@@ -5,9 +5,6 @@ BUGS======================================================================
 Explosion does not appear if observer is close to wall
 
 ))
-Shake on wall move
-
-))
 Eject issue on moveable wall lateral====================~~
 
 ))
@@ -16,6 +13,9 @@ Corpse ejected by door and WALL==============================~~
 ))
 In input gamepad menu bug in GLFW in AXIS===============================~
 
+
+))
+Shake on wall move===========================OK
 
 ))
 Eject issue for marines========================OK
