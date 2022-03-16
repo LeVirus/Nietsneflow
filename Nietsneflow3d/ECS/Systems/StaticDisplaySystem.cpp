@@ -535,30 +535,44 @@ void StaticDisplaySystem::setWeaponMovement(PlayerConfComponent *playerComp,
     //put weapon to standart position
     else if(!weaponComp->m_spritePositionCorrected)
     {
+        bool standardPosReachedY = false, standardPosReachedX = false;
         float modX;
-        bool change = false;
         if(posComp->m_vertex[0].first < memPosComp->m_vectSpriteData[index][0].first)
         {
-            change = true;
-            modX = m_speedMoveWeaponChange;
+            modX = std::abs(weaponComp->m_currentWeaponMove.first) / 1.f;
         }
         else if(posComp->m_vertex[0].first > memPosComp->m_vectSpriteData[index][0].first)
         {
-            change = true;
-            modX = -m_speedMoveWeaponChange;
+            modX = -std::abs(weaponComp->m_currentWeaponMove.first) / 1.f;
         }
-        if(change)
+        float modY;
+        if(posComp->m_vertex[2].second < -1.0f)
         {
-            modVertexPos(posComp, {modX, m_speedMoveWeaponChange});
-            uint32_t currentWeapon = weaponComp->getStdCurrentWeaponSprite();
-            if(posComp->m_vertex[0].second >= memPosComp->m_vectSpriteData[currentWeapon][0].second)
+            modY = std::abs(weaponComp->m_currentWeaponMove.second) / 1.f;
+        }
+        else
+        {
+            modY = EPSILON_FLOAT;
+            standardPosReachedY = true;
+        }
+        if(std::abs(std::abs(posComp->m_vertex[0].first) -
+                    std::abs(memPosComp->m_vectSpriteData[index][0].first)) < 0.01f)
+        {
+            modX = EPSILON_FLOAT;
+            standardPosReachedX = true;
+        }
+        if(!standardPosReachedX || !standardPosReachedY)
+        {
+            modVertexPos(posComp, {modX, modY});
+        }
+        else
+        {
+            for(uint32_t i = 0; i < 4; ++i)
             {
-                for(uint32_t i = 0; i < 4; ++i)
-                {
-                    posComp->m_vertex[i] = memPosComp->m_vectSpriteData[currentWeapon][i];
-                    weaponComp->m_spritePositionCorrected = true;
-                }
+                posComp->m_vertex[i] =
+                        memPosComp->m_vectSpriteData[weaponComp->getStdCurrentWeaponSprite()][i];
             }
+            weaponComp->m_spritePositionCorrected = true;
         }
     }
 }

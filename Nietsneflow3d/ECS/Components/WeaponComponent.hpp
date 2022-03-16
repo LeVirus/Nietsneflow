@@ -30,7 +30,7 @@ struct WeaponComponent : public ecs::Component
     std::map<uint32_t, uint32_t> m_reloadSoundAssociated;
     std::vector<WeaponData> m_weaponsData;
     uint32_t m_numWeaponSprite, m_currentWeapon = 10000, m_previousWeapon;
-    PairFloat_t m_currentWeaponMove = {-0.02f, -0.01f};
+    PairFloat_t m_currentWeaponMove = {-0.005f, -0.003f};
     bool m_timerShootActive = false, m_shootFirstPhase, m_weaponChange = false,
     m_spritePositionCorrected = true;
     virtual ~WeaponComponent() = default;

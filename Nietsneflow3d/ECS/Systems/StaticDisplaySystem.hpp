@@ -99,9 +99,10 @@ private:
     std::array<VerticesData, static_cast<uint32_t>(VertexID_e::TOTAL)> m_vertices;
     std::vector<Texture> *m_ptrVectTexture = nullptr;
     float m_speedMoveWeaponChange = 0.05f;
-    PairFloat_t m_forkWeaponMovementX = {-0.4f, 0.1f}, m_forkWeaponMovementY = {-0.8f, -0.6f};
+    PairFloat_t m_forkWeaponMovementX = {-0.33f, -0.1f}, m_forkWeaponMovementY = {-0.99f, -0.4f};
     float m_diffTotalDistanceMoveWeaponX = std::abs(m_forkWeaponMovementX.first -
-                                                    m_forkWeaponMovementX.second);
+                                                    m_forkWeaponMovementX.second),
+    m_halfDiffTotalDistanceMoveWeaponX = m_diffTotalDistanceMoveWeaponX / 2.0f;
     float m_middleWeaponMovementX = m_forkWeaponMovementX.first + (m_forkWeaponMovementX.second -
                                                                    m_forkWeaponMovementX.first) / 2.0f;
     //FORCE UPDATE AT LAUNCH
