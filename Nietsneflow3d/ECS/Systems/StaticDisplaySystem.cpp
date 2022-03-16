@@ -539,16 +539,16 @@ void StaticDisplaySystem::setWeaponMovement(PlayerConfComponent *playerComp,
         float modX;
         if(posComp->m_vertex[0].first < memPosComp->m_vectSpriteData[index][0].first)
         {
-            modX = std::abs(weaponComp->m_currentWeaponMove.first) / 1.f;
+            modX = std::abs(weaponComp->m_currentWeaponMove.first) * 1.5f;
         }
         else if(posComp->m_vertex[0].first > memPosComp->m_vectSpriteData[index][0].first)
         {
-            modX = -std::abs(weaponComp->m_currentWeaponMove.first) / 1.f;
+            modX = -std::abs(weaponComp->m_currentWeaponMove.first) * 1.5f;
         }
         float modY;
         if(posComp->m_vertex[2].second < -1.0f)
         {
-            modY = std::abs(weaponComp->m_currentWeaponMove.second) / 1.f;
+            modY = std::abs(weaponComp->m_currentWeaponMove.second) * 1.2f;
         }
         else
         {
