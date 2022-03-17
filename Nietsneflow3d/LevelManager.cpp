@@ -983,18 +983,27 @@ void LevelManager::loadWeaponData(std::string_view sectionName, uint32_t numIt)
 void LevelManager::loadWallData()
 {
     std::vector<std::string> vectINISections = m_ini.getSectionNamesContaining("Wall");
-    std::optional<std::string> sprites;
+    std::optional<std::string> datas;
+    std::vector<float> time;
     for(uint32_t i = 0; i < vectINISections.size(); ++i)
     {
         m_wallData.insert({vectINISections[i], WallData()});
-        sprites = m_ini.getValue(vectINISections[i], "Sprite");
-        assert(!sprites || (!(*sprites).empty() && "Wall sprites cannot be loaded."));
-        vectStr_t results = convertStrToVectStr(*sprites);
+        datas = m_ini.getValue(vectINISections[i], "Sprite");
+        assert(!datas || (!(*datas).empty() && "Wall sprites cannot be loaded."));
+        vectStr_t results = convertStrToVectStr(*datas);
         m_wallData[vectINISections[i]].m_sprites.reserve(results.size());
         //load sprites
         for(uint32_t j = 0; j < results.size(); ++j)
         {
             m_wallData[vectINISections[i]].m_sprites.emplace_back(*m_pictureData.getIdentifier(results[j]));
+        }
+        //Time data
+        datas = m_ini.getValue(vectINISections[i], "Time");
+        if(datas)
+        {
+            time = convertStrToVectFloat(*datas);
+            assert(results.size() == time.size());
+            m_wallData[vectINISections[i]].m_time = time;
         }
     }
 }
@@ -1012,6 +1021,7 @@ void LevelManager::loadPositionWall()
         //Moveable wall
         m_mainWallData.insert({vectINISections[i], MoveableWallData()});
         m_mainWallData[vectINISections[i]].m_sprites = it->second.m_sprites;
+        m_mainWallData[vectINISections[i]].m_time = it->second.m_time;
         fillWallPositionVect(vectINISections[i], "GamePosition",
                              m_mainWallData[vectINISections[i]].m_TileGamePosition);
         fillWallPositionVect(vectINISections[i], "RemovePosition",

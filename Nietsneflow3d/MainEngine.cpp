@@ -4,6 +4,7 @@
 #include <ECS/Components/PositionVertexComponent.hpp>
 #include <ECS/Components/ColorVertexComponent.hpp>
 #include <ECS/Components/MapCoordComponent.hpp>
+#include <ECS/Components/WallMultiSpriteConf.hpp>
 #include <ECS/Components/SpriteTextureComponent.hpp>
 #include <ECS/Components/FPSVisibleStaticElementComponent.hpp>
 #include <ECS/Components/MoveableComponent.hpp>
@@ -886,13 +887,13 @@ void MainEngine::loadWallEntities(const std::map<std::string, MoveableWallData> 
             {
                 m_memWallPos.insert({*it, numEntity});
             }
-            confBaseWallData(numEntity, memSpriteData, *it, iter->second.m_sprites, vectSprite, iter->second.m_triggerBehaviourType);
+            confBaseWallData(numEntity, memSpriteData, *it, iter->second.m_sprites, iter->second.m_time,
+                             vectSprite, iter->second.m_triggerBehaviourType, moveable);
             if(!moveable)
             {
                 continue;
             }
             vectMemEntities.emplace_back(numEntity);
-            confBaseWallData(numEntity, memSpriteData, *it, iter->second.m_sprites, vectSprite, iter->second.m_triggerBehaviourType, true);
             MoveableComponent *moveComp = m_ecsManager.getComponentManager().
                     searchComponentByType<MoveableComponent>(numEntity, Components_e::MOVEABLE_COMPONENT);
             assert(moveComp);
@@ -947,6 +948,7 @@ void MainEngine::loadWallEntities(const std::map<std::string, MoveableWallData> 
 void MainEngine::confBaseWallData(uint32_t wallEntity, const SpriteData &memSpriteData,
                                   const PairUI_t& coordLevel,
                                   const std::vector<uint8_t> &numWallSprites,
+                                  const std::vector<float> &timeMultiSpriteCase,
                                   const std::vector<SpriteData> &vectSprite, TriggerBehaviourType_e triggerType, bool moveable)
 {
     MemSpriteDataComponent *memSpriteComp;
@@ -954,6 +956,13 @@ void MainEngine::confBaseWallData(uint32_t wallEntity, const SpriteData &memSpri
     TimerComponent *timerComp;
     confBaseComponent(wallEntity, memSpriteData, coordLevel,
                       CollisionShape_e::RECTANGLE_C, CollisionTag_e::WALL_CT);
+    if(!timeMultiSpriteCase.empty())
+    {
+        WallMultiSpriteConf *multiSpriteConf = m_ecsManager.getComponentManager().
+                searchComponentByType<WallMultiSpriteConf>(wallEntity, Components_e::WALL_MULTI_SPRITE_CONF);
+        assert(multiSpriteConf);
+        multiSpriteConf->m_time = timeMultiSpriteCase;
+    }
     spriteComp = m_ecsManager.getComponentManager().
             searchComponentByType<SpriteTextureComponent>(wallEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
     assert(spriteComp);
@@ -1874,6 +1883,7 @@ uint32_t MainEngine::createWallEntity(bool multiSprite, bool moveable)
     bitsetComponents[Components_e::GENERAL_COLLISION_COMPONENT] = true;
     if(multiSprite)
     {
+        bitsetComponents[Components_e::WALL_MULTI_SPRITE_CONF] = true;
         bitsetComponents[Components_e::MEM_SPRITE_DATA_COMPONENT] = true;
         bitsetComponents[Components_e::TIMER_COMPONENT] = true;
     }

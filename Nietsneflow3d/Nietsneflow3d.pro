@@ -50,6 +50,7 @@ HEADERS += \
     ECS/Components/TimerComponent.hpp \
     ECS/Components/TriggerComponent.hpp \
     ECS/Components/VisionComponent.hpp \
+    ECS/Components/WallMultiSpriteConf.hpp \
     ECS/Components/WeaponComponent.hpp \
     ECS/Components/WriteComponent.hpp \
     ECS/Systems/DoorWallSystem.hpp \

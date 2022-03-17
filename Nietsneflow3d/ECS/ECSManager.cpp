@@ -3,6 +3,7 @@
 #include <ECS/Components/SpriteTextureComponent.hpp>
 #include <ECS/Components/ColorVertexComponent.hpp>
 #include <ECS/Components/MapCoordComponent.hpp>
+#include <ECS/Components/WallMultiSpriteConf.hpp>
 #include <ECS/Components/FPSVisibleStaticElementComponent.hpp>
 #include <ECS/Components/MoveableComponent.hpp>
 #include <ECS/Components/MoveableWallConfComponent.hpp>
@@ -281,6 +282,11 @@ void ECSManager::syncComponentsFromEntities(uint32_t numEntity, const std::vecto
         case Components_e::AUDIO_COMPONENT:
         {
             m_componentManager->instanciateExternComponent(numEntity, std::make_unique<AudioComponent>());
+        }
+            break;
+        case Components_e::WALL_MULTI_SPRITE_CONF:
+        {
+            m_componentManager->instanciateExternComponent(numEntity, std::make_unique<WallMultiSpriteConf>());
         }
             break;
         case Components_e::TOTAL_COMPONENTS:

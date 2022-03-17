@@ -44,6 +44,7 @@ struct WallData
 {
     std::vector<uint8_t> m_sprites;
     std::set<PairUI_t> m_TileGamePosition, m_removeGamePosition;
+    std::vector<float> m_time;
 };
 
 struct AssociatedTriggerData
@@ -55,6 +56,7 @@ struct AssociatedTriggerData
 struct MoveableWallData
 {
     std::vector<uint8_t> m_sprites;
+    std::vector<float> m_time;
     std::set<PairUI_t> m_TileGamePosition, m_removeGamePosition;
     std::vector<std::pair<Direction_e, uint32_t>> m_directionMove;
     TriggerWallMoveType_e m_triggerType;
@@ -108,7 +110,6 @@ public:
     inline const Level &getLevel()const {return m_level;}
     inline const FontData &getFontData()const {return m_fontData;}
     inline std::string getCursorSpriteName()const {return m_spriteCursorName;}
-    inline const std::map<std::string, WallData> getWallData()const{return m_wallData;}
     inline const std::map<std::string, MoveableWallData> getMoveableWallData()const
     {
         return m_mainWallData;

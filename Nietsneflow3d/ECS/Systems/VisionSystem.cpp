@@ -14,6 +14,7 @@
 #include <ECS/Components/FPSVisibleStaticElementComponent.hpp>
 #include <ECS/Components/PositionVertexComponent.hpp>
 #include <ECS/Components/MoveableComponent.hpp>
+#include <ECS/Components/WallMultiSpriteConf.hpp>
 #include <ECS/Components/MemSpriteDataComponent.hpp>
 #include <ECS/Components/MemFPSGLSizeComponent.hpp>
 #include <ECS/Components/SpriteTextureComponent.hpp>
@@ -150,6 +151,7 @@ void VisionSystem::updateWallSprites()
     MemSpriteDataComponent *memSpriteComp;
     SpriteTextureComponent *spriteComp;
     TimerComponent *timerComp;
+    float currentInterval;
     for(uint32_t i = 0; i < m_memMultiSpritesWallEntities.size(); ++i)
     {
         spriteComp = stairwayToComponentManager().
@@ -164,7 +166,19 @@ void VisionSystem::updateWallSprites()
         assert(memSpriteComp);
         std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() -
                 timerComp->m_clockA;
-        if(elapsed_seconds.count() > 0.80)
+        WallMultiSpriteConf *multiSpriteConf = stairwayToComponentManager().
+                searchComponentByType<WallMultiSpriteConf>(m_memMultiSpritesWallEntities[i], Components_e::WALL_MULTI_SPRITE_CONF);
+        assert(multiSpriteConf);
+        if(!multiSpriteConf->m_time.empty())
+        {
+            assert(memSpriteComp->m_current < multiSpriteConf->m_time.size());
+            currentInterval = multiSpriteConf->m_time[memSpriteComp->m_current];
+        }
+        else
+        {
+            currentInterval = 0.80;
+        }
+        if(elapsed_seconds.count() > currentInterval)
         {
             ++memSpriteComp->m_current;
             if(memSpriteComp->m_current >= memSpriteComp->m_vectSpriteData.size())

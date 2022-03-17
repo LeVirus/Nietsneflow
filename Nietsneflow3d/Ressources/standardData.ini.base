@@ -23,6 +23,7 @@ Sprite = SpriteWallC
 
 [WallScreen]
 Sprite = SpriteSimetraLogo SpriteSimetraWrite
+Time = 0.5 1.5
 
 [WallLogo]
 Sprite = SpriteSimetraLogo
