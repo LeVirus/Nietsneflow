@@ -8,7 +8,6 @@ texturePosY = 0.0
 textureWeight = 0.4924
 textureHeight = 1.0
 
-118
 [SpriteSimetraLogo]
 texture = 7
 texturePosX = 0.0276
@@ -16,7 +15,38 @@ texturePosY = 0.0
 textureWeight = 0.4553
 textureHeight = 1.0
 
-[SpriteAnimTeleportA]
+#4388 42
+[SpriteSimetraCardBlue]
+texture = 7
+texturePosX = 0.9396
+texturePosY = 0.02
+textureWeight = 0.0182
+textureHeight = 0.0622
+
+#4489
+[SpriteSimetraCardGreen]
+texture = 7
+texturePosX = 0.9612
+texturePosY = 0.02
+textureWeight = 0.0182
+textureHeight = 0.0622
+
+#4582
+[SpriteSimetraCardPurple]
+texture = 7
+texturePosX = 0.9811
+texturePosY = 0.02
+textureWeight = 0.0182
+textureHeight = 0.0622
+
+#4284 42  85 130  4369 172
+[SpriteSimetraCardGold]
+texture = 7
+texturePosX = 0.9173
+texturePosY = 0.02
+textureWeight = 0.0182
+textureHeight = 0.0622
+
 [SpriteTeleport]
 texture = 1
 texturePosX = 0.67812

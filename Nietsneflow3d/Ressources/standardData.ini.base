@@ -39,7 +39,7 @@ Vertical = false
 [DoorCardV]
 Sprite = SpriteDoorA
 Vertical = true
-CardID = ObjectRedCard
+CardID = ObjectPurpleCard
 
 [TriggerA]
 Sprite = SpriteTriggerA
@@ -310,13 +310,37 @@ SpriteHeightGame = 0.5
 Type = 2
 Containing = 10
 
-[ObjectRedCard]
-CardName = RED CARD
-Sprite = SpriteItemCard
-SpriteWeightGame = 0.2 ; value in %
-SpriteHeightGame = 0.5
+[ObjectPurpleCard]
+CardName = PURPLE CARD
+Sprite = SpriteSimetraCardPurple
+SpriteWeightGame = 0.1365
+SpriteHeightGame = 0.4665
 Type = 3
 CardID = 0
+
+[ObjectBlueCard]
+CardName = BLUE CARD
+Sprite = SpriteSimetraCardBlue
+SpriteWeightGame = 0.1365
+SpriteHeightGame = 0.4665
+Type = 3
+CardID = 1
+
+[ObjectGreenCard]
+CardName = GREEN CARD
+Sprite = SpriteSimetraCardGreen
+SpriteWeightGame = 0.1365
+SpriteHeightGame = 0.4665
+Type = 3
+CardID = 2
+
+[ObjectGoldCard]
+CardName = GOLD CARD
+Sprite = SpriteSimetraCardGold
+SpriteWeightGame = 0.1365
+SpriteHeightGame = 0.4665
+Type = 3
+CardID = 3
 
 [GroundLittleStorage]
 Sprite = SpriteLittleStorage
