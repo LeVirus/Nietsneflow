@@ -2,6 +2,12 @@ BUGS======================================================================
 
 
 ))
+New key menu display issue
+
+))
+Visible shots explosion bad display on moveable wall
+
+))
 Wall intersection raycast issue some times
 
 ))
@@ -13,6 +19,9 @@ Corpse ejected by door and WALL==============================~~
 ))
 In input gamepad menu bug in GLFW in AXIS===============================~
 
+
+))
+Next level screen zero enemies or secrets found issue=====================OK
 
 ))
 Explosion does not appear if observer is close to wall====================OK
