@@ -346,7 +346,6 @@ void IASystem::confVisibleShoot(std::vector<uint32_t> &visibleShots, const PairF
     ShotConfComponent *targetShotConfComp = stairwayToComponentManager().
             searchComponentByType<ShotConfComponent>(visibleShots[currentShot], Components_e::SHOT_CONF_COMPONENT);
     assert(targetShotConfComp);
-    targetShotConfComp->m_currentLoopEjected = false;
     if(targetShotConfComp->m_ejectMode)
     {
         targetShotConfComp->m_ejectMode = false;

@@ -110,7 +110,6 @@ void CollisionSystem::execSystem()
             ShotConfComponent *shotConfComp = stairwayToComponentManager().
                     searchComponentByType<ShotConfComponent>(mVectNumEntity[i], Components_e::SHOT_CONF_COMPONENT);
             assert(shotConfComp);
-            shotConfComp->m_currentLoopEjected = false;
         }
         secondEntitiesLoop(mVectNumEntity[i], i, tagCompA);
         if(tagCompA->m_tagA == CollisionTag_e::EXPLOSION_CT)
@@ -755,7 +754,8 @@ bool CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args, bool shotEx
         break;
     }
     //TREAT VISIBLE SHOT
-    if((args.tagCompA->m_tagA == CollisionTag_e::BULLET_ENEMY_CT) || (args.tagCompA->m_tagA == CollisionTag_e::BULLET_PLAYER_CT))
+    if((args.tagCompA->m_tagA == CollisionTag_e::BULLET_ENEMY_CT) ||
+            (args.tagCompA->m_tagA == CollisionTag_e::BULLET_PLAYER_CT))
     {
         //limit level case
         ShotConfComponent *shotConfComp = stairwayToComponentManager().
@@ -787,13 +787,12 @@ bool CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args, bool shotEx
                     std::swap(circleCompA.m_ray, shotConfComp->m_ejectExplosionRay);
                     return false;
                 }
-                else if(args.tagCompB->m_tagA == CollisionTag_e::WALL_CT && !shotConfComp->m_currentLoopEjected)
+                else if(args.tagCompB->m_tagA == CollisionTag_e::WALL_CT)
                 {
                     MoveableWallConfComponent *moveWallComp = stairwayToComponentManager().
                             searchComponentByType<MoveableWallConfComponent>(args.entityNumB, Components_e::MOVEABLE_WALL_CONF_COMPONENT);
                     if(moveWallComp)
                     {
-                        shotConfComp->m_currentLoopEjected = true;
                         RectangleCollisionComponent &rectCompB = getRectangleComponent(args.entityNumB);
                         collisionCircleRectEject(args, circleCompA.m_ray, rectCompB, shotExplosionEject);
                     }
