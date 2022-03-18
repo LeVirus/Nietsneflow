@@ -250,6 +250,8 @@ void GraphicEngine::fillMenuWrite(WriteComponent *writeComp, MenuMode_e menuEntr
         m_currentDisplayedResolution = m_currentResolution;
         m_displayMenuFullscreenMode = m_fullscreenMode;
         setCurrentResolution(m_currentDisplayedResolution);
+        std::map<MenuMode_e, PairPairFloatStr_t>::const_iterator it = MAP_MENU_DATA.find(menuEntry);
+        writeComp->m_str = it->second.second;
     }
     else if(menuEntry == MenuMode_e::NEW_KEY)
     {
