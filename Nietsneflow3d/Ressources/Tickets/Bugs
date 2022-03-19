@@ -1,9 +1,6 @@
 BUGS======================================================================
 
 
-))
-Next level screen zero enemies or secrets found issue when restart level
-
 
 ))
 Eject issue on moveable wall lateral====================~~
@@ -14,6 +11,9 @@ Corpse ejected by door and WALL==============================~~
 ))
 In input gamepad menu bug in GLFW in AXIS===============================~
 
+
+))
+Next level screen zero enemies or secrets found issue when restart level=================OK
 
 ))
 Wall intersection raycast issue some times======================OK
