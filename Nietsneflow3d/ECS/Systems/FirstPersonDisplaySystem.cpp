@@ -1299,14 +1299,74 @@ std::optional<PairUI_t> getCorrectedCoord(const PairFloat_t &currentPoint,
     //raycast on angle case
     if(fmodX && fmodY)
     {
+        bool treat = false;
+        std::optional<ElementRaycast> elementA, elementB;
         if(std::cos(radiantAngle) < EPSILON_FLOAT)
         {
-            --point.first;
+            //NORTH WEST
+            if(std::sin(radiantAngle) > EPSILON_FLOAT)
+            {
+                elementA = Level::getElementCase(*getLevelCoord({point.first - 1, point.second}));
+                elementB = Level::getElementCase(*getLevelCoord({point.first, point.second - 1}));
+                if(elementA && elementB && elementA->m_type == LevelCaseType_e::WALL_LC &&
+                        elementB->m_type == LevelCaseType_e::WALL_LC)
+                {
+                    --point.first;
+                    treat = true;
+                }
+            }
+            //SOUTH WEST
+            else
+            {
+                elementA = Level::getElementCase(*getLevelCoord(point));
+                elementB = Level::getElementCase(*getLevelCoord({point.first - 1, point.second - 1}));
+                if(elementA && elementB && elementA->m_type == LevelCaseType_e::WALL_LC &&
+                        elementB->m_type == LevelCaseType_e::WALL_LC)
+                {
+                    treat = true;
+                }
+            }
         }
-        if(std::sin(radiantAngle) > EPSILON_FLOAT)
+        else
         {
-            --point.second;
+            //NORTH EAST
+            if(std::sin(radiantAngle) > EPSILON_FLOAT)
+            {
+                elementA = Level::getElementCase(*getLevelCoord(point));
+                elementB = Level::getElementCase(*getLevelCoord({point.first - 1, point.second - 1}));
+                if(elementA && elementB && elementA->m_type == LevelCaseType_e::WALL_LC &&
+                        elementB->m_type == LevelCaseType_e::WALL_LC)
+                {
+                    --point.second;
+                    --point.first;
+                    treat = true;
+                }
+            }
+            //SOUTH EAST
+            else
+            {
+                elementA = Level::getElementCase(*getLevelCoord({point.first - 1, point.second}));
+                elementB = Level::getElementCase(*getLevelCoord({point.first, point.second - 1}));
+                if(elementA && elementB && elementA->m_type == LevelCaseType_e::WALL_LC &&
+                        elementB->m_type == LevelCaseType_e::WALL_LC)
+                {
+                    --point.first;
+                    treat = true;
+                }
+            }
         }
+        if(!treat)
+        {
+            if(std::cos(radiantAngle) < EPSILON_FLOAT)
+            {
+                --point.first;
+            }
+            if(std::sin(radiantAngle) > EPSILON_FLOAT)
+            {
+                --point.second;
+            }
+        }
+
     }
     else if(fmodY && std::sin(radiantAngle) > EPSILON_FLOAT &&
             (lateral || std::abs(std::cos(radiantAngle)) < 0.0001f))
