@@ -241,12 +241,7 @@ void GraphicEngine::fillMenuWrite(WriteComponent *writeComp, MenuMode_e menuEntr
     {
         writeComp->m_str = m_saveMenuWrite;
     }
-    else
-    {
-        std::map<MenuMode_e, PairPairFloatStr_t>::const_iterator it = MAP_MENU_DATA.find(menuEntry);
-        writeComp->m_str = it->second.second;
-    }
-    if(menuEntry == MenuMode_e::TRANSITION_LEVEL)
+    else if(menuEntry == MenuMode_e::TRANSITION_LEVEL)
     {
         writeComp->m_str = getEndLevelMenuStr(endLevelData);
     }
@@ -260,6 +255,8 @@ void GraphicEngine::fillMenuWrite(WriteComponent *writeComp, MenuMode_e menuEntr
     }
     else if(menuEntry == MenuMode_e::NEW_KEY)
     {
+        std::map<MenuMode_e, PairPairFloatStr_t>::const_iterator it = MAP_MENU_DATA.find(menuEntry);
+        writeComp->m_str = it->second.second;
         writeComp->m_str += " " + m_mapInputActionStringAssociated.at(static_cast<InputMenuCursorPos_e>(cursorPos));
     }
     else

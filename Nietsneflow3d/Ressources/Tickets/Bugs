@@ -3,9 +3,6 @@ BUGS======================================================================
 
 
 ))
-Regression load level does not display 
-
-))
 Eject issue on moveable wall lateral====================~~
 
 ))
@@ -14,6 +11,9 @@ Corpse ejected by door and WALL==============================~~
 ))
 In input gamepad menu bug in GLFW in AXIS===============================~
 
+
+))
+Regression load level does not display=========================OK
 
 ))
 loading From level with checkpoint and reload an other level Issue==================OK
