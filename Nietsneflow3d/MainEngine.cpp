@@ -1608,6 +1608,8 @@ bool MainEngine::loadSavedGame(uint32_t saveNum, LevelState_e levelMode)
     {
         return false;
     }
+    m_memCheckpointLevelState = {};
+    m_memEnemiesStateFromCheckpoint.clear();
     m_memPlayerConfBeginLevel = *savedData->m_playerConfBeginLevel;
     if(savedData->m_checkpointLevelData)
     {

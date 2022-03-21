@@ -3,9 +3,6 @@ BUGS======================================================================
 
 
 ))
-loading From level with checkpoint and reload an other level Issue
-
-))
 Regression load level does not display 
 
 ))
@@ -17,6 +14,9 @@ Corpse ejected by door and WALL==============================~~
 ))
 In input gamepad menu bug in GLFW in AXIS===============================~
 
+
+))
+loading From level with checkpoint and reload an other level Issue==================OK
 
 ))
 Next level screen zero enemies or secrets found issue when restart level=================OK
