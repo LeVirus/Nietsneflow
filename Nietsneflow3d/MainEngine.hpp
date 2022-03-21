@@ -48,7 +48,7 @@ struct MemPlayerConf
 
 struct MemCheckpointLevelState
 {
-    uint32_t m_levelNum, m_checkpointNum;
+    uint32_t m_levelNum, m_checkpointNum, m_secretsFound, m_ennemiesKilled;
     PairUI_t m_playerPos;
 };
 
@@ -61,7 +61,7 @@ struct MemCheckpointEnemiesState
 
 struct MemCheckpointElementsState
 {
-    uint32_t m_checkpointNum;
+    uint32_t m_checkpointNum, m_secretsNumber, m_enemiesKilled;
     PairUI_t m_checkpointPos;
     std::vector<MemCheckpointEnemiesState> m_enemiesData;
     std::set<PairUI_t> m_staticElementDeleted;

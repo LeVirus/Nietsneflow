@@ -1759,6 +1759,8 @@ void LevelManager::savePlayerGear(bool beginLevel, const MemPlayerConf &playerCo
 void LevelManager::saveElementsGameProgress(const MemCheckpointElementsState &checkpointData)
 {
     m_ini.setValue("Checkpoint", "Num", std::to_string(checkpointData.m_checkpointNum));
+    m_ini.setValue("Checkpoint", "SecretsFound", std::to_string(checkpointData.m_secretsNumber));
+    m_ini.setValue("Checkpoint", "EnemiesKilled", std::to_string(checkpointData.m_enemiesKilled));
     m_ini.setValue("Checkpoint", "PosX", std::to_string(checkpointData.m_checkpointPos.first));
     m_ini.setValue("Checkpoint", "PosY", std::to_string(checkpointData.m_checkpointPos.second));
     saveEnemiesDataGameProgress(checkpointData.m_enemiesData);
@@ -1858,7 +1860,8 @@ std::optional<MemLevelLoadedData> LevelManager::loadSavedGame(uint32_t saveNum)
         return {};
     }
     uint32_t levelNum = std::stoi(*val);
-    std::optional<MemPlayerConf> playerConfBeginLevel = loadPlayerConf(true), playerConfCheckpoint = loadPlayerConf(false);
+    std::optional<MemPlayerConf> playerConfBeginLevel = loadPlayerConf(true),
+            playerConfCheckpoint = loadPlayerConf(false);
     if(!playerConfBeginLevel || playerConfBeginLevel->m_ammunationsCount.size() != playerConfBeginLevel->m_weapons.size())
     {
         return {};
@@ -1912,7 +1915,7 @@ std::optional<MemPlayerConf> LevelManager::loadPlayerConf(bool beginLevel)
 //===================================================================
 std::unique_ptr<MemCheckpointElementsState> LevelManager::loadCheckpointDataSavedGame()
 {
-    uint32_t checkpointNum;
+    uint32_t checkpointNum, secretsFound, enemiesKilled;
     PairUI_t pos;
     std::optional<std::string> val;
     val = m_ini.getValue("Checkpoint", "Num");
@@ -1921,14 +1924,21 @@ std::unique_ptr<MemCheckpointElementsState> LevelManager::loadCheckpointDataSave
         return nullptr;
     }
     checkpointNum = std::stoi(*val);
+    val = m_ini.getValue("Checkpoint", "SecretsFound");
+    assert(val);
+    secretsFound = std::stoi(*val);
+    val = m_ini.getValue("Checkpoint", "EnemiesKilled");
+    assert(val);
+    enemiesKilled = std::stoi(*val);
     val = m_ini.getValue("Checkpoint", "PosX");
     assert(val);
     pos.first = std::stoi(*val);
     val = m_ini.getValue("Checkpoint", "PosY");
     assert(val);
     pos.second = std::stoi(*val);
-    return std::make_unique<MemCheckpointElementsState>(MemCheckpointElementsState{checkpointNum, pos,
-                                                                                   loadEnemiesDataGameProgress(), loadStaticElementsDataGameProgress()});
+    return std::make_unique<MemCheckpointElementsState>(MemCheckpointElementsState{
+                                                            checkpointNum, secretsFound, enemiesKilled, pos,
+                                                            loadEnemiesDataGameProgress(), loadStaticElementsDataGameProgress()});
 }
 
 //===================================================================

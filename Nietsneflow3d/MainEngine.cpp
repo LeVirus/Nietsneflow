@@ -184,7 +184,9 @@ LevelState MainEngine::mainLoop(uint32_t levelNum, LevelState_e levelState)
 void MainEngine::saveGameProgressCheckpoint(uint32_t levelNum, const PairUI_t &checkpointReached, uint32_t checkpointNum)
 {
     std::vector<MemCheckpointEnemiesState> vectEnemiesData;
-    m_memCheckpointLevelState = {levelNum, checkpointNum, checkpointReached};
+    uint32_t enemiesKilled = (m_playerConf->m_enemiesKilled) ? *m_playerConf->m_enemiesKilled : 0;
+    uint32_t secretsFound = (m_playerConf->m_secretsFound) ? *m_playerConf->m_secretsFound : 0;
+    m_memCheckpointLevelState = {levelNum, checkpointNum, secretsFound, enemiesKilled, checkpointReached};
     //OOOK SAVE GEAR BEGIN LEVEL
     savePlayerGear(false);
     vectEnemiesData.reserve(m_memEnemiesStateFromCheckpoint.size());
@@ -215,7 +217,7 @@ void MainEngine::saveGameProgressCheckpoint(uint32_t levelNum, const PairUI_t &c
             }
         }
     }
-    MemCheckpointElementsState d{checkpointNum,
+    MemCheckpointElementsState d{checkpointNum, secretsFound, enemiesKilled,
                                  checkpointReached, m_memEnemiesStateFromCheckpoint,
                 m_memStaticEntitiesDeletedFromCheckpoint};
     saveGameProgress(m_currentLevel, m_currentSave, &d);
@@ -234,7 +236,8 @@ void MainEngine::saveGameProgress(uint32_t levelNum, std::optional<uint32_t> num
     {
         m_graphicEngine.updateGraphicCheckpointData(checkpointData, saveNum);
     }
-    std::string date = m_refGame->saveGameProgress(m_memPlayerConfBeginLevel, m_memPlayerConfCheckpoint, levelNum, saveNum, checkpointData);
+    std::string date = m_refGame->saveGameProgress(m_memPlayerConfBeginLevel, m_memPlayerConfCheckpoint,
+                                                   levelNum, saveNum, checkpointData);
     m_graphicEngine.updateSaveNum(levelNum, saveNum, {}, date);
 }
 
@@ -757,6 +760,8 @@ void MainEngine::loadGameProgressCheckpoint()
     mapComp->m_absoluteMapPositionPX = getCenteredAbsolutePosition(m_memCheckpointLevelState->m_playerPos);
     m_memStaticEntitiesDeletedFromCheckpoint = m_currentEntitiesDelete;
     m_playerConf->m_currentCheckpoint = m_memCheckpointLevelState->m_checkpointNum;
+    m_playerConf->m_enemiesKilled = m_memCheckpointLevelState->m_ennemiesKilled;
+    m_playerConf->m_secretsFound = m_memCheckpointLevelState->m_secretsFound;
 }
 
 //===================================================================
@@ -1632,7 +1637,9 @@ bool MainEngine::loadSavedGame(uint32_t saveNum, LevelState_e levelMode)
 //===================================================================
 void MainEngine::loadCheckpointSavedGame(const MemCheckpointElementsState &checkpointData)
 {
-    m_memCheckpointLevelState = {*m_levelToLoad, checkpointData.m_checkpointNum, checkpointData.m_checkpointPos};
+    m_memCheckpointLevelState = {*m_levelToLoad, checkpointData.m_checkpointNum,
+                                 checkpointData.m_secretsNumber, checkpointData.m_enemiesKilled,
+                                 checkpointData.m_checkpointPos};
     m_currentEntitiesDelete = checkpointData.m_staticElementDeleted;
     m_memEnemiesStateFromCheckpoint = checkpointData.m_enemiesData;
 }

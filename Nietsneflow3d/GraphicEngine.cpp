@@ -493,15 +493,13 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 //===================================================================
 std::string getEndLevelMenuStr(const std::tuple<const PlayerConfComponent*, uint32_t, uint32_t> &endLevelData)
 {
-    std::cerr << *std::get<0>(endLevelData)->m_enemiesKilled << " / " << std::get<2>(endLevelData) << " E\n";
-    std::cerr << *std::get<0>(endLevelData)->m_secretFound << " / " << std::get<1>(endLevelData) << " S\n";
     float enemiesKilledPercent =
             (!std::get<0>(endLevelData)->m_enemiesKilled || std::get<2>(endLevelData) == 0) ? EPSILON_FLOAT :
                 static_cast<float>(*std::get<0>(endLevelData)->m_enemiesKilled) /
                 static_cast<float>(std::get<2>(endLevelData)) * 100.0f,
             secretsFoundPercent =
-            (!std::get<0>(endLevelData)->m_secretFound || std::get<1>(endLevelData) == 0) ? EPSILON_FLOAT :
-                static_cast<float>(*std::get<0>(endLevelData)->m_secretFound) /
+            (!std::get<0>(endLevelData)->m_secretsFound || std::get<1>(endLevelData) == 0) ? EPSILON_FLOAT :
+                static_cast<float>(*std::get<0>(endLevelData)->m_secretsFound) /
                 static_cast<float>(std::get<1>(endLevelData)) * 100.0f;
     return "ENEMIES KILLED :         " + std::to_string(static_cast<uint32_t>(enemiesKilledPercent)) +
        "%\\\\SECRETS FOUND :         " + std::to_string(static_cast<uint32_t>(secretsFoundPercent)) +

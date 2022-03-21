@@ -883,13 +883,13 @@ bool CollisionSystem::treatCollisionPlayer(CollisionArgs &args, CircleCollisionC
                 searchComponentByType<PlayerConfComponent>(args.entityNumA, Components_e::PLAYER_CONF_COMPONENT);
         assert(playerComp);
         writePlayerInfo("SECRET FOUND");
-        if(!playerComp->m_secretFound)
+        if(!playerComp->m_secretsFound)
         {
-            playerComp->m_secretFound = 1;
+            playerComp->m_secretsFound = 1;
         }
         else
         {
-            ++(*playerComp->m_secretFound);
+            ++(*playerComp->m_secretsFound);
         }
         m_vectEntitiesToDelete.push_back(args.entityNumB);
         return true;
