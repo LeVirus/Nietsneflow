@@ -1765,6 +1765,21 @@ void LevelManager::saveElementsGameProgress(const MemCheckpointElementsState &ch
     m_ini.setValue("Checkpoint", "PosY", std::to_string(checkpointData.m_checkpointPos.second));
     saveEnemiesDataGameProgress(checkpointData.m_enemiesData);
     saveStaticElementsDataGameProgress(checkpointData.m_staticElementDeleted);
+    saveMoveableWallDataGameProgress(checkpointData.m_moveableWallData);
+}
+
+//===================================================================
+void LevelManager::saveMoveableWallDataGameProgress(const std::map<uint32_t, uint32_t> &moveableWallData)
+{
+    std::string strShapeNum, strNumberOfTriggers;
+    std::map<uint32_t, uint32_t>::const_iterator it = moveableWallData.begin();
+    for(; it != moveableWallData.end(); ++it)
+    {
+        strShapeNum += std::to_string(it->first) + " ";
+        strNumberOfTriggers += std::to_string(it->second) + " ";
+    }
+    m_ini.setValue("MoveableWall", "ShapeNum", strShapeNum);
+    m_ini.setValue("MoveableWall", "NumberOfTriggers", strNumberOfTriggers);
 }
 
 //===================================================================
@@ -1937,8 +1952,32 @@ std::unique_ptr<MemCheckpointElementsState> LevelManager::loadCheckpointDataSave
     assert(val);
     pos.second = std::stoi(*val);
     return std::make_unique<MemCheckpointElementsState>(MemCheckpointElementsState{
-                                                            checkpointNum, secretsFound, enemiesKilled, pos,
-                                                            loadEnemiesDataGameProgress(), loadStaticElementsDataGameProgress()});
+                    checkpointNum, secretsFound, enemiesKilled, pos,
+                    loadEnemiesDataGameProgress(),
+                    loadMoveableWallDataGameProgress(), loadStaticElementsDataGameProgress()});
+}
+
+//===================================================================
+std::map<uint32_t, uint32_t> LevelManager::loadMoveableWallDataGameProgress()
+{
+    std::optional<std::string> val;
+    std::vector<uint32_t> vectShapes, vectTriggers;
+    std::map<uint32_t, uint32_t> map;
+    val = m_ini.getValue("MoveableWall", "ShapeNum");
+    if(!val)
+    {
+        return {};
+    }
+    vectShapes = convertStrToVectUI(*val);
+    val = m_ini.getValue("MoveableWall", "NumberOfTriggers");
+    assert(val);
+    vectTriggers = convertStrToVectUI(*val);
+    assert(vectShapes.size() == vectTriggers.size());
+    for(uint32_t i = 0; i < vectShapes.size(); ++i)
+    {
+        map.insert({vectShapes[i], vectTriggers[i]});
+    }
+    return map;
 }
 
 //===================================================================

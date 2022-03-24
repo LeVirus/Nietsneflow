@@ -64,6 +64,7 @@ struct MemCheckpointElementsState
     uint32_t m_checkpointNum, m_secretsNumber, m_enemiesKilled;
     PairUI_t m_checkpointPos;
     std::vector<MemCheckpointEnemiesState> m_enemiesData;
+    std::map<uint32_t, uint32_t> m_moveableWallData;
     std::set<PairUI_t> m_staticElementDeleted;
 };
 
@@ -171,6 +172,9 @@ public:
     void loadCheckpointSavedGame(const MemCheckpointElementsState &checkpointData);
     bool checkSavedGameExists(uint32_t saveNum)const;
 private:
+    void clearCheckpointData();
+    void saveEnemiesCheckpoint();
+    void saveMoveableWallCheckpoint();
     bool isLoadFromLevelBegin(LevelState_e levelState)const;
     void clearObjectToDelete();
     void savePlayerGear(bool beginLevel);
@@ -200,19 +204,21 @@ private:
     void confActionEntity();
     void loadWallEntities(const std::map<std::string, MoveableWallData> &wallData,
                           const std::vector<SpriteData> &vectSprite);
+    void modifyMoveableWallPos(uint32_t numEntity, const pairI_t &moveableWallCorrectedPos);
     void confBaseWallData(uint32_t wallEntity, const SpriteData &memSpriteData, const PairUI_t &coordLevel,
                           const std::vector<uint8_t> &numWallSprites, const std::vector<float> &timeMultiSpriteCase,
                           const std::vector<SpriteData> &vectSprite, TriggerBehaviourType_e triggerType, bool moveable = false);
     void loadDoorEntities(const LevelManager &levelManager);
     void loadEnemiesEntities(const LevelManager &levelManager);
+    pairI_t getModifMoveableWallDataCheckpoint(uint32_t wallShapeNum, const MoveableWallData &moveableWallData);
     void loadNonVisibleEnemyAmmoStuff(bool loadFromCheckpoint, uint32_t currentEnemy,
                                       const EnemyData &enemyData, const LevelManager &levelManager,
                                       EnemyConfComponent *enemyComp);
-    void treatCheckpointEnemiesData(bool loadFromCheckpoint, uint32_t enemyEntity, uint32_t cmpt);
+    void memCheckpointEnemiesData(bool loadFromCheckpoint, uint32_t enemyEntity, uint32_t cmpt);
     void loadCheckpointsEntities(const LevelManager &levelManager);
     void initStdCollisionCase(uint32_t entityNum, const PairUI_t &mapPos, CollisionTag_e tag);
     void loadSecretsEntities(const LevelManager &levelManager);
-    void loadTriggerEntityData(const MoveableWallData &moveWallData, const std::vector<uint32_t> &vectPosition, const std::vector<SpriteData> &vectSprite, TriggerWallMoveType_e type);
+    void loadTriggerEntityData(const MoveableWallData &moveWallData, const std::vector<uint32_t> &vectPosition, const std::vector<SpriteData> &vectSprite, TriggerWallMoveType_e type, uint32_t shapeNum);
     void confVisibleAmmo(uint32_t ammoEntity);
     void loadStaticElementEntities(const LevelManager &levelManager);
     void loadBarrelElementEntities(const LevelManager &levelManager);
@@ -307,6 +313,8 @@ private:
     std::optional<MemCheckpointLevelState> m_memCheckpointLevelState;
     uint32_t m_playerEntity;
     std::vector<MemCheckpointEnemiesState> m_memEnemiesStateFromCheckpoint;
+    //first shape num, second number of actionned
+    std::map<uint32_t, uint32_t> m_memMoveableWallCheckpointData;
 };
 
 void insertEnemySpriteFromType(const std::vector<SpriteData> &vectSprite, mapEnemySprite_t &mapSpriteAssociate,
