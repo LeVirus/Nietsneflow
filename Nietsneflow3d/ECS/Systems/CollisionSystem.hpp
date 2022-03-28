@@ -16,6 +16,7 @@ struct PlayerConfComponent;
 struct WeaponComponent;
 struct MoveableWallConfComponent;
 struct ShotConfComponent;
+class MainEngine;
 
 class CollisionSystem : public ecs::System
 {
@@ -29,6 +30,10 @@ public:
     inline void clearVectObjectToDelete()
     {
         m_vectEntitiesToDelete.clear();
+    }
+    inline void linkMainEngine(MainEngine *mainEngine)
+    {
+        m_refMainEngine = mainEngine;
     }
     void memPlayerDatas(uint32_t playerEntity);
     void writePlayerInfo(const std::string &info);
@@ -98,6 +103,7 @@ private:
     //0 movement eject, 1 angle behaviour, 2 Direction,
     //3 if moveable wall current direction
     std::vector<std::tuple<PairFloat_t, bool, Direction_e, std::optional<Direction_e>>> m_memCrush;
+    MainEngine *m_refMainEngine;
 };
 
 bool opposingDirection(Direction_e dirA, Direction_e dirB);

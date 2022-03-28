@@ -6,6 +6,7 @@
 #include <ECS/ECSManager.hpp>
 #include <Level.hpp>
 #include <ECS/Components/AudioComponent.hpp>
+#include <ECS/Components/MoveableWallConfComponent.hpp>
 
 struct MemSpriteData;
 struct WallData;
@@ -65,6 +66,7 @@ struct MemCheckpointElementsState
     PairUI_t m_checkpointPos;
     std::vector<MemCheckpointEnemiesState> m_enemiesData;
     std::map<uint32_t, uint32_t> m_moveableWallData;
+    std::map<uint32_t, std::vector<uint32_t>> m_triggerWallMoveableWallData;
     std::set<PairUI_t> m_staticElementDeleted;
 };
 
@@ -98,6 +100,7 @@ public:
     void playerAttack(uint32_t playerEntity, PlayerConfComponent *playerComp,
                       const PairFloat_t &point, float degreeAngle);
     void setUnsetPaused();
+    void updateTriggerWallMoveableWallDataCheckpoint(const std::pair<uint32_t, TriggerWallCheckpointData> &pairShapeWallNum);
     inline bool isGamePaused()
     {
         return m_gamePaused;
@@ -165,6 +168,11 @@ public:
     {
         return m_memCheckpointLevelState != std::nullopt;
     }
+    inline void updateTriggerWallCheckpointData(uint32_t shapeNum)
+    {
+        ++m_memMoveableWallCheckpointData[shapeNum];
+    }
+
     void saveAudioSettings();
     void saveInputSettings(const std::map<ControlKey_e, GamepadInputState> &gamepadArray,
                            const std::map<ControlKey_e, uint32_t> &keyboardArray);
@@ -204,7 +212,6 @@ private:
     void confActionEntity();
     void loadWallEntities(const std::map<std::string, MoveableWallData> &wallData,
                           const std::vector<SpriteData> &vectSprite);
-    void modifyMoveableWallPos(uint32_t numEntity, const pairI_t &moveableWallCorrectedPos);
     void confBaseWallData(uint32_t wallEntity, const SpriteData &memSpriteData, const PairUI_t &coordLevel,
                           const std::vector<uint8_t> &numWallSprites, const std::vector<float> &timeMultiSpriteCase,
                           const std::vector<SpriteData> &vectSprite, TriggerBehaviourType_e triggerType, bool moveable = false);
@@ -315,6 +322,8 @@ private:
     std::vector<MemCheckpointEnemiesState> m_memEnemiesStateFromCheckpoint;
     //first shape num, second number of actionned
     std::map<uint32_t, uint32_t> m_memMoveableWallCheckpointData;
+    //MAP (first shape num, VECTOR number of actionned)
+    std::map<uint32_t, std::vector<uint32_t>> m_memTriggerWallMoveableWallCheckpointData;
 };
 
 void insertEnemySpriteFromType(const std::vector<SpriteData> &vectSprite, mapEnemySprite_t &mapSpriteAssociate,

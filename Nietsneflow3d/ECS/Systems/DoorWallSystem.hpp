@@ -7,6 +7,7 @@ class ECSManager;
 struct DoorComponent;
 struct MapCoordComponent;
 struct MoveableWallConfComponent;
+class MainEngine;
 
 class DoorWallSystem : public ecs::System
 {
@@ -14,6 +15,10 @@ public:
     DoorWallSystem(const ECSManager* memECSManager);
     void execSystem()override;
     void clearSystem();
+    inline void memRefMainEngine(MainEngine *mainEngine)
+    {
+        m_refMainEngine = mainEngine;
+    }
 private:
     void treatDoorMovementSize(DoorComponent *doorComp, uint32_t entityNum);
     void updateEntities();
@@ -29,6 +34,7 @@ private:
     double m_timeDoorClosed = 0.6;
     std::vector<uint32_t> m_vectMoveableWall, m_vectTrigger;
     ECSManager const *m_ECSManager;
+    MainEngine *m_refMainEngine;
 };
 
 Direction_e getReverseDirection(Direction_e dir);

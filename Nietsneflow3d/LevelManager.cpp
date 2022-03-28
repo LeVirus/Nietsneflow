@@ -1062,7 +1062,6 @@ void LevelManager::loadPositionWall()
         }
         else if(m_mainWallData[vectINISections[i]].m_triggerType == TriggerWallMoveType_e::GROUND)
         {
-            m_mainWallData[vectINISections[i]].m_groundTriggerPos = PairUI_t();
             m_mainWallData[vectINISections[i]].m_groundTriggerPos =
                     *getPosition(vectINISections[i], "TriggerGamePosition");
         }
@@ -1766,6 +1765,7 @@ void LevelManager::saveElementsGameProgress(const MemCheckpointElementsState &ch
     saveEnemiesDataGameProgress(checkpointData.m_enemiesData);
     saveStaticElementsDataGameProgress(checkpointData.m_staticElementDeleted);
     saveMoveableWallDataGameProgress(checkpointData.m_moveableWallData);
+    saveTriggerWallMoveableWallDataGameProgress(checkpointData.m_triggerWallMoveableWallData);
 }
 
 //===================================================================
@@ -1780,6 +1780,24 @@ void LevelManager::saveMoveableWallDataGameProgress(const std::map<uint32_t, uin
     }
     m_ini.setValue("MoveableWall", "ShapeNum", strShapeNum);
     m_ini.setValue("MoveableWall", "NumberOfTriggers", strNumberOfTriggers);
+}
+
+//===================================================================
+void LevelManager::saveTriggerWallMoveableWallDataGameProgress(const std::map<uint32_t, std::vector<uint32_t>> &triggerWallMoveableWallData)
+{
+    std::string strShapeNum, strNumberOfTriggers, strCurrentShape;
+    uint32_t cmpt = 0;
+    for(std::map<uint32_t, std::vector<uint32_t>>::const_iterator it = triggerWallMoveableWallData.begin();
+        it != triggerWallMoveableWallData.end(); ++it, ++cmpt)
+    {
+        for(uint32_t i = 0; i < it->second.size(); ++i)
+        {
+            strNumberOfTriggers += std::to_string(it->second[i]) + " ";
+        }
+        strCurrentShape = "TriggerWallMoveableWall" + std::to_string(cmpt);
+        m_ini.setValue(strCurrentShape, "ShapeNum", std::to_string(it->first));
+        m_ini.setValue(strCurrentShape, "NumberOfTriggers", strNumberOfTriggers);
+    }
 }
 
 //===================================================================
@@ -1953,8 +1971,29 @@ std::unique_ptr<MemCheckpointElementsState> LevelManager::loadCheckpointDataSave
     pos.second = std::stoi(*val);
     return std::make_unique<MemCheckpointElementsState>(MemCheckpointElementsState{
                     checkpointNum, secretsFound, enemiesKilled, pos,
-                    loadEnemiesDataGameProgress(),
-                    loadMoveableWallDataGameProgress(), loadStaticElementsDataGameProgress()});
+                    loadEnemiesDataGameProgress(), loadMoveableWallDataGameProgress(),
+                    loadTriggerWallMoveableWallDataGameProgress(), loadStaticElementsDataGameProgress()});
+}
+
+//===================================================================
+std::map<uint32_t, std::vector<uint32_t>> LevelManager::loadTriggerWallMoveableWallDataGameProgress()
+{
+    std::map<uint32_t, std::vector<uint32_t>> mapReturn;
+    std::optional<std::string> val;
+    uint32_t shapeNum;
+    std::vector<uint32_t> vectTriggers;
+    std::vector<std::string> vectSection = m_ini.getSectionNamesContaining("TriggerWallMoveableWall");
+    for(uint32_t i = 0; i < vectSection.size(); ++i)
+    {
+        val = m_ini.getValue(vectSection[i], "ShapeNum");
+        assert(val);
+        shapeNum = std::stoi(*val);
+        val = m_ini.getValue(vectSection[i], "NumberOfTriggers");
+        assert(val);
+        vectTriggers = convertStrToVectUI(*val);
+        mapReturn.insert({shapeNum, vectTriggers});
+    }
+    return mapReturn;
 }
 
 //===================================================================

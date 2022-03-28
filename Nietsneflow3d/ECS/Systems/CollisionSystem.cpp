@@ -27,6 +27,7 @@
 #include <BaseECS/engine.hpp>
 #include <CollisionUtils.hpp>
 #include <PhysicalEngine.hpp>
+#include <MainEngine.hpp>
 #include <cassert>
 #include <Level.hpp>
 #include <math.h>
@@ -707,14 +708,6 @@ bool CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args, bool shotEx
                     return false;
                 }
             }
-            else if((args.tagCompA->m_tagA == CollisionTag_e::PLAYER_CT || args.tagCompA->m_tagA == CollisionTag_e::ENEMY_CT ||
-                     args.tagCompA->m_tagB == CollisionTag_e::BARREL_CT || args.tagCompA->m_tagA == CollisionTag_e::IMPACT_CT) &&
-                    (args.tagCompB->m_tagA == CollisionTag_e::WALL_CT || args.tagCompB->m_tagA == CollisionTag_e::PLAYER_CT ||
-                     args.tagCompB->m_tagA == CollisionTag_e::ENEMY_CT || args.tagCompB->m_tagA == CollisionTag_e::STATIC_SET_CT ||
-                     args.tagCompB->m_tagB == CollisionTag_e::BARREL_CT))
-            {
-                collisionCircleCircleEject(args, circleCompA, circleCompB);
-            }
             else if(args.tagCompA->m_tagA == CollisionTag_e::PLAYER_CT)
             {
                 if(args.tagCompB->m_tagA == CollisionTag_e::OBJECT_CT)
@@ -737,6 +730,14 @@ bool CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args, bool shotEx
             else if(args.tagCompA->m_tagA == CollisionTag_e::EXPLOSION_CT)
             {
                 treatExplosionColl(args);
+            }
+            if((args.tagCompA->m_tagA == CollisionTag_e::PLAYER_CT || args.tagCompA->m_tagA == CollisionTag_e::ENEMY_CT ||
+                     args.tagCompA->m_tagB == CollisionTag_e::BARREL_CT || args.tagCompA->m_tagA == CollisionTag_e::IMPACT_CT) &&
+                    (args.tagCompB->m_tagA == CollisionTag_e::WALL_CT || args.tagCompB->m_tagA == CollisionTag_e::PLAYER_CT ||
+                     args.tagCompB->m_tagA == CollisionTag_e::ENEMY_CT || args.tagCompB->m_tagA == CollisionTag_e::STATIC_SET_CT ||
+                     args.tagCompB->m_tagB == CollisionTag_e::BARREL_CT))
+            {
+                collisionCircleCircleEject(args, circleCompA, circleCompB);
             }
         }
     }
@@ -1011,7 +1012,10 @@ void CollisionSystem::treatActionPlayerRect(CollisionArgs &args)
             MoveableWallConfComponent *moveWallComp = stairwayToComponentManager().
                     searchComponentByType<MoveableWallConfComponent>(args.entityNumB, Components_e::MOVEABLE_WALL_CONF_COMPONENT);
             assert(moveWallComp);
+            assert(moveWallComp->m_triggerWallCheckpointData);
             moveWallComp->m_manualTrigger = true;
+            ++moveWallComp->m_triggerWallCheckpointData->second.m_numberOfMove;
+            m_refMainEngine->updateTriggerWallMoveableWallDataCheckpoint(*moveWallComp->m_triggerWallCheckpointData);
         }
     }
 }

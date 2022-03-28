@@ -3,6 +3,7 @@
 #include <Level.hpp>
 #include <ECS/ECSManager.hpp>
 #include <CollisionUtils.hpp>
+#include <MainEngine.hpp>
 #include <ECS/Components/DoorComponent.hpp>
 #include <ECS/Components/TimerComponent.hpp>
 #include <ECS/Components/MapCoordComponent.hpp>
@@ -187,6 +188,7 @@ void DoorWallSystem::treatMoveableWalls()
 //===================================================================
 void DoorWallSystem::treatTriggers()
 {
+    bool treated = false;
     for(uint32_t i = 0; i < m_vectTrigger.size(); ++i)
     {
         TriggerComponent *triggerComp = stairwayToComponentManager().
@@ -200,6 +202,22 @@ void DoorWallSystem::treatTriggers()
         triggerComp->m_actionned = false;
         for(uint32_t j = 0; j < triggerComp->m_vectElementEntities.size();)
         {
+            if(!treated)
+            {
+                //!!! marche pas pour multi shape
+                MoveableWallConfComponent *moveableWallComp = stairwayToComponentManager().
+                        searchComponentByType<MoveableWallConfComponent>(triggerComp->m_vectElementEntities[j],
+                                                                         Components_e::MOVEABLE_WALL_CONF_COMPONENT);
+                assert(moveableWallComp);
+                if(!moveableWallComp->m_inMovement)
+                {
+                    treated = true;
+                    for(uint32_t k = 0; k < triggerComp->m_wallShapeNum.size(); ++k)
+                    {
+                        m_refMainEngine->updateTriggerWallCheckpointData(triggerComp->m_wallShapeNum[i]);
+                    }
+                }
+            }
             if(triggerMoveableWall(triggerComp->m_vectElementEntities[j]))
             {
                 triggerComp->m_vectElementEntities.erase(triggerComp->m_vectElementEntities.begin() + j);
