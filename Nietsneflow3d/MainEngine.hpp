@@ -212,12 +212,13 @@ private:
     void confActionEntity();
     void loadWallEntities(const std::map<std::string, MoveableWallData> &wallData,
                           const std::vector<SpriteData> &vectSprite);
+    std::vector<uint32_t> loadWallEntitiesWallLoop(const pairI_t &moveableWallCorrectedPos, const std::vector<SpriteData> &vectSprite,
+                                  const std::map<std::string, MoveableWallData>::const_iterator &iter, bool moveable, uint32_t shapeNum, bool loadFromCheckpoint);
     void confBaseWallData(uint32_t wallEntity, const SpriteData &memSpriteData, const PairUI_t &coordLevel,
                           const std::vector<uint8_t> &numWallSprites, const std::vector<float> &timeMultiSpriteCase,
                           const std::vector<SpriteData> &vectSprite, TriggerBehaviourType_e triggerType, bool moveable = false);
     void loadDoorEntities(const LevelManager &levelManager);
     void loadEnemiesEntities(const LevelManager &levelManager);
-    pairI_t getModifMoveableWallDataCheckpoint(uint32_t wallShapeNum, const MoveableWallData &moveableWallData);
     void loadNonVisibleEnemyAmmoStuff(bool loadFromCheckpoint, uint32_t currentEnemy,
                                       const EnemyData &enemyData, const LevelManager &levelManager,
                                       EnemyConfComponent *enemyComp);
@@ -326,6 +327,7 @@ private:
     std::map<uint32_t, std::pair<std::vector<uint32_t>, bool>> m_memTriggerWallMoveableWallCheckpointData;
 };
 
+pairI_t getModifMoveableWallDataCheckpoint(const std::vector<std::pair<Direction_e, uint32_t>> &vectDir, uint32_t timesActionned, TriggerBehaviourType_e triggerBehaviour);
 void insertEnemySpriteFromType(const std::vector<SpriteData> &vectSprite, mapEnemySprite_t &mapSpriteAssociate,
                                std::vector<SpriteData const *> &vectSpriteData, const std::vector<uint8_t> &enemyMemArray,
                                EnemySpriteType_e type);
