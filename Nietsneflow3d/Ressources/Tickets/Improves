@@ -7,6 +7,12 @@ When load checkpoint define a direction
 
 ))
 For checkpoint mem moveable wall position for non AUTO
+	--Multi direction same OK
+	--Multi reverse bad reinit
+	--Once 
+	--issue when restart level
+))
+Mem barrels state for checkpoints
 
 4) 
 Improve Enemy behavour===!!!!!!

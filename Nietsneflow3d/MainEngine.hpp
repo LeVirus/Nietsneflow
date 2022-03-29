@@ -65,8 +65,9 @@ struct MemCheckpointElementsState
     uint32_t m_checkpointNum, m_secretsNumber, m_enemiesKilled;
     PairUI_t m_checkpointPos;
     std::vector<MemCheckpointEnemiesState> m_enemiesData;
-    std::map<uint32_t, uint32_t> m_moveableWallData;
-    std::map<uint32_t, std::vector<uint32_t>> m_triggerWallMoveableWallData;
+    //bool if reversable
+    std::map<uint32_t, std::pair<uint32_t, bool>> m_moveableWallData;
+    std::map<uint32_t, std::pair<std::vector<uint32_t>, bool>> m_triggerWallMoveableWallData;
     std::set<PairUI_t> m_staticElementDeleted;
 };
 
@@ -170,7 +171,7 @@ public:
     }
     inline void updateTriggerWallCheckpointData(uint32_t shapeNum)
     {
-        ++m_memMoveableWallCheckpointData[shapeNum];
+        ++m_memMoveableWallCheckpointData[shapeNum].first;
     }
 
     void saveAudioSettings();
@@ -182,7 +183,6 @@ public:
 private:
     void clearCheckpointData();
     void saveEnemiesCheckpoint();
-    void saveMoveableWallCheckpoint();
     bool isLoadFromLevelBegin(LevelState_e levelState)const;
     void clearObjectToDelete();
     void savePlayerGear(bool beginLevel);
@@ -321,9 +321,9 @@ private:
     uint32_t m_playerEntity;
     std::vector<MemCheckpointEnemiesState> m_memEnemiesStateFromCheckpoint;
     //first shape num, second number of actionned
-    std::map<uint32_t, uint32_t> m_memMoveableWallCheckpointData;
+    std::map<uint32_t, std::pair<uint32_t, bool>> m_memMoveableWallCheckpointData;
     //MAP (first shape num, VECTOR number of actionned)
-    std::map<uint32_t, std::vector<uint32_t>> m_memTriggerWallMoveableWallCheckpointData;
+    std::map<uint32_t, std::pair<std::vector<uint32_t>, bool>> m_memTriggerWallMoveableWallCheckpointData;
 };
 
 void insertEnemySpriteFromType(const std::vector<SpriteData> &vectSprite, mapEnemySprite_t &mapSpriteAssociate,

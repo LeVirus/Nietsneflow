@@ -18,9 +18,9 @@ All along the adventure the player have to pick up many objects:
 Like weapons, ammunations, gold and food.
 The game allow to save at any time.
 
-Technique precisions::
+technical details
 
-The game is one of the first FPS in the history, the material of the time did not allow 3d render.
+The game is one of the first FPS in the history, the hardware of the time did not allow 3d render.
 So the engine simulate it in a 2d logic. The used technique was called raycasting.
 The levels in wolfenstein3d were respresented on a 2d map, to display the elements the engine calculate the distance between the player and 
 the concerned element. Depending on the angle and distance the element was displayed in consequences. 

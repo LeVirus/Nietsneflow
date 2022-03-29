@@ -1769,34 +1769,38 @@ void LevelManager::saveElementsGameProgress(const MemCheckpointElementsState &ch
 }
 
 //===================================================================
-void LevelManager::saveMoveableWallDataGameProgress(const std::map<uint32_t, uint32_t> &moveableWallData)
+void LevelManager::saveMoveableWallDataGameProgress(const std::map<uint32_t, std::pair<uint32_t, bool>> &moveableWallData)
 {
-    std::string strShapeNum, strNumberOfTriggers;
-    std::map<uint32_t, uint32_t>::const_iterator it = moveableWallData.begin();
+    std::string strShapeNum, strNumberOfTriggers, strReversable;
+    std::map<uint32_t, std::pair<uint32_t, bool>>::const_iterator it = moveableWallData.begin();
     for(; it != moveableWallData.end(); ++it)
     {
         strShapeNum += std::to_string(it->first) + " ";
-        strNumberOfTriggers += std::to_string(it->second) + " ";
+        strNumberOfTriggers += std::to_string(it->second.first) + " ";
+        strReversable += it->second.second ? "1 " : "0 ";
     }
     m_ini.setValue("MoveableWall", "ShapeNum", strShapeNum);
     m_ini.setValue("MoveableWall", "NumberOfTriggers", strNumberOfTriggers);
+    m_ini.setValue("MoveableWall", "Reversable", strReversable);
 }
 
 //===================================================================
-void LevelManager::saveTriggerWallMoveableWallDataGameProgress(const std::map<uint32_t, std::vector<uint32_t>> &triggerWallMoveableWallData)
+void LevelManager::saveTriggerWallMoveableWallDataGameProgress(
+        const std::map<uint32_t, std::pair<std::vector<uint32_t>, bool>> &triggerWallMoveableWallData)
 {
     std::string strShapeNum, strNumberOfTriggers, strCurrentShape;
     uint32_t cmpt = 0;
-    for(std::map<uint32_t, std::vector<uint32_t>>::const_iterator it = triggerWallMoveableWallData.begin();
+    for(std::map<uint32_t, std::pair<std::vector<uint32_t>, bool>>::const_iterator it = triggerWallMoveableWallData.begin();
         it != triggerWallMoveableWallData.end(); ++it, ++cmpt)
     {
-        for(uint32_t i = 0; i < it->second.size(); ++i)
+        for(uint32_t i = 0; i < it->second.first.size(); ++i)
         {
-            strNumberOfTriggers += std::to_string(it->second[i]) + " ";
+            strNumberOfTriggers += std::to_string(it->second.first[i]) + " ";
         }
         strCurrentShape = "TriggerWallMoveableWall" + std::to_string(cmpt);
         m_ini.setValue(strCurrentShape, "ShapeNum", std::to_string(it->first));
         m_ini.setValue(strCurrentShape, "NumberOfTriggers", strNumberOfTriggers);
+        m_ini.setValue(strCurrentShape, "Reversable", it->second.second ? "1" : "0");
     }
 }
 
@@ -1976,9 +1980,9 @@ std::unique_ptr<MemCheckpointElementsState> LevelManager::loadCheckpointDataSave
 }
 
 //===================================================================
-std::map<uint32_t, std::vector<uint32_t>> LevelManager::loadTriggerWallMoveableWallDataGameProgress()
+std::map<uint32_t, std::pair<std::vector<uint32_t>, bool>> LevelManager::loadTriggerWallMoveableWallDataGameProgress()
 {
-    std::map<uint32_t, std::vector<uint32_t>> mapReturn;
+    std::map<uint32_t, std::pair<std::vector<uint32_t>, bool>> mapReturn;
     std::optional<std::string> val;
     uint32_t shapeNum;
     std::vector<uint32_t> vectTriggers;
@@ -1991,17 +1995,20 @@ std::map<uint32_t, std::vector<uint32_t>> LevelManager::loadTriggerWallMoveableW
         val = m_ini.getValue(vectSection[i], "NumberOfTriggers");
         assert(val);
         vectTriggers = convertStrToVectUI(*val);
-        mapReturn.insert({shapeNum, vectTriggers});
+        val = m_ini.getValue(vectSection[i], "Reversable");
+        assert(val);
+        mapReturn.insert({shapeNum, {vectTriggers, std::stoi(*val) == 1 ? true : false}});
     }
     return mapReturn;
 }
 
 //===================================================================
-std::map<uint32_t, uint32_t> LevelManager::loadMoveableWallDataGameProgress()
+std::map<uint32_t, std::pair<uint32_t, bool>> LevelManager::loadMoveableWallDataGameProgress()
 {
     std::optional<std::string> val;
     std::vector<uint32_t> vectShapes, vectTriggers;
-    std::map<uint32_t, uint32_t> map;
+    std::vector<bool> vectRevers;
+    std::map<uint32_t, std::pair<uint32_t, bool>> map;
     val = m_ini.getValue("MoveableWall", "ShapeNum");
     if(!val)
     {
@@ -2012,9 +2019,13 @@ std::map<uint32_t, uint32_t> LevelManager::loadMoveableWallDataGameProgress()
     assert(val);
     vectTriggers = convertStrToVectUI(*val);
     assert(vectShapes.size() == vectTriggers.size());
+    val = m_ini.getValue("MoveableWall", "Reversable");
+    assert(val);
+    vectRevers = convertStrToVectBool(*val);
+    assert(vectRevers.size() == vectTriggers.size());
     for(uint32_t i = 0; i < vectShapes.size(); ++i)
     {
-        map.insert({vectShapes[i], vectTriggers[i]});
+        map.insert({vectShapes[i], {vectTriggers[i], vectRevers[i]}});
     }
     return map;
 }

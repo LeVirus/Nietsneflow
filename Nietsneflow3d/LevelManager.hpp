@@ -101,8 +101,8 @@ public:
     std::optional<MemLevelLoadedData> loadSavedGame(uint32_t saveNum);
     std::optional<MemPlayerConf> loadPlayerConf(bool beginLevel);
     std::unique_ptr<MemCheckpointElementsState> loadCheckpointDataSavedGame();
-    std::map<uint32_t, std::vector<uint32_t> > loadTriggerWallMoveableWallDataGameProgress();
-    std::map<uint32_t, uint32_t> loadMoveableWallDataGameProgress();
+    std::map<uint32_t, std::pair<std::vector<uint32_t>, bool> > loadTriggerWallMoveableWallDataGameProgress();
+    std::map<uint32_t, std::pair<uint32_t, bool> > loadMoveableWallDataGameProgress();
     std::array<std::optional<DataLevelWriteMenu>, 3> getExistingLevelNumSaves();
     //if encryptKey is nullopt no encryption
     bool loadIniFile(std::string_view path, std::optional<uint32_t> encryptKey);
@@ -215,8 +215,8 @@ private:
     std::string saveLevelGameProgress(const MemPlayerConf &playerConfBeginLevel, const MemPlayerConf &playerConfCheckpoint, uint32_t levelNum, bool beginLevel);
     void savePlayerGear(bool beginLevel, const MemPlayerConf &playerConf);
     void saveElementsGameProgress(const MemCheckpointElementsState &checkpointData);
-    void saveMoveableWallDataGameProgress(const std::map<uint32_t, uint32_t> &moveableWallData);
-    void saveTriggerWallMoveableWallDataGameProgress(const std::map<uint32_t, std::vector<uint32_t> > &triggerWallMoveableWallData);
+    void saveMoveableWallDataGameProgress(const std::map<uint32_t, std::pair<uint32_t, bool> > &moveableWallData);
+    void saveTriggerWallMoveableWallDataGameProgress(const std::map<uint32_t, std::pair<std::vector<uint32_t>, bool> > &triggerWallMoveableWallData);
     void saveEnemiesDataGameProgress(const std::vector<MemCheckpointEnemiesState> &enemiesData);
     std::vector<MemCheckpointEnemiesState> loadEnemiesDataGameProgress();
     void saveStaticElementsDataGameProgress(const std::set<PairUI_t> &staticElementData);

@@ -62,6 +62,7 @@ LevelState MainEngine::mainLoop(uint32_t levelNum, LevelState_e levelState)
     bool beginLevel = isLoadFromLevelBegin(m_currentLevelState);
     if(beginLevel)
     {
+        clearCheckpointData();
         m_memCheckpointLevelState = {};
         m_playerConf->m_currentCheckpoint = 0;
         if(levelState == LevelState_e::NEW_GAME)
@@ -189,7 +190,6 @@ void MainEngine::saveGameProgressCheckpoint(uint32_t levelNum, const PairUI_t &c
     //OOOK SAVE GEAR BEGIN LEVEL
     savePlayerGear(false);
     saveEnemiesCheckpoint();
-    saveMoveableWallCheckpoint();
     MemCheckpointElementsState d{checkpointNum, secretsFound, enemiesKilled, checkpointReached, m_memEnemiesStateFromCheckpoint,
                 m_memMoveableWallCheckpointData, m_memTriggerWallMoveableWallCheckpointData, m_memStaticEntitiesDeletedFromCheckpoint};
     saveGameProgress(m_currentLevel, m_currentSave, &d);
@@ -227,12 +227,6 @@ void MainEngine::saveEnemiesCheckpoint()
             }
         }
     }
-}
-
-//===================================================================
-void MainEngine::saveMoveableWallCheckpoint()
-{
-
 }
 
 //===================================================================
@@ -456,8 +450,8 @@ void MainEngine::updateTriggerWallMoveableWallDataCheckpoint(const std::pair<uin
 {
     uint32_t shapeNum = triggerWallCheckpointData.first, wallNum = triggerWallCheckpointData.second.m_wallNum;
     assert(m_memTriggerWallMoveableWallCheckpointData.find(shapeNum) != m_memTriggerWallMoveableWallCheckpointData.end());
-    assert(wallNum < m_memTriggerWallMoveableWallCheckpointData[shapeNum].size());
-    ++m_memTriggerWallMoveableWallCheckpointData[shapeNum][wallNum];
+    assert(wallNum < m_memTriggerWallMoveableWallCheckpointData[shapeNum].first.size());
+    ++m_memTriggerWallMoveableWallCheckpointData[shapeNum].first[wallNum];
 }
 
 //===================================================================
@@ -887,7 +881,6 @@ void MainEngine::loadWallEntities(const std::map<std::string, MoveableWallData> 
                                   const std::vector<SpriteData> &vectSprite)
 {
     assert(!Level::getLevelCaseType().empty());
-    std::map<std::string, MoveableWallData>::const_iterator iter = wallData.begin();
     std::vector<uint32_t> vectMemEntities;
     TriggerWallMoveType_e memTriggerType;
     bool moveable;
@@ -900,7 +893,7 @@ void MainEngine::loadWallEntities(const std::map<std::string, MoveableWallData> 
     }
     pairI_t moveableWallCorrectedPos, currentCoord;
     //Shape Wall Loop
-    for(; iter != wallData.end(); ++iter, ++shapeNum)
+    for(std::map<std::string, MoveableWallData>::const_iterator iter = wallData.begin(); iter != wallData.end(); ++iter, ++shapeNum)
     {
         moveableWallCorrectedPos = {0, 0};
         vectMemEntities.clear();
@@ -922,15 +915,14 @@ void MainEngine::loadWallEntities(const std::map<std::string, MoveableWallData> 
             {
                 if(distantTrigger)
                 {
-                    m_memMoveableWallCheckpointData.insert({shapeNum, 0});
+                    m_memMoveableWallCheckpointData.insert({shapeNum, {0, iter->second.m_triggerBehaviourType == TriggerBehaviourType_e::REVERSABLE}});
                 }
                 else
                 {
                     m_memTriggerWallMoveableWallCheckpointData.insert({shapeNum, {}});
-                    m_memTriggerWallMoveableWallCheckpointData[shapeNum].resize(iter->second.m_TileGamePosition.size());
+                    m_memTriggerWallMoveableWallCheckpointData[shapeNum].first.resize(iter->second.m_TileGamePosition.size());
                 }
             }
-
         }
         const SpriteData &memSpriteData = vectSprite[iter->second.m_sprites[0]];
         wallNum = 0;
@@ -983,16 +975,18 @@ void MainEngine::loadWallEntities(const std::map<std::string, MoveableWallData> 
             if(moveWallConfComp->m_triggerType == TriggerWallMoveType_e::WALL)
             {
                 moveWallConfComp->m_triggerWallCheckpointData = {shapeNum, {wallNum, 0}};
-            }
-            moveWallConfComp->m_triggerBehaviour = iter->second.m_triggerBehaviourType;
-            moveWallConfComp->m_manualTrigger =
-                    (moveWallConfComp->m_triggerBehaviour == TriggerBehaviourType_e::AUTO);
-            if(moveWallConfComp->m_triggerType == TriggerWallMoveType_e::WALL)
-            {
                 GeneralCollisionComponent *genCollComp = m_ecsManager.getComponentManager().
                         searchComponentByType<GeneralCollisionComponent>(numEntity, Components_e::GENERAL_COLLISION_COMPONENT);
                 assert(genCollComp);
                 genCollComp->m_tagB = CollisionTag_e::TRIGGER_CT;
+            }
+            moveWallConfComp->m_triggerBehaviour = iter->second.m_triggerBehaviourType;
+            moveWallConfComp->m_manualTrigger = (moveWallConfComp->m_triggerBehaviour == TriggerBehaviourType_e::AUTO);
+            //if load a reversable wall from checkpoint reverse direction
+            if(iter->second.m_triggerBehaviourType == TriggerBehaviourType_e::REVERSABLE &&
+                    m_memMoveableWallCheckpointData[shapeNum].first % 2 == 1)
+            {
+                reverseDirection(moveWallConfComp);
             }
         }
         if(distantTrigger)
@@ -1209,9 +1203,9 @@ void MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
 pairI_t MainEngine::getModifMoveableWallDataCheckpoint(uint32_t wallShapeNum, const MoveableWallData &moveableWallData)
 {
     assert(m_memMoveableWallCheckpointData.find(wallShapeNum) != m_memMoveableWallCheckpointData.end());
-    if(m_memMoveableWallCheckpointData[wallShapeNum] == 0 ||
+    if(m_memMoveableWallCheckpointData[wallShapeNum].first == 0 ||
             (moveableWallData.m_triggerBehaviourType == TriggerBehaviourType_e::REVERSABLE &&
-            m_memMoveableWallCheckpointData[wallShapeNum] % 2 == 0))
+            m_memMoveableWallCheckpointData[wallShapeNum].first % 2 == 0))
     {
         return {0, 0};
     }
@@ -1237,8 +1231,8 @@ pairI_t MainEngine::getModifMoveableWallDataCheckpoint(uint32_t wallShapeNum, co
                 break;
             }
         }
-        posModif.first *= m_memMoveableWallCheckpointData[wallShapeNum];
-        posModif.second *= m_memMoveableWallCheckpointData[wallShapeNum];
+        posModif.first *= m_memMoveableWallCheckpointData[wallShapeNum].first;
+        posModif.second *= m_memMoveableWallCheckpointData[wallShapeNum].first;
         return posModif;
     }
 }
