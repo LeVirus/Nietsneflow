@@ -1375,10 +1375,19 @@ void MainEngine::loadTriggerEntityData(const MoveableWallData &moveWallData,
         pos = *moveWallData.m_groundTriggerPos;
         it = m_memTriggerCreated.find(pos);
     }
-    //if trigger does not exist
+    uint32_t numEntity;
+    bool newTrigger = (it == m_memTriggerCreated.end());
     if(it == m_memTriggerCreated.end())
     {
-        uint32_t numEntity = createTriggerEntity(button);
+        numEntity = createTriggerEntity(button);
+    }
+    else
+    {
+        numEntity = it->second;
+    }
+    //if trigger does not exist
+    if(newTrigger)
+    {
         m_memTriggerCreated.insert({pos, numEntity});
         GeneralCollisionComponent *genComp = m_ecsManager.getComponentManager().
                 searchComponentByType<GeneralCollisionComponent>(numEntity, Components_e::GENERAL_COLLISION_COMPONENT);
@@ -1386,9 +1395,6 @@ void MainEngine::loadTriggerEntityData(const MoveableWallData &moveWallData,
                 searchComponentByType<MapCoordComponent>(numEntity, Components_e::MAP_COORD_COMPONENT);
         CircleCollisionComponent *circleComp = m_ecsManager.getComponentManager().
                 searchComponentByType<CircleCollisionComponent>(numEntity, Components_e::CIRCLE_COLLISION_COMPONENT);
-        TriggerComponent *triggerComp = m_ecsManager.getComponentManager().
-                searchComponentByType<TriggerComponent>(numEntity, Components_e::TRIGGER_COMPONENT);
-        assert(triggerComp);
         assert(circleComp);
         assert(mapComp);
         assert(genComp);
@@ -1414,21 +1420,12 @@ void MainEngine::loadTriggerEntityData(const MoveableWallData &moveWallData,
         circleComp->m_ray = 10.0f;
         mapComp->m_coord = pos;
         mapComp->m_absoluteMapPositionPX = getCenteredAbsolutePosition(mapComp->m_coord);
-        triggerComp->m_vectElementEntities = vectPosition;
-        triggerComp->m_wallShapeNum.push_back(shapeNum);
     }
-    //else add new entity num to trigger
-    else
-    {
-        TriggerComponent *triggerComp = m_ecsManager.getComponentManager().
-                searchComponentByType<TriggerComponent>(it->second, Components_e::TRIGGER_COMPONENT);
-        assert(triggerComp);
-        triggerComp->m_wallShapeNum.push_back(shapeNum);
-        for(uint32_t i = 0; i < vectPosition.size(); ++i)
-        {
-            triggerComp->m_vectElementEntities.push_back(vectPosition[i]);
-        }
-    }
+    //add new entity num to trigger
+    TriggerComponent *triggerComp = m_ecsManager.getComponentManager().
+            searchComponentByType<TriggerComponent>(numEntity, Components_e::TRIGGER_COMPONENT);
+    assert(triggerComp);
+    triggerComp->m_mapElementEntities.insert({shapeNum, vectPosition});
 }
 
 //===================================================================

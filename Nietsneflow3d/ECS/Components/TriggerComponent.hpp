@@ -14,7 +14,7 @@ struct TriggerComponent : public ecs::Component
         muiTypeComponent = Components_e::TRIGGER_COMPONENT;
     }
     bool m_actionned = false;
-    std::vector<uint32_t> m_wallShapeNum;
-    std::vector<uint32_t> m_vectElementEntities;
+    //class by shape
+    std::map<uint32_t, std::vector<uint32_t>> m_mapElementEntities;
     virtual ~TriggerComponent() = default;
 };

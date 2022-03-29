@@ -26,7 +26,7 @@ private:
     void activeDoorSound(uint32_t entityNum);
     void treatMoveableWalls();
     void treatTriggers();
-    bool triggerMoveableWall(uint32_t wallEntity);
+    void triggerMoveableWall(uint32_t wallEntity);
     void switchToNextPhaseMoveWall(uint32_t wallEntity, MapCoordComponent *mapComp,
                                    MoveableWallConfComponent *moveWallComp,
                                    const PairUI_t &previousPos);

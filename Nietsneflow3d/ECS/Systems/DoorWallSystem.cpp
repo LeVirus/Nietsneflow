@@ -188,7 +188,6 @@ void DoorWallSystem::treatMoveableWalls()
 //===================================================================
 void DoorWallSystem::treatTriggers()
 {
-    bool treated = false;
     for(uint32_t i = 0; i < m_vectTrigger.size(); ++i)
     {
         TriggerComponent *triggerComp = stairwayToComponentManager().
@@ -200,38 +199,47 @@ void DoorWallSystem::treatTriggers()
             continue;
         }
         triggerComp->m_actionned = false;
-        for(uint32_t j = 0; j < triggerComp->m_vectElementEntities.size();)
+        //Check if none of the shape is in movement
+        for(std::map<uint32_t, std::vector<uint32_t>>::const_iterator it = triggerComp->m_mapElementEntities.begin();
+            it != triggerComp->m_mapElementEntities.end(); ++it)
         {
-            if(!treated)
+            MoveableWallConfComponent *moveableWallComp = stairwayToComponentManager().
+                    searchComponentByType<MoveableWallConfComponent>(triggerComp->m_mapElementEntities[it->first][0],
+                                                                     Components_e::MOVEABLE_WALL_CONF_COMPONENT);
+            assert(moveableWallComp);
+            if(moveableWallComp->m_inMovement)
             {
-                //!!! marche pas pour multi shape
-                MoveableWallConfComponent *moveableWallComp = stairwayToComponentManager().
-                        searchComponentByType<MoveableWallConfComponent>(triggerComp->m_vectElementEntities[j],
-                                                                         Components_e::MOVEABLE_WALL_CONF_COMPONENT);
-                assert(moveableWallComp);
-                if(!moveableWallComp->m_inMovement)
-                {
-                    treated = true;
-                    for(uint32_t k = 0; k < triggerComp->m_wallShapeNum.size(); ++k)
-                    {
-                        m_refMainEngine->updateTriggerWallCheckpointData(triggerComp->m_wallShapeNum[i]);
-                    }
-                }
+                return;
             }
-            if(triggerMoveableWall(triggerComp->m_vectElementEntities[j]))
+        }
+        //Wall Shape loop
+        for(std::map<uint32_t, std::vector<uint32_t>>::const_iterator it = triggerComp->m_mapElementEntities.begin();
+            it != triggerComp->m_mapElementEntities.end();)
+        {
+            m_refMainEngine->updateTriggerWallCheckpointData(it->first);
+            //Wall loop
+            for(uint32_t j = 0; j < it->second.size(); ++j)
             {
-                triggerComp->m_vectElementEntities.erase(triggerComp->m_vectElementEntities.begin() + j);
+                triggerMoveableWall(triggerComp->m_mapElementEntities[it->first][j]);
+            }
+            MoveableWallConfComponent *moveableWallComp = stairwayToComponentManager().
+                    searchComponentByType<MoveableWallConfComponent>(triggerComp->m_mapElementEntities[it->first][0],
+                                                                     Components_e::MOVEABLE_WALL_CONF_COMPONENT);
+            assert(moveableWallComp);
+            if(moveableWallComp->m_triggerBehaviour == TriggerBehaviourType_e::ONCE)
+            {
+                it = triggerComp->m_mapElementEntities.erase(it);
             }
             else
             {
-                ++j;
+                ++it;
             }
         }
     }
 }
 
 //===================================================================
-bool DoorWallSystem::triggerMoveableWall(uint32_t wallEntity)
+void DoorWallSystem::triggerMoveableWall(uint32_t wallEntity)
 {
     MoveableWallConfComponent *moveableWallComp = stairwayToComponentManager().
             searchComponentByType<MoveableWallConfComponent>(wallEntity, Components_e::MOVEABLE_WALL_CONF_COMPONENT);
@@ -239,11 +247,6 @@ bool DoorWallSystem::triggerMoveableWall(uint32_t wallEntity)
             searchComponentByType<MapCoordComponent>(wallEntity, Components_e::MAP_COORD_COMPONENT);
     assert(moveableWallComp);
     assert(mapComp);
-    bool once = (moveableWallComp->m_triggerBehaviour == TriggerBehaviourType_e::ONCE);
-    if(moveableWallComp->m_inMovement || (once && moveableWallComp->m_actionned))
-    {
-       return once;
-    }
     moveableWallComp->m_actionned = true;
     std::optional<ElementRaycast> element = Level::getElementCase(mapComp->m_coord);
     //init move wall case
@@ -267,7 +270,6 @@ bool DoorWallSystem::triggerMoveableWall(uint32_t wallEntity)
     moveableWallComp->m_initPos = true;
     moveableWallComp->m_currentPhase = 0;
     moveableWallComp->m_currentMove = 0;
-    return once;
 }
 
 
