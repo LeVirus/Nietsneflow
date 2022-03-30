@@ -102,9 +102,13 @@ public:
                       const PairFloat_t &point, float degreeAngle);
     void setUnsetPaused();
     void updateTriggerWallMoveableWallDataCheckpoint(const std::pair<uint32_t, TriggerWallCheckpointData> &pairShapeWallNum);
-    inline bool isGamePaused()
+    inline bool isGamePaused()const
     {
         return m_gamePaused;
+    }
+    inline bool isLoadFromCheckpoint()const
+    {
+        return m_memCheckpointLevelState != std::nullopt;
     }
     void clearLevel();
     void confSystems();
@@ -180,8 +184,8 @@ public:
     bool loadSavedGame(uint32_t saveNum, LevelState_e levelMode);
     void loadCheckpointSavedGame(const MemCheckpointElementsState &checkpointData);
     bool checkSavedGameExists(uint32_t saveNum)const;
-private:
     void clearCheckpointData();
+private:
     void saveEnemiesCheckpoint();
     bool isLoadFromLevelBegin(LevelState_e levelState)const;
     void clearObjectToDelete();
@@ -212,8 +216,9 @@ private:
     void confActionEntity();
     void loadWallEntities(const std::map<std::string, MoveableWallData> &wallData,
                           const std::vector<SpriteData> &vectSprite);
-    std::vector<uint32_t> loadWallEntitiesWallLoop(const pairI_t &moveableWallCorrectedPos, const std::vector<SpriteData> &vectSprite,
-                                  const std::map<std::string, MoveableWallData>::const_iterator &iter, bool moveable, uint32_t shapeNum, bool loadFromCheckpoint);
+    std::vector<uint32_t> loadWallEntitiesWallLoop(const std::vector<SpriteData> &vectSprite,
+                                                   const std::pair<std::string, MoveableWallData> &currentShape, bool moveable,
+                                                   uint32_t shapeNum, bool loadFromCheckpoint);
     void confBaseWallData(uint32_t wallEntity, const SpriteData &memSpriteData, const PairUI_t &coordLevel,
                           const std::vector<uint8_t> &numWallSprites, const std::vector<float> &timeMultiSpriteCase,
                           const std::vector<SpriteData> &vectSprite, TriggerBehaviourType_e triggerType, bool moveable = false);

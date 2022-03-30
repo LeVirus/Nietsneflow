@@ -48,7 +48,13 @@ void Game::initEngine()
 //===================================================================
 LevelState Game::launchGame(uint32_t levelNum, LevelState_e levelState)
 {
-    return m_mainEngine.mainLoop(levelNum, levelState);
+    LevelState levelRet = m_mainEngine.mainLoop(levelNum, levelState);
+    if(m_mainEngine.isLoadFromCheckpoint() && levelRet.m_levelState != LevelState_e::RESTART_FROM_CHECKPOINT &&
+            levelRet.m_levelState != LevelState_e::GAME_OVER)
+    {
+        m_mainEngine.clearCheckpointData();
+    }
+    return levelRet;
 }
 
 //===================================================================

@@ -1012,10 +1012,13 @@ void CollisionSystem::treatActionPlayerRect(CollisionArgs &args)
             MoveableWallConfComponent *moveWallComp = stairwayToComponentManager().
                     searchComponentByType<MoveableWallConfComponent>(args.entityNumB, Components_e::MOVEABLE_WALL_CONF_COMPONENT);
             assert(moveWallComp);
+            if(!moveWallComp->m_inMovement)
+            {
+                moveWallComp->m_manualTrigger = true;
+                ++moveWallComp->m_triggerWallCheckpointData->second.m_numberOfMove;
+                m_refMainEngine->updateTriggerWallMoveableWallDataCheckpoint(*moveWallComp->m_triggerWallCheckpointData);
+            }
             assert(moveWallComp->m_triggerWallCheckpointData);
-            moveWallComp->m_manualTrigger = true;
-            ++moveWallComp->m_triggerWallCheckpointData->second.m_numberOfMove;
-            m_refMainEngine->updateTriggerWallMoveableWallDataCheckpoint(*moveWallComp->m_triggerWallCheckpointData);
         }
     }
 }

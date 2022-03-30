@@ -8,9 +8,10 @@ When load checkpoint define a direction
 ))
 For checkpoint mem moveable wall position for non AUTO
 	--Multi direction same OK
-	--Multi reverse bad reinit
-	--Once 
-	--issue when restart level
+	--Multi reverse bad reinit OK
+	--Once OK
+	--issue when restart level Moveable auto issue
+
 ))
 Mem barrels state for checkpoints
 
