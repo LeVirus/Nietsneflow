@@ -1788,11 +1788,12 @@ void LevelManager::saveMoveableWallDataGameProgress(const std::map<uint32_t, std
 void LevelManager::saveTriggerWallMoveableWallDataGameProgress(
         const std::map<uint32_t, std::pair<std::vector<uint32_t>, bool>> &triggerWallMoveableWallData)
 {
-    std::string strShapeNum, strNumberOfTriggers, strCurrentShape;
+    std::string strNumberOfTriggers, strCurrentShape;
     uint32_t cmpt = 0;
     for(std::map<uint32_t, std::pair<std::vector<uint32_t>, bool>>::const_iterator it = triggerWallMoveableWallData.begin();
         it != triggerWallMoveableWallData.end(); ++it, ++cmpt)
     {
+        strNumberOfTriggers.clear();
         for(uint32_t i = 0; i < it->second.first.size(); ++i)
         {
             strNumberOfTriggers += std::to_string(it->second.first[i]) + " ";
