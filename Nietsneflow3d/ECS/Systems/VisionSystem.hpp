@@ -27,6 +27,14 @@ public:
     {
         m_memMultiSpritesWallEntities.clear();
     }
+    inline void clearVectObjectToDelete()
+    {
+        m_vectBarrelsEntitiesToDelete.clear();
+    }
+    inline const std::vector<uint32_t> &getBarrelEntitiesToDelete()const
+    {
+        return m_vectBarrelsEntitiesToDelete;
+    }
 private:
     EnemySpriteType_e getOrientationFromAngle(uint32_t observerEntity, uint32_t targetEntity,
                                               float targetDegreeAngle);
@@ -55,7 +63,7 @@ private:
                                      TimerComponent *timerComp, GeneralCollisionComponent *genComp);
 private:
     const ECSManager* m_memECSManager;
-    std::vector<uint32_t> m_memMultiSpritesWallEntities;
+    std::vector<uint32_t> m_memMultiSpritesWallEntities, m_vectBarrelsEntitiesToDelete;
 };
 
 mapEnemySprite_t::const_reverse_iterator findMapLastElement(const mapEnemySprite_t &map,

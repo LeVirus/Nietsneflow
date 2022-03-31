@@ -131,9 +131,7 @@ LevelState MainEngine::mainLoop(uint32_t levelNum, LevelState_e levelState)
             m_levelToLoad = {};
             if(m_currentLevelState == LevelState_e::NEW_GAME || m_currentLevelState == LevelState_e::RESTART_LEVEL)
             {
-                m_memCheckpointLevelState = {};
-                m_memStaticEntitiesDeletedFromCheckpoint.clear();
-                m_currentEntitiesDelete.clear();
+                clearCheckpointData();
             }
             return {m_currentLevelState, levelToLoad};
         }
@@ -474,7 +472,9 @@ void MainEngine::confSystems()
 void MainEngine::clearObjectToDelete()
 {
     const std::vector<uint32_t> &vect = m_physicalEngine.getStaticEntitiesToDelete();
-    if(vect.empty())
+    const std::vector<uint32_t> &vectBarrelsCheckpointRem = m_physicalEngine.getBarrelEntitiesDestruct();
+    const std::vector<uint32_t> &vectBarrels = m_graphicEngine.getBarrelEntitiesToDelete();
+    if(vect.empty() && vectBarrels.empty() && vectBarrelsCheckpointRem.empty())
     {
         return;
     }
@@ -486,7 +486,25 @@ void MainEngine::clearObjectToDelete()
         m_memStaticEntitiesDeletedFromCheckpoint.insert(mapComp->m_coord);
         m_ecsManager.bRmEntity(vect[i]);
     }
+    //mem destruct barrel current checkpoint
+    for(uint32_t i = 0; i < vectBarrelsCheckpointRem.size(); ++i)
+    {
+        MapCoordComponent *mapComp = m_ecsManager.getComponentManager().
+                searchComponentByType<MapCoordComponent>(vectBarrelsCheckpointRem[i], Components_e::MAP_COORD_COMPONENT);
+        assert(mapComp);
+        m_memStaticEntitiesDeletedFromCheckpoint.insert(mapComp->m_coord);
+    }
+    //clear barrel current game entities
+    for(uint32_t i = 0; i < vectBarrels.size(); ++i)
+    {
+        MapCoordComponent *mapComp = m_ecsManager.getComponentManager().
+                searchComponentByType<MapCoordComponent>(vectBarrels[i], Components_e::MAP_COORD_COMPONENT);
+        assert(mapComp);
+        m_ecsManager.bRmEntity(vectBarrels[i]);
+    }
     m_physicalEngine.clearVectObjectToDelete();
+    m_physicalEngine.clearVectBarrelsDestruct();
+    m_graphicEngine.clearBarrelEntitiesToDelete();
 }
 
 //===================================================================
@@ -1712,7 +1730,6 @@ bool MainEngine::loadSavedGame(uint32_t saveNum, LevelState_e levelMode)
     {
         return false;
     }
-//    clearCheckpointData();
     m_memPlayerConfBeginLevel = *savedData->m_playerConfBeginLevel;
     if(savedData->m_checkpointLevelData)
     {
@@ -1761,6 +1778,7 @@ bool MainEngine::checkSavedGameExists(uint32_t saveNum)const
 void MainEngine::clearCheckpointData()
 {
     m_memStaticEntitiesDeletedFromCheckpoint.clear();
+    m_currentEntitiesDelete.clear();
     m_memMoveableWallCheckpointData.clear();
     m_memTriggerWallMoveableWallCheckpointData.clear();
     m_memCheckpointLevelState = {};
@@ -2633,6 +2651,11 @@ void MainEngine::loadBarrelElementEntities(const LevelManager &levelManager)
     const BarrelData &barrelData = levelManager.getBarrelData();
     for(uint32_t i = 0; i < barrelData.m_TileGamePosition.size(); ++i)
     {
+        if(m_currentEntitiesDelete.find(barrelData.m_TileGamePosition[i]) !=
+                m_currentEntitiesDelete.end())
+        {
+            continue;
+        }
         uint32_t barrelEntity = createBarrelEntity();
         SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().
                 searchComponentByType<SpriteTextureComponent>(barrelEntity, Components_e::SPRITE_TEXTURE_COMPONENT);

@@ -321,9 +321,10 @@ void VisionSystem::updateBarrelSprite(uint32_t barrelEntity, MemSpriteDataCompon
                     genComp->m_active = true;
                 }
             }
-            //remove entity
+            //end animation remove entity
             else
             {
+                m_vectBarrelsEntitiesToDelete.push_back(barrelEntity);
                 genComp->m_active = false;
             }
         }

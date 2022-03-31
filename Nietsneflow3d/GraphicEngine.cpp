@@ -280,6 +280,18 @@ void GraphicEngine::updateStringWriteEntitiesInputMenu(bool keyboardInputMenuMod
 }
 
 //===================================================================
+const std::vector<uint32_t> &GraphicEngine::getBarrelEntitiesToDelete() const
+{
+    return m_visionSystem->getBarrelEntitiesToDelete();
+}
+
+//===================================================================
+void GraphicEngine::clearBarrelEntitiesToDelete()
+{
+    m_visionSystem->clearVectObjectToDelete();
+}
+
+//===================================================================
 void GraphicEngine::toogleMenuEntryFullscreen()
 {
     m_displayMenuFullscreenMode = !m_displayMenuFullscreenMode;

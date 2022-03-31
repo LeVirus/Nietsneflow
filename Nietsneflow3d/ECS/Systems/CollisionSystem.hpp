@@ -27,6 +27,14 @@ public:
     {
         return m_vectEntitiesToDelete;
     }
+    inline const std::vector<uint32_t> &getBarrelEntitiesDestruct()const
+    {
+        return m_vectBarrelsEntitiesDestruct;
+    }
+    inline void clearVectBarrelsDestruct()
+    {
+        m_vectBarrelsEntitiesDestruct.clear();
+    }
     inline void clearVectObjectToDelete()
     {
         m_vectEntitiesToDelete.clear();
@@ -97,7 +105,7 @@ private:
     std::pair<std::optional<uint32_t>, float> m_memDistCurrentBulletColl;
     //first bullet second target
     std::vector<PairUI_t> m_vectMemShots;
-    std::vector<uint32_t> m_vectEntitiesToDelete;
+    std::vector<uint32_t> m_vectEntitiesToDelete, m_vectBarrelsEntitiesDestruct;
     PlayerConfComponent *m_playerComp = nullptr;
     bool m_pair = true, m_memPlayerTeleport;
     //0 movement eject, 1 angle behaviour, 2 Direction,

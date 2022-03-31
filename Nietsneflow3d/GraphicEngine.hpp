@@ -48,6 +48,8 @@ public:
                        uint32_t cursorPos = 0, const std::tuple<const PlayerConfComponent *, uint32_t, uint32_t> &endLevelData = {});
     void confWriteComponent(WriteComponent *writeComp);
     void updateStringWriteEntitiesInputMenu(bool keyboardInputMenuMode, bool defaultInput = true);
+    const std::vector<uint32_t> &getBarrelEntitiesToDelete()const;
+    void clearBarrelEntitiesToDelete();
     inline MapDisplaySystem &getMapSystem()
     {
         return *m_mapSystem;

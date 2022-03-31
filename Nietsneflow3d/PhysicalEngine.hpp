@@ -30,6 +30,14 @@ public:
     {
         return m_collisionSystem->getStaticEntitiesToDelete();
     }
+    inline const std::vector<uint32_t> &getBarrelEntitiesDestruct()const
+    {
+        return m_collisionSystem->getBarrelEntitiesDestruct();
+    }
+    inline void clearVectBarrelsDestruct()
+    {
+        m_collisionSystem->clearVectBarrelsDestruct();
+    }
     inline void clearVectObjectToDelete()
     {
         m_collisionSystem->clearVectObjectToDelete();

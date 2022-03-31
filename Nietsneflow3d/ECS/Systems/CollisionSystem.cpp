@@ -356,6 +356,7 @@ void CollisionSystem::treatBarrelShots(uint32_t entityNum, uint32_t damage)
         barrelComp->m_life = 0;
         barrelComp->m_destructPhase = true;
         activeSound(entityNum);
+        m_vectBarrelsEntitiesDestruct.push_back(entityNum);
     }
     else
     {

@@ -5,9 +5,6 @@ IMPROVE=========================================================================
 ))
 When load checkpoint define a direction 
 
-))
-Mem barrels state for checkpoints
-
 4) 
 Improve Enemy behavour===!!!!!!
 
@@ -21,6 +18,9 @@ Animation move while shooting===========================~
 Enemy animations========================~
 
 
+
+))
+Mem barrels state for checkpoints====================OK
 
 ))
 For checkpoint mem moveable wall position for non AUTO========================OK
