@@ -245,6 +245,7 @@ void IASystem::enemyShoot(EnemyConfComponent *enemyConfComp, MoveableComponent *
     }
     else
     {
+        assert(!enemyConfComp->m_stdAmmo.empty());
         genComp = stairwayToComponentManager().
                 searchComponentByType<GeneralCollisionComponent>(enemyConfComp->m_stdAmmo[0], Components_e::GENERAL_COLLISION_COMPONENT);
         SegmentCollisionComponent *segmentComp = stairwayToComponentManager().

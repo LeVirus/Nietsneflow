@@ -1209,7 +1209,7 @@ void MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
             }
             else
             {
-                loadNonVisibleEnemyAmmoStuff(loadFromCheckpoint, j, it->second, levelManager, enemyComp);
+                loadNonVisibleEnemyAmmoStuff(loadFromCheckpoint, m_currentLevelEnemiesNumber, it->second, levelManager, enemyComp);
             }
             loadEnemySprites(levelManager.getPictureData().getSpriteData(),
                              it->second, numEntity, enemyComp, levelManager.getVisibleShootDisplayData());
