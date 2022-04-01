@@ -1,13 +1,6 @@
 BUGS======================================================================
 
 ))
-Wall exists inside door some time
-
-))
-Bad display order for enemies at limit case
-
-
-))
 Eject issue on moveable wall lateral====================~~
 
 ))
@@ -15,6 +8,9 @@ Corpse ejected by door and WALL==============================~~
 
 ))
 In input gamepad menu bug in GLFW in AXIS===============================~
+
+))
+Wall exists inside door some time======================Bug in level editor
 
 
 ))
