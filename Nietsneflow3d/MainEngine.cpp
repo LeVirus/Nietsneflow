@@ -63,7 +63,7 @@ LevelState MainEngine::mainLoop(uint32_t levelNum, LevelState_e levelState)
     if(beginLevel)
     {
         m_memCheckpointLevelState = {};
-        m_playerConf->m_currentCheckpoint = 0;
+        m_playerConf->m_currentCheckpoint->first = 0;
         if(levelState == LevelState_e::NEW_GAME)
         {
             m_graphicEngine.updateSaveNum(levelNum, m_currentSave, 0);
@@ -179,15 +179,17 @@ LevelState MainEngine::mainLoop(uint32_t levelNum, LevelState_e levelState)
 }
 
 //===================================================================
-void MainEngine::saveGameProgressCheckpoint(uint32_t levelNum, const PairUI_t &checkpointReached, uint32_t checkpointNum)
+void MainEngine::saveGameProgressCheckpoint(uint32_t levelNum, const PairUI_t &checkpointReached,
+                                            const std::pair<uint32_t, Direction_e> &checkpointData)
 {
     uint32_t enemiesKilled = (m_playerConf->m_enemiesKilled) ? *m_playerConf->m_enemiesKilled : 0;
     uint32_t secretsFound = (m_playerConf->m_secretsFound) ? *m_playerConf->m_secretsFound : 0;
-    m_memCheckpointLevelState = {levelNum, checkpointNum, secretsFound, enemiesKilled, checkpointReached};
+    m_memCheckpointLevelState = {levelNum, checkpointData.first, secretsFound, enemiesKilled, checkpointData.second, checkpointReached};
     //OOOK SAVE GEAR BEGIN LEVEL
     savePlayerGear(false);
     saveEnemiesCheckpoint();
-    MemCheckpointElementsState d{checkpointNum, secretsFound, enemiesKilled, checkpointReached, m_memEnemiesStateFromCheckpoint,
+    MemCheckpointElementsState d{checkpointData.first, secretsFound, enemiesKilled, checkpointReached,
+                checkpointData.second, m_memEnemiesStateFromCheckpoint,
                 m_memMoveableWallCheckpointData, m_memTriggerWallMoveableWallCheckpointData, m_memStaticEntitiesDeletedFromCheckpoint};
     saveGameProgress(m_currentLevel, m_currentSave, &d);
 }
@@ -789,9 +791,13 @@ void MainEngine::loadGameProgressCheckpoint()
     MapCoordComponent *mapComp = m_ecsManager.getComponentManager().
             searchComponentByType<MapCoordComponent>(m_playerEntity, Components_e::MAP_COORD_COMPONENT);
     assert(mapComp);
+    MoveableComponent *moveComp = m_ecsManager.getComponentManager().
+            searchComponentByType<MoveableComponent>(m_playerEntity, Components_e::MOVEABLE_COMPONENT);
+    assert(moveComp);
     mapComp->m_absoluteMapPositionPX = getCenteredAbsolutePosition(m_memCheckpointLevelState->m_playerPos);
+    moveComp->m_degreeOrientation = getDegreeAngleFromDirection(m_memCheckpointLevelState->m_direction);
     m_memStaticEntitiesDeletedFromCheckpoint = m_currentEntitiesDelete;
-    m_playerConf->m_currentCheckpoint = m_memCheckpointLevelState->m_checkpointNum;
+    m_playerConf->m_currentCheckpoint = {m_memCheckpointLevelState->m_checkpointNum, m_memCheckpointLevelState->m_direction};
     m_playerConf->m_enemiesKilled = m_memCheckpointLevelState->m_ennemiesKilled;
     m_playerConf->m_secretsFound = m_memCheckpointLevelState->m_secretsFound;
 }
@@ -1330,21 +1336,21 @@ void MainEngine::memCheckpointEnemiesData(bool loadFromCheckpoint, uint32_t enem
 //===================================================================
 void MainEngine::loadCheckpointsEntities(const LevelManager &levelManager)
 {
-    const std::vector<PairUI_t> &container = levelManager.getCheckpointsData();
+    const std::vector<std::pair<PairUI_t, Direction_e>> &container = levelManager.getCheckpointsData();
     uint32_t entityNum;
     for(uint32_t i = 0; i < container.size(); ++i)
     {
-        if(m_currentEntitiesDelete.find(container[i]) !=
-                m_currentEntitiesDelete.end())
+        if(m_currentEntitiesDelete.find(container[i].first) != m_currentEntitiesDelete.end())
         {
             continue;
         }
         entityNum = createCheckpointEntity();
-        initStdCollisionCase(entityNum, container[i], CollisionTag_e::CHECKPOINT_CT);
+        initStdCollisionCase(entityNum, container[i].first, CollisionTag_e::CHECKPOINT_CT);
         CheckpointComponent *checkComponent = m_ecsManager.getComponentManager().
                 searchComponentByType<CheckpointComponent>(entityNum, Components_e::CHECKPOINT_COMPONENT);
         assert(checkComponent);
         checkComponent->m_checkpointNumber = i + 1;
+        checkComponent->m_direction = container[i].second;
     }
 }
 
@@ -1733,7 +1739,7 @@ bool MainEngine::loadSavedGame(uint32_t saveNum, LevelState_e levelMode)
     m_memPlayerConfBeginLevel = *savedData->m_playerConfBeginLevel;
     if(savedData->m_checkpointLevelData)
     {
-        m_playerConf->m_currentCheckpoint = savedData->m_checkpointLevelData->m_checkpointNum;
+        m_playerConf->m_currentCheckpoint = {savedData->m_checkpointLevelData->m_checkpointNum, savedData->m_checkpointLevelData->m_direction};
     }
     assert(!m_memPlayerConfBeginLevel.m_ammunationsCount.empty());
     if(savedData->m_playerConfCheckpoint)
@@ -1759,9 +1765,8 @@ bool MainEngine::loadSavedGame(uint32_t saveNum, LevelState_e levelMode)
 //===================================================================
 void MainEngine::loadCheckpointSavedGame(const MemCheckpointElementsState &checkpointData)
 {
-    m_memCheckpointLevelState = {*m_levelToLoad, checkpointData.m_checkpointNum,
-                                 checkpointData.m_secretsNumber, checkpointData.m_enemiesKilled,
-                                 checkpointData.m_checkpointPos};
+    m_memCheckpointLevelState = {*m_levelToLoad, checkpointData.m_checkpointNum, checkpointData.m_secretsNumber,
+                                 checkpointData.m_enemiesKilled, checkpointData.m_direction, checkpointData.m_checkpointPos};
     m_currentEntitiesDelete = checkpointData.m_staticElementDeleted;
     m_memEnemiesStateFromCheckpoint = checkpointData.m_enemiesData;
     m_memMoveableWallCheckpointData = checkpointData.m_moveableWallData;
@@ -2346,21 +2351,7 @@ void MainEngine::confPlayerEntity(const LevelManager &levelManager,
     createPlayerImpactEntities(vectSpriteData, weaponConf, levelManager.getImpactDisplayData());
     map->m_coord = level.getPlayerDeparture();
     Direction_e playerDir = level.getPlayerDepartureDirection();
-    switch(playerDir)
-    {
-    case Direction_e::NORTH:
-        move->m_degreeOrientation = 90.0f;
-        break;
-    case Direction_e::EAST:
-        move->m_degreeOrientation = 0.0f;
-        break;
-    case Direction_e::SOUTH:
-        move->m_degreeOrientation = 270.0f;
-        break;
-    case Direction_e::WEST:
-        move->m_degreeOrientation = 180.0f;
-        break;
-    }
+    move->m_degreeOrientation = getDegreeAngleFromDirection(playerDir);
     map->m_absoluteMapPositionPX = getCenteredAbsolutePosition(map->m_coord);
     updatePlayerOrientation(*move, *pos, *vision);
     color->m_vertex.reserve(3);
@@ -3043,4 +3034,21 @@ void MainEngine::linkSystemsToSoundEngine()
     SoundSystem *soundSystem = m_ecsManager.getSystemManager().
             searchSystemByType<SoundSystem>(static_cast<uint32_t>(Systems_e::SOUND_SYSTEM));
     m_audioEngine.linkSystem(soundSystem);
+}
+
+//===================================================================
+float getDegreeAngleFromDirection(Direction_e direction)
+{
+    switch(direction)
+    {
+    case Direction_e::NORTH:
+        return 90.0f;
+    case Direction_e::EAST:
+        return 0.0f;
+    case Direction_e::SOUTH:
+        return 270.0f;
+    case Direction_e::WEST:
+        return 180.0f;
+    }
+    return 0.0f;
 }

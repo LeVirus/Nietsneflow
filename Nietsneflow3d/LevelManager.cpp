@@ -1224,11 +1224,21 @@ void LevelManager::loadPositionEnemyData()
 void LevelManager::loadPositionCheckpointsData()
 {
     std::vector<std::string> vectINISections;
+    VectPairUI_t vectPos;
     m_checkpointsPos.clear();
     vectINISections = m_ini.getSectionNamesContaining("Checkpoints");
-    if(!vectINISections.empty())
+    if(vectINISections.empty())
     {
-        fillStandartPositionVect(vectINISections[0], m_checkpointsPos);
+        return;
+    }
+    fillStandartPositionVect(vectINISections[0], vectPos);
+    std::optional<std::string> dir = m_ini.getValue("Checkpoints", "Direction");
+    std::vector<uint32_t> vectDir = convertStrToVectUI(*dir);
+    assert(vectDir.size() == vectPos.size());
+    m_checkpointsPos.reserve(vectDir.size());
+    for(uint32_t j = 0; j < vectDir.size(); ++j)
+    {
+        m_checkpointsPos.emplace_back(std::pair<PairUI_t, Direction_e>{vectPos[j], static_cast<Direction_e>(vectDir[j])});
     }
 }
 
@@ -1758,6 +1768,7 @@ void LevelManager::savePlayerGear(bool beginLevel, const MemPlayerConf &playerCo
 void LevelManager::saveElementsGameProgress(const MemCheckpointElementsState &checkpointData)
 {
     m_ini.setValue("Checkpoint", "Num", std::to_string(checkpointData.m_checkpointNum));
+    m_ini.setValue("Checkpoint", "Direction", std::to_string(static_cast<uint32_t>(checkpointData.m_direction)));
     m_ini.setValue("Checkpoint", "SecretsFound", std::to_string(checkpointData.m_secretsNumber));
     m_ini.setValue("Checkpoint", "EnemiesKilled", std::to_string(checkpointData.m_enemiesKilled));
     m_ini.setValue("Checkpoint", "PosX", std::to_string(checkpointData.m_checkpointPos.first));
@@ -1955,6 +1966,7 @@ std::unique_ptr<MemCheckpointElementsState> LevelManager::loadCheckpointDataSave
 {
     uint32_t checkpointNum, secretsFound, enemiesKilled;
     PairUI_t pos;
+    Direction_e direction;
     std::optional<std::string> val;
     val = m_ini.getValue("Checkpoint", "Num");
     if(!val)
@@ -1965,6 +1977,11 @@ std::unique_ptr<MemCheckpointElementsState> LevelManager::loadCheckpointDataSave
     val = m_ini.getValue("Checkpoint", "SecretsFound");
     assert(val);
     secretsFound = std::stoi(*val);
+
+    val = m_ini.getValue("Checkpoint", "Direction");
+    assert(val);
+    direction = static_cast<Direction_e>(std::stoi(*val));
+
     val = m_ini.getValue("Checkpoint", "EnemiesKilled");
     assert(val);
     enemiesKilled = std::stoi(*val);
@@ -1975,7 +1992,7 @@ std::unique_ptr<MemCheckpointElementsState> LevelManager::loadCheckpointDataSave
     assert(val);
     pos.second = std::stoi(*val);
     return std::make_unique<MemCheckpointElementsState>(MemCheckpointElementsState{
-                    checkpointNum, secretsFound, enemiesKilled, pos,
+                    checkpointNum, secretsFound, enemiesKilled, pos, direction,
                     loadEnemiesDataGameProgress(), loadMoveableWallDataGameProgress(),
                     loadTriggerWallMoveableWallDataGameProgress(), loadStaticElementsDataGameProgress()});
 }

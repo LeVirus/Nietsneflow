@@ -50,6 +50,7 @@ struct MemPlayerConf
 struct MemCheckpointLevelState
 {
     uint32_t m_levelNum, m_checkpointNum, m_secretsFound, m_ennemiesKilled;
+    Direction_e m_direction;
     PairUI_t m_playerPos;
 };
 
@@ -64,6 +65,7 @@ struct MemCheckpointElementsState
 {
     uint32_t m_checkpointNum, m_secretsNumber, m_enemiesKilled;
     PairUI_t m_checkpointPos;
+    Direction_e m_direction;
     std::vector<MemCheckpointEnemiesState> m_enemiesData;
     //bool if reversable
     std::map<uint32_t, std::pair<uint32_t, bool>> m_moveableWallData;
@@ -95,7 +97,7 @@ public:
     void loadGameProgressCheckpoint();
     //first quit, second gameover
     LevelState mainLoop(uint32_t levelNum, LevelState_e levelState);
-    void saveGameProgressCheckpoint(uint32_t levelNum, const PairUI_t &checkpointReached, uint32_t checkpointNum);
+    void saveGameProgressCheckpoint(uint32_t levelNum, const PairUI_t &checkpointReached, const std::pair<uint32_t, Direction_e> &checkpointData);
     void saveGameProgress(uint32_t levelNum, std::optional<uint32_t> numSaveFile = {},
                           const MemCheckpointElementsState *checkpointData = nullptr);
     void playerAttack(uint32_t playerEntity, PlayerConfComponent *playerComp,
@@ -332,6 +334,7 @@ private:
     std::map<uint32_t, std::pair<std::vector<uint32_t>, bool>> m_memTriggerWallMoveableWallCheckpointData;
 };
 
+float getDegreeAngleFromDirection(Direction_e direction);
 pairI_t getModifMoveableWallDataCheckpoint(const std::vector<std::pair<Direction_e, uint32_t>> &vectDir, uint32_t timesActionned, TriggerBehaviourType_e triggerBehaviour);
 void insertEnemySpriteFromType(const std::vector<SpriteData> &vectSprite, mapEnemySprite_t &mapSpriteAssociate,
                                std::vector<SpriteData const *> &vectSpriteData, const std::vector<uint8_t> &enemyMemArray,

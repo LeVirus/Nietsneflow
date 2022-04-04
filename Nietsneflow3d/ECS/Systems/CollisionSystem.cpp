@@ -867,13 +867,13 @@ bool CollisionSystem::treatCollisionPlayer(CollisionArgs &args, CircleCollisionC
         CheckpointComponent *checkpointComp = stairwayToComponentManager().
                 searchComponentByType<CheckpointComponent>(args.entityNumB, Components_e::CHECKPOINT_COMPONENT);
         assert(checkpointComp);
-        if(!playerComp->m_currentCheckpoint || checkpointComp->m_checkpointNumber > playerComp->m_currentCheckpoint)
+        if(!playerComp->m_currentCheckpoint || checkpointComp->m_checkpointNumber > playerComp->m_currentCheckpoint->first)
         {
             MapCoordComponent *mapComp = stairwayToComponentManager().
                     searchComponentByType<MapCoordComponent>(args.entityNumB, Components_e::MAP_COORD_COMPONENT);
             assert(mapComp);
             playerComp->m_checkpointReached = mapComp->m_coord;
-            playerComp->m_currentCheckpoint = checkpointComp->m_checkpointNumber;
+            playerComp->m_currentCheckpoint = {checkpointComp->m_checkpointNumber, checkpointComp->m_direction};
             writePlayerInfo("CHECKPOINT REACHED");
         }
         m_vectEntitiesToDelete.push_back(args.entityNumB);

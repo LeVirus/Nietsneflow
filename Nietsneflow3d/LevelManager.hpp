@@ -188,7 +188,7 @@ public:
     {
         return m_settingsData;
     }
-    inline const std::vector<PairUI_t> &getCheckpointsData()const
+    inline const std::vector<std::pair<PairUI_t, Direction_e>> &getCheckpointsData()const
     {
         return m_checkpointsPos;
     }
@@ -282,7 +282,8 @@ private:
     std::map<std::string, EnemyData> m_enemyData;
     std::map<std::string, MemSpriteData> m_triggerDisplayData;
     std::vector<MemSpriteData> m_displayTeleportData;
-    std::vector<PairUI_t> m_checkpointsPos, m_secretsPos;
+    std::vector<PairUI_t> m_secretsPos;
+    std::vector<std::pair<PairUI_t, Direction_e>> m_checkpointsPos;
     //store the sprite number and the screen display size
     std::vector<WeaponINIData> m_vectWeaponsINIData;
     //first moving Shot sprite, all other destruct phase sprites
