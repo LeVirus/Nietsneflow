@@ -794,9 +794,16 @@ void MainEngine::loadGameProgressCheckpoint()
     MoveableComponent *moveComp = m_ecsManager.getComponentManager().
             searchComponentByType<MoveableComponent>(m_playerEntity, Components_e::MOVEABLE_COMPONENT);
     assert(moveComp);
+    VisionComponent *vision = m_ecsManager.getComponentManager().
+            searchComponentByType<VisionComponent>(m_playerEntity, Components_e::VISION_COMPONENT);
+    assert(vision);
+    PositionVertexComponent *pos = m_ecsManager.getComponentManager().
+            searchComponentByType<PositionVertexComponent>(m_playerEntity, Components_e::POSITION_VERTEX_COMPONENT);
+    assert(pos);
     mapComp->m_absoluteMapPositionPX = getCenteredAbsolutePosition(m_memCheckpointLevelState->m_playerPos);
     moveComp->m_degreeOrientation = getDegreeAngleFromDirection(m_memCheckpointLevelState->m_direction);
     m_memStaticEntitiesDeletedFromCheckpoint = m_currentEntitiesDelete;
+    updatePlayerOrientation(*moveComp, *pos, *vision);
     m_playerConf->m_currentCheckpoint = {m_memCheckpointLevelState->m_checkpointNum, m_memCheckpointLevelState->m_direction};
     m_playerConf->m_enemiesKilled = m_memCheckpointLevelState->m_ennemiesKilled;
     m_playerConf->m_secretsFound = m_memCheckpointLevelState->m_secretsFound;
