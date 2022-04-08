@@ -12,6 +12,16 @@ Sprite = SpriteAnimTeleportA SpriteAnimTeleportB
 SpriteWeightGame = 1.4
 SpriteHeightGame = 1.8
 
+[LogA]
+Sprite = SpriteTriggerA
+SpriteWeightGame = 0.4
+SpriteHeightGame = 0.6
+
+[LogB]
+Sprite = SpriteBackStars
+SpriteWeightGame = 0.4
+SpriteHeightGame = 0.6
+
 [WallA]
 Sprite = SpriteWallA SpriteWallB 
 

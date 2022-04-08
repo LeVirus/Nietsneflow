@@ -237,6 +237,7 @@ private:
     void loadWeaponsData();
     void loadGeneralSoundData();
     void loadBarrelsData();
+    void loadLogData();
     void loadExit();
     void loadVisualTeleportData();
     void loadTriggerElements();
@@ -283,6 +284,8 @@ private:
     std::map<std::string, MemSpriteData> m_triggerDisplayData;
     std::vector<MemSpriteData> m_displayTeleportData;
     std::vector<PairUI_t> m_secretsPos;
+    //first sprite, second fps size
+    std::vector<std::pair<std::string, PairUI_t>> m_logStdData;
     std::vector<std::pair<PairUI_t, Direction_e>> m_checkpointsPos;
     //store the sprite number and the screen display size
     std::vector<WeaponINIData> m_vectWeaponsINIData;

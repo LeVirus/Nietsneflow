@@ -260,6 +260,30 @@ void LevelManager::loadBarrelsData()
 }
 
 //===================================================================
+void LevelManager::loadLogData()
+{
+    std::vector<std::string> vectINISections;
+    vectINISections = m_ini.getSectionNamesContaining("Log");
+    assert(!vectINISections.empty());
+    m_logStdData.reserve(vectINISections.size());
+    std::optional<std::string> val;
+    std::string sprite;
+    PairFloat_t size;
+    for(uint32_t i = 0; i < vectINISections.size(); ++i)
+    {
+        val = m_ini.getValue(vectINISections[i], "Sprite");
+        assert(val);
+        val = m_ini.getValue(vectINISections[i], "SpriteWeightGame");
+        assert(val);
+        size.first = std::stof(*val);
+        val = m_ini.getValue(vectINISections[i], "SpriteHeightGame");
+        assert(val);
+        size.second = std::stof(*val);
+        m_logStdData.emplace_back(std::pair<std::string, PairUI_t>{sprite, size});
+    }
+}
+
+//===================================================================
 std::vector<uint8_t> LevelManager::getVectSpriteNum(const std::string_view section, const std::string_view param)
 {
     std::optional<std::string> val = m_ini.getValue(section.data(), param.data());
@@ -1392,6 +1416,7 @@ void LevelManager::loadStandardData(const std::string &INIFileName)
     loadGeneralStaticElements(LevelStaticElementType_e::TELEPORT);
     loadVisualTeleportData();
     loadBarrelsData();
+    loadLogData();
     loadExit();
     loadTriggerElements();
     loadDoorData();
