@@ -233,6 +233,7 @@ private:
     void loadCheckpointsEntities(const LevelManager &levelManager);
     void initStdCollisionCase(uint32_t entityNum, const PairUI_t &mapPos, CollisionTag_e tag);
     void loadSecretsEntities(const LevelManager &levelManager);
+    void loadLogsEntities(const LevelManager &levelManager, const std::vector<SpriteData> &vectSprite);
     void loadTriggerEntityData(const MoveableWallData &moveWallData, const std::vector<uint32_t> &vectPosition, const std::vector<SpriteData> &vectSprite, TriggerWallMoveType_e type, uint32_t shapeNum);
     void confVisibleAmmo(uint32_t ammoEntity);
     void loadStaticElementEntities(const LevelManager &levelManager);
@@ -253,6 +254,7 @@ private:
     uint32_t createTriggerEntity(bool visible);
     uint32_t createColorEntity();
     uint32_t createCheckpointEntity();
+    uint32_t createLogEntity();
     uint32_t createSecretEntity();
     uint32_t createTextureEntity();
     uint32_t createEnemyDropObject(const LevelManager &levelManager, const EnemyData &enemyData, uint32_t iterationNum, bool loadFromCheckpoint, uint32_t cmpt);

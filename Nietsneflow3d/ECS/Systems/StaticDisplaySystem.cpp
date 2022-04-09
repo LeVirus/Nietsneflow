@@ -63,6 +63,7 @@ void StaticDisplaySystem::updateMenuCursorPosition(PlayerConfComponent *playerCo
 //===================================================================
 void StaticDisplaySystem::execSystem()
 {
+    double time;
     System::execSystem();
     m_shader->use();
     for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
@@ -94,9 +95,11 @@ void StaticDisplaySystem::execSystem()
             assert(timerComp);
             std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() - timerComp->m_clockA;
             drawWriteVertex(playerComp->m_numInfoWriteEntity, VertexID_e::INFO, playerComp->m_infoWriteData.second);
-            if(elapsed_seconds.count() > 1.5)
+            time = (!timerComp->m_time) ? 1.5 : *timerComp->m_time;
+            if(elapsed_seconds.count() > time)
             {
                 playerComp->m_infoWriteData.first = false;
+                timerComp->m_time = {};
             }
         }
     }

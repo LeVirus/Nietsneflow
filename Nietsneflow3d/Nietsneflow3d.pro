@@ -41,6 +41,7 @@ HEADERS += \
     ECS/Components/CheckpointComponent.hpp \
     ECS/Components/EnemyConfComponent.hpp \
     ECS/Components/FPSVisibleStaticElementComponent.hpp \
+    ECS/Components/LogComponent.hpp \
     ECS/Components/MemFPSGLSizeComponent.hpp \
     ECS/Components/MemSpriteDataComponent.hpp \
     ECS/Components/MoveableWallConfComponent.hpp \

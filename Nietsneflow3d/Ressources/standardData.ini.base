@@ -12,12 +12,12 @@ Sprite = SpriteAnimTeleportA SpriteAnimTeleportB
 SpriteWeightGame = 1.4
 SpriteHeightGame = 1.8
 
-[LogA]
+[MessageLogA]
 Sprite = SpriteTriggerA
 SpriteWeightGame = 0.4
 SpriteHeightGame = 0.6
 
-[LogB]
+[MessageLogB]
 Sprite = SpriteBackStars
 SpriteWeightGame = 0.4
 SpriteHeightGame = 0.6

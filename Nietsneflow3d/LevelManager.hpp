@@ -84,6 +84,18 @@ struct DataLevelWriteMenu
     uint32_t m_levelNum, m_checkpointNum;
 };
 
+struct LogStdData
+{
+    uint8_t m_spriteNum;
+    PairFloat_t m_fpsSize;
+};
+
+struct LogLevelData
+{
+    std::string m_id, m_message;
+    PairUI_t m_pos;
+};
+
 class LevelManager
 {
 public:
@@ -196,6 +208,14 @@ public:
     {
         return m_secretsPos;
     }
+    inline const std::vector<LogLevelData> &getLogsData()const
+    {
+        return m_logsLevelData;
+    }
+    inline const std::map<std::string, LogStdData> &getStdLogData()const
+    {
+        return m_logStdData;
+    }
     bool checkSavedGameExists(uint32_t saveNum) const;
 private:
     std::string getGamepadKeyIniString(const GamepadInputState &gamepadInputState) const;
@@ -254,6 +274,7 @@ private:
     void loadPositionEnemyData();
     void loadPositionCheckpointsData();
     void loadPositionSecretsData();
+    void loadPositionLogsData();
     void loadUtilsData();
     void loadEnemySprites(const std::string &sectionName,
                           EnemySpriteElementType_e spriteTypeEnum, EnemyData &enemyData);
@@ -284,8 +305,9 @@ private:
     std::map<std::string, MemSpriteData> m_triggerDisplayData;
     std::vector<MemSpriteData> m_displayTeleportData;
     std::vector<PairUI_t> m_secretsPos;
-    //first sprite, second fps size
-    std::vector<std::pair<std::string, PairUI_t>> m_logStdData;
+    std::vector<LogLevelData> m_logsLevelData;
+    //first ID, second Std data
+    std::map<std::string, LogStdData> m_logStdData;
     std::vector<std::pair<PairUI_t, Direction_e>> m_checkpointsPos;
     //store the sprite number and the screen display size
     std::vector<WeaponINIData> m_vectWeaponsINIData;

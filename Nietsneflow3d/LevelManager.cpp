@@ -263,9 +263,8 @@ void LevelManager::loadBarrelsData()
 void LevelManager::loadLogData()
 {
     std::vector<std::string> vectINISections;
-    vectINISections = m_ini.getSectionNamesContaining("Log");
+    vectINISections = m_ini.getSectionNamesContaining("MessageLog");
     assert(!vectINISections.empty());
-    m_logStdData.reserve(vectINISections.size());
     std::optional<std::string> val;
     std::string sprite;
     PairFloat_t size;
@@ -273,13 +272,15 @@ void LevelManager::loadLogData()
     {
         val = m_ini.getValue(vectINISections[i], "Sprite");
         assert(val);
+        std::optional<uint8_t> spritenum = *m_pictureData.getIdentifier(*val);
         val = m_ini.getValue(vectINISections[i], "SpriteWeightGame");
         assert(val);
         size.first = std::stof(*val);
         val = m_ini.getValue(vectINISections[i], "SpriteHeightGame");
         assert(val);
         size.second = std::stof(*val);
-        m_logStdData.emplace_back(std::pair<std::string, PairUI_t>{sprite, size});
+        assert(spritenum);
+        m_logStdData.insert({vectINISections[i], {*spritenum, size}});
     }
 }
 
@@ -1279,6 +1280,34 @@ void LevelManager::loadPositionSecretsData()
 }
 
 //===================================================================
+void LevelManager::loadPositionLogsData()
+{
+    std::vector<std::string> vectINISections;
+    m_logsLevelData.clear();
+    vectINISections = m_ini.getSectionNamesContaining("MessageLog");
+    m_logsLevelData.reserve(vectINISections.size());
+    std::optional<std::string> val;
+    std::string id, message;
+    PairUI_t pos;
+    std::vector<uint32_t> vectPos;
+    for(uint32_t j = 0; j < vectINISections.size(); ++j)
+    {
+        val = m_ini.getValue(vectINISections[j], "DisplayID");
+        assert(val);
+        id = *val;
+        val = m_ini.getValue(vectINISections[j], "GamePosition");
+        assert(val);
+        vectPos = convertStrToVectUI(*val);
+        assert(vectPos.size() == 2);
+        pos = {vectPos[0], vectPos[1]};
+        val = m_ini.getValue(vectINISections[j], "Message");
+        assert(val);
+        message = *val;
+        m_logsLevelData.emplace_back(LogLevelData{id, message, pos});
+    }
+}
+
+//===================================================================
 void LevelManager::loadUtilsData()
 {
     std::vector<std::string> vectINISections;
@@ -1494,6 +1523,7 @@ bool LevelManager::loadLevel(const std::string &INIFileName, uint32_t levelNum)
     loadPositionEnemyData();
     loadPositionCheckpointsData();
     loadPositionSecretsData();
+    loadPositionLogsData();
     loadBackgroundData();
     loadMusicData();
     return true;

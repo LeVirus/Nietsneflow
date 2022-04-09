@@ -76,6 +76,7 @@ enum Components_e
     AUDIO_COMPONENT,
     CHECKPOINT_COMPONENT,
     WALL_MULTI_SPRITE_CONF,
+    LOG_COMPONENT,
     TOTAL_COMPONENTS
 };
 
@@ -314,7 +315,8 @@ enum class CollisionTag_e
     CHECKPOINT_CT,
     SECRET_CT,
     TELEPORT_ANIM_CT,
-    DEAD_CORPSE_CT
+    DEAD_CORPSE_CT,
+    LOG_CT
 };
 
 enum class CollisionShape_e

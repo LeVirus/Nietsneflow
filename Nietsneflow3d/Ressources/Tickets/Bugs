@@ -1,6 +1,9 @@
 BUGS======================================================================
 
 ))
+Enemies repop to 0 0 if die without checkpoint
+
+))
 Weapon display a bit too high
 
 ))

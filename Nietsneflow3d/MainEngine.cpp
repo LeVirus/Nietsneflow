@@ -27,6 +27,7 @@
 #include <ECS/Components/ShotConfComponent.hpp>
 #include <ECS/Components/WeaponComponent.hpp>
 #include <ECS/Components/MoveableWallConfComponent.hpp>
+#include <ECS/Components/LogComponent.hpp>
 #include <ECS/Components/BarrelComponent.hpp>
 #include <ECS/Systems/ColorDisplaySystem.hpp>
 #include <ECS/Systems/MapDisplaySystem.hpp>
@@ -668,6 +669,20 @@ uint32_t MainEngine::createCheckpointEntity()
 }
 
 //===================================================================
+uint32_t MainEngine::createLogEntity()
+{
+    std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComponents;
+    bitsetComponents[Components_e::POSITION_VERTEX_COMPONENT] = true;
+    bitsetComponents[Components_e::SPRITE_TEXTURE_COMPONENT] = true;
+    bitsetComponents[Components_e::MAP_COORD_COMPONENT] = true;
+    bitsetComponents[Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT] = true;
+    bitsetComponents[Components_e::GENERAL_COLLISION_COMPONENT] = true;
+    bitsetComponents[Components_e::CIRCLE_COLLISION_COMPONENT] = true;
+    bitsetComponents[Components_e::LOG_COMPONENT] = true;
+    return m_ecsManager.addEntity(bitsetComponents);
+}
+
+//===================================================================
 uint32_t MainEngine::createSecretEntity()
 {
     std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComponents;
@@ -780,6 +795,7 @@ void MainEngine::loadLevel(const LevelManager &levelManager)
     loadEnemiesEntities(levelManager);
     loadCheckpointsEntities(levelManager);
     loadSecretsEntities(levelManager);
+    loadLogsEntities(levelManager, levelManager.getPictureData().getSpriteData());
     //MUUUUUUUUUUUUSSSSS
     m_audioEngine.loadMusicFromFile(levelManager.getLevel().getMusicFilename());
     m_audioEngine.playMusic();
@@ -1370,13 +1386,43 @@ void MainEngine::loadSecretsEntities(const LevelManager &levelManager)
     uint32_t entityNum;
     for(uint32_t i = 0; i < container.size(); ++i)
     {
-        if(m_currentEntitiesDelete.find(container[i]) !=
-                m_currentEntitiesDelete.end())
+        if(m_currentEntitiesDelete.find(container[i]) != m_currentEntitiesDelete.end())
         {
             continue;
         }
         entityNum = createCheckpointEntity();
         initStdCollisionCase(entityNum, container[i], CollisionTag_e::SECRET_CT);
+    }
+}
+
+//===================================================================
+void MainEngine::loadLogsEntities(const LevelManager &levelManager, const std::vector<SpriteData> &vectSprite)
+{
+    const std::vector<LogLevelData> &container = levelManager.getLogsData();
+    const std::map<std::string, LogStdData> &stdLogData = levelManager.getStdLogData();
+    uint32_t entityNum;
+    std::map<std::string, LogStdData>::const_iterator it;
+    for(uint32_t i = 0; i < container.size(); ++i)
+    {
+        entityNum = createLogEntity();
+        it = stdLogData.find(container[i].m_id);
+        confBaseComponent(entityNum, vectSprite[it->second.m_spriteNum], container[i].m_pos,
+                CollisionShape_e::CIRCLE_C, CollisionTag_e::LOG_CT);
+        FPSVisibleStaticElementComponent *fpsStaticComp = m_ecsManager.getComponentManager().
+                searchComponentByType<FPSVisibleStaticElementComponent>(
+                    entityNum, Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
+        assert(fpsStaticComp);
+        assert(it != stdLogData.end());
+        fpsStaticComp->m_inGameSpriteSize = it->second.m_fpsSize;
+        fpsStaticComp->m_levelElementType = LevelStaticElementType_e::GROUND;
+        CircleCollisionComponent *circleComp = m_ecsManager.getComponentManager().
+                searchComponentByType<CircleCollisionComponent>(entityNum, Components_e::CIRCLE_COLLISION_COMPONENT);
+        assert(circleComp);
+        circleComp->m_ray = 10.0f;
+        LogComponent *logComp = m_ecsManager.getComponentManager().
+                searchComponentByType<LogComponent>(entityNum, Components_e::LOG_COMPONENT);
+        assert(logComp);
+        logComp->m_message = container[i].m_message;
     }
 }
 

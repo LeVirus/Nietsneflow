@@ -13,6 +13,7 @@
 #include <ECS/Components/TimerComponent.hpp>
 #include <ECS/Components/ShotConfComponent.hpp>
 #include <ECS/Components/TeleportComponent.hpp>
+#include <ECS/Components/LogComponent.hpp>
 #include <ECS/Components/ImpactShotComponent.hpp>
 #include <ECS/Components/MemSpriteDataComponent.hpp>
 #include <ECS/Components/AudioComponent.hpp>
@@ -449,6 +450,7 @@ void CollisionSystem::initArrayTag()
     m_tagArray.insert({CollisionTag_e::PLAYER_CT, CollisionTag_e::TRIGGER_CT});
     m_tagArray.insert({CollisionTag_e::PLAYER_CT, CollisionTag_e::TELEPORT_CT});
     m_tagArray.insert({CollisionTag_e::PLAYER_CT, CollisionTag_e::BARREL_CT});
+    m_tagArray.insert({CollisionTag_e::PLAYER_CT, CollisionTag_e::LOG_CT});
     m_tagArray.insert({CollisionTag_e::PLAYER_CT, CollisionTag_e::CHECKPOINT_CT});
     m_tagArray.insert({CollisionTag_e::PLAYER_CT, CollisionTag_e::SECRET_CT});
 
@@ -457,6 +459,7 @@ void CollisionSystem::initArrayTag()
     m_tagArray.insert({CollisionTag_e::PLAYER_ACTION_CT, CollisionTag_e::DOOR_CT});
     m_tagArray.insert({CollisionTag_e::PLAYER_ACTION_CT, CollisionTag_e::EXIT_CT});
     m_tagArray.insert({CollisionTag_e::PLAYER_ACTION_CT, CollisionTag_e::TRIGGER_CT});
+    m_tagArray.insert({CollisionTag_e::PLAYER_ACTION_CT, CollisionTag_e::LOG_CT});
     m_tagArray.insert({CollisionTag_e::HIT_PLAYER_CT, CollisionTag_e::ENEMY_CT});
 
     m_tagArray.insert({CollisionTag_e::EXPLOSION_CT, CollisionTag_e::PLAYER_CT});
@@ -469,6 +472,7 @@ void CollisionSystem::initArrayTag()
     m_tagArray.insert({CollisionTag_e::ENEMY_CT, CollisionTag_e::DOOR_CT});
     m_tagArray.insert({CollisionTag_e::ENEMY_CT, CollisionTag_e::STATIC_SET_CT});
     m_tagArray.insert({CollisionTag_e::ENEMY_CT, CollisionTag_e::BARREL_CT});
+    m_tagArray.insert({CollisionTag_e::ENEMY_CT, CollisionTag_e::LOG_CT});
 //    m_tagArray.insert({CollisionTag_e::ENEMY_CT, CollisionTag_e::ENEMY_CT});
 
     m_tagArray.insert({CollisionTag_e::WALL_CT, CollisionTag_e::PLAYER_CT});
@@ -734,7 +738,7 @@ bool CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args, bool shotEx
             }
             if((args.tagCompA->m_tagA == CollisionTag_e::PLAYER_CT || args.tagCompA->m_tagA == CollisionTag_e::ENEMY_CT ||
                      args.tagCompA->m_tagB == CollisionTag_e::BARREL_CT || args.tagCompA->m_tagA == CollisionTag_e::IMPACT_CT) &&
-                    (args.tagCompB->m_tagA == CollisionTag_e::WALL_CT || args.tagCompB->m_tagA == CollisionTag_e::PLAYER_CT ||
+                    (args.tagCompB->m_tagA == CollisionTag_e::LOG_CT || args.tagCompB->m_tagA == CollisionTag_e::WALL_CT || args.tagCompB->m_tagA == CollisionTag_e::PLAYER_CT ||
                      args.tagCompB->m_tagA == CollisionTag_e::ENEMY_CT || args.tagCompB->m_tagA == CollisionTag_e::STATIC_SET_CT ||
                      args.tagCompB->m_tagB == CollisionTag_e::BARREL_CT))
             {
@@ -1040,9 +1044,20 @@ void CollisionSystem::treatActionPlayerCircle(CollisionArgs &args)
     {
         args.tagCompB->m_active = false;
     }
+    else if(args.tagCompB->m_tagA == CollisionTag_e::LOG_CT)
+    {
+        LogComponent *logComp = stairwayToComponentManager().
+                searchComponentByType<LogComponent>(args.entityNumB, Components_e::LOG_COMPONENT);
+        assert(logComp);
+        m_playerComp->m_infoWriteData = {true, logComp->m_message};
+        TimerComponent *timerComp = stairwayToComponentManager().
+                searchComponentByType<TimerComponent>(m_playerComp->muiGetIdEntityAssociated(), Components_e::TIMER_COMPONENT);
+        assert(timerComp);
+        timerComp->m_clockA = std::chrono::system_clock::now();
+        timerComp->m_time = 4.0;
+    }
     else if(args.tagCompB->m_tagB == CollisionTag_e::TRIGGER_CT)
     {
-
         TriggerComponent *triggerComp = stairwayToComponentManager().
                 searchComponentByType<TriggerComponent>(args.entityNumB, Components_e::TRIGGER_COMPONENT);
         assert(triggerComp);

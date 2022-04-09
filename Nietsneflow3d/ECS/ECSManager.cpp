@@ -10,6 +10,7 @@
 #include <ECS/Components/InputComponent.hpp>
 #include <ECS/Components/MemFPSGLSizeComponent.hpp>
 #include <ECS/Components/TeleportComponent.hpp>
+#include <ECS/Components/LogComponent.hpp>
 #include <ECS/Components/WeaponComponent.hpp>
 #include <ECS/Components/GeneralCollisionComponent.hpp>
 #include <ECS/Components/CircleCollisionComponent.hpp>
@@ -177,6 +178,11 @@ void ECSManager::syncComponentsFromEntities(uint32_t numEntity, const std::vecto
         case Components_e::CIRCLE_COLLISION_COMPONENT:
         {
             m_componentManager->instanciateExternComponent(numEntity, std::make_unique<CircleCollisionComponent>());
+        }
+            break;
+        case Components_e::LOG_COMPONENT:
+        {
+            m_componentManager->instanciateExternComponent(numEntity, std::make_unique<LogComponent>());
         }
             break;
         case Components_e::CHECKPOINT_COMPONENT:
