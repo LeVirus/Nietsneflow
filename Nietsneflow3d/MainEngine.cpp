@@ -1422,7 +1422,7 @@ void MainEngine::loadLogsEntities(const LevelManager &levelManager, const std::v
         LogComponent *logComp = m_ecsManager.getComponentManager().
                 searchComponentByType<LogComponent>(entityNum, Components_e::LOG_COMPONENT);
         assert(logComp);
-        logComp->m_message = container[i].m_message;
+        logComp->m_message = treatInfoMessageEndLine(container[i].m_message);
     }
 }
 
@@ -2554,7 +2554,7 @@ void MainEngine::confWriteEntities()
     WriteComponent *writeConf = m_ecsManager.getComponentManager().
             searchComponentByType<WriteComponent>(numInfoWrite, Components_e::WRITE_COMPONENT);
     assert(writeConf);
-    writeConf->m_upLeftPositionGL = {-0.95f, 0.9f};
+    writeConf->m_upLeftPositionGL = {-0.3f, 0.9f};
     writeConf->m_fontSize = STD_FONT_SIZE;
     //AMMO
     writeConf = m_ecsManager.getComponentManager().

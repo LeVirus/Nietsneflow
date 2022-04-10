@@ -111,4 +111,5 @@ private:
     ArrayControlKey_t m_inputMenuKeyboardWriteKeysEntities, m_inputMenuGamepadWriteKeysEntities;
 };
 
+std::string treatInfoMessageEndLine(const std::string &str, uint32_t lineSize = 20);
 void modVertexPos(PositionVertexComponent *posComp, const PairFloat_t &mod);

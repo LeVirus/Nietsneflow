@@ -708,3 +708,34 @@ void StaticDisplaySystem::memDisplayMenuEntities(uint32_t numMenuResolutionWrite
     m_resolutionDisplayMenuEntity = numMenuResolutionWrite;
     m_fullscreenMenuEntity = numFullscreenMenuEntity;
 }
+
+//===================================================================
+std::string treatInfoMessageEndLine(const std::string &str, uint32_t lineSize)
+{
+    if(str.size() < lineSize)
+    {
+        return str;
+    }
+    std::string ret = str;
+    uint32_t currentPos = 0;
+    size_t found = 0;
+    while(currentPos < ret.size())
+    {
+        found = ret.find('\\', currentPos + 1);
+        if(found == std::string::npos)
+        {
+            found = ret.size();
+        }
+        if(found < currentPos + lineSize)
+        {
+            currentPos = found;
+            continue;
+        }
+        for(uint32_t i = currentPos + lineSize; i < found; i += lineSize)
+        {
+            ret.insert(ret.begin() + i, '\\');
+        }
+        currentPos = found;
+    }
+    return ret;
+}
