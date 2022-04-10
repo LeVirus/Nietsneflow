@@ -110,6 +110,6 @@ private:
     m_fullscreenMenuEntity;
     ArrayControlKey_t m_inputMenuKeyboardWriteKeysEntities, m_inputMenuGamepadWriteKeysEntities;
 };
-
+float getLeftTextPosition(std::string_view str);
 std::string treatInfoMessageEndLine(const std::string &str, uint32_t lineSize = 20);
 void modVertexPos(PositionVertexComponent *posComp, const PairFloat_t &mod);

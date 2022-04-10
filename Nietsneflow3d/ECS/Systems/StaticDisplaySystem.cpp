@@ -346,6 +346,10 @@ void StaticDisplaySystem::drawWriteVertex(uint32_t numEntity, VertexID_e type, c
         }
         writeComp->m_str = value;
     }
+    if(type == VertexID_e::INFO)
+    {
+        writeComp->m_upLeftPositionGL.first = getLeftTextPosition(writeComp->m_str);
+    }
     confWriteVertex(writeComp, posComp, type);
     drawVertex(writeComp->m_numTexture, type);
 }
@@ -738,4 +742,29 @@ std::string treatInfoMessageEndLine(const std::string &str, uint32_t lineSize)
         currentPos = found;
     }
     return ret;
+}
+
+//===================================================================
+float getLeftTextPosition(std::string_view str)
+{
+    uint32_t maxLineSize = 0, pos = 0;
+    size_t find, currentPos = 0;
+    do
+    {
+        find = str.find('\\', currentPos + 1);
+        if(find == std::string::npos)
+        {
+            pos = str.size();
+        }
+        else
+        {
+            pos = find;
+        }
+        if(maxLineSize < (pos - currentPos))
+        {
+            maxLineSize = pos - currentPos;
+        }
+        currentPos = find;
+    }while(find != std::string::npos);
+    return maxLineSize * -0.02f;
 }
