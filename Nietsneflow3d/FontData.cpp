@@ -33,6 +33,10 @@ VectSpriteDataRef_t FontData::getWriteData(const std::string &str, uint32_t &num
     for(uint32_t i = 0; i < str.size(); ++i)
     {
         it = m_mapFontData.find(str[i]);
+        if(str[i] != ' ' && str[i] != '\\' && it == m_mapFontData.end())
+        {
+            it = m_mapFontData.find('?');
+        }
         if(it != m_mapFontData.end())
         {
             vect.emplace_back(const_cast<SpriteData&>(it->second));
