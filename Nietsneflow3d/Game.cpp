@@ -48,6 +48,14 @@ void Game::loadPlayerEntity()
 }
 
 //===================================================================
+void Game::setPlayerDeparture()
+{
+    m_mainEngine.setPlayerDeparture(m_levelManager.getLevel().getPlayerDeparture(),
+                                    m_levelManager.getLevel().getPlayerDepartureDirection());
+
+}
+
+//===================================================================
 bool Game::loadLevelData(uint32_t levelNum)
 {
     if(!m_levelManager.loadLevel("level.ini", levelNum))

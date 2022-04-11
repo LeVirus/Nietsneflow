@@ -1782,6 +1782,19 @@ void MainEngine::validDisplayMenu()
 }
 
 //===================================================================
+void MainEngine::setPlayerDeparture(const PairUI_t &pos, Direction_e dir)
+{
+    MapCoordComponent *mapComp = m_ecsManager.getComponentManager().
+            searchComponentByType<MapCoordComponent>(m_playerEntity, Components_e::MAP_COORD_COMPONENT);
+    MoveableComponent *moveComp = m_ecsManager.getComponentManager().
+            searchComponentByType<MoveableComponent>(m_playerEntity, Components_e::MOVEABLE_COMPONENT);
+    assert(mapComp);
+    assert(moveComp);
+    mapComp->m_absoluteMapPositionPX = getCenteredAbsolutePosition(pos);
+    moveComp->m_degreeOrientation = getDegreeAngleFromDirection(dir);
+}
+
+//===================================================================
 void MainEngine::saveAudioSettings()
 {
     m_refGame->saveAudioSettings(getMusicVolume(), getEffectsVolume());

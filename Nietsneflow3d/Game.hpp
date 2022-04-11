@@ -15,6 +15,7 @@ public:
     void clearLevel();
     void loadStandardEntities();
     void loadPlayerEntity();
+    void setPlayerDeparture();
     LevelState launchGame(uint32_t levelNum, LevelState_e levelState);
     void saveAudioSettings(uint32_t musicVolume, uint32_t effectVolume);
     void saveDisplaySettings(const pairI_t &resolution, bool fullscreen);

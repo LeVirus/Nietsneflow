@@ -180,7 +180,7 @@ public:
     {
         ++m_memMoveableWallCheckpointData[shapeNum].first;
     }
-
+    void setPlayerDeparture(const PairUI_t &pos, Direction_e dir);
     void saveAudioSettings();
     void saveInputSettings(const std::map<ControlKey_e, GamepadInputState> &gamepadArray,
                            const std::map<ControlKey_e, uint32_t> &keyboardArray);

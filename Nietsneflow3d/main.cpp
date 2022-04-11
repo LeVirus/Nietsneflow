@@ -13,6 +13,7 @@ int main()
         game.loadStandardEntities();
         if(firstLaunch)
         {
+            //PLAYER DEPARTURE NOT SET
             game.loadPlayerEntity();
             if(!gameLoaded)
             {
@@ -25,6 +26,8 @@ int main()
             {
                 break;
             }
+            game.setPlayerDeparture();
+            firstLaunch = false;
         }
         else
         {
@@ -38,7 +41,6 @@ int main()
                 gameLoaded = true;
             }
         }
-        firstLaunch = false;
         levelState = game.launchGame(i, levelState.m_levelState);
         switch(levelState.m_levelState)
         {
