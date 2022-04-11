@@ -123,6 +123,7 @@ private:
     void treatEnterPressedMenu(PlayerConfComponent *playerComp);
     void treatLeftPressedMenu(PlayerConfComponent *playerComp);
     void treatRightPressedMenu(PlayerConfComponent *playerComp);
+    void treatEnterPressedTitleMenu(PlayerConfComponent *playerComp);
     void treatEnterPressedMainMenu(PlayerConfComponent *playerComp);
     void treatEnterPressedSoundMenu(PlayerConfComponent *playerComp);
     void treatEnterPressedDisplayMenu(PlayerConfComponent *playerComp);
@@ -146,6 +147,7 @@ private:
     //first == axis + second == axis -
     std::array<std::pair<bool, bool>, GLFW_GAMEPAD_AXIS_LAST + 1> m_gamepadAxisKeyPressed;
     const std::map<MenuMode_e, uint32_t> m_mapMenuSize = {
+        {MenuMode_e::TITLE, static_cast<uint32_t>(TitleMenuCursorPos_e::TOTAL) - 1},
         {MenuMode_e::BASE, static_cast<uint32_t>(MainMenuCursorPos_e::TOTAL) - 1},
         {MenuMode_e::DISPLAY, static_cast<uint32_t>(DisplayMenuCursorPos_e::TOTAL) - 1},
         {MenuMode_e::INPUT, static_cast<uint32_t>(InputMenuCursorPos_e::TOTAL) - 1},

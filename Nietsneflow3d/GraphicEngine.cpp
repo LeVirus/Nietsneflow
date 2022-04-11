@@ -198,6 +198,9 @@ void GraphicEngine::fillTitleMenuWrite(WriteComponent *writeComp, MenuMode_e men
     writeComp->m_upLeftPositionGL.first = -0.3f;
     switch (menuEntry)
     {
+    case MenuMode_e::TITLE:
+        writeComp->m_str = "TITLE MENU";
+        break;
     case MenuMode_e::BASE:
         writeComp->m_str = "MAIN MENU";
         break;

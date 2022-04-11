@@ -364,7 +364,8 @@ void InputSystem::treatMenu(uint32_t playerEntity)
         m_keyEspapePressed = false;
     }
     if((!m_keyEspapePressed && glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_PRESS) ||
-            (!m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_B] && playerComp->m_menuMode != MenuMode_e::NEW_KEY &&
+            (!m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_B] && playerComp->m_menuMode != MenuMode_e::NEW_KEY
+              && playerComp->m_menuMode != MenuMode_e::TITLE &&
              checkStandardButtonGamepadKeyStatus(GLFW_GAMEPAD_BUTTON_B, GLFW_PRESS)))
     {
         m_keyEspapePressed = true;
@@ -652,6 +653,9 @@ void InputSystem::treatEnterPressedMenu(PlayerConfComponent *playerComp)
     }
     switch(playerComp->m_menuMode)
     {
+    case MenuMode_e::TITLE:
+        treatEnterPressedTitleMenu(playerComp);
+        break;
     case MenuMode_e::BASE:
         treatEnterPressedMainMenu(playerComp);
         break;
@@ -871,6 +875,46 @@ void InputSystem::treatRightPressedMenu(PlayerConfComponent *playerComp)
         {
             m_mainEngine->toogleMenuEntryFullscreen();
         }
+    }
+}
+
+//===================================================================
+void InputSystem::treatEnterPressedTitleMenu(PlayerConfComponent *playerComp)
+{
+    TitleMenuCursorPos_e menuPos = static_cast<TitleMenuCursorPos_e>(playerComp->m_currentCursorPos);
+    switch(menuPos)
+    {
+    case TitleMenuCursorPos_e::SOUND_CONF:
+        playerComp->m_menuMode = MenuMode_e::SOUND;
+        m_mainEngine->setMenuEntries(playerComp);
+        m_mainEngine->getMusicVolume();
+        break;
+    case TitleMenuCursorPos_e::DISPLAY_CONF:
+        playerComp->m_menuMode = MenuMode_e::DISPLAY;
+        m_mainEngine->setMenuEntries(playerComp);
+        break;
+    case TitleMenuCursorPos_e::INPUT_CONF:
+        playerComp->m_inputModified = false;
+        playerComp->m_menuMode = MenuMode_e::INPUT;
+        m_mainEngine->setMenuEntries(playerComp);
+        m_mapKeyboardTmpAssociatedKey = m_mapKeyboardCurrentAssociatedKey;
+        m_mapGamepadTmpAssociatedKey = m_mapGamepadCurrentAssociatedKey;
+        m_mainEngine->updateStringWriteEntitiesInputMenu(playerComp->m_keyboardInputMenuMode, false);
+        break;
+    case TitleMenuCursorPos_e::NEW_GAME:
+        playerComp->m_menuMode = MenuMode_e::NEW_GAME;
+        m_mainEngine->setMenuEntries(playerComp);
+        break;
+    case TitleMenuCursorPos_e::LOAD_GAME:
+        playerComp->m_menuMode = MenuMode_e::LOAD_GAME;
+        m_mainEngine->setMenuEntries(playerComp);
+        break;
+    case TitleMenuCursorPos_e::QUIT_GAME:
+        glfwSetWindowShouldClose(m_window, true);
+        break;
+    case TitleMenuCursorPos_e::PLAY_CUSTOM_LEVELS:
+    case TitleMenuCursorPos_e::TOTAL:
+        break;
     }
 }
 

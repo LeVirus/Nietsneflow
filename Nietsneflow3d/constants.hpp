@@ -87,6 +87,18 @@ enum class ConfirmCursorPos_e
     TOTAL
 };
 
+enum class TitleMenuCursorPos_e
+{
+    NEW_GAME,
+    LOAD_GAME,
+    DISPLAY_CONF,
+    SOUND_CONF,
+    INPUT_CONF,
+    PLAY_CUSTOM_LEVELS,
+    QUIT_GAME,
+    TOTAL
+};
+
 enum class MainMenuCursorPos_e
 {
     RETURN_TO_GAME,
@@ -337,6 +349,7 @@ enum class LevelCaseType_e
 
 enum class MenuMode_e
 {
+    TITLE,
     BASE,
     TRANSITION_LEVEL,
     DISPLAY,
@@ -393,6 +406,9 @@ inline const std::string LEVEL_RESSOURCES_DIR_STR = "../Nietsneflow3d/Ressources
 inline const std::string TEXTURES_DIR_STR = "../Nietsneflow3d/Ressources/Textures/";
 inline const std::map<MenuMode_e, PairPairFloatStr_t> MAP_MENU_DATA =
 {
+    {MenuMode_e::TITLE,
+     PairPairFloatStr_t{{-0.5f, 0.5f},
+        "NEW GAME\\LOAD GAME\\DISPLAY CONF\\SOUND CONF\\INPUT CONF\\PLAY CUSTOM LEVELS\\EXIT GAME"}},
     {MenuMode_e::BASE,
      PairPairFloatStr_t{{-0.5f, 0.5f},
       "RETURN TO GAME\\SOUND CONF\\DISPLAY CONF\\INPUT CONF\\NEW GAME\\LOAD GAME\\RESTART FROM LAST CHECKPOINT\\RESTART LEVEL\\EXIT GAME"}},

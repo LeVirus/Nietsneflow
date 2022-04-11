@@ -54,6 +54,27 @@ void MainEngine::init(Game *refGame)
 }
 
 //===================================================================
+uint32_t MainEngine::displayTitleMenu(const LevelManager &levelManager)
+{
+    uint32_t levelNum = 1;
+    uint8_t cursorSpriteId = *levelManager.getPictureData().
+            getIdentifier(levelManager.getCursorSpriteName());
+    const std::vector<SpriteData> &vectSprite = levelManager.getPictureData().getSpriteData();
+    m_memCursorSpriteData = &vectSprite[cursorSpriteId];
+    assert(m_playerConf);
+    m_playerConf->m_menuMode = MenuMode_e::TITLE;
+    setMenuEntries(m_playerConf);
+    m_gamePaused = true;
+    //game paused
+    do
+    {
+        m_physicalEngine.runIteration(m_gamePaused);
+        m_graphicEngine.runIteration(m_gamePaused);
+    }while(m_gamePaused);
+    return levelNum;
+}
+
+//===================================================================
 LevelState MainEngine::mainLoop(uint32_t levelNum, LevelState_e levelState)
 {
     m_currentLevelState = levelState;
@@ -457,6 +478,7 @@ void MainEngine::updateTriggerWallMoveableWallDataCheckpoint(const std::pair<uin
 //===================================================================
 void MainEngine::clearLevel()
 {
+    m_playerConf = nullptr;
     m_audioEngine.clearSourceAndBuffer();
     m_physicalEngine.clearSystems();
     m_graphicEngine.clearSystems();
@@ -783,9 +805,14 @@ void MainEngine::loadLevel(const LevelManager &levelManager)
     loadBackgroundEntities(levelManager.getPictureData().getGroundData(),
                            levelManager.getPictureData().getCeilingData(),
                            levelManager);
+//    loadColorEntities();
     loadColorEntities();
     loadStaticElementEntities(levelManager);
     loadBarrelElementEntities(levelManager);
+//    if(!m_playerConf)
+//    {
+//        loadPlayerEntity(levelManager);
+//    }
     uint32_t displayTeleportEntity = loadDisplayTeleportEntity(levelManager);
     uint32_t weaponEntity = loadWeaponsEntity(levelManager);
     loadPlayerEntity(levelManager, weaponEntity, displayTeleportEntity);
@@ -2320,10 +2347,15 @@ void MainEngine::confStaticComponent(uint32_t entityNum, const PairFloat_t& elem
 }
 
 //===================================================================
+//void MainEngine::loadPlayerEntity(const LevelManager &levelManager)
 void MainEngine::loadPlayerEntity(const LevelManager &levelManager,
                                   uint32_t numWeaponEntity,
                                   uint32_t numDisplayTeleportEntity)
 {
+    if(m_playerConf)
+    {
+        return;
+    }
     std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComponents;
     bitsetComponents[Components_e::POSITION_VERTEX_COMPONENT] = true;
     bitsetComponents[Components_e::MAP_COORD_COMPONENT] = true;
@@ -2338,6 +2370,7 @@ void MainEngine::loadPlayerEntity(const LevelManager &levelManager,
     bitsetComponents[Components_e::AUDIO_COMPONENT] = true;
     uint32_t entityNum = m_ecsManager.addEntity(bitsetComponents);
     confPlayerEntity(levelManager, entityNum, levelManager.getLevel(),
+//                     loadWeaponsEntity(levelManager), loadDisplayTeleportEntity(levelManager));
                      numWeaponEntity, numDisplayTeleportEntity);
     //notify player entity number
     m_graphicEngine.getMapSystem().confPlayerComp(entityNum);
@@ -2687,6 +2720,16 @@ void MainEngine::loadStaticElementEntities(const LevelManager &levelManager)
     loadStaticElementGroup(vectSprite, levelManager.getObjectData(), LevelStaticElementType_e::OBJECT);
     loadStaticElementGroup(vectSprite, levelManager.getTeleportData(), LevelStaticElementType_e::TELEPORT, levelManager.getTeleportSoundFile());
     loadExitElement(levelManager, levelManager.getExitElementData());
+}
+
+//===================================================================
+void MainEngine::loadCursorEntities(const LevelManager &levelManager)
+{
+    //LOAD CURSOR MENU
+    uint8_t cursorSpriteId = *levelManager.getPictureData().
+            getIdentifier(levelManager.getCursorSpriteName());
+    const std::vector<SpriteData> &vectSprite = levelManager.getPictureData().getSpriteData();
+    m_memCursorSpriteData = &vectSprite[cursorSpriteId];
 }
 
 //===================================================================

@@ -12,6 +12,12 @@ void Game::loadStandardData()
 }
 
 //===================================================================
+uint32_t Game::displayTitleMenu()
+{
+    m_mainEngine.displayTitleMenu(m_levelManager);
+}
+
+//===================================================================
 void Game::loadSavedSettingsData()
 {
     if(!m_levelManager.loadSettingsData())
@@ -26,6 +32,14 @@ void Game::clearLevel()
 {
     m_mainEngine.clearLevel();
     m_levelManager.clearExistingPositionsElement();
+}
+
+//===================================================================
+void Game::loadStandardEntities()
+{
+    m_mainEngine.loadColorEntities();
+    m_mainEngine.loadCursorEntities(m_levelManager);
+//    m_mainEngine.loadPlayerEntity(m_levelManager);
 }
 
 //===================================================================

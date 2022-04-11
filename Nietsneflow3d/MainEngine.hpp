@@ -93,6 +93,7 @@ public:
     void loadGraphicPicture(const PictureData &picData, const FontData &fontData);
     void loadExistingLevelNumSaves(const std::array<std::optional<DataLevelWriteMenu>, 3> &existingLevelNum);
     void init(Game *refGame);
+    uint32_t displayTitleMenu(const LevelManager &levelManager);
     void loadLevel(const LevelManager &levelManager);
     void loadGameProgressCheckpoint();
     //first quit, second gameover
@@ -187,6 +188,10 @@ public:
     void loadCheckpointSavedGame(const MemCheckpointElementsState &checkpointData);
     bool checkSavedGameExists(uint32_t saveNum)const;
     void clearCheckpointData();
+    void loadColorEntities();
+    void loadPlayerEntity(const LevelManager &levelManager, uint32_t numWeaponEntity, uint32_t numDisplayTeleportEntity);
+//    void loadPlayerEntity(const LevelManager &levelManager);
+    void loadCursorEntities(const LevelManager &levelManager);
 private:
     void saveEnemiesCheckpoint();
     bool isLoadFromLevelBegin(LevelState_e levelState)const;
@@ -194,7 +199,6 @@ private:
     void savePlayerGear(bool beginLevel);
     void loadPlayerGear(bool beginLevel);
     void displayTransitionMenu();
-    void loadColorEntities();
     void confSoundMenuEntities(uint32_t musicEntity, uint32_t effectEntity);
     void confUnifiedColorEntity(uint32_t entityNum, const tupleFloat_t &color, bool transparent);
     void loadBackgroundEntities(const GroundCeilingData &groundData, const GroundCeilingData &backgroundData, const LevelManager &levelManager);
@@ -212,7 +216,6 @@ private:
     void loadShotImpactSprite(const std::vector<SpriteData> &vectSpriteData, const PairImpactData_t &shootDisplayData, uint32_t impactEntity);
     void confPlayerVisibleShotsSprite(const std::vector<SpriteData> &vectSpriteData, const MapVisibleShotData_t &shootDisplayData,
                                       WeaponComponent *weaponComp);
-    void loadPlayerEntity(const LevelManager &levelManager, uint32_t numWeaponEntity, uint32_t numDisplayTeleportEntity);
     void confPlayerEntity(const LevelManager &levelManager, uint32_t entityNum, const Level &level, uint32_t numWeaponEntity,
                           uint32_t numDisplayTeleportEntity);
     void confActionEntity();

@@ -10,8 +10,10 @@ public:
     bool loadLevelData(uint32_t levelNum);
     void initEngine();
     void loadStandardData();
+    uint32_t displayTitleMenu();
     void loadSavedSettingsData();
     void clearLevel();
+    void loadStandardEntities();
     LevelState launchGame(uint32_t levelNum, LevelState_e levelState);
     void saveAudioSettings(uint32_t musicVolume, uint32_t effectVolume);
     void saveDisplaySettings(const pairI_t &resolution, bool fullscreen);
