@@ -10,7 +10,7 @@ int main()
     LevelState levelState = {LevelState_e::NEW_GAME, {}};
     for(uint32_t i = 1; i < 3; ++i)
     {
-//        game.loadStandardEntities();
+        game.loadStandardEntities();
 //        if(firstLaunch)
 //        {
 //            if(!gameLoaded)

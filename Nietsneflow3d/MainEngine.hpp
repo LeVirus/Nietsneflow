@@ -189,7 +189,7 @@ public:
     bool checkSavedGameExists(uint32_t saveNum)const;
     void clearCheckpointData();
     void loadColorEntities();
-    void loadPlayerEntity(const LevelManager &levelManager, uint32_t numWeaponEntity, uint32_t numDisplayTeleportEntity);
+    void loadPlayerEntity(const LevelManager &levelManager);
 //    void loadPlayerEntity(const LevelManager &levelManager);
     void loadCursorEntities(const LevelManager &levelManager);
 private:

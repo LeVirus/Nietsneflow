@@ -805,17 +805,9 @@ void MainEngine::loadLevel(const LevelManager &levelManager)
     loadBackgroundEntities(levelManager.getPictureData().getGroundData(),
                            levelManager.getPictureData().getCeilingData(),
                            levelManager);
-//    loadColorEntities();
-    loadColorEntities();
     loadStaticElementEntities(levelManager);
     loadBarrelElementEntities(levelManager);
-//    if(!m_playerConf)
-//    {
-//        loadPlayerEntity(levelManager);
-//    }
-    uint32_t displayTeleportEntity = loadDisplayTeleportEntity(levelManager);
-    uint32_t weaponEntity = loadWeaponsEntity(levelManager);
-    loadPlayerEntity(levelManager, weaponEntity, displayTeleportEntity);
+    loadPlayerEntity(levelManager);
     Level::initLevelElementArray();
     loadWallEntities(levelManager.getMoveableWallData(), levelManager.getPictureData().getSpriteData());
     loadDoorEntities(levelManager);
@@ -2347,10 +2339,7 @@ void MainEngine::confStaticComponent(uint32_t entityNum, const PairFloat_t& elem
 }
 
 //===================================================================
-//void MainEngine::loadPlayerEntity(const LevelManager &levelManager)
-void MainEngine::loadPlayerEntity(const LevelManager &levelManager,
-                                  uint32_t numWeaponEntity,
-                                  uint32_t numDisplayTeleportEntity)
+void MainEngine::loadPlayerEntity(const LevelManager &levelManager)
 {
     if(m_playerConf)
     {
@@ -2370,8 +2359,7 @@ void MainEngine::loadPlayerEntity(const LevelManager &levelManager,
     bitsetComponents[Components_e::AUDIO_COMPONENT] = true;
     uint32_t entityNum = m_ecsManager.addEntity(bitsetComponents);
     confPlayerEntity(levelManager, entityNum, levelManager.getLevel(),
-//                     loadWeaponsEntity(levelManager), loadDisplayTeleportEntity(levelManager));
-                     numWeaponEntity, numDisplayTeleportEntity);
+                     loadWeaponsEntity(levelManager), loadDisplayTeleportEntity(levelManager));
     //notify player entity number
     m_graphicEngine.getMapSystem().confPlayerComp(entityNum);
     m_physicalEngine.memPlayerEntity(entityNum);
@@ -2711,10 +2699,7 @@ void MainEngine::confMenuCursorEntity()
 void MainEngine::loadStaticElementEntities(const LevelManager &levelManager)
 {
     //LOAD CURSOR MENU
-    uint8_t cursorSpriteId = *levelManager.getPictureData().
-            getIdentifier(levelManager.getCursorSpriteName());
     const std::vector<SpriteData> &vectSprite = levelManager.getPictureData().getSpriteData();
-    m_memCursorSpriteData = &vectSprite[cursorSpriteId];
     loadStaticElementGroup(vectSprite, levelManager.getGroundData(), LevelStaticElementType_e::GROUND);
     loadStaticElementGroup(vectSprite, levelManager.getCeilingData(), LevelStaticElementType_e::CEILING);
     loadStaticElementGroup(vectSprite, levelManager.getObjectData(), LevelStaticElementType_e::OBJECT);
