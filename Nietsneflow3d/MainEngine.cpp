@@ -54,9 +54,8 @@ void MainEngine::init(Game *refGame)
 }
 
 //===================================================================
-uint32_t MainEngine::displayTitleMenu(const LevelManager &levelManager)
+LevelState MainEngine::displayTitleMenu(const LevelManager &levelManager)
 {
-    uint32_t levelNum = 1;
     uint8_t cursorSpriteId = *levelManager.getPictureData().
             getIdentifier(levelManager.getCursorSpriteName());
     const std::vector<SpriteData> &vectSprite = levelManager.getPictureData().getSpriteData();
@@ -70,8 +69,10 @@ uint32_t MainEngine::displayTitleMenu(const LevelManager &levelManager)
     {
         m_physicalEngine.runIteration(m_gamePaused);
         m_graphicEngine.runIteration(m_gamePaused);
-    }while(m_gamePaused);
-    return levelNum;
+    }while(m_currentLevelState != LevelState_e::NEW_GAME && m_currentLevelState != LevelState_e::LOAD_GAME);
+    uint32_t levelToLoad = *m_levelToLoad;
+    m_levelToLoad = {};
+    return {m_currentLevelState, levelToLoad};
 }
 
 //===================================================================

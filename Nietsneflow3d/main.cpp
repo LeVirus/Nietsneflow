@@ -11,20 +11,22 @@ int main()
     for(uint32_t i = 1; i < 3; ++i)
     {
         game.loadStandardEntities();
-//        if(firstLaunch)
-//        {
-//            if(!gameLoaded)
-//            {
-//                game.loadSavedSettingsData();
-//                gameLoaded = true;
-//            }
-//            game.displayTitleMenu();
-//            if(!game.loadLevelData(i))
-//            {
-//                break;
-//            }
-//        }
-//        else
+        if(firstLaunch)
+        {
+            game.loadPlayerEntity();
+            if(!gameLoaded)
+            {
+                game.loadSavedSettingsData();
+                gameLoaded = true;
+            }
+            levelState = game.displayTitleMenu();
+            i = *levelState.m_levelToLoad;
+            if(!game.loadLevelData(i))
+            {
+                break;
+            }
+        }
+        else
         {
             if(!game.loadLevelData(i))
             {

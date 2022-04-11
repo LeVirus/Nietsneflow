@@ -93,7 +93,7 @@ public:
     void loadGraphicPicture(const PictureData &picData, const FontData &fontData);
     void loadExistingLevelNumSaves(const std::array<std::optional<DataLevelWriteMenu>, 3> &existingLevelNum);
     void init(Game *refGame);
-    uint32_t displayTitleMenu(const LevelManager &levelManager);
+    LevelState displayTitleMenu(const LevelManager &levelManager);
     void loadLevel(const LevelManager &levelManager);
     void loadGameProgressCheckpoint();
     //first quit, second gameover
@@ -192,11 +192,11 @@ public:
     void loadPlayerEntity(const LevelManager &levelManager);
 //    void loadPlayerEntity(const LevelManager &levelManager);
     void loadCursorEntities(const LevelManager &levelManager);
+    void savePlayerGear(bool beginLevel);
 private:
     void saveEnemiesCheckpoint();
     bool isLoadFromLevelBegin(LevelState_e levelState)const;
     void clearObjectToDelete();
-    void savePlayerGear(bool beginLevel);
     void loadPlayerGear(bool beginLevel);
     void displayTransitionMenu();
     void confSoundMenuEntities(uint32_t musicEntity, uint32_t effectEntity);

@@ -12,9 +12,9 @@ void Game::loadStandardData()
 }
 
 //===================================================================
-uint32_t Game::displayTitleMenu()
+LevelState Game::displayTitleMenu()
 {
-    m_mainEngine.displayTitleMenu(m_levelManager);
+    return m_mainEngine.displayTitleMenu(m_levelManager);
 }
 
 //===================================================================
@@ -39,7 +39,12 @@ void Game::loadStandardEntities()
 {
     m_mainEngine.loadColorEntities();
     m_mainEngine.loadCursorEntities(m_levelManager);
-//    m_mainEngine.loadPlayerEntity(m_levelManager);
+}
+
+//===================================================================
+void Game::loadPlayerEntity()
+{
+    m_mainEngine.loadPlayerEntity(m_levelManager);
 }
 
 //===================================================================
