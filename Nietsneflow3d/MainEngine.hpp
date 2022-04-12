@@ -312,7 +312,7 @@ private:
     }
 private:
     LevelState_e m_currentLevelState;
-    uint32_t m_memInputCursorPos, m_currentSave = 1, m_currentLevel = 0;
+    uint32_t m_memInputCursorPos = 0, m_currentSave = 1, m_currentLevel = 0;
     float m_fpsValue = 1.0f / 60.0f;
     GraphicEngine m_graphicEngine;
     PhysicalEngine m_physicalEngine;

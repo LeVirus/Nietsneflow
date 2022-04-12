@@ -38,9 +38,9 @@ public:
     }
     inline void updateMusicVolume(uint32_t volume)
     {
+        m_musicVolume = volume;
         if(m_musicElement)
         {
-            m_musicVolume = volume;
             alSourcef(m_musicElement->first, AL_GAIN, static_cast<float>(m_musicVolume) / 100.0f);
         }
     }
