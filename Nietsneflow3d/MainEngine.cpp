@@ -1655,7 +1655,7 @@ void MainEngine::setMenuEntries(PlayerConfComponent *playerComp)
     WriteComponent *writeComp = m_ecsManager.getComponentManager().
             searchComponentByType<WriteComponent>(playerComp->m_titleMenuEntity, Components_e::WRITE_COMPONENT);
     assert(writeComp);
-    m_graphicEngine.fillTitleMenuWrite(writeComp, playerComp->m_menuMode);
+    m_graphicEngine.fillTitleMenuWrite(writeComp, playerComp->m_menuMode, playerComp->m_previousMenuMode);
     //MENU ENTRIES
     m_writeConf->m_upLeftPositionGL = MAP_MENU_DATA.at(playerComp->m_menuMode).first;
     m_graphicEngine.fillMenuWrite(m_writeConf, playerComp->m_menuMode, playerComp->m_currentCursorPos,

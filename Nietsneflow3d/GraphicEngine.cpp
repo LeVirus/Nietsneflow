@@ -193,7 +193,7 @@ void GraphicEngine::updatePlayerLife(WriteComponent *writeComp, PlayerConfCompon
 }
 
 //===================================================================
-void GraphicEngine::fillTitleMenuWrite(WriteComponent *writeComp, MenuMode_e menuEntry)
+void GraphicEngine::fillTitleMenuWrite(WriteComponent *writeComp, MenuMode_e menuEntry, MenuMode_e previousMenuEntry)
 {
     writeComp->m_upLeftPositionGL.first = -0.3f;
     switch (menuEntry)
@@ -205,9 +205,20 @@ void GraphicEngine::fillTitleMenuWrite(WriteComponent *writeComp, MenuMode_e men
         writeComp->m_str = "MAIN MENU";
         break;
     case MenuMode_e::LOAD_GAME:
-    case MenuMode_e::CONFIRM_LOADING_GAME_FORM:
         writeComp->m_str = "LOAD GAME";
         break;
+    case MenuMode_e::CONFIRM_LOADING_GAME_FORM:
+    {
+        if(previousMenuEntry == MenuMode_e::LOAD_GAME)
+        {
+            writeComp->m_str = "LOAD GAME";
+        }
+        else if(previousMenuEntry == MenuMode_e::LOAD_GAME)
+        {
+            writeComp->m_str = "NEW GAME";
+        }
+        break;
+    }
     case MenuMode_e::NEW_GAME:
         writeComp->m_str = "NEW GAME";
         break;
