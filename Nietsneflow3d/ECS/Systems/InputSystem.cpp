@@ -179,6 +179,7 @@ void InputSystem::treatPlayerInput()
         if(glfwGetKey(m_window, GLFW_KEY_M) == GLFW_PRESS || checkStandardButtonGamepadKeyStatus(GLFW_GAMEPAD_BUTTON_START, GLFW_PRESS))
         {
             playerComp->m_menuMode = playerComp->m_firstMenu ? MenuMode_e::TITLE : MenuMode_e::BASE;
+            m_mainEngine->setMenuEntries(playerComp);
             m_mainEngine->setUnsetPaused();
         }
         if(!weaponComp->m_weaponChange && !weaponComp->m_timerShootActive)

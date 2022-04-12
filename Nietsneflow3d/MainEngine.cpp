@@ -1690,6 +1690,7 @@ void MainEngine::updateMenuInfo(PlayerConfComponent *playerComp)
     WriteComponent *writeComp = m_ecsManager.getComponentManager().
             searchComponentByType<WriteComponent>(playerComp->m_menuInfoWriteEntity, Components_e::WRITE_COMPONENT);
     assert(writeComp);
+    writeComp->m_str.clear();
     if(playerComp->m_menuMode == MenuMode_e::INPUT)
     {
         writeComp->m_upLeftPositionGL = {-0.6f, -0.7f};
@@ -1705,15 +1706,38 @@ void MainEngine::updateMenuInfo(PlayerConfComponent *playerComp)
             playerComp->m_menuMode == MenuMode_e::CONFIRM_RESTART_LEVEL ||
             playerComp->m_menuMode == MenuMode_e::CONFIRM_RESTART_FROM_LAST_CHECKPOINT)
     {
-        writeComp->m_upLeftPositionGL = {-0.9f, 0.3f};
-        writeComp->m_str = "ALL YOUR PROGRESS UNTIL LAST SAVE WILL BE LOST\\";
+        if(!playerComp->m_firstMenu)
+        {
+            writeComp->m_upLeftPositionGL = {-0.9f, 0.3f};
+            writeComp->m_str = "ALL YOUR PROGRESS UNTIL LAST SAVE WILL BE LOST\\";
+        }
+        else
+        {
+            writeComp->m_upLeftPositionGL = {-0.6f, 0.3f};
+        }
         if(playerComp->m_menuMode == MenuMode_e::CONFIRM_LOADING_GAME_FORM)
         {
             if(playerComp->m_previousMenuMode == MenuMode_e::NEW_GAME && checkSavedGameExists(playerComp->m_currentCursorPos + 1))
             {
                 writeComp->m_str += "PREVIOUS FILE WILL BE ERASED\\";
             }
-            writeComp->m_str += "CONTINUE ANYWAY?";
+            if(!writeComp->m_str.empty())
+            {
+                writeComp->m_str += "CONTINUE ANYWAY?";
+            }
+            //TITLE MENU CASE
+            else
+            {
+                writeComp->m_upLeftPositionGL = {-0.3f, 0.3f};
+                if(playerComp->m_previousMenuMode == MenuMode_e::NEW_GAME)
+                {
+                    writeComp->m_str += "BEGIN NEW GAME?";
+                }
+                else if(playerComp->m_previousMenuMode == MenuMode_e::LOAD_GAME)
+                {
+                    writeComp->m_str += "LOAD GAME?";
+                }
+            }
         }
     }
     m_graphicEngine.confWriteComponent(writeComp);
