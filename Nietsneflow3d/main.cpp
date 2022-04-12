@@ -21,6 +21,10 @@ int main()
                 gameLoaded = true;
             }
             levelState = game.displayTitleMenu();
+            if(levelState.m_levelState == LevelState_e::EXIT)
+            {
+                break;
+            }
             i = *levelState.m_levelToLoad;
             if(!game.loadLevelData(i))
             {
@@ -28,6 +32,7 @@ int main()
             }
             game.setPlayerDeparture();
             firstLaunch = false;
+            game.unsetFirstLaunch();
         }
         else
         {

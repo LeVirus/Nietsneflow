@@ -31,6 +31,10 @@ public:
     {
         return m_levelManager.checkSavedGameExists(saveNum);
     }
+    inline void unsetFirstLaunch()
+    {
+        m_mainEngine.unsetFirstLaunch();
+    }
 private:
     MainEngine m_mainEngine;
     LevelManager m_levelManager;

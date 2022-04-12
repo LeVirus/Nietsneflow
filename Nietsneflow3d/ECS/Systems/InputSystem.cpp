@@ -178,7 +178,7 @@ void InputSystem::treatPlayerInput()
         }
         if(glfwGetKey(m_window, GLFW_KEY_M) == GLFW_PRESS || checkStandardButtonGamepadKeyStatus(GLFW_GAMEPAD_BUTTON_START, GLFW_PRESS))
         {
-            playerComp->m_menuMode = MenuMode_e::BASE;
+            playerComp->m_menuMode = playerComp->m_firstMenu ? MenuMode_e::TITLE : MenuMode_e::BASE;
             m_mainEngine->setUnsetPaused();
         }
         if(!weaponComp->m_weaponChange && !weaponComp->m_timerShootActive)
@@ -389,13 +389,17 @@ void InputSystem::treatMenu(uint32_t playerEntity)
             playerComp->m_menuMode = playerComp->m_previousMenuMode;
             m_mainEngine->setMenuEntries(playerComp);
         }
+        else if(playerComp->m_menuMode == MenuMode_e::TITLE)
+        {
+            playerComp->m_currentCursorPos = static_cast<uint32_t>(TitleMenuCursorPos_e::QUIT_GAME);
+        }
         else if(playerComp->m_menuMode != MenuMode_e::CONFIRM_QUIT_INPUT_FORM)
         {
             if(playerComp->m_menuMode == MenuMode_e::SOUND)
             {
                 m_mainEngine->saveAudioSettings();
             }
-            playerComp->m_menuMode = MenuMode_e::BASE;
+            playerComp->m_menuMode = playerComp->m_firstMenu ? MenuMode_e::TITLE : MenuMode_e::BASE;
             m_mainEngine->setMenuEntries(playerComp);
         }
         return;
@@ -704,7 +708,7 @@ void InputSystem::treatEnterPressedConfirmInputMenu(PlayerConfComponent *playerC
     }
     else
     {
-        playerComp->m_menuMode = MenuMode_e::BASE;
+        playerComp->m_menuMode = playerComp->m_firstMenu ? MenuMode_e::TITLE : MenuMode_e::BASE;
         m_mainEngine->setMenuEntries(playerComp);
     }
 }
@@ -722,7 +726,7 @@ void InputSystem::treatEnterPressedConfirmRestartLevelMenu(PlayerConfComponent *
     }
     else
     {
-        playerComp->m_menuMode = MenuMode_e::BASE;
+        playerComp->m_menuMode = playerComp->m_firstMenu ? MenuMode_e::TITLE : MenuMode_e::BASE;
         m_mainEngine->setMenuEntries(playerComp);
     }
 }
@@ -740,7 +744,7 @@ void InputSystem::treatEnterPressedConfirmRestartFromLastCheckpointMenu(PlayerCo
     }
     else
     {
-        playerComp->m_menuMode = MenuMode_e::BASE;
+        playerComp->m_menuMode = playerComp->m_firstMenu ? MenuMode_e::TITLE : MenuMode_e::BASE;
         m_mainEngine->setMenuEntries(playerComp);
     }
 }
@@ -981,7 +985,7 @@ void InputSystem::treatEnterPressedSoundMenu(PlayerConfComponent *playerComp)
         break;
     case SoundMenuCursorPos_e::RETURN:
         m_mainEngine->saveAudioSettings();
-        playerComp->m_menuMode = MenuMode_e::BASE;
+        playerComp->m_menuMode = playerComp->m_firstMenu ? MenuMode_e::TITLE : MenuMode_e::BASE;
         m_mainEngine->setMenuEntries(playerComp);
         break;
     case SoundMenuCursorPos_e::TOTAL:
@@ -996,7 +1000,7 @@ void InputSystem::treatEnterPressedDisplayMenu(PlayerConfComponent *playerComp)
             static_cast<DisplayMenuCursorPos_e>(playerComp->m_currentCursorPos);
     if(menuPos == DisplayMenuCursorPos_e::RETURN)
     {
-        playerComp->m_menuMode = MenuMode_e::BASE;
+        playerComp->m_menuMode = playerComp->m_firstMenu ? MenuMode_e::TITLE : MenuMode_e::BASE;
         m_mainEngine->setMenuEntries(playerComp);
     }
     else if(menuPos == DisplayMenuCursorPos_e::VALID)
@@ -1025,7 +1029,7 @@ void InputSystem::treatEnterPressedInputMenu(PlayerConfComponent *playerComp)
         }
         else
         {
-            playerComp->m_menuMode = MenuMode_e::BASE;
+            playerComp->m_menuMode = playerComp->m_firstMenu ? MenuMode_e::TITLE : MenuMode_e::BASE;
             m_mainEngine->setMenuEntries(playerComp);
         }
     }
@@ -1061,7 +1065,7 @@ void InputSystem::treatEnterPressedNewGameMenu(PlayerConfComponent *playerComp)
     NewGameMenuCursorPos_e menuPos = static_cast<NewGameMenuCursorPos_e>(playerComp->m_currentCursorPos);
     if(menuPos == NewGameMenuCursorPos_e::RETURN)
     {
-        playerComp->m_menuMode = MenuMode_e::BASE;
+        playerComp->m_menuMode = playerComp->m_firstMenu ? MenuMode_e::TITLE : MenuMode_e::BASE;
         m_mainEngine->setMenuEntries(playerComp);
     }
     else
@@ -1080,7 +1084,7 @@ void InputSystem::treatEnterPressedLoadGameMenu(PlayerConfComponent *playerComp)
     LoadGameMenuCursorPos_e menuPos = static_cast<LoadGameMenuCursorPos_e>(playerComp->m_currentCursorPos);
     if(menuPos == LoadGameMenuCursorPos_e::RETURN)
     {
-        playerComp->m_menuMode = MenuMode_e::BASE;
+        playerComp->m_menuMode = playerComp->m_firstMenu ? MenuMode_e::TITLE : MenuMode_e::BASE;
         m_mainEngine->setMenuEntries(playerComp);
     }
     else
@@ -1110,7 +1114,7 @@ void InputSystem::validInputMenu(PlayerConfComponent *playerComp)
     }
     m_mainEngine->saveInputSettings(m_mapGamepadCurrentAssociatedKey, m_mapKeyboardCurrentAssociatedKey);
     m_mainEngine->updateStringWriteEntitiesInputMenu(playerComp->m_keyboardInputMenuMode);
-    playerComp->m_menuMode = MenuMode_e::BASE;
+    playerComp->m_menuMode = playerComp->m_firstMenu ? MenuMode_e::TITLE : MenuMode_e::BASE;
     m_mainEngine->setMenuEntries(playerComp);
 }
 

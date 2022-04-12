@@ -193,6 +193,7 @@ public:
 //    void loadPlayerEntity(const LevelManager &levelManager);
     void loadCursorEntities(const LevelManager &levelManager);
     void savePlayerGear(bool beginLevel);
+    void unsetFirstLaunch();
 private:
     void saveEnemiesCheckpoint();
     bool isLoadFromLevelBegin(LevelState_e levelState)const;

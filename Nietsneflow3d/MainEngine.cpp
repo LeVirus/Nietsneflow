@@ -67,8 +67,12 @@ LevelState MainEngine::displayTitleMenu(const LevelManager &levelManager)
     //game paused
     do
     {
-        m_physicalEngine.runIteration(m_gamePaused);
         m_graphicEngine.runIteration(m_gamePaused);
+        m_physicalEngine.runIteration(m_gamePaused);
+        if(m_graphicEngine.windowShouldClose())
+        {
+            return {LevelState_e::EXIT, 0};
+        }
     }while(m_currentLevelState != LevelState_e::NEW_GAME && m_currentLevelState != LevelState_e::LOAD_GAME);
     uint32_t levelToLoad = *m_levelToLoad;
     m_levelToLoad = {};
@@ -290,6 +294,12 @@ void MainEngine::savePlayerGear(bool beginLevel)
     {
         m_memCheckpointLevelState = {};
     }
+}
+
+//===================================================================
+void MainEngine::unsetFirstLaunch()
+{
+    m_playerConf->m_firstMenu = false;
 }
 
 //===================================================================
