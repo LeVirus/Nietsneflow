@@ -3,9 +3,6 @@ BUGS======================================================================
 ))
 Enemies shake when touch a wall or other elements
 
-))
-When shoot with visible shot weapon and strafe strange
-
 
 ))
 Eject issue on moveable wall lateral====================~~
@@ -19,6 +16,9 @@ In input gamepad menu bug in GLFW in AXIS===============================~
 ))
 Wall exists inside door some time======================Bug in level editor
 
+
+))
+When shoot with visible shot weapon and strafe strange=======================OK
 
 ))
 Enemies repop to 0 0 if die without checkpoint==================OK

@@ -368,6 +368,8 @@ void IASystem::confVisibleShoot(std::vector<uint32_t> &visibleShots, const PairF
     genComp->m_active = true;
     ammoTimeComp->m_clockA = std::chrono::system_clock::now();
     mapComp->m_absoluteMapPositionPX = point;
+    moveElementFromAngle(LEVEL_HALF_TILE_SIZE_PX, getRadiantAngle(degreeAngle),
+                         mapComp->m_absoluteMapPositionPX);
     ammoMoveComp->m_degreeOrientation = degreeAngle;
     ammoMoveComp->m_currentDegreeMoveDirection = degreeAngle;
 }
