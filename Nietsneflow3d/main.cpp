@@ -32,7 +32,6 @@ int main()
             }
             game.setPlayerDeparture();
             firstLaunch = false;
-            game.unsetFirstLaunch();
         }
         else
         {
@@ -46,6 +45,7 @@ int main()
                 gameLoaded = true;
             }
         }
+        game.unsetFirstLaunch();
         levelState = game.launchGame(i, levelState.m_levelState);
         switch(levelState.m_levelState)
         {

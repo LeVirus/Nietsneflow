@@ -1,9 +1,6 @@
 BUGS======================================================================
 
 ))
-When reload game and go to menu title menu is displaying
-
-))
 When shoot with visible shot weapon and strafe strange
 
 ))
@@ -24,6 +21,9 @@ In input gamepad menu bug in GLFW in AXIS===============================~
 ))
 Wall exists inside door some time======================Bug in level editor
 
+
+))
+When reload game and go to menu title menu is displaying==============================OK
 
 ))
 Don't display percentage of enemies and secrets when die=========================OK
