@@ -1,6 +1,12 @@
 BUGS======================================================================
 
 ))
+When reload game and go to menu title menu is displaying
+
+))
+When shoot with visible shot weapon and strafe strange
+
+))
 Enemies repop to 0 0 if die without checkpoint
 
 ))
@@ -18,6 +24,9 @@ In input gamepad menu bug in GLFW in AXIS===============================~
 ))
 Wall exists inside door some time======================Bug in level editor
 
+
+))
+Don't display percentage of enemies and secrets when die=========================OK
 
 ))
 Crash when shoot and kill marines ?? Checkpoint??=========================OK
