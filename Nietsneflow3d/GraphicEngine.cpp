@@ -518,7 +518,7 @@ std::string getEndLevelMenuStr(const std::tuple<const PlayerConfComponent*, uint
 {
     if(std::get<0>(endLevelData)->m_life == 0)
     {
-        return "\\PRESS ENTER TO RESTART";
+        return "PRESS ENTER TO RESTART";
     }
     float enemiesKilledPercent =
             (!std::get<0>(endLevelData)->m_enemiesKilled || std::get<2>(endLevelData) == 0) ? EPSILON_FLOAT :

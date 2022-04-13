@@ -183,8 +183,7 @@ LevelState MainEngine::mainLoop(uint32_t levelNum, LevelState_e levelState)
         if(!m_exitColl->m_active)
         {
             m_currentLevelState = LevelState_e::LEVEL_END;
-            m_memEnemiesStateFromCheckpoint.clear();
-            m_memCheckpointLevelState = {};
+            clearCheckpointData();
             //end level
             m_playerConf->m_inMovement = false;
             savePlayerGear(true);
@@ -197,6 +196,10 @@ LevelState MainEngine::mainLoop(uint32_t levelNum, LevelState_e levelState)
         //Player dead
         else if(!m_playerConf->m_life)
         {
+            if(!m_memCheckpointLevelState)
+            {
+                clearCheckpointData();
+            }
             m_graphicEngine.setTransition(m_gamePaused);
             displayTransitionMenu();
             return {LevelState_e::GAME_OVER, {}};
