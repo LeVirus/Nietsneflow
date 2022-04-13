@@ -7,9 +7,6 @@ When shoot with visible shot weapon and strafe strange
 Enemies repop to 0 0 if die without checkpoint
 
 ))
-Weapon display a bit too high
-
-))
 Eject issue on moveable wall lateral====================~~
 
 ))
@@ -21,6 +18,9 @@ In input gamepad menu bug in GLFW in AXIS===============================~
 ))
 Wall exists inside door some time======================Bug in level editor
 
+
+))
+Weapon display a bit too high========================OK
 
 ))
 When reload game and go to menu title menu is displaying==============================OK

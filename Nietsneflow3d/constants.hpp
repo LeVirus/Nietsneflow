@@ -366,6 +366,7 @@ enum class MenuMode_e
 inline const uint32_t ENCRYPT_KEY_STANDARD_LEVEL = 17;
 inline const uint32_t ENCRYPT_KEY_CONF_FILE = 42;
 inline const float MAX_SOUND_DISTANCE = 1000.0f;
+inline const float DOWN_WEAPON_POS_Y = -1.02f;
 inline const float EJECT_TIME = 0.5F;
 inline const float RAYCAST_VERTICAL_SIZE = 1.0f;
 inline const float STD_FONT_SIZE = 0.06f;

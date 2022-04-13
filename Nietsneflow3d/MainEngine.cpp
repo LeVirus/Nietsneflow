@@ -891,7 +891,7 @@ uint32_t MainEngine::loadWeaponsEntity(const LevelManager &levelManager)
         totalSize += vectWeapons[i].m_spritesData.size();
     }
     memSprite->m_vectSpriteData.reserve(totalSize);
-    float posUp, posDown = -1.0f, posLeft, posRight, diffLateral;
+    float posUp, posDown = DOWN_WEAPON_POS_Y, posLeft, posRight, diffLateral;
     memSprite->m_vectSpriteData.reserve(vectWeapons.size());
     for(uint32_t i = 0; i < vectWeapons.size(); ++i)
     {
@@ -934,7 +934,7 @@ uint32_t MainEngine::loadWeaponsEntity(const LevelManager &levelManager)
         for(uint32_t j = 0; j < vectWeapons[i].m_spritesData.size(); ++j)
         {
             memSprite->m_vectSpriteData.emplace_back(&vectSprite[vectWeapons[i].m_spritesData[j].m_numSprite]);
-            posUp = -1.0f + vectWeapons[i].m_spritesData[j].m_GLSize.second;
+            posUp = DOWN_WEAPON_POS_Y + vectWeapons[i].m_spritesData[j].m_GLSize.second;
             diffLateral = vectWeapons[i].m_spritesData[j].m_GLSize.first / 2.0f;
             posLeft = -diffLateral;
             posRight = diffLateral;
