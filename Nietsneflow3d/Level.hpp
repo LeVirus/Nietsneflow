@@ -115,6 +115,10 @@ public:
     {
         m_musicFile = filename;
     }
+    inline static void clearMusicFilePath()
+    {
+        m_musicFile.clear();
+    }
     inline static std::string getMusicFilename()
     {
         return m_musicFile;

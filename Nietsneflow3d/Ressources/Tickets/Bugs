@@ -1,8 +1,5 @@
 BUGS======================================================================
 
-))
-Music still play on next level 
-
 
 ))
 Eject issue on moveable wall lateral====================~~
@@ -16,6 +13,9 @@ In input gamepad menu bug in GLFW in AXIS===============================~
 ))
 Wall exists inside door some time======================Bug in level editor
 
+
+))
+Music still play on next level=========================OK
 
 ))
 Enemies shake when touch a wall or other elements====================OK

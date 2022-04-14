@@ -1512,6 +1512,7 @@ bool LevelManager::loadLevel(const std::string &INIFileName, uint32_t levelNum)
     {
         assert("Error while reading INI file.");
     }
+    Level::clearMusicFilePath();
     m_mainWallData.clear();
     loadLevelData();
     loadPositionPlayerData();
