@@ -227,6 +227,7 @@ void IASystem::updateEnemyDirection(EnemyConfComponent *enemyConfComp, MoveableC
     {
         moveComp->m_degreeOrientation += 30.0f;
     }
+    moveComp->m_currentDegreeMoveDirection = moveComp->m_degreeOrientation;
 }
 
 //===================================================================

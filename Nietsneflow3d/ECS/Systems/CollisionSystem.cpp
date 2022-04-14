@@ -209,14 +209,10 @@ void CollisionSystem::treatGeneralCrushing(uint32_t entityNum)
     for(uint32_t i = 0; i < m_memCrush.size(); ++i)
     {
         //QuickFix
-        if(collComp->m_tagA != CollisionTag_e::PLAYER_CT)
+        if(collComp->m_tagA == CollisionTag_e::ENEMY_CT)
         {
-            if(m_memCrush.size() < 3 || !std::get<3>(m_memCrush[i]) ||
-                    *std::get<3>(m_memCrush[i]) != std::get<2>(m_memCrush[i]))
-            {
-                mapComp->m_absoluteMapPositionPX.first += std::get<0>(m_memCrush[i]).first;
-                mapComp->m_absoluteMapPositionPX.second += std::get<0>(m_memCrush[i]).second;
-            }
+            mapComp->m_absoluteMapPositionPX.first += std::get<0>(m_memCrush[i]).first;
+            mapComp->m_absoluteMapPositionPX.second += std::get<0>(m_memCrush[i]).second;
         }
         //3 == direction
         if(!crush && !std::get<1>(m_memCrush[i]))

@@ -1,7 +1,7 @@
 BUGS======================================================================
 
 ))
-Enemies shake when touch a wall or other elements
+Music still play on next level 
 
 
 ))
@@ -16,6 +16,9 @@ In input gamepad menu bug in GLFW in AXIS===============================~
 ))
 Wall exists inside door some time======================Bug in level editor
 
+
+))
+Enemies shake when touch a wall or other elements====================OK
 
 ))
 When shoot with visible shot weapon and strafe strange=======================OK
