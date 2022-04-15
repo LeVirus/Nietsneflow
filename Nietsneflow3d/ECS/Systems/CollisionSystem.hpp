@@ -46,6 +46,7 @@ public:
     void memPlayerDatas(uint32_t playerEntity);
     void writePlayerInfo(const std::string &info);
 private:
+    void checkCollisionFirstRect(CollisionArgs &args);
     void treatSegmentShots();
     void treatBarrelShots(uint32_t entityNum, uint32_t damage);
     void confImpactShots(uint32_t numBullet, CollisionTag_e targetTag);

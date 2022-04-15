@@ -450,6 +450,13 @@ void CollisionSystem::initArrayTag()
     m_tagArray.insert({CollisionTag_e::PLAYER_CT, CollisionTag_e::CHECKPOINT_CT});
     m_tagArray.insert({CollisionTag_e::PLAYER_CT, CollisionTag_e::SECRET_CT});
 
+    m_tagArray.insert({CollisionTag_e::DETECT_MAP_CT, CollisionTag_e::WALL_CT});
+    m_tagArray.insert({CollisionTag_e::DETECT_MAP_CT, CollisionTag_e::DOOR_CT});
+    m_tagArray.insert({CollisionTag_e::DETECT_MAP_CT, CollisionTag_e::STATIC_SET_CT});
+    m_tagArray.insert({CollisionTag_e::DETECT_MAP_CT, CollisionTag_e::TRIGGER_CT});
+    m_tagArray.insert({CollisionTag_e::DETECT_MAP_CT, CollisionTag_e::TELEPORT_CT});
+    m_tagArray.insert({CollisionTag_e::DETECT_MAP_CT, CollisionTag_e::BARREL_CT});
+
     m_tagArray.insert({CollisionTag_e::BARREL_CT, CollisionTag_e::BARREL_CT});
 
     m_tagArray.insert({CollisionTag_e::PLAYER_ACTION_CT, CollisionTag_e::DOOR_CT});
@@ -525,10 +532,11 @@ bool CollisionSystem::checkTag(CollisionTag_e entityTagA, CollisionTag_e entityT
 bool CollisionSystem::treatCollision(uint32_t entityNumA, uint32_t entityNumB, GeneralCollisionComponent *tagCompA,
                                      GeneralCollisionComponent *tagCompB, bool shotExplosionEject)
 {
-//    if(tagCompA->m_shape == CollisionShape_e::RECTANGLE_C)
-//    {
-//        checkCollisionFirstRect(args);
-//    }
+    if(tagCompA->m_shape == CollisionShape_e::RECTANGLE_C)
+    {
+        CollisionArgs args = {entityNumA, entityNumB, tagCompA, tagCompB, getMapComponent(entityNumA), getMapComponent(entityNumB)};
+        checkCollisionFirstRect(args);
+    }
     if(tagCompA->m_shape == CollisionShape_e::CIRCLE_C)
     {
         CollisionArgs args = {entityNumA, entityNumB, tagCompA, tagCompB, getMapComponent(entityNumA), getMapComponent(entityNumB)};
@@ -542,36 +550,44 @@ bool CollisionSystem::treatCollision(uint32_t entityNumA, uint32_t entityNumB, G
     return true;
 }
 
+//Detect map only
 //===================================================================
-//void CollisionSystem::checkCollisionFirstRect(CollisionArgs &args)
-//{
-//    bool collision = false;
-//    RectangleCollisionComponent &rectCompA = getRectangleComponent(args.entityNumA);
-//    switch(args.tagCompB->m_shape)
-//    {
-//    case CollisionShape_e::RECTANGLE_C:
-//    {
-//        RectangleCollisionComponent &rectCompB = getRectangleComponent(args.entityNumB);
-//        collision = checkRectRectCollision(args.mapCompA.m_absoluteMapPositionPX, rectCompA.m_size,
-//                               args.mapCompB.m_absoluteMapPositionPX, rectCompB.m_size);
-//    }
-//        break;
-//    case CollisionShape_e::CIRCLE:
-//    {
-//        CircleCollisionComponent &circleCompB = getCircleComponent(args.entityNumB);
-//        collision = checkCircleRectCollision(args.mapCompB.m_absoluteMapPositionPX, circleCompB.m_ray,
-//                                 args.mapCompA.m_absoluteMapPositionPX, rectCompA.m_size);
-//    }
-//        break;
-//    case CollisionShape_e::SEGMENT:
-//    {
-//        SegmentCollisionComponent &segmentCompB = getSegmentComponent(args.entityNumB);
-//        collision = checkSegmentRectCollision(args.mapCompB.m_absoluteMapPositionPX, segmentCompB.m_secondPoint,
-//                               args.mapCompA.m_absoluteMapPositionPX, rectCompA.m_size);
-//    }
-//        break;
-//    }
-//}
+void CollisionSystem::checkCollisionFirstRect(CollisionArgs &args)
+{
+    MapDisplaySystem *mapSystem = mptrSystemManager->searchSystemByType<MapDisplaySystem>(
+                    static_cast<uint32_t>(Systems_e::MAP_DISPLAY_SYSTEM));
+    assert(mapSystem);
+    if(mapSystem->entityAlreadyDiscovered(args.entityNumB))
+    {
+        return;
+    }
+    bool collision = false;
+    RectangleCollisionComponent &rectCompA = getRectangleComponent(args.entityNumA);
+    switch(args.tagCompB->m_shape)
+    {
+    case CollisionShape_e::RECTANGLE_C:
+    {
+        RectangleCollisionComponent &rectCompB = getRectangleComponent(args.entityNumB);
+        collision = checkRectRectCollision(args.mapCompA.m_absoluteMapPositionPX, rectCompA.m_size,
+                               args.mapCompB.m_absoluteMapPositionPX, rectCompB.m_size);
+    }
+        break;
+    case CollisionShape_e::CIRCLE_C:
+    {
+        CircleCollisionComponent &circleCompB = getCircleComponent(args.entityNumB);
+        collision = checkCircleRectCollision(args.mapCompB.m_absoluteMapPositionPX, circleCompB.m_ray,
+                                 args.mapCompA.m_absoluteMapPositionPX, rectCompA.m_size);
+    }
+        break;
+    case CollisionShape_e::SEGMENT_C:
+        break;
+    }
+    if(collision)
+    {
+        std::cerr << args.entityNumB << " ======================================C OL\n";
+        mapSystem->addDiscoveredEntity(args.entityNumB, *getLevelCoord(args.mapCompB.m_absoluteMapPositionPX));
+    }
+}
 
 //===================================================================
 void CollisionSystem::writePlayerInfo(const std::string &info)

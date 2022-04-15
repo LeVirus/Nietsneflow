@@ -2494,6 +2494,7 @@ void MainEngine::confPlayerEntity(const LevelManager &levelManager,
     confWriteEntities();
     confMenuCursorEntity();
     confActionEntity();
+    confMapDetectShapeEntity(map->m_absoluteMapPositionPX);
     for(uint32_t i = 0; i < weaponConf->m_weaponsData.size(); ++i)
     {
         if(weaponConf->m_weaponsData[i].m_attackType == AttackType_e::MELEE)
@@ -2530,6 +2531,33 @@ void MainEngine::confActionEntity()
     genCollComp->m_tagA = CollisionTag_e::PLAYER_ACTION_CT;
     circleColl->m_ray = 15.0f;
     m_playerConf->m_actionEntity = entityNum;
+}
+
+//===================================================================
+void MainEngine::confMapDetectShapeEntity(const PairFloat_t &playerPos)
+{
+    std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComponents;
+    bitsetComponents[Components_e::GENERAL_COLLISION_COMPONENT] = true;
+    bitsetComponents[Components_e::RECTANGLE_COLLISION_COMPONENT] = true;
+    bitsetComponents[Components_e::MAP_COORD_COMPONENT] = true;
+    m_playerConf->m_mapDetectShapeEntity = m_ecsManager.addEntity(bitsetComponents);
+    RectangleCollisionComponent *rectColl = m_ecsManager.getComponentManager().
+            searchComponentByType<RectangleCollisionComponent>(m_playerConf->m_mapDetectShapeEntity,
+                                                               Components_e::RECTANGLE_COLLISION_COMPONENT);
+    MapCoordComponent *mapComp= m_ecsManager.getComponentManager().
+            searchComponentByType<MapCoordComponent>(m_playerConf->m_mapDetectShapeEntity,
+                                                     Components_e::MAP_COORD_COMPONENT);
+    GeneralCollisionComponent *genComp = m_ecsManager.getComponentManager().
+            searchComponentByType<GeneralCollisionComponent>(m_playerConf->m_mapDetectShapeEntity,
+                                                             Components_e::GENERAL_COLLISION_COMPONENT);
+    assert(rectColl);
+    assert(mapComp);
+    assert(genComp);
+    mapComp->m_absoluteMapPositionPX = {playerPos.first - DETECT_RECT_SHAPE_HALF_SIZE,
+                                        playerPos.second - DETECT_RECT_SHAPE_HALF_SIZE};
+    rectColl->m_size = {DETECT_RECT_SHAPE_SIZE, DETECT_RECT_SHAPE_SIZE};
+    genComp->m_shape = CollisionShape_e::RECTANGLE_C;
+    genComp->m_tagA = CollisionTag_e::DETECT_MAP_CT;
 }
 
 //===================================================================

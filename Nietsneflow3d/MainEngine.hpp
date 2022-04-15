@@ -220,6 +220,7 @@ private:
     void confPlayerEntity(const LevelManager &levelManager, uint32_t entityNum, const Level &level, uint32_t numWeaponEntity,
                           uint32_t numDisplayTeleportEntity);
     void confActionEntity();
+    void confMapDetectShapeEntity(const PairFloat_t &playerPos);
     void loadWallEntities(const std::map<std::string, MoveableWallData> &wallData,
                           const std::vector<SpriteData> &vectSprite);
     std::vector<uint32_t> loadWallEntitiesWallLoop(const std::vector<SpriteData> &vectSprite,

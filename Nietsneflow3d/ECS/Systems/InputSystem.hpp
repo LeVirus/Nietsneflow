@@ -107,6 +107,7 @@ public:
     static void removeGamepad(int gamepadID);
     static void addGamepad(int gamepadID);
 private:
+    void updateDetectRect(PlayerConfComponent *playerComp, MapCoordComponent *mapPlayerComp);
     void gamepadUpdate();
     bool checkStandardButtonGamepadKeyStatus(uint32_t key, uint32_t status);
     bool checkAxisGamepadKeyStatus(uint32_t key, bool positive);

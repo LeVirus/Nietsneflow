@@ -339,6 +339,7 @@ void InputSystem::treatPlayerMove(PlayerConfComponent *playerComp, MoveableCompo
         moveElementFromAngle(moveComp->m_velocity,
                              getRadiantAngle(moveComp->m_currentDegreeMoveDirection),
                              mapComp->m_absoluteMapPositionPX, true);
+        updateDetectRect(playerComp, mapComp);
     }
 }
 
@@ -1232,6 +1233,16 @@ void InputSystem::addGamepad(int gamepadID)
     {
         m_mapGamepadID.insert({gamepadID, {nullptr, nullptr}});
     }
+}
+
+//===================================================================
+void InputSystem::updateDetectRect(PlayerConfComponent *playerComp, MapCoordComponent *mapPlayerComp)
+{
+    MapCoordComponent *mapComp = stairwayToComponentManager().
+            searchComponentByType<MapCoordComponent>(playerComp->m_mapDetectShapeEntity, Components_e::MAP_COORD_COMPONENT);
+    assert(mapComp);
+    mapComp->m_absoluteMapPositionPX = {mapPlayerComp->m_absoluteMapPositionPX.first - DETECT_RECT_SHAPE_HALF_SIZE,
+                                       mapPlayerComp->m_absoluteMapPositionPX.second - DETECT_RECT_SHAPE_HALF_SIZE};
 }
 
 //===================================================================

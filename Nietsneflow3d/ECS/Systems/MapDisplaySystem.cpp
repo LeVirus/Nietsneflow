@@ -26,6 +26,7 @@ void MapDisplaySystem::confLevelData()
 {
     m_localLevelSizePX = Level::getRangeView() * 2;
     m_tileSizeGL = (LEVEL_TILE_SIZE_PX * MAP_LOCAL_SIZE_GL) / m_localLevelSizePX;
+    m_entitiesDetectedData.clear();
 }
 
 //===================================================================
@@ -45,15 +46,58 @@ void MapDisplaySystem::setShader(Shader &shader)
 //===================================================================
 void MapDisplaySystem::execSystem()
 {
-    System::execSystem();
-    confPositionVertexEntities();
-    fillVertexFromEntities();
-    drawVertex();
-    drawPlayerOnMap();
+//    drawMiniMap();
+    drawFullMap();
 }
 
 //===================================================================
-void MapDisplaySystem::confPositionVertexEntities()
+void MapDisplaySystem::drawMiniMap()
+{
+    System::execSystem();
+    confMiniMapPositionVertexEntities();
+    fillMapVertexFromEntities(true);
+    drawMapVertex(true);
+    drawPlayerOnMiniMap();
+}
+
+//===================================================================
+void MapDisplaySystem::drawFullMap()
+{
+    confFullMapPositionVertexEntities();
+    fillMapVertexFromEntities(false);
+    drawMapVertex(false);
+    drawPlayerOnFullMap();
+}
+
+//===================================================================
+void MapDisplaySystem::confFullMapPositionVertexEntities()
+{
+    PairFloat_t corner, relativePosMapGL;
+    for(uint32_t i = 0; i < m_entitiesDetectedData.size(); ++i)
+    {
+        std::cerr << m_entitiesDetectedData.size() << "  " << m_entitiesDetectedData[i].first << "\n";
+        MapCoordComponent *mapComp = stairwayToComponentManager().
+                searchComponentByType<MapCoordComponent>(m_entitiesDetectedData[i].first,
+                                                         Components_e::MAP_COORD_COMPONENT);
+        assert(mapComp);
+        //get absolute position corner
+        corner = getUpLeftCorner(mapComp, m_entitiesDetectedData[i].first);
+        //convert absolute position to relative
+        relativePosMapGL = {-1.0f + mapComp->m_absoluteMapPositionPX.first / m_localLevelSizePX,
+                            -1.0f + mapComp->m_absoluteMapPositionPX.second / m_localLevelSizePX};
+        std::cerr << i << "  " << relativePosMapGL.first << "  " << relativePosMapGL.second << "\n";
+        confVertexElement(relativePosMapGL, m_entitiesDetectedData[i].first);
+    }
+}
+
+//===================================================================
+void MapDisplaySystem::drawPlayerOnFullMap()
+{
+
+}
+
+//===================================================================
+void MapDisplaySystem::confMiniMapPositionVertexEntities()
 {
     assert(m_playerComp.m_mapCoordComp);
     PairFloat_t playerPos = m_playerComp.m_mapCoordComp->m_absoluteMapPositionPX;
@@ -92,11 +136,12 @@ void MapDisplaySystem::confPositionVertexEntities()
 }
 
 //===================================================================
-void MapDisplaySystem::fillVertexFromEntities()
+void MapDisplaySystem::fillMapVertexFromEntities(bool miniMap)
 {
-    for(uint32_t h = 0; h < m_vectVerticesData.size(); ++h)
+    std::vector<VerticesData> &vectVertices = miniMap ? m_vectMiniMapVerticesData : m_vectFullMapVerticesData;
+    for(uint32_t h = 0; h < vectVertices.size(); ++h)
     {
-        m_vectVerticesData[h].clear();
+        vectVertices[h].clear();
     }
     for(uint32_t i = 0; i < m_entitiesToDisplay.size(); ++i)
     {
@@ -108,8 +153,8 @@ void MapDisplaySystem::fillVertexFromEntities()
                                                             Components_e::SPRITE_TEXTURE_COMPONENT);
         assert(posComp);
         assert(spriteComp);
-        assert(spriteComp->m_spriteData->m_textureNum < m_vectVerticesData.size());
-        m_vectVerticesData[spriteComp->m_spriteData->m_textureNum].
+        assert(spriteComp->m_spriteData->m_textureNum < vectVertices.size());
+        vectVertices[spriteComp->m_spriteData->m_textureNum].
                 loadVertexStandartTextureComponent(*posComp, *spriteComp);
     }
 }
@@ -208,17 +253,16 @@ bool MapDisplaySystem::checkBoundEntityMap(const MapCoordComponent &mapCoordComp
 }
 
 //===================================================================
-void MapDisplaySystem::drawVertex()
+void MapDisplaySystem::drawMapVertex(bool miniMap)
 {
-    drawPlayerVision();
+//    drawPlayerVision();
     m_shader->use();
-    for(uint32_t h = 0; h < m_vectVerticesData.size(); ++h)
+    for(uint32_t h = 0; h < m_vectMiniMapVerticesData.size(); ++h)
     {
         m_ptrVectTexture->operator[](h).bind();
-        m_vectVerticesData[h].confVertexBuffer();
-        m_vectVerticesData[h].drawElement();
+        m_vectMiniMapVerticesData[h].confVertexBuffer();
+        m_vectMiniMapVerticesData[h].drawElement();
     }
-    drawPlayerOnMap();
 }
 
 //===================================================================
@@ -231,7 +275,7 @@ void MapDisplaySystem::drawPlayerVision()
 }
 
 //===================================================================
-void MapDisplaySystem::drawPlayerOnMap()
+void MapDisplaySystem::drawPlayerOnMiniMap()
 {
     assert(m_playerComp.m_posComp);
     assert(m_playerComp.m_colorComp);
@@ -270,9 +314,9 @@ void MapDisplaySystem::confPlayerComp(uint32_t playerNum)
 void MapDisplaySystem::setVectTextures(std::vector<Texture> &vectTexture)
 {
     m_ptrVectTexture = &vectTexture;
-    m_vectVerticesData.reserve(vectTexture.size());
+    m_vectMiniMapVerticesData.reserve(vectTexture.size());
     for(uint32_t h = 0; h < vectTexture.size(); ++h)
     {
-        m_vectVerticesData.emplace_back(VerticesData(Shader_e::TEXTURE_S));
+        m_vectMiniMapVerticesData.emplace_back(VerticesData(Shader_e::TEXTURE_S));
     }
 }
