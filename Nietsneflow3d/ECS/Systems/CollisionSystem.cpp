@@ -584,7 +584,6 @@ void CollisionSystem::checkCollisionFirstRect(CollisionArgs &args)
     }
     if(collision)
     {
-        std::cerr << args.entityNumB << " ======================================C OL\n";
         mapSystem->addDiscoveredEntity(args.entityNumB, *getLevelCoord(args.mapCompB.m_absoluteMapPositionPX));
     }
 }

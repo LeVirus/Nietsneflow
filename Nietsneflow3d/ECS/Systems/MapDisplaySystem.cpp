@@ -25,7 +25,13 @@ MapDisplaySystem::MapDisplaySystem()
 void MapDisplaySystem::confLevelData()
 {
     m_localLevelSizePX = Level::getRangeView() * 2;
-    m_tileSizeGL = (LEVEL_TILE_SIZE_PX * MAP_LOCAL_SIZE_GL) / m_localLevelSizePX;
+    m_sizeLevelPX = {Level::getSize().first * LEVEL_TILE_SIZE_PX,
+                    Level::getSize().second * LEVEL_TILE_SIZE_PX};
+    m_miniMapTileSizeGL = (LEVEL_TILE_SIZE_PX * MAP_LOCAL_SIZE_GL) / m_localLevelSizePX;
+    m_fullMapTileSizePX = {m_sizeLevelPX.first / Level::getSize().first,
+                           m_sizeLevelPX.second / Level::getSize().second};
+    m_fullMapTileSizeGL = {m_fullMapTileSizePX.first * FULL_MAP_SIZE_GL / m_sizeLevelPX.first,
+                          m_fullMapTileSizePX.second * FULL_MAP_SIZE_GL / m_sizeLevelPX.second};
     m_entitiesDetectedData.clear();
 }
 
@@ -55,7 +61,7 @@ void MapDisplaySystem::drawMiniMap()
 {
     System::execSystem();
     confMiniMapPositionVertexEntities();
-    fillMapVertexFromEntities(true);
+    fillMiniMapVertexFromEntities();
     drawMapVertex(true);
     drawPlayerOnMiniMap();
 }
@@ -64,7 +70,7 @@ void MapDisplaySystem::drawMiniMap()
 void MapDisplaySystem::drawFullMap()
 {
     confFullMapPositionVertexEntities();
-    fillMapVertexFromEntities(false);
+    fillFullMapVertexFromEntities();
     drawMapVertex(false);
     drawPlayerOnFullMap();
 }
@@ -73,20 +79,18 @@ void MapDisplaySystem::drawFullMap()
 void MapDisplaySystem::confFullMapPositionVertexEntities()
 {
     PairFloat_t corner, relativePosMapGL;
-    for(uint32_t i = 0; i < m_entitiesDetectedData.size(); ++i)
+    for(std::map<uint32_t, PairUI_t>::const_iterator it = m_entitiesDetectedData.begin();
+        it != m_entitiesDetectedData.end(); ++it)
     {
-        std::cerr << m_entitiesDetectedData.size() << "  " << m_entitiesDetectedData[i].first << "\n";
         MapCoordComponent *mapComp = stairwayToComponentManager().
-                searchComponentByType<MapCoordComponent>(m_entitiesDetectedData[i].first,
+                searchComponentByType<MapCoordComponent>(it->first,
                                                          Components_e::MAP_COORD_COMPONENT);
         assert(mapComp);
+        //issue with BARREL !!!
         //get absolute position corner
-        corner = getUpLeftCorner(mapComp, m_entitiesDetectedData[i].first);
+        corner = getUpLeftCorner(mapComp, it->first);
         //convert absolute position to relative
-        relativePosMapGL = {-1.0f + mapComp->m_absoluteMapPositionPX.first / m_localLevelSizePX,
-                            -1.0f + mapComp->m_absoluteMapPositionPX.second / m_localLevelSizePX};
-        std::cerr << i << "  " << relativePosMapGL.first << "  " << relativePosMapGL.second << "\n";
-        confVertexElement(relativePosMapGL, m_entitiesDetectedData[i].first);
+        confFullMapVertexElement(corner, it->first);
     }
 }
 
@@ -130,18 +134,17 @@ void MapDisplaySystem::confMiniMapPositionVertexEntities()
             //convert absolute position to relative
             relativePosMapGL = {diffPosPX.first * MAP_LOCAL_SIZE_GL / m_localLevelSizePX,
                                 diffPosPX.second * MAP_LOCAL_SIZE_GL / m_localLevelSizePX};
-            confVertexElement(relativePosMapGL, mVectNumEntity[i]);
+            confMiniMapVertexElement(relativePosMapGL, mVectNumEntity[i]);
         }
     }
 }
 
 //===================================================================
-void MapDisplaySystem::fillMapVertexFromEntities(bool miniMap)
+void MapDisplaySystem::fillMiniMapVertexFromEntities()
 {
-    std::vector<VerticesData> &vectVertices = miniMap ? m_vectMiniMapVerticesData : m_vectFullMapVerticesData;
-    for(uint32_t h = 0; h < vectVertices.size(); ++h)
+    for(uint32_t h = 0; h < m_vectMapVerticesData.size(); ++h)
     {
-        vectVertices[h].clear();
+        m_vectMapVerticesData[h].clear();
     }
     for(uint32_t i = 0; i < m_entitiesToDisplay.size(); ++i)
     {
@@ -153,8 +156,32 @@ void MapDisplaySystem::fillMapVertexFromEntities(bool miniMap)
                                                             Components_e::SPRITE_TEXTURE_COMPONENT);
         assert(posComp);
         assert(spriteComp);
-        assert(spriteComp->m_spriteData->m_textureNum < vectVertices.size());
-        vectVertices[spriteComp->m_spriteData->m_textureNum].
+        assert(spriteComp->m_spriteData->m_textureNum < m_vectMapVerticesData.size());
+        m_vectMapVerticesData[spriteComp->m_spriteData->m_textureNum].
+                loadVertexStandartTextureComponent(*posComp, *spriteComp);
+    }
+}
+
+//===================================================================
+void MapDisplaySystem::fillFullMapVertexFromEntities()
+{
+    for(uint32_t h = 0; h < m_vectMapVerticesData.size(); ++h)
+    {
+        m_vectMapVerticesData[h].clear();
+    }
+    for(std::map<uint32_t, PairUI_t>::const_iterator it = m_entitiesDetectedData.begin();
+        it != m_entitiesDetectedData.end(); ++it)
+    {
+        PositionVertexComponent *posComp = stairwayToComponentManager().
+                searchComponentByType<PositionVertexComponent>(it->first,
+                                                               Components_e::POSITION_VERTEX_COMPONENT);
+        SpriteTextureComponent *spriteComp = stairwayToComponentManager().
+                searchComponentByType<SpriteTextureComponent>(it->first,
+                                                            Components_e::SPRITE_TEXTURE_COMPONENT);
+        assert(posComp);
+        assert(spriteComp);
+        assert(spriteComp->m_spriteData->m_textureNum < m_vectMapVerticesData.size());
+        m_vectMapVerticesData[spriteComp->m_spriteData->m_textureNum].
                 loadVertexStandartTextureComponent(*posComp, *spriteComp);
     }
 }
@@ -211,7 +238,7 @@ void MapDisplaySystem::getMapDisplayLimit(PairFloat_t &playerPos,
 
 
 //===================================================================
-void MapDisplaySystem::confVertexElement(const PairFloat_t &glPosition,
+void MapDisplaySystem::confMiniMapVertexElement(const PairFloat_t &glPosition,
                                          uint32_t entityNum)
 {
     PositionVertexComponent *posComp = stairwayToComponentManager().
@@ -226,12 +253,37 @@ void MapDisplaySystem::confVertexElement(const PairFloat_t &glPosition,
     }
     posComp->m_vertex[0] = {MAP_LOCAL_CENTER_X_GL + glPosition.first,
                             MAP_LOCAL_CENTER_Y_GL + glPosition.second};
-    posComp->m_vertex[1] = {MAP_LOCAL_CENTER_X_GL + glPosition.first + m_tileSizeGL,
+    posComp->m_vertex[1] = {MAP_LOCAL_CENTER_X_GL + glPosition.first + m_miniMapTileSizeGL,
                             MAP_LOCAL_CENTER_Y_GL + glPosition.second};
-    posComp->m_vertex[2] = {MAP_LOCAL_CENTER_X_GL + glPosition.first + m_tileSizeGL,
-                            MAP_LOCAL_CENTER_Y_GL + glPosition.second - m_tileSizeGL};
+    posComp->m_vertex[2] = {MAP_LOCAL_CENTER_X_GL + glPosition.first + m_miniMapTileSizeGL,
+                            MAP_LOCAL_CENTER_Y_GL + glPosition.second - m_miniMapTileSizeGL};
     posComp->m_vertex[3] = {MAP_LOCAL_CENTER_X_GL + glPosition.first,
-                            MAP_LOCAL_CENTER_Y_GL + glPosition.second - m_tileSizeGL};
+                            MAP_LOCAL_CENTER_Y_GL + glPosition.second - m_miniMapTileSizeGL};
+}
+
+//===================================================================
+void MapDisplaySystem::confFullMapVertexElement(const PairFloat_t &absolutePositionPX, uint32_t entityNum)
+{
+    PositionVertexComponent *posComp = stairwayToComponentManager().
+            searchComponentByType<PositionVertexComponent>(entityNum,
+                                                           Components_e::POSITION_VERTEX_COMPONENT);
+    assert(posComp);
+    posComp->m_vertex.resize(4);
+    //CONSIDER THAT MAP X AND Y ARE THE SAME
+    if(posComp->m_vertex.empty())
+    {
+        posComp->m_vertex.resize(4);
+    }
+    double leftPos = MAP_FULL_TOP_LEFT_X_GL +
+            ((absolutePositionPX.first / m_sizeLevelPX.first) * FULL_MAP_SIZE_GL),
+            rightPos = leftPos + m_fullMapTileSizeGL.first,
+            topPos = MAP_FULL_TOP_LEFT_Y_GL -
+            ((absolutePositionPX.second  / m_sizeLevelPX.second) * FULL_MAP_SIZE_GL),
+            downPos = topPos - m_fullMapTileSizeGL.second;
+    posComp->m_vertex[0] = {leftPos, topPos};
+    posComp->m_vertex[1] = {rightPos, topPos};
+    posComp->m_vertex[2] = {rightPos, downPos};
+    posComp->m_vertex[3] = {leftPos, downPos};
 }
 
 //===================================================================
@@ -257,11 +309,11 @@ void MapDisplaySystem::drawMapVertex(bool miniMap)
 {
 //    drawPlayerVision();
     m_shader->use();
-    for(uint32_t h = 0; h < m_vectMiniMapVerticesData.size(); ++h)
+    for(uint32_t h = 0; h < m_vectMapVerticesData.size(); ++h)
     {
         m_ptrVectTexture->operator[](h).bind();
-        m_vectMiniMapVerticesData[h].confVertexBuffer();
-        m_vectMiniMapVerticesData[h].drawElement();
+        m_vectMapVerticesData[h].confVertexBuffer();
+        m_vectMapVerticesData[h].drawElement();
     }
 }
 
@@ -314,9 +366,9 @@ void MapDisplaySystem::confPlayerComp(uint32_t playerNum)
 void MapDisplaySystem::setVectTextures(std::vector<Texture> &vectTexture)
 {
     m_ptrVectTexture = &vectTexture;
-    m_vectMiniMapVerticesData.reserve(vectTexture.size());
+    m_vectMapVerticesData.reserve(vectTexture.size());
     for(uint32_t h = 0; h < vectTexture.size(); ++h)
     {
-        m_vectMiniMapVerticesData.emplace_back(VerticesData(Shader_e::TEXTURE_S));
+        m_vectMapVerticesData.emplace_back(VerticesData(Shader_e::TEXTURE_S));
     }
 }
