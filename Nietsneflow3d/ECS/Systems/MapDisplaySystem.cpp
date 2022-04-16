@@ -234,7 +234,15 @@ PairFloat_t MapDisplaySystem::getUpLeftCorner(const MapCoordComponent *mapCoordC
     }
     else
     {
-        return mapCoordComp->m_absoluteMapPositionPX;//tmp
+        if(genCollComp->m_tagA == CollisionTag_e::DOOR_CT)
+        {
+            return {mapCoordComp->m_absoluteMapPositionPX.first - std::fmod(mapCoordComp->m_absoluteMapPositionPX.first, LEVEL_TILE_SIZE_PX),
+                        mapCoordComp->m_absoluteMapPositionPX.second - std::fmod(mapCoordComp->m_absoluteMapPositionPX.second, LEVEL_TILE_SIZE_PX)};
+        }
+        else
+        {
+            return mapCoordComp->m_absoluteMapPositionPX;
+        }
     }
 }
 
