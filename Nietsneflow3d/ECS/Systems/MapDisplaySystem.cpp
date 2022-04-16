@@ -13,6 +13,7 @@
 #include <ECS/Components/VisionComponent.hpp>
 #include <ECS/Systems/ColorDisplaySystem.hpp>
 #include <constants.hpp>
+#include <PhysicalEngine.hpp>
 
 //===================================================================
 //WARNING CONSIDER THAT LENGHT AND WEIGHT ARE THE SAME
@@ -62,7 +63,7 @@ void MapDisplaySystem::drawMiniMap()
     System::execSystem();
     confMiniMapPositionVertexEntities();
     fillMiniMapVertexFromEntities();
-    drawMapVertex(true);
+    drawMapVertex();
     drawPlayerOnMiniMap();
 }
 
@@ -71,8 +72,9 @@ void MapDisplaySystem::drawFullMap()
 {
     confFullMapPositionVertexEntities();
     fillFullMapVertexFromEntities();
-    drawMapVertex(false);
+    drawMapVertex();
     drawPlayerOnFullMap();
+    drawPlayerOnMiniMap();
 }
 
 //===================================================================
@@ -101,7 +103,33 @@ void MapDisplaySystem::confFullMapPositionVertexEntities()
 //===================================================================
 void MapDisplaySystem::drawPlayerOnFullMap()
 {
+    if(m_playerComp.m_posComp->m_vertex.empty())
+    {
+        m_playerComp.m_posComp->m_vertex.resize(3);
+    }
+    float angle = m_playerComp.m_moveableComp->m_degreeOrientation;
+    float radiantAngle = getRadiantAngle(angle);
+    PairFloat_t GLPos = {m_playerComp.m_mapCoordComp->m_absoluteMapPositionPX.first / m_sizeLevelPX.first * FULL_MAP_SIZE_GL,
+                        m_playerComp.m_mapCoordComp->m_absoluteMapPositionPX.second / m_sizeLevelPX.second * FULL_MAP_SIZE_GL};
+    // ((absolutePositionPX.first / m_sizeLevelPX.first) * FULL_MAP_SIZE_GL)
+    m_playerComp.m_posComp->m_vertex[0].first = MAP_FULL_TOP_LEFT_X_GL + GLPos.first +
+            cos(radiantAngle) * m_fullMapTileSizeGL.first;
+    m_playerComp.m_posComp->m_vertex[0].second = MAP_FULL_TOP_LEFT_Y_GL - GLPos.second +
+            sin(radiantAngle) * m_fullMapTileSizeGL.second;
+    angle += 150.0f;
+    radiantAngle = getRadiantAngle(angle);
 
+    m_playerComp.m_posComp->m_vertex[1].first = MAP_FULL_TOP_LEFT_X_GL + GLPos.first +
+            cos(radiantAngle) * m_fullMapTileSizeGL.first;
+    m_playerComp.m_posComp->m_vertex[1].second = MAP_FULL_TOP_LEFT_Y_GL - GLPos.second +
+            sin(radiantAngle) * m_fullMapTileSizeGL.second;
+    angle += 60.0f;
+    radiantAngle = getRadiantAngle(angle);
+
+    m_playerComp.m_posComp->m_vertex[2].first = MAP_FULL_TOP_LEFT_X_GL + GLPos.first +
+            cos(radiantAngle) * m_fullMapTileSizeGL.first;
+    m_playerComp.m_posComp->m_vertex[2].second = MAP_FULL_TOP_LEFT_Y_GL - GLPos.second +
+            sin(radiantAngle) * m_fullMapTileSizeGL.second;
 }
 
 //===================================================================
@@ -309,7 +337,7 @@ bool MapDisplaySystem::checkBoundEntityMap(const MapCoordComponent &mapCoordComp
 }
 
 //===================================================================
-void MapDisplaySystem::drawMapVertex(bool miniMap)
+void MapDisplaySystem::drawMapVertex()
 {
 //    drawPlayerVision();
     m_shader->use();
@@ -352,6 +380,8 @@ void MapDisplaySystem::confPlayerComp(uint32_t playerNum)
     m_playerComp.m_colorComp = stairwayToComponentManager().
             searchComponentByType<ColorVertexComponent>(playerNum,
                                                         Components_e::COLOR_VERTEX_COMPONENT);
+    m_playerComp.m_moveableComp = stairwayToComponentManager().
+            searchComponentByType<MoveableComponent>(playerNum, Components_e::MOVEABLE_COMPONENT);
     VisionComponent *visionComp = stairwayToComponentManager().
             searchComponentByType<VisionComponent>(playerNum,
                                                    Components_e::VISION_COMPONENT);
@@ -364,6 +394,7 @@ void MapDisplaySystem::confPlayerComp(uint32_t playerNum)
     assert(m_playerComp.m_posComp);
     assert(m_playerComp.m_colorComp);
     assert(m_playerComp.m_mapCoordComp);
+    assert(m_playerComp.m_moveableComp);
 }
 
 //===================================================================

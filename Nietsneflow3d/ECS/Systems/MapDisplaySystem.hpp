@@ -10,13 +10,15 @@
 
 struct MapCoordComponent;
 struct VisionComponent;
+struct MoveableComponent;
 
 struct PlayerComp
 {
     MapCoordComponent const *m_mapCoordComp = nullptr;
-    PositionVertexComponent const *m_posComp = nullptr;
+    PositionVertexComponent *m_posComp = nullptr;
     ColorVertexComponent const *m_colorComp = nullptr;
     VisionComponent const *m_visionComp = nullptr;
+    MoveableComponent const *m_moveableComp = nullptr;
 };
 
 class MapDisplaySystem : public ecs::System
@@ -44,7 +46,7 @@ private:
     void setUsedComponents();
     void fillMiniMapVertexFromEntities();
     void fillFullMapVertexFromEntities();
-    void drawMapVertex(bool miniMap);
+    void drawMapVertex();
     void drawPlayerVision();
     void drawPlayerOnMiniMap();
     void confMiniMapPositionVertexEntities();

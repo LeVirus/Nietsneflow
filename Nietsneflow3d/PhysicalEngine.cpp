@@ -117,7 +117,7 @@ void updatePlayerOrientation(const MoveableComponent &moveComp,
                              PositionVertexComponent &posComp, VisionComponent &visionComp)
 {
     updatePlayerArrow(moveComp, posComp);
-    updatePlayerConeVision(moveComp, visionComp);
+//    updatePlayerConeVision(moveComp, visionComp);
 }
 
 //===================================================================
