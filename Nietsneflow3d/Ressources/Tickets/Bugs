@@ -2,16 +2,13 @@ BUGS======================================================================
 
 
 ))
-Random exit at launch
-
-))
 Delta time for visible shot and maybe other thing
 
 ))
 Static element disapear when camera is too close
 
 ))
-Config disapear when restart new game
+Pad Config disapear when restart new game
 
 ))
 Player pos on mini map does not update at start
@@ -28,6 +25,9 @@ In input gamepad menu bug in GLFW in AXIS===============================~
 ))
 Wall exists inside door some time======================Bug in level editor
 
+
+))
+Random exit at launch===========================OK
 
 ))
 Music still play on next level=========================OK

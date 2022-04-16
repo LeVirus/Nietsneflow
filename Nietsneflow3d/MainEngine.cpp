@@ -64,6 +64,8 @@ LevelState MainEngine::displayTitleMenu(const LevelManager &levelManager)
     m_playerConf->m_menuMode = MenuMode_e::TITLE;
     setMenuEntries(m_playerConf);
     m_gamePaused = true;
+    //prevent to exit
+    m_currentLevelState = LevelState_e::EXIT;
     //game paused
     do
     {
