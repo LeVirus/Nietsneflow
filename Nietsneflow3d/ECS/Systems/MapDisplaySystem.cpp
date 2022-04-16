@@ -78,19 +78,23 @@ void MapDisplaySystem::drawFullMap()
 //===================================================================
 void MapDisplaySystem::confFullMapPositionVertexEntities()
 {
-    PairFloat_t corner, relativePosMapGL;
+    PairFloat_t corner;
     for(std::map<uint32_t, PairUI_t>::const_iterator it = m_entitiesDetectedData.begin();
-        it != m_entitiesDetectedData.end(); ++it)
+        it != m_entitiesDetectedData.end();)
     {
         MapCoordComponent *mapComp = stairwayToComponentManager().
                 searchComponentByType<MapCoordComponent>(it->first,
                                                          Components_e::MAP_COORD_COMPONENT);
-        assert(mapComp);
-        //issue with BARREL !!!
+        if(!mapComp)
+        {
+            it = m_entitiesDetectedData.erase(it);
+            continue;
+        }
         //get absolute position corner
         corner = getUpLeftCorner(mapComp, it->first);
         //convert absolute position to relative
         confFullMapVertexElement(corner, it->first);
+        ++it;
     }
 }
 
