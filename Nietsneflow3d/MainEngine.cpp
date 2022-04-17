@@ -2480,12 +2480,12 @@ void MainEngine::confPlayerEntity(const LevelManager &levelManager,
     Direction_e playerDir = level.getPlayerDepartureDirection();
     move->m_degreeOrientation = getDegreeAngleFromDirection(playerDir);
     map->m_absoluteMapPositionPX = getCenteredAbsolutePosition(map->m_coord);
-    updatePlayerOrientation(*move, *pos, *vision);
     color->m_vertex.reserve(3);
     color->m_vertex.emplace_back(TupleTetraFloat_t{0.9f, 0.00f, 0.00f, 1.0f});
     color->m_vertex.emplace_back(TupleTetraFloat_t{0.9f, 0.00f, 0.00f, 1.0f});
     color->m_vertex.emplace_back(TupleTetraFloat_t{0.9f, 0.00f, 0.00f, 1.0f});
     circleColl->m_ray = PLAYER_RAY;
+    updatePlayerOrientation(*move, *pos, *vision);
     tagColl->m_tagA = CollisionTag_e::PLAYER_CT;
     tagColl->m_shape = CollisionShape_e::CIRCLE_C;
     //set standard weapon sprite

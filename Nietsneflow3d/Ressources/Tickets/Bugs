@@ -10,9 +10,6 @@ Static element disapear when camera is too close
 Pad Config disapear when restart new game
 
 ))
-Player pos on mini map does not update at start
-
-))
 Eject issue on moveable wall lateral====================~~
 
 ))
@@ -24,6 +21,9 @@ In input gamepad menu bug in GLFW in AXIS===============================~
 ))
 Wall exists inside door some time======================Bug in level editor
 
+
+))
+Player pos on mini map does not update at start========================OK
 
 ))
 Static element display behind door and wall if map activated=========================OK
