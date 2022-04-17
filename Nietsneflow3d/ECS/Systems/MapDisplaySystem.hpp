@@ -58,12 +58,12 @@ private:
     PairFloat_t getUpLeftCorner(const MapCoordComponent *mapCoordComp, uint32_t entityNum);
 private:
     std::map<uint32_t, PairUI_t> m_entitiesDetectedData;
+    std::vector<uint32_t> m_entitiesToDisplay;
     PairFloat_t m_sizeLevelPX, m_fullMapTileSizePX, m_fullMapTileSizeGL;
     Shader *m_shader;
     std::vector<VerticesData> m_vectMapVerticesData;
     float m_localLevelSizePX;
     float m_miniMapTileSizeGL;
-    std::vector<uint32_t> m_entitiesToDisplay;
     std::vector<Texture> *m_ptrVectTexture = nullptr;
     PlayerComp m_playerComp;
 };

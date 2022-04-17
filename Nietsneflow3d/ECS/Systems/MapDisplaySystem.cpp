@@ -53,14 +53,13 @@ void MapDisplaySystem::setShader(Shader &shader)
 //===================================================================
 void MapDisplaySystem::execSystem()
 {
-//    drawMiniMap();
-    drawFullMap();
+    drawMiniMap();
+//    drawFullMap();
 }
 
 //===================================================================
 void MapDisplaySystem::drawMiniMap()
 {
-    System::execSystem();
     confMiniMapPositionVertexEntities();
     fillMiniMapVertexFromEntities();
     drawMapVertex();
@@ -74,7 +73,6 @@ void MapDisplaySystem::drawFullMap()
     fillFullMapVertexFromEntities();
     drawMapVertex();
     drawPlayerOnFullMap();
-    drawPlayerOnMiniMap();
 }
 
 //===================================================================
@@ -142,31 +140,27 @@ void MapDisplaySystem::confMiniMapPositionVertexEntities()
     getMapDisplayLimit(playerPos, min, max);
     m_entitiesToDisplay.clear();
     m_entitiesToDisplay.reserve(mVectNumEntity.size());
-    for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
+    for( std::map<uint32_t, PairUI_t>::const_iterator it = m_entitiesDetectedData.begin();
+         it != m_entitiesDetectedData.end(); ++it)
     {
         MapCoordComponent *mapComp = stairwayToComponentManager().
-                searchComponentByType<MapCoordComponent>(mVectNumEntity[i],
+                searchComponentByType<MapCoordComponent>(it->first,
                                                          Components_e::MAP_COORD_COMPONENT);
-        assert(mapComp);
-        GeneralCollisionComponent *genCollComp = stairwayToComponentManager().
-                searchComponentByType<GeneralCollisionComponent>(mVectNumEntity[i],
-                                                                 Components_e::GENERAL_COLLISION_COMPONENT);
-        if(genCollComp && (genCollComp->m_tagA == CollisionTag_e::BULLET_ENEMY_CT ||
-                           genCollComp->m_tagA == CollisionTag_e::BULLET_PLAYER_CT) &&
-                !genCollComp->m_active)
+        if(!mapComp)
         {
+            it = m_entitiesDetectedData.erase(it);
             continue;
         }
-        //get absolute position corner
         if(checkBoundEntityMap(*mapComp, min, max))
         {
-            corner = getUpLeftCorner(mapComp, mVectNumEntity[i]);
-            m_entitiesToDisplay.emplace_back(mVectNumEntity[i]);
+            //get absolute position corner
+            corner = getUpLeftCorner(mapComp, it->first);
+            m_entitiesToDisplay.emplace_back(it->first);
             diffPosPX = corner - m_playerComp.m_mapCoordComp->m_absoluteMapPositionPX;
             //convert absolute position to relative
             relativePosMapGL = {diffPosPX.first * MAP_LOCAL_SIZE_GL / m_localLevelSizePX,
                                 diffPosPX.second * MAP_LOCAL_SIZE_GL / m_localLevelSizePX};
-            confMiniMapVertexElement(relativePosMapGL, mVectNumEntity[i]);
+            confMiniMapVertexElement(relativePosMapGL, it->first);
         }
     }
 }
@@ -201,15 +195,14 @@ void MapDisplaySystem::fillFullMapVertexFromEntities()
     {
         m_vectMapVerticesData[h].clear();
     }
-    for(std::map<uint32_t, PairUI_t>::const_iterator it = m_entitiesDetectedData.begin();
-        it != m_entitiesDetectedData.end(); ++it)
+    for(uint32_t i = 0; i < m_entitiesDetectedData.size(); ++i)
     {
         PositionVertexComponent *posComp = stairwayToComponentManager().
-                searchComponentByType<PositionVertexComponent>(it->first,
+                searchComponentByType<PositionVertexComponent>(m_entitiesToDisplay[i],
                                                                Components_e::POSITION_VERTEX_COMPONENT);
         SpriteTextureComponent *spriteComp = stairwayToComponentManager().
-                searchComponentByType<SpriteTextureComponent>(it->first,
-                                                            Components_e::SPRITE_TEXTURE_COMPONENT);
+                searchComponentByType<SpriteTextureComponent>(m_entitiesToDisplay[i],
+                                                              Components_e::SPRITE_TEXTURE_COMPONENT);
         assert(posComp);
         assert(spriteComp);
         assert(spriteComp->m_spriteData->m_textureNum < m_vectMapVerticesData.size());
