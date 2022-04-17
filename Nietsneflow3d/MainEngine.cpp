@@ -855,16 +855,9 @@ void MainEngine::loadGameProgressCheckpoint()
     MoveableComponent *moveComp = m_ecsManager.getComponentManager().
             searchComponentByType<MoveableComponent>(m_playerEntity, Components_e::MOVEABLE_COMPONENT);
     assert(moveComp);
-    VisionComponent *vision = m_ecsManager.getComponentManager().
-            searchComponentByType<VisionComponent>(m_playerEntity, Components_e::VISION_COMPONENT);
-    assert(vision);
-    PositionVertexComponent *pos = m_ecsManager.getComponentManager().
-            searchComponentByType<PositionVertexComponent>(m_playerEntity, Components_e::POSITION_VERTEX_COMPONENT);
-    assert(pos);
     mapComp->m_absoluteMapPositionPX = getCenteredAbsolutePosition(m_memCheckpointLevelState->m_playerPos);
     moveComp->m_degreeOrientation = getDegreeAngleFromDirection(m_memCheckpointLevelState->m_direction);
     m_memStaticEntitiesDeletedFromCheckpoint = m_currentEntitiesDelete;
-    updatePlayerOrientation(*moveComp, *pos, *vision);
     m_playerConf->m_currentCheckpoint = {m_memCheckpointLevelState->m_checkpointNum, m_memCheckpointLevelState->m_direction};
     m_playerConf->m_enemiesKilled = m_memCheckpointLevelState->m_ennemiesKilled;
     m_playerConf->m_secretsFound = m_memCheckpointLevelState->m_secretsFound;
@@ -2452,9 +2445,6 @@ void MainEngine::confPlayerEntity(const LevelManager &levelManager,
     m_playerEntity = entityNum;
     const std::vector<SpriteData> &vectSpriteData =
             levelManager.getPictureData().getSpriteData();
-    PositionVertexComponent *pos = m_ecsManager.getComponentManager().
-            searchComponentByType<PositionVertexComponent>(entityNum,
-                                                           Components_e::POSITION_VERTEX_COMPONENT);
     MapCoordComponent *map = m_ecsManager.getComponentManager().
             searchComponentByType<MapCoordComponent>(entityNum,
                                                      Components_e::MAP_COORD_COMPONENT);
@@ -2470,9 +2460,6 @@ void MainEngine::confPlayerEntity(const LevelManager &levelManager,
     GeneralCollisionComponent *tagColl = m_ecsManager.getComponentManager().
             searchComponentByType<GeneralCollisionComponent>(entityNum,
                                                      Components_e::GENERAL_COLLISION_COMPONENT);
-    VisionComponent *vision = m_ecsManager.getComponentManager().
-            searchComponentByType<VisionComponent>(entityNum,
-                                                     Components_e::VISION_COMPONENT);
     PlayerConfComponent *playerConf = m_ecsManager.getComponentManager().
             searchComponentByType<PlayerConfComponent>(entityNum,
                                                      Components_e::PLAYER_CONF_COMPONENT);
@@ -2486,13 +2473,11 @@ void MainEngine::confPlayerEntity(const LevelManager &levelManager,
             searchComponentByType<AudioComponent>(entityNum, Components_e::AUDIO_COMPONENT);
     assert(audioComp);
     audioComp->m_soundElements.push_back(loadSound(levelManager.getPickObjectSoundFile()));
-    assert(pos);
     assert(map);
     assert(move);
     assert(color);
     assert(circleColl);
     assert(tagColl);
-    assert(vision);
     assert(playerConf);
     assert(weaponConf);
     m_playerConf = playerConf;
@@ -2510,7 +2495,6 @@ void MainEngine::confPlayerEntity(const LevelManager &levelManager,
     color->m_vertex.emplace_back(TupleTetraFloat_t{0.9f, 0.00f, 0.00f, 1.0f});
     color->m_vertex.emplace_back(TupleTetraFloat_t{0.9f, 0.00f, 0.00f, 1.0f});
     circleColl->m_ray = PLAYER_RAY;
-    updatePlayerOrientation(*move, *pos, *vision);
     tagColl->m_tagA = CollisionTag_e::PLAYER_CT;
     tagColl->m_shape = CollisionShape_e::CIRCLE_C;
     //set standard weapon sprite

@@ -156,12 +156,6 @@ void InputSystem::treatPlayerInput()
         MoveableComponent *moveComp = stairwayToComponentManager().
                 searchComponentByType<MoveableComponent>(mVectNumEntity[i], Components_e::MOVEABLE_COMPONENT);
         assert(moveComp);
-        PositionVertexComponent *posComp = stairwayToComponentManager().
-                searchComponentByType<PositionVertexComponent>(mVectNumEntity[i], Components_e::POSITION_VERTEX_COMPONENT);
-        assert(posComp);
-        VisionComponent *visionComp = stairwayToComponentManager().
-                searchComponentByType<VisionComponent>(mVectNumEntity[i], Components_e::VISION_COMPONENT);
-        assert(visionComp);
         WeaponComponent *weaponComp = stairwayToComponentManager().
                 searchComponentByType<WeaponComponent>(playerComp->m_weaponEntity, Components_e::WEAPON_COMPONENT);
         assert(weaponComp);
@@ -173,7 +167,6 @@ void InputSystem::treatPlayerInput()
             {
                 moveComp->m_degreeOrientation += 360.0f;
             }
-            updatePlayerOrientation(*moveComp, *posComp, *visionComp);
         }
         else if(checkPlayerKeyTriggered(ControlKey_e::TURN_LEFT))
         {
@@ -182,7 +175,6 @@ void InputSystem::treatPlayerInput()
             {
                 moveComp->m_degreeOrientation -= 360.0f;
             }
-            updatePlayerOrientation(*moveComp, *posComp, *visionComp);
         }
         if(checkPlayerKeyTriggered(ControlKey_e::ACTION))
         {

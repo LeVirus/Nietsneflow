@@ -58,11 +58,7 @@ private:
 };
 
 void moveElementFromAngle(float distanceMove, float radiantAngle, PairFloat_t &point, bool playerMove = false);
-void updatePlayerOrientation(const MoveableComponent &moveComp,
-                             PositionVertexComponent &posComp, VisionComponent &visionComp);
 void updatePlayerArrow(const MoveableComponent &moveComp,
                              PositionVertexComponent &posComp);
-void updatePlayerConeVision(const MoveableComponent &moveComp,
-                             VisionComponent &visionComp);
 float getRadiantAngle(float angle);
 float getDegreeAngle(float angle);

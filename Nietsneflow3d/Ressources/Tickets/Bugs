@@ -1,9 +1,6 @@
 BUGS======================================================================
 
 ))
-Update player map pos when switch map mode
-
-))
 Delta time for visible shot and maybe other thing
 
 ))
@@ -24,6 +21,9 @@ In input gamepad menu bug in GLFW in AXIS===============================~
 ))
 Wall exists inside door some time======================Bug in level editor
 
+
+))
+Update player map pos when switch map mode=============================OK
 
 ))
 Player pos on mini map does not update at start========================OK

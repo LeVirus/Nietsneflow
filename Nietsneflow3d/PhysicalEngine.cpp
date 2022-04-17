@@ -113,14 +113,6 @@ void moveElementFromAngle(float distanceMove, float radiantAngle, PairFloat_t &p
 }
 
 //===================================================================
-void updatePlayerOrientation(const MoveableComponent &moveComp,
-                             PositionVertexComponent &posComp, VisionComponent &visionComp)
-{
-    updatePlayerArrow(moveComp, posComp);
-//    updatePlayerConeVision(moveComp, visionComp);
-}
-
-//===================================================================
 void updatePlayerArrow(const MoveableComponent &moveComp, PositionVertexComponent &posComp)
 {
     if(posComp.m_vertex.empty())
@@ -147,29 +139,6 @@ void updatePlayerArrow(const MoveableComponent &moveComp, PositionVertexComponen
             cos(radiantAngle) * PLAYER_RAY_DISPLAY;
     posComp.m_vertex[2].second = MAP_LOCAL_CENTER_Y_GL +
             sin(radiantAngle) * PLAYER_RAY_DISPLAY;
-}
-
-//===================================================================
-void updatePlayerConeVision(const MoveableComponent &moveComp, VisionComponent &visionComp)
-{
-
-    float degreeAngle = moveComp.m_degreeOrientation - HALF_CONE_VISION;
-    float radiantAngle = getRadiantAngle(degreeAngle);
-    if(visionComp.m_positionVertexComp.m_vertex.empty())
-    {
-        visionComp.m_positionVertexComp.m_vertex.resize(3);
-    }
-    visionComp.m_positionVertexComp.m_vertex[0].first = MAP_LOCAL_CENTER_X_GL;
-    visionComp.m_positionVertexComp.m_vertex[0].second = MAP_LOCAL_CENTER_Y_GL;
-    visionComp.m_positionVertexComp.m_vertex[1].first = MAP_LOCAL_CENTER_X_GL +
-            cos(radiantAngle) * PLAYER_RAY_DISPLAY * 5;//TEST
-    visionComp.m_positionVertexComp.m_vertex[1].second = MAP_LOCAL_CENTER_Y_GL +
-            sin(radiantAngle) * PLAYER_RAY_DISPLAY * 5;
-    radiantAngle = getRadiantAngle(degreeAngle + CONE_VISION);
-    visionComp.m_positionVertexComp.m_vertex[2].first = MAP_LOCAL_CENTER_X_GL +
-            cos(radiantAngle) * PLAYER_RAY_DISPLAY * 5;//TEST
-    visionComp.m_positionVertexComp.m_vertex[2].second = MAP_LOCAL_CENTER_Y_GL +
-            sin(radiantAngle) * PLAYER_RAY_DISPLAY * 5;
 }
 
 //===================================================================

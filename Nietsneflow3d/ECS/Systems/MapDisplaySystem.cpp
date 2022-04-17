@@ -64,6 +64,7 @@ void MapDisplaySystem::execSystem()
         drawFullMap();
         break;
     }
+    updatePlayerArrow(*m_playerComp.m_moveableComp, *m_playerComp.m_posComp);
 }
 
 //===================================================================
