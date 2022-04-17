@@ -34,7 +34,6 @@ void MapDisplaySystem::confLevelData()
                            m_sizeLevelPX.second / Level::getSize().second};
     m_fullMapTileSizeGL = {m_fullMapTileSizePX.first * FULL_MAP_SIZE_GL / m_sizeLevelPX.first,
                           m_fullMapTileSizePX.second * FULL_MAP_SIZE_GL / m_sizeLevelPX.second};
-    m_entitiesDetectedData.clear();
 }
 
 //===================================================================
@@ -57,7 +56,7 @@ void MapDisplaySystem::execSystem()
     switch(m_playerComp.m_playerConfComp->m_mapMode)
     {
     case MapMode_e::NONE:
-        break;
+        return;
     case MapMode_e::MINI_MAP:
         drawMiniMap();
         break;

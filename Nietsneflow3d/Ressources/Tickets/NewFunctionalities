@@ -6,14 +6,14 @@ For custom level add menu
 
 
 ))
-Add map display 
+Add mouse support
+
+))
+Add map display==============================================================OK 
 	-Mini map have to stay
 	-Mem discovered map in save
 	-Remove Barrels if destroyed
 	-Set switch between: no map, mini map and full map
-
-))
-Add mouse support
 
 ))
 Add enter menu==========================OK

@@ -71,6 +71,7 @@ struct MemCheckpointElementsState
     std::map<uint32_t, std::pair<uint32_t, bool>> m_moveableWallData;
     std::map<uint32_t, std::pair<std::vector<uint32_t>, bool>> m_triggerWallMoveableWallData;
     std::set<PairUI_t> m_staticElementDeleted;
+    std::vector<PairUI_t> m_revealedMapData;
 };
 
 struct MemLevelLoadedData
@@ -239,6 +240,7 @@ private:
     void initStdCollisionCase(uint32_t entityNum, const PairUI_t &mapPos, CollisionTag_e tag);
     void loadSecretsEntities(const LevelManager &levelManager);
     void loadLogsEntities(const LevelManager &levelManager, const std::vector<SpriteData> &vectSprite);
+    void loadRevealedMap();
     void loadTriggerEntityData(const MoveableWallData &moveWallData, const std::vector<uint32_t> &vectPosition, const std::vector<SpriteData> &vectSprite, TriggerWallMoveType_e type, uint32_t shapeNum);
     void confVisibleAmmo(uint32_t ammoEntity);
     void loadStaticElementEntities(const LevelManager &levelManager);
@@ -339,6 +341,7 @@ private:
     std::map<uint32_t, std::pair<uint32_t, bool>> m_memMoveableWallCheckpointData;
     //MAP (first shape num, VECTOR number of actionned)
     std::map<uint32_t, std::pair<std::vector<uint32_t>, bool>> m_memTriggerWallMoveableWallCheckpointData;
+    std::vector<PairUI_t> m_revealedMapData;
 };
 
 float getDegreeAngleFromDirection(Direction_e direction);

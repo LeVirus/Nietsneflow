@@ -1785,9 +1785,8 @@ std::string LevelManager::getGamepadKeyIniString(const GamepadInputState &gamepa
 
 //===================================================================
 std::string LevelManager::saveLevelGameProgress(const MemPlayerConf &playerConfBeginLevel, const MemPlayerConf &playerConfCheckpoint,
-                                         uint32_t levelNum, bool beginLevel)
+                                                uint32_t levelNum, bool beginLevel)
 {
-    std::string sectionName = beginLevel ? "PlayerBeginLevel" : "PlayerCheckpoint";
     std::string date = getStrDate();
     //remove \n
     date.pop_back();
@@ -1833,6 +1832,7 @@ void LevelManager::saveElementsGameProgress(const MemCheckpointElementsState &ch
     saveStaticElementsDataGameProgress(checkpointData.m_staticElementDeleted);
     saveMoveableWallDataGameProgress(checkpointData.m_moveableWallData);
     saveTriggerWallMoveableWallDataGameProgress(checkpointData.m_triggerWallMoveableWallData);
+    saveRevealedMapGameProgress(checkpointData.m_revealedMapData);
 }
 
 //===================================================================
@@ -1905,6 +1905,18 @@ void LevelManager::saveStaticElementsDataGameProgress(const std::set<PairUI_t> &
 }
 
 //===================================================================
+void LevelManager::saveRevealedMapGameProgress(const std::vector<PairUI_t> &revealedMapData)
+{
+    std::string strPos;
+    for(uint32_t i = 0; i < revealedMapData.size(); ++i)
+    {
+        strPos += std::to_string(revealedMapData[i].first) + " " +
+                std::to_string(revealedMapData[i].second) + " ";
+    }
+    m_ini.setValue("RevealedMap", "Pos", strPos);
+}
+
+//===================================================================
 void LevelManager::generateSavedFile(uint32_t numSaveFile)
 {
     std::string str;
@@ -1937,7 +1949,7 @@ bool LevelManager::loadIniFile(std::string_view path, std::optional<uint32_t> en
 
 //===================================================================
 std::string LevelManager::saveGameProgress(const MemPlayerConf &playerConfBeginLevel, const MemPlayerConf &playerConfCheckpoint,
-                                    uint32_t levelNum, uint32_t numSaveFile, const MemCheckpointElementsState *checkpointData)
+                                           uint32_t levelNum, uint32_t numSaveFile, const MemCheckpointElementsState *checkpointData)
 {
     m_ini.clear();
     std::string date = saveLevelGameProgress(playerConfBeginLevel, playerConfCheckpoint,  levelNum, !checkpointData);
@@ -2050,7 +2062,8 @@ std::unique_ptr<MemCheckpointElementsState> LevelManager::loadCheckpointDataSave
     return std::make_unique<MemCheckpointElementsState>(MemCheckpointElementsState{
                     checkpointNum, secretsFound, enemiesKilled, pos, direction,
                     loadEnemiesDataGameProgress(), loadMoveableWallDataGameProgress(),
-                    loadTriggerWallMoveableWallDataGameProgress(), loadStaticElementsDataGameProgress()});
+                    loadTriggerWallMoveableWallDataGameProgress(),
+                    loadStaticElementsDataGameProgress(), loadRevealedMapDataGameProgress()});
 }
 
 //===================================================================
@@ -2156,6 +2169,21 @@ std::set<PairUI_t> LevelManager::loadStaticElementsDataGameProgress()
         pairPos.insert(PairUI_t{vectPos[i], vectPos[i + 1]});
     }
     return pairPos;
+}
+
+//===================================================================
+std::vector<PairUI_t> LevelManager::loadRevealedMapDataGameProgress()
+{
+    std::vector<PairUI_t> vectRet;
+    std::optional<std::string> val = m_ini.getValue("RevealedMap", "Pos");
+    std::vector<uint32_t> vectPos = convertStrToVectUI(*val);
+    assert(vectPos.size() % 2 == 0);
+    vectRet.reserve(vectPos.size() / 2);
+    for(uint32_t i = 0; i < vectPos.size(); i += 2)
+    {
+        vectRet.emplace_back(PairUI_t{vectPos[i], vectPos[i + 1]});
+    }
+    return vectRet;
 }
 
 //===================================================================

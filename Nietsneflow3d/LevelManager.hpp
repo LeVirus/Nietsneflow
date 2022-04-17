@@ -240,7 +240,9 @@ private:
     void saveEnemiesDataGameProgress(const std::vector<MemCheckpointEnemiesState> &enemiesData);
     std::vector<MemCheckpointEnemiesState> loadEnemiesDataGameProgress();
     void saveStaticElementsDataGameProgress(const std::set<PairUI_t> &staticElementData);
+    void saveRevealedMapGameProgress(const std::vector<PairUI_t> &revealedMapData);
     std::set<PairUI_t> loadStaticElementsDataGameProgress();
+    std::vector<PairUI_t> loadRevealedMapDataGameProgress();
     void generateSavedFile(uint32_t numSaveFile);
     void readStandardStaticElement(StaticLevelElementData &staticElement,
                                    const std::string &sectionName,

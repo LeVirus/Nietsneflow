@@ -42,6 +42,14 @@ public:
     {
         m_entitiesDetectedData.insert({entityNum, pos});
     }
+    inline const std::map<uint32_t, PairUI_t> &getDetectedMapData()const
+    {
+        return m_entitiesDetectedData;
+    }
+    inline void clearRevealedMap()
+    {
+        m_entitiesDetectedData.clear();
+    }
 private:
     void confFullMapPositionVertexEntities();
     void confVertexPlayerOnFullMap();

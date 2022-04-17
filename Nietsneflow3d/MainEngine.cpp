@@ -220,10 +220,19 @@ void MainEngine::saveGameProgressCheckpoint(uint32_t levelNum, const PairUI_t &c
     //OOOK SAVE GEAR BEGIN LEVEL
     savePlayerGear(false);
     saveEnemiesCheckpoint();
-    MemCheckpointElementsState d{checkpointData.first, secretsFound, enemiesKilled, checkpointReached,
+    std::vector<PairUI_t> revealedMap;
+    const std::map<uint32_t, PairUI_t> &map = m_graphicEngine.getMapSystem().getDetectedMapData();
+    revealedMap.reserve(map.size());
+    for(std::map<uint32_t, PairUI_t>::const_iterator it = map.begin(); it != map.end(); ++it)
+    {
+        revealedMap.emplace_back(it->second);
+    }
+    MemCheckpointElementsState structCheckpointData =
+    {checkpointData.first, secretsFound, enemiesKilled, checkpointReached,
                 checkpointData.second, m_memEnemiesStateFromCheckpoint,
-                m_memMoveableWallCheckpointData, m_memTriggerWallMoveableWallCheckpointData, m_memStaticEntitiesDeletedFromCheckpoint};
-    saveGameProgress(m_currentLevel, m_currentSave, &d);
+                m_memMoveableWallCheckpointData, m_memTriggerWallMoveableWallCheckpointData,
+                m_memStaticEntitiesDeletedFromCheckpoint, revealedMap};
+    saveGameProgress(m_currentLevel, m_currentSave, &structCheckpointData);
 }
 
 //===================================================================
@@ -831,6 +840,7 @@ void MainEngine::loadLevel(const LevelManager &levelManager)
     loadCheckpointsEntities(levelManager);
     loadSecretsEntities(levelManager);
     loadLogsEntities(levelManager, levelManager.getPictureData().getSpriteData());
+    loadRevealedMap();
     //MUUUUUUUUUUUUSSSSS
     m_audioEngine.loadMusicFromFile(levelManager.getLevel().getMusicFilename());
     m_audioEngine.playMusic();
@@ -1462,6 +1472,19 @@ void MainEngine::loadLogsEntities(const LevelManager &levelManager, const std::v
 }
 
 //===================================================================
+void MainEngine::loadRevealedMap()
+{
+    m_graphicEngine.getMapSystem().clearRevealedMap();
+    for(uint32_t i = 0; i < m_revealedMapData.size(); ++i)
+    {
+        std::optional<ElementRaycast> element = Level::getElementCase(m_revealedMapData[i]);
+        assert(element);
+        m_graphicEngine.getMapSystem().addDiscoveredEntity(element->m_numEntity,
+                                                           m_revealedMapData[i]);
+    }
+}
+
+//===================================================================
 void MainEngine::initStdCollisionCase(uint32_t entityNum, const PairUI_t &mapPos, CollisionTag_e tag)
 {
     MapCoordComponent *mapComponent = m_ecsManager.getComponentManager().
@@ -1896,6 +1919,7 @@ void MainEngine::loadCheckpointSavedGame(const MemCheckpointElementsState &check
     m_memEnemiesStateFromCheckpoint = checkpointData.m_enemiesData;
     m_memMoveableWallCheckpointData = checkpointData.m_moveableWallData;
     m_memTriggerWallMoveableWallCheckpointData = checkpointData.m_triggerWallMoveableWallData;
+    m_revealedMapData = checkpointData.m_revealedMapData;
 }
 
 //===================================================================
@@ -1913,6 +1937,7 @@ void MainEngine::clearCheckpointData()
     m_memTriggerWallMoveableWallCheckpointData.clear();
     m_memCheckpointLevelState = {};
     m_memEnemiesStateFromCheckpoint.clear();
+    m_revealedMapData.clear();
 }
 
 //===================================================================
