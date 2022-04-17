@@ -5,6 +5,13 @@
 #include <array>
 #include <set>
 
+enum class MapMode_e
+{
+    NONE,
+    MINI_MAP,
+    FULL_MAP
+};
+
 struct PlayerConfComponent : public ecs::Component
 {
     PlayerConfComponent()
@@ -36,5 +43,6 @@ struct PlayerConfComponent : public ecs::Component
     std::optional<std::pair<uint32_t, Direction_e>> m_currentCheckpoint;
     std::optional<PairUI_t> m_checkpointReached;
     MenuMode_e m_menuMode, m_previousMenuMode;
+    MapMode_e m_mapMode = MapMode_e::NONE;
     virtual ~PlayerConfComponent() = default;
 };

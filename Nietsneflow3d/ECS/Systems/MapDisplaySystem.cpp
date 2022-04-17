@@ -8,6 +8,7 @@
 #include <ECS/Components/ColorVertexComponent.hpp>
 #include <ECS/Components/MoveableComponent.hpp>
 #include <ECS/Components/GeneralCollisionComponent.hpp>
+#include <ECS/Components/PlayerConfComponent.hpp>
 #include <ECS/Components/CircleCollisionComponent.hpp>
 #include <ECS/Components/RectangleCollisionComponent.hpp>
 #include <ECS/Components/VisionComponent.hpp>
@@ -53,8 +54,17 @@ void MapDisplaySystem::setShader(Shader &shader)
 //===================================================================
 void MapDisplaySystem::execSystem()
 {
-//    drawMiniMap();
-    drawFullMap();
+    switch(m_playerComp.m_playerConfComp->m_mapMode)
+    {
+    case MapMode_e::NONE:
+        break;
+    case MapMode_e::MINI_MAP:
+        drawMiniMap();
+        break;
+    case MapMode_e::FULL_MAP:
+        drawFullMap();
+        break;
+    }
 }
 
 //===================================================================
@@ -342,7 +352,6 @@ bool MapDisplaySystem::checkBoundEntityMap(const MapCoordComponent &mapCoordComp
 //===================================================================
 void MapDisplaySystem::drawMapVertex()
 {
-//    drawPlayerVision();
     m_shader->use();
     for(uint32_t h = 0; h < m_vectMapVerticesData.size(); ++h)
     {
@@ -385,19 +394,22 @@ void MapDisplaySystem::confPlayerComp(uint32_t playerNum)
                                                         Components_e::COLOR_VERTEX_COMPONENT);
     m_playerComp.m_moveableComp = stairwayToComponentManager().
             searchComponentByType<MoveableComponent>(playerNum, Components_e::MOVEABLE_COMPONENT);
+    m_playerComp.m_playerConfComp = stairwayToComponentManager().
+            searchComponentByType<PlayerConfComponent>(playerNum, Components_e::PLAYER_CONF_COMPONENT);
     VisionComponent *visionComp = stairwayToComponentManager().
             searchComponentByType<VisionComponent>(playerNum,
                                                    Components_e::VISION_COMPONENT);
     assert(visionComp);
+    assert(m_playerComp.m_posComp);
+    assert(m_playerComp.m_colorComp);
+    assert(m_playerComp.m_mapCoordComp);
+    assert(m_playerComp.m_moveableComp);
+    assert(m_playerComp.m_playerConfComp);
     visionComp->m_colorVertexComp.m_vertex.reserve(3);
     visionComp->m_colorVertexComp.m_vertex.emplace_back(0.00f, 100.00f, 0.00f, 1.0f);
     visionComp->m_colorVertexComp.m_vertex.emplace_back(0.00f, 10.00f, 0.00f, 1.0f);
     visionComp->m_colorVertexComp.m_vertex.emplace_back(0.00f, 10.00f, 0.00f, 1.0f);
     m_playerComp.m_visionComp = visionComp;
-    assert(m_playerComp.m_posComp);
-    assert(m_playerComp.m_colorComp);
-    assert(m_playerComp.m_mapCoordComp);
-    assert(m_playerComp.m_moveableComp);
 }
 
 //===================================================================

@@ -142,7 +142,7 @@ private:
     GLFWwindow *m_window = nullptr;
     MainEngine *m_mainEngine = nullptr;
     bool m_keyEspapePressed = false, m_keyLeftPressed = false, m_keyRightPressed = false,
-    m_keyUpPressed = false, m_keyDownPressed = false, m_F12Pressed = false, m_enterPressed = false,
+    m_keyUpPressed = false, m_keyDownPressed = false, m_F12Pressed = false, m_enterPressed = false, m_changeMapMode = false,
     m_keyKeyboardGPressed = false;
     std::array<bool, GLFW_GAMEPAD_BUTTON_LAST + 1> m_gamepadButtonsKeyPressed;
     //first == axis + second == axis -

@@ -129,6 +129,27 @@ void InputSystem::treatPlayerInput()
             glfwSetWindowShouldClose(m_window, true);
             return;
         }
+        PlayerConfComponent *playerComp = stairwayToComponentManager().
+                searchComponentByType<PlayerConfComponent>(mVectNumEntity[i], Components_e::PLAYER_CONF_COMPONENT);
+        assert(playerComp);
+        if(!m_changeMapMode && glfwGetKey(m_window, GLFW_KEY_TAB) == GLFW_PRESS)
+        {
+            m_changeMapMode = true;
+            if(playerComp->m_mapMode != MapMode_e::FULL_MAP)
+            {
+                uint32_t num = static_cast<uint32_t>(playerComp->m_mapMode);
+                playerComp->m_mapMode = static_cast<MapMode_e>(++num);
+            }
+            else
+            {
+                playerComp->m_mapMode = MapMode_e::NONE;
+            }
+
+        }
+        else if(m_changeMapMode && glfwGetKey(m_window, GLFW_KEY_TAB) == GLFW_RELEASE)
+        {
+            m_changeMapMode = false;
+        }
         MapCoordComponent *mapComp = stairwayToComponentManager().
                 searchComponentByType<MapCoordComponent>(mVectNumEntity[i], Components_e::MAP_COORD_COMPONENT);
         assert(mapComp);
@@ -141,9 +162,6 @@ void InputSystem::treatPlayerInput()
         VisionComponent *visionComp = stairwayToComponentManager().
                 searchComponentByType<VisionComponent>(mVectNumEntity[i], Components_e::VISION_COMPONENT);
         assert(visionComp);
-        PlayerConfComponent *playerComp = stairwayToComponentManager().
-                searchComponentByType<PlayerConfComponent>(mVectNumEntity[i], Components_e::PLAYER_CONF_COMPONENT);
-        assert(playerComp);
         WeaponComponent *weaponComp = stairwayToComponentManager().
                 searchComponentByType<WeaponComponent>(playerComp->m_weaponEntity, Components_e::WEAPON_COMPONENT);
         assert(weaponComp);

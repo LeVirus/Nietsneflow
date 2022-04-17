@@ -11,6 +11,7 @@
 struct MapCoordComponent;
 struct VisionComponent;
 struct MoveableComponent;
+struct PlayerConfComponent;
 
 struct PlayerComp
 {
@@ -19,6 +20,7 @@ struct PlayerComp
     ColorVertexComponent const *m_colorComp = nullptr;
     VisionComponent const *m_visionComp = nullptr;
     MoveableComponent const *m_moveableComp = nullptr;
+    PlayerConfComponent const *m_playerConfComp = nullptr;
 };
 
 class MapDisplaySystem : public ecs::System
