@@ -1,9 +1,6 @@
 BUGS======================================================================
 
 ))
-Static element display behind door and wall if map activated
-
-))
 Delta time for visible shot and maybe other thing
 
 ))
@@ -27,6 +24,9 @@ In input gamepad menu bug in GLFW in AXIS===============================~
 ))
 Wall exists inside door some time======================Bug in level editor
 
+
+))
+Static element display behind door and wall if map activated=========================OK
 
 ))
 Random exit at launch===========================OK

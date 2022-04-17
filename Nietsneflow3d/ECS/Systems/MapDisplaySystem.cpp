@@ -53,8 +53,8 @@ void MapDisplaySystem::setShader(Shader &shader)
 //===================================================================
 void MapDisplaySystem::execSystem()
 {
-    drawMiniMap();
-//    drawFullMap();
+//    drawMiniMap();
+    drawFullMap();
 }
 
 //===================================================================
@@ -63,7 +63,7 @@ void MapDisplaySystem::drawMiniMap()
     confMiniMapPositionVertexEntities();
     fillMiniMapVertexFromEntities();
     drawMapVertex();
-    drawPlayerOnMiniMap();
+    drawPlayerOnMap();
 }
 
 //===================================================================
@@ -72,7 +72,8 @@ void MapDisplaySystem::drawFullMap()
     confFullMapPositionVertexEntities();
     fillFullMapVertexFromEntities();
     drawMapVertex();
-    drawPlayerOnFullMap();
+    confVertexPlayerOnFullMap();
+    drawPlayerOnMap();
 }
 
 //===================================================================
@@ -99,7 +100,7 @@ void MapDisplaySystem::confFullMapPositionVertexEntities()
 }
 
 //===================================================================
-void MapDisplaySystem::drawPlayerOnFullMap()
+void MapDisplaySystem::confVertexPlayerOnFullMap()
 {
     if(m_playerComp.m_posComp->m_vertex.empty())
     {
@@ -140,7 +141,7 @@ void MapDisplaySystem::confMiniMapPositionVertexEntities()
     getMapDisplayLimit(playerPos, min, max);
     m_entitiesToDisplay.clear();
     m_entitiesToDisplay.reserve(mVectNumEntity.size());
-    for( std::map<uint32_t, PairUI_t>::const_iterator it = m_entitiesDetectedData.begin();
+    for(std::map<uint32_t, PairUI_t>::const_iterator it = m_entitiesDetectedData.begin();
          it != m_entitiesDetectedData.end(); ++it)
     {
         MapCoordComponent *mapComp = stairwayToComponentManager().
@@ -195,13 +196,14 @@ void MapDisplaySystem::fillFullMapVertexFromEntities()
     {
         m_vectMapVerticesData[h].clear();
     }
-    for(uint32_t i = 0; i < m_entitiesDetectedData.size(); ++i)
+    for(std::map<uint32_t, PairUI_t>::const_iterator it = m_entitiesDetectedData.begin();
+         it != m_entitiesDetectedData.end(); ++it)
     {
         PositionVertexComponent *posComp = stairwayToComponentManager().
-                searchComponentByType<PositionVertexComponent>(m_entitiesToDisplay[i],
+                searchComponentByType<PositionVertexComponent>(it->first,
                                                                Components_e::POSITION_VERTEX_COMPONENT);
         SpriteTextureComponent *spriteComp = stairwayToComponentManager().
-                searchComponentByType<SpriteTextureComponent>(m_entitiesToDisplay[i],
+                searchComponentByType<SpriteTextureComponent>(it->first,
                                                               Components_e::SPRITE_TEXTURE_COMPONENT);
         assert(posComp);
         assert(spriteComp);
@@ -360,7 +362,7 @@ void MapDisplaySystem::drawPlayerVision()
 }
 
 //===================================================================
-void MapDisplaySystem::drawPlayerOnMiniMap()
+void MapDisplaySystem::drawPlayerOnMap()
 {
     assert(m_playerComp.m_posComp);
     assert(m_playerComp.m_colorComp);

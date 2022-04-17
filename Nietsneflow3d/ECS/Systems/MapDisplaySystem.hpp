@@ -42,13 +42,13 @@ public:
     }
 private:
     void confFullMapPositionVertexEntities();
-    void drawPlayerOnFullMap();
+    void confVertexPlayerOnFullMap();
     void setUsedComponents();
     void fillMiniMapVertexFromEntities();
     void fillFullMapVertexFromEntities();
     void drawMapVertex();
     void drawPlayerVision();
-    void drawPlayerOnMiniMap();
+    void drawPlayerOnMap();
     void confMiniMapPositionVertexEntities();
     void confMiniMapVertexElement(const PairFloat_t &glPosition, uint32_t entityNum);
     void confFullMapVertexElement(const PairFloat_t &absolutePositionPX, uint32_t entityNum);
