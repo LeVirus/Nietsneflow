@@ -88,6 +88,7 @@ LevelState MainEngine::mainLoop(uint32_t levelNum, LevelState_e levelState)
     m_currentLevel = levelNum;
     m_memInputCursorPos = 0;
     m_graphicEngine.getMapSystem().confLevelData();
+    m_physicalEngine.updateMousePos();
     bool beginLevel = isLoadFromLevelBegin(m_currentLevelState);
     if(beginLevel)
     {
@@ -136,6 +137,7 @@ LevelState MainEngine::mainLoop(uint32_t levelNum, LevelState_e levelState)
     m_graphicEngine.unsetTransition(m_gamePaused);
     std::chrono::time_point<std::chrono::system_clock> clock;
     clock = std::chrono::system_clock::now();
+    m_physicalEngine.updateMousePos();
     do
     {
         elapsed_seconds = std::chrono::system_clock::now() - clock;
@@ -3191,8 +3193,8 @@ void MainEngine::linkSystemsToPhysicalEngine()
             searchSystemByType<DoorWallSystem>(static_cast<uint32_t>(Systems_e::DOOR_SYSTEM));
     IASystem *iaSystem = m_ecsManager.getSystemManager().
             searchSystemByType<IASystem>(static_cast<uint32_t>(Systems_e::IA_SYSTEM));
-    input->setGLWindow(m_graphicEngine.getGLWindow());
     input->linkMainEngine(this);
+    input->init(m_graphicEngine.getGLWindow());
     iaSystem->linkMainEngine(this);
     coll->linkMainEngine(this);
     door->memRefMainEngine(this);

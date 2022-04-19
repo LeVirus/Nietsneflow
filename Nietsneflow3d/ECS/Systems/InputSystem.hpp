@@ -74,14 +74,11 @@ class InputSystem : public ecs::System
 {
 public:
     InputSystem();
+    void init(GLFWwindow &window);
     void execSystem()override;
     inline void linkMainEngine(MainEngine *mainEngine)
     {
         m_mainEngine = mainEngine;
-    }
-    inline void setGLWindow(GLFWwindow &window)
-    {
-        m_window = &window;
     }
     inline void setModeTransitionMenu(bool transition)
     {
@@ -103,6 +100,7 @@ public:
     {
         return m_mapGamepadTmpAssociatedKey;
     }
+    void updateMousePos();
     void updateNewInputKey(ControlKey_e currentSelectedKey, uint32_t glKey, InputType_e inputType, bool axisSense = false);
     static void removeGamepad(int gamepadID);
     static void addGamepad(int gamepadID);
@@ -114,6 +112,7 @@ private:
     void setUsedComponents();
     void getGamepadInputs();
     void treatPlayerInput();
+    std::optional<double> getXMouseMotion();
     bool checkPlayerKeyTriggered(ControlKey_e key);
     void treatMenu(uint32_t playerEntity);
     void treatAxisRelease();
@@ -137,7 +136,11 @@ private:
     void treatEnterPressedConfirmRestartFromLastCheckpointMenu(PlayerConfComponent *playerComp);
     void validInputMenu(PlayerConfComponent *playerComp);
     void treatPlayerMove(PlayerConfComponent *playerComp, MoveableComponent *moveComp, MapCoordComponent *mapComp);
+    static void window_focus_callback(GLFWwindow* window, int focused);
+
 private:
+    uint32_t m_rotationSensibility = 10;
+    std::pair<double, double> m_previousMousePosition;
     static MapGamepadInputData_t m_mapGamepadID;
     GLFWwindow *m_window = nullptr;
     MainEngine *m_mainEngine = nullptr;
@@ -180,7 +183,9 @@ private:
     };
     ControlKey_e m_currentSelectedKey;
     bool m_modeTransition = false, m_toggleSignal = false;
+    static bool m_windowFocus;
 };
+
 
 void decrementMenuPosition(PlayerConfComponent *playerConf, uint32_t maxIndex);
 void incrementMenuPosition(PlayerConfComponent *playerConf, uint32_t maxIndex);

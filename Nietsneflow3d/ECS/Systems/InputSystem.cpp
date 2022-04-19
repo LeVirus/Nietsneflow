@@ -15,6 +15,7 @@
 #include <cassert>
 
 MapGamepadInputData_t InputSystem::m_mapGamepadID;
+bool InputSystem::m_windowFocus;
 
 //===================================================================
 InputSystem::InputSystem()
@@ -22,6 +23,7 @@ InputSystem::InputSystem()
     setUsedComponents();
     gamepadUpdate();
     glfwSetJoystickCallback(joystick_callback);
+    m_windowFocus = true;
 }
 
 //===================================================================
@@ -160,17 +162,44 @@ void InputSystem::treatPlayerInput()
                 searchComponentByType<WeaponComponent>(playerComp->m_weaponEntity, Components_e::WEAPON_COMPONENT);
         assert(weaponComp);
         treatPlayerMove(playerComp, moveComp, mapComp);
-        if(checkPlayerKeyTriggered(ControlKey_e::TURN_RIGHT))
+        std::optional<double> mouseXdiff = getXMouseMotion();
+        if(checkPlayerKeyTriggered(ControlKey_e::TURN_RIGHT) ||
+                (mouseXdiff && mouseXdiff > 0.00))
         {
-            moveComp->m_degreeOrientation -= moveComp->m_rotationAngle;
+            if(checkPlayerKeyTriggered(ControlKey_e::TURN_RIGHT))
+            {
+                moveComp->m_degreeOrientation -= moveComp->m_rotationAngle;
+            }
+            else
+            {
+                if(*mouseXdiff > 30.0)
+                {
+                    *mouseXdiff = 30.0;
+                }
+                moveComp->m_degreeOrientation -= moveComp->m_rotationAngle *
+                        (*mouseXdiff / 6);
+            }
             if(moveComp->m_degreeOrientation < 0.0f)
             {
                 moveComp->m_degreeOrientation += 360.0f;
             }
         }
-        else if(checkPlayerKeyTriggered(ControlKey_e::TURN_LEFT))
+        else if(checkPlayerKeyTriggered(ControlKey_e::TURN_LEFT) ||
+                (mouseXdiff && mouseXdiff < 0.00))
         {
-            moveComp->m_degreeOrientation += moveComp->m_rotationAngle;
+            if(checkPlayerKeyTriggered(ControlKey_e::TURN_LEFT))
+            {
+                moveComp->m_degreeOrientation += moveComp->m_rotationAngle;
+            }
+            else
+            {
+                if(*mouseXdiff < -30.0)
+                {
+                    *mouseXdiff = -30.0;
+                }
+                moveComp->m_degreeOrientation -= moveComp->m_rotationAngle *
+                        (*mouseXdiff / m_rotationSensibility);
+            }
             if(moveComp->m_degreeOrientation > 360.0f)
             {
                 moveComp->m_degreeOrientation -= 360.0f;
@@ -227,6 +256,24 @@ void InputSystem::treatPlayerInput()
             }
         }
     }
+}
+
+//===================================================================
+std::optional<double> InputSystem::getXMouseMotion()
+{
+    if(!m_windowFocus)
+    {
+        return {};
+    }
+    double xpos, ypos, xDiff;
+    glfwGetCursorPos(m_window, &xpos, &ypos);
+    xDiff = xpos - m_previousMousePosition.first;
+    if(std::abs(xDiff) < 0.01)
+    {
+        return {};
+    }
+    m_previousMousePosition.first = xpos;
+    return xDiff;
 }
 
 //===================================================================
@@ -350,6 +397,21 @@ void InputSystem::treatPlayerMove(PlayerConfComponent *playerComp, MoveableCompo
                              getRadiantAngle(moveComp->m_currentDegreeMoveDirection),
                              mapComp->m_absoluteMapPositionPX, true);
         updateDetectRect(playerComp, mapComp);
+    }
+}
+
+//===================================================================
+void InputSystem::window_focus_callback(GLFWwindow *window, int focused)
+{
+    if(focused == 0)
+    {
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        m_windowFocus = false;
+    }
+    else
+    {
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        m_windowFocus = true;
     }
 }
 
@@ -1211,6 +1273,19 @@ void InputSystem::execSystem()
 }
 
 //===================================================================
+void InputSystem::init(GLFWwindow &window)
+{
+    m_window = &window;
+    glfwSetWindowFocusCallback(m_window, InputSystem::window_focus_callback);
+}
+
+//===================================================================
+void InputSystem::updateMousePos()
+{
+    glfwGetCursorPos(m_window, &m_previousMousePosition.first, &m_previousMousePosition.second);
+}
+
+//===================================================================
 void InputSystem::updateNewInputKey(ControlKey_e currentSelectedKey, uint32_t glKey, InputType_e inputType, bool axisSense)
 {
     if(inputType == InputType_e::KEYBOARD)
@@ -1266,19 +1341,6 @@ void InputSystem::removeGamepad(int gamepadID)
 }
 
 //===================================================================
-void joystick_callback(int jid, int event)
-{
-    if(event == GLFW_CONNECTED)
-    {
-        InputSystem::addGamepad(jid);
-    }
-    else if(event == GLFW_DISCONNECTED)
-    {
-        InputSystem::removeGamepad(jid);
-    }
-}
-
-//===================================================================
 void decrementMenuPosition(PlayerConfComponent *playerConf, uint32_t maxIndex)
 {
     uint32_t index = playerConf->m_currentCursorPos;
@@ -1303,5 +1365,18 @@ void incrementMenuPosition(PlayerConfComponent *playerConf, uint32_t maxIndex)
     else
     {
         playerConf->m_currentCursorPos = index + 1;
+    }
+}
+
+//===================================================================
+void joystick_callback(int jid, int event)
+{
+    if(event == GLFW_CONNECTED)
+    {
+        InputSystem::addGamepad(jid);
+    }
+    else if(event == GLFW_DISCONNECTED)
+    {
+        InputSystem::removeGamepad(jid);
     }
 }

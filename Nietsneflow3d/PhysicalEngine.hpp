@@ -50,6 +50,10 @@ public:
     {
         return m_inputSystem->toggleFullScreenSignal();
     }
+    inline void updateMousePos()
+    {
+        m_inputSystem->updateMousePos();
+    }
 private:
     InputSystem *m_inputSystem = nullptr;
     CollisionSystem *m_collisionSystem = nullptr;
