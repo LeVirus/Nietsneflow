@@ -1859,7 +1859,7 @@ void MainEngine::saveAudioSettings()
 
 //===================================================================
 void MainEngine::saveInputSettings(const std::map<ControlKey_e, GamepadInputState> &gamepadArray,
-                                   const std::map<ControlKey_e, uint32_t> &keyboardArray)
+                                   const std::map<ControlKey_e, MouseKeyboardInputState> &keyboardArray)
 {
     m_refGame->saveInputSettings(gamepadArray, keyboardArray);
 }

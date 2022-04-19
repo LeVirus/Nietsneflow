@@ -16,6 +16,8 @@
 
 MapGamepadInputData_t InputSystem::m_mapGamepadID;
 bool InputSystem::m_windowFocus;
+bool InputSystem::m_scrollUp;
+bool InputSystem::m_scrollDown;
 
 //===================================================================
 InputSystem::InputSystem()
@@ -24,6 +26,20 @@ InputSystem::InputSystem()
     gamepadUpdate();
     glfwSetJoystickCallback(joystick_callback);
     m_windowFocus = true;
+}
+
+//===================================================================
+void InputSystem::init(GLFWwindow &window)
+{
+    m_window = &window;
+    glfwSetWindowFocusCallback(m_window, InputSystem::window_focus_callback);
+    glfwSetScrollCallback(m_window, InputSystem::scroll_callback);
+}
+
+//===================================================================
+void InputSystem::updateMousePos()
+{
+    glfwGetCursorPos(m_window, &m_previousMousePosition.first, &m_previousMousePosition.second);
 }
 
 //===================================================================
@@ -280,7 +296,11 @@ std::optional<double> InputSystem::getXMouseMotion()
 bool InputSystem::checkPlayerKeyTriggered(ControlKey_e key)
 {
     //KEYBOARD
-    if(glfwGetKey(m_window, m_mapKeyboardCurrentAssociatedKey[key]) == GLFW_PRESS)
+    if(glfwGetKey(m_window, m_mapKeyboardCurrentAssociatedKey[key].m_key) == GLFW_PRESS)
+    {
+        return true;
+    }
+    if(glfwGetMouseButton(m_window, m_mapKeyboardCurrentAssociatedKey[key].m_key) == GLFW_PRESS)
     {
         return true;
     }
@@ -557,6 +577,8 @@ void InputSystem::treatReleaseInputMenu()
     {
         m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER] = false;
     }
+    m_scrollUp = false;
+    m_scrollDown = false;
 }
 
 //===================================================================
@@ -634,6 +656,7 @@ bool InputSystem::treatNewKey(PlayerConfComponent *playerComp)
                 static_cast<uint32_t>(Systems_e::STATIC_DISPLAY_SYSTEM));
     if(playerComp->m_keyboardInputMenuMode)
     {
+        //KEYBOARD
         for(std::map<uint32_t, std::string>::const_iterator it = INPUT_KEYBOARD_KEY_STRING.begin(); it != INPUT_KEYBOARD_KEY_STRING.end(); ++it)
         {
             if(glfwGetKey(m_window, it->first) == GLFW_PRESS)
@@ -654,8 +677,22 @@ bool InputSystem::treatNewKey(PlayerConfComponent *playerComp)
                 {
                     m_enterPressed = true;
                 }
-                m_mapKeyboardTmpAssociatedKey[m_currentSelectedKey] = it->first;
-                staticSystem->updateNewInputKey(m_currentSelectedKey, it->first, InputType_e::KEYBOARD);
+                m_mapKeyboardTmpAssociatedKey[m_currentSelectedKey] = {true, it->first};
+                staticSystem->updateNewInputKeyKeyboard(m_currentSelectedKey, m_mapKeyboardTmpAssociatedKey[m_currentSelectedKey]);
+                return true;
+            }
+        }
+        int state;
+        //MOUSE
+        for(std::map<uint32_t, std::string>::const_iterator it = INPUT_MOUSE_KEY_STRING.begin();
+            it != INPUT_MOUSE_KEY_STRING.end(); ++it)
+        {
+            state = glfwGetMouseButton(m_window, it->first);
+            if(state == GLFW_PRESS)
+            {
+
+                m_mapKeyboardTmpAssociatedKey[m_currentSelectedKey] = {false, it->first};
+                staticSystem->updateNewInputKeyKeyboard(m_currentSelectedKey, m_mapKeyboardTmpAssociatedKey[m_currentSelectedKey]);
                 return true;
             }
         }
@@ -671,7 +708,7 @@ bool InputSystem::treatNewKey(PlayerConfComponent *playerComp)
                 m_mapGamepadTmpAssociatedKey[m_currentSelectedKey].m_standardButton = true;
                 m_mapGamepadTmpAssociatedKey[m_currentSelectedKey].m_axisPos = {};
                 m_mapGamepadTmpAssociatedKey[m_currentSelectedKey].m_keyID = it->first;
-                staticSystem->updateNewInputKey(m_currentSelectedKey, it->first, InputType_e::GAMEPAD_BUTTONS);
+                staticSystem->updateNewInputKeyGamepad(m_currentSelectedKey, it->first, InputType_e::GAMEPAD_BUTTONS);
                 if(it->first == GLFW_GAMEPAD_BUTTON_B)
                 {
                     m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_B] = true;
@@ -704,7 +741,7 @@ bool InputSystem::treatNewKey(PlayerConfComponent *playerComp)
                 m_mapGamepadTmpAssociatedKey[m_currentSelectedKey].m_standardButton = false;
                 m_mapGamepadTmpAssociatedKey[m_currentSelectedKey].m_axisPos = true;
                 m_mapGamepadTmpAssociatedKey[m_currentSelectedKey].m_keyID = it->first;
-                staticSystem->updateNewInputKey(m_currentSelectedKey, it->first, InputType_e::GAMEPAD_AXIS, true);
+                staticSystem->updateNewInputKeyGamepad(m_currentSelectedKey, it->first, InputType_e::GAMEPAD_AXIS, true);
                 return true;
             }
             //NEG
@@ -713,7 +750,7 @@ bool InputSystem::treatNewKey(PlayerConfComponent *playerComp)
                 m_mapGamepadTmpAssociatedKey[m_currentSelectedKey].m_standardButton = false;
                 m_mapGamepadTmpAssociatedKey[m_currentSelectedKey].m_axisPos = false;
                 m_mapGamepadTmpAssociatedKey[m_currentSelectedKey].m_keyID = it->first;
-                staticSystem->updateNewInputKey(m_currentSelectedKey, it->first, InputType_e::GAMEPAD_AXIS, false);
+                staticSystem->updateNewInputKeyGamepad(m_currentSelectedKey, it->first, InputType_e::GAMEPAD_AXIS, false);
                 return true;
             }
         }
@@ -1273,42 +1310,28 @@ void InputSystem::execSystem()
 }
 
 //===================================================================
-void InputSystem::init(GLFWwindow &window)
+void InputSystem::updateNewInputKeyGamepad(ControlKey_e currentSelectedKey, uint32_t glKey, InputType_e inputType, bool axisSense)
 {
-    m_window = &window;
-    glfwSetWindowFocusCallback(m_window, InputSystem::window_focus_callback);
-}
-
-//===================================================================
-void InputSystem::updateMousePos()
-{
-    glfwGetCursorPos(m_window, &m_previousMousePosition.first, &m_previousMousePosition.second);
-}
-
-//===================================================================
-void InputSystem::updateNewInputKey(ControlKey_e currentSelectedKey, uint32_t glKey, InputType_e inputType, bool axisSense)
-{
-    if(inputType == InputType_e::KEYBOARD)
+    if(inputType == InputType_e::GAMEPAD_BUTTONS)
     {
-        m_mapKeyboardCurrentAssociatedKey[currentSelectedKey] = glKey;
+        if(glKey == GLFW_GAMEPAD_BUTTON_START)
+        {
+            return;
+        }
+        m_mapGamepadCurrentAssociatedKey[currentSelectedKey].m_standardButton = true;
     }
     else
     {
-        if(inputType == InputType_e::GAMEPAD_BUTTONS)
-        {
-            if(glKey == GLFW_GAMEPAD_BUTTON_START)
-            {
-                return;
-            }
-            m_mapGamepadCurrentAssociatedKey[currentSelectedKey].m_standardButton = true;
-        }
-        else
-        {
-            m_mapGamepadCurrentAssociatedKey[currentSelectedKey].m_standardButton = false;
-            m_mapGamepadCurrentAssociatedKey[currentSelectedKey].m_axisPos = axisSense;
-        }
-        m_mapGamepadCurrentAssociatedKey[currentSelectedKey].m_keyID = glKey;
+        m_mapGamepadCurrentAssociatedKey[currentSelectedKey].m_standardButton = false;
+        m_mapGamepadCurrentAssociatedKey[currentSelectedKey].m_axisPos = axisSense;
     }
+    m_mapGamepadCurrentAssociatedKey[currentSelectedKey].m_keyID = glKey;
+}
+
+//===================================================================
+void InputSystem::updateNewInputKeyKeyboard(ControlKey_e currentSelectedKey, const MouseKeyboardInputState &state)
+{
+    m_mapKeyboardCurrentAssociatedKey[currentSelectedKey] = state;
 }
 
 //===================================================================
@@ -1318,6 +1341,12 @@ void InputSystem::addGamepad(int gamepadID)
     {
         m_mapGamepadID.insert({gamepadID, {nullptr, nullptr}});
     }
+}
+
+//===================================================================
+void InputSystem::scroll_callback(GLFWwindow *window, double xoffset, double yoffset)
+{
+
 }
 
 //===================================================================

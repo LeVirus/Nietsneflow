@@ -24,7 +24,7 @@ public:
                                 const PairFloat_t &point, float degreeAngle);
     void setModeTransitionMenu(bool transition);
     void clearSystems();
-    void setKeyboardKey(const std::array<uint32_t, static_cast<uint32_t>(ControlKey_e::TOTAL)> &keyboardArray);
+    void setKeyboardKey(const std::array<MouseKeyboardInputState, static_cast<uint32_t>(ControlKey_e::TOTAL)> &keyboardArray);
     void setGamepadKey(const std::array<GamepadInputState, static_cast<uint32_t>(ControlKey_e::TOTAL)> &gamepadArray);
     inline const std::vector<uint32_t> &getStaticEntitiesToDelete()const
     {

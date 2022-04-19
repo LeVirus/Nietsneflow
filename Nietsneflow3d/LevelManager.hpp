@@ -74,7 +74,7 @@ struct SettingsData
     std::optional<bool> m_fullscreen;
     std::optional<int> m_resolutionWidth, m_resolutionHeight;
     //INPUT
-    std::optional<std::array<uint32_t, static_cast<uint32_t>(ControlKey_e::TOTAL)>> m_arrayKeyboard;
+    std::optional<std::array<MouseKeyboardInputState, static_cast<uint32_t>(ControlKey_e::TOTAL)>> m_arrayKeyboard;
     std::optional<std::array<GamepadInputState, static_cast<uint32_t>(ControlKey_e::TOTAL)>> m_arrayGamepad;
 };
 
@@ -109,7 +109,7 @@ public:
     void saveAudioSettings(uint32_t musicVolume, uint32_t effectVolume);
     void saveDisplaySettings(const pairI_t &resolution, bool fullscreen);
     void saveInputSettings(const std::map<ControlKey_e, GamepadInputState> &gamepadArray,
-                                  const std::map<ControlKey_e, uint32_t> &keyboardArray);
+                                  const std::map<ControlKey_e, MouseKeyboardInputState> &keyboardArray);
     std::optional<MemLevelLoadedData> loadSavedGame(uint32_t saveNum);
     std::optional<MemPlayerConf> loadPlayerConf(bool beginLevel);
     std::unique_ptr<MemCheckpointElementsState> loadCheckpointDataSavedGame();
@@ -320,6 +320,11 @@ private:
     std::string m_pickObjectSound, m_doorOpeningSound, m_hitSound, m_teleportSound;
     const std::array<std::string, static_cast<uint32_t>(ControlKey_e::TOTAL)> m_inputIDString = {
         "moveForward", "moveBackward", "strafeLeft", "strafeRight", "turnLeft", "turnRight", "action", "shoot", "previousWeapon", "nextWeapon"
+    };
+    const std::map<std::string, uint32_t> m_inputMouseKeyString = {
+        {"MOUSE LEFT", GLFW_MOUSE_BUTTON_LEFT},
+        {"MOUSE RIGHT", GLFW_MOUSE_BUTTON_RIGHT},
+        {"MOUSE MIDDLE", GLFW_MOUSE_BUTTON_MIDDLE}
     };
     const std::map<std::string, uint32_t> m_inputKeyboardKeyString = {
         {"SPACE", GLFW_KEY_SPACE},

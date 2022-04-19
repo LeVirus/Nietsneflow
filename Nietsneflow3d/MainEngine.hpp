@@ -184,7 +184,7 @@ public:
     void setPlayerDeparture(const PairUI_t &pos, Direction_e dir);
     void saveAudioSettings();
     void saveInputSettings(const std::map<ControlKey_e, GamepadInputState> &gamepadArray,
-                           const std::map<ControlKey_e, uint32_t> &keyboardArray);
+                           const std::map<ControlKey_e, MouseKeyboardInputState> &keyboardArray);
     bool loadSavedGame(uint32_t saveNum, LevelState_e levelMode);
     void loadCheckpointSavedGame(const MemCheckpointElementsState &checkpointData);
     bool checkSavedGameExists(uint32_t saveNum)const;

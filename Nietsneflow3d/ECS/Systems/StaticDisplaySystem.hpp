@@ -14,6 +14,7 @@ struct TimerComponent;
 struct PlayerConfComponent;
 struct MemPositionsVertexComponents;
 struct WriteComponent;
+struct MouseKeyboardInputState;
 class MainEngine;
 
 using ArrayControlKey_t = std::array<uint32_t, static_cast<uint32_t>(ControlKey_e::TOTAL)>;
@@ -54,10 +55,11 @@ public:
     void memDisplayMenuEntities(uint32_t numMenuResolutionWrite, uint32_t numFullscreenMenuEntity);
     void updateDisplayMenuResolution(const std::string &str);
     void updateMenuEntryFullscreen(bool displayMenufullscreenMode);
-    std::string getKeyboardStringKeyAssociated(uint32_t key)const;
+    std::string getMouseKeyboardStringKeyAssociated(const MouseKeyboardInputState &state)const;
     std::string getGamepadStringKeyButtonAssociated(uint32_t key)const;
     std::string getGamepadStringKeyAxisAssociated(uint32_t key, bool axisSense)const;
-    void updateNewInputKey(ControlKey_e currentSelectedKey, uint32_t glKey, InputType_e inputType, bool axisSense = false);
+    void updateNewInputKeyGamepad(ControlKey_e currentSelectedKey, uint32_t glKey, InputType_e inputType, bool axisSense = false);
+    void updateNewInputKeyKeyboard(ControlKey_e currentSelectedKey, const MouseKeyboardInputState &state);
     void updateStringWriteEntitiesInputMenu(bool keyboardInputMenuMode, bool defaultInput = true);
     inline void linkMainEngine(MainEngine *mainEngine)
     {

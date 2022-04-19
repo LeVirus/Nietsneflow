@@ -9,6 +9,7 @@
 #include <ECS/Systems/StaticDisplaySystem.hpp>
 #include <ECS/Systems/DoorWallSystem.hpp>
 #include <ECS/Systems/IASystem.hpp>
+#include <ECS/Systems/InputSystem.hpp>
 #include <cassert>
 
 //===================================================================
@@ -67,11 +68,11 @@ void PhysicalEngine::clearSystems()
 }
 
 //===================================================================
-void PhysicalEngine::setKeyboardKey(const std::array<uint32_t, static_cast<uint32_t>(ControlKey_e::TOTAL)> &keyboardArray)
+void PhysicalEngine::setKeyboardKey(const std::array<MouseKeyboardInputState, static_cast<uint32_t>(ControlKey_e::TOTAL)> &keyboardArray)
 {
     for(uint32_t i = 0; i < keyboardArray.size(); ++i)
     {
-        m_inputSystem->updateNewInputKey(static_cast<ControlKey_e>(i), keyboardArray[i], InputType_e::KEYBOARD);
+        m_inputSystem->updateNewInputKeyKeyboard(static_cast<ControlKey_e>(i), keyboardArray[i]);
     }
 }
 
@@ -91,7 +92,7 @@ void PhysicalEngine::setGamepadKey(const std::array<GamepadInputState, static_ca
             axisSense = *gamepadArray[i].m_axisPos;
             inputType = InputType_e::GAMEPAD_AXIS;
         }
-        m_inputSystem->updateNewInputKey(static_cast<ControlKey_e>(i), gamepadArray[i].m_keyID, inputType, axisSense);
+        m_inputSystem->updateNewInputKeyGamepad(static_cast<ControlKey_e>(i), gamepadArray[i].m_keyID, inputType, axisSense);
     }
 }
 

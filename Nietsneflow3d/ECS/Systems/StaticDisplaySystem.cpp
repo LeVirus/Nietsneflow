@@ -172,10 +172,10 @@ void StaticDisplaySystem::displayMenu()
 void StaticDisplaySystem::updateStringWriteEntitiesInputMenu(bool keyboardInputMenuMode, bool defaultInput)
 {
     WriteComponent *writeConf;
-    //KEYBOARD
+    //MOUSE KEYBOARD
     if(keyboardInputMenuMode)
     {
-        const std::map<ControlKey_e, uint32_t> &map = defaultInput ? MAP_KEYBOARD_DEFAULT_KEY :
+        const std::map<ControlKey_e, MouseKeyboardInputState> &map = defaultInput ? MAP_KEYBOARD_DEFAULT_KEY :
                     mptrSystemManager->searchSystemByType<InputSystem>(
                         static_cast<uint32_t>(Systems_e::INPUT_SYSTEM))->getMapTmpKeyboardAssociatedKey();
         for(uint32_t i = 0; i < m_inputMenuKeyboardWriteKeysEntities.size(); ++i)
@@ -183,7 +183,7 @@ void StaticDisplaySystem::updateStringWriteEntitiesInputMenu(bool keyboardInputM
             writeConf = stairwayToComponentManager().
                     searchComponentByType<WriteComponent>(m_inputMenuKeyboardWriteKeysEntities[i], Components_e::WRITE_COMPONENT);
             assert(writeConf);
-            writeConf->m_str = getKeyboardStringKeyAssociated(map.at(static_cast<ControlKey_e>(i)));
+            writeConf->m_str = getMouseKeyboardStringKeyAssociated(map.at(static_cast<ControlKey_e>(i)));
             m_mainEngine->updateWriteComp(writeConf);
         }
     }
@@ -242,14 +242,27 @@ void StaticDisplaySystem::updateMenuEntryFullscreen(bool displayMenufullscreenMo
 }
 
 //===================================================================
-std::string StaticDisplaySystem::getKeyboardStringKeyAssociated(uint32_t key)const
+std::string StaticDisplaySystem::getMouseKeyboardStringKeyAssociated(const MouseKeyboardInputState &state)const
 {
-    std::map<uint32_t, std::string>::const_iterator it = INPUT_KEYBOARD_KEY_STRING.find(key);
-    if(it == INPUT_KEYBOARD_KEY_STRING.end())
+    std::map<uint32_t, std::string>::const_iterator it;
+    if(state.m_keyboard)
     {
-        return "";
+        it = INPUT_KEYBOARD_KEY_STRING.find(state.m_key);
+        if(it == INPUT_KEYBOARD_KEY_STRING.end())
+        {
+            return "";
+        }
+        return it->second;
     }
-    return it->second;
+    else
+    {
+        it = INPUT_MOUSE_KEY_STRING.find(state.m_key);
+        if(it == INPUT_MOUSE_KEY_STRING.end())
+        {
+            return "";
+        }
+        return it->second;
+    }
 }
 
 //===================================================================
@@ -282,19 +295,14 @@ std::string StaticDisplaySystem::getGamepadStringKeyButtonAssociated(uint32_t ke
 }
 
 //===================================================================
-void StaticDisplaySystem::updateNewInputKey(ControlKey_e currentSelectedKey, uint32_t glKey, InputType_e inputType, bool axisSense)
+void StaticDisplaySystem::updateNewInputKeyGamepad(ControlKey_e currentSelectedKey, uint32_t glKey,
+                                                   InputType_e inputType, bool axisSense)
 {
-    uint32_t entityWrite = (inputType == InputType_e::KEYBOARD) ?
-                m_inputMenuKeyboardWriteKeysEntities[static_cast<uint32_t>(currentSelectedKey)] :
-            m_inputMenuGamepadWriteKeysEntities[static_cast<uint32_t>(currentSelectedKey)];
+    uint32_t entityWrite = m_inputMenuGamepadWriteKeysEntities[static_cast<uint32_t>(currentSelectedKey)];
     WriteComponent *writeComp = stairwayToComponentManager().searchComponentByType<WriteComponent>(
                 entityWrite, Components_e::WRITE_COMPONENT);
     assert(writeComp);
-    if(inputType == InputType_e::KEYBOARD)
-    {
-        writeComp->m_str = getKeyboardStringKeyAssociated(glKey);
-    }
-    else if(inputType == InputType_e::GAMEPAD_BUTTONS)
+    if(inputType == InputType_e::GAMEPAD_BUTTONS)
     {
         writeComp->m_str = getGamepadStringKeyButtonAssociated(glKey);
     }
@@ -302,6 +310,17 @@ void StaticDisplaySystem::updateNewInputKey(ControlKey_e currentSelectedKey, uin
     {
         writeComp->m_str = getGamepadStringKeyAxisAssociated(glKey, axisSense);
     }
+    m_mainEngine->updateWriteComp(writeComp);
+}
+
+//===================================================================
+void StaticDisplaySystem::updateNewInputKeyKeyboard(ControlKey_e currentSelectedKey, const MouseKeyboardInputState &state)
+{
+    uint32_t entityWrite = m_inputMenuKeyboardWriteKeysEntities[static_cast<uint32_t>(currentSelectedKey)];
+    WriteComponent *writeComp = stairwayToComponentManager().searchComponentByType<WriteComponent>(
+                entityWrite, Components_e::WRITE_COMPONENT);
+    assert(writeComp);
+    writeComp->m_str = getMouseKeyboardStringKeyAssociated(state);
     m_mainEngine->updateWriteComp(writeComp);
 }
 

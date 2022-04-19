@@ -1611,23 +1611,33 @@ bool LevelManager::loadSettingsData()
     ControlKey_e currentKey;
     if(!m_settingsData.m_arrayKeyboard)
     {
-        m_settingsData.m_arrayKeyboard = std::array<uint32_t, static_cast<uint32_t>(ControlKey_e::TOTAL)>();
+        m_settingsData.m_arrayKeyboard = std::array<MouseKeyboardInputState, static_cast<uint32_t>(ControlKey_e::TOTAL)>();
     }
     for(uint32_t i = 0; i < m_settingsData.m_arrayKeyboard->size(); ++i)
     {
         currentKey = static_cast<ControlKey_e>(i);
         //KEYBOARD
-        val = m_ini.getValue("Keyboard", m_inputIDString[i]);
+        val = m_ini.getValue("MouseKeyboard", m_inputIDString[i]);
         if(val)
         {
+            bool ok = false;
             kbIt = m_inputKeyboardKeyString.find(*val);
             if(kbIt != m_inputKeyboardKeyString.end())
             {
-                m_settingsData.m_arrayKeyboard->at(i) = kbIt->second;
+                m_settingsData.m_arrayKeyboard->at(i) = {true, kbIt->second};
+                ok = true;
             }
-            else
+            if(!ok)
             {
-                m_settingsData.m_arrayKeyboard->at(i) = MAP_KEYBOARD_DEFAULT_KEY.at(currentKey);
+                kbIt = m_inputMouseKeyString.find(*val);
+                if(kbIt != m_inputMouseKeyString.end())
+                {
+                    m_settingsData.m_arrayKeyboard->at(i) = {false, kbIt->second};
+                }
+                else
+                {
+                    m_settingsData.m_arrayKeyboard->at(i) = MAP_KEYBOARD_DEFAULT_KEY.at(currentKey);
+                }
             }
         }
         else
@@ -1691,9 +1701,13 @@ void LevelManager::fillSettingsFileFromMemory()
     }
     if(m_settingsData.m_arrayKeyboard)
     {
+        std::string str;
         for(uint32_t i = 0; i < m_settingsData.m_arrayKeyboard->size(); ++i)
         {
-            m_ini.setValue("Keyboard", m_inputIDString[i] , INPUT_KEYBOARD_KEY_STRING.at(m_settingsData.m_arrayKeyboard->at(i)));
+            str = m_settingsData.m_arrayKeyboard->at(i).m_keyboard ?
+                        INPUT_KEYBOARD_KEY_STRING.at(m_settingsData.m_arrayKeyboard->at(i).m_key) :
+                        INPUT_MOUSE_KEY_STRING.at(m_settingsData.m_arrayKeyboard->at(i).m_key);
+            m_ini.setValue("MouseKeyboard", m_inputIDString[i], str);
         }
     }
     if(m_settingsData.m_arrayGamepad)
@@ -1735,7 +1749,7 @@ void LevelManager::saveDisplaySettings(const pairI_t &resolution, bool fullscree
 
 //===================================================================
 void LevelManager::saveInputSettings(const std::map<ControlKey_e, GamepadInputState> &gamepadArray,
-                                     const std::map<ControlKey_e, uint32_t> &keyboardArray)
+                                     const std::map<ControlKey_e, MouseKeyboardInputState> &keyboardArray)
 {
     m_outputStream.open(LEVEL_RESSOURCES_DIR_STR + "Saves/CustomSettings.ini");
     fillSettingsFileFromMemory();
@@ -1750,10 +1764,14 @@ void LevelManager::saveInputSettings(const std::map<ControlKey_e, GamepadInputSt
         m_settingsData.m_arrayGamepad->at(cmpt) = it->second;
     }
     cmpt = 0;
-    for(std::map<ControlKey_e, uint32_t>::const_iterator it = keyboardArray.begin(); it != keyboardArray.end(); ++it, ++cmpt)
+    std::string str;
+    for(std::map<ControlKey_e, MouseKeyboardInputState>::const_iterator it = keyboardArray.begin();
+        it != keyboardArray.end(); ++it, ++cmpt)
     {
+        str = it->second.m_keyboard ? INPUT_KEYBOARD_KEY_STRING.at(it->second.m_key) :
+                    INPUT_MOUSE_KEY_STRING.at(it->second.m_key);
         currentIndex = static_cast<uint32_t>(it->first);
-        m_ini.setValue("Keyboard", m_inputIDString[currentIndex] , INPUT_KEYBOARD_KEY_STRING.at(it->second));
+        m_ini.setValue("MouseKeyboard", m_inputIDString[currentIndex], str);
         m_settingsData.m_arrayKeyboard->at(cmpt) = it->second;
     }
     m_ini.generate(m_outputStream);
