@@ -545,7 +545,12 @@ inline const std::map<uint32_t, std::string> INPUT_KEYBOARD_KEY_STRING = {
 inline const std::map<uint32_t, std::string> INPUT_MOUSE_KEY_STRING = {
     {GLFW_MOUSE_BUTTON_LEFT, "MOUSE LEFT"},
     {GLFW_MOUSE_BUTTON_RIGHT, "MOUSE RIGHT"},
-    {GLFW_MOUSE_BUTTON_MIDDLE, "MOUSE MIDDLE"}
+    {GLFW_MOUSE_BUTTON_MIDDLE, "MOUSE MIDDLE"},
+    {GLFW_MOUSE_BUTTON_4, "MOUSE 4"},
+    {GLFW_MOUSE_BUTTON_5, "MOUSE 5"},
+    {GLFW_MOUSE_BUTTON_6, "MOUSE 6"},
+    {GLFW_MOUSE_BUTTON_7, "MOUSE 7"},
+    {GLFW_MOUSE_BUTTON_8, "MOUSE 8"}
 };
 
 inline const std::map<uint32_t, std::string> INPUT_GAMEPAD_SIMPLE_BUTTONS_STRING = {

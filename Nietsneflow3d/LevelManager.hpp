@@ -324,7 +324,12 @@ private:
     const std::map<std::string, uint32_t> m_inputMouseKeyString = {
         {"MOUSE LEFT", GLFW_MOUSE_BUTTON_LEFT},
         {"MOUSE RIGHT", GLFW_MOUSE_BUTTON_RIGHT},
-        {"MOUSE MIDDLE", GLFW_MOUSE_BUTTON_MIDDLE}
+        {"MOUSE MIDDLE", GLFW_MOUSE_BUTTON_MIDDLE},
+        {"MOUSE 4", GLFW_MOUSE_BUTTON_4},
+        {"MOUSE 5", GLFW_MOUSE_BUTTON_5},
+        {"MOUSE 6", GLFW_MOUSE_BUTTON_6},
+        {"MOUSE 7", GLFW_MOUSE_BUTTON_7},
+        {"MOUSE 8", GLFW_MOUSE_BUTTON_8}
     };
     const std::map<std::string, uint32_t> m_inputKeyboardKeyString = {
         {"SPACE", GLFW_KEY_SPACE},
