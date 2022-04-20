@@ -240,11 +240,11 @@ void InputSystem::treatPlayerInput()
         if(!weaponComp->m_weaponChange && !weaponComp->m_timerShootActive)
         {
             //Change weapon
-            if(checkPlayerKeyTriggered(ControlKey_e::PREVIOUS_WEAPON))
+            if(checkPlayerKeyTriggered(ControlKey_e::PREVIOUS_WEAPON) || m_scrollDown)
             {
                 changePlayerWeapon(*weaponComp, false);
             }
-            else if(checkPlayerKeyTriggered(ControlKey_e::NEXT_WEAPON))
+            else if(checkPlayerKeyTriggered(ControlKey_e::NEXT_WEAPON) || m_scrollUp)
             {
                 changePlayerWeapon(*weaponComp, true);
             }
@@ -271,6 +271,8 @@ void InputSystem::treatPlayerInput()
                 }
             }
         }
+        m_scrollUp = false;
+        m_scrollDown = false;
     }
 }
 
@@ -577,8 +579,6 @@ void InputSystem::treatReleaseInputMenu()
     {
         m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER] = false;
     }
-    m_scrollUp = false;
-    m_scrollDown = false;
 }
 
 //===================================================================
@@ -1344,9 +1344,20 @@ void InputSystem::addGamepad(int gamepadID)
 }
 
 //===================================================================
-void InputSystem::scroll_callback(GLFWwindow *window, double xoffset, double yoffset)
+void InputSystem::scroll_callback(GLFWwindow *window, double xOffset, double yOffset)
 {
-
+    if(std::abs(yOffset) < 0.01)
+    {
+        return;
+    }
+    if(yOffset < 0.0)
+    {
+        m_scrollDown = true;
+    }
+    else
+    {
+        m_scrollUp = true;
+    }
 }
 
 //===================================================================

@@ -112,7 +112,7 @@ public:
     void updateNewInputKeyKeyboard(ControlKey_e currentSelectedKey, const MouseKeyboardInputState &state);
     static void removeGamepad(int gamepadID);
     static void addGamepad(int gamepadID);
-    static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
+    static void scroll_callback(GLFWwindow* window, double xOffset, double yOffset);
 private:
     void updateDetectRect(PlayerConfComponent *playerComp, MapCoordComponent *mapPlayerComp);
     void gamepadUpdate();
@@ -150,7 +150,6 @@ private:
 private:
     uint32_t m_rotationSensibility = 10;
     std::pair<double, double> m_previousMousePosition;
-    static MapGamepadInputData_t m_mapGamepadID;
     GLFWwindow *m_window = nullptr;
     MainEngine *m_mainEngine = nullptr;
     bool m_keyEspapePressed = false, m_keyLeftPressed = false, m_keyRightPressed = false,
@@ -194,6 +193,7 @@ private:
     ControlKey_e m_currentSelectedKey;
     bool m_modeTransition = false, m_toggleSignal = false;
     static bool m_windowFocus;
+    static MapGamepadInputData_t m_mapGamepadID;
 };
 
 
