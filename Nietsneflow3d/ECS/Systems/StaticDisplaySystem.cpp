@@ -133,6 +133,7 @@ void StaticDisplaySystem::displayMenu()
         {
             mptrSystemManager->searchSystemByType<ColorDisplaySystem>(
                         static_cast<uint32_t>(Systems_e::COLOR_DISPLAY_SYSTEM))->drawSoundMenuBars();
+            //reset shader
             m_shader->use();
         }
         else if(playerComp->m_menuMode == MenuMode_e::DISPLAY)
@@ -143,6 +144,10 @@ void StaticDisplaySystem::displayMenu()
         else if(playerComp->m_menuMode == MenuMode_e::INPUT)
         {
             drawWriteVertex(playerComp->m_menuInfoWriteEntity, VertexID_e::INPUT);
+            mptrSystemManager->searchSystemByType<ColorDisplaySystem>(
+                        static_cast<uint32_t>(Systems_e::COLOR_DISPLAY_SYSTEM))->drawInputMenuBar();
+            //reset shader
+            m_shader->use();
             if(playerComp->m_keyboardInputMenuMode)
             {
                 for(uint32_t j = 0; j < m_inputMenuKeyboardWriteKeysEntities.size(); ++j)

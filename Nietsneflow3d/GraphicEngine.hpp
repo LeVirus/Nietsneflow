@@ -87,6 +87,7 @@ public:
     void setSizeResolution(const pairI_t &resolution);
     void updateMusicVolumeBar(uint32_t volume);
     void updateEffectsVolumeBar(uint32_t volume);
+    void updateTurnSensitivityBar(uint32_t turnSensitivity);
     void clearSystems();
     void memColorSystemEntity(uint32_t entity);
     void memGroundBackgroundFPSSystemEntity(uint32_t entity, bool simpleTexture);

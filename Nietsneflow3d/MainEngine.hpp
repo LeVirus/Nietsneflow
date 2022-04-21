@@ -136,6 +136,12 @@ public:
         m_audioEngine.updateMusicVolume(volume);
         m_graphicEngine.updateMusicVolumeBar(volume);
     }
+    inline void updateTurnSensitivity(uint32_t turnSensitivity)
+    {
+        m_physicalEngine.updateTurnSensitivity(turnSensitivity);
+        m_graphicEngine.updateTurnSensitivityBar(turnSensitivity);
+    }
+
     inline void updateEffectsVolume(uint32_t volume)
     {
         m_audioEngine.updateEffectsVolume(volume);
@@ -144,6 +150,10 @@ public:
     inline uint32_t getMusicVolume()const
     {
         return m_audioEngine.getMusicVolume();
+    }
+    inline uint32_t getTurnSensitivity()const
+    {
+        return m_physicalEngine.getTurnSensitivity();
     }
     inline uint32_t getEffectsVolume()const
     {
@@ -201,7 +211,7 @@ private:
     void clearObjectToDelete();
     void loadPlayerGear(bool beginLevel);
     void displayTransitionMenu();
-    void confSoundMenuEntities(uint32_t musicEntity, uint32_t effectEntity);
+    void confMenuBarMenuEntity(uint32_t musicEntity, uint32_t effectEntity, uint32_t turnSensitivity);
     void confUnifiedColorEntity(uint32_t entityNum, const tupleFloat_t &color, bool transparent);
     void loadBackgroundEntities(const GroundCeilingData &groundData, const GroundCeilingData &backgroundData, const LevelManager &levelManager);
     void confColorBackgroundComponents(uint32_t entity, const GroundCeilingData &groundData, bool ground);

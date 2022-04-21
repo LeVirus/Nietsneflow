@@ -14,10 +14,11 @@ public:
     void execSystem()override;
     void setShader(Shader &shader);
     void addColorSystemEntity(uint32_t entity);
-    void loadColorEntities(uint32_t damage, uint32_t getObject, uint32_t transition, uint32_t scratchEntity, uint32_t musicVolume, uint32_t effectVolume);
+    void loadColorEntities(uint32_t damage, uint32_t getObject, uint32_t transition, uint32_t scratchEntity, uint32_t musicVolume, uint32_t effectVolume, uint32_t turnSensitivity);
     void drawEntity(const PositionVertexComponent *posComp, const ColorVertexComponent *colorComp);
     void drawVisibleDamage();
     void drawSoundMenuBars();
+    void drawInputMenuBar();
     void drawScratchWall();
     void drawVisiblePickUpObject();
     void setTransition(uint32_t current, uint32_t total);
@@ -25,6 +26,7 @@ public:
     void clearEntities();
     void updateMusicVolumeBar(uint32_t volume);
     void updateEffectsVolumeBar(uint32_t volume);
+    void updateTurnSensitivityBar(uint32_t turnSensitivity);
 private:
     void fillVertexFromEntities();
     void drawVertex();
@@ -42,5 +44,6 @@ private:
     m_getObjectMemComponents = {nullptr, nullptr},
     m_menuMusicVolumeComponents = {nullptr, nullptr},
     m_menuEffectsVolumeComponents = {nullptr, nullptr},
+    m_menuTurnSensitivityComponents = {nullptr, nullptr},
     m_insideWallScratchMemComponents = {nullptr, nullptr};
 };

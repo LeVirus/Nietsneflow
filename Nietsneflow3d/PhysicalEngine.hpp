@@ -54,6 +54,14 @@ public:
     {
         m_inputSystem->updateMousePos();
     }
+    inline uint32_t getTurnSensitivity()const
+    {
+        return m_inputSystem->getTurnSensitivity();
+    }
+    inline void updateTurnSensitivity(uint32_t turnSensitivity)
+    {
+        return m_inputSystem->setTurnSensitivity(turnSensitivity);
+    }
 private:
     InputSystem *m_inputSystem = nullptr;
     CollisionSystem *m_collisionSystem = nullptr;

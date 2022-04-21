@@ -160,6 +160,7 @@ enum class InputMenuCursorPos_e
     SHOOT,
     PREVIOUS_WEAPON,
     NEXT_WEAPON,
+    TURN_SENSITIVITY,
     DEFAULT,
     RETURN,
     VALID,
@@ -397,7 +398,7 @@ inline const float EMPTY_VALUE = -10000.0f;
 inline const float EPSILON_FLOAT = std::numeric_limits<float>::epsilon();
 inline const float TAN_PI_QUARTER = std::tan(45.0f);
 inline const float CONE_VISION = 60.0f;
-inline const float MAX_SOUND_MENU_SIZE = 0.7f;
+inline const float MAX_BAR_MENU_SIZE = 0.7f;
 inline const float HALF_CONE_VISION = CONE_VISION / 2.0f;
 inline const float DOUBLE_CONE_VISION = CONE_VISION * 2.0f;
 inline const uint32_t RAYCAST_LINE_NUMBER = 300, RAYCAST_DEPTH = 20, MAX_SHOTS = 5,
@@ -427,7 +428,7 @@ inline const std::map<MenuMode_e, PairPairFloatStr_t> MAP_MENU_DATA =
      PairPairFloatStr_t{{-0.7f, 0.5f}, "SET RESOLUTION\\FULLSCREEN\\RETURN\\VALID"}},
     {MenuMode_e::INPUT,
      PairPairFloatStr_t{{-0.7f, 0.7f}, "MOVE FORWARD\\MOVE BACKWARD\\STRAFE LEFT\\"
-         "STRAFE RIGHT\\TURN LEFT\\TURN RIGHT\\ACTION\\SHOOT\\PREVIOUS WEAPON\\NEXT WEAPON\\DEFAULT\\RETURN\\VALID"}
+         "STRAFE RIGHT\\TURN LEFT\\TURN RIGHT\\ACTION\\SHOOT\\PREVIOUS WEAPON\\NEXT WEAPON\\TURN SENSITIVITY\\DEFAULT\\RETURN\\VALID"}
     },
     {MenuMode_e::NEW_GAME,
      PairPairFloatStr_t{{-0.7f, 0.7f}, "1\\2\\3\\RETURN"}

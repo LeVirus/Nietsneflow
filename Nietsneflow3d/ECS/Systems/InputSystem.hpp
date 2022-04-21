@@ -107,6 +107,14 @@ public:
     {
         return m_mapGamepadTmpAssociatedKey;
     }
+    inline void setTurnSensitivity(uint32_t turnSensitivity)
+    {
+        m_rotationSensibility = turnSensitivity;
+    }
+    uint32_t getTurnSensitivity()const
+    {
+        return m_rotationSensibility;
+    }
     void updateMousePos();
     void updateNewInputKeyGamepad(ControlKey_e currentSelectedKey, uint32_t glKey, InputType_e inputType, bool axisSense = false);
     void updateNewInputKeyKeyboard(ControlKey_e currentSelectedKey, const MouseKeyboardInputState &state);

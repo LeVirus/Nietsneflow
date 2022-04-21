@@ -388,6 +388,12 @@ void GraphicEngine::updateEffectsVolumeBar(uint32_t volume)
 }
 
 //===================================================================
+void GraphicEngine::updateTurnSensitivityBar(uint32_t turnSensitivity)
+{
+    m_colorSystem->updateTurnSensitivityBar(turnSensitivity);
+}
+
+//===================================================================
 void GraphicEngine::clearSystems()
 {
     m_firstPersonSystem->clearBackgroundData();

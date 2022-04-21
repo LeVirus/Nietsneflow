@@ -605,26 +605,28 @@ void MainEngine::loadColorEntities()
             scratchEntity = createColorEntity(),
             transitionEntity = createColorEntity(),
             musicVolume = createColorEntity(),
+            turnSensitivity = createColorEntity(),
             effectVolume = createColorEntity();
     confUnifiedColorEntity(transitionEntity, {0.0f, 0.0f, 0.0f}, true);
     confUnifiedColorEntity(damageEntity, {0.7f, 0.2f, 0.1f}, true);
     confUnifiedColorEntity(getObjectEntity, {0.1f, 0.7f, 0.5f}, true);
     confUnifiedColorEntity(scratchEntity, {0.0f, 0.0f, 0.0f}, false);
-    confSoundMenuEntities(musicVolume, effectVolume);
+    confMenuBarMenuEntity(musicVolume, effectVolume, turnSensitivity);
     m_ecsManager.getSystemManager().searchSystemByType<ColorDisplaySystem>(static_cast<uint32_t>(Systems_e::COLOR_DISPLAY_SYSTEM))->
-            loadColorEntities(damageEntity, getObjectEntity, transitionEntity, scratchEntity, musicVolume, effectVolume);
+            loadColorEntities(damageEntity, getObjectEntity, transitionEntity, scratchEntity, musicVolume, effectVolume, turnSensitivity);
 }
 
 //===================================================================
-void MainEngine::confSoundMenuEntities(uint32_t musicEntity, uint32_t effectEntity)
+void MainEngine::confMenuBarMenuEntity(uint32_t musicEntity, uint32_t effectEntity, uint32_t turnSensitivity)
 {
+    //MUSIC VOLUME
     PositionVertexComponent *posComp = m_ecsManager.getComponentManager().
             searchComponentByType<PositionVertexComponent>(musicEntity, Components_e::POSITION_VERTEX_COMPONENT);
     assert(posComp);
     ColorVertexComponent *colorComp = m_ecsManager.getComponentManager().
             searchComponentByType<ColorVertexComponent>(musicEntity, Components_e::COLOR_VERTEX_COMPONENT);
     assert(colorComp);
-    float leftPos = 0.1f, rightPos = leftPos + (getMusicVolume() * MAX_SOUND_MENU_SIZE) / 100.0f,
+    float leftPos = 0.1f, rightPos = leftPos + (getMusicVolume() * MAX_BAR_MENU_SIZE) / 100.0f,
     upPos = MAP_MENU_DATA.at(MenuMode_e::SOUND).first.second - 0.01f,
     downPos = upPos - (MENU_FONT_SIZE - 0.02f);
     if(!posComp->m_vertex.empty())
@@ -645,6 +647,7 @@ void MainEngine::confSoundMenuEntities(uint32_t musicEntity, uint32_t effectEnti
     colorComp->m_vertex.emplace_back(TupleTetraFloat_t{0.5f, 0.0f, 0.0f, 1.0f});
     colorComp->m_vertex.emplace_back(TupleTetraFloat_t{0.5f, 0.0f, 0.0f, 1.0f});
     colorComp->m_vertex.emplace_back(TupleTetraFloat_t{0.5f, 0.0f, 0.0f, 1.0f});
+    //EFFECT VOLUME
     posComp = m_ecsManager.getComponentManager().
             searchComponentByType<PositionVertexComponent>(effectEntity, Components_e::POSITION_VERTEX_COMPONENT);
     assert(posComp);
@@ -653,7 +656,28 @@ void MainEngine::confSoundMenuEntities(uint32_t musicEntity, uint32_t effectEnti
     assert(colorComp);
     upPos -= MENU_FONT_SIZE;
     downPos -= MENU_FONT_SIZE;
-    rightPos = leftPos + (getEffectsVolume() * MAX_SOUND_MENU_SIZE) / 100.0f;
+    rightPos = leftPos + (getEffectsVolume() * MAX_BAR_MENU_SIZE) / 100.0f;
+    posComp->m_vertex.reserve(4);
+    posComp->m_vertex.emplace_back(PairFloat_t{leftPos, upPos});
+    posComp->m_vertex.emplace_back(PairFloat_t{rightPos, upPos});
+    posComp->m_vertex.emplace_back(PairFloat_t{rightPos, downPos});
+    posComp->m_vertex.emplace_back(PairFloat_t{leftPos, downPos});
+    colorComp->m_vertex.reserve(4);
+    colorComp->m_vertex.emplace_back(TupleTetraFloat_t{0.5f, 0.0f, 0.0f, 1.0f});
+    colorComp->m_vertex.emplace_back(TupleTetraFloat_t{0.5f, 0.0f, 0.0f, 1.0f});
+    colorComp->m_vertex.emplace_back(TupleTetraFloat_t{0.5f, 0.0f, 0.0f, 1.0f});
+    colorComp->m_vertex.emplace_back(TupleTetraFloat_t{0.5f, 0.0f, 0.0f, 1.0f});
+    //TURN SENSITIVITY
+    posComp = m_ecsManager.getComponentManager().
+            searchComponentByType<PositionVertexComponent>(turnSensitivity, Components_e::POSITION_VERTEX_COMPONENT);
+    assert(posComp);
+    colorComp = m_ecsManager.getComponentManager().
+            searchComponentByType<ColorVertexComponent>(turnSensitivity, Components_e::COLOR_VERTEX_COMPONENT);
+    assert(colorComp);
+    upPos = (MAP_MENU_DATA.at(MenuMode_e::INPUT).first.second - 0.01f) -
+            MENU_FONT_SIZE * static_cast<uint32_t>(InputMenuCursorPos_e::TURN_SENSITIVITY),
+    downPos = upPos - MENU_FONT_SIZE;
+    rightPos = leftPos + (getTurnSensitivity() * MAX_BAR_MENU_SIZE) / 100.0f;
     posComp->m_vertex.reserve(4);
     posComp->m_vertex.emplace_back(PairFloat_t{leftPos, upPos});
     posComp->m_vertex.emplace_back(PairFloat_t{rightPos, upPos});
