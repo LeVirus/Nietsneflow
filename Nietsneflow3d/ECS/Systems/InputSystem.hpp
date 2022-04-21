@@ -156,7 +156,7 @@ private:
     static void window_focus_callback(GLFWwindow* window, int focused);
 
 private:
-    uint32_t m_rotationSensibility = 10;
+    uint32_t m_rotationSensibility = 40;
     std::pair<double, double> m_previousMousePosition;
     GLFWwindow *m_window = nullptr;
     MainEngine *m_mainEngine = nullptr;

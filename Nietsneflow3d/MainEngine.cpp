@@ -677,7 +677,7 @@ void MainEngine::confMenuBarMenuEntity(uint32_t musicEntity, uint32_t effectEnti
     upPos = (MAP_MENU_DATA.at(MenuMode_e::INPUT).first.second - 0.01f) -
             MENU_FONT_SIZE * static_cast<uint32_t>(InputMenuCursorPos_e::TURN_SENSITIVITY),
     downPos = upPos - MENU_FONT_SIZE;
-    rightPos = leftPos + (getTurnSensitivity() * MAX_BAR_MENU_SIZE) / 100.0f;
+    rightPos = 0.1f + ((getTurnSensitivity() - MIN_TURN_SENSITIVITY) * MAX_BAR_MENU_SIZE) / DIFF_TOTAL_SENSITIVITY;
     posComp->m_vertex.reserve(4);
     posComp->m_vertex.emplace_back(PairFloat_t{leftPos, upPos});
     posComp->m_vertex.emplace_back(PairFloat_t{rightPos, upPos});

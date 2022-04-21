@@ -182,9 +182,11 @@ void InputSystem::treatPlayerInput()
         if(checkPlayerKeyTriggered(ControlKey_e::TURN_RIGHT) ||
                 (mouseXdiff && mouseXdiff > 0.00))
         {
+            float diffBase = (moveComp->m_rotationAngle *
+                              (m_rotationSensibility /*- MIN_TURN_SENSITIVITY + 1*/) / DIFF_TOTAL_SENSITIVITY);
             if(checkPlayerKeyTriggered(ControlKey_e::TURN_RIGHT))
             {
-                moveComp->m_degreeOrientation -= moveComp->m_rotationAngle;
+                moveComp->m_degreeOrientation -= diffBase * 2;
             }
             else
             {
@@ -192,8 +194,7 @@ void InputSystem::treatPlayerInput()
                 {
                     *mouseXdiff = 30.0;
                 }
-                moveComp->m_degreeOrientation -= moveComp->m_rotationAngle *
-                        (*mouseXdiff / 6);
+                moveComp->m_degreeOrientation -= diffBase * (*mouseXdiff) / 8;
             }
             if(moveComp->m_degreeOrientation < 0.0f)
             {
@@ -203,9 +204,11 @@ void InputSystem::treatPlayerInput()
         else if(checkPlayerKeyTriggered(ControlKey_e::TURN_LEFT) ||
                 (mouseXdiff && mouseXdiff < 0.00))
         {
+            float diffBase = (moveComp->m_rotationAngle *
+                              (m_rotationSensibility /*- MIN_TURN_SENSITIVITY*/ /*+ 1*/) / DIFF_TOTAL_SENSITIVITY);
             if(checkPlayerKeyTriggered(ControlKey_e::TURN_LEFT))
             {
-                moveComp->m_degreeOrientation += moveComp->m_rotationAngle;
+                moveComp->m_degreeOrientation += diffBase * 2;
             }
             else
             {
@@ -213,8 +216,7 @@ void InputSystem::treatPlayerInput()
                 {
                     *mouseXdiff = -30.0;
                 }
-                moveComp->m_degreeOrientation -= moveComp->m_rotationAngle *
-                        (*mouseXdiff / m_rotationSensibility);
+                moveComp->m_degreeOrientation -= diffBase * (*mouseXdiff) / 8;
             }
             if(moveComp->m_degreeOrientation > 360.0f)
             {
@@ -903,7 +905,7 @@ void InputSystem::treatLeftPressedMenu(PlayerConfComponent *playerComp)
         if(inputCursorPos == InputMenuCursorPos_e::TURN_SENSITIVITY)
         {
             uint32_t turnSensitivity = m_mainEngine->getTurnSensitivity();
-            if(turnSensitivity > 0)
+            if(turnSensitivity > MIN_TURN_SENSITIVITY)
             {
                 m_mainEngine->updateTurnSensitivity(--turnSensitivity);
             }
@@ -965,7 +967,7 @@ void InputSystem::treatRightPressedMenu(PlayerConfComponent *playerComp)
         if(inputCursorPos == InputMenuCursorPos_e::TURN_SENSITIVITY)
         {
             uint32_t turnSensitivity = m_mainEngine->getTurnSensitivity();
-            if(turnSensitivity < 100)
+            if(turnSensitivity < MAX_TURN_SENSITIVITY)
             {
                 m_mainEngine->updateTurnSensitivity(++turnSensitivity);
             }
@@ -1148,11 +1150,7 @@ void InputSystem::treatEnterPressedDisplayMenu(PlayerConfComponent *playerComp)
 void InputSystem::treatEnterPressedInputMenu(PlayerConfComponent *playerComp)
 {
     InputMenuCursorPos_e menuPos = static_cast<InputMenuCursorPos_e>(playerComp->m_currentCursorPos);
-    if(menuPos == InputMenuCursorPos_e::TURN_SENSITIVITY)
-    {
-
-    }
-    else if(menuPos == InputMenuCursorPos_e::RETURN)
+    if(menuPos == InputMenuCursorPos_e::RETURN)
     {
         if(playerComp->m_inputModified)
         {
@@ -1190,7 +1188,7 @@ void InputSystem::treatEnterPressedInputMenu(PlayerConfComponent *playerComp)
         validInputMenu(playerComp);
     }
     //INPUT CHANGE
-    else
+    else if(menuPos != InputMenuCursorPos_e::TURN_SENSITIVITY)
     {
         m_gamepadAxisKeyPressed.fill({true, true});
         playerComp->m_menuMode = MenuMode_e::NEW_KEY;

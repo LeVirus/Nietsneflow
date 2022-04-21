@@ -194,7 +194,7 @@ void ColorDisplaySystem::updateEffectsVolumeBar(uint32_t volume)
 //===================================================================
 void ColorDisplaySystem::updateTurnSensitivityBar(uint32_t turnSensitivity)
 {
-    float newVal = 0.1f + (turnSensitivity * MAX_BAR_MENU_SIZE) / 100.0f;
+    float newVal = 0.1f + ((turnSensitivity - MIN_TURN_SENSITIVITY) * MAX_BAR_MENU_SIZE) / DIFF_TOTAL_SENSITIVITY;
     m_menuTurnSensitivityComponents.first->m_vertex[1].first = newVal;
     m_menuTurnSensitivityComponents.first->m_vertex[2].first = newVal;
 }
