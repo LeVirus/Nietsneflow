@@ -76,6 +76,7 @@ struct SettingsData
     //INPUT
     std::optional<std::array<MouseKeyboardInputState, static_cast<uint32_t>(ControlKey_e::TOTAL)>> m_arrayKeyboard;
     std::optional<std::array<GamepadInputState, static_cast<uint32_t>(ControlKey_e::TOTAL)>> m_arrayGamepad;
+    std::optional<uint32_t> m_turnSensitivity;
 };
 
 struct DataLevelWriteMenu
@@ -109,7 +110,8 @@ public:
     void saveAudioSettings(uint32_t musicVolume, uint32_t effectVolume);
     void saveDisplaySettings(const pairI_t &resolution, bool fullscreen);
     void saveInputSettings(const std::map<ControlKey_e, GamepadInputState> &gamepadArray,
-                                  const std::map<ControlKey_e, MouseKeyboardInputState> &keyboardArray);
+                           const std::map<ControlKey_e, MouseKeyboardInputState> &keyboardArray);
+    void saveTurnSensitivitySettings(uint32_t sensitivity);
     std::optional<MemLevelLoadedData> loadSavedGame(uint32_t saveNum);
     std::optional<MemPlayerConf> loadPlayerConf(bool beginLevel);
     std::unique_ptr<MemCheckpointElementsState> loadCheckpointDataSavedGame();

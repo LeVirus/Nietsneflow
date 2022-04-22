@@ -1671,6 +1671,11 @@ bool LevelManager::loadSettingsData()
             m_settingsData.m_arrayGamepad->at(i) = MAP_GAMEPAD_DEFAULT_KEY.at(currentKey);
         }
     }
+    val = m_ini.getValue("Input", "TurnSensitivity");
+    if(val)
+    {
+        m_settingsData.m_turnSensitivity = std::stoi(*val);
+    }
     return true;
 }
 
@@ -1774,6 +1779,16 @@ void LevelManager::saveInputSettings(const std::map<ControlKey_e, GamepadInputSt
         m_ini.setValue("MouseKeyboard", m_inputIDString[currentIndex], str);
         m_settingsData.m_arrayKeyboard->at(cmpt) = it->second;
     }
+    m_ini.generate(m_outputStream);
+    m_outputStream.close();
+}
+
+//===================================================================
+void LevelManager::saveTurnSensitivitySettings(uint32_t sensitivity)
+{
+    m_outputStream.open(LEVEL_RESSOURCES_DIR_STR + "Saves/CustomSettings.ini");
+    fillSettingsFileFromMemory();
+    m_ini.setValue("Input", "TurnSensitivity", std::to_string(sensitivity));
     m_ini.generate(m_outputStream);
     m_outputStream.close();
 }

@@ -20,7 +20,8 @@ public:
     void saveAudioSettings(uint32_t musicVolume, uint32_t effectVolume);
     void saveDisplaySettings(const pairI_t &resolution, bool fullscreen);
     void saveInputSettings(const std::map<ControlKey_e, GamepadInputState> &gamepadArray,
-                                  const std::map<ControlKey_e, MouseKeyboardInputState> &keyboardArray);
+                           const std::map<ControlKey_e, MouseKeyboardInputState> &keyboardArray);
+    void saveTurnSensitivitySettings(uint32_t sensitivity);
     std::string saveGameProgress(const MemPlayerConf &playerConfBeginLevel, const MemPlayerConf &playerConfCheckpoint, uint32_t levelNum, uint32_t numSaveFile,
                           const MemCheckpointElementsState *checkpointData = nullptr);
     inline std::optional<MemLevelLoadedData> loadSavedGame(uint32_t saveNum)

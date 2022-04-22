@@ -1852,6 +1852,10 @@ void MainEngine::confGlobalSettings(const SettingsData &settingsData)
     {
         m_physicalEngine.setGamepadKey(*settingsData.m_arrayGamepad);
     }
+    if(settingsData.m_turnSensitivity)
+    {
+        updateTurnSensitivity(*settingsData.m_turnSensitivity);
+    }
 }
 
 //===================================================================
@@ -1886,6 +1890,12 @@ void MainEngine::saveInputSettings(const std::map<ControlKey_e, GamepadInputStat
                                    const std::map<ControlKey_e, MouseKeyboardInputState> &keyboardArray)
 {
     m_refGame->saveInputSettings(gamepadArray, keyboardArray);
+}
+
+//===================================================================
+void MainEngine::saveTurnSensitivitySettings()
+{
+    m_refGame->saveTurnSensitivitySettings(m_physicalEngine.getTurnSensitivity());
 }
 
 //===================================================================

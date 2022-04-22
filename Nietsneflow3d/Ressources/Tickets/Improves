@@ -3,9 +3,6 @@ IMPROVE=========================================================================
 
 
 ))
-Add turn sensibility in option
-
-))
 Exit element should not desapear when activated
 
 4) 
@@ -25,6 +22,9 @@ Animation move while shooting===========================~
 Enemy animations========================~
 
 
+
+))
+Add turn sensibility in option=============================OK
 
 ))
 When load checkpoint define a direction============================OK

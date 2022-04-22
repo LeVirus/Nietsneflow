@@ -183,7 +183,7 @@ void InputSystem::treatPlayerInput()
                 (mouseXdiff && mouseXdiff > 0.00))
         {
             float diffBase = (moveComp->m_rotationAngle *
-                              (m_rotationSensibility /*- MIN_TURN_SENSITIVITY + 1*/) / DIFF_TOTAL_SENSITIVITY);
+                              (m_rotationSensibility) / DIFF_TOTAL_SENSITIVITY);
             if(checkPlayerKeyTriggered(ControlKey_e::TURN_RIGHT))
             {
                 moveComp->m_degreeOrientation -= diffBase * 2;
@@ -205,7 +205,7 @@ void InputSystem::treatPlayerInput()
                 (mouseXdiff && mouseXdiff < 0.00))
         {
             float diffBase = (moveComp->m_rotationAngle *
-                              (m_rotationSensibility /*- MIN_TURN_SENSITIVITY*/ /*+ 1*/) / DIFF_TOTAL_SENSITIVITY);
+                              (m_rotationSensibility) / DIFF_TOTAL_SENSITIVITY);
             if(checkPlayerKeyTriggered(ControlKey_e::TURN_LEFT))
             {
                 moveComp->m_degreeOrientation += diffBase * 2;
@@ -496,6 +496,10 @@ void InputSystem::treatMenu(uint32_t playerEntity)
             if(playerComp->m_menuMode == MenuMode_e::SOUND)
             {
                 m_mainEngine->saveAudioSettings();
+            }
+            else if(playerComp->m_menuMode == MenuMode_e::INPUT)
+            {
+                m_mainEngine->saveTurnSensitivitySettings();
             }
             playerComp->m_menuMode = playerComp->m_firstMenu ? MenuMode_e::TITLE : MenuMode_e::BASE;
             m_mainEngine->setMenuEntries(playerComp);
@@ -1161,6 +1165,7 @@ void InputSystem::treatEnterPressedInputMenu(PlayerConfComponent *playerComp)
         {
             playerComp->m_menuMode = playerComp->m_firstMenu ? MenuMode_e::TITLE : MenuMode_e::BASE;
             m_mainEngine->setMenuEntries(playerComp);
+            m_mainEngine->saveTurnSensitivitySettings();
         }
     }
     else if(menuPos == InputMenuCursorPos_e::DEFAULT)
@@ -1182,6 +1187,7 @@ void InputSystem::treatEnterPressedInputMenu(PlayerConfComponent *playerComp)
             m_mapGamepadCurrentAssociatedKey = m_mapGamepadTmpAssociatedKey;
             m_mapGamepadTmpAssociatedKey = MAP_GAMEPAD_DEFAULT_KEY;
         }
+        m_mainEngine->updateTurnSensitivity(40);
     }
     else if(menuPos == InputMenuCursorPos_e::VALID)
     {
@@ -1251,6 +1257,7 @@ void InputSystem::validInputMenu(PlayerConfComponent *playerComp)
         m_mapGamepadCurrentAssociatedKey = m_mapGamepadTmpAssociatedKey;
     }
     m_mainEngine->saveInputSettings(m_mapGamepadCurrentAssociatedKey, m_mapKeyboardCurrentAssociatedKey);
+    m_mainEngine->saveTurnSensitivitySettings();
     m_mainEngine->updateStringWriteEntitiesInputMenu(playerComp->m_keyboardInputMenuMode);
     playerComp->m_menuMode = playerComp->m_firstMenu ? MenuMode_e::TITLE : MenuMode_e::BASE;
     m_mainEngine->setMenuEntries(playerComp);

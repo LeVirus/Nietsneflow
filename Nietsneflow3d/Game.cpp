@@ -105,6 +105,12 @@ void Game::saveInputSettings(const std::map<ControlKey_e, GamepadInputState> &ga
 }
 
 //===================================================================
+void Game::saveTurnSensitivitySettings(uint32_t sensitivity)
+{
+    m_levelManager.saveTurnSensitivitySettings(sensitivity);
+}
+
+//===================================================================
 std::string Game::saveGameProgress(const MemPlayerConf &playerConfBeginLevel, const MemPlayerConf &playerConfCheckpoint, uint32_t levelNum, uint32_t numSaveFile,
                                    const MemCheckpointElementsState *checkpointData)
 {

@@ -195,6 +195,7 @@ public:
     void saveAudioSettings();
     void saveInputSettings(const std::map<ControlKey_e, GamepadInputState> &gamepadArray,
                            const std::map<ControlKey_e, MouseKeyboardInputState> &keyboardArray);
+    void saveTurnSensitivitySettings();
     bool loadSavedGame(uint32_t saveNum, LevelState_e levelMode);
     void loadCheckpointSavedGame(const MemCheckpointElementsState &checkpointData);
     bool checkSavedGameExists(uint32_t saveNum)const;
