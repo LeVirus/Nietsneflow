@@ -1682,6 +1682,7 @@ bool LevelManager::loadSettingsData()
 //===================================================================
 void LevelManager::fillSettingsFileFromMemory()
 {
+    m_ini.clear();
     //AUDIO
     if(m_settingsData.m_musicVolume)
     {

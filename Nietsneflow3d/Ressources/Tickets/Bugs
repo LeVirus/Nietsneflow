@@ -1,13 +1,14 @@
 BUGS======================================================================
 
 ))
+Crash when display map
+
+))
 Delta time for visible shot and maybe other thing
 
 ))
 Static element disapear when camera is too close
 
-))
-Pad Config disapear when restart new game
 
 ))
 Eject issue on moveable wall lateral====================~~
@@ -21,6 +22,9 @@ In input gamepad menu bug in GLFW in AXIS===============================~
 ))
 Wall exists inside door some time======================Bug in level editor
 
+
+))
+Pad Config disapear when restart new game=======================OK
 
 ))
 Update player map pos when switch map mode=============================OK
