@@ -1,10 +1,6 @@
 IMPROVE===================================================================================================
 ==========================================================================================================
 
-
-))
-Set menu on pressing escape
-
 ))
 Exit element should not desapear when activated
 
@@ -26,6 +22,9 @@ Animation move while shooting===========================~
 Enemy animations========================~
 
 
+
+))
+Set menu on pressing escape============================OK
 
 ))
 Add turn sensibility in option=============================OK

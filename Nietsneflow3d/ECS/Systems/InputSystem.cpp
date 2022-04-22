@@ -142,11 +142,6 @@ void InputSystem::treatPlayerInput()
         {
             m_keyEspapePressed = false;
         }
-        else if(!m_keyEspapePressed && glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        {
-            glfwSetWindowShouldClose(m_window, true);
-            return;
-        }
         PlayerConfComponent *playerComp = stairwayToComponentManager().
                 searchComponentByType<PlayerConfComponent>(mVectNumEntity[i], Components_e::PLAYER_CONF_COMPONENT);
         assert(playerComp);
@@ -233,8 +228,10 @@ void InputSystem::treatPlayerInput()
             assert(genCompAction);
             confActionShape(mapCompAction, genCompAction, mapComp, moveComp);
         }
-        if(glfwGetKey(m_window, GLFW_KEY_M) == GLFW_PRESS || checkStandardButtonGamepadKeyStatus(GLFW_GAMEPAD_BUTTON_START, GLFW_PRESS))
+        if((!m_keyEspapePressed && glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_PRESS) ||
+                checkStandardButtonGamepadKeyStatus(GLFW_GAMEPAD_BUTTON_START, GLFW_PRESS))
         {
+            m_keyEspapePressed = true;
             playerComp->m_menuMode = playerComp->m_firstMenu ? MenuMode_e::TITLE : MenuMode_e::BASE;
             m_mainEngine->setMenuEntries(playerComp);
             m_mainEngine->setUnsetPaused();
