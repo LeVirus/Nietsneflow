@@ -191,6 +191,10 @@ public:
     {
         ++m_memMoveableWallCheckpointData[shapeNum].first;
     }
+    inline void activeEndLevel()
+    {
+        m_levelEnd = true;
+    }
     void setPlayerDeparture(const PairUI_t &pos, Direction_e dir);
     void saveAudioSettings();
     void saveInputSettings(const std::map<ControlKey_e, GamepadInputState> &gamepadArray,
@@ -334,9 +338,8 @@ private:
     ECSManager m_ecsManager;
     Game *m_refGame = nullptr;
     std::vector<std::pair<uint32_t, time_t>> m_vectMemPausedTimer;
-    bool m_gamePaused = false, m_playerMemGear = false;
+    bool m_gamePaused = false, m_playerMemGear = false, m_levelEnd = false;
     SpriteData const *m_memCursorSpriteData = nullptr, *m_memVisibleShotA = nullptr;
-    GeneralCollisionComponent *m_exitColl = nullptr;
     WriteComponent *m_writeConf = nullptr;
     PlayerConfComponent *m_playerConf = nullptr;
     WeaponComponent *m_weaponComp;

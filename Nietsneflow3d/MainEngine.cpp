@@ -84,6 +84,7 @@ LevelState MainEngine::displayTitleMenu(const LevelManager &levelManager)
 //===================================================================
 LevelState MainEngine::mainLoop(uint32_t levelNum, LevelState_e levelState)
 {
+    m_levelEnd = false;
     m_currentLevelState = levelState;
     m_currentLevel = levelNum;
     m_memInputCursorPos = 0;
@@ -184,7 +185,7 @@ LevelState MainEngine::mainLoop(uint32_t levelNum, LevelState_e levelState)
             m_playerConf->m_checkpointReached = {};
         }
         //level end
-        if(!m_exitColl->m_active)
+        if(m_levelEnd)
         {
             m_currentLevelState = LevelState_e::LEVEL_END;
             clearCheckpointData();
@@ -2996,10 +2997,6 @@ void MainEngine::loadExitElement(const LevelManager &levelManager,
     fpsStaticComp->m_inGameSpriteSize = exit.m_inGameSpriteSize;
     fpsStaticComp->m_levelElementType = LevelStaticElementType_e::CEILING;
     assert(!exit.m_TileGamePosition.empty());
-    //mem exit comp determine when level is over
-    m_exitColl = m_ecsManager.getComponentManager().
-            searchComponentByType<GeneralCollisionComponent>(entityNum, Components_e::GENERAL_COLLISION_COMPONENT);
-    assert(m_exitColl);
     confBaseComponent(entityNum, memSpriteData, exit.m_TileGamePosition[0],
             CollisionShape_e::CIRCLE_C, CollisionTag_e::EXIT_CT);
     confStaticComponent(entityNum, exit.m_inGameSpriteSize, LevelStaticElementType_e::GROUND);

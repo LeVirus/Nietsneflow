@@ -1053,7 +1053,7 @@ void CollisionSystem::treatActionPlayerCircle(CollisionArgs &args)
 {
     if(args.tagCompB->m_tagA == CollisionTag_e::EXIT_CT)
     {
-        args.tagCompB->m_active = false;
+        m_refMainEngine->activeEndLevel();
     }
     else if(args.tagCompB->m_tagA == CollisionTag_e::LOG_CT)
     {
