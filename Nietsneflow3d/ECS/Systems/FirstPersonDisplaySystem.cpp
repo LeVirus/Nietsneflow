@@ -234,9 +234,10 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
     //get lateral pos from angle
     float lateralPos = getLateralAngle(degreeObserverAngle, trigoAngle);
     //quickfix
-    if(genCollComp->m_tagA != CollisionTag_e::BULLET_ENEMY_CT &&
+    if(genCollComp->m_tagA != CollisionTag_e::ENEMY_CT &&
             genCollComp->m_tagA != CollisionTag_e::BULLET_PLAYER_CT &&
-            genCollComp->m_tagA != CollisionTag_e::IMPACT_CT && cameraDistance < 15.0f)
+            genCollComp->m_tagA != CollisionTag_e::IMPACT_CT &&
+            genCollComp->m_tagA != CollisionTag_e::STATIC_SET_CT && cameraDistance < 15.0f)
     {
         return;
     }

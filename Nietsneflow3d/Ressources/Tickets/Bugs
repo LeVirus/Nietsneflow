@@ -4,9 +4,6 @@ BUGS======================================================================
 ))
 Delta time for visible shot and maybe other thing
 
-))
-Static element disapear when camera is too close
-
 
 ))
 Eject issue on moveable wall lateral====================~~
@@ -20,6 +17,9 @@ In input gamepad menu bug in GLFW in AXIS===============================~
 ))
 Wall exists inside door some time======================Bug in level editor
 
+
+))
+Static element disapear when camera is too close=========================OK
 
 ))
 Crash when display map==================================OK
