@@ -10,6 +10,6 @@ struct WallMultiSpriteConf : public ecs::Component
     {
         muiTypeComponent = Components_e::WALL_MULTI_SPRITE_CONF;
     }
-    std::vector<float> m_time;
+    std::vector<uint32_t> m_cyclesTime;
     virtual ~WallMultiSpriteConf() = default;
 };

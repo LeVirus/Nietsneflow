@@ -164,21 +164,19 @@ void VisionSystem::updateWallSprites()
         memSpriteComp = stairwayToComponentManager().
                 searchComponentByType<MemSpriteDataComponent>(m_memMultiSpritesWallEntities[i], Components_e::MEM_SPRITE_DATA_COMPONENT);
         assert(memSpriteComp);
-        std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() -
-                timerComp->m_clockA;
         WallMultiSpriteConf *multiSpriteConf = stairwayToComponentManager().
                 searchComponentByType<WallMultiSpriteConf>(m_memMultiSpritesWallEntities[i], Components_e::WALL_MULTI_SPRITE_CONF);
         assert(multiSpriteConf);
-        if(!multiSpriteConf->m_time.empty())
+        if(!multiSpriteConf->m_cyclesTime.empty())
         {
-            assert(memSpriteComp->m_current < multiSpriteConf->m_time.size());
-            currentInterval = multiSpriteConf->m_time[memSpriteComp->m_current];
+            assert(memSpriteComp->m_current < multiSpriteConf->m_cyclesTime.size());
+            currentInterval = multiSpriteConf->m_cyclesTime[memSpriteComp->m_current];
         }
         else
         {
-            currentInterval = 0.80;
+            currentInterval = m_defaultInterval;
         }
-        if(elapsed_seconds.count() > currentInterval)
+        if(++timerComp->m_cycleCount >= currentInterval)
         {
             ++memSpriteComp->m_current;
             if(memSpriteComp->m_current >= memSpriteComp->m_vectSpriteData.size())
@@ -186,7 +184,7 @@ void VisionSystem::updateWallSprites()
                 memSpriteComp->m_current = 0;
             }
             spriteComp->m_spriteData = memSpriteComp->m_vectSpriteData[memSpriteComp->m_current];
-            timerComp->m_clockA = std::chrono::system_clock::now();
+            timerComp->m_cycleCount = 0;
         }
     }
 }

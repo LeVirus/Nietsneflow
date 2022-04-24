@@ -142,7 +142,7 @@ LevelState MainEngine::mainLoop(uint32_t levelNum, LevelState_e levelState)
     do
     {
         elapsed_seconds = std::chrono::system_clock::now() - clock;
-        if(m_fpsValue > elapsed_seconds.count())
+        if(FPS_VALUE > elapsed_seconds.count())
         {
             continue;
         }
@@ -1095,7 +1095,8 @@ std::vector<uint32_t> MainEngine::loadWallEntitiesWallLoop(const std::vector<Spr
         {
             moveableWallCorrectedPos.second = 0;
         }
-        confBaseWallData(numEntity, memSpriteData, moveableWallCorrectedPos, currentShape.second.m_sprites, currentShape.second.m_time,
+        confBaseWallData(numEntity, memSpriteData, moveableWallCorrectedPos,
+                         currentShape.second.m_sprites, currentShape.second.m_cyclesTime,
                          vectSprite, currentShape.second.m_triggerBehaviourType, moveable);
         if(!moveable)
         {
@@ -1136,7 +1137,7 @@ std::vector<uint32_t> MainEngine::loadWallEntitiesWallLoop(const std::vector<Spr
 void MainEngine::confBaseWallData(uint32_t wallEntity, const SpriteData &memSpriteData,
                                   const PairUI_t& coordLevel,
                                   const std::vector<uint8_t> &numWallSprites,
-                                  const std::vector<float> &timeMultiSpriteCase,
+                                  const std::vector<uint32_t> &timeMultiSpriteCase,
                                   const std::vector<SpriteData> &vectSprite, TriggerBehaviourType_e triggerType, bool moveable)
 {
     MemSpriteDataComponent *memSpriteComp;
@@ -1149,7 +1150,7 @@ void MainEngine::confBaseWallData(uint32_t wallEntity, const SpriteData &memSpri
         WallMultiSpriteConf *multiSpriteConf = m_ecsManager.getComponentManager().
                 searchComponentByType<WallMultiSpriteConf>(wallEntity, Components_e::WALL_MULTI_SPRITE_CONF);
         assert(multiSpriteConf);
-        multiSpriteConf->m_time = timeMultiSpriteCase;
+        multiSpriteConf->m_cyclesTime = timeMultiSpriteCase;
     }
     spriteComp = m_ecsManager.getComponentManager().
             searchComponentByType<SpriteTextureComponent>(wallEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
@@ -1177,7 +1178,7 @@ void MainEngine::confBaseWallData(uint32_t wallEntity, const SpriteData &memSpri
     timerComp = m_ecsManager.getComponentManager().
             searchComponentByType<TimerComponent>(wallEntity, Components_e::TIMER_COMPONENT);
     assert(timerComp);
-    timerComp->m_clockA = std::chrono::system_clock::now();
+    timerComp->m_cycleCount = 0;
 }
 
 //===================================================================

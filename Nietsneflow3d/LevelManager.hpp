@@ -44,7 +44,7 @@ struct WallData
 {
     std::vector<uint8_t> m_sprites;
     std::set<PairUI_t> m_TileGamePosition, m_removeGamePosition;
-    std::vector<float> m_time;
+    std::vector<uint32_t> m_cyclesTime;
 };
 
 struct AssociatedTriggerData
@@ -56,7 +56,7 @@ struct AssociatedTriggerData
 struct MoveableWallData
 {
     std::vector<uint8_t> m_sprites;
-    std::vector<float> m_time;
+    std::vector<uint32_t> m_cyclesTime;
     std::set<PairUI_t> m_TileGamePosition, m_removeGamePosition;
     std::vector<std::pair<Direction_e, uint32_t>> m_directionMove;
     TriggerWallMoveType_e m_triggerType;

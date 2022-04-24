@@ -195,10 +195,6 @@ public:
     {
         m_levelEnd = true;
     }
-    inline float getFPSTime()const
-    {
-        return m_fpsValue;
-    }
     void setPlayerDeparture(const PairUI_t &pos, Direction_e dir);
     void saveAudioSettings();
     void saveInputSettings(const std::map<ControlKey_e, GamepadInputState> &gamepadArray,
@@ -247,7 +243,7 @@ private:
                                                    const std::pair<std::string, MoveableWallData> &currentShape, bool moveable,
                                                    uint32_t shapeNum, bool loadFromCheckpoint);
     void confBaseWallData(uint32_t wallEntity, const SpriteData &memSpriteData, const PairUI_t &coordLevel,
-                          const std::vector<uint8_t> &numWallSprites, const std::vector<float> &timeMultiSpriteCase,
+                          const std::vector<uint8_t> &numWallSprites, const std::vector<uint32_t> &timeMultiSpriteCase,
                           const std::vector<SpriteData> &vectSprite, TriggerBehaviourType_e triggerType, bool moveable = false);
     void loadDoorEntities(const LevelManager &levelManager);
     void loadEnemiesEntities(const LevelManager &levelManager);
@@ -335,7 +331,6 @@ private:
 private:
     LevelState_e m_currentLevelState;
     uint32_t m_memInputCursorPos = 0, m_currentSave = 1, m_currentLevel = 0;
-    float m_fpsValue = 1.0f / 60.0f;
     GraphicEngine m_graphicEngine;
     PhysicalEngine m_physicalEngine;
     AudioEngine m_audioEngine;

@@ -1028,7 +1028,11 @@ void LevelManager::loadWallData()
         {
             time = convertStrToVectFloat(*datas);
             assert(results.size() == time.size());
-            m_wallData[vectINISections[i]].m_time = time;
+            m_wallData[vectINISections[i]].m_cyclesTime.reserve(time.size());
+            for(uint32_t j = 0; j < time.size(); ++j)
+            {
+                m_wallData[vectINISections[i]].m_cyclesTime.emplace_back(time[j] / FPS_VALUE);
+            }
         }
     }
 }
@@ -1046,7 +1050,7 @@ void LevelManager::loadPositionWall()
         //Moveable wall
         m_mainWallData.insert({vectINISections[i], MoveableWallData()});
         m_mainWallData[vectINISections[i]].m_sprites = it->second.m_sprites;
-        m_mainWallData[vectINISections[i]].m_time = it->second.m_time;
+        m_mainWallData[vectINISections[i]].m_cyclesTime = it->second.m_cyclesTime;
         fillWallPositionVect(vectINISections[i], "GamePosition",
                              m_mainWallData[vectINISections[i]].m_TileGamePosition);
         fillWallPositionVect(vectINISections[i], "RemovePosition",

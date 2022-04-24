@@ -439,7 +439,7 @@ void DoorWallSystem::clearSystem()
 void DoorWallSystem::memRefMainEngine(MainEngine *mainEngine)
 {
     m_refMainEngine = mainEngine;
-    m_doorCyclesForClose = 0.6 / m_refMainEngine->getFPSTime();
+    m_doorCyclesForClose = 0.6 / FPS_VALUE;
 }
 
 //===================================================================
