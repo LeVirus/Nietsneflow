@@ -195,6 +195,10 @@ public:
     {
         m_levelEnd = true;
     }
+    inline float getFPSTime()const
+    {
+        return m_fpsValue;
+    }
     void setPlayerDeparture(const PairUI_t &pos, Direction_e dir);
     void saveAudioSettings();
     void saveInputSettings(const std::map<ControlKey_e, GamepadInputState> &gamepadArray,

@@ -13,6 +13,7 @@ struct TimerComponent : public ecs::Component
     }
     std::chrono::time_point<std::chrono::system_clock> m_clockA, m_clockB, m_clockC, m_clockD;
     std::optional<double> m_time;
+    uint32_t m_cycleEnding, m_cycleCount = 0;
     virtual ~TimerComponent() = default;
 };
 

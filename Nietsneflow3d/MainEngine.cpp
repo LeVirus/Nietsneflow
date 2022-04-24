@@ -1207,6 +1207,10 @@ void MainEngine::loadDoorEntities(const LevelManager &levelManager)
             AudioComponent *audioComp = m_ecsManager.getComponentManager().
                     searchComponentByType<AudioComponent>(numEntity, Components_e::AUDIO_COMPONENT);
             assert(audioComp);
+            TimerComponent *timerComp = m_ecsManager.getComponentManager().
+                    searchComponentByType<TimerComponent>(numEntity, Components_e::TIMER_COMPONENT);
+            assert(audioComp);
+            timerComp->m_cycleCount = 0;
             audioComp->m_soundElements.push_back(loadSound(levelManager.getDoorOpeningSoundFile()));
             if(it->second.m_vertical)
             {

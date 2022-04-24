@@ -15,10 +15,7 @@ public:
     DoorWallSystem(const ECSManager* memECSManager);
     void execSystem()override;
     void clearSystem();
-    inline void memRefMainEngine(MainEngine *mainEngine)
-    {
-        m_refMainEngine = mainEngine;
-    }
+    void memRefMainEngine(MainEngine *mainEngine);
 private:
     void treatDoorMovementSize(DoorComponent *doorComp, uint32_t entityNum);
     void updateEntities();
@@ -31,7 +28,7 @@ private:
                                    MoveableWallConfComponent *moveWallComp,
                                    const PairUI_t &previousPos);
 private:
-    double m_timeDoorClosed = 0.6;
+    double m_doorCyclesForClose;
     std::vector<uint32_t> m_vectMoveableWall, m_vectTrigger;
     ECSManager const *m_ECSManager;
     MainEngine *m_refMainEngine;

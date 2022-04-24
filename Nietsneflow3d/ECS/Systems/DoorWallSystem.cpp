@@ -16,9 +16,8 @@
 #include <cassert>
 
 //===================================================================
-DoorWallSystem::DoorWallSystem(const ECSManager *memECSManager)
+DoorWallSystem::DoorWallSystem(const ECSManager *memECSManager) : m_ECSManager(memECSManager)
 {
-    m_ECSManager = memECSManager;
     bAddComponentToSystem(Components_e::DOOR_COMPONENT);
 }
 
@@ -63,30 +62,25 @@ void DoorWallSystem::treatDoors()
                 searchComponentByType<TimerComponent>(mVectNumEntity[i],
                                                      Components_e::TIMER_COMPONENT);
         assert(timerComp);
-        std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() - timerComp->m_clockA;
         if(doorComp->m_currentState == DoorState_e::STATIC_OPEN)
         {
-            if(elapsed_seconds.count() > m_timeDoorClosed)
+            if(++timerComp->m_cycleCount >= m_doorCyclesForClose)
             {
                 if(doorComp->m_obstruct)
                 {
-                    timerComp->m_clockA = std::chrono::system_clock::now();
+                    timerComp->m_cycleCount = 0;
                     doorComp->m_obstruct = false;
                 }
                 else
                 {
                     doorComp->m_currentState = DoorState_e::MOVE_CLOSE;
                     activeDoorSound(mVectNumEntity[i]);
-                    timerComp->m_clockA = std::chrono::system_clock::now();
+                    timerComp->m_cycleCount = 0;
                 }
             }
             continue;
         }
-        if(elapsed_seconds.count() > doorComp->m_speedMove)
-        {
-            treatDoorMovementSize(doorComp, mVectNumEntity[i]);
-            timerComp->m_clockA = std::chrono::system_clock::now();
-        }
+        treatDoorMovementSize(doorComp, mVectNumEntity[i]);
     }
 }
 
@@ -439,6 +433,13 @@ void DoorWallSystem::clearSystem()
     mVectNumEntity.clear();
     m_vectMoveableWall.clear();
     m_vectTrigger.clear();
+}
+
+//===================================================================
+void DoorWallSystem::memRefMainEngine(MainEngine *mainEngine)
+{
+    m_refMainEngine = mainEngine;
+    m_doorCyclesForClose = 0.6 / m_refMainEngine->getFPSTime();
 }
 
 //===================================================================
