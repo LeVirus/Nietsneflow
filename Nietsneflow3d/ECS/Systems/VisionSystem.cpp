@@ -262,13 +262,10 @@ void VisionSystem::updateBarrelSprite(uint32_t barrelEntity, MemSpriteDataCompon
     FPSVisibleStaticElementComponent *fpsComp = stairwayToComponentManager().
             searchComponentByType<FPSVisibleStaticElementComponent>(barrelEntity, Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
     assert(fpsComp);
-    std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() -
-            timerComp->m_clockA;
     if(!barrelComp->m_destructPhase)
     {
-        if(elapsed_seconds.count() > barrelComp->m_timeStaticPhase)
+        if(++timerComp->m_cycleCount >= barrelComp->m_timeStaticPhase)
         {
-            timerComp->m_clockA = std::chrono::system_clock::now();
             if(memSpriteComp->m_current < barrelComp->m_memPosExplosionSprite)
             {
                 ++memSpriteComp->m_current;
@@ -285,15 +282,15 @@ void VisionSystem::updateBarrelSprite(uint32_t barrelEntity, MemSpriteDataCompon
         //first sprite destruct
         if(memSpriteComp->m_current <= barrelComp->m_memPosExplosionSprite)
         {
-            timerComp->m_clockA = std::chrono::system_clock::now();
+            timerComp->m_cycleCount = 0;
             memSpriteComp->m_current = barrelComp->m_memPosExplosionSprite + 1;
             spriteComp->m_spriteData = memSpriteComp->m_vectSpriteData[memSpriteComp->m_current];
             fpsComp->m_inGameSpriteSize = glSizeComp->m_memGLSizeData[memSpriteComp->m_current];
             return;
         }
-        if(elapsed_seconds.count() > barrelComp->m_timeEject / barrelComp->m_phaseDestructPhaseNumber)
+        if(++timerComp->m_cycleCount >= barrelComp->m_timeStaticPhase)
         {
-            timerComp->m_clockA = std::chrono::system_clock::now();
+            timerComp->m_cycleCount = 0;
             if(memSpriteComp->m_current != memSpriteComp->m_vectSpriteData.size() - 1)
             {
                 ++memSpriteComp->m_current;
