@@ -229,13 +229,12 @@ void VisionSystem::updateVisibleShotSprite(uint32_t shotEntity, MemSpriteDataCom
     {
         return;
     }
-    std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() - timerComp->m_clockB;
-    if(elapsed_seconds.count() > 0.12)
+    if(++timerComp->m_cycleCount >= shotComp->m_cycleDestructNumber)
     {
+        timerComp->m_cycleCount = 0;
         if(shotComp->m_spriteShotNum != memSpriteComp->m_vectSpriteData.size() - 1)
         {
             ++shotComp->m_spriteShotNum;
-            timerComp->m_clockB = std::chrono::system_clock::now();
         }
         else
         {

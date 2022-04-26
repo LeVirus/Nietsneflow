@@ -827,7 +827,6 @@ bool CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args, bool shotEx
                     searchComponentByType<TimerComponent>(args.entityNumA, Components_e::TIMER_COMPONENT);
             assert(timerComp);
             activeSound(args.entityNumA);
-            timerComp->m_clockB = std::chrono::system_clock::now();
             shotConfComp->m_destructPhase = true;
             shotConfComp->m_spriteShotNum = 1;
             if(shotConfComp->m_damageCircleRayData || circleDamageObstructed(args))
