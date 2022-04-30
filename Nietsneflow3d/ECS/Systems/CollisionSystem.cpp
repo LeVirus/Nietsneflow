@@ -1175,8 +1175,6 @@ void CollisionSystem::treatPlayerTeleport(CollisionArgs &args)
     assert(mapTeleportComp);
     assert(mapPlayerComp);
     assert(teleportComp);
-    timerComp->m_clockA = std::chrono::system_clock::now();
-    timerComp->m_clockB = std::chrono::system_clock::now();
     mapPlayerComp->m_coord = teleportComp->m_targetPos;
     mapPlayerComp->m_absoluteMapPositionPX = getCenteredAbsolutePosition(mapPlayerComp->m_coord);
     mapTeleportComp->m_absoluteMapPositionPX = mapPlayerComp->m_absoluteMapPositionPX;
@@ -1184,6 +1182,8 @@ void CollisionSystem::treatPlayerTeleport(CollisionArgs &args)
                          mapTeleportComp->m_absoluteMapPositionPX);
     playerComp->m_teleported = true;
     genTeleportComp->m_active = true;
+    timerComp->m_cycleCountA = 0;
+    timerComp->m_cycleCountB = 0;
 }
 
 //===================================================================

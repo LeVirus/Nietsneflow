@@ -1331,7 +1331,6 @@ void MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
                     searchComponentByType<TimerComponent>(numEntity, Components_e::TIMER_COMPONENT);
             assert(timerComponent);
             timerComponent->m_cycleCountA = 0;
-            timerComponent->m_clockC = std::chrono::system_clock::now();
             memCheckpointEnemiesData(loadFromCheckpoint, numEntity, m_currentLevelEnemiesNumber);
             ++m_currentLevelEnemiesNumber;
         }

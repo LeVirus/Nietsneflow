@@ -65,6 +65,8 @@ private:
     const ECSManager* m_memECSManager;
     std::vector<uint32_t> m_memMultiSpritesWallEntities, m_vectBarrelsEntitiesToDelete;
     uint32_t m_defaultInterval = 0.8 / FPS_VALUE;
+    //first change sprite interval, second interval total time
+    PairUI_t m_teleportIntervalTime = {0.1 / FPS_VALUE, 0.4 / FPS_VALUE};
 };
 
 mapEnemySprite_t::const_reverse_iterator findMapLastElement(const mapEnemySprite_t &map,

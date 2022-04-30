@@ -474,15 +474,13 @@ void VisionSystem::updateImpactSprites(uint32_t entityImpact, MemSpriteDataCompo
 void VisionSystem::updateTeleportDisplaySprite(MemSpriteDataComponent *memSpriteComp, SpriteTextureComponent *spriteComp,
                                                TimerComponent *timerComp, GeneralCollisionComponent *genComp)
 {
-    std::chrono::duration<double> elapsed_secondsA = std::chrono::system_clock::now() - timerComp->m_clockA,
-            elapsed_secondsB = std::chrono::system_clock::now() - timerComp->m_clockB;
-    if(elapsed_secondsA.count() > 0.40)
+    if(++timerComp->m_cycleCountA >= m_teleportIntervalTime.second)
     {
         genComp->m_active = false;
     }
-    else if(elapsed_secondsB.count() > 0.10)
+    else if(++timerComp->m_cycleCountB >= m_teleportIntervalTime.first)
     {
-        timerComp->m_clockB = std::chrono::system_clock::now();
+        timerComp->m_cycleCountB = 0;
         if(memSpriteComp->m_current < memSpriteComp->m_vectSpriteData.size() - 1)
         {
             ++memSpriteComp->m_current;
