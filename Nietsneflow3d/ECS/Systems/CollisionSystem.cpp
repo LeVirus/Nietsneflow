@@ -1064,7 +1064,7 @@ void CollisionSystem::treatActionPlayerCircle(CollisionArgs &args)
                 searchComponentByType<TimerComponent>(m_playerComp->muiGetIdEntityAssociated(), Components_e::TIMER_COMPONENT);
         assert(timerComp);
         timerComp->m_clockA = std::chrono::system_clock::now();
-        timerComp->m_time = 4.0;
+        timerComp->m_timeIntervalOptional = 4.0 / FPS_VALUE;
     }
     else if(args.tagCompB->m_tagB == CollisionTag_e::TRIGGER_CT)
     {

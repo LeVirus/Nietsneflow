@@ -108,7 +108,7 @@ private:
                                                                    m_forkWeaponMovementX.first) / 2.0f;
     //FORCE UPDATE AT LAUNCH
     uint32_t m_currentCursorPos = static_cast<uint32_t>(MainMenuCursorPos_e::TOTAL), m_resolutionDisplayMenuEntity,
-    m_fullscreenMenuEntity;
+    m_fullscreenMenuEntity, m_infoWriteStandardInterval = 1.5 / FPS_VALUE;
     ArrayControlKey_t m_inputMenuKeyboardWriteKeysEntities, m_inputMenuGamepadWriteKeysEntities;
 };
 float getLeftTextPosition(std::string_view str);

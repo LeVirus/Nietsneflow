@@ -12,8 +12,8 @@ struct TimerComponent : public ecs::Component
         muiTypeComponent = Components_e::TIMER_COMPONENT;
     }
     std::chrono::time_point<std::chrono::system_clock> m_clockA, m_clockB, m_clockC, m_clockD;
-    std::optional<double> m_time;
-    uint32_t m_cycleEnding, m_cycleCountA = 0, m_cycleCountB = 0, m_cycleCountC = 0, m_cycleCountD = 0;
+    std::optional<uint32_t> m_timeIntervalOptional;
+    uint32_t m_cycleCountA = 0, m_cycleCountB = 0, m_cycleCountC = 0, m_cycleCountD = 0;
     virtual ~TimerComponent() = default;
 };
 
