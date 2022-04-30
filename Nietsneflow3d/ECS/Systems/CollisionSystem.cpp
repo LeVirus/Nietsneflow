@@ -422,7 +422,7 @@ void CollisionSystem::confImpactShots(uint32_t numBullet, CollisionTag_e targetT
         moveElementFromAngle(m_memDistCurrentBulletColl.second, radiantAngle, (*mapImpact).m_absoluteMapPositionPX);
     }
     genImpact->m_active = true;
-    timerImpact->m_clockA = std::chrono::system_clock::now();
+    timerImpact->m_cycleCountA = 0;
 }
 
 //===================================================================

@@ -19,5 +19,6 @@ struct ImpactShotComponent : public ecs::Component
     bool m_touched;
     ImpactPhase_e m_spritePhase = ImpactPhase_e::FIRST;
     float m_moveUp = EPSILON_FLOAT;
+    uint32_t m_intervalTime = 0.2 / FPS_VALUE;
     virtual ~ImpactShotComponent() = default;
 };

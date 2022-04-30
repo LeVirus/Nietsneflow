@@ -442,10 +442,8 @@ void VisionSystem::updateImpactSprites(uint32_t entityImpact, MemSpriteDataCompo
                                        TimerComponent *timerComp, GeneralCollisionComponent *genComp)
 {
     ImpactShotComponent *impactComp = stairwayToComponentManager().
-            searchComponentByType<ImpactShotComponent>(entityImpact,
-                                                       Components_e::IMPACT_CONF_COMPONENT);
+            searchComponentByType<ImpactShotComponent>(entityImpact, Components_e::IMPACT_CONF_COMPONENT);
     assert(impactComp);
-    std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() - timerComp->m_clockA;
     if(!impactComp->m_touched)
     {
         impactComp->m_moveUp += 0.02f;
@@ -454,14 +452,14 @@ void VisionSystem::updateImpactSprites(uint32_t entityImpact, MemSpriteDataCompo
     {
         impactComp->m_moveUp -= 0.02f;
     }
-    if(elapsed_seconds.count() > 0.20)
+    if(++timerComp->m_cycleCountA >= impactComp->m_intervalTime)
     {
         if(impactComp->m_spritePhase == ImpactPhase_e::FIRST)
         {
             uint32_t current = static_cast<uint32_t>(impactComp->m_spritePhase);
             impactComp->m_spritePhase = static_cast<ImpactPhase_e>(++current);
             spriteComp->m_spriteData = memSpriteComp->m_vectSpriteData[current];
-            timerComp->m_clockA = std::chrono::system_clock::now();
+            timerComp->m_cycleCountA = 0;
         }
         else
         {
