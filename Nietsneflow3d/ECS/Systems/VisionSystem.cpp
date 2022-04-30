@@ -374,8 +374,8 @@ void VisionSystem::updateEnemyNormalSprite(EnemyConfComponent *enemyConfComp, Ti
     {
         enemyConfComp->m_displayMode = EnemyDisplayMode_e::DYING;
         enemyConfComp->m_currentSprite = enemyConfComp->m_mapSpriteAssociate.find(EnemySpriteType_e::DYING)->second.first;
-        timerComp->m_clockA = std::chrono::system_clock::now();
-        timerComp->m_clockB = std::chrono::system_clock::now();
+        timerComp->m_cycleCountA = 0;
+        timerComp->m_cycleCountB = 0;
     }
     else
     {
@@ -387,15 +387,14 @@ void VisionSystem::updateEnemyNormalSprite(EnemyConfComponent *enemyConfComp, Ti
                 getOrientationFromAngle(observerEntity, enemyEntity,
                                         enemyMoveComp->m_degreeOrientation);
         mapEnemySprite_t::const_iterator it = enemyConfComp->m_mapSpriteAssociate.find(currentOrientationSprite);
-        std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() -
-                timerComp->m_clockA;
+        //if sprite outside
         if(enemyConfComp->m_currentSprite < it->second.first ||
                 enemyConfComp->m_currentSprite > it->second.second)
         {
             enemyConfComp->m_currentSprite = it->second.first;
-            timerComp->m_clockA = std::chrono::system_clock::now();
+            timerComp->m_cycleCountA = 0;
         }
-        else if(elapsed_seconds.count() > 0.5)
+        else if(++timerComp->m_cycleCountA > enemyConfComp->m_standardSpriteInterval)
         {
             if(enemyConfComp->m_currentSprite == it->second.second)
             {
@@ -405,7 +404,7 @@ void VisionSystem::updateEnemyNormalSprite(EnemyConfComponent *enemyConfComp, Ti
             {
                 ++enemyConfComp->m_currentSprite;
             }
-            timerComp->m_clockA = std::chrono::system_clock::now();
+            timerComp->m_cycleCountA = 0;
         }
     }
 }
