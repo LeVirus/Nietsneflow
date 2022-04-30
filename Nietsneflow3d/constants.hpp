@@ -370,9 +370,10 @@ const uint32_t MIN_TURN_SENSITIVITY = 20, MAX_TURN_SENSITIVITY = 100,
 DIFF_TOTAL_SENSITIVITY = MAX_TURN_SENSITIVITY - MIN_TURN_SENSITIVITY;
 inline const uint32_t ENCRYPT_KEY_STANDARD_LEVEL = 17;
 inline const uint32_t ENCRYPT_KEY_CONF_FILE = 42;
+inline const float FPS_VALUE = 1.0f / 60.0f;
 inline const float MAX_SOUND_DISTANCE = 1000.0f;
 inline const float DOWN_WEAPON_POS_Y = -1.02f;
-inline const float EJECT_TIME = 0.5f;
+inline const uint32_t EJECT_CYCLE_TIME = 0.5f / FPS_VALUE;
 inline const float RAYCAST_VERTICAL_SIZE = 1.0f;
 inline const float STD_FONT_SIZE = 0.06f;
 inline const float MENU_FONT_SIZE = 0.075f;
@@ -404,7 +405,6 @@ inline const float CONE_VISION = 60.0f;
 inline const float MAX_BAR_MENU_SIZE = 0.7f;
 inline const float HALF_CONE_VISION = CONE_VISION / 2.0f;
 inline const float DOUBLE_CONE_VISION = CONE_VISION * 2.0f;
-const float FPS_VALUE = 1.0f / 60.0f;
 inline const uint32_t RAYCAST_LINE_NUMBER = 300, RAYCAST_DEPTH = 20, MAX_SHOTS = 5,
 RAYCAST_GROUND_CEILING_NUMBER = RAYCAST_LINE_NUMBER / 2.0f;
 inline const float SCREEN_VERT_BACKGROUND_GL_STEP = 1.0f / RAYCAST_GROUND_CEILING_NUMBER;

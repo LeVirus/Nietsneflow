@@ -574,7 +574,7 @@ void MainEngine::memTimerPausedValue()
         timerComp = m_ecsManager.getComponentManager().searchComponentByType<TimerComponent>(vectEntities[i], Components_e::TIMER_COMPONENT);
         assert(timerComp);
         time_t time = (std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()) -
-                       std::chrono::system_clock::to_time_t(timerComp->m_clockA));
+                       std::chrono::system_clock::to_time_t(timerComp->m_clock));
         m_vectMemPausedTimer.emplace_back(vectEntities[i], time);
     }
 }
@@ -589,7 +589,7 @@ void MainEngine::applyTimerPausedValue()
                 searchComponentByType<TimerComponent>(m_vectMemPausedTimer[i].first,
                                                       Components_e::TIMER_COMPONENT);
         assert(timerComp);
-        timerComp->m_clockA = std::chrono::system_clock::from_time_t( std::chrono::system_clock::to_time_t(
+        timerComp->m_clock = std::chrono::system_clock::from_time_t( std::chrono::system_clock::to_time_t(
                     std::chrono::system_clock::now()) - m_vectMemPausedTimer[i].second);
     }
     m_vectMemPausedTimer.clear();

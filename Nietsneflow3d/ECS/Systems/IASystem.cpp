@@ -57,8 +57,7 @@ void IASystem::treatEject()
             timerComp = stairwayToComponentManager().
                     searchComponentByType<TimerComponent>(m_vectMoveableEntities[i], Components_e::TIMER_COMPONENT);
             assert(timerComp);
-            std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() - timerComp->m_clockD;
-            if(elapsed_seconds.count() > moveComp->m_ejectData->second)
+            if(++timerComp->m_cycleCountD >= moveComp->m_ejectData->second)
             {
                 moveComp->m_ejectData = std::nullopt;
                 return;
@@ -122,16 +121,15 @@ void IASystem::execSystem()
             assert(timerComp);
             if(enemyConfComp->m_behaviourMode == EnemyBehaviourMode_e::PASSIVE)
             {
-                std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() - timerComp->m_clockC;
-                if(elapsed_seconds.count() > 5.0)
+                if(++timerComp->m_cycleCountC > m_intervalEnemyPlayPassiveSound)
                 {
                     activeSound(mVectNumEntity[i], static_cast<uint32_t>(EnemySoundEffect_e::NORMAL));
-                    timerComp->m_clockC = std::chrono::system_clock::now();
+                    timerComp->m_cycleCountC = 0;
                 }
             }
             if(checkEnemyTriggerAttackMode(radiantAnglePlayerDirection, distancePlayer, enemyMapComp))
             {
-                timerComp->m_clockB = std::chrono::system_clock::now();
+                timerComp->m_cycleCountB = 0;
                 enemyConfComp->m_behaviourMode = EnemyBehaviourMode_e::ATTACK;
                 activeSound(mVectNumEntity[i], static_cast<uint32_t>(EnemySoundEffect_e::DETECT));
                 enemyConfComp->m_countPlayerInvisibility = 0;
@@ -189,10 +187,10 @@ void IASystem::treatVisibleShot(uint32_t numEntity)
     TimerComponent *timerComp = stairwayToComponentManager().
             searchComponentByType<TimerComponent>(numEntity, Components_e::TIMER_COMPONENT);
     assert(timerComp);
-    std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() - timerComp->m_clockA;
-    if(elapsed_seconds.count() > 5.0)
+    if(++timerComp->m_cycleCountA > m_intervalVisibleShotLifeTime)
     {
         genColl->m_active = false;
+        timerComp->m_cycleCountA = 0;
         return;
     }
     MapCoordComponent *ammoMapComp = stairwayToComponentManager().
@@ -275,13 +273,11 @@ void IASystem::treatEnemyBehaviourAttack(uint32_t enemyEntity, MapCoordComponent
                 enemyEntity, Components_e::TIMER_COMPONENT);
     assert(moveComp);
     assert(timerComp);
-    std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() -
-            timerComp->m_clockB;
-    if(elapsed_seconds.count() > 0.4)
+    if(++timerComp->m_cycleCountB > m_intervalEnemyBehaviour)
     {
         enemyConfComp->m_prevWall = false;
         enemyConfComp->m_attackPhase = static_cast<EnemyAttackPhase_e>(std::rand() / ((RAND_MAX + 1u) / 4));
-        timerComp->m_clockB = std::chrono::system_clock::now();
+        timerComp->m_cycleCountB = 0;
         updateEnemyDirection(enemyConfComp, moveComp, enemyMapComp);
         if(enemyConfComp->m_attackPhase == EnemyAttackPhase_e::SHOOT)
         {
@@ -293,7 +289,7 @@ void IASystem::treatEnemyBehaviourAttack(uint32_t enemyEntity, MapCoordComponent
             if(++enemyConfComp->m_countPlayerInvisibility > 5)
             {
                enemyConfComp->m_behaviourMode = EnemyBehaviourMode_e::PASSIVE;
-               timerComp->m_clockC = std::chrono::system_clock::now();
+               timerComp->m_cycleCountC = 0;
             }
         }
     }
@@ -367,7 +363,7 @@ void IASystem::confVisibleShoot(std::vector<uint32_t> &visibleShots, const PairF
     assert(mapComp);
     assert(ammoMoveComp);
     genComp->m_active = true;
-    ammoTimeComp->m_clockA = std::chrono::system_clock::now();
+    ammoTimeComp->m_cycleCountA = 0;
     mapComp->m_absoluteMapPositionPX = point;
     moveElementFromAngle(LEVEL_HALF_TILE_SIZE_PX, getRadiantAngle(degreeAngle),
                          mapComp->m_absoluteMapPositionPX);

@@ -594,7 +594,7 @@ void CollisionSystem::writePlayerInfo(const std::string &info)
     TimerComponent *timerComp = stairwayToComponentManager().
             searchComponentByType<TimerComponent>(m_playerComp->muiGetIdEntityAssociated(), Components_e::TIMER_COMPONENT);
     assert(timerComp);
-    timerComp->m_clockA = std::chrono::system_clock::now();
+    timerComp->m_cycleCountA = 0;
     m_playerComp->m_infoWriteData = {true, info};
 }
 
@@ -932,12 +932,12 @@ void CollisionSystem::treatExplosionColl(CollisionArgs &args)
         TimerComponent *timerComp = stairwayToComponentManager().
                 searchComponentByType<TimerComponent>(args.entityNumB, Components_e::TIMER_COMPONENT);
         assert(timerComp);
-        timerComp->m_clockD = std::chrono::system_clock::now();
+        timerComp->m_cycleCountD = 0;
         if(!moveComp->m_ejectData && (std::abs(args.mapCompA.m_absoluteMapPositionPX.first - args.mapCompB.m_absoluteMapPositionPX.first) > 0.01f ||
                 std::abs(args.mapCompA.m_absoluteMapPositionPX.second - args.mapCompB.m_absoluteMapPositionPX.second) > 0.01f))
         {
             moveComp->m_currentDegreeMoveDirection = getTrigoAngle(args.mapCompA.m_absoluteMapPositionPX, args.mapCompB.m_absoluteMapPositionPX);
-            moveComp->m_ejectData = {1.5f, EJECT_TIME};
+            moveComp->m_ejectData = {1.5f, EJECT_CYCLE_TIME};
         }
     }
     if(args.tagCompB->m_tagA == CollisionTag_e::PLAYER_CT)
@@ -1063,7 +1063,7 @@ void CollisionSystem::treatActionPlayerCircle(CollisionArgs &args)
         TimerComponent *timerComp = stairwayToComponentManager().
                 searchComponentByType<TimerComponent>(m_playerComp->muiGetIdEntityAssociated(), Components_e::TIMER_COMPONENT);
         assert(timerComp);
-        timerComp->m_clockA = std::chrono::system_clock::now();
+        timerComp->m_cycleCountA = 0;
         timerComp->m_timeIntervalOptional = 4.0 / FPS_VALUE;
     }
     else if(args.tagCompB->m_tagB == CollisionTag_e::TRIGGER_CT)
@@ -1136,7 +1136,7 @@ void CollisionSystem::treatPlayerPickObject(CollisionArgs &args)
     TimerComponent *timerComp = stairwayToComponentManager().
             searchComponentByType<TimerComponent>(m_playerComp->muiGetIdEntityAssociated(), Components_e::TIMER_COMPONENT);
     assert(timerComp);
-    timerComp->m_clockA = std::chrono::system_clock::now();
+    timerComp->m_cycleCountA = 0;
     playerComp->m_pickItem = true;
     activeSound(args.entityNumA);
     m_vectEntitiesToDelete.push_back(args.entityNumB);

@@ -274,6 +274,7 @@ void VisionSystem::updateBarrelSprite(uint32_t barrelEntity, MemSpriteDataCompon
                 memSpriteComp->m_current = 0;
             }
             spriteComp->m_spriteData = memSpriteComp->m_vectSpriteData[memSpriteComp->m_current];
+            timerComp->m_cycleCountA = 0;
         }
     }
     else

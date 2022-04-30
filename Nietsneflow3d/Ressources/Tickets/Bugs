@@ -2,7 +2,10 @@ BUGS======================================================================
 
 
 ))
-Delta time for visible shot and maybe other thing
+Display issue in moveable wall multi sprite on trigger (wall trigger ==> display door sprite)
+
+))
+Display enemies visible shot explosion issue 
 
 
 ))
@@ -17,6 +20,9 @@ In input gamepad menu bug in GLFW in AXIS===============================~
 ))
 Wall exists inside door some time======================Bug in level editor
 
+
+))
+Delta time for visible shot and maybe other thing============================OK
 
 ))
 Static element disapear when camera is too close=========================OK

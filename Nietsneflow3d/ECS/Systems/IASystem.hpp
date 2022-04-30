@@ -33,7 +33,8 @@ private:
     void treatVisibleShot(uint32_t numEntity);
     void activeSound(uint32_t entityNum, uint32_t soundNum);
 private:
-    uint32_t m_playerEntity;
+    uint32_t m_playerEntity, m_intervalEnemyBehaviour = 0.4 / FPS_VALUE, m_intervalVisibleShotLifeTime = 5.0 / FPS_VALUE,
+    m_intervalEnemyPlayPassiveSound = 5.0 / FPS_VALUE;
     MapCoordComponent *m_playerMapComp = nullptr;
     PlayerConfComponent *m_playerComp = nullptr;
     float m_distanceEnemyBehaviour = LEVEL_TILE_SIZE_PX * 15.0f;
