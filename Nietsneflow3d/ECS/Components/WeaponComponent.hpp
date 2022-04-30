@@ -6,7 +6,7 @@
 
 struct WeaponData
 {
-    uint32_t m_ammunationsCount, m_simultaneousShots, m_maxAmmunations, m_lastAnimNum, m_weaponPower, m_currentBullet = 0;
+    uint32_t m_ammunationsCount, m_simultaneousShots, m_maxAmmunations, m_lastAnimNum, m_weaponPower, m_currentBullet = 0, m_intervalLatency;
     AttackType_e m_attackType;
     AnimationMode_e m_animMode;
     PairUI_t m_memPosSprite;
@@ -14,7 +14,7 @@ struct WeaponData
     std::optional<std::vector<uint32_t>> m_visibleShootEntities, m_segmentShootEntities;
     std::string m_visibleShotID, m_impactID, m_weaponName;
     std::optional<float> m_damageRay;
-    float m_latency, m_shotVelocity;
+    float m_shotVelocity;
 };
 
 struct WeaponComponent : public ecs::Component

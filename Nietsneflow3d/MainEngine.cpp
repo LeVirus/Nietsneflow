@@ -944,7 +944,7 @@ uint32_t MainEngine::loadWeaponsEntity(const LevelManager &levelManager)
         }
         weaponComp->m_weaponsData[weaponToTreat].m_weaponPower = vectWeapons[i].m_damage;
         weaponComp->m_weaponsData[weaponToTreat].m_animMode = vectWeapons[i].m_animMode;
-        weaponComp->m_weaponsData[weaponToTreat].m_latency = vectWeapons[i].m_animationLatency;
+        weaponComp->m_weaponsData[weaponToTreat].m_intervalLatency = vectWeapons[i].m_animationLatency / FPS_VALUE;
         weaponComp->m_weaponsData[weaponToTreat].m_visibleShotID = vectWeapons[i].m_visibleShootID;
         weaponComp->m_weaponsData[weaponToTreat].m_weaponName = vectWeapons[i].m_weaponName;
         weaponComp->m_weaponsData[weaponToTreat].m_impactID = vectWeapons[i].m_impactID;

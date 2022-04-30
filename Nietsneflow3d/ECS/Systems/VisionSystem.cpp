@@ -289,8 +289,7 @@ void VisionSystem::updateBarrelSprite(uint32_t barrelEntity, MemSpriteDataCompon
         }
         if(++timerComp->m_cycleCountA >= barrelComp->m_timeStaticPhase)
         {
-            timerComp->m_cycleCountA//        std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() - timerComp->m_clockC;
- = 0;
+            timerComp->m_cycleCountA = 0;
             if(memSpriteComp->m_current != memSpriteComp->m_vectSpriteData.size() - 1)
             {
                 ++memSpriteComp->m_current;

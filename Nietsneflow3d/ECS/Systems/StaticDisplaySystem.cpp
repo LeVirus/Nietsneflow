@@ -407,7 +407,7 @@ void StaticDisplaySystem::confWeaponsVertexFromComponent(PlayerConfComponent *pl
     {
         if(playerComp->m_playerShoot)
         {
-            timerComp->m_clockA = std::chrono::system_clock::now();
+            timerComp->m_cycleCountA = 0;
             weaponComp->m_numWeaponSprite = weaponComp->getStdCurrentWeaponSprite() + 1;
             setWeaponSprite(playerComp->m_weaponEntity, weaponComp->m_numWeaponSprite);
             playerComp->m_playerShoot = false;
@@ -416,9 +416,7 @@ void StaticDisplaySystem::confWeaponsVertexFromComponent(PlayerConfComponent *pl
         }
         else if(weaponComp->m_timerShootActive)
         {
-            std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() -
-                    timerComp->m_clockA;
-            treatWeaponShootAnimation(elapsed_seconds.count(), playerComp, timerComp);
+            treatWeaponShootAnimation(playerComp, timerComp);
         }
         else if(!weaponComp->m_timerShootActive)
         {
@@ -431,17 +429,14 @@ void StaticDisplaySystem::confWeaponsVertexFromComponent(PlayerConfComponent *pl
 }
 
 //===================================================================
-void StaticDisplaySystem::treatWeaponShootAnimation(float elapsedSeconds,
-                                                    PlayerConfComponent *playerComp,
-                                                    TimerComponent *timerComp)
+void StaticDisplaySystem::treatWeaponShootAnimation(PlayerConfComponent *playerComp, TimerComponent *timerComp)
 {
     WeaponComponent *weaponComp = stairwayToComponentManager().
-            searchComponentByType<WeaponComponent>(playerComp->m_weaponEntity,
-                                                   Components_e::WEAPON_COMPONENT);
+            searchComponentByType<WeaponComponent>(playerComp->m_weaponEntity, Components_e::WEAPON_COMPONENT);
     assert(weaponComp);
     const WeaponData &currentWeapon = weaponComp->m_weaponsData[weaponComp->m_currentWeapon];
     uint32_t spriteFirstAnim = currentWeapon.m_memPosSprite.first, spriteNumLastAnim = currentWeapon.m_lastAnimNum;
-    if(elapsedSeconds > currentWeapon.m_latency)
+    if(++timerComp->m_cycleCountA > currentWeapon.m_intervalLatency)
     {
         if(currentWeapon.m_animMode == AnimationMode_e::CONSTANT)
         {
@@ -504,7 +499,7 @@ void StaticDisplaySystem::treatWeaponShootAnimation(float elapsedSeconds,
             }
         }
         setWeaponSprite(playerComp->m_weaponEntity, weaponComp->m_numWeaponSprite);
-        timerComp->m_clockA = std::chrono::system_clock::now();
+        timerComp->m_cycleCountA = 0;
     }
 }
 

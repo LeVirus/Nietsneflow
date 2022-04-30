@@ -87,8 +87,7 @@ private:
     void drawWriteVertex(uint32_t numEntity, VertexID_e type, const std::string &value = "");
     void drawLineWriteVertex(PositionVertexComponent *posComp, WriteComponent *writeComp);
     void confWeaponsVertexFromComponent(PlayerConfComponent *playerComp, SpriteTextureComponent *weaponSpriteComp);
-    void treatWeaponShootAnimation(float elapsedSeconds, PlayerConfComponent *playerComp,
-                                   TimerComponent *timerComp);
+    void treatWeaponShootAnimation(PlayerConfComponent *playerComp, TimerComponent *timerComp);
     void setDisplayWeaponChange(PositionVertexComponent *posComp, PlayerConfComponent *playerComp,
                                 MemPositionsVertexComponents *memPosComp);
     void setWeaponMovement(PlayerConfComponent *playerComp, PositionVertexComponent *posComp,
