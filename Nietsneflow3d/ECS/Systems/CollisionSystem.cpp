@@ -245,8 +245,8 @@ void CollisionSystem::treatEnemyTakeDamage(uint32_t enemyEntityNum, uint32_t dam
         return;
     }
     enemyConfCompB->m_touched = true;
-    timerComp->m_clockC = std::chrono::system_clock::now();
-    timerComp->m_clockB = std::chrono::system_clock::now();
+    timerComp->m_cycleCountC = 0;
+    timerComp->m_cycleCountB = 0;
     enemyConfCompB->m_attackPhase = EnemyAttackPhase_e::SHOOTED;
     //if enemy dead
     if(!enemyConfCompB->takeDamage(damage))

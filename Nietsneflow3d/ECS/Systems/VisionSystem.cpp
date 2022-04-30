@@ -176,7 +176,7 @@ void VisionSystem::updateWallSprites()
         {
             currentInterval = m_defaultInterval;
         }
-        if(++timerComp->m_cycleCount >= currentInterval)
+        if(++timerComp->m_cycleCountA >= currentInterval)
         {
             ++memSpriteComp->m_current;
             if(memSpriteComp->m_current >= memSpriteComp->m_vectSpriteData.size())
@@ -184,7 +184,7 @@ void VisionSystem::updateWallSprites()
                 memSpriteComp->m_current = 0;
             }
             spriteComp->m_spriteData = memSpriteComp->m_vectSpriteData[memSpriteComp->m_current];
-            timerComp->m_cycleCount = 0;
+            timerComp->m_cycleCountA = 0;
         }
     }
 }
@@ -229,9 +229,9 @@ void VisionSystem::updateVisibleShotSprite(uint32_t shotEntity, MemSpriteDataCom
     {
         return;
     }
-    if(++timerComp->m_cycleCount >= shotComp->m_cycleDestructNumber)
+    if(++timerComp->m_cycleCountA >= shotComp->m_cycleDestructNumber)
     {
-        timerComp->m_cycleCount = 0;
+        timerComp->m_cycleCountA = 0;
         if(shotComp->m_spriteShotNum != memSpriteComp->m_vectSpriteData.size() - 1)
         {
             ++shotComp->m_spriteShotNum;
@@ -263,7 +263,7 @@ void VisionSystem::updateBarrelSprite(uint32_t barrelEntity, MemSpriteDataCompon
     assert(fpsComp);
     if(!barrelComp->m_destructPhase)
     {
-        if(++timerComp->m_cycleCount >= barrelComp->m_timeStaticPhase)
+        if(++timerComp->m_cycleCountA >= barrelComp->m_timeStaticPhase)
         {
             if(memSpriteComp->m_current < barrelComp->m_memPosExplosionSprite)
             {
@@ -281,15 +281,16 @@ void VisionSystem::updateBarrelSprite(uint32_t barrelEntity, MemSpriteDataCompon
         //first sprite destruct
         if(memSpriteComp->m_current <= barrelComp->m_memPosExplosionSprite)
         {
-            timerComp->m_cycleCount = 0;
+            timerComp->m_cycleCountA = 0;
             memSpriteComp->m_current = barrelComp->m_memPosExplosionSprite + 1;
             spriteComp->m_spriteData = memSpriteComp->m_vectSpriteData[memSpriteComp->m_current];
             fpsComp->m_inGameSpriteSize = glSizeComp->m_memGLSizeData[memSpriteComp->m_current];
             return;
         }
-        if(++timerComp->m_cycleCount >= barrelComp->m_timeStaticPhase)
+        if(++timerComp->m_cycleCountA >= barrelComp->m_timeStaticPhase)
         {
-            timerComp->m_cycleCount = 0;
+            timerComp->m_cycleCountA//        std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() - timerComp->m_clockC;
+ = 0;
             if(memSpriteComp->m_current != memSpriteComp->m_vectSpriteData.size() - 1)
             {
                 ++memSpriteComp->m_current;
@@ -335,9 +336,7 @@ void VisionSystem::updateEnemySprites(uint32_t enemyEntity, uint32_t observerEnt
     {
         enemyConfComp->m_currentSprite =
                 enemyConfComp->m_mapSpriteAssociate.find(EnemySpriteType_e::TOUCHED)->second.first;
-        std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() -
-                timerComp->m_clockC;
-        if(elapsed_seconds.count() > 0.2)
+        if(++timerComp->m_cycleCountC >= enemyConfComp->m_cycleNumberSpriteUpdate)
         {
             enemyConfComp->m_touched = false;
         }
@@ -354,15 +353,14 @@ void VisionSystem::updateEnemySprites(uint32_t enemyEntity, uint32_t observerEnt
     else if(enemyConfComp->m_displayMode == EnemyDisplayMode_e::DYING)
     {
         mapEnemySprite_t::const_iterator it = enemyConfComp->m_mapSpriteAssociate.find(EnemySpriteType_e::DYING);
-        std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() - timerComp->m_clockB;
         if(enemyConfComp->m_currentSprite == it->second.second)
         {
             enemyConfComp->m_displayMode = EnemyDisplayMode_e::DEAD;
         }
-        else if(elapsed_seconds.count() > enemyConfComp->m_dyingInterval)
+        else if(++timerComp->m_cycleCountB >= enemyConfComp->m_cycleNumberDyingInterval)
         {
             ++enemyConfComp->m_currentSprite;
-            timerComp->m_clockB = std::chrono::system_clock::now();
+            timerComp->m_cycleCountB = 0;
         }
     }
     spriteComp->m_spriteData = memSpriteComp->m_vectSpriteData[static_cast<uint32_t>(enemyConfComp->m_currentSprite)];
@@ -424,21 +422,18 @@ void updateEnemyAttackSprite(EnemyConfComponent *enemyConfComp, TimerComponent *
     }
     if(enemyConfComp->m_currentSprite >= it->second.first &&
             enemyConfComp->m_currentSprite <= it->second.second)
-    {
-        std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() - timerComp->m_clockC;
-        if(elapsed_seconds.count() > enemyConfComp->m_attackInterval)
+    {        
+        if(++timerComp->m_cycleCountC >= enemyConfComp->m_cycleNumberAttackInterval)
         {
             ++enemyConfComp->m_currentSprite;
-            timerComp->m_clockC = std::chrono::system_clock::now();
+            timerComp->m_cycleCountC = 0;
         }
     }
-    //if sprite is not ATTACK
+    //if sprite is not ATTACK Go to First atack sprite
     else
     {
-        enemyConfComp->m_currentSprite =
-                enemyConfComp->m_mapSpriteAssociate.find(
-                    EnemySpriteType_e::ATTACK)->second.first;
-        timerComp->m_clockC = std::chrono::system_clock::now();
+        enemyConfComp->m_currentSprite = enemyConfComp->m_mapSpriteAssociate.find(EnemySpriteType_e::ATTACK)->second.first;
+        timerComp->m_cycleCountC = 0;
     }
 }
 

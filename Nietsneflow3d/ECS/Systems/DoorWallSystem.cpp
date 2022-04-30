@@ -64,18 +64,18 @@ void DoorWallSystem::treatDoors()
         assert(timerComp);
         if(doorComp->m_currentState == DoorState_e::STATIC_OPEN)
         {
-            if(++timerComp->m_cycleCount >= m_doorCyclesForClose)
+            if(++timerComp->m_cycleCountA >= m_doorCyclesForClose)
             {
                 if(doorComp->m_obstruct)
                 {
-                    timerComp->m_cycleCount = 0;
+                    timerComp->m_cycleCountA = 0;
                     doorComp->m_obstruct = false;
                 }
                 else
                 {
                     doorComp->m_currentState = DoorState_e::MOVE_CLOSE;
                     activeDoorSound(mVectNumEntity[i]);
-                    timerComp->m_cycleCount = 0;
+                    timerComp->m_cycleCountA = 0;
                 }
             }
             continue;

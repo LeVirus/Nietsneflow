@@ -571,12 +571,9 @@ void MainEngine::memTimerPausedValue()
     m_vectMemPausedTimer.reserve(vectEntities.size());
     for(uint32_t i = 0; i < vectEntities.size(); ++i)
     {
-        timerComp = m_ecsManager.getComponentManager().
-                searchComponentByType<TimerComponent>(vectEntities[i],
-                                                      Components_e::TIMER_COMPONENT);
+        timerComp = m_ecsManager.getComponentManager().searchComponentByType<TimerComponent>(vectEntities[i], Components_e::TIMER_COMPONENT);
         assert(timerComp);
-        time_t time = (std::chrono::system_clock::to_time_t(
-                           std::chrono::system_clock::now()) -
+        time_t time = (std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()) -
                        std::chrono::system_clock::to_time_t(timerComp->m_clockA));
         m_vectMemPausedTimer.emplace_back(vectEntities[i], time);
     }
@@ -1178,7 +1175,7 @@ void MainEngine::confBaseWallData(uint32_t wallEntity, const SpriteData &memSpri
     timerComp = m_ecsManager.getComponentManager().
             searchComponentByType<TimerComponent>(wallEntity, Components_e::TIMER_COMPONENT);
     assert(timerComp);
-    timerComp->m_cycleCount = 0;
+    timerComp->m_cycleCountA = 0;
 }
 
 //===================================================================
@@ -1211,7 +1208,7 @@ void MainEngine::loadDoorEntities(const LevelManager &levelManager)
             TimerComponent *timerComp = m_ecsManager.getComponentManager().
                     searchComponentByType<TimerComponent>(numEntity, Components_e::TIMER_COMPONENT);
             assert(audioComp);
-            timerComp->m_cycleCount = 0;
+            timerComp->m_cycleCountA = 0;
             audioComp->m_soundElements.push_back(loadSound(levelManager.getDoorOpeningSoundFile()));
             if(it->second.m_vertical)
             {
@@ -1333,7 +1330,7 @@ void MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
             TimerComponent *timerComponent = m_ecsManager.getComponentManager().
                     searchComponentByType<TimerComponent>(numEntity, Components_e::TIMER_COMPONENT);
             assert(timerComponent);
-            timerComponent->m_cycleCount = 0;
+            timerComponent->m_cycleCountA = 0;
             timerComponent->m_clockC = std::chrono::system_clock::now();
             memCheckpointEnemiesData(loadFromCheckpoint, numEntity, m_currentLevelEnemiesNumber);
             ++m_currentLevelEnemiesNumber;
@@ -2929,7 +2926,7 @@ void MainEngine::loadBarrelElementEntities(const LevelManager &levelManager)
         barrelComp->m_life = 3;
         barrelComp->m_memPosExplosionSprite = barrelData.m_staticSprite.size() - 1;
         barrelComp->m_damageZoneEntity = createDamageZoneEntity(15, CollisionTag_e::EXPLOSION_CT, 30.0f, levelManager.getHitSoundFile());
-        timerComp->m_cycleCount = 0;
+        timerComp->m_cycleCountA = 0;
     }
 }
 
