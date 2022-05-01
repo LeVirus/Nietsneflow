@@ -218,17 +218,17 @@ void VisionSystem::updateVisibleShotSprite(uint32_t shotEntity, MemSpriteDataCom
 {
     ShotConfComponent *shotComp = stairwayToComponentManager().
             searchComponentByType<ShotConfComponent>(shotEntity, Components_e::SHOT_CONF_COMPONENT);
+    assert(shotComp);
+    if(!shotComp->m_destructPhase)
+    {
+        return;
+    }
     MemFPSGLSizeComponent *memGLSizeComp = stairwayToComponentManager().
             searchComponentByType<MemFPSGLSizeComponent>(shotEntity, Components_e::MEM_FPS_GLSIZE_COMPONENT);
     FPSVisibleStaticElementComponent *fpsStaticComp = stairwayToComponentManager().
             searchComponentByType<FPSVisibleStaticElementComponent>(shotEntity, Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
     assert(fpsStaticComp);
-    assert(shotComp);
     assert(memGLSizeComp);
-    if(!shotComp->m_destructPhase)
-    {
-        return;
-    }
     if(++timerComp->m_cycleCountA >= shotComp->m_cycleDestructNumber)
     {
         timerComp->m_cycleCountA = 0;
