@@ -217,13 +217,21 @@ void IASystem::updateEnemyDirection(EnemyConfComponent *enemyConfComp, MoveableC
                                     MapCoordComponent *enemyMapComp)
 {
     moveComp->m_degreeOrientation = getTrigoAngle(enemyMapComp->m_absoluteMapPositionPX, m_playerMapComp->m_absoluteMapPositionPX);
-    if(enemyConfComp->m_attackPhase == EnemyAttackPhase_e::MOVE_TO_TARGET_RIGHT)
+    if(enemyConfComp->m_attackPhase == EnemyAttackPhase_e::MOVE_TO_TARGET_DIAG_RIGHT)
     {
         moveComp->m_degreeOrientation -= 30.0f;
     }
-    else if(enemyConfComp->m_attackPhase == EnemyAttackPhase_e::MOVE_TO_TARGET_LEFT)
+    else if(enemyConfComp->m_attackPhase == EnemyAttackPhase_e::MOVE_TO_TARGET_DIAG_LEFT)
     {
         moveComp->m_degreeOrientation += 30.0f;
+    }
+    else if(enemyConfComp->m_attackPhase == EnemyAttackPhase_e::MOVE_TO_TARGET_LEFT)
+    {
+        moveComp->m_degreeOrientation += 90.0f;
+    }
+    else if(enemyConfComp->m_attackPhase == EnemyAttackPhase_e::MOVE_TO_TARGET_RIGHT)
+    {
+        moveComp->m_degreeOrientation -= 90.0f;
     }
     moveComp->m_currentDegreeMoveDirection = moveComp->m_degreeOrientation;
 }
@@ -273,10 +281,46 @@ void IASystem::treatEnemyBehaviourAttack(uint32_t enemyEntity, MapCoordComponent
                 enemyEntity, Components_e::TIMER_COMPONENT);
     assert(moveComp);
     assert(timerComp);
-    if(++timerComp->m_cycleCountB > m_intervalEnemyBehaviour)
+    if(!enemyConfComp->m_stuck)
     {
-        enemyConfComp->m_prevWall = false;
-        enemyConfComp->m_attackPhase = static_cast<EnemyAttackPhase_e>(std::rand() / ((RAND_MAX + 1u) / 4));
+        enemyConfComp->m_previousMove = {EnemyAttackPhase_e::TOTAL, EnemyAttackPhase_e::TOTAL};
+    }
+    if(enemyConfComp->m_stuck || ++timerComp->m_cycleCountB >= m_intervalEnemyBehaviour)
+    {
+        if(enemyConfComp->m_countTillLastAttack > 3)
+        {
+            enemyConfComp->m_attackPhase = EnemyAttackPhase_e::SHOOT;
+            enemyConfComp->m_stuck = false;
+        }
+        else
+        {
+            uint32_t modulo = (enemyConfComp->m_countTillLastAttack < 2) ? static_cast<uint32_t>(EnemyAttackPhase_e::SHOOT) :
+                                                                           static_cast<uint32_t>(EnemyAttackPhase_e::SHOOTED);
+            enemyConfComp->m_attackPhase = static_cast<EnemyAttackPhase_e>(std::rand() / ((RAND_MAX + 1u) / modulo));
+        }
+        enemyConfComp->m_countTillLastAttack =
+                (enemyConfComp->m_attackPhase == EnemyAttackPhase_e::SHOOT) ? 0 : ++enemyConfComp->m_countTillLastAttack;
+        while(enemyConfComp->m_stuck)
+        {
+            if((enemyConfComp->m_attackPhase != enemyConfComp->m_previousMove.first &&
+                enemyConfComp->m_attackPhase != enemyConfComp->m_previousMove.second))
+            {
+                enemyConfComp->m_stuck = false;
+            }
+            else
+            {
+                if(enemyConfComp->m_attackPhase == EnemyAttackPhase_e::MOVE_TO_TARGET_FRONT)
+                {
+                    enemyConfComp->m_attackPhase = EnemyAttackPhase_e::MOVE_TO_TARGET_DIAG_LEFT;
+                }
+                else
+                {
+                    enemyConfComp->m_attackPhase = static_cast<EnemyAttackPhase_e>(static_cast<uint32_t>(enemyConfComp->m_attackPhase) - 1);
+                }
+            }
+        }
+        std::swap(enemyConfComp->m_previousMove.first, enemyConfComp->m_previousMove.second);
+        enemyConfComp->m_previousMove.first = enemyConfComp->m_attackPhase;
         timerComp->m_cycleCountB = 0;
         updateEnemyDirection(enemyConfComp, moveComp, enemyMapComp);
         if(enemyConfComp->m_attackPhase == EnemyAttackPhase_e::SHOOT)
@@ -288,8 +332,8 @@ void IASystem::treatEnemyBehaviourAttack(uint32_t enemyEntity, MapCoordComponent
         {
             if(++enemyConfComp->m_countPlayerInvisibility > 5)
             {
-               enemyConfComp->m_behaviourMode = EnemyBehaviourMode_e::PASSIVE;
-               timerComp->m_cycleCountC = 0;
+                enemyConfComp->m_behaviourMode = EnemyBehaviourMode_e::PASSIVE;
+                timerComp->m_cycleCountC = 0;
             }
         }
     }

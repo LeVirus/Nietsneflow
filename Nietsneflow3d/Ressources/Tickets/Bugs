@@ -2,7 +2,10 @@ BUGS======================================================================
 
 
 ))
-Display issue in moveable wall multi sprite on trigger (wall trigger ==> display door sprite)
+When die and reload from checkpoint moveable wall bad place
+
+))
+Display issue in moveable wall multi sprite on trigger (wall trigger ==> display door sprite) NOT REPRODUCIBLE
 
 
 ))

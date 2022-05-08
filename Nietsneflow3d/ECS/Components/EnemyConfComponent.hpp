@@ -26,11 +26,14 @@ enum class EnemyBehaviourMode_e
 
 enum class EnemyAttackPhase_e
 {
-    MOVE_TO_TARGET_FRONT,
+    MOVE_TO_TARGET_FRONT,//MUST BE FIRST
     MOVE_TO_TARGET_RIGHT,
     MOVE_TO_TARGET_LEFT,
+    MOVE_TO_TARGET_DIAG_RIGHT,
+    MOVE_TO_TARGET_DIAG_LEFT,
     SHOOT,
-    SHOOTED//FROZEN
+    SHOOTED,//FROZEN MUST BE BEFORE TOTAL
+    TOTAL
 };
 
 enum class EnemySoundEffect_e
@@ -60,15 +63,18 @@ struct EnemyConfComponent : public ecs::Component
             return true;
         }
     }
-    bool m_prevWall = false, m_touched = false, m_visibleShot;
+    bool m_stuck = false, m_touched = false, m_visibleShot;
     uint32_t m_weaponEntity, m_life, m_countPlayerInvisibility = 0, m_currentSprite, m_cycleNumberSpriteUpdate = 0.2 / FPS_VALUE,
-    m_cycleNumberDyingInterval = 0.11 / FPS_VALUE, m_cycleNumberAttackInterval = 0.15f / FPS_VALUE, m_standardSpriteInterval = 0.5 / FPS_VALUE;
+    m_cycleNumberDyingInterval = 0.11 / FPS_VALUE, m_cycleNumberAttackInterval = 0.15f / FPS_VALUE, m_standardSpriteInterval = 0.5 / FPS_VALUE,
+    m_countTillLastAttack = 0;
     std::vector<uint32_t> m_stdAmmo, m_visibleAmmo;
     EnemyDisplayMode_e m_displayMode = EnemyDisplayMode_e::NORMAL;
     //give first and last emplacement of sprite from type
     mapEnemySprite_t m_mapSpriteAssociate;
     std::optional<uint32_t> m_dropedObjectEntity;
     EnemyBehaviourMode_e m_behaviourMode = EnemyBehaviourMode_e::PASSIVE;
+    //fist previous -1, second previous -2
+    std::pair<EnemyAttackPhase_e, EnemyAttackPhase_e> m_previousMove = {EnemyAttackPhase_e::TOTAL, EnemyAttackPhase_e::TOTAL};
     EnemyAttackPhase_e m_attackPhase;
     std::optional<uint32_t> m_meleeAttackDamage;
     virtual ~EnemyConfComponent() = default;
