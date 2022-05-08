@@ -2,10 +2,7 @@ BUGS======================================================================
 
 
 ))
-When die and reload from checkpoint moveable wall bad place
-
-))
-Display issue in moveable wall multi sprite on trigger (wall trigger ==> display door sprite) NOT REPRODUCIBLE
+When die and reload from checkpoint moveable wall bad place========================NOT REPRODUCIBLE
 
 
 ))
@@ -20,6 +17,9 @@ In input gamepad menu bug in GLFW in AXIS===============================~
 ))
 Wall exists inside door some time======================Bug in level editor
 
+
+))
+Display issue in moveable wall multi sprite on trigger (wall trigger ==> display door sprite) NOT REPRODUCIBLE APPEND ONLY WHEN MODIFY LEVEL WHEN GAME RUNNING====================OK
 
 ))
 Display enemies visible shot explosion issue===============================OK

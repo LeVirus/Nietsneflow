@@ -178,7 +178,7 @@ void ColorDisplaySystem::clearEntities()
 //===================================================================
 void ColorDisplaySystem::updateMusicVolumeBar(uint32_t volume)
 {
-    float newVal = 0.1f + (volume * MAX_BAR_MENU_SIZE) / 100.0f;
+    float newVal = 0.11f + (volume * MAX_BAR_MENU_SIZE) / 100.0f;
     m_menuMusicVolumeComponents.first->m_vertex[1].first = newVal;
     m_menuMusicVolumeComponents.first->m_vertex[2].first = newVal;
 }
@@ -186,7 +186,7 @@ void ColorDisplaySystem::updateMusicVolumeBar(uint32_t volume)
 //===================================================================
 void ColorDisplaySystem::updateEffectsVolumeBar(uint32_t volume)
 {
-    float newVal = 0.1f + (volume * MAX_BAR_MENU_SIZE) / 100.0f;
+    float newVal = 0.11f + (volume * MAX_BAR_MENU_SIZE) / 100.0f;
     m_menuEffectsVolumeComponents.first->m_vertex[1].first = newVal;
     m_menuEffectsVolumeComponents.first->m_vertex[2].first = newVal;
 }
@@ -194,7 +194,7 @@ void ColorDisplaySystem::updateEffectsVolumeBar(uint32_t volume)
 //===================================================================
 void ColorDisplaySystem::updateTurnSensitivityBar(uint32_t turnSensitivity)
 {
-    float newVal = 0.1f + ((turnSensitivity - MIN_TURN_SENSITIVITY) * MAX_BAR_MENU_SIZE) / DIFF_TOTAL_SENSITIVITY;
+    float newVal = 0.11f + ((turnSensitivity - MIN_TURN_SENSITIVITY) * MAX_BAR_MENU_SIZE) / DIFF_TOTAL_SENSITIVITY;
     m_menuTurnSensitivityComponents.first->m_vertex[1].first = newVal;
     m_menuTurnSensitivityComponents.first->m_vertex[2].first = newVal;
 }
