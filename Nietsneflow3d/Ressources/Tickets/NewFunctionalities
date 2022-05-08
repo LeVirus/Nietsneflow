@@ -3,7 +3,13 @@ NEW FUNCTIONALITIES=============================================================
 
 ))
 For custom level add menu
+	Each level are independant
+	When a custom level ends go back to custom level menu
+	Special Save for custom??
+	Ajouter le menu custom level dans le menu du jeu
 
+))
+Faire une section de fin (générique et/ou ProloGUE)
 
 ))
 Add mouse support===============================OK
