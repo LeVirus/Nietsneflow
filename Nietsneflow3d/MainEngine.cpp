@@ -848,6 +848,12 @@ void MainEngine::loadExistingLevelNumSaves(const std::array<std::optional<DataLe
 }
 
 //===================================================================
+void MainEngine::loadExistingCustomLevel(const std::vector<std::string> &customLevels)
+{
+    m_graphicEngine.loadExistingCustomLevel(customLevels);
+}
+
+//===================================================================
 void MainEngine::loadLevel(const LevelManager &levelManager)
 {
     m_memWallPos.clear();

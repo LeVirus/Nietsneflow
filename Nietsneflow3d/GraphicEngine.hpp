@@ -31,6 +31,7 @@ class GraphicEngine
 public:
     GraphicEngine();
     void loadExistingLevelNumSaves(const std::array<std::optional<DataLevelWriteMenu>, 3> &existingLevelNum);
+    void loadExistingCustomLevel(const std::vector<std::string> &customLevels);
     void confSystems();
     void loadPictureData(const PictureData &pictureData, const FontData &fontData);
     void runIteration(bool gamePaused);
@@ -126,7 +127,8 @@ private:
     StaticDisplaySystem *m_staticDisplaySystem = nullptr;
     uint32_t m_transitionFrameNumber = 30;
     std::array<std::optional<DataLevelWriteMenu>, 3> m_memExistingLevelSave;
-    std::string m_saveMenuWrite;
+    std::string m_saveStandardLevelMenuWrite;
+    std::vector<std::string> m_existingCustomLevelsFilename, m_existingCustomLevelsMenuWrite;
     bool m_fullscreenMode = false, m_displayMenuFullscreenMode = m_fullscreenMode;
     const std::map<InputMenuCursorPos_e, std::string> m_mapInputActionStringAssociated = {
         {InputMenuCursorPos_e::ACTION, "ACTION"},

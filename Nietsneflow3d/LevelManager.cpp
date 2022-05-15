@@ -7,6 +7,8 @@
 #include <filesystem>
 #include <ctime>
 
+namespace fs = std::filesystem;
+
 //===================================================================
 LevelManager::LevelManager()
 {
@@ -1507,7 +1509,7 @@ bool LevelManager::loadLevel(const std::string &INIFileName, uint32_t levelNum)
 {
     std::string path = LEVEL_RESSOURCES_DIR_STR + std::string("Level") +
             std::to_string(levelNum) + std::string ("/") + INIFileName;
-    if(!std::filesystem::exists(path))
+    if(!fs::exists(path))
     {
         return false;
     }
@@ -2003,7 +2005,7 @@ std::string LevelManager::saveGameProgress(const MemPlayerConf &playerConfBeginL
 std::optional<MemLevelLoadedData> LevelManager::loadSavedGame(uint32_t saveNum)
 {
     std::string path = LEVEL_RESSOURCES_DIR_STR + "Saves/save" + std::to_string(saveNum) + ".ini";
-    if(saveNum == 0 || !std::filesystem::exists(path))
+    if(saveNum == 0 || !fs::exists(path))
     {
         return {};
     }
@@ -2232,7 +2234,7 @@ std::array<std::optional<DataLevelWriteMenu>, 3> LevelManager::getExistingLevelN
     for(uint32_t i = 1; i < 4; ++i)
     {
         path = LEVEL_RESSOURCES_DIR_STR + "Saves/save" + std::to_string(i) + ".ini";
-        if(std::filesystem::exists(path))
+        if(fs::exists(path))
         {
             ret[i - 1] = DataLevelWriteMenu();
             loadIniFile(path, ENCRYPT_KEY_CONF_FILE);
@@ -2257,9 +2259,25 @@ std::array<std::optional<DataLevelWriteMenu>, 3> LevelManager::getExistingLevelN
 }
 
 //===================================================================
+std::vector<std::string> LevelManager::getExistingCustomLevel()
+{
+    std::vector<std::string> vect;
+    for(fs::directory_iterator it =
+        fs::directory_iterator(LEVEL_RESSOURCES_DIR_STR + "CustomLevels/");
+        it != fs::directory_iterator(); ++it)
+    {
+        if(it->path().extension().string() == ".clvl")
+        {
+            vect.push_back(it->path().filename().string());
+        }
+    }
+    return vect;
+}
+
+//===================================================================
 bool LevelManager::checkSavedGameExists(uint32_t saveNum)const
 {
-    return std::filesystem::exists(LEVEL_RESSOURCES_DIR_STR + "Saves/save" + std::to_string(saveNum) + ".ini");
+    return fs::exists(LEVEL_RESSOURCES_DIR_STR + "Saves/save" + std::to_string(saveNum) + ".ini");
 }
 
 //===================================================================

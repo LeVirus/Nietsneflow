@@ -26,21 +26,55 @@ GraphicEngine::GraphicEngine()
 void GraphicEngine::loadExistingLevelNumSaves(const std::array<std::optional<DataLevelWriteMenu>, 3> &existingLevelNum)
 {
     m_memExistingLevelSave = existingLevelNum;
-    m_saveMenuWrite.clear();
+    m_saveStandardLevelMenuWrite.clear();
     std::string checkpoint;
     for(uint32_t i = 1; i < 4; ++i)
     {
-        m_saveMenuWrite += std::to_string(i);
+        m_saveStandardLevelMenuWrite += std::to_string(i);
         if(existingLevelNum[i - 1])
         {
             checkpoint = (existingLevelNum[i - 1]->m_checkpointNum == 0) ? "" :
                 " CHCKPT " + std::to_string(existingLevelNum[i - 1]->m_checkpointNum);
-            m_saveMenuWrite += "  LVL " + std::to_string(existingLevelNum[i - 1]->m_levelNum) +
+            m_saveStandardLevelMenuWrite += "  LVL " + std::to_string(existingLevelNum[i - 1]->m_levelNum) +
                     checkpoint + " " + existingLevelNum[i - 1]->m_date;
         }
-        m_saveMenuWrite += "\\";
+        m_saveStandardLevelMenuWrite += "\\";
     }
-    m_saveMenuWrite += "RETURN";
+    m_saveStandardLevelMenuWrite += "RETURN";
+}
+
+//===================================================================
+void GraphicEngine::loadExistingCustomLevel(const std::vector<std::string> &customLevels)
+{
+    m_existingCustomLevelsFilename = customLevels;
+    std::string str, strFinal, longNameContract = "...CLVL", endStringMenu;
+    const uint32_t sectionSize = 9;
+    m_existingCustomLevelsMenuWrite.clear();
+    uint32_t currentSectionCursor = 0, currentMenuSection = 0, size = customLevels.size() / sectionSize +
+            ((customLevels.size() % sectionSize == 0) ? 0 : 1);
+    m_existingCustomLevelsMenuWrite.resize(size);
+    endStringMenu = (size > 1) ? "PREVIOUS\\NEXT\\RETURN" : "\\RETURN";
+    for(uint32_t i = 0; i < customLevels.size(); ++i, ++currentSectionCursor)
+    {
+        str = customLevels[i];
+        if(str.size() > 15)
+        {
+            str.resize(15);
+            std::copy(longNameContract.begin(), longNameContract.end(), str.begin() +
+                      str.size() - longNameContract.size());
+        }
+        std::transform(str.begin(), str.end(), str.begin(),
+                       [](unsigned char c){ return std::toupper(c); });
+        strFinal += std::to_string(i) + " " + str + "\\";
+        if(currentSectionCursor == (sectionSize - 1) || currentSectionCursor == customLevels.size() - 1)
+        {
+            strFinal += endStringMenu;
+            m_existingCustomLevelsMenuWrite[currentMenuSection] = strFinal;
+            currentSectionCursor = 0;
+            strFinal.clear();
+            //OOOOOK
+        }
+    }
 }
 
 //===================================================================
@@ -207,6 +241,9 @@ void GraphicEngine::fillTitleMenuWrite(WriteComponent *writeComp, MenuMode_e men
     case MenuMode_e::LOAD_GAME:
         writeComp->m_str = "LOAD GAME";
         break;
+    case MenuMode_e::LOAD_CUSTOM_LEVEL:
+        writeComp->m_str = "LOAD CUSTOM GAME";
+        break;
     case MenuMode_e::CONFIRM_LOADING_GAME_FORM:
     {
         if(previousMenuEntry == MenuMode_e::LOAD_GAME)
@@ -253,8 +290,12 @@ void GraphicEngine::fillMenuWrite(WriteComponent *writeComp, MenuMode_e menuEntr
 {
     if(menuEntry == MenuMode_e::LOAD_GAME || menuEntry == MenuMode_e::NEW_GAME)
     {
-        writeComp->m_str = m_saveMenuWrite;
+        writeComp->m_str = m_saveStandardLevelMenuWrite;
     }
+//    else if(menuEntry == MenuMode_e::LOAD_CUSTOM_LEVEL)
+//    {
+//        writeComp->m_str = "TEST\\AA";
+//    }
     else if(menuEntry == MenuMode_e::TRANSITION_LEVEL)
     {
         writeComp->m_str = getEndLevelMenuStr(endLevelData);

@@ -147,6 +147,7 @@ private:
     void treatEnterPressedInputMenu(PlayerConfComponent *playerComp);
     void treatEnterPressedNewGameMenu(PlayerConfComponent *playerComp);
     void treatEnterPressedLoadGameMenu(PlayerConfComponent *playerComp);
+    void treatEnterPressedLoadCustomGameMenu(PlayerConfComponent *playerComp);
     void treatEnterPressedConfirmInputMenu(PlayerConfComponent *playerComp);
     void treatEnterPressedConfirmLoadGameMenu(PlayerConfComponent *playerComp);
     void treatEnterPressedConfirmRestartLevelMenu(PlayerConfComponent *playerComp);
@@ -176,6 +177,7 @@ private:
         {MenuMode_e::SOUND, static_cast<uint32_t>(SoundMenuCursorPos_e::TOTAL) - 1},
         {MenuMode_e::NEW_GAME, static_cast<uint32_t>(NewGameMenuCursorPos_e::TOTAL) - 1},
         {MenuMode_e::LOAD_GAME, static_cast<uint32_t>(LoadGameMenuCursorPos_e::TOTAL) - 1},
+        {MenuMode_e::LOAD_CUSTOM_LEVEL, static_cast<uint32_t>(LoadCustomGameMenuCursorPos_e::TOTAL) - 1},
         {MenuMode_e::CONFIRM_QUIT_INPUT_FORM, static_cast<uint32_t>(ConfirmCursorPos_e::TOTAL) - 1},
         {MenuMode_e::CONFIRM_LOADING_GAME_FORM, static_cast<uint32_t>(ConfirmCursorPos_e::TOTAL) - 1},
         {MenuMode_e::CONFIRM_RESTART_LEVEL, static_cast<uint32_t>(ConfirmCursorPos_e::TOTAL) - 1},

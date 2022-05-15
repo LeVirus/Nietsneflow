@@ -797,6 +797,9 @@ void InputSystem::treatEnterPressedMenu(PlayerConfComponent *playerComp)
     case MenuMode_e::LOAD_GAME:
         treatEnterPressedLoadGameMenu(playerComp);
         break;
+    case MenuMode_e::LOAD_CUSTOM_LEVEL:
+        treatEnterPressedLoadCustomGameMenu(playerComp);
+        break;
     case MenuMode_e::CONFIRM_QUIT_INPUT_FORM:
         treatEnterPressedConfirmInputMenu(playerComp);
         break;
@@ -1052,10 +1055,13 @@ void InputSystem::treatEnterPressedTitleMenu(PlayerConfComponent *playerComp)
         playerComp->m_menuMode = MenuMode_e::LOAD_GAME;
         m_mainEngine->setMenuEntries(playerComp);
         break;
+    case TitleMenuCursorPos_e::PLAY_CUSTOM_LEVELS:
+        playerComp->m_menuMode = MenuMode_e::LOAD_CUSTOM_LEVEL;
+        m_mainEngine->setMenuEntries(playerComp);
+        break;
     case TitleMenuCursorPos_e::QUIT_GAME:
         glfwSetWindowShouldClose(m_window, true);
         break;
-    case TitleMenuCursorPos_e::PLAY_CUSTOM_LEVELS:
     case TitleMenuCursorPos_e::TOTAL:
         break;
     }
@@ -1100,6 +1106,10 @@ void InputSystem::treatEnterPressedMainMenu(PlayerConfComponent *playerComp)
         playerComp->m_menuMode = MenuMode_e::CONFIRM_RESTART_LEVEL;
         m_mainEngine->setMenuEntries(playerComp);
         break;
+    case MainMenuCursorPos_e::PLAY_CUSTOM_LEVELS:
+        playerComp->m_menuMode = MenuMode_e::LOAD_CUSTOM_LEVEL;
+        m_mainEngine->setMenuEntries(playerComp);
+    break;
     case MainMenuCursorPos_e::QUIT_GAME:
         glfwSetWindowShouldClose(m_window, true);
         break;
@@ -1240,6 +1250,18 @@ void InputSystem::treatEnterPressedLoadGameMenu(PlayerConfComponent *playerComp)
         playerComp->m_menuMode = MenuMode_e::CONFIRM_LOADING_GAME_FORM;
         m_mainEngine->setMenuEntries(playerComp);
     }
+}
+
+//===================================================================
+void InputSystem::treatEnterPressedLoadCustomGameMenu(PlayerConfComponent *playerComp)
+{
+    LoadCustomGameMenuCursorPos_e menuPos = static_cast<LoadCustomGameMenuCursorPos_e>(playerComp->m_currentCursorPos);
+    if(menuPos == LoadCustomGameMenuCursorPos_e::RETURN)
+    {
+        playerComp->m_menuMode = playerComp->m_firstMenu ? MenuMode_e::TITLE : MenuMode_e::BASE;
+        m_mainEngine->setMenuEntries(playerComp);
+    }
+    //A COMPLETER
 }
 
 //===================================================================

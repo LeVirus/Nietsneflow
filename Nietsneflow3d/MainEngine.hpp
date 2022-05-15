@@ -93,6 +93,7 @@ public:
     MainEngine() = default;
     void loadGraphicPicture(const PictureData &picData, const FontData &fontData);
     void loadExistingLevelNumSaves(const std::array<std::optional<DataLevelWriteMenu>, 3> &existingLevelNum);
+    void loadExistingCustomLevel(const std::vector<std::string> &customLevels);
     void init(Game *refGame);
     LevelState displayTitleMenu(const LevelManager &levelManager);
     void loadLevel(const LevelManager &levelManager);

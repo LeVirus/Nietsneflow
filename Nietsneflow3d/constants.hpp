@@ -109,6 +109,7 @@ enum class MainMenuCursorPos_e
     LOAD_GAME,
     RESTART_FROM_LAST_CHECKPOINT,
     RESTART_LEVEL,
+    PLAY_CUSTOM_LEVELS,
     QUIT_GAME,
     TOTAL
 };
@@ -135,6 +136,19 @@ enum class LoadGameMenuCursorPos_e
     FIRST,
     SECOND,
     THIRD,
+    RETURN,
+    TOTAL
+};
+
+enum class LoadCustomGameMenuCursorPos_e
+{
+    FIRST,
+    SECOND,
+    THIRD,
+    FOURTH,
+    FIFTH,
+    PREVIOUS,
+    NEXT,
     RETURN,
     TOTAL
 };
@@ -363,7 +377,8 @@ enum class MenuMode_e
     CONFIRM_LOADING_GAME_FORM,
     CONFIRM_RESTART_LEVEL,
     CONFIRM_RESTART_FROM_LAST_CHECKPOINT,
-    NEW_KEY
+    NEW_KEY,
+    LOAD_CUSTOM_LEVEL
 };
 
 const uint32_t MIN_TURN_SENSITIVITY = 20, MAX_TURN_SENSITIVITY = 100,
@@ -423,7 +438,7 @@ inline const std::map<MenuMode_e, PairPairFloatStr_t> MAP_MENU_DATA =
         "NEW GAME\\LOAD GAME\\DISPLAY CONF\\SOUND CONF\\INPUT CONF\\PLAY CUSTOM LEVELS\\EXIT GAME"}},
     {MenuMode_e::BASE,
      PairPairFloatStr_t{{-0.5f, 0.5f},
-      "RETURN TO GAME\\SOUND CONF\\DISPLAY CONF\\INPUT CONF\\NEW GAME\\LOAD GAME\\RESTART FROM LAST CHECKPOINT\\RESTART LEVEL\\EXIT GAME"}},
+      "RETURN TO GAME\\SOUND CONF\\DISPLAY CONF\\INPUT CONF\\NEW GAME\\LOAD GAME\\RESTART FROM LAST CHECKPOINT\\RESTART LEVEL\\PLAY CUSTOM LEVELS\\EXIT GAME"}},
     {MenuMode_e::TRANSITION_LEVEL,
      PairPairFloatStr_t{{-0.5f, 0.5f}, "CONTINUE"}},
     {MenuMode_e::SOUND,
@@ -454,6 +469,9 @@ inline const std::map<MenuMode_e, PairPairFloatStr_t> MAP_MENU_DATA =
     },
     {MenuMode_e::NEW_KEY,
      PairPairFloatStr_t{{-0.6f, 0.1f}, "PRESS ESCAPE FOR CANCEL\\ENTER NEW KEY FOR ACTION :\\"}
+    },
+    {MenuMode_e::LOAD_CUSTOM_LEVEL,
+     PairPairFloatStr_t{{-0.7f, 0.7f}, "1\\2\\3\\4\\5\\PREVIOUS\\NEXT\\RETURN"}
     }
 };
 inline const std::map<Shader_e, std::string> SHADER_ID_MAP
