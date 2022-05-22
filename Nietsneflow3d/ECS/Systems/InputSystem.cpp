@@ -587,7 +587,17 @@ void InputSystem::treatReleaseInputMenu()
 //===================================================================
 void InputSystem::treatGeneralKeysMenu(PlayerConfComponent *playerComp)
 {
-    uint32_t maxMenuIndex = m_mapMenuSize.at(playerComp->m_menuMode);
+    uint32_t maxMenuIndex;
+    if(playerComp->m_menuMode != MenuMode_e::LOAD_CUSTOM_LEVEL)
+    {
+        maxMenuIndex = m_mapMenuSize.at(playerComp->m_menuMode);
+    }
+    else
+    {
+        std::optional<uint32_t> menuSize = m_mainEngine->getCustomLevelsMenuSize(playerComp->m_currentCustomLevelCusorMenu);
+        assert(menuSize);
+        maxMenuIndex = *menuSize;
+    }
     if(!m_modeTransition && ((!m_keyUpPressed && glfwGetKey(m_window, GLFW_KEY_UP) == GLFW_PRESS) ||
                              (!m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_DPAD_UP] &&
                               checkStandardButtonGamepadKeyStatus(GLFW_GAMEPAD_BUTTON_DPAD_UP, GLFW_PRESS))))

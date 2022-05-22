@@ -118,11 +118,15 @@ public:
     std::map<uint32_t, std::pair<std::vector<uint32_t>, bool> > loadTriggerWallMoveableWallDataGameProgress();
     std::map<uint32_t, std::pair<uint32_t, bool> > loadMoveableWallDataGameProgress();
     std::array<std::optional<DataLevelWriteMenu>, 3> getExistingLevelNumSaves();
-    std::vector<std::string> getExistingCustomLevel();
+    void loadExistingCustomLevelFilename();
     //if encryptKey is nullopt no encryption
     bool loadIniFile(std::string_view path, std::optional<uint32_t> encryptKey);
     std::string saveGameProgress(const MemPlayerConf &playerConfBeginLevel, const MemPlayerConf &playerConfCheckpoint, uint32_t levelNum,
                           uint32_t numSaveFile, const MemCheckpointElementsState *checkpointData);
+    inline std::vector<std::string> getExistingCustomLevel()
+    {
+        return m_existingCustomLevelsFilename;
+    }
     inline const PictureData &getPictureData()const {return m_pictureData;}
     inline const Level &getLevel()const {return m_level;}
     inline const FontData &getFontData()const {return m_fontData;}
@@ -292,6 +296,7 @@ private:
                                                               const std::string &propertyName);
     VectPairUI_t getPositionData(const std::string & sectionName, const std::string &propertyName);
 private:
+    std::vector<std::string> m_existingCustomLevelsFilename;
     inipp::Ini<char> m_ini;
     std::ofstream m_outputStream;
     std::ifstream m_inputStream;

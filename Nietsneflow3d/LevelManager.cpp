@@ -2259,19 +2259,21 @@ std::array<std::optional<DataLevelWriteMenu>, 3> LevelManager::getExistingLevelN
 }
 
 //===================================================================
-std::vector<std::string> LevelManager::getExistingCustomLevel()
+void LevelManager::loadExistingCustomLevelFilename()
 {
-    std::vector<std::string> vect;
+    if(!fs::exists(fs::path(LEVEL_RESSOURCES_DIR_STR + "CustomLevels/")))
+    {
+        return;
+    }
     for(fs::directory_iterator it =
         fs::directory_iterator(LEVEL_RESSOURCES_DIR_STR + "CustomLevels/");
         it != fs::directory_iterator(); ++it)
     {
         if(it->path().extension().string() == ".clvl")
         {
-            vect.push_back(it->path().filename().string());
+            m_existingCustomLevelsFilename.push_back(it->path().filename().string());
         }
     }
-    return vect;
 }
 
 //===================================================================

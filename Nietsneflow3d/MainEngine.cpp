@@ -1719,7 +1719,7 @@ void MainEngine::setMenuEntries(PlayerConfComponent *playerComp)
     //MENU ENTRIES
     m_writeConf->m_upLeftPositionGL = MAP_MENU_DATA.at(playerComp->m_menuMode).first;
     m_graphicEngine.fillMenuWrite(m_writeConf, playerComp->m_menuMode, playerComp->m_currentCursorPos,
-    {playerComp, m_currentLevelSecretsNumber, m_currentLevelEnemiesNumber});
+                                  {playerComp, m_currentLevelSecretsNumber, m_currentLevelEnemiesNumber});
     if(playerComp->m_menuMode == MenuMode_e::NEW_KEY)
     {
         m_memInputCursorPos = playerComp->m_currentCursorPos;

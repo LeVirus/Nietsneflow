@@ -46,7 +46,7 @@ public:
     void fillTitleMenuWrite(WriteComponent *writeComp, MenuMode_e menuEntry, MenuMode_e previousMenuEntry);
     //tuple second == secrets, third == enemies killed
     void fillMenuWrite(WriteComponent *writeComp, MenuMode_e menuEntry,
-                       uint32_t cursorPos = 0, const std::tuple<const PlayerConfComponent *, uint32_t, uint32_t> &endLevelData = {});
+                       uint32_t cursorPos = 0, const std::tuple<PlayerConfComponent *, uint32_t, uint32_t> &endLevelData = {});
     void confWriteComponent(WriteComponent *writeComp);
     void updateStringWriteEntitiesInputMenu(bool keyboardInputMenuMode, bool defaultInput = true);
     const std::vector<uint32_t> &getBarrelEntitiesToDelete()const;
@@ -63,6 +63,7 @@ public:
     {
         return *m_window;
     }
+    std::optional<uint32_t> getCustomLevelsMenuSize(uint32_t index)const;
     inline const std::vector<std::pair<pairI_t, std::string>> &getResolutions()const
     {
         return m_memGraphicResolution;
@@ -113,6 +114,7 @@ private:
 private:
     GLFWwindow* m_window = nullptr;
     uint32_t m_currentResolution = 0, m_currentDisplayedResolution = m_currentResolution;
+    const uint32_t m_sectionSize = 9;
     std::vector<Shader> m_vectShader;
     //PictureData
     std::vector<Texture> m_vectTexture;
@@ -128,7 +130,8 @@ private:
     uint32_t m_transitionFrameNumber = 30;
     std::array<std::optional<DataLevelWriteMenu>, 3> m_memExistingLevelSave;
     std::string m_saveStandardLevelMenuWrite;
-    std::vector<std::string> m_existingCustomLevelsFilename, m_existingCustomLevelsMenuWrite;
+    //First Write menu, second size menu
+    std::vector<std::pair<std::string, uint32_t>> m_existingCustomLevelsMenuWrite;
     bool m_fullscreenMode = false, m_displayMenuFullscreenMode = m_fullscreenMode;
     const std::map<InputMenuCursorPos_e, std::string> m_mapInputActionStringAssociated = {
         {InputMenuCursorPos_e::ACTION, "ACTION"},

@@ -8,6 +8,7 @@ void Game::loadStandardData()
     m_levelManager.loadFontData("fontData.ini");
     m_mainEngine.loadGraphicPicture(m_levelManager.getPictureData(), m_levelManager.getFontData());
     m_mainEngine.loadExistingLevelNumSaves(m_levelManager.getExistingLevelNumSaves());
+    m_levelManager.loadExistingCustomLevelFilename();
     m_mainEngine.loadExistingCustomLevel(m_levelManager.getExistingCustomLevel());
     m_mainEngine.confSystems();
 }

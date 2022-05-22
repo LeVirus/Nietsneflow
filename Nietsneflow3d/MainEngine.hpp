@@ -148,6 +148,10 @@ public:
         m_audioEngine.updateEffectsVolume(volume);
         m_graphicEngine.updateEffectsVolumeBar(volume);
     }
+    inline std::optional<uint32_t> getCustomLevelsMenuSize(uint32_t index)const
+    {
+        return m_graphicEngine.getCustomLevelsMenuSize(index);
+    }
     inline uint32_t getMusicVolume()const
     {
         return m_audioEngine.getMusicVolume();

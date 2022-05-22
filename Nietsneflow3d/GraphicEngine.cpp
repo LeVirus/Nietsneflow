@@ -46,33 +46,29 @@ void GraphicEngine::loadExistingLevelNumSaves(const std::array<std::optional<Dat
 //===================================================================
 void GraphicEngine::loadExistingCustomLevel(const std::vector<std::string> &customLevels)
 {
-    m_existingCustomLevelsFilename = customLevels;
-    std::string str, strFinal, longNameContract = "...CLVL", endStringMenu;
-    const uint32_t sectionSize = 9;
+    uint32_t currentSectionCursor = 0, size = customLevels.size() / m_sectionSize + ((customLevels.size() % m_sectionSize == 0) ? 0 : 1),
+            currentSection = 0;
+    std::string levelName, strFinal, longNameContract = "...CLVL";
     m_existingCustomLevelsMenuWrite.clear();
-    uint32_t currentSectionCursor = 0, currentMenuSection = 0, size = customLevels.size() / sectionSize +
-            ((customLevels.size() % sectionSize == 0) ? 0 : 1);
     m_existingCustomLevelsMenuWrite.resize(size);
-    endStringMenu = (size > 1) ? "PREVIOUS\\NEXT\\RETURN" : "\\RETURN";
     for(uint32_t i = 0; i < customLevels.size(); ++i, ++currentSectionCursor)
     {
-        str = customLevels[i];
-        if(str.size() > 15)
+        levelName = customLevels[i];
+        //mem level full name
+        if(levelName.size() > 15)
         {
-            str.resize(15);
-            std::copy(longNameContract.begin(), longNameContract.end(), str.begin() +
-                      str.size() - longNameContract.size());
+            levelName.resize(15);
+            std::copy(longNameContract.begin(), longNameContract.end(), levelName.begin() + levelName.size() - longNameContract.size());
         }
-        std::transform(str.begin(), str.end(), str.begin(),
-                       [](unsigned char c){ return std::toupper(c); });
-        strFinal += std::to_string(i) + " " + str + "\\";
-        if(currentSectionCursor == (sectionSize - 1) || currentSectionCursor == customLevels.size() - 1)
+        std::transform(levelName.begin(), levelName.end(), levelName.begin(), [](unsigned char c){ return std::toupper(c); });
+        strFinal += std::to_string(i + 1) + " " + levelName + "\\";
+        if(currentSectionCursor == (m_sectionSize - 1) || i == customLevels.size() - 1)
         {
-            strFinal += endStringMenu;
-            m_existingCustomLevelsMenuWrite[currentMenuSection] = strFinal;
+            strFinal += (size > 1) ? "PREVIOUS\\NEXT\\RETURN" : "\\RETURN";
+            m_existingCustomLevelsMenuWrite[currentSection] = {strFinal, currentSectionCursor + ((size > 1) ? 3 : 1)};
+            ++currentSection;
             currentSectionCursor = 0;
             strFinal.clear();
-            //OOOOOK
         }
     }
 }
@@ -286,16 +282,17 @@ void GraphicEngine::fillTitleMenuWrite(WriteComponent *writeComp, MenuMode_e men
 
 //===================================================================
 void GraphicEngine::fillMenuWrite(WriteComponent *writeComp, MenuMode_e menuEntry, uint32_t cursorPos,
-                                  const std::tuple<const PlayerConfComponent*, uint32_t, uint32_t> &endLevelData)
+                                  const std::tuple<PlayerConfComponent*, uint32_t, uint32_t> &endLevelData)
 {
     if(menuEntry == MenuMode_e::LOAD_GAME || menuEntry == MenuMode_e::NEW_GAME)
     {
         writeComp->m_str = m_saveStandardLevelMenuWrite;
     }
-//    else if(menuEntry == MenuMode_e::LOAD_CUSTOM_LEVEL)
-//    {
-//        writeComp->m_str = "TEST\\AA";
-//    }
+    else if(menuEntry == MenuMode_e::LOAD_CUSTOM_LEVEL)
+    {
+        std::get<0>(endLevelData)->m_currentCustomLevelCusorMenu = 0;
+        writeComp->m_str = m_existingCustomLevelsMenuWrite[std::get<0>(endLevelData)->m_currentCustomLevelCusorMenu].first;
+    }
     else if(menuEntry == MenuMode_e::TRANSITION_LEVEL)
     {
         writeComp->m_str = getEndLevelMenuStr(endLevelData);
@@ -335,7 +332,7 @@ void GraphicEngine::updateStringWriteEntitiesInputMenu(bool keyboardInputMenuMod
 }
 
 //===================================================================
-const std::vector<uint32_t> &GraphicEngine::getBarrelEntitiesToDelete() const
+const std::vector<uint32_t> &GraphicEngine::getBarrelEntitiesToDelete()const
 {
     return m_visionSystem->getBarrelEntitiesToDelete();
 }
@@ -344,6 +341,16 @@ const std::vector<uint32_t> &GraphicEngine::getBarrelEntitiesToDelete() const
 void GraphicEngine::clearBarrelEntitiesToDelete()
 {
     m_visionSystem->clearVectObjectToDelete();
+}
+
+//===================================================================
+std::optional<uint32_t> GraphicEngine::getCustomLevelsMenuSize(uint32_t index)const
+{
+    if(index >= m_existingCustomLevelsMenuWrite.size())
+    {
+        return {};
+    }
+    return m_existingCustomLevelsMenuWrite[index].second;
 }
 
 //===================================================================
