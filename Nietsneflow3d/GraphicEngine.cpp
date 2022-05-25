@@ -46,12 +46,13 @@ void GraphicEngine::loadExistingLevelNumSaves(const std::array<std::optional<Dat
 //===================================================================
 void GraphicEngine::loadExistingCustomLevel(const std::vector<std::string> &customLevels)
 {
-    uint32_t currentSectionCursor = 0, size = customLevels.size() / m_sectionSize + ((customLevels.size() % m_sectionSize == 0) ? 0 : 1),
+    uint32_t currentSectionCursor = 0, size = customLevels.size() / CUSTOM_MENU_SECTION_SIZE +
+            ((customLevels.size() % CUSTOM_MENU_SECTION_SIZE == 0) ? 0 : 1),
             currentSection = 0;
     std::string levelName, strFinal, longNameContract = "...CLVL";
     m_existingCustomLevelsMenuWrite.clear();
     m_existingCustomLevelsMenuWrite.resize(size);
-    for(uint32_t i = 0; i < customLevels.size(); ++i, ++currentSectionCursor)
+    for(uint32_t i = 0; i < customLevels.size(); ++i)
     {
         levelName = customLevels[i];
         //mem level full name
@@ -62,13 +63,17 @@ void GraphicEngine::loadExistingCustomLevel(const std::vector<std::string> &cust
         }
         std::transform(levelName.begin(), levelName.end(), levelName.begin(), [](unsigned char c){ return std::toupper(c); });
         strFinal += std::to_string(i + 1) + " " + levelName + "\\";
-        if(currentSectionCursor == (m_sectionSize - 1) || i == customLevels.size() - 1)
+        if(currentSectionCursor == (CUSTOM_MENU_SECTION_SIZE - 1) || i == customLevels.size() - 1)
         {
             strFinal += (size > 1) ? "PREVIOUS\\NEXT\\RETURN" : "\\RETURN";
             m_existingCustomLevelsMenuWrite[currentSection] = {strFinal, currentSectionCursor + ((size > 1) ? 3 : 1)};
             ++currentSection;
             currentSectionCursor = 0;
             strFinal.clear();
+        }
+        else
+        {
+            ++currentSectionCursor;
         }
     }
 }
@@ -290,7 +295,6 @@ void GraphicEngine::fillMenuWrite(WriteComponent *writeComp, MenuMode_e menuEntr
     }
     else if(menuEntry == MenuMode_e::LOAD_CUSTOM_LEVEL)
     {
-        std::get<0>(endLevelData)->m_currentCustomLevelCusorMenu = 0;
         writeComp->m_str = m_existingCustomLevelsMenuWrite[std::get<0>(endLevelData)->m_currentCustomLevelCusorMenu].first;
     }
     else if(menuEntry == MenuMode_e::TRANSITION_LEVEL)

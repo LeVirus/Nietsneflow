@@ -1067,6 +1067,7 @@ void InputSystem::treatEnterPressedTitleMenu(PlayerConfComponent *playerComp)
         break;
     case TitleMenuCursorPos_e::PLAY_CUSTOM_LEVELS:
         playerComp->m_menuMode = MenuMode_e::LOAD_CUSTOM_LEVEL;
+        playerComp->m_currentCustomLevelCusorMenu = 0;
         m_mainEngine->setMenuEntries(playerComp);
         break;
     case TitleMenuCursorPos_e::QUIT_GAME:
@@ -1117,6 +1118,7 @@ void InputSystem::treatEnterPressedMainMenu(PlayerConfComponent *playerComp)
         m_mainEngine->setMenuEntries(playerComp);
         break;
     case MainMenuCursorPos_e::PLAY_CUSTOM_LEVELS:
+        playerComp->m_currentCustomLevelCusorMenu = 0;
         playerComp->m_menuMode = MenuMode_e::LOAD_CUSTOM_LEVEL;
         m_mainEngine->setMenuEntries(playerComp);
     break;
@@ -1265,13 +1267,49 @@ void InputSystem::treatEnterPressedLoadGameMenu(PlayerConfComponent *playerComp)
 //===================================================================
 void InputSystem::treatEnterPressedLoadCustomGameMenu(PlayerConfComponent *playerComp)
 {
-    LoadCustomGameMenuCursorPos_e menuPos = static_cast<LoadCustomGameMenuCursorPos_e>(playerComp->m_currentCursorPos);
-    if(menuPos == LoadCustomGameMenuCursorPos_e::RETURN)
+    std::optional<uint32_t> maxPos = m_mainEngine->getCustomLevelsMenuSize(playerComp->m_currentCustomLevelCusorMenu);
+    assert(maxPos);
+    bool previousNextEntries = m_mainEngine->previousNextCustomLevelMenuPresent();
+    //RETURN
+    if(playerComp->m_currentCursorPos == *maxPos)
     {
         playerComp->m_menuMode = playerComp->m_firstMenu ? MenuMode_e::TITLE : MenuMode_e::BASE;
         m_mainEngine->setMenuEntries(playerComp);
     }
-    //A COMPLETER
+    //PREVIOUS
+    else if(previousNextEntries && playerComp->m_currentCursorPos == (*maxPos - 2))
+    {
+        if(playerComp->m_currentCustomLevelCusorMenu == 0)
+        {
+            playerComp->m_currentCustomLevelCusorMenu = m_mainEngine->getCustomLevelMenuSectionNumber() - 1;
+        }
+        else
+        {
+            --playerComp->m_currentCustomLevelCusorMenu;
+        }
+        m_mainEngine->setMenuEntries(playerComp);
+        playerComp->m_currentCursorPos = *maxPos - 2;
+    }
+    //NEXT
+    else if(previousNextEntries && playerComp->m_currentCursorPos == (*maxPos - 1))
+    {
+        if(playerComp->m_currentCustomLevelCusorMenu == m_mainEngine->getCustomLevelMenuSectionNumber() - 1)
+        {
+            playerComp->m_currentCustomLevelCusorMenu = 0;
+        }
+        else
+        {
+            ++playerComp->m_currentCustomLevelCusorMenu;
+        }
+        m_mainEngine->setMenuEntries(playerComp);
+        playerComp->m_currentCursorPos = *maxPos - 1;
+    }
+    else
+    {
+        uint32_t customLevelNum = playerComp->m_currentCustomLevelCusorMenu * CUSTOM_MENU_SECTION_SIZE +
+                playerComp->m_currentCursorPos;
+        m_mainEngine->loadSavedGame(customLevelNum, LevelState_e::LOAD_GAME);
+    }
 }
 
 //===================================================================

@@ -84,6 +84,14 @@ public:
     {
         return m_fullscreenMode;
     }
+    inline bool previousNextCustomLevelMenuPresent()const
+    {
+        return m_existingCustomLevelsMenuWrite.size() > 1;
+    }
+    inline uint32_t getCustomLevelMenuSectionNumber()const
+    {
+        return m_existingCustomLevelsMenuWrite.size();
+    }
     void toogleMenuEntryFullscreen();
     void setCurrentResolution(uint32_t resolution);
     void setSizeResolution(const pairI_t &resolution);
@@ -114,7 +122,6 @@ private:
 private:
     GLFWwindow* m_window = nullptr;
     uint32_t m_currentResolution = 0, m_currentDisplayedResolution = m_currentResolution;
-    const uint32_t m_sectionSize = 9;
     std::vector<Shader> m_vectShader;
     //PictureData
     std::vector<Texture> m_vectTexture;

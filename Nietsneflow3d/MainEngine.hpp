@@ -200,11 +200,20 @@ public:
     {
         m_levelEnd = true;
     }
+    inline bool previousNextCustomLevelMenuPresent()
+    {
+        return m_graphicEngine.previousNextCustomLevelMenuPresent();
+    }
+    inline uint32_t getCustomLevelMenuSectionNumber()const
+    {
+        return m_graphicEngine.getCustomLevelMenuSectionNumber();
+    }
     void setPlayerDeparture(const PairUI_t &pos, Direction_e dir);
     void saveAudioSettings();
     void saveInputSettings(const std::map<ControlKey_e, GamepadInputState> &gamepadArray,
                            const std::map<ControlKey_e, MouseKeyboardInputState> &keyboardArray);
     void saveTurnSensitivitySettings();
+    //if customLevel == true saveNum ==> custom level num
     bool loadSavedGame(uint32_t saveNum, LevelState_e levelMode);
     void loadCheckpointSavedGame(const MemCheckpointElementsState &checkpointData);
     bool checkSavedGameExists(uint32_t saveNum)const;
@@ -351,7 +360,7 @@ private:
     uint32_t m_currentLevelSecretsNumber, m_currentLevelEnemiesNumber, m_currentLevelEnemiesKilled;
     std::set<PairUI_t> m_memWall, m_memStaticEntitiesDeletedFromCheckpoint, m_currentEntitiesDelete;
     std::map<PairUI_t, uint32_t> m_memTriggerCreated, m_memWallPos;
-    std::optional<uint32_t> m_levelToLoad;
+    std::optional<std::pair<uint32_t, bool>> m_levelToLoad;
     std::optional<MemCheckpointLevelState> m_memCheckpointLevelState;
     uint32_t m_playerEntity;
     std::vector<MemCheckpointEnemiesState> m_memEnemiesStateFromCheckpoint;

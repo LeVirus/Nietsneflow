@@ -76,7 +76,7 @@ LevelState MainEngine::displayTitleMenu(const LevelManager &levelManager)
             return {LevelState_e::EXIT, 0};
         }
     }while(m_currentLevelState != LevelState_e::NEW_GAME && m_currentLevelState != LevelState_e::LOAD_GAME);
-    uint32_t levelToLoad = *m_levelToLoad;
+    uint32_t levelToLoad = m_levelToLoad->first;
     m_levelToLoad = {};
     return {m_currentLevelState, levelToLoad};
 }
@@ -159,7 +159,7 @@ LevelState MainEngine::mainLoop(uint32_t levelNum, LevelState_e levelState)
             {
                 m_memEnemiesStateFromCheckpoint.clear();
             }
-            uint32_t levelToLoad = *m_levelToLoad;
+            uint32_t levelToLoad = m_levelToLoad->first;
             m_levelToLoad = {};
             if(m_currentLevelState == LevelState_e::NEW_GAME || m_currentLevelState == LevelState_e::RESTART_LEVEL)
             {
@@ -1918,7 +1918,7 @@ bool MainEngine::loadSavedGame(uint32_t saveNum, LevelState_e levelMode)
     m_currentSave = saveNum;
     if(m_currentLevelState == LevelState_e::NEW_GAME)
     {
-        m_levelToLoad = 1;
+        m_levelToLoad = {1, false};
         return true;
     }
     std::optional<MemLevelLoadedData> savedData = m_refGame->loadSavedGame(saveNum);
@@ -1938,11 +1938,11 @@ bool MainEngine::loadSavedGame(uint32_t saveNum, LevelState_e levelMode)
     }
     if(m_currentLevelState == LevelState_e::RESTART_LEVEL || m_currentLevelState == LevelState_e::RESTART_FROM_CHECKPOINT)
     {
-        m_levelToLoad = m_currentLevel;
+        m_levelToLoad = {m_currentLevel, false};
     }
     else if(m_currentLevelState == LevelState_e::LOAD_GAME)
     {
-        m_levelToLoad = savedData->m_levelNum;
+        m_levelToLoad = {savedData->m_levelNum, false};
     }
     m_playerMemGear = true;
     if(savedData->m_checkpointLevelData)
@@ -1955,7 +1955,7 @@ bool MainEngine::loadSavedGame(uint32_t saveNum, LevelState_e levelMode)
 //===================================================================
 void MainEngine::loadCheckpointSavedGame(const MemCheckpointElementsState &checkpointData)
 {
-    m_memCheckpointLevelState = {*m_levelToLoad, checkpointData.m_checkpointNum, checkpointData.m_secretsNumber,
+    m_memCheckpointLevelState = {m_levelToLoad->first, checkpointData.m_checkpointNum, checkpointData.m_secretsNumber,
                                  checkpointData.m_enemiesKilled, checkpointData.m_direction, checkpointData.m_checkpointPos};
     m_currentEntitiesDelete = checkpointData.m_staticElementDeleted;
     m_memEnemiesStateFromCheckpoint = checkpointData.m_enemiesData;
