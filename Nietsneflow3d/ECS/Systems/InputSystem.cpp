@@ -657,7 +657,7 @@ void InputSystem::toogleInputMenuGamepadKeyboard(PlayerConfComponent *playerComp
         m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER] = true;
     }
     playerComp->m_keyboardInputMenuMode = !playerComp->m_keyboardInputMenuMode;
-    m_mainEngine->updateMenuInfo(playerComp);
+    m_mainEngine->updateConfirmLoadingMenuInfo(playerComp);
     mptrSystemManager->searchSystemByType<StaticDisplaySystem>(static_cast<uint32_t>(Systems_e::STATIC_DISPLAY_SYSTEM))->
             updateStringWriteEntitiesInputMenu(playerComp->m_keyboardInputMenuMode, false);
 }
@@ -890,6 +890,14 @@ void InputSystem::treatEnterPressedConfirmLoadGameMenu(PlayerConfComponent *play
             m_mainEngine->savePlayerGear(true);
             m_mainEngine->saveGameProgress(1, numSaveFile);
             if(m_mainEngine->loadSavedGame(numSaveFile, LevelState_e::NEW_GAME))
+            {
+                m_mainEngine->setTransition(true);
+            }
+        }
+        //LOAD CUSTOM LEVEL
+        else if(playerComp->m_previousMenuMode == MenuMode_e::LOAD_CUSTOM_LEVEL)
+        {
+            m_mainEngine->loadCustomLevelGame(playerComp->m_levelToLoad, LevelState_e::LOAD_GAME);
             {
                 m_mainEngine->setTransition(true);
             }
@@ -1235,7 +1243,7 @@ void InputSystem::treatEnterPressedNewGameMenu(PlayerConfComponent *playerComp)
     {
         playerComp->m_previousMenuMode = playerComp->m_menuMode;
         playerComp->m_currentSelectedSaveFile = playerComp->m_currentCursorPos + 1;
-        m_mainEngine->updateMenuInfo(playerComp);
+        m_mainEngine->updateConfirmLoadingMenuInfo(playerComp);
         playerComp->m_menuMode = MenuMode_e::CONFIRM_LOADING_GAME_FORM;
         m_mainEngine->setMenuEntries(playerComp);
     }
@@ -1258,7 +1266,7 @@ void InputSystem::treatEnterPressedLoadGameMenu(PlayerConfComponent *playerComp)
         }
         playerComp->m_currentSelectedSaveFile = playerComp->m_currentCursorPos + 1;
         playerComp->m_previousMenuMode = playerComp->m_menuMode;
-        m_mainEngine->updateMenuInfo(playerComp);
+        m_mainEngine->updateConfirmLoadingMenuInfo(playerComp);
         playerComp->m_menuMode = MenuMode_e::CONFIRM_LOADING_GAME_FORM;
         m_mainEngine->setMenuEntries(playerComp);
     }
@@ -1306,9 +1314,13 @@ void InputSystem::treatEnterPressedLoadCustomGameMenu(PlayerConfComponent *playe
     }
     else
     {
-        uint32_t customLevelNum = playerComp->m_currentCustomLevelCusorMenu * CUSTOM_MENU_SECTION_SIZE +
+        playerComp->m_levelToLoad = playerComp->m_currentCustomLevelCusorMenu * CUSTOM_MENU_SECTION_SIZE +
                 playerComp->m_currentCursorPos;
-        m_mainEngine->loadSavedGame(customLevelNum, LevelState_e::LOAD_GAME);
+        playerComp->m_previousMenuMode = playerComp->m_menuMode;
+        playerComp->m_menuMode = MenuMode_e::CONFIRM_LOADING_GAME_FORM;
+        m_mainEngine->updateConfirmLoadingMenuInfo(playerComp);
+        m_mainEngine->setMenuEntries(playerComp);
+
     }
 }
 

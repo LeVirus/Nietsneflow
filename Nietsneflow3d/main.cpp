@@ -7,7 +7,7 @@ int main()
     game.initEngine();
     game.loadStandardData();
     bool gameLoaded = false, firstLaunch = true;
-    LevelState levelState = {LevelState_e::NEW_GAME, {}};
+    LevelState levelState = {LevelState_e::NEW_GAME, {}, false};
     for(uint32_t i = 1; i < 3; ++i)
     {
         game.loadStandardEntities();
@@ -26,7 +26,7 @@ int main()
                 break;
             }
             i = *levelState.m_levelToLoad;
-            if(!game.loadLevelData(i))
+            if(!game.loadLevelData(i, levelState.m_customLevel))
             {
                 break;
             }
@@ -35,7 +35,7 @@ int main()
         }
         else
         {
-            if(!game.loadLevelData(i))
+            if(!game.loadLevelData(i, levelState.m_customLevel))
             {
                 break;
             }

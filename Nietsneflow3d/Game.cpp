@@ -58,9 +58,9 @@ void Game::setPlayerDeparture()
 }
 
 //===================================================================
-bool Game::loadLevelData(uint32_t levelNum)
+bool Game::loadLevelData(uint32_t levelNum, bool customLevel)
 {
-    if(!m_levelManager.loadLevel("level.ini", levelNum))
+    if(!m_levelManager.loadLevel(levelNum, customLevel))
     {
         return false;
     }

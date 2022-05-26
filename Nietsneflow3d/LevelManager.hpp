@@ -105,7 +105,7 @@ public:
     void loadStandardData(const std::string &INIFileName);
     void loadFontData(const std::string &INIFileName);
     bool loadSettingsData();
-    bool loadLevel(const std::string &INIFileName, uint32_t levelNum);
+    bool loadLevel(uint32_t levelNum, bool customLevel = false);
     void clearExistingPositionsElement();
     void saveAudioSettings(uint32_t musicVolume, uint32_t effectVolume);
     void saveDisplaySettings(const pairI_t &resolution, bool fullscreen);

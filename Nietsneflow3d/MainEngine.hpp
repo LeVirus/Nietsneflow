@@ -81,10 +81,17 @@ struct MemLevelLoadedData
     std::unique_ptr<MemCheckpointElementsState> m_checkpointLevelData;
 };
 
+struct MemCustomLevelLoadedData
+{
+    MemPlayerConf m_playerConfCheckpoint;
+    MemCheckpointElementsState m_checkpointLevelData;
+};
+
 struct LevelState
 {
     LevelState_e m_levelState;
     std::optional<uint32_t> m_levelToLoad;
+    bool m_customLevel;
 };
 
 class MainEngine
@@ -119,7 +126,7 @@ public:
     void confSystems();
     uint32_t createAmmoEntity(CollisionTag_e collTag, bool visibleShot);
     void setMenuEntries(PlayerConfComponent *playerComp);
-    void updateMenuInfo(PlayerConfComponent *playerComp);
+    void updateConfirmLoadingMenuInfo(PlayerConfComponent *playerComp);
     void updateWriteComp(WriteComponent *writeComp);
     void updateStringWriteEntitiesInputMenu(bool keyboardInputMenuMode, bool defaultInput = true);
     void confGlobalSettings(const SettingsData &settingsData);
@@ -213,8 +220,8 @@ public:
     void saveInputSettings(const std::map<ControlKey_e, GamepadInputState> &gamepadArray,
                            const std::map<ControlKey_e, MouseKeyboardInputState> &keyboardArray);
     void saveTurnSensitivitySettings();
-    //if customLevel == true saveNum ==> custom level num
     bool loadSavedGame(uint32_t saveNum, LevelState_e levelMode);
+    bool loadCustomLevelGame(uint32_t saveNum, LevelState_e levelMode);
     void loadCheckpointSavedGame(const MemCheckpointElementsState &checkpointData);
     bool checkSavedGameExists(uint32_t saveNum)const;
     void clearCheckpointData();
@@ -369,6 +376,7 @@ private:
     //MAP (first shape num, VECTOR number of actionned)
     std::map<uint32_t, std::pair<std::vector<uint32_t>, bool>> m_memTriggerWallMoveableWallCheckpointData;
     std::vector<PairUI_t> m_revealedMapData;
+    std::unique_ptr<MemCustomLevelLoadedData> m_memCustomLevelLoadedData;
 };
 
 float getDegreeAngleFromDirection(Direction_e direction);

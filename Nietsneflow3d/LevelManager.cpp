@@ -1505,16 +1505,18 @@ void LevelManager::loadBarrelElements()
 }
 
 //===================================================================
-bool LevelManager::loadLevel(const std::string &INIFileName, uint32_t levelNum)
+bool LevelManager::loadLevel(uint32_t levelNum, bool customLevel)
 {
-    std::string path = LEVEL_RESSOURCES_DIR_STR + std::string("Level") +
-            std::to_string(levelNum) + std::string ("/") + INIFileName;
+    std::string path = customLevel ? LEVEL_RESSOURCES_DIR_STR + "CustomLevels/" +
+                                     m_existingCustomLevelsFilename[levelNum] :
+                                     LEVEL_RESSOURCES_DIR_STR + std::string("Level") +
+                                     std::to_string(levelNum) + std::string ("/level.ini");
     if(!fs::exists(path))
     {
         return false;
     }
-    //OOOOOOOOOK set different encryption for standard and custom level
-    if(!loadIniFile(path, ENCRYPT_KEY_STANDARD_LEVEL))
+    uint32_t encryptKey = customLevel ? ENCRYPT_KEY_CUSTOM_LEVEL : ENCRYPT_KEY_STANDARD_LEVEL;
+    if(!loadIniFile(path, encryptKey))
     {
         assert("Error while reading INI file.");
     }

@@ -73,12 +73,12 @@ LevelState MainEngine::displayTitleMenu(const LevelManager &levelManager)
         m_physicalEngine.runIteration(m_gamePaused);
         if(m_graphicEngine.windowShouldClose())
         {
-            return {LevelState_e::EXIT, 0};
+            return {LevelState_e::EXIT, 0, false};
         }
     }while(m_currentLevelState != LevelState_e::NEW_GAME && m_currentLevelState != LevelState_e::LOAD_GAME);
     uint32_t levelToLoad = m_levelToLoad->first;
     m_levelToLoad = {};
-    return {m_currentLevelState, levelToLoad};
+    return {m_currentLevelState, levelToLoad, m_playerConf->m_previousMenuMode == MenuMode_e::LOAD_CUSTOM_LEVEL};
 }
 
 //===================================================================
@@ -152,7 +152,7 @@ LevelState MainEngine::mainLoop(uint32_t levelNum, LevelState_e levelState)
 //        clockFrame = std::chrono::system_clock::now();
         clock = std::chrono::system_clock::now();
         m_physicalEngine.runIteration(m_gamePaused);
-        //LOAD
+        //LOAD if level to load break the loop
         if(m_levelToLoad)
         {
             if(!m_memCheckpointLevelState)
@@ -165,7 +165,7 @@ LevelState MainEngine::mainLoop(uint32_t levelNum, LevelState_e levelState)
             {
                 clearCheckpointData();
             }
-            return {m_currentLevelState, levelToLoad};
+            return {m_currentLevelState, levelToLoad, m_levelToLoad->second};
         }
         clearObjectToDelete();
         if(m_physicalEngine.toogledFullScreenSignal())
@@ -196,7 +196,7 @@ LevelState MainEngine::mainLoop(uint32_t levelNum, LevelState_e levelState)
             m_graphicEngine.setTransition(m_gamePaused);
             displayTransitionMenu();
             m_memEnemiesStateFromCheckpoint.clear();
-            return {m_currentLevelState, {}};
+            return {m_currentLevelState, {}, m_levelToLoad->second};
         }
         //Player dead
         else if(!m_playerConf->m_life)
@@ -207,10 +207,10 @@ LevelState MainEngine::mainLoop(uint32_t levelNum, LevelState_e levelState)
             }
             m_graphicEngine.setTransition(m_gamePaused);
             displayTransitionMenu();
-            return {LevelState_e::GAME_OVER, {}};
+            return {LevelState_e::GAME_OVER, {}, m_levelToLoad->second};
         }
     }while(!m_graphicEngine.windowShouldClose());
-    return {LevelState_e::EXIT, {}};
+    return {LevelState_e::EXIT, {}, m_levelToLoad->second};
 }
 
 //===================================================================
@@ -1726,7 +1726,7 @@ void MainEngine::setMenuEntries(PlayerConfComponent *playerComp)
     }
     else if(playerComp->m_menuMode == MenuMode_e::INPUT)
     {
-        updateMenuInfo(playerComp);
+        updateConfirmLoadingMenuInfo(playerComp);
         playerComp->m_currentCursorPos = m_memInputCursorPos;
         m_memInputCursorPos = 0;
     }
@@ -1735,7 +1735,7 @@ void MainEngine::setMenuEntries(PlayerConfComponent *playerComp)
             playerComp->m_menuMode == MenuMode_e::CONFIRM_RESTART_LEVEL ||
             playerComp->m_menuMode == MenuMode_e::CONFIRM_RESTART_FROM_LAST_CHECKPOINT)
     {
-        updateMenuInfo(playerComp);
+        updateConfirmLoadingMenuInfo(playerComp);
         playerComp->m_currentCursorPos = 0;
     }
     else if(playerComp->m_menuMode != MenuMode_e::NEW_KEY)
@@ -1745,7 +1745,7 @@ void MainEngine::setMenuEntries(PlayerConfComponent *playerComp)
 }
 
 //===================================================================
-void MainEngine::updateMenuInfo(PlayerConfComponent *playerComp)
+void MainEngine::updateConfirmLoadingMenuInfo(PlayerConfComponent *playerComp)
 {
     WriteComponent *writeComp = m_ecsManager.getComponentManager().
             searchComponentByType<WriteComponent>(playerComp->m_menuInfoWriteEntity, Components_e::WRITE_COMPONENT);
@@ -1796,6 +1796,10 @@ void MainEngine::updateMenuInfo(PlayerConfComponent *playerComp)
                 else if(playerComp->m_previousMenuMode == MenuMode_e::LOAD_GAME)
                 {
                     writeComp->m_str += "LOAD GAME?";
+                }
+                else if(playerComp->m_previousMenuMode == MenuMode_e::LOAD_CUSTOM_LEVEL)
+                {
+                    writeComp->m_str += "LOAD CUSTOM GAME?";
                 }
             }
         }
@@ -1914,6 +1918,7 @@ void MainEngine::saveTurnSensitivitySettings()
 //===================================================================
 bool MainEngine::loadSavedGame(uint32_t saveNum, LevelState_e levelMode)
 {
+    m_memCustomLevelLoadedData = 0;
     m_currentLevelState = levelMode;
     m_currentSave = saveNum;
     if(m_currentLevelState == LevelState_e::NEW_GAME)
@@ -1949,6 +1954,30 @@ bool MainEngine::loadSavedGame(uint32_t saveNum, LevelState_e levelMode)
     {
         loadCheckpointSavedGame(*savedData->m_checkpointLevelData);
     }
+    return true;
+}
+
+//===================================================================
+bool MainEngine::loadCustomLevelGame(uint32_t saveNum, LevelState_e levelMode)
+{
+    m_currentLevelState = levelMode;
+//        m_playerConf->m_currentCheckpoint = {savedData->m_checkpointLevelData->m_checkpointNum, savedData->m_checkpointLevelData->m_direction};
+//    assert(!m_memPlayerConfBeginLevel.m_ammunationsCount.empty());
+//        m_memPlayerConfCheckpoint = *savedData->m_playerConfCheckpoint;
+    if(m_currentLevelState == LevelState_e::RESTART_LEVEL || m_currentLevelState == LevelState_e::RESTART_FROM_CHECKPOINT)
+    {
+        m_levelToLoad = {saveNum, true};
+    }
+    else if(m_currentLevelState == LevelState_e::LOAD_GAME)
+    {
+        m_levelToLoad = {saveNum, true};
+    }
+    m_memCustomLevelLoadedData = std::make_unique<MemCustomLevelLoadedData>();
+//    m_playerMemGear = true;
+//    if(savedData->m_checkpointLevelData)
+//    {
+//        loadCheckpointSavedGame(*savedData->m_checkpointLevelData);
+//    }
     return true;
 }
 

@@ -7,7 +7,7 @@ class Game
 {
 public:
     Game() = default;
-    bool loadLevelData(uint32_t levelNum);
+    bool loadLevelData(uint32_t levelNum, bool customLevel);
     void initEngine();
     void loadStandardData();
     LevelState displayTitleMenu();

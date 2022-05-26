@@ -384,6 +384,7 @@ enum class MenuMode_e
 const uint32_t MIN_TURN_SENSITIVITY = 20, MAX_TURN_SENSITIVITY = 100,
 DIFF_TOTAL_SENSITIVITY = MAX_TURN_SENSITIVITY - MIN_TURN_SENSITIVITY;
 inline const uint32_t ENCRYPT_KEY_STANDARD_LEVEL = 17;
+inline const uint32_t ENCRYPT_KEY_CUSTOM_LEVEL = 52;
 inline const uint32_t ENCRYPT_KEY_CONF_FILE = 42;
 inline const uint32_t CUSTOM_MENU_SECTION_SIZE = 9;
 inline const float FPS_VALUE = 1.0f / 60.0f;

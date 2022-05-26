@@ -2,6 +2,9 @@ BUGS======================================================================
 
 
 ))
+loading From level with checkpoint and reload an other level Issue
+
+))
 When die and reload from checkpoint moveable wall bad place========================NOT REPRODUCIBLE
 
 
@@ -77,9 +80,6 @@ When close to wall explosion desapear===============OK
 
 ))
 Regression load level does not display=========================OK
-
-))
-loading From level with checkpoint and reload an other level Issue==================OK
 
 ))
 Next level screen zero enemies or secrets found issue when restart level=================OK

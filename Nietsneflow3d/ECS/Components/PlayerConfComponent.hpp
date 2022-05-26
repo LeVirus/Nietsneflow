@@ -38,7 +38,8 @@ struct PlayerConfComponent : public ecs::Component
     uint32_t m_weaponEntity, m_ammoWriteEntity, m_currentCursorPos = 0, m_currentSelectedSaveFile,
              m_titleMenuEntity, m_menuEntriesEntity, m_menuCursorEntity, m_menuInfoWriteEntity,
              m_actionEntity, m_hitMeleeEntity, m_lifeWriteEntity, m_numInfoWriteEntity,
-             m_life = 100, m_displayTeleportEntity, m_mapDetectShapeEntity, m_currentCustomLevelCusorMenu;
+             m_life = 100, m_displayTeleportEntity, m_mapDetectShapeEntity, m_currentCustomLevelCusorMenu,
+    m_levelToLoad;
     std::optional<uint32_t> m_secretsFound, m_enemiesKilled;
     std::optional<std::pair<uint32_t, Direction_e>> m_currentCheckpoint;
     std::optional<PairUI_t> m_checkpointReached;
