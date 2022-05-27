@@ -280,14 +280,29 @@ void MainEngine::saveGameProgress(uint32_t levelNum, std::optional<uint32_t> num
     if(!checkpointData)
     {
         m_memCheckpointLevelState = {};
+        if(m_memCustomLevelLoadedData)
+        {
+            m_memCustomLevelLoadedData->m_playerConfCheckpoint = m_memPlayerConfBeginLevel;
+        }
     }
     if(checkpointData)
     {
-        m_graphicEngine.updateGraphicCheckpointData(checkpointData, saveNum);
+        if(!m_memCustomLevelLoadedData)
+        {
+            m_graphicEngine.updateGraphicCheckpointData(checkpointData, saveNum);
+        }
+        else
+        {
+            m_memCustomLevelLoadedData->m_checkpointLevelData = *checkpointData;
+            m_memCustomLevelLoadedData->m_playerConfCheckpoint = m_memPlayerConfCheckpoint;
+        }
     }
-    std::string date = m_refGame->saveGameProgress(m_memPlayerConfBeginLevel, m_memPlayerConfCheckpoint,
-                                                   levelNum, saveNum, checkpointData);
-    m_graphicEngine.updateSaveNum(levelNum, saveNum, {}, date);
+    if(!m_memCustomLevelLoadedData)
+    {
+        std::string date = m_refGame->saveGameProgress(m_memPlayerConfBeginLevel, m_memPlayerConfCheckpoint,
+                                                       levelNum, saveNum, checkpointData);
+        m_graphicEngine.updateSaveNum(levelNum, saveNum, {}, date);
+    }
 }
 
 //===================================================================
@@ -1961,23 +1976,9 @@ bool MainEngine::loadSavedGame(uint32_t saveNum, LevelState_e levelMode)
 bool MainEngine::loadCustomLevelGame(uint32_t saveNum, LevelState_e levelMode)
 {
     m_currentLevelState = levelMode;
-//        m_playerConf->m_currentCheckpoint = {savedData->m_checkpointLevelData->m_checkpointNum, savedData->m_checkpointLevelData->m_direction};
-//    assert(!m_memPlayerConfBeginLevel.m_ammunationsCount.empty());
-//        m_memPlayerConfCheckpoint = *savedData->m_playerConfCheckpoint;
-    if(m_currentLevelState == LevelState_e::RESTART_LEVEL || m_currentLevelState == LevelState_e::RESTART_FROM_CHECKPOINT)
-    {
-        m_levelToLoad = {saveNum, true};
-    }
-    else if(m_currentLevelState == LevelState_e::LOAD_GAME)
-    {
-        m_levelToLoad = {saveNum, true};
-    }
+    m_levelToLoad = {saveNum, true};
+    m_playerConf->m_levelToLoad = saveNum;
     m_memCustomLevelLoadedData = std::make_unique<MemCustomLevelLoadedData>();
-//    m_playerMemGear = true;
-//    if(savedData->m_checkpointLevelData)
-//    {
-//        loadCheckpointSavedGame(*savedData->m_checkpointLevelData);
-//    }
     return true;
 }
 
@@ -2009,6 +2010,10 @@ void MainEngine::clearCheckpointData()
     m_memCheckpointLevelState = {};
     m_memEnemiesStateFromCheckpoint.clear();
     m_revealedMapData.clear();
+    if(m_memCustomLevelLoadedData)
+    {
+        m_memCustomLevelLoadedData->m_checkpointLevelData = {};
+    }
 }
 
 //===================================================================
@@ -2545,6 +2550,7 @@ void MainEngine::confPlayerEntity(const LevelManager &levelManager,
             searchComponentByType<PlayerConfComponent>(entityNum,
                                                      Components_e::PLAYER_CONF_COMPONENT);
     playerConf->m_weaponEntity = numWeaponEntity;
+    playerConf->m_levelToLoad = m_currentLevel;
     playerConf->setIDEntityAssociated(entityNum);
     playerConf->m_displayTeleportEntity = numDisplayTeleportEntity;
     WeaponComponent *weaponConf = m_ecsManager.getComponentManager().

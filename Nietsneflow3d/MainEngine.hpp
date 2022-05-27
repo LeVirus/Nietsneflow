@@ -84,7 +84,7 @@ struct MemLevelLoadedData
 struct MemCustomLevelLoadedData
 {
     MemPlayerConf m_playerConfCheckpoint;
-    MemCheckpointElementsState m_checkpointLevelData;
+    std::optional<MemCheckpointElementsState> m_checkpointLevelData;
 };
 
 struct LevelState
@@ -131,6 +131,10 @@ public:
     void updateStringWriteEntitiesInputMenu(bool keyboardInputMenuMode, bool defaultInput = true);
     void confGlobalSettings(const SettingsData &settingsData);
     void validDisplayMenu();
+    inline bool currentSessionCustomLevel()const
+    {
+        return m_memCustomLevelLoadedData != nullptr;
+    }
     inline void unsetTransition(bool transition)
     {
         m_graphicEngine.unsetTransition(transition);

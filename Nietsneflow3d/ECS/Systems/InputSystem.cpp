@@ -846,7 +846,12 @@ void InputSystem::treatEnterPressedConfirmRestartLevelMenu(PlayerConfComponent *
     ConfirmCursorPos_e menuEntry = static_cast<ConfirmCursorPos_e>(playerComp->m_currentCursorPos);
     if(menuEntry == ConfirmCursorPos_e::TRUE)
     {
-        if(m_mainEngine->loadSavedGame(m_mainEngine->getCurrentSaveNum(), LevelState_e::RESTART_LEVEL))
+        if(!m_mainEngine->currentSessionCustomLevel() &&
+                m_mainEngine->loadSavedGame(m_mainEngine->getCurrentSaveNum(), LevelState_e::RESTART_LEVEL))
+        {
+            m_mainEngine->setTransition(true);
+        }
+        else if(m_mainEngine->currentSessionCustomLevel() && m_mainEngine->loadCustomLevelGame(playerComp->m_levelToLoad, LevelState_e::RESTART_LEVEL))
         {
             m_mainEngine->setTransition(true);
         }
@@ -864,7 +869,12 @@ void InputSystem::treatEnterPressedConfirmRestartFromLastCheckpointMenu(PlayerCo
     ConfirmCursorPos_e menuEntry = static_cast<ConfirmCursorPos_e>(playerComp->m_currentCursorPos);
     if(menuEntry == ConfirmCursorPos_e::TRUE)
     {
-        if(m_mainEngine->loadSavedGame(m_mainEngine->getCurrentSaveNum(), LevelState_e::RESTART_FROM_CHECKPOINT))
+        if(!m_mainEngine->currentSessionCustomLevel() &&
+                m_mainEngine->loadSavedGame(m_mainEngine->getCurrentSaveNum(), LevelState_e::RESTART_FROM_CHECKPOINT))
+        {
+            m_mainEngine->setTransition(true);
+        }
+        else if(m_mainEngine->currentSessionCustomLevel() && m_mainEngine->loadCustomLevelGame(playerComp->m_levelToLoad, LevelState_e::RESTART_FROM_CHECKPOINT))
         {
             m_mainEngine->setTransition(true);
         }
@@ -898,9 +908,7 @@ void InputSystem::treatEnterPressedConfirmLoadGameMenu(PlayerConfComponent *play
         else if(playerComp->m_previousMenuMode == MenuMode_e::LOAD_CUSTOM_LEVEL)
         {
             m_mainEngine->loadCustomLevelGame(playerComp->m_levelToLoad, LevelState_e::LOAD_GAME);
-            {
-                m_mainEngine->setTransition(true);
-            }
+            m_mainEngine->setTransition(true);
         }
         //LOAD
         else
