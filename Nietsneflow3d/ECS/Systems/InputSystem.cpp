@@ -1304,7 +1304,8 @@ void InputSystem::treatEnterPressedLoadCustomGameMenu(PlayerConfComponent *playe
             --playerComp->m_currentCustomLevelCusorMenu;
         }
         m_mainEngine->setMenuEntries(playerComp);
-        playerComp->m_currentCursorPos = *maxPos - 2;
+        std::optional<uint32_t> currentMaxPos = m_mainEngine->getCustomLevelsMenuSize(playerComp->m_currentCustomLevelCusorMenu);
+        playerComp->m_currentCursorPos = *currentMaxPos - 2;
     }
     //NEXT
     else if(previousNextEntries && playerComp->m_currentCursorPos == (*maxPos - 1))
@@ -1318,7 +1319,8 @@ void InputSystem::treatEnterPressedLoadCustomGameMenu(PlayerConfComponent *playe
             ++playerComp->m_currentCustomLevelCusorMenu;
         }
         m_mainEngine->setMenuEntries(playerComp);
-        playerComp->m_currentCursorPos = *maxPos - 1;
+        std::optional<uint32_t> currentMaxPos = m_mainEngine->getCustomLevelsMenuSize(playerComp->m_currentCustomLevelCusorMenu);
+        playerComp->m_currentCursorPos = *currentMaxPos - 1;
     }
     else
     {
