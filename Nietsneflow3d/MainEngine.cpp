@@ -299,13 +299,26 @@ void MainEngine::saveGameProgress(uint32_t levelNum, std::optional<uint32_t> num
         {
             m_memCustomLevelLoadedData->m_checkpointLevelData = *checkpointData;
             m_memCustomLevelLoadedData->m_playerConfCheckpoint = m_memPlayerConfCheckpoint;
+            memCustomLevelRevealedMap();
         }
     }
     if(!m_memCustomLevelLoadedData)
     {
-        std::string date = m_refGame->saveGameProgress(m_memPlayerConfBeginLevel, m_memPlayerConfCheckpoint,
-                                                       levelNum, saveNum, checkpointData);
+        std::string date = m_refGame->saveGameProgressINI(m_memPlayerConfBeginLevel, m_memPlayerConfCheckpoint,
+                                                          levelNum, saveNum, checkpointData);
         m_graphicEngine.updateSaveNum(levelNum, saveNum, {}, date);
+    }
+}
+
+//===================================================================
+void MainEngine::memCustomLevelRevealedMap()
+{
+    const std::map<uint32_t, PairUI_t> &revealedMap = m_graphicEngine.getMapSystem().getRevealedMap();
+    m_revealedMapData.clear();
+    m_revealedMapData.reserve(revealedMap.size());
+    for(std::map<uint32_t, PairUI_t>::const_iterator it = revealedMap.begin(); it != revealedMap.end(); ++it)
+    {
+        m_revealedMapData.emplace_back(it->second);
     }
 }
 
@@ -1972,6 +1985,10 @@ bool MainEngine::loadSavedGame(uint32_t saveNum, LevelState_e levelMode)
     if(savedData->m_checkpointLevelData)
     {
         loadCheckpointSavedGame(*savedData->m_checkpointLevelData);
+    }
+    if(m_memCustomLevelLoadedData)
+    {
+        loadRevealedMap();
     }
     return true;
 }

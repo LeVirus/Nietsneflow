@@ -50,6 +50,10 @@ public:
     {
         m_entitiesDetectedData.clear();
     }
+    inline const std::map<uint32_t, PairUI_t> &getRevealedMap()const
+    {
+        return m_entitiesDetectedData;
+    }
 private:
     void confFullMapPositionVertexEntities();
     void confVertexPlayerOnFullMap();

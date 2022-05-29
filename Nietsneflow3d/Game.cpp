@@ -116,7 +116,7 @@ void Game::saveTurnSensitivitySettings(uint32_t sensitivity)
 }
 
 //===================================================================
-std::string Game::saveGameProgress(const MemPlayerConf &playerConfBeginLevel, const MemPlayerConf &playerConfCheckpoint, uint32_t levelNum, uint32_t numSaveFile,
+std::string Game::saveGameProgressINI(const MemPlayerConf &playerConfBeginLevel, const MemPlayerConf &playerConfCheckpoint, uint32_t levelNum, uint32_t numSaveFile,
                                    const MemCheckpointElementsState *checkpointData)
 {
     return m_levelManager.saveGameProgress(playerConfBeginLevel, playerConfCheckpoint, levelNum, numSaveFile, checkpointData);

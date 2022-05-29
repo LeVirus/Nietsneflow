@@ -236,6 +236,7 @@ public:
     void savePlayerGear(bool beginLevel);
     void unsetFirstLaunch();
 private:
+    void memCustomLevelRevealedMap();
     void saveEnemiesCheckpoint();
     bool isLoadFromLevelBegin(LevelState_e levelState)const;
     void clearObjectToDelete();
