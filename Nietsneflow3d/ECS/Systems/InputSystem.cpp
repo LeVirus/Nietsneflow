@@ -1328,7 +1328,6 @@ void InputSystem::treatEnterPressedLoadCustomGameMenu(PlayerConfComponent *playe
         playerComp->m_menuMode = MenuMode_e::CONFIRM_LOADING_GAME_FORM;
         m_mainEngine->updateConfirmLoadingMenuInfo(playerComp);
         m_mainEngine->setMenuEntries(playerComp);
-
     }
 }
 

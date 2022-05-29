@@ -1,8 +1,20 @@
 BUGS======================================================================
 
+))
+Bad modif save level if load custom level
 
 ))
-loading From level with checkpoint and reload an other level Issue
+In custom level bad save map when reload checkpoint
+
+))
+In custom levels menu if 2 entry shift with return entry
+
+))
+In custom levels menu bad cursor position if next menu has less levels than the previous
+
+
+
+
 
 ))
 When die and reload from checkpoint moveable wall bad place========================NOT REPRODUCIBLE
@@ -20,6 +32,9 @@ In input gamepad menu bug in GLFW in AXIS===============================~
 ))
 Wall exists inside door some time======================Bug in level editor
 
+
+))
+loading From level with checkpoint and reload an other level Issue=================================OK
 
 ))
 Display issue in moveable wall multi sprite on trigger (wall trigger ==> display door sprite) NOT REPRODUCIBLE APPEND ONLY WHEN MODIFY LEVEL WHEN GAME RUNNING====================OK

@@ -371,6 +371,7 @@ private:
     uint32_t m_currentLevelSecretsNumber, m_currentLevelEnemiesNumber, m_currentLevelEnemiesKilled;
     std::set<PairUI_t> m_memWall, m_memStaticEntitiesDeletedFromCheckpoint, m_currentEntitiesDelete;
     std::map<PairUI_t, uint32_t> m_memTriggerCreated, m_memWallPos;
+    //first level num, second true :: customLevel
     std::optional<std::pair<uint32_t, bool>> m_levelToLoad;
     std::optional<MemCheckpointLevelState> m_memCheckpointLevelState;
     uint32_t m_playerEntity;

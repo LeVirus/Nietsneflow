@@ -78,8 +78,11 @@ void Game::initEngine()
 LevelState Game::launchGame(uint32_t levelNum, LevelState_e levelState)
 {
     LevelState levelRet = m_mainEngine.mainLoop(levelNum, levelState);
-    if(m_mainEngine.isLoadFromCheckpoint() && levelRet.m_levelState != LevelState_e::RESTART_FROM_CHECKPOINT &&
-            levelRet.m_levelState != LevelState_e::GAME_OVER)
+    if(levelRet.m_levelState == LevelState_e::RESTART_LEVEL || (levelRet.m_customLevel && levelRet.m_levelState == LevelState_e::LOAD_GAME) ||
+            (m_mainEngine.isLoadFromCheckpoint() &&
+             levelRet.m_levelState != LevelState_e::RESTART_FROM_CHECKPOINT &&
+             levelRet.m_levelState != LevelState_e::GAME_OVER &&
+             levelRet.m_levelState != LevelState_e::LOAD_GAME))
     {
         m_mainEngine.clearCheckpointData();
     }
