@@ -892,10 +892,10 @@ void MainEngine::loadLevel(const LevelManager &levelManager)
     loadBackgroundEntities(levelManager.getPictureData().getGroundData(),
                            levelManager.getPictureData().getCeilingData(),
                            levelManager);
+    Level::initLevelElementArray();
     loadStaticElementEntities(levelManager);
     loadBarrelElementEntities(levelManager);
     loadPlayerEntity(levelManager);
-    Level::initLevelElementArray();
     loadWallEntities(levelManager.getMoveableWallData(), levelManager.getPictureData().getSpriteData());
     loadDoorEntities(levelManager);
     loadEnemiesEntities(levelManager);
@@ -1283,7 +1283,6 @@ void MainEngine::loadDoorEntities(const LevelManager &levelManager)
                     searchComponentByType<SpriteTextureComponent>(numEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
             assert(spriteComp);
             Level::addElementCase(spriteComp, it->second.m_TileGamePosition[j], LevelCaseType_e::DOOR_LC, numEntity);
-
             if(!memSpriteComp)
             {
                 continue;
@@ -1532,6 +1531,13 @@ void MainEngine::loadLogsEntities(const LevelManager &levelManager, const std::v
                 searchComponentByType<LogComponent>(entityNum, Components_e::LOG_COMPONENT);
         assert(logComp);
         logComp->m_message = treatInfoMessageEndLine(container[i].m_message);
+        SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().
+                searchComponentByType<SpriteTextureComponent>(entityNum, Components_e::SPRITE_TEXTURE_COMPONENT);
+        MapCoordComponent *mapComp = m_ecsManager.getComponentManager().
+                searchComponentByType<MapCoordComponent>(entityNum, Components_e::MAP_COORD_COMPONENT);
+        assert(spriteComp);
+        assert(mapComp);
+        Level::addElementCase(spriteComp, mapComp->m_coord, LevelCaseType_e::EMPTY_LC, entityNum);
     }
 }
 
@@ -1543,8 +1549,7 @@ void MainEngine::loadRevealedMap()
     {
         std::optional<ElementRaycast> element = Level::getElementCase(m_revealedMapData[i]);
         assert(element);
-        m_graphicEngine.getMapSystem().addDiscoveredEntity(element->m_numEntity,
-                                                           m_revealedMapData[i]);
+        m_graphicEngine.getMapSystem().addDiscoveredEntity(element->m_numEntity, m_revealedMapData[i]);
     }
 }
 
@@ -2961,6 +2966,7 @@ void MainEngine::loadBarrelElementEntities(const LevelManager &levelManager)
         assert(spriteComp);
         audioComp->m_soundElements.push_back(loadSound(barrelData.m_explosionSoundFile));
         mapComp->m_coord = barrelData.m_TileGamePosition[i];
+        Level::addElementCase(spriteComp, barrelData.m_TileGamePosition[i], LevelCaseType_e::EMPTY_LC, barrelEntity);
         mapComp->m_absoluteMapPositionPX = getCenteredAbsolutePosition(mapComp->m_coord);
         circleComp->m_ray = 10.0f;
         genComp->m_tagA = CollisionTag_e::BARREL_CT;
@@ -3067,6 +3073,13 @@ void MainEngine::loadExitElement(const LevelManager &levelManager,
             searchComponentByType<CircleCollisionComponent>(entityNum, Components_e::CIRCLE_COLLISION_COMPONENT);
     assert(circleComp);
     circleComp->m_ray = 5.0f;
+    SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().
+            searchComponentByType<SpriteTextureComponent>(entityNum, Components_e::SPRITE_TEXTURE_COMPONENT);
+    MapCoordComponent *mapComp = m_ecsManager.getComponentManager().
+            searchComponentByType<MapCoordComponent>(entityNum, Components_e::MAP_COORD_COMPONENT);
+    assert(spriteComp);
+    assert(mapComp);
+    Level::addElementCase(spriteComp, mapComp->m_coord, LevelCaseType_e::EMPTY_LC, entityNum);
 }
 
 //===================================================================
@@ -3137,6 +3150,13 @@ std::optional<uint32_t> MainEngine::createStaticElementEntity(LevelStaticElement
     assert(circleComp);
     circleComp->m_ray = staticElementData.m_inGameSpriteSize.first * LEVEL_THIRD_TILE_SIZE_PX;
     confStaticComponent(entityNum, staticElementData.m_inGameSpriteSize, elementType);
+    SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().
+            searchComponentByType<SpriteTextureComponent>(entityNum, Components_e::SPRITE_TEXTURE_COMPONENT);
+    assert(spriteComp);
+    MapCoordComponent *mapComp = m_ecsManager.getComponentManager().
+            searchComponentByType<MapCoordComponent>(entityNum, Components_e::MAP_COORD_COMPONENT);
+    assert(mapComp);
+    Level::addElementCase(spriteComp, mapComp->m_coord, LevelCaseType_e::EMPTY_LC, entityNum);
     return entityNum;
 }
 

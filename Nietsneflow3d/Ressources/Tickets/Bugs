@@ -1,14 +1,11 @@
 BUGS======================================================================
 
 ))
-If load bad custom level crash
+If load bad custom level, crash
 
-))
-On reload from checkpoint case some static object does not appear on revealed minimap
 
 ))
 When die and reload from checkpoint moveable wall bad place========================NOT REPRODUCIBLE
-
 
 ))
 Eject issue on moveable wall lateral====================~~
@@ -22,6 +19,12 @@ In input gamepad menu bug in GLFW in AXIS===============================~
 ))
 Wall exists inside door some time======================Bug in level editor
 
+
+
+
+
+))
+On reload from checkpoint case some static object does not appear on revealed minimap========================OK
 
 ))
 In custom level bad save map when reload checkpoint===================================OK

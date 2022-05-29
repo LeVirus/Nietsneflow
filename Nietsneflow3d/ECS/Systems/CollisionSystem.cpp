@@ -456,6 +456,8 @@ void CollisionSystem::initArrayTag()
     m_tagArray.insert({CollisionTag_e::DETECT_MAP_CT, CollisionTag_e::TRIGGER_CT});
     m_tagArray.insert({CollisionTag_e::DETECT_MAP_CT, CollisionTag_e::TELEPORT_CT});
     m_tagArray.insert({CollisionTag_e::DETECT_MAP_CT, CollisionTag_e::BARREL_CT});
+    m_tagArray.insert({CollisionTag_e::DETECT_MAP_CT, CollisionTag_e::EXIT_CT});
+    m_tagArray.insert({CollisionTag_e::DETECT_MAP_CT, CollisionTag_e::LOG_CT});
 
     m_tagArray.insert({CollisionTag_e::BARREL_CT, CollisionTag_e::BARREL_CT});
 
