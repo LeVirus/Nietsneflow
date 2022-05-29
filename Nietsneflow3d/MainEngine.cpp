@@ -99,7 +99,7 @@ LevelState MainEngine::mainLoop(uint32_t levelNum, LevelState_e levelState)
         {
             m_graphicEngine.updateSaveNum(levelNum, m_currentSave, 0);
         }
-        else
+        else if(!m_memCustomLevelLoadedData)
         {
             m_graphicEngine.updateSaveNum(levelNum, m_currentSave, {});
         }
