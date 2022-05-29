@@ -104,14 +104,18 @@ LevelState MainEngine::mainLoop(uint32_t levelNum, LevelState_e levelState)
             m_graphicEngine.updateSaveNum(levelNum, m_currentSave, {});
         }
     }
-    if(m_playerMemGear)
+    //don't load gear for custom level
+    if(!m_memCustomLevelLoadedData)
     {
-        loadPlayerGear(beginLevel);
-    }
-    else
-    {
-        savePlayerGear(beginLevel);
-        saveGameProgress(m_currentLevel);
+        if(m_playerMemGear)
+        {
+            loadPlayerGear(beginLevel);
+        }
+        else
+        {
+            savePlayerGear(beginLevel);
+            saveGameProgress(m_currentLevel);
+        }
     }
     std::chrono::duration<double> elapsed_seconds;
     //display FPS

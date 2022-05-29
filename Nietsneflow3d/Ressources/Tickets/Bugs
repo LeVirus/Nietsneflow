@@ -1,9 +1,6 @@
 BUGS======================================================================
 
 ))
-Reinit standard objects and life for next custom level
-
-))
 In custom level bad save map when reload checkpoint
 
 
@@ -23,6 +20,9 @@ In input gamepad menu bug in GLFW in AXIS===============================~
 ))
 Wall exists inside door some time======================Bug in level editor
 
+
+))
+Reinit standard objects and life for next custom level=========================OK
 
 ))
 In custom levels menu if 2 entry shift with return entry==========================OK
