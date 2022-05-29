@@ -61,11 +61,11 @@ void GraphicEngine::loadExistingCustomLevel(const std::vector<std::string> &cust
             levelName.resize(15);
             std::copy(longNameContract.begin(), longNameContract.end(), levelName.begin() + levelName.size() - longNameContract.size());
         }
-        std::transform(levelName.begin(), levelName.end(), levelName.begin(), [](unsigned char c){ return std::toupper(c); });
+        std::transform(levelName.begin(), levelName.end(), levelName.begin(), [](uint8_t c){ return std::toupper(c); });
         strFinal += std::to_string(i + 1) + " " + levelName + "\\";
         if(currentSectionCursor == (CUSTOM_MENU_SECTION_SIZE - 1) || i == customLevels.size() - 1)
         {
-            strFinal += (size > 1) ? "PREVIOUS\\NEXT\\RETURN" : "\\RETURN";
+            strFinal += (size > 1) ? "PREVIOUS\\NEXT\\RETURN" : "RETURN";
             m_existingCustomLevelsMenuWrite[currentSection] = {strFinal, currentSectionCursor + ((size > 1) ? 3 : 1)};
             ++currentSection;
             currentSectionCursor = 0;
