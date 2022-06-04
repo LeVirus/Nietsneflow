@@ -181,26 +181,31 @@ void LevelManager::loadMusicData()
 }
 
 //===================================================================
-void LevelManager::loadLevelData()
+bool LevelManager::loadLevelData()
 {
     std::optional<std::string> valWeight = m_ini.getValue("Level", "weight");
     std::optional<std::string> valHeight = m_ini.getValue("Level", "height");
-    assert(valWeight);
-    assert(valHeight);
+    if(!valWeight || !valHeight)
+    {
+        return false;
+    }
     m_level.setLevelSize({std::stoi(*valWeight), std::stoi(*valHeight)});
+    return true;
 }
 
 //===================================================================
-void LevelManager::loadPositionPlayerData()
+bool LevelManager::loadPositionPlayerData()
 {
     std::optional<std::string> playerDepartureX = m_ini.getValue("PlayerInit", "playerDepartureX");
     std::optional<std::string> playerDepartureY = m_ini.getValue("PlayerInit", "playerDepartureY");
     std::optional<std::string> PlayerOrientation = m_ini.getValue("PlayerInit", "PlayerOrientation");
-    assert(playerDepartureX);
-    assert(playerDepartureY);
-    assert(PlayerOrientation);
+    if(!playerDepartureX || !playerDepartureY || !PlayerOrientation)
+    {
+        return false;
+    }
     m_level.setPlayerInitData({std::stoi(*playerDepartureX), std::stoi(*playerDepartureY)},
                               static_cast<Direction_e>(std::stoi(*PlayerOrientation)));
+    return true;
 }
 
 //===================================================================
@@ -508,43 +513,53 @@ void LevelManager::readStandardStaticElement(StaticLevelElementData &staticEleme
 
 
 //===================================================================
-void LevelManager::fillStandartPositionVect(const std::string &sectionName, VectPairUI_t &vectPos)
+bool LevelManager::fillStandartPositionVect(const std::string &sectionName, VectPairUI_t &vectPos)
 {
     std::optional<std::vector<uint32_t>> results = getBrutPositionData(sectionName, "GamePosition");
     if(!results)
     {
-        return;
+        return true;
     }
-    assert(!(*results).empty() && "Error inconsistent position datas.");
+    if((*results).empty() || (*results).size() % 2 == 1)
+    {
+        std::cout << "Error inconsistent position datas in " << sectionName << std::endl;
+        return false;
+    }
     size_t finalSize = (*results).size() / 2;
-    assert(!((*results).size() % 2) && "Error inconsistent position datas.");
     vectPos.reserve(finalSize);
     for(uint32_t j = 0; j < (*results).size(); j += 2)
     {
         vectPos.emplace_back(PairUI_t{(*results)[j], (*results)[j + 1]});
         deleteWall(vectPos.back());
     }
+    return true;
 }
 
 //===================================================================
-void LevelManager::fillTeleportPositions(const std::string &sectionName)
+bool LevelManager::fillTeleportPositions(const std::string &sectionName)
 {
     std::optional<std::vector<uint32_t>> resultsPosA = getBrutPositionData(sectionName, "PosA"),
             resultsPosB = getBrutPositionData(sectionName, "PosB");
-    if(!resultsPosA)
+    if(!resultsPosA || !resultsPosB || (*resultsPosA).size() % 2 == 1 || (*resultsPosB).size() % 2 == 1 ||
+            (*resultsPosB).size() != (*resultsPosA).size())
     {
-        return;
+        std::cout << "Error inconsistent position datas in " << sectionName << std::endl;
+        return false;
     }
-    assert(resultsPosB);
-    assert((*resultsPosA).size() % 2 == 0);
-    assert((*resultsPosB).size() % 2 == 0);
-    assert((*resultsPosB).size() == (*resultsPosA).size());
     uint32_t vectSize = (*resultsPosA).size() / 2;
     m_teleportElement[sectionName].m_teleportData = TeleportData();
     std::optional<std::string> val = m_ini.getValue(sectionName, "BiDirection");
-    assert(val);
+    if(!val)
+    {
+        std::cout << "Error bidirection datas in " << sectionName << std::endl;
+        return false;
+    }
     m_teleportElement[sectionName].m_teleportData->m_biDirection = convertStrToVectBool(*val);
-    assert(m_teleportElement[sectionName].m_teleportData->m_biDirection.size() == vectSize);
+    if(m_teleportElement[sectionName].m_teleportData->m_biDirection.size() != vectSize)
+    {
+        std::cout << "Error bidirection datas in " << sectionName << std::endl;
+        return false;
+    }
     VectPairUI_t &vect = m_teleportElement[sectionName].m_teleportData->m_targetTeleport;
     vect.reserve(vectSize);
     m_teleportElement[sectionName].m_TileGamePosition.reserve(vectSize);
@@ -562,6 +577,35 @@ void LevelManager::fillTeleportPositions(const std::string &sectionName)
             vect.emplace_back(PairUI_t{(*resultsPosA)[j], (*resultsPosA)[j + 1]});
         }
     }
+    return true;
+}
+
+//===================================================================
+std::map<std::string, StaticLevelElementData>::iterator LevelManager::removeStaticElement(const std::string_view sectionName,
+                                                                                          LevelStaticElementType_e elementType)
+{
+    std::map<std::string, StaticLevelElementData> *container;
+    switch(elementType)
+    {
+    case LevelStaticElementType_e::GROUND:
+        container = &m_groundElement;
+        break;
+    case LevelStaticElementType_e::CEILING:
+        container = &m_ceilingElement;
+        break;
+    case LevelStaticElementType_e::OBJECT:
+        container = &m_objectElement;
+        break;
+    case LevelStaticElementType_e::TELEPORT:
+        container = &m_teleportElement;
+        break;
+    case LevelStaticElementType_e::IMPACT:
+        assert(false);
+        break;
+    }
+    std::map<std::string, StaticLevelElementData>::iterator it = container->find(sectionName.data());
+    assert(it != container->end());
+    return container->erase(it);
 }
 
 //===================================================================
@@ -1044,11 +1088,21 @@ void LevelManager::loadPositionWall()
 {
     std::vector<std::string> vectINISections = m_ini.getSectionNamesContaining("WallShape");
     std::map<std::string, WallData>::iterator it;
-    std::optional<std::string> direction, moveNumber, val;
+    std::optional<std::string> direction, moveNumber, velocity, triggerType, triggerBehaviourType, wallDisplayID;
     for(uint32_t i = 0; i < vectINISections.size(); ++i)
     {
-        it = m_wallData.find(*m_ini.getValue(vectINISections[i], "WallDisplayID"));
-        assert(it != m_wallData.end());
+        wallDisplayID = m_ini.getValue(vectINISections[i], "WallDisplayID");
+        if(!wallDisplayID)
+        {
+            std::cout << "WARNING errors in " << vectINISections[i] << " datas skip\n";
+            continue;
+        }
+        it = m_wallData.find(*wallDisplayID);
+        if(it == m_wallData.end())
+        {
+            std::cout << "WARNING errors in " << vectINISections[i] << " datas skip\n";
+            continue;
+        }
         //Moveable wall
         m_mainWallData.insert({vectINISections[i], MoveableWallData()});
         m_mainWallData[vectINISections[i]].m_sprites = it->second.m_sprites;
@@ -1058,35 +1112,35 @@ void LevelManager::loadPositionWall()
         fillWallPositionVect(vectINISections[i], "RemovePosition",
                              m_mainWallData[vectINISections[i]].m_removeGamePosition);
         direction = m_ini.getValue(vectINISections[i], "Direction");
-        if(!direction)
+        moveNumber = m_ini.getValue(vectINISections[i], "NumberOfMove");
+        if(!direction || !moveNumber)
         {
             continue;
         }
-        moveNumber = m_ini.getValue(vectINISections[i], "NumberOfMove");
-        assert(moveNumber);
         std::vector<uint32_t> vectDir = convertStrToVectUI(*direction);
         std::vector<uint32_t> vectMov = convertStrToVectUI(*moveNumber);
-        assert(vectDir.size() == vectMov.size());
+        velocity = m_ini.getValue(vectINISections[i], "Velocity");
+        triggerBehaviourType = m_ini.getValue(vectINISections[i], "TriggerBehaviourType");
+        if(!triggerBehaviourType || !velocity || vectDir.size() != vectMov.size())
+        {
+            std::cout << "WARNING errors in " << vectINISections[i] << " moveable wall datas skip\n";
+            continue;
+        }
         m_mainWallData[vectINISections[i]].m_directionMove.reserve(vectDir.size());
         for(uint32_t j = 0; j < vectDir.size(); ++j)
         {
             m_mainWallData[vectINISections[i]].m_directionMove.emplace_back(
                         std::pair<Direction_e, uint32_t>{static_cast<Direction_e>(vectDir[j]), vectMov[j]});
         }
-        val = m_ini.getValue(vectINISections[i], "Velocity");
-        assert(val);
-        m_mainWallData[vectINISections[i]].m_velocity = std::stof(*val);
-
-        val = m_ini.getValue(vectINISections[i], "TriggerType");
-        if(val)
+        m_mainWallData[vectINISections[i]].m_velocity = std::stof(*velocity);
+        triggerType = m_ini.getValue(vectINISections[i], "TriggerType");
+        if(triggerType)
         {
             m_mainWallData[vectINISections[i]].m_triggerType =
-                    static_cast<TriggerWallMoveType_e>(std::stoi(*val));
+                    static_cast<TriggerWallMoveType_e>(std::stoi(*triggerType));
         }
-        val = m_ini.getValue(vectINISections[i], "TriggerBehaviourType");
-        assert(val);
         m_mainWallData[vectINISections[i]].m_triggerBehaviourType =
-                static_cast<TriggerBehaviourType_e>(std::stoi(*val));
+                static_cast<TriggerBehaviourType_e>(std::stoi(*triggerBehaviourType));
         if(m_mainWallData[vectINISections[i]].m_triggerType == TriggerWallMoveType_e::BUTTON)
         {
             loadTriggerLevelData(vectINISections[i]);
@@ -1478,20 +1532,41 @@ void LevelManager::loadFontData(const std::string &INIFileName)
 void LevelManager::loadPositionStaticElements()
 {
     std::map<std::string, StaticLevelElementData>::iterator it = m_groundElement.begin();
-    for(; it != m_groundElement.end(); ++it)
+    for(; it != m_groundElement.end();)
     {
-        fillStandartPositionVect(it->first, it->second.m_TileGamePosition);
+        if(!fillStandartPositionVect(it->first, it->second.m_TileGamePosition))
+        {
+            it = removeStaticElement(it->first, LevelStaticElementType_e::GROUND);
+        }
+        else
+        {
+            ++it;
+        }
     }
-    for(it = m_ceilingElement.begin(); it != m_ceilingElement.end(); ++it)
+    for(it = m_ceilingElement.begin(); it != m_ceilingElement.end();)
     {
-        fillStandartPositionVect(it->first, it->second.m_TileGamePosition);
+        if(!fillStandartPositionVect(it->first, it->second.m_TileGamePosition))
+        {
+            it = removeStaticElement(it->first, LevelStaticElementType_e::CEILING);
+        }
+        else
+        {
+            ++it;
+        }
     }
-    for(it = m_objectElement.begin(); it != m_objectElement.end(); ++it)
+    for(it = m_objectElement.begin(); it != m_objectElement.end();)
     {
-        fillStandartPositionVect(it->first, it->second.m_TileGamePosition);
+        if(!fillStandartPositionVect(it->first, it->second.m_TileGamePosition))
+        {
+            it = removeStaticElement(it->first, LevelStaticElementType_e::OBJECT);
+        }
+        else
+        {
+            ++it;
+        }
     }
-    //OOOOK only one teleport element
-    for(it = m_teleportElement.begin(); it != m_teleportElement.end(); ++it)
+    it = m_teleportElement.begin();
+    if(it != m_teleportElement.end())
     {
         fillTeleportPositions(it->first);
     }
@@ -1522,8 +1597,16 @@ bool LevelManager::loadLevel(uint32_t levelNum, bool customLevel)
     }
     Level::clearMusicFilePath();
     m_mainWallData.clear();
-    loadLevelData();
-    loadPositionPlayerData();
+    if(!loadLevelData())
+    {
+        std::cout << "ERROR level " << path << " cannot be loaded\n";
+        return false;
+    }
+    if(!loadPositionPlayerData())
+    {
+        std::cout << "ERROR level " << path << " cannot be loaded\n";
+        return false;
+    }
     loadPositionWall();
     loadPositionStaticElements();
     loadBarrelElements();

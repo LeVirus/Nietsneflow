@@ -234,8 +234,8 @@ private:
     void loadBackgroundData();
     void loadMusicData();
     //Level element datas loading
-    void loadLevelData();
-    void loadPositionPlayerData();
+    bool loadLevelData();
+    bool loadPositionPlayerData();
     void loadGeneralStaticElements(LevelStaticElementType_e elementType);
     void loadPositionStaticElements();
     void loadBarrelElements();
@@ -254,9 +254,11 @@ private:
     void readStandardStaticElement(StaticLevelElementData &staticElement,
                                    const std::string &sectionName,
                                    LevelStaticElementType_e elementType);
-    void fillStandartPositionVect(const std::string &sectionName,
+    bool fillStandartPositionVect(const std::string &sectionName,
                                   VectPairUI_t &vectPos);
-    void fillTeleportPositions(const std::string &sectionName);
+    bool fillTeleportPositions(const std::string &sectionName);
+    std::map<std::string, StaticLevelElementData>::iterator removeStaticElement(const std::string_view sectionName,
+                                                                                LevelStaticElementType_e elementType);
     std::optional<PairUI_t> getPosition(const std::string_view sectionName, const std::string_view propertyName);
     bool fillWallPositionVect(const std::string &sectionName, const std::string &propertyName,
                               std::set<PairUI_t> &setPos);
