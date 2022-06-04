@@ -78,9 +78,9 @@ void LevelManager::loadSpriteData(const std::string &sectionName,
 }
 
 //===================================================================
-void LevelManager::loadBackgroundData()
+bool LevelManager::loadBackgroundData()
 {
-    std::optional<std::string> val;
+    std::optional<std::string> valA, valB, valC;
     std::vector<std::string> sections = m_ini.getSectionNamesContaining("GroundBackground");
     GroundCeilingData groundData, ceilingData;
     uint32_t colorIndex = static_cast<uint32_t>(DisplayType_e::COLOR),
@@ -93,15 +93,17 @@ void LevelManager::loadBackgroundData()
         if(sections[i] == "ColorGroundBackground")
         {
             std::vector<float> colorR, colorG, colorB;
-            val = m_ini.getValue(sections[i], "colorR");
-            assert(val);
-            colorR = convertStrToVectFloat(*val);
-            val = m_ini.getValue(sections[i], "colorG");
-            assert(val);
-            colorG = convertStrToVectFloat(*val);
-            val = m_ini.getValue(sections[i], "colorB");
-            assert(val);
-            colorB = convertStrToVectFloat(*val);
+            valA = m_ini.getValue(sections[i], "colorR");
+            valB = m_ini.getValue(sections[i], "colorG");
+            valC = m_ini.getValue(sections[i], "colorB");
+            if(!valA || !valB || !valC)
+            {
+                std::cout << "Error while loading color background" << std::endl;
+                return false;
+            }
+            colorR = convertStrToVectFloat(*valA);
+            colorG = convertStrToVectFloat(*valB);
+            colorB = convertStrToVectFloat(*valC);
             for(uint32_t j = 0; j < 4 ; ++j)
             {
                 groundData.m_color[j] = tupleFloat_t{colorR[j], colorG[j], colorB[j]};
@@ -110,19 +112,35 @@ void LevelManager::loadBackgroundData()
         }
         else if(sections[i] == "SimpleTextureGroundBackground")
         {
-            val = m_ini.getValue(sections[i], "sprite");
-            assert(val);
-            std::optional<uint8_t> picNum = m_pictureData.getIdentifier(*val);
-            assert(picNum);
+            valA = m_ini.getValue(sections[i], "sprite");
+            if(!valA)
+            {
+                std::cout << "Error while loading background picture" << std::endl;
+                return false;
+            }
+            std::optional<uint8_t> picNum = m_pictureData.getIdentifier(*valA);
+            if(!picNum)
+            {
+                std::cout << "Error while loading background picture" << std::endl;
+                return false;
+            }
             groundData.m_spriteSimpleTextNum = *picNum;
             groundData.m_apparence[simpleTextureIndex] = true;
         }
         else if(sections[i] == "TiledTextureGroundBackground")
         {
-            val = m_ini.getValue(sections[i], "sprite");
-            assert(val);
-            std::optional<uint8_t> picNum = m_pictureData.getIdentifier(*val);
-            assert(picNum);
+            valA = m_ini.getValue(sections[i], "sprite");
+            if(!valA)
+            {
+                std::cout << "Error while loading background picture" << std::endl;
+                return false;
+            }
+            std::optional<uint8_t> picNum = m_pictureData.getIdentifier(*valA);
+            if(!picNum)
+            {
+                std::cout << "Error while loading background picture" << std::endl;
+                return false;
+            }
             groundData.m_spriteTiledTextNum = *picNum;
             groundData.m_apparence[tiledTextureIndex] = true;
         }
@@ -133,15 +151,17 @@ void LevelManager::loadBackgroundData()
         if(sections[i] == "ColorCeilingBackground")
         {
             std::vector<float> colorR, colorG, colorB;
-            val = m_ini.getValue(sections[i], "colorR");
-            assert(val);
-            colorR = convertStrToVectFloat(*val);
-            val = m_ini.getValue(sections[i], "colorG");
-            assert(val);
-            colorG = convertStrToVectFloat(*val);
-            val = m_ini.getValue(sections[i], "colorB");
-            assert(val);
-            colorB = convertStrToVectFloat(*val);
+            valA = m_ini.getValue(sections[i], "colorR");
+            valB = m_ini.getValue(sections[i], "colorG");
+            valC = m_ini.getValue(sections[i], "colorB");
+            if(!valA || !valB || !valC)
+            {
+                std::cout << "Error while loading color background" << std::endl;
+                return false;
+            }
+            colorR = convertStrToVectFloat(*valA);
+            colorG = convertStrToVectFloat(*valB);
+            colorB = convertStrToVectFloat(*valC);
             for(uint32_t j = 0; j < 4 ; ++j)
             {
                 ceilingData.m_color[j] = tupleFloat_t{colorR[j], colorG[j], colorB[j]};
@@ -150,24 +170,41 @@ void LevelManager::loadBackgroundData()
         }
         else if(sections[i] == "SimpleTextureCeilingBackground")
         {
-            val = m_ini.getValue(sections[i], "sprite");
-            assert(val);
-            std::optional<uint8_t> picNum = m_pictureData.getIdentifier(*val);
-            assert(picNum);
+            valA = m_ini.getValue(sections[i], "sprite");
+            if(!valA)
+            {
+                std::cout << "Error while loading background picture" << std::endl;
+                return false;
+            }
+            std::optional<uint8_t> picNum = m_pictureData.getIdentifier(*valA);
+            if(!picNum)
+            {
+                std::cout << "Error while loading background picture" << std::endl;
+                return false;
+            }
             ceilingData.m_spriteSimpleTextNum = *picNum;
             ceilingData.m_apparence[simpleTextureIndex] = true;
         }
         else if(sections[i] == "TiledTextureCeilingBackground")
         {
-            val = m_ini.getValue(sections[i], "sprite");
-            assert(val);
-            std::optional<uint8_t> picNum = m_pictureData.getIdentifier(*val);
-            assert(picNum);
+            valA = m_ini.getValue(sections[i], "sprite");
+            if(!valA)
+            {
+                std::cout << "Error while loading background picture" << std::endl;
+                return false;
+            }
+            std::optional<uint8_t> picNum = m_pictureData.getIdentifier(*valA);
+            if(!picNum)
+            {
+                std::cout << "Error while loading background picture" << std::endl;
+                return false;
+            }
             ceilingData.m_spriteTiledTextNum = *picNum;
             ceilingData.m_apparence[tiledTextureIndex] = true;
         }
     }
     m_pictureData.setBackgroundData(groundData, ceilingData);
+    return true;
 }
 
 //===================================================================
@@ -355,7 +392,11 @@ VectPairUI_t LevelManager::getPositionData(const std::string &sectionName, const
     {
         return {};
     }
-    assert((*resultsPos).size() % 2 == 0);
+    if((*resultsPos).size() % 2 == 1)
+    {
+        std::cout << "Warning : inconsistent position datas in " << sectionName << std::endl;
+        return {};
+    }
     vectRet.reserve((*resultsPos).size() / 2);
     for(uint32_t i = 0; i < (*resultsPos).size(); i += 2)
     {
@@ -431,20 +472,26 @@ void LevelManager::loadTriggerElements()
 }
 
 //===================================================================
-void LevelManager::loadPositionExit()
+bool LevelManager::loadPositionExit()
 {
     std::vector<std::string> vectINISections;
     vectINISections = m_ini.getSectionNamesContaining("Exit");
-    assert(!vectINISections.empty());
+    if(vectINISections.empty())
+    {
+        return false;
+    }
     std::optional<std::string> gamePositions = m_ini.getValue(vectINISections[0], "GamePosition");
-    assert(gamePositions);
-    assert(!(*gamePositions).empty() && "Error while getting positions.");
+    if(!gamePositions || (*gamePositions).empty())
+    {
+        return false;
+    }
     std::vector<uint32_t> results = convertStrToVectUI(*gamePositions);
     for(uint32_t i = 0; i < results.size(); i += 2)
     {
         m_exitStaticElement.m_TileGamePosition.push_back({results[i], results[i + 1]});
         deleteWall(m_exitStaticElement.m_TileGamePosition.back());
     }
+    return true;
 }
 
 //===================================================================
@@ -522,7 +569,7 @@ bool LevelManager::fillStandartPositionVect(const std::string &sectionName, Vect
     }
     if((*results).empty() || (*results).size() % 2 == 1)
     {
-        std::cout << "Error inconsistent position datas in " << sectionName << std::endl;
+        std::cout << "Warning : inconsistent position datas in " << sectionName << std::endl;
         return false;
     }
     size_t finalSize = (*results).size() / 2;
@@ -543,7 +590,7 @@ bool LevelManager::fillTeleportPositions(const std::string &sectionName)
     if(!resultsPosA || !resultsPosB || (*resultsPosA).size() % 2 == 1 || (*resultsPosB).size() % 2 == 1 ||
             (*resultsPosB).size() != (*resultsPosA).size())
     {
-        std::cout << "Error inconsistent position datas in " << sectionName << std::endl;
+        std::cout << "Warning : inconsistent position datas in " << sectionName << std::endl;
         return false;
     }
     uint32_t vectSize = (*resultsPosA).size() / 2;
@@ -551,13 +598,13 @@ bool LevelManager::fillTeleportPositions(const std::string &sectionName)
     std::optional<std::string> val = m_ini.getValue(sectionName, "BiDirection");
     if(!val)
     {
-        std::cout << "Error bidirection datas in " << sectionName << std::endl;
+        std::cout << "Warning : bidirection datas in " << sectionName << std::endl;
         return false;
     }
     m_teleportElement[sectionName].m_teleportData->m_biDirection = convertStrToVectBool(*val);
     if(m_teleportElement[sectionName].m_teleportData->m_biDirection.size() != vectSize)
     {
-        std::cout << "Error bidirection datas in " << sectionName << std::endl;
+        std::cout << "Warning : bidirection datas in " << sectionName << std::endl;
         return false;
     }
     VectPairUI_t &vect = m_teleportElement[sectionName].m_teleportData->m_targetTeleport;
@@ -1206,7 +1253,11 @@ void LevelManager::loadPositionDoorData()
     for(uint32_t i = 0; i < vectINISections.size(); ++i)
     {
         it = m_doorData.find(vectINISections[i]);
-        assert(it != m_doorData.end());
+        if(it == m_doorData.end())
+        {
+            std::cout << "Warning : door data id cannot be found" << std::endl;
+            continue;
+        }
         fillStandartPositionVect(vectINISections[i], it->second.m_TileGamePosition);
     }
 }
@@ -1300,7 +1351,11 @@ void LevelManager::loadPositionEnemyData()
     for(uint32_t i = 0; i < vectINISections.size(); ++i)
     {
         it = m_enemyData.find(vectINISections[i]);
-        assert(it != m_enemyData.end());
+        if(it == m_enemyData.end())
+        {
+            std::cout << "Warning : enemy data id cannot be found" << std::endl;
+            continue;
+        }
         fillStandartPositionVect(vectINISections[i], it->second.m_TileGamePosition);
     }
 }
@@ -1319,7 +1374,11 @@ void LevelManager::loadPositionCheckpointsData()
     fillStandartPositionVect(vectINISections[0], vectPos);
     std::optional<std::string> dir = m_ini.getValue("Checkpoints", "Direction");
     std::vector<uint32_t> vectDir = convertStrToVectUI(*dir);
-    assert(vectDir.size() == vectPos.size());
+    if(vectDir.size() != vectPos.size())
+    {
+        std::cout << "Warning : inconsistent checkpoints position datas" << std::endl;
+        return;
+    }
     m_checkpointsPos.reserve(vectDir.size());
     for(uint32_t j = 0; j < vectDir.size(); ++j)
     {
@@ -1353,15 +1412,31 @@ void LevelManager::loadPositionLogsData()
     for(uint32_t j = 0; j < vectINISections.size(); ++j)
     {
         val = m_ini.getValue(vectINISections[j], "DisplayID");
-        assert(val);
+        if(!val)
+        {
+            std::cout << "Warning : loading logs display id. Skip..." << std::endl;
+            continue;
+        }
         id = *val;
         val = m_ini.getValue(vectINISections[j], "GamePosition");
-        assert(val);
+        if(!val)
+        {
+            std::cout << "Warning : loading logs position datas. Skip..." << std::endl;
+            continue;
+        }
         vectPos = convertStrToVectUI(*val);
-        assert(vectPos.size() == 2);
+        if(vectPos.size() != 2)
+        {
+            std::cout << "Warning : loading logs position datas. Skip..." << std::endl;
+            continue;
+        }
         pos = {vectPos[0], vectPos[1]};
         val = m_ini.getValue(vectINISections[j], "Message");
-        assert(val);
+        if(!val)
+        {
+            std::cout << "Error loading logs message datas. Skip..." << std::endl;
+            continue;
+        }
         message = *val;
         m_logsLevelData.emplace_back(LogLevelData{id, message, pos});
     }
@@ -1593,30 +1668,42 @@ bool LevelManager::loadLevel(uint32_t levelNum, bool customLevel)
     uint32_t encryptKey = customLevel ? ENCRYPT_KEY_CUSTOM_LEVEL : ENCRYPT_KEY_STANDARD_LEVEL;
     if(!loadIniFile(path, encryptKey))
     {
-        assert("Error while reading INI file.");
+        std::cout << "ERROR level " << path << " cannot be loaded" << std::endl;
+        return false;
     }
     Level::clearMusicFilePath();
     m_mainWallData.clear();
     if(!loadLevelData())
     {
-        std::cout << "ERROR level " << path << " cannot be loaded\n";
+        std::cout << "ERROR level " << path << " cannot be loaded" << std::endl;
         return false;
     }
     if(!loadPositionPlayerData())
     {
-        std::cout << "ERROR level " << path << " cannot be loaded\n";
+        std::cout << "ERROR player data cannot be loaded" << std::endl;
+        std::cout << "Level " << path << " cannot be loaded" << std::endl;
         return false;
     }
     loadPositionWall();
     loadPositionStaticElements();
     loadBarrelElements();
-    loadPositionExit();
+    if(!loadPositionExit())
+    {
+        std::cout << "ERROR exit data cannot be loaded" << std::endl;
+        std::cout << "Level " << path << " cannot be loaded" << std::endl;
+        return false;
+    }
     loadPositionDoorData();
     loadPositionEnemyData();
     loadPositionCheckpointsData();
     loadPositionSecretsData();
     loadPositionLogsData();
-    loadBackgroundData();
+    if(!loadBackgroundData())
+    {
+        std::cout << "ERROR background data cannot be loaded" << std::endl;
+        std::cout << "Level " << path << " cannot be loaded" << std::endl;
+        return false;
+    }
     loadMusicData();
     return true;
 }

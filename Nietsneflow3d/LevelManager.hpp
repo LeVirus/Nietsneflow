@@ -231,7 +231,7 @@ private:
     void loadTexturePath();
     void loadSpriteData(const std::string &sectionName = "Sprite",
                         bool font = false);
-    void loadBackgroundData();
+    bool loadBackgroundData();
     void loadMusicData();
     //Level element datas loading
     bool loadLevelData();
@@ -290,7 +290,7 @@ private:
     void loadEnemySprites(const std::string &sectionName,
                           EnemySpriteElementType_e spriteTypeEnum, EnemyData &enemyData);
     void deleteWall(const PairUI_t &coord);
-    void loadPositionExit();
+    bool loadPositionExit();
     std::vector<uint8_t> getVectSpriteNum(const std::string_view section, const std::string_view param);
     std::vector<PairFloat_t> getVectSpriteGLSize(const std::string_view section, const std::string_view weightParam,
                                                   const std::string_view heightParam);
