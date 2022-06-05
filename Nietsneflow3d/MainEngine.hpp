@@ -106,7 +106,7 @@ public:
     void loadLevel(const LevelManager &levelManager);
     void loadGameProgressCheckpoint();
     //first quit, second gameover
-    LevelState mainLoop(uint32_t levelNum, LevelState_e levelState);
+    LevelState mainLoop(uint32_t levelNum, LevelState_e levelState, bool afterLoadFailure = false);
     void saveGameProgressCheckpoint(uint32_t levelNum, const PairUI_t &checkpointReached, const std::pair<uint32_t, Direction_e> &checkpointData);
     void saveGameProgress(uint32_t levelNum, std::optional<uint32_t> numSaveFile = {},
                           const MemCheckpointElementsState *checkpointData = nullptr);
@@ -236,6 +236,7 @@ public:
     void savePlayerGear(bool beginLevel);
     void unsetFirstLaunch();
 private:
+    void initLevel(uint32_t levelNum, LevelState_e levelState);
     void memCustomLevelRevealedMap();
     void saveEnemiesCheckpoint();
     bool isLoadFromLevelBegin(LevelState_e levelState)const;

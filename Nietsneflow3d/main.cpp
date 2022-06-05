@@ -3,12 +3,13 @@
 
 int main()
 {
-    uint32_t levelIndex = 1;
+    uint32_t levelIndex = 1, memPreviousLevel;
     Game game;
     game.initEngine();
     game.loadStandardData();
     bool gameLoaded = false, firstLaunch = true;
     LevelState levelState = {LevelState_e::NEW_GAME, {}, false};
+    LevelLoadState_e levelRetState = LevelLoadState_e::OK;
     do
     {
         game.loadStandardEntities();
@@ -27,29 +28,53 @@ int main()
                 break;
             }
             levelIndex = *levelState.m_levelToLoad;
+            levelRetState = game.loadLevelData(levelIndex, levelState.m_customLevel);
             //if no more level
-            if(!game.loadLevelData(levelIndex, levelState.m_customLevel))
+            if(levelRetState == LevelLoadState_e::END)
             {
                 break;
             }
-            game.setPlayerDeparture();
-            firstLaunch = false;
+            else if(levelRetState == LevelLoadState_e::OK)
+            {
+                memPreviousLevel = levelIndex;
+                game.setPlayerDeparture();
+                firstLaunch = false;
+            }
+            else if(levelRetState == LevelLoadState_e::FAIL)
+            {
+                continue;
+            }
         }
         else
         {
-            //if no more level
-            if(!game.loadLevelData(levelIndex, levelState.m_customLevel))
+            if(levelRetState != LevelLoadState_e::FAIL)
             {
-                break;
-            }
-            if(!gameLoaded)
-            {
-                game.loadSavedSettingsData();
-                gameLoaded = true;
+                levelRetState = game.loadLevelData(levelIndex, levelState.m_customLevel);
+                //if no more level
+                if(levelRetState == LevelLoadState_e::END)
+                {
+                    break;
+                }
+                else if(levelRetState == LevelLoadState_e::OK)
+                {
+                    memPreviousLevel = levelIndex;
+                    if(!gameLoaded)
+                    {
+                        game.loadSavedSettingsData();
+                        gameLoaded = true;
+                    }
+                }
+                else if(levelRetState == LevelLoadState_e::FAIL)
+                {
+                    levelIndex = memPreviousLevel;
+                }
             }
         }
-        game.unsetFirstLaunch();
-        levelState = game.launchGame(levelIndex, levelState.m_levelState);
+        if(levelRetState != LevelLoadState_e::FAIL)
+        {
+            game.unsetFirstLaunch();
+        }
+        levelState = game.launchGame(levelIndex, levelState.m_levelState, levelRetState == LevelLoadState_e::FAIL);
         switch(levelState.m_levelState)
         {
         case LevelState_e::EXIT:
@@ -77,8 +102,11 @@ int main()
         {
             break;
         }
-        game.clearLevel();
+        if(levelRetState != LevelLoadState_e::FAIL)
+        {
+            game.clearLevel(levelState);
+        }
     }while(true);
-    game.clearLevel();
+    game.clearLevel(levelState);
     return 0;
 }

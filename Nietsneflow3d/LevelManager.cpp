@@ -1655,7 +1655,7 @@ void LevelManager::loadBarrelElements()
 }
 
 //===================================================================
-bool LevelManager::loadLevel(uint32_t levelNum, bool customLevel)
+LevelLoadState_e LevelManager::loadLevel(uint32_t levelNum, bool customLevel)
 {
     std::string path = customLevel ? LEVEL_RESSOURCES_DIR_STR + "CustomLevels/" +
                                      m_existingCustomLevelsFilename[levelNum] :
@@ -1663,26 +1663,26 @@ bool LevelManager::loadLevel(uint32_t levelNum, bool customLevel)
                                      std::to_string(levelNum) + std::string ("/level.ini");
     if(!fs::exists(path))
     {
-        return false;
+        return LevelLoadState_e::END;
     }
     uint32_t encryptKey = customLevel ? ENCRYPT_KEY_CUSTOM_LEVEL : ENCRYPT_KEY_STANDARD_LEVEL;
     if(!loadIniFile(path, encryptKey))
     {
         std::cout << "ERROR level " << path << " cannot be loaded" << std::endl;
-        return false;
+        return LevelLoadState_e::FAIL;
     }
     Level::clearMusicFilePath();
     m_mainWallData.clear();
     if(!loadLevelData())
     {
         std::cout << "ERROR level " << path << " cannot be loaded" << std::endl;
-        return false;
+        return LevelLoadState_e::FAIL;
     }
     if(!loadPositionPlayerData())
     {
         std::cout << "ERROR player data cannot be loaded" << std::endl;
         std::cout << "Level " << path << " cannot be loaded" << std::endl;
-        return false;
+        return LevelLoadState_e::FAIL;
     }
     loadPositionWall();
     loadPositionStaticElements();
@@ -1691,7 +1691,7 @@ bool LevelManager::loadLevel(uint32_t levelNum, bool customLevel)
     {
         std::cout << "ERROR exit data cannot be loaded" << std::endl;
         std::cout << "Level " << path << " cannot be loaded" << std::endl;
-        return false;
+        return LevelLoadState_e::FAIL;
     }
     loadPositionDoorData();
     loadPositionEnemyData();
@@ -1702,10 +1702,10 @@ bool LevelManager::loadLevel(uint32_t levelNum, bool customLevel)
     {
         std::cout << "ERROR background data cannot be loaded" << std::endl;
         std::cout << "Level " << path << " cannot be loaded" << std::endl;
-        return false;
+        return LevelLoadState_e::FAIL;
     }
     loadMusicData();
-    return true;
+    return LevelLoadState_e::OK;
 }
 
 //===================================================================

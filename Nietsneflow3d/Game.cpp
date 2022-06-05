@@ -30,8 +30,16 @@ void Game::loadSavedSettingsData()
 }
 
 //===================================================================
-void Game::clearLevel()
+void Game::clearLevel(const LevelState &levelRet)
 {
+    if(levelRet.m_levelState == LevelState_e::RESTART_LEVEL || (levelRet.m_customLevel && levelRet.m_levelState == LevelState_e::LOAD_GAME) ||
+            (m_mainEngine.isLoadFromCheckpoint() &&
+             levelRet.m_levelState != LevelState_e::RESTART_FROM_CHECKPOINT &&
+             levelRet.m_levelState != LevelState_e::GAME_OVER &&
+             levelRet.m_levelState != LevelState_e::LOAD_GAME))
+    {
+        m_mainEngine.clearCheckpointData();
+    }
     m_mainEngine.clearLevel();
     m_levelManager.clearExistingPositionsElement();
 }
@@ -58,14 +66,15 @@ void Game::setPlayerDeparture()
 }
 
 //===================================================================
-bool Game::loadLevelData(uint32_t levelNum, bool customLevel)
+LevelLoadState_e Game::loadLevelData(uint32_t levelNum, bool customLevel)
 {
-    if(!m_levelManager.loadLevel(levelNum, customLevel))
+    LevelLoadState_e levelState = m_levelManager.loadLevel(levelNum, customLevel);
+    if(levelState != LevelLoadState_e::OK)
     {
-        return false;
+        return levelState;
     }
     m_mainEngine.loadLevel(m_levelManager);
-    return true;
+    return levelState;
 }
 
 //===================================================================
@@ -75,18 +84,9 @@ void Game::initEngine()
 }
 
 //===================================================================
-LevelState Game::launchGame(uint32_t levelNum, LevelState_e levelState)
+LevelState Game::launchGame(uint32_t levelNum, LevelState_e levelState, bool afterLoadFailure)
 {
-    LevelState levelRet = m_mainEngine.mainLoop(levelNum, levelState);
-    if(levelRet.m_levelState == LevelState_e::RESTART_LEVEL || (levelRet.m_customLevel && levelRet.m_levelState == LevelState_e::LOAD_GAME) ||
-            (m_mainEngine.isLoadFromCheckpoint() &&
-             levelRet.m_levelState != LevelState_e::RESTART_FROM_CHECKPOINT &&
-             levelRet.m_levelState != LevelState_e::GAME_OVER &&
-             levelRet.m_levelState != LevelState_e::LOAD_GAME))
-    {
-        m_mainEngine.clearCheckpointData();
-    }
-    return levelRet;
+    return m_mainEngine.mainLoop(levelNum, levelState, afterLoadFailure);
 }
 
 //===================================================================

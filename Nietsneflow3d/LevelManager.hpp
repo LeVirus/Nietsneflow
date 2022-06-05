@@ -27,6 +27,13 @@ using PairImpactData_t = std::pair<std::vector<MemSpriteData>, MemSpriteData>;
 using MapImpactData_t = std::map<std::string, PairImpactData_t>;
 using pairI_t = std::pair<int, int>;
 
+enum class LevelLoadState_e
+{
+    OK,
+    END,
+    FAIL
+};
+
 struct WeaponINIData
 {
     std::vector<MemSpriteData> m_spritesData;
@@ -105,7 +112,7 @@ public:
     void loadStandardData(const std::string &INIFileName);
     void loadFontData(const std::string &INIFileName);
     bool loadSettingsData();
-    bool loadLevel(uint32_t levelNum, bool customLevel = false);
+    LevelLoadState_e loadLevel(uint32_t levelNum, bool customLevel = false);
     void clearExistingPositionsElement();
     void saveAudioSettings(uint32_t musicVolume, uint32_t effectVolume);
     void saveDisplaySettings(const pairI_t &resolution, bool fullscreen);

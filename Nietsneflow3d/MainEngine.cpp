@@ -82,7 +82,7 @@ LevelState MainEngine::displayTitleMenu(const LevelManager &levelManager)
 }
 
 //===================================================================
-LevelState MainEngine::mainLoop(uint32_t levelNum, LevelState_e levelState)
+LevelState MainEngine::mainLoop(uint32_t levelNum, LevelState_e levelState, bool afterLoadFailure)
 {
     m_levelEnd = false;
     m_currentLevelState = levelState;
@@ -90,55 +90,11 @@ LevelState MainEngine::mainLoop(uint32_t levelNum, LevelState_e levelState)
     m_memInputCursorPos = 0;
     m_graphicEngine.getMapSystem().confLevelData();
     m_physicalEngine.updateMousePos();
-    bool beginLevel = isLoadFromLevelBegin(m_currentLevelState);
-    if(beginLevel)
+    if(!afterLoadFailure)
     {
-        m_memCheckpointLevelState = {};
-        m_playerConf->m_currentCheckpoint->first = 0;
-        if(levelState == LevelState_e::NEW_GAME)
-        {
-            m_graphicEngine.updateSaveNum(levelNum, m_currentSave, 0);
-        }
-        else if(!m_memCustomLevelLoadedData)
-        {
-            m_graphicEngine.updateSaveNum(levelNum, m_currentSave, {});
-        }
-    }
-    //don't load gear for custom level
-    if(!m_memCustomLevelLoadedData)
-    {
-        if(m_playerMemGear)
-        {
-            loadPlayerGear(beginLevel);
-        }
-        else
-        {
-            savePlayerGear(beginLevel);
-            saveGameProgress(m_currentLevel);
-        }
+        initLevel(levelNum, levelState);
     }
     std::chrono::duration<double> elapsed_seconds;
-    //display FPS
-//    std::chrono::duration<double> fps;
-//    std::chrono::time_point<std::chrono::system_clock> clockFrame  = std::chrono::system_clock::now();
-    if(m_currentLevelState == LevelState_e::NEW_GAME || m_currentLevelState == LevelState_e::LOAD_GAME ||
-            m_currentLevelState == LevelState_e::RESTART_LEVEL || m_currentLevelState == LevelState_e::RESTART_FROM_CHECKPOINT)
-    {
-        m_vectMemPausedTimer.clear();
-        if(m_gamePaused)
-        {
-            setUnsetPaused();
-        }
-    }
-    if(m_memCheckpointLevelState)
-    {
-        loadGameProgressCheckpoint();
-    }
-    if(!m_memCheckpointLevelState)
-    {
-        m_memStaticEntitiesDeletedFromCheckpoint.clear();
-        m_currentEntitiesDelete.clear();
-    }
     m_graphicEngine.unsetTransition(m_gamePaused);
     std::chrono::time_point<std::chrono::system_clock> clock;
     clock = std::chrono::system_clock::now();
@@ -215,6 +171,59 @@ LevelState MainEngine::mainLoop(uint32_t levelNum, LevelState_e levelState)
         }
     }while(!m_graphicEngine.windowShouldClose());
     return {LevelState_e::EXIT, {}, m_levelToLoad->second};
+}
+
+//===================================================================
+void MainEngine::initLevel(uint32_t levelNum, LevelState_e levelState)
+{
+    bool beginLevel = isLoadFromLevelBegin(m_currentLevelState);
+    if(beginLevel)
+    {
+        m_memCheckpointLevelState = {};
+        m_playerConf->m_currentCheckpoint->first = 0;
+        if(levelState == LevelState_e::NEW_GAME)
+        {
+            m_graphicEngine.updateSaveNum(levelNum, m_currentSave, 0);
+        }
+        else if(!m_memCustomLevelLoadedData)
+        {
+            m_graphicEngine.updateSaveNum(levelNum, m_currentSave, {});
+        }
+    }
+    //don't load gear for custom level
+    if(!m_memCustomLevelLoadedData)
+    {
+        if(m_playerMemGear)
+        {
+            loadPlayerGear(beginLevel);
+        }
+        else
+        {
+            savePlayerGear(beginLevel);
+            saveGameProgress(m_currentLevel);
+        }
+    }
+    //display FPS
+    //    std::chrono::duration<double> fps;
+    //    std::chrono::time_point<std::chrono::system_clock> clockFrame  = std::chrono::system_clock::now();
+    if(m_currentLevelState == LevelState_e::NEW_GAME || m_currentLevelState == LevelState_e::LOAD_GAME ||
+            m_currentLevelState == LevelState_e::RESTART_LEVEL || m_currentLevelState == LevelState_e::RESTART_FROM_CHECKPOINT)
+    {
+        m_vectMemPausedTimer.clear();
+        if(m_gamePaused)
+        {
+            setUnsetPaused();
+        }
+    }
+    if(m_memCheckpointLevelState)
+    {
+        loadGameProgressCheckpoint();
+    }
+    if(!m_memCheckpointLevelState)
+    {
+        m_memStaticEntitiesDeletedFromCheckpoint.clear();
+        m_currentEntitiesDelete.clear();
+    }
 }
 
 //===================================================================
