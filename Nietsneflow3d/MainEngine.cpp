@@ -1932,6 +1932,13 @@ void MainEngine::validDisplayMenu()
 }
 
 //===================================================================
+void MainEngine::setInfoDataWrite(std::string_view message)
+{
+    assert(m_playerConf);
+    m_playerConf->m_infoWriteData = {true, message.data()};
+}
+
+//===================================================================
 void MainEngine::setPlayerDeparture(const PairUI_t &pos, Direction_e dir)
 {
     MapCoordComponent *mapComp = m_ecsManager.getComponentManager().

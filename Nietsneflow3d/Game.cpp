@@ -71,6 +71,7 @@ LevelLoadState_e Game::loadLevelData(uint32_t levelNum, bool customLevel, LevelS
     LevelLoadState_e levelLoadState = m_levelManager.loadLevel(levelNum, customLevel);
     if(levelLoadState != LevelLoadState_e::OK)
     {
+        m_mainEngine.setInfoDataWrite("ERROR : LEVEL COULD NOT BE LOADED");
         return levelLoadState;
     }
     clearLevel({levelState, levelNum, customLevel});

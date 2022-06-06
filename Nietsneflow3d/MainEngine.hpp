@@ -131,6 +131,7 @@ public:
     void updateStringWriteEntitiesInputMenu(bool keyboardInputMenuMode, bool defaultInput = true);
     void confGlobalSettings(const SettingsData &settingsData);
     void validDisplayMenu();
+    void setInfoDataWrite(std::string_view message);
     inline bool currentSessionCustomLevel()const
     {
         return m_memCustomLevelLoadedData != nullptr;

@@ -3,7 +3,7 @@
 
 int main()
 {
-    uint32_t levelIndex = 1, memPreviousLevel;
+    uint32_t levelIndex = 1, memPreviousLevel = 0;
     Game game;
     game.initEngine();
     game.loadStandardData();
@@ -69,6 +69,7 @@ int main()
             {
                 levelIndex = memPreviousLevel;
                 levelState.m_customLevel = memCustomLevelMode;
+                game.setUnsetPaused();
             }
         }
         if(levelRetState != LevelLoadState_e::FAIL)
