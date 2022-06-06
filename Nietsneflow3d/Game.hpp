@@ -7,7 +7,7 @@ class Game
 {
 public:
     Game() = default;
-    LevelLoadState_e loadLevelData(uint32_t levelNum, bool customLevel);
+    LevelLoadState_e loadLevelData(uint32_t levelNum, bool customLevel, LevelState_e levelState);
     void initEngine();
     void loadStandardData();
     LevelState displayTitleMenu();
@@ -16,7 +16,7 @@ public:
     void loadStandardEntities();
     void loadPlayerEntity();
     void setPlayerDeparture();
-    LevelState launchGame(uint32_t levelNum, LevelState_e levelState, bool afterLoadFailure);
+    LevelState launchGame(uint32_t levelNum, LevelState_e levelState, bool afterLoadFailure, bool customLevel);
     void saveAudioSettings(uint32_t musicVolume, uint32_t effectVolume);
     void saveDisplaySettings(const pairI_t &resolution, bool fullscreen);
     void saveInputSettings(const std::map<ControlKey_e, GamepadInputState> &gamepadArray,

@@ -7,15 +7,15 @@ int main()
     Game game;
     game.initEngine();
     game.loadStandardData();
-    bool gameLoaded = false, firstLaunch = true;
+    bool gameLoaded = false, firstLaunch = true, memCustomLevelMode = false;
     LevelState levelState = {LevelState_e::NEW_GAME, {}, false};
     LevelLoadState_e levelRetState = LevelLoadState_e::OK;
+    game.loadStandardEntities();
+    //PLAYER DEPARTURE NOT SET
     do
     {
-        game.loadStandardEntities();
         if(firstLaunch)
         {
-            //PLAYER DEPARTURE NOT SET
             game.loadPlayerEntity();
             if(!gameLoaded)
             {
@@ -28,7 +28,7 @@ int main()
                 break;
             }
             levelIndex = *levelState.m_levelToLoad;
-            levelRetState = game.loadLevelData(levelIndex, levelState.m_customLevel);
+            levelRetState = game.loadLevelData(levelIndex, levelState.m_customLevel, levelState.m_levelState);
             //if no more level
             if(levelRetState == LevelLoadState_e::END)
             {
@@ -37,6 +37,7 @@ int main()
             else if(levelRetState == LevelLoadState_e::OK)
             {
                 memPreviousLevel = levelIndex;
+                memCustomLevelMode = levelState.m_customLevel;
                 game.setPlayerDeparture();
                 firstLaunch = false;
             }
@@ -47,41 +48,41 @@ int main()
         }
         else
         {
-            if(levelRetState != LevelLoadState_e::FAIL)
+            game.loadPlayerEntity();
+            levelRetState = game.loadLevelData(levelIndex, levelState.m_customLevel, levelState.m_levelState);
+            //if no more level
+            if(levelRetState == LevelLoadState_e::END)
             {
-                levelRetState = game.loadLevelData(levelIndex, levelState.m_customLevel);
-                //if no more level
-                if(levelRetState == LevelLoadState_e::END)
+                break;
+            }
+            else if(levelRetState == LevelLoadState_e::OK)
+            {
+                memPreviousLevel = levelIndex;
+                memCustomLevelMode = levelState.m_customLevel;
+                if(!gameLoaded)
                 {
-                    break;
+                    game.loadSavedSettingsData();
+                    gameLoaded = true;
                 }
-                else if(levelRetState == LevelLoadState_e::OK)
-                {
-                    memPreviousLevel = levelIndex;
-                    if(!gameLoaded)
-                    {
-                        game.loadSavedSettingsData();
-                        gameLoaded = true;
-                    }
-                }
-                else if(levelRetState == LevelLoadState_e::FAIL)
-                {
-                    levelIndex = memPreviousLevel;
-                }
+            }
+            else if(levelRetState == LevelLoadState_e::FAIL)
+            {
+                levelIndex = memPreviousLevel;
+                levelState.m_customLevel = memCustomLevelMode;
             }
         }
         if(levelRetState != LevelLoadState_e::FAIL)
         {
             game.unsetFirstLaunch();
         }
-        levelState = game.launchGame(levelIndex, levelState.m_levelState, levelRetState == LevelLoadState_e::FAIL);
+        levelState = game.launchGame(levelIndex, levelState.m_levelState, levelRetState == LevelLoadState_e::FAIL, levelState.m_customLevel);
         switch(levelState.m_levelState)
         {
         case LevelState_e::EXIT:
             break;
         case LevelState_e::NEW_GAME:
             levelIndex = 1;
-            break;
+            continue;
         case LevelState_e::LEVEL_END:
             ++levelIndex;
             break;
@@ -94,7 +95,7 @@ int main()
             assert(levelState.m_levelToLoad);
             //reloop on the specific level
             levelIndex = *levelState.m_levelToLoad;
-            break;
+            continue;
         }
         }
         //quit
@@ -102,10 +103,7 @@ int main()
         {
             break;
         }
-        if(levelRetState != LevelLoadState_e::FAIL)
-        {
-            game.clearLevel(levelState);
-        }
+        game.clearLevel(levelState);
     }while(true);
     game.clearLevel(levelState);
     return 0;

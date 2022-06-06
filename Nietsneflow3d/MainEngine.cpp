@@ -82,7 +82,7 @@ LevelState MainEngine::displayTitleMenu(const LevelManager &levelManager)
 }
 
 //===================================================================
-LevelState MainEngine::mainLoop(uint32_t levelNum, LevelState_e levelState, bool afterLoadFailure)
+LevelState MainEngine::mainLoop(uint32_t levelNum, LevelState_e levelState, bool afterLoadFailure, bool customLevel)
 {
     m_levelEnd = false;
     m_currentLevelState = levelState;
@@ -120,12 +120,13 @@ LevelState MainEngine::mainLoop(uint32_t levelNum, LevelState_e levelState, bool
                 m_memEnemiesStateFromCheckpoint.clear();
             }
             uint32_t levelToLoad = m_levelToLoad->first;
+            bool customLevelMode = m_levelToLoad->second;
             m_levelToLoad = {};
             if(m_currentLevelState == LevelState_e::NEW_GAME || m_currentLevelState == LevelState_e::RESTART_LEVEL)
             {
                 clearCheckpointData();
             }
-            return {m_currentLevelState, levelToLoad, m_levelToLoad->second};
+            return {m_currentLevelState, levelToLoad, customLevelMode};
         }
         clearObjectToDelete();
         if(m_physicalEngine.toogledFullScreenSignal())
@@ -137,6 +138,7 @@ LevelState MainEngine::mainLoop(uint32_t levelNum, LevelState_e levelState, bool
         m_graphicEngine.runIteration(m_gamePaused);
         //MUUUUUUUUUUUUSSSSS
         m_audioEngine.runIteration();
+        assert(m_playerConf);
         if(m_playerConf->m_checkpointReached)
         {
             //MEM ENTITIES TO DELETE WHEN CHECKPOINT IS REACHED
@@ -156,7 +158,7 @@ LevelState MainEngine::mainLoop(uint32_t levelNum, LevelState_e levelState, bool
             m_graphicEngine.setTransition(m_gamePaused);
             displayTransitionMenu();
             m_memEnemiesStateFromCheckpoint.clear();
-            return {m_currentLevelState, {}, m_levelToLoad->second};
+            return {m_currentLevelState, {}, customLevel};
         }
         //Player dead
         else if(!m_playerConf->m_life)
@@ -167,10 +169,10 @@ LevelState MainEngine::mainLoop(uint32_t levelNum, LevelState_e levelState, bool
             }
             m_graphicEngine.setTransition(m_gamePaused);
             displayTransitionMenu();
-            return {LevelState_e::GAME_OVER, {}, m_levelToLoad->second};
+            return {LevelState_e::GAME_OVER, {}, customLevel};
         }
     }while(!m_graphicEngine.windowShouldClose());
-    return {LevelState_e::EXIT, {}, m_levelToLoad->second};
+    return {LevelState_e::EXIT, {}, customLevel};
 }
 
 //===================================================================

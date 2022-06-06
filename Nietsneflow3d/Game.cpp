@@ -41,7 +41,6 @@ void Game::clearLevel(const LevelState &levelRet)
         m_mainEngine.clearCheckpointData();
     }
     m_mainEngine.clearLevel();
-    m_levelManager.clearExistingPositionsElement();
 }
 
 //===================================================================
@@ -66,15 +65,20 @@ void Game::setPlayerDeparture()
 }
 
 //===================================================================
-LevelLoadState_e Game::loadLevelData(uint32_t levelNum, bool customLevel)
+LevelLoadState_e Game::loadLevelData(uint32_t levelNum, bool customLevel, LevelState_e levelState)
 {
-    LevelLoadState_e levelState = m_levelManager.loadLevel(levelNum, customLevel);
-    if(levelState != LevelLoadState_e::OK)
+    m_levelManager.clearExistingPositionsElement();
+    LevelLoadState_e levelLoadState = m_levelManager.loadLevel(levelNum, customLevel);
+    if(levelLoadState != LevelLoadState_e::OK)
     {
-        return levelState;
+        return levelLoadState;
     }
+    clearLevel({levelState, levelNum, customLevel});
+    loadStandardEntities();
+    //PLAYER DEPARTURE NOT SET
+    loadPlayerEntity();
     m_mainEngine.loadLevel(m_levelManager);
-    return levelState;
+    return levelLoadState;
 }
 
 //===================================================================
@@ -84,9 +88,9 @@ void Game::initEngine()
 }
 
 //===================================================================
-LevelState Game::launchGame(uint32_t levelNum, LevelState_e levelState, bool afterLoadFailure)
+LevelState Game::launchGame(uint32_t levelNum, LevelState_e levelState, bool afterLoadFailure, bool customLevel)
 {
-    return m_mainEngine.mainLoop(levelNum, levelState, afterLoadFailure);
+    return m_mainEngine.mainLoop(levelNum, levelState, afterLoadFailure, customLevel);
 }
 
 //===================================================================
