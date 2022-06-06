@@ -93,6 +93,7 @@ LevelState MainEngine::mainLoop(uint32_t levelNum, LevelState_e levelState, bool
     if(!afterLoadFailure)
     {
         initLevel(levelNum, levelState);
+        saveGameProgress(levelNum);
     }
     std::chrono::duration<double> elapsed_seconds;
     m_graphicEngine.unsetTransition(m_gamePaused);
@@ -154,7 +155,6 @@ LevelState MainEngine::mainLoop(uint32_t levelNum, LevelState_e levelState, bool
             //end level
             m_playerConf->m_inMovement = false;
             savePlayerGear(true);
-            saveGameProgress(levelNum + 1);
             m_graphicEngine.setTransition(m_gamePaused);
             displayTransitionMenu();
             m_memEnemiesStateFromCheckpoint.clear();

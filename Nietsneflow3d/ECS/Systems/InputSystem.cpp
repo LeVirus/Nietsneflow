@@ -898,7 +898,6 @@ void InputSystem::treatEnterPressedConfirmLoadGameMenu(PlayerConfComponent *play
             uint32_t numSaveFile = playerComp->m_currentSelectedSaveFile;
             //init or reinit save file
             m_mainEngine->savePlayerGear(true);
-            m_mainEngine->saveGameProgress(1, numSaveFile);
             if(m_mainEngine->loadSavedGame(numSaveFile, LevelState_e::NEW_GAME))
             {
                 m_mainEngine->setTransition(true);
