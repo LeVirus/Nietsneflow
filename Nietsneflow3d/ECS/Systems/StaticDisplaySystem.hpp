@@ -79,6 +79,7 @@ public:
         m_inputMenuGamepadWriteKeysEntities = memGamepadEntities;
     }
 private:
+    void drawWriteInfoPlayer(uint32_t playerEntity, PlayerConfComponent *playerComp);
     void fillCursorMenuVertex(PlayerConfComponent *playerComp);
     void updateMenuCursorPosition(PlayerConfComponent *playerComp);
     void confWriteVertex(WriteComponent *writeComp, PositionVertexComponent *posComp,

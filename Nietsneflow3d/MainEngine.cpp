@@ -2798,7 +2798,7 @@ void MainEngine::confWriteEntities()
     WriteComponent *writeConf = m_ecsManager.getComponentManager().
             searchComponentByType<WriteComponent>(numInfoWrite, Components_e::WRITE_COMPONENT);
     assert(writeConf);
-    writeConf->m_upLeftPositionGL = {-0.3f, 0.9f};
+    writeConf->m_upLeftPositionGL = {-0.3f, 0.7f};
     writeConf->m_fontSize = STD_FONT_SIZE;
     //AMMO
     writeConf = m_ecsManager.getComponentManager().

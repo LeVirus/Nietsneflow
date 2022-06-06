@@ -63,23 +63,19 @@ void StaticDisplaySystem::updateMenuCursorPosition(PlayerConfComponent *playerCo
 //===================================================================
 void StaticDisplaySystem::execSystem()
 {
-    uint32_t maxTime;
     System::execSystem();
     m_shader->use();
     for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
     {
         PlayerConfComponent *playerComp = stairwayToComponentManager().
-                    searchComponentByType<PlayerConfComponent>(mVectNumEntity[i],
-                                                               Components_e::PLAYER_CONF_COMPONENT);
+                    searchComponentByType<PlayerConfComponent>(mVectNumEntity[i], Components_e::PLAYER_CONF_COMPONENT);
         assert(playerComp);
         WeaponComponent *weaponComp = stairwayToComponentManager().
-                searchComponentByType<WeaponComponent>(playerComp->m_weaponEntity,
-                                                       Components_e::WEAPON_COMPONENT);
+                searchComponentByType<WeaponComponent>(playerComp->m_weaponEntity, Components_e::WEAPON_COMPONENT);
         assert(weaponComp);
         //DRAW WEAPON
         SpriteTextureComponent *spriteComp = stairwayToComponentManager().
-                searchComponentByType<SpriteTextureComponent>(playerComp->m_weaponEntity,
-                                                              Components_e::SPRITE_TEXTURE_COMPONENT);
+                searchComponentByType<SpriteTextureComponent>(playerComp->m_weaponEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
         assert(spriteComp);
         confWeaponsVertexFromComponent(playerComp, spriteComp);
         drawVertex(spriteComp->m_spriteData->m_textureNum, VertexID_e::WEAPON);
@@ -88,19 +84,25 @@ void StaticDisplaySystem::execSystem()
         drawWriteVertex(playerComp->m_ammoWriteEntity, VertexID_e::AMMO_WRITE, strAmmoDisplay);
         drawWriteVertex(playerComp->m_lifeWriteEntity, VertexID_e::LIFE_WRITE, STR_PLAYER_LIFE +
                          std::to_string(playerComp->m_life));
-        if(playerComp->m_infoWriteData.first)
+        drawWriteInfoPlayer(mVectNumEntity[i], playerComp);
+    }
+}
+
+//===================================================================
+void StaticDisplaySystem::drawWriteInfoPlayer(uint32_t playerEntity, PlayerConfComponent *playerComp)
+{
+    if(playerComp->m_infoWriteData.first)
+    {
+        TimerComponent *timerComp = stairwayToComponentManager().
+                searchComponentByType<TimerComponent>(playerEntity, Components_e::TIMER_COMPONENT);
+        assert(timerComp);
+        drawWriteVertex(playerComp->m_numInfoWriteEntity, VertexID_e::INFO, playerComp->m_infoWriteData.second);
+        uint32_t maxTime = (!timerComp->m_timeIntervalOptional) ? m_infoWriteStandardInterval : *timerComp->m_timeIntervalOptional;
+        if(++timerComp->m_cycleCountA >= maxTime)
         {
-            TimerComponent *timerComp = stairwayToComponentManager().
-                    searchComponentByType<TimerComponent>(mVectNumEntity[i], Components_e::TIMER_COMPONENT);
-            assert(timerComp);
-            drawWriteVertex(playerComp->m_numInfoWriteEntity, VertexID_e::INFO, playerComp->m_infoWriteData.second);
-            maxTime = (!timerComp->m_timeIntervalOptional) ? m_infoWriteStandardInterval : *timerComp->m_timeIntervalOptional;
-            if(++timerComp->m_cycleCountA >= maxTime)
-            {
-                playerComp->m_infoWriteData.first = false;
-                timerComp->m_timeIntervalOptional = {};
-                timerComp->m_cycleCountA = 0;
-            }
+            playerComp->m_infoWriteData.first = false;
+            timerComp->m_timeIntervalOptional = {};
+            timerComp->m_cycleCountA = 0;
         }
     }
 }
@@ -117,6 +119,7 @@ void StaticDisplaySystem::displayMenu()
         assert(playerComp);
         drawWriteVertex(playerComp->m_menuEntriesEntity, VertexID_e::MENU_WRITE);
         drawWriteVertex(playerComp->m_titleMenuEntity, VertexID_e::MENU_WRITE);
+        drawWriteInfoPlayer(mVectNumEntity[i], playerComp);
         SpriteTextureComponent *spriteComp = stairwayToComponentManager().
                 searchComponentByType<SpriteTextureComponent>(playerComp->m_menuCursorEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
         assert(spriteComp);
