@@ -3,9 +3,6 @@ BUGS======================================================================
 ))
 When reach end game save happend and should not
 
-))
-If load bad custom level, crash
-
 
 ))
 When die and reload from checkpoint moveable wall bad place========================NOT REPRODUCIBLE
@@ -25,6 +22,8 @@ Wall exists inside door some time======================Bug in level editor
 
 
 
+))
+If load bad custom level, crash====================================OK
 
 ))
 On reload from checkpoint case some static object does not appear on revealed minimap========================OK

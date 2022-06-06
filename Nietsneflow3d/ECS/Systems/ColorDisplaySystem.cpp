@@ -155,6 +155,8 @@ void ColorDisplaySystem::drawVisiblePickUpObject()
 //===================================================================
 void ColorDisplaySystem::setTransition(uint32_t current, uint32_t total)
 {
+    assert(m_transitionMemComponents.first);
+    assert(m_transitionMemComponents.second);
     float currentTransparency = static_cast<float>(current) / static_cast<float>(total);
     std::get<3>(m_transitionMemComponents.second->m_vertex[0]) = currentTransparency;
     std::get<3>(m_transitionMemComponents.second->m_vertex[1]) = currentTransparency;

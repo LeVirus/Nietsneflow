@@ -10,12 +10,12 @@ int main()
     bool gameLoaded = false, firstLaunch = true, memCustomLevelMode = false;
     LevelState levelState = {LevelState_e::NEW_GAME, {}, false};
     LevelLoadState_e levelRetState = LevelLoadState_e::OK;
-    game.loadStandardEntities();
     //PLAYER DEPARTURE NOT SET
     do
     {
         if(firstLaunch)
         {
+            game.loadStandardEntities();
             game.loadPlayerEntity();
             if(!gameLoaded)
             {
@@ -70,6 +70,11 @@ int main()
                 levelIndex = memPreviousLevel;
                 levelState.m_customLevel = memCustomLevelMode;
                 game.setUnsetPaused();
+                if(levelState.m_levelState == LevelState_e::LEVEL_END)
+                {
+                    firstLaunch = true;
+                    continue;
+                }
             }
         }
         if(levelRetState != LevelLoadState_e::FAIL)
