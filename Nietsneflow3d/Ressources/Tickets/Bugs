@@ -1,9 +1,6 @@
 BUGS======================================================================
 
 ))
-Checkpoint not memorized when close game
-
-))
 When die and reload from checkpoint moveable wall bad place========================NOT REPRODUCIBLE
 
 ))
@@ -20,6 +17,9 @@ Wall exists inside door some time======================Bug in level editor
 
 
 
+
+))
+Checkpoint not memorized when close game===========================OK
 
 ))
 When reach end game save happend and should not======================OK

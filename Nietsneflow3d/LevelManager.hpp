@@ -279,8 +279,7 @@ private:
     void loadExit();
     void loadVisualTeleportData();
     void loadTriggerElements();
-    void loadSpriteData(const std::string &sectionName,
-                        StaticLevelElementData &staticElement);
+    void loadSpriteData(const std::string &sectionName, StaticLevelElementData &staticElement);
     void loadDisplayData(std::string_view sectionName, std::string_view subSectionName);
     void loadWeaponData(std::string_view sectionName, uint32_t numIt);
     void loadWallData();
