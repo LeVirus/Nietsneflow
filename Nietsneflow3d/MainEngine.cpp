@@ -184,7 +184,7 @@ void MainEngine::initLevel(uint32_t levelNum, LevelState_e levelState)
     bool beginLevel = isLoadFromLevelBegin(m_currentLevelState);
     if(beginLevel)
     {
-        m_memCheckpointLevelState = {};
+        m_memCheckpointLevelState = std::nullopt;
         m_playerConf->m_currentCheckpoint->first = 0;
         if(levelState == LevelState_e::NEW_GAME)
         {
@@ -297,7 +297,7 @@ void MainEngine::saveGameProgress(uint32_t levelNum, std::optional<uint32_t> num
     uint32_t saveNum = numSaveFile ? *numSaveFile : m_currentSave;
     if(!checkpointData)
     {
-        m_memCheckpointLevelState = {};
+        m_memCheckpointLevelState = std::nullopt;
         if(m_memCustomLevelLoadedData)
         {
             m_memCustomLevelLoadedData->m_playerConfCheckpoint = m_memPlayerConfBeginLevel;
@@ -355,7 +355,7 @@ void MainEngine::savePlayerGear(bool beginLevel)
     m_playerMemGear = true;
     if(beginLevel)
     {
-        m_memCheckpointLevelState = {};
+        m_memCheckpointLevelState = std::nullopt;
     }
 }
 
@@ -1341,6 +1341,7 @@ void MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
             circleComp->m_ray = collisionRay;
             enemyComp->m_life = it->second.m_life;
             enemyComp->m_visibleShot = !(it->second.m_visibleShootID.empty());
+            enemyComp->m_countTillLastAttack = 0;
             if(it->second.m_meleeDamage)
             {
                 enemyComp->m_meleeAttackDamage = *it->second.m_meleeDamage;
@@ -2054,12 +2055,12 @@ void MainEngine::clearCheckpointData()
     m_currentEntitiesDelete.clear();
     m_memMoveableWallCheckpointData.clear();
     m_memTriggerWallMoveableWallCheckpointData.clear();
-    m_memCheckpointLevelState = {};
+    m_memCheckpointLevelState = std::nullopt;
     m_memEnemiesStateFromCheckpoint.clear();
     m_revealedMapData.clear();
     if(m_memCustomLevelLoadedData)
     {
-        m_memCustomLevelLoadedData->m_checkpointLevelData = {};
+        m_memCustomLevelLoadedData->m_checkpointLevelData = std::nullopt;
     }
 }
 
