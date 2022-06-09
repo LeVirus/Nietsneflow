@@ -26,10 +26,10 @@ int main(int argc, char *argv[])
 			//return -1;
 		//}
 		//std::string path = argv[1];
-		//std::ifstream inStream("./Ressources/fontData.ini");
+		std::ifstream inStream("./Ressources/fontData.ini.base");
 		//std::ifstream inStream("./Ressources/pictureData.ini.base");
 		//std::ifstream inStream("./Ressources/" + path + ".base");
-		std::ifstream inStream("./Ressources/standardData.ini.base");
+		//std::ifstream inStream("./Ressources/standardData.ini.base");
 		if(inStream.fail())
 		{
 				std::cout << "Fail\n";
@@ -41,10 +41,10 @@ int main(int argc, char *argv[])
 		inStream.close();
 		std::string dataString = encrypt(ostringStream.str(), KEY);
 
-		//std::ofstream outStream("./Ressources/fontData.ini.enc");
+		std::ofstream outStream("./Ressources/fontData.ini");
 		//std::ofstream outStream("./Ressources/pictureData.ini");
 		//std::ofstream outStream("./Ressources/" + path);
-		std::ofstream outStream("./Ressources/standardData.ini");
+		//std::ofstream outStream("./Ressources/standardData.ini");
 		outStream << dataString;
 		outStream.close();
 		std::cout << "OK\n";

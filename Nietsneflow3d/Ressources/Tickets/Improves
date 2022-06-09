@@ -5,14 +5,13 @@ IMPROVE=========================================================================
 Prevent standard level file to be swaped
 
 ))
-Add space between font letters
-
-))
 While exiting in game add confirm menu
 
 ))
 For eject case froze movement and unset rectilign speed
 
+))
+Center screen write data
 
 
 ))
@@ -28,6 +27,12 @@ Enemy animations========================~
 Improve Enemy behavour===!!!!!!===================~
 
 
+
+))
+Add point in write conf data===========================OK
+
+))
+Add space between font letters===============================OK
 
 ))
 If next level is corrupted write message in menu=========================OK

@@ -328,3 +328,11 @@ texturePosX = 0.273
 texturePosY = 0.566
 textureWeight = 0.0533
 textureHeight = 0.1
+
+#1139 342  1171 434
+[.]
+texture = 2
+texturePosX = 0.7593
+texturePosY = 0.4275
+textureWeight = 0.02133
+textureHeight = 0.115

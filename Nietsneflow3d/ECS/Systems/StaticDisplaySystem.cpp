@@ -685,7 +685,7 @@ void StaticDisplaySystem::drawLineWriteVertex(PositionVertexComponent *posComp, 
         posComp->m_vertex.emplace_back(PairFloat_t{currentX + diffX, currentY});
         posComp->m_vertex.emplace_back(PairFloat_t{currentX + diffX, currentY - diffY});
         posComp->m_vertex.emplace_back(PairFloat_t{currentX, currentY - diffY});
-        currentX += diffX;
+        currentX += diffX + 0.01;
         ++cmptSpriteData;
     }
 }
