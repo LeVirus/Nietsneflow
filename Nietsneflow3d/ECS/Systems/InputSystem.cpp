@@ -169,6 +169,10 @@ void InputSystem::treatPlayerInput()
         MoveableComponent *moveComp = stairwayToComponentManager().
                 searchComponentByType<MoveableComponent>(mVectNumEntity[i], Components_e::MOVEABLE_COMPONENT);
         assert(moveComp);
+        if(moveComp->m_ejectData)
+        {
+            return;
+        }
         WeaponComponent *weaponComp = stairwayToComponentManager().
                 searchComponentByType<WeaponComponent>(playerComp->m_weaponEntity, Components_e::WEAPON_COMPONENT);
         assert(weaponComp);

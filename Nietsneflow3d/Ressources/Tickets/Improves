@@ -2,10 +2,10 @@ IMPROVE=========================================================================
 ==========================================================================================================
 
 ))
-Prevent standard level file to be swaped
+Improve menu write alignment
 
 ))
-For eject case froze movement and unset rectilign speed
+Prevent standard level file to be swaped
 
 
 
@@ -22,6 +22,9 @@ Enemy animations========================~
 Improve Enemy behavour===!!!!!!===================~
 
 
+
+))
+For eject case froze movement and unset rectilign speed=====================OK
 
 ))
 While exiting in game add confirm menu==========================OK

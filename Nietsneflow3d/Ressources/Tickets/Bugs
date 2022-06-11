@@ -1,6 +1,9 @@
 BUGS======================================================================
 
 ))
+remove data written if switch to menu
+
+))
 When die and reload from checkpoint moveable wall bad place========================NOT REPRODUCIBLE
 
 ))
