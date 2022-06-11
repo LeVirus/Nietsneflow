@@ -239,6 +239,7 @@ void InputSystem::treatPlayerInput()
             playerComp->m_menuMode = playerComp->m_firstMenu ? MenuMode_e::TITLE : MenuMode_e::BASE;
             m_mainEngine->setMenuEntries(playerComp);
             m_mainEngine->setUnsetPaused();
+            playerComp->m_infoWriteData = {false, ""};
         }
         if(!weaponComp->m_weaponChange && !weaponComp->m_timerShootActive)
         {
