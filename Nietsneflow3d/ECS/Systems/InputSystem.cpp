@@ -822,6 +822,9 @@ void InputSystem::treatEnterPressedMenu(PlayerConfComponent *playerComp)
     case MenuMode_e::CONFIRM_RESTART_FROM_LAST_CHECKPOINT:
         treatEnterPressedConfirmRestartFromLastCheckpointMenu(playerComp);
         break;
+    case MenuMode_e::CONFIRM_QUIT_GAME:
+        treatEnterPressedConfirmQuitGame(playerComp);
+        break;
     }
 }
 
@@ -878,6 +881,21 @@ void InputSystem::treatEnterPressedConfirmRestartFromLastCheckpointMenu(PlayerCo
         {
             m_mainEngine->setTransition(true);
         }
+    }
+    else
+    {
+        playerComp->m_menuMode = playerComp->m_firstMenu ? MenuMode_e::TITLE : MenuMode_e::BASE;
+        m_mainEngine->setMenuEntries(playerComp);
+    }
+}
+
+//===================================================================
+void InputSystem::treatEnterPressedConfirmQuitGame(PlayerConfComponent *playerComp)
+{
+    ConfirmCursorPos_e menuEntry = static_cast<ConfirmCursorPos_e>(playerComp->m_currentCursorPos);
+    if(menuEntry == ConfirmCursorPos_e::TRUE)
+    {
+        glfwSetWindowShouldClose(m_window, true);
     }
     else
     {
@@ -1086,7 +1104,11 @@ void InputSystem::treatEnterPressedTitleMenu(PlayerConfComponent *playerComp)
         m_mainEngine->setMenuEntries(playerComp);
         break;
     case TitleMenuCursorPos_e::QUIT_GAME:
-        glfwSetWindowShouldClose(m_window, true);
+        playerComp->m_previousMenuMode = playerComp->m_menuMode;
+        playerComp->m_menuMode = MenuMode_e::CONFIRM_QUIT_GAME;
+        m_mainEngine->updateConfirmLoadingMenuInfo(playerComp);
+        m_mainEngine->setMenuEntries(playerComp);
+        playerComp->m_currentCustomLevelCusorMenu = 0;
         break;
     case TitleMenuCursorPos_e::TOTAL:
         break;
@@ -1138,7 +1160,11 @@ void InputSystem::treatEnterPressedMainMenu(PlayerConfComponent *playerComp)
         m_mainEngine->setMenuEntries(playerComp);
     break;
     case MainMenuCursorPos_e::QUIT_GAME:
-        glfwSetWindowShouldClose(m_window, true);
+        playerComp->m_previousMenuMode = playerComp->m_menuMode;
+        playerComp->m_menuMode = MenuMode_e::CONFIRM_QUIT_GAME;
+        m_mainEngine->updateConfirmLoadingMenuInfo(playerComp);
+        m_mainEngine->setMenuEntries(playerComp);
+        playerComp->m_currentCustomLevelCusorMenu = 0;
         break;
     case MainMenuCursorPos_e::RETURN_TO_GAME:
         m_mainEngine->setUnsetPaused();

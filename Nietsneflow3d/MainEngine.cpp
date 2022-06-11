@@ -1816,16 +1816,18 @@ void MainEngine::updateConfirmLoadingMenuInfo(PlayerConfComponent *playerComp)
     }
     else if(playerComp->m_menuMode == MenuMode_e::CONFIRM_LOADING_GAME_FORM ||
             playerComp->m_menuMode == MenuMode_e::CONFIRM_RESTART_LEVEL ||
-            playerComp->m_menuMode == MenuMode_e::CONFIRM_RESTART_FROM_LAST_CHECKPOINT)
+            playerComp->m_menuMode == MenuMode_e::CONFIRM_RESTART_FROM_LAST_CHECKPOINT ||
+            playerComp->m_menuMode == MenuMode_e::CONFIRM_QUIT_GAME)
     {
         if(!playerComp->m_firstMenu)
         {
-            writeComp->m_upLeftPositionGL = {-0.9f, 0.3f};
-            writeComp->m_str = "ALL YOUR PROGRESS UNTIL LAST SAVE WILL BE LOST\\";
+            writeComp->m_upLeftPositionGL = {-0.8f, 0.3f};
+            writeComp->m_str = "   ALL YOUR PROGRESS UNTIL LAST SAVE\\"
+                               "                          WILL BE LOST\\";
         }
         else
         {
-            writeComp->m_upLeftPositionGL = {-0.6f, 0.3f};
+            writeComp->m_upLeftPositionGL = {-0.8f, 0.5f};
         }
         if(playerComp->m_menuMode == MenuMode_e::CONFIRM_LOADING_GAME_FORM)
         {
@@ -1854,6 +1856,10 @@ void MainEngine::updateConfirmLoadingMenuInfo(PlayerConfComponent *playerComp)
                     writeComp->m_str += "LOAD CUSTOM GAME?";
                 }
             }
+        }
+        else if(playerComp->m_menuMode == MenuMode_e::CONFIRM_QUIT_GAME)
+        {
+            writeComp->m_str += "DO YOU REALLY WANT TO QUIT THE GAME?";
         }
     }
     m_graphicEngine.confWriteComponent(writeComp);

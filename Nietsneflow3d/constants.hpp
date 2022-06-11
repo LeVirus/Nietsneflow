@@ -377,6 +377,7 @@ enum class MenuMode_e
     CONFIRM_LOADING_GAME_FORM,
     CONFIRM_RESTART_LEVEL,
     CONFIRM_RESTART_FROM_LAST_CHECKPOINT,
+    CONFIRM_QUIT_GAME,
     NEW_KEY,
     LOAD_CUSTOM_LEVEL
 };
@@ -467,6 +468,9 @@ inline const std::map<MenuMode_e, PairPairFloatStr_t> MAP_MENU_DATA =
      PairPairFloatStr_t{{-0.1f, 0.0f}, "YES\\NO"}
     },
     {MenuMode_e::CONFIRM_RESTART_FROM_LAST_CHECKPOINT,
+     PairPairFloatStr_t{{-0.1f, 0.0f}, "YES\\NO"}
+    },
+    {MenuMode_e::CONFIRM_QUIT_GAME,
      PairPairFloatStr_t{{-0.1f, 0.0f}, "YES\\NO"}
     },
     {MenuMode_e::NEW_KEY,

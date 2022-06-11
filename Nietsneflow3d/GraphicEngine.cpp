@@ -271,6 +271,9 @@ void GraphicEngine::fillTitleMenuWrite(WriteComponent *writeComp, MenuMode_e men
     case MenuMode_e::CONFIRM_RESTART_LEVEL:
         writeComp->m_str = "RESTART LEVEL";
         break;
+    case MenuMode_e::CONFIRM_QUIT_GAME:
+        writeComp->m_str = "QUIT GAME?";
+        break;
     case MenuMode_e::CONFIRM_RESTART_FROM_LAST_CHECKPOINT:
         writeComp->m_upLeftPositionGL.first = -0.5f;
         writeComp->m_str = "RESTART FROM LAST CHECKPOINT";

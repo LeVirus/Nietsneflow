@@ -5,13 +5,8 @@ IMPROVE=========================================================================
 Prevent standard level file to be swaped
 
 ))
-While exiting in game add confirm menu
-
-))
 For eject case froze movement and unset rectilign speed
 
-))
-Center screen write data
 
 
 ))
@@ -27,6 +22,9 @@ Enemy animations========================~
 Improve Enemy behavour===!!!!!!===================~
 
 
+
+))
+While exiting in game add confirm menu==========================OK
 
 ))
 Add point in write conf data===========================OK

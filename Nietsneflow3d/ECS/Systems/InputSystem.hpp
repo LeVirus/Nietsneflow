@@ -152,6 +152,7 @@ private:
     void treatEnterPressedConfirmLoadGameMenu(PlayerConfComponent *playerComp);
     void treatEnterPressedConfirmRestartLevelMenu(PlayerConfComponent *playerComp);
     void treatEnterPressedConfirmRestartFromLastCheckpointMenu(PlayerConfComponent *playerComp);
+    void treatEnterPressedConfirmQuitGame(PlayerConfComponent *playerComp);
     void validInputMenu(PlayerConfComponent *playerComp);
     void treatPlayerMove(PlayerConfComponent *playerComp, MoveableComponent *moveComp, MapCoordComponent *mapComp);
     static void window_focus_callback(GLFWwindow* window, int focused);
@@ -179,6 +180,7 @@ private:
         {MenuMode_e::LOAD_GAME, static_cast<uint32_t>(LoadGameMenuCursorPos_e::TOTAL) - 1},
         {MenuMode_e::LOAD_CUSTOM_LEVEL, static_cast<uint32_t>(LoadCustomGameMenuCursorPos_e::TOTAL) - 1},
         {MenuMode_e::CONFIRM_QUIT_INPUT_FORM, static_cast<uint32_t>(ConfirmCursorPos_e::TOTAL) - 1},
+        {MenuMode_e::CONFIRM_QUIT_GAME, static_cast<uint32_t>(ConfirmCursorPos_e::TOTAL) - 1},
         {MenuMode_e::CONFIRM_LOADING_GAME_FORM, static_cast<uint32_t>(ConfirmCursorPos_e::TOTAL) - 1},
         {MenuMode_e::CONFIRM_RESTART_LEVEL, static_cast<uint32_t>(ConfirmCursorPos_e::TOTAL) - 1},
         {MenuMode_e::CONFIRM_RESTART_FROM_LAST_CHECKPOINT, static_cast<uint32_t>(ConfirmCursorPos_e::TOTAL) - 1},
