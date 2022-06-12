@@ -5,6 +5,7 @@
 #include <functional>
 
 using VectSpriteDataRef_t = std::vector<std::reference_wrapper<SpriteData>>;
+using VectVectSpriteDataRef_t = std::vector<VectSpriteDataRef_t>;
 class FontData
 {
 public:

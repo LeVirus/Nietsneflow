@@ -192,7 +192,11 @@ void StaticDisplaySystem::updateStringWriteEntitiesInputMenu(bool keyboardInputM
             writeConf = stairwayToComponentManager().
                     searchComponentByType<WriteComponent>(m_inputMenuKeyboardWriteKeysEntities[i], Components_e::WRITE_COMPONENT);
             assert(writeConf);
-            writeConf->m_str = getMouseKeyboardStringKeyAssociated(map.at(static_cast<ControlKey_e>(i)));
+            if(writeConf->m_vectMessage.empty())
+            {
+                writeConf->m_vectMessage.resize(1);
+            }
+            writeConf->m_vectMessage[0] = {-0.3, getMouseKeyboardStringKeyAssociated(map.at(static_cast<ControlKey_e>(i)))};
             m_mainEngine->updateWriteComp(writeConf);
         }
     }
@@ -208,14 +212,21 @@ void StaticDisplaySystem::updateStringWriteEntitiesInputMenu(bool keyboardInputM
             writeConf = stairwayToComponentManager().
                     searchComponentByType<WriteComponent>(m_inputMenuGamepadWriteKeysEntities[i], Components_e::WRITE_COMPONENT);
             assert(writeConf);
+            if(writeConf->m_vectMessage.empty())
+            {
+                writeConf->m_vectMessage.resize(1);
+            }
             if(map.at(static_cast<ControlKey_e>(i)).m_standardButton)
             {
-                writeConf->m_str = getGamepadStringKeyButtonAssociated(map.at(static_cast<ControlKey_e>(i)).m_keyID);
+                writeConf->m_vectMessage[0] = {-0.3, getGamepadStringKeyButtonAssociated(map.at(static_cast<ControlKey_e>(i)).m_keyID)};
+//                writeConf->m_vectMessage = getGamepadStringKeyButtonAssociated(map.at(static_cast<ControlKey_e>(i)).m_keyID);
             }
             else
             {
-                writeConf->m_str = getGamepadStringKeyAxisAssociated(map.at(static_cast<ControlKey_e>(i)).m_keyID,
-                                                                     (*map.at(static_cast<ControlKey_e>(i)).m_axisPos));
+                writeConf->m_vectMessage[0] = {-0.3, getGamepadStringKeyAxisAssociated(map.at(static_cast<ControlKey_e>(i)).m_keyID,
+                                               (*map.at(static_cast<ControlKey_e>(i)).m_axisPos))};
+//                writeConf->m_vectMessage = getGamepadStringKeyAxisAssociated(map.at(static_cast<ControlKey_e>(i)).m_keyID,
+//                                                                     (*map.at(static_cast<ControlKey_e>(i)).m_axisPos));
             }
             m_mainEngine->updateWriteComp(writeConf);
         }
@@ -228,11 +239,16 @@ void StaticDisplaySystem::updateDisplayMenuResolution(const std::string &str)
     WriteComponent *writeComp = stairwayToComponentManager().
                 searchComponentByType<WriteComponent>(m_resolutionDisplayMenuEntity, Components_e::WRITE_COMPONENT);
     assert(writeComp);
-    writeComp->m_str = str;
+    if(writeComp->m_vectMessage.empty())
+    {
+        writeComp->m_vectMessage.resize(1);
+        writeComp->m_vectMessage[0].first = writeComp->m_upLeftPositionGL.first;
+    }
+    writeComp->m_vectMessage[0].second = str;
     PositionVertexComponent *posComp = stairwayToComponentManager().
                 searchComponentByType<PositionVertexComponent>(m_resolutionDisplayMenuEntity, Components_e::POSITION_VERTEX_COMPONENT);
     assert(posComp);
-    writeComp->m_fontSpriteData = m_fontDataPtr->getWriteData(str, writeComp->m_numTexture);
+    writeComp->m_fontSpriteData[0] = m_fontDataPtr->getWriteData(str, writeComp->m_numTexture);
     confWriteVertex(writeComp, posComp, VertexID_e::RESOLUTION_DISPLAY_MENU);
 }
 
@@ -242,11 +258,16 @@ void StaticDisplaySystem::updateMenuEntryFullscreen(bool displayMenufullscreenMo
     WriteComponent *writeComp = stairwayToComponentManager().
                 searchComponentByType<WriteComponent>(m_fullscreenMenuEntity, Components_e::WRITE_COMPONENT);
     assert(writeComp);
-    writeComp->m_str = displayMenufullscreenMode ? "X" : "";
+    if(writeComp->m_vectMessage.empty())
+    {
+        writeComp->m_vectMessage.resize(1);
+        writeComp->m_vectMessage[0].first = writeComp->m_upLeftPositionGL.first;
+    }
+    writeComp->m_vectMessage[0].second = displayMenufullscreenMode ? "X" : "";
     PositionVertexComponent *posComp = stairwayToComponentManager().
                 searchComponentByType<PositionVertexComponent>(m_fullscreenMenuEntity, Components_e::POSITION_VERTEX_COMPONENT);
     assert(posComp);
-    writeComp->m_fontSpriteData = m_fontDataPtr->getWriteData(writeComp->m_str, writeComp->m_numTexture);
+    writeComp->m_fontSpriteData[0] = m_fontDataPtr->getWriteData(writeComp->m_vectMessage[0].second, writeComp->m_numTexture);
     confWriteVertex(writeComp, posComp, VertexID_e::FULLSCREEN);
 }
 
@@ -311,13 +332,14 @@ void StaticDisplaySystem::updateNewInputKeyGamepad(ControlKey_e currentSelectedK
     WriteComponent *writeComp = stairwayToComponentManager().searchComponentByType<WriteComponent>(
                 entityWrite, Components_e::WRITE_COMPONENT);
     assert(writeComp);
+    assert(!writeComp->m_vectMessage.empty());
     if(inputType == InputType_e::GAMEPAD_BUTTONS)
     {
-        writeComp->m_str = getGamepadStringKeyButtonAssociated(glKey);
+        writeComp->m_vectMessage[0].second = getGamepadStringKeyButtonAssociated(glKey);
     }
     else if(inputType == InputType_e::GAMEPAD_AXIS)
     {
-        writeComp->m_str = getGamepadStringKeyAxisAssociated(glKey, axisSense);
+        writeComp->m_vectMessage[0].second = getGamepadStringKeyAxisAssociated(glKey, axisSense);
     }
     m_mainEngine->updateWriteComp(writeComp);
 }
@@ -329,7 +351,8 @@ void StaticDisplaySystem::updateNewInputKeyKeyboard(ControlKey_e currentSelected
     WriteComponent *writeComp = stairwayToComponentManager().searchComponentByType<WriteComponent>(
                 entityWrite, Components_e::WRITE_COMPONENT);
     assert(writeComp);
-    writeComp->m_str = getMouseKeyboardStringKeyAssociated(state);
+    assert(!writeComp->m_vectMessage.empty());
+    writeComp->m_vectMessage[0].second = getMouseKeyboardStringKeyAssociated(state);
     m_mainEngine->updateWriteComp(writeComp);
 }
 
@@ -368,15 +391,15 @@ void StaticDisplaySystem::drawWriteVertex(uint32_t numEntity, VertexID_e type, c
     assert(posComp);
     if(!value.empty())
     {
-        if(value != writeComp->m_str)
+        if(value != writeComp->m_vectMessage[0].second)
         {
-            writeComp->m_fontSpriteData = m_fontDataPtr->getWriteData(value, writeComp->m_numTexture);
+            writeComp->m_fontSpriteData[0] = m_fontDataPtr->getWriteData(value, writeComp->m_numTexture);
         }
-        writeComp->m_str = value;
+        writeComp->m_vectMessage[0].second = value;
     }
     if(type == VertexID_e::INFO)
     {
-        writeComp->m_upLeftPositionGL.first = getLeftTextPosition(writeComp->m_str);
+        writeComp->m_upLeftPositionGL.first = getLeftTextPosition(writeComp->m_vectMessage[0].second);
     }
     confWriteVertex(writeComp, posComp, type);
     drawVertex(writeComp->m_numTexture, type);
@@ -663,31 +686,38 @@ void StaticDisplaySystem::drawLineWriteVertex(PositionVertexComponent *posComp, 
     posComp->m_vertex.reserve(writeComp->m_fontSpriteData.size() * 4);
     float currentX = writeComp->m_upLeftPositionGL.first, diffX,
             currentY = writeComp->m_upLeftPositionGL.second, diffY = writeComp->m_fontSize;
-    std::array<PairFloat_t, 4> *memArray = &(writeComp->m_fontSpriteData[0].get().m_texturePosVertex);
+    std::array<PairFloat_t, 4> *memArray = &(writeComp->m_fontSpriteData[0][0].get().m_texturePosVertex);
     float cohef = ((*memArray)[2].second - (*memArray)[0].second) / writeComp->m_fontSize;
-    uint32_t cmptSpriteData = 0;
-    for(uint32_t i = 0; i < writeComp->m_str.size(); ++i)
+    uint32_t cmptSpriteData;
+    for(uint32_t i = 0; i < writeComp->m_vectMessage.size(); ++i)
     {
-        if(writeComp->m_str[i] == ' ')
+        cmptSpriteData = 0;
+        for(uint32_t j = 0; j < writeComp->m_vectMessage[i].second.size(); ++j)
         {
-            currentX += writeComp->m_fontSize / 4.0f;
-            continue;
+            std::cerr << j << "  " <<  writeComp->m_vectMessage[i].second.size() <<  " j\n";
+            if(writeComp->m_vectMessage[i].second[j] == ' ')
+            {
+                currentX += writeComp->m_fontSize / 4.0f;
+                continue;
+            }
+            else if(writeComp->m_vectMessage[i].second[j] == '\\')
+            {
+                currentX = writeComp->m_upLeftPositionGL.first;
+                currentY -= diffY;
+                continue;
+            }
+            assert(cmptSpriteData < writeComp->m_fontSpriteData[i].size());
+            memArray = &(writeComp->m_fontSpriteData[i][cmptSpriteData].get().m_texturePosVertex);
+            diffX = ((*memArray)[1].first - (*memArray)[0].first) / cohef;
+            posComp->m_vertex.emplace_back(PairFloat_t{currentX, currentY});
+            posComp->m_vertex.emplace_back(PairFloat_t{currentX + diffX, currentY});
+            posComp->m_vertex.emplace_back(PairFloat_t{currentX + diffX, currentY - diffY});
+            posComp->m_vertex.emplace_back(PairFloat_t{currentX, currentY - diffY});
+            currentX += diffX + 0.01;
+            ++cmptSpriteData;
         }
-        else if(writeComp->m_str[i] == '\\')
-        {
-            currentX = writeComp->m_upLeftPositionGL.first;
-            currentY -= diffY;
-            continue;
-        }
-        assert(cmptSpriteData < writeComp->m_fontSpriteData.size());
-        memArray = &(writeComp->m_fontSpriteData[cmptSpriteData].get().m_texturePosVertex);
-        diffX = ((*memArray)[1].first - (*memArray)[0].first) / cohef;
-        posComp->m_vertex.emplace_back(PairFloat_t{currentX, currentY});
-        posComp->m_vertex.emplace_back(PairFloat_t{currentX + diffX, currentY});
-        posComp->m_vertex.emplace_back(PairFloat_t{currentX + diffX, currentY - diffY});
-        posComp->m_vertex.emplace_back(PairFloat_t{currentX, currentY - diffY});
-        currentX += diffX + 0.01;
-        ++cmptSpriteData;
+        currentX = writeComp->m_vectMessage[i].first;
+        currentY -= diffY;
     }
 }
 

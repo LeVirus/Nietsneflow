@@ -12,7 +12,7 @@ using pairStr_t = std::pair<std::string, std::string>;
 using pairI_t = std::pair<int, int>;
 using vectPairStr_t = std::vector<pairStr_t>;
 using vectStr_t = std::vector<std::string>;
-using VectSpriteDataRef_t = std::vector<std::reference_wrapper<SpriteData>>;
+//using VectVectSpriteDataRef_t = std::vector<std::reference_wrapper<SpriteData>>;
 
 struct GLFWwindow;
 struct WriteComponent;

@@ -6,6 +6,8 @@
 #include <functional>
 
 using VectSpriteDataRef_t = std::vector<std::reference_wrapper<SpriteData>>;
+using VectVectSpriteDataRef_t = std::vector<VectSpriteDataRef_t>;
+using PairDoubleStr_t = std::pair<double, std::string>;
 
 struct WriteComponent : public ecs::Component
 {
@@ -13,8 +15,9 @@ struct WriteComponent : public ecs::Component
     {
         muiTypeComponent = Components_e::WRITE_COMPONENT;
     }
-    VectSpriteDataRef_t m_fontSpriteData;
-    std::string m_str;
+    VectVectSpriteDataRef_t m_fontSpriteData;
+    //first GL Left position, second message
+    std::vector<PairDoubleStr_t> m_vectMessage;
     float m_fontSize;
     PairFloat_t m_upLeftPositionGL;
     uint32_t m_numTexture;

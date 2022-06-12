@@ -215,16 +215,16 @@ void GraphicEngine::linkSystems(ColorDisplaySystem *colorSystem, MapDisplaySyste
 void GraphicEngine::updateAmmoCount(WriteComponent *writeComp,
                                     WeaponComponent *weaponComp)
 {
-    writeComp->m_str = STR_PLAYER_AMMO + std::to_string(weaponComp->m_weaponsData[
+    writeComp->m_vectMessage[0].second = STR_PLAYER_AMMO + std::to_string(weaponComp->m_weaponsData[
                                                 weaponComp->m_currentWeapon].m_ammunationsCount);
-    writeComp->m_fontSpriteData = m_ptrFontData->getWriteData(writeComp->m_str, writeComp->m_numTexture);
+    writeComp->m_fontSpriteData[0] = m_ptrFontData->getWriteData(writeComp->m_vectMessage[0].second, writeComp->m_numTexture);
 }
 
 //===================================================================
 void GraphicEngine::updatePlayerLife(WriteComponent *writeComp, PlayerConfComponent *playerComp)
 {
-    writeComp->m_str = STR_PLAYER_LIFE + std::to_string(playerComp->m_life);
-    writeComp->m_fontSpriteData = m_ptrFontData->getWriteData(writeComp->m_str, writeComp->m_numTexture);
+    writeComp->m_vectMessage[0].second = STR_PLAYER_LIFE + std::to_string(playerComp->m_life);
+    writeComp->m_fontSpriteData[0] = m_ptrFontData->getWriteData(writeComp->m_vectMessage[0].second, writeComp->m_numTexture);
 }
 
 //===================================================================
@@ -234,58 +234,58 @@ void GraphicEngine::fillTitleMenuWrite(WriteComponent *writeComp, MenuMode_e men
     switch (menuEntry)
     {
     case MenuMode_e::TITLE:
-        writeComp->m_str = "TITLE MENU";
+        writeComp->m_vectMessage[0].second = "TITLE MENU";
         break;
     case MenuMode_e::BASE:
-        writeComp->m_str = "MAIN MENU";
+        writeComp->m_vectMessage[0].second = "MAIN MENU";
         break;
     case MenuMode_e::LOAD_GAME:
-        writeComp->m_str = "LOAD GAME";
+        writeComp->m_vectMessage[0].second = "LOAD GAME";
         break;
     case MenuMode_e::LOAD_CUSTOM_LEVEL:
-        writeComp->m_str = "LOAD CUSTOM GAME";
+        writeComp->m_vectMessage[0].second = "LOAD CUSTOM GAME";
         break;
     case MenuMode_e::CONFIRM_LOADING_GAME_FORM:
     {
         if(previousMenuEntry == MenuMode_e::LOAD_GAME)
         {
-            writeComp->m_str = "LOAD GAME";
+            writeComp->m_vectMessage[0].second = "LOAD GAME";
         }
         else if(previousMenuEntry == MenuMode_e::LOAD_GAME)
         {
-            writeComp->m_str = "NEW GAME";
+            writeComp->m_vectMessage[0].second = "NEW GAME";
         }
         break;
     }
     case MenuMode_e::NEW_GAME:
-        writeComp->m_str = "NEW GAME";
+        writeComp->m_vectMessage[0].second = "NEW GAME";
         break;
     case MenuMode_e::DISPLAY:
-        writeComp->m_str = "GRAPHIC MENU";
+        writeComp->m_vectMessage[0].second = "GRAPHIC MENU";
         break;
     case MenuMode_e::INPUT:
     case MenuMode_e::NEW_KEY:
     case MenuMode_e::CONFIRM_QUIT_INPUT_FORM:
-        writeComp->m_str = "INPUT MENU";
+        writeComp->m_vectMessage[0].second = "INPUT MENU";
         break;
     case MenuMode_e::CONFIRM_RESTART_LEVEL:
-        writeComp->m_str = "RESTART LEVEL";
+        writeComp->m_vectMessage[0].second = "RESTART LEVEL";
         break;
     case MenuMode_e::CONFIRM_QUIT_GAME:
-        writeComp->m_str = "QUIT GAME?";
+        writeComp->m_vectMessage[0].second = "QUIT GAME?";
         break;
     case MenuMode_e::CONFIRM_RESTART_FROM_LAST_CHECKPOINT:
         writeComp->m_upLeftPositionGL.first = -0.5f;
-        writeComp->m_str = "RESTART FROM LAST CHECKPOINT";
+        writeComp->m_vectMessage[0].second = "RESTART FROM LAST CHECKPOINT";
         break;
     case MenuMode_e::SOUND:
-        writeComp->m_str = "AUDIO MENU";
+        writeComp->m_vectMessage[0].second = "AUDIO MENU";
         break;
     case MenuMode_e::TRANSITION_LEVEL:
-        writeComp->m_str = "";
+        writeComp->m_vectMessage[0].second = "";
         break;
     }
-    writeComp->m_fontSpriteData = m_ptrFontData->getWriteData(writeComp->m_str, writeComp->m_numTexture);
+    writeComp->m_fontSpriteData[0] = m_ptrFontData->getWriteData(writeComp->m_vectMessage[0].second, writeComp->m_numTexture);
 }
 
 //===================================================================
@@ -294,15 +294,15 @@ void GraphicEngine::fillMenuWrite(WriteComponent *writeComp, MenuMode_e menuEntr
 {
     if(menuEntry == MenuMode_e::LOAD_GAME || menuEntry == MenuMode_e::NEW_GAME)
     {
-        writeComp->m_str = m_saveStandardLevelMenuWrite;
+        writeComp->m_vectMessage[0].second = m_saveStandardLevelMenuWrite;
     }
     else if(menuEntry == MenuMode_e::LOAD_CUSTOM_LEVEL)
     {
-        writeComp->m_str = m_existingCustomLevelsMenuWrite[std::get<0>(endLevelData)->m_currentCustomLevelCusorMenu].first;
+        writeComp->m_vectMessage[0].second = m_existingCustomLevelsMenuWrite[std::get<0>(endLevelData)->m_currentCustomLevelCusorMenu].first;
     }
     else if(menuEntry == MenuMode_e::TRANSITION_LEVEL)
     {
-        writeComp->m_str = getEndLevelMenuStr(endLevelData);
+        writeComp->m_vectMessage[0].second = getEndLevelMenuStr(endLevelData);
     }
     else if(menuEntry == MenuMode_e::DISPLAY)
     {
@@ -310,26 +310,31 @@ void GraphicEngine::fillMenuWrite(WriteComponent *writeComp, MenuMode_e menuEntr
         m_displayMenuFullscreenMode = m_fullscreenMode;
         setCurrentResolution(m_currentDisplayedResolution);
         std::map<MenuMode_e, PairPairFloatStr_t>::const_iterator it = MAP_MENU_DATA.find(menuEntry);
-        writeComp->m_str = it->second.second;
+        writeComp->m_vectMessage[0].second = it->second.second;
     }
     else if(menuEntry == MenuMode_e::NEW_KEY)
     {
         std::map<MenuMode_e, PairPairFloatStr_t>::const_iterator it = MAP_MENU_DATA.find(menuEntry);
-        writeComp->m_str = it->second.second;
-        writeComp->m_str += " " + m_mapInputActionStringAssociated.at(static_cast<InputMenuCursorPos_e>(cursorPos));
+        writeComp->m_vectMessage[0].second = it->second.second;
+        writeComp->m_vectMessage[0].second += " " + m_mapInputActionStringAssociated.at(static_cast<InputMenuCursorPos_e>(cursorPos));
     }
     else
     {
         std::map<MenuMode_e, PairPairFloatStr_t>::const_iterator it = MAP_MENU_DATA.find(menuEntry);
-        writeComp->m_str = it->second.second;
+        writeComp->m_vectMessage[0].second = it->second.second;
     }
-    writeComp->m_fontSpriteData = m_ptrFontData->getWriteData(writeComp->m_str, writeComp->m_numTexture);
+    writeComp->m_fontSpriteData[0] = m_ptrFontData->getWriteData(writeComp->m_vectMessage[0].second, writeComp->m_numTexture);
 }
 
 //===================================================================
 void GraphicEngine::confWriteComponent(WriteComponent *writeComp)
 {
-    writeComp->m_fontSpriteData = m_ptrFontData->getWriteData(writeComp->m_str, writeComp->m_numTexture);
+    std::cerr << "CLEARAAA\n";
+    writeComp->m_fontSpriteData.clear();
+    for(uint32_t i = 0; i < writeComp->m_vectMessage.size(); ++i)
+    {
+        writeComp->m_fontSpriteData.emplace_back(m_ptrFontData->getWriteData(writeComp->m_vectMessage[i].second, writeComp->m_numTexture));
+    }
 }
 
 //===================================================================
