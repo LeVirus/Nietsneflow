@@ -1828,7 +1828,7 @@ void MainEngine::updateConfirmLoadingMenuInfo(PlayerConfComponent *playerComp)
     {
         if(!playerComp->m_firstMenu)
         {
-            writeComp->m_upLeftPositionGL = {-0.8f, 0.3f};
+            writeComp->m_upLeftPositionGL = {-0.8f, 0.5f};
             writeComp->addTextLine({writeComp->m_upLeftPositionGL.first + 0.1, "ALL YOUR PROGRESS UNTIL LAST SAVE"});
             writeComp->addTextLine({writeComp->m_upLeftPositionGL.first + 0.5, "WILL BE LOST"});
         }

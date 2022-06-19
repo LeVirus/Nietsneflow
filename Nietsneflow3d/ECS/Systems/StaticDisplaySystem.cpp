@@ -691,6 +691,7 @@ void StaticDisplaySystem::drawLineWriteVertex(PositionVertexComponent *posComp, 
     uint32_t cmptSpriteData;
     for(uint32_t i = 0; i < writeComp->m_vectMessage.size(); ++i)
     {
+        currentX = writeComp->m_vectMessage[i].first;
         cmptSpriteData = 0;
         for(uint32_t j = 0; j < writeComp->m_vectMessage[i].second.size(); ++j)
         {
@@ -701,7 +702,7 @@ void StaticDisplaySystem::drawLineWriteVertex(PositionVertexComponent *posComp, 
             }
             else if(writeComp->m_vectMessage[i].second[j] == '\\')
             {
-                currentX = writeComp->m_upLeftPositionGL.first;
+                currentX = writeComp->m_vectMessage[i].first;
                 currentY -= diffY;
                 continue;
             }
@@ -715,7 +716,6 @@ void StaticDisplaySystem::drawLineWriteVertex(PositionVertexComponent *posComp, 
             currentX += diffX + 0.01;
             ++cmptSpriteData;
         }
-        currentX = writeComp->m_vectMessage[i].first;
         currentY -= diffY;
     }
 }
