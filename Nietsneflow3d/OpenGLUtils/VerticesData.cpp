@@ -196,13 +196,14 @@ void VerticesData::loadVertexWriteTextureComponent(const PositionVertexComponent
                                                    const WriteComponent &writeComp)
 {
     uint32_t size = writeComp.m_fontSpriteData.size();
+    uint32_t l = 0;
     for(uint32_t i = 0; i < size; ++i)
     {
-        for(uint32_t k = 0; k < writeComp.m_fontSpriteData[i].size(); ++k)
+        for(uint32_t k = 0; k < writeComp.m_fontSpriteData[i].size(); ++k, ++l)
         {
             for(uint32_t j = 0; j < 4; ++j)
             {
-                addTexturePoint(posComp.m_vertex[(i * size + k) * 4 + j],
+                addTexturePoint(posComp.m_vertex[l * 4 + j],
                         writeComp.m_fontSpriteData[i][k].get().m_texturePosVertex[j]);
             }
             addIndices(BaseShapeTypeGL_e::RECTANGLE);
