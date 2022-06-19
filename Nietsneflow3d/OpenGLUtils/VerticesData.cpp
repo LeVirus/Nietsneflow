@@ -195,13 +195,14 @@ float VerticesData::loadRaycastingEntity(const SpriteTextureComponent &spriteCom
 void VerticesData::loadVertexWriteTextureComponent(const PositionVertexComponent &posComp,
                                                    const WriteComponent &writeComp)
 {
-    for(uint32_t i = 0; i < writeComp.m_fontSpriteData.size(); ++i)
+    uint32_t size = writeComp.m_fontSpriteData.size();
+    for(uint32_t i = 0; i < size; ++i)
     {
-        for(uint32_t k = 0; k < writeComp.m_fontSpriteData.size(); ++k)
+        for(uint32_t k = 0; k < writeComp.m_fontSpriteData[i].size(); ++k)
         {
             for(uint32_t j = 0; j < 4; ++j)
             {
-                addTexturePoint(posComp.m_vertex[i * 4 + j],
+                addTexturePoint(posComp.m_vertex[(i * size + k) * 4 + j],
                         writeComp.m_fontSpriteData[i][k].get().m_texturePosVertex[j]);
             }
             addIndices(BaseShapeTypeGL_e::RECTANGLE);

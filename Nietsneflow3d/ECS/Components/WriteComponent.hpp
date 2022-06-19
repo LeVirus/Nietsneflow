@@ -15,6 +15,16 @@ struct WriteComponent : public ecs::Component
     {
         muiTypeComponent = Components_e::WRITE_COMPONENT;
     }
+    void addTextLine(const PairDoubleStr_t &data)
+    {
+        m_fontSpriteData.emplace_back(VectSpriteDataRef_t{});
+        m_vectMessage.emplace_back(data);
+    }
+    void clear()
+    {
+        m_fontSpriteData.clear();
+        m_vectMessage.clear();
+    }
     VectVectSpriteDataRef_t m_fontSpriteData;
     //first GL Left position, second message
     std::vector<PairDoubleStr_t> m_vectMessage;

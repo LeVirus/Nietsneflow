@@ -1772,8 +1772,7 @@ void MainEngine::setMenuEntries(PlayerConfComponent *playerComp)
     m_writeConf->m_upLeftPositionGL = MAP_MENU_DATA.at(playerComp->m_menuMode).first;
     if(m_writeConf->m_vectMessage.empty())
     {
-        m_writeConf->m_vectMessage.emplace_back(PairDoubleStr_t{m_writeConf->m_upLeftPositionGL.first, ""});
-        m_writeConf->m_fontSpriteData.emplace_back(VectSpriteDataRef_t{});
+        m_writeConf->addTextLine({m_writeConf->m_upLeftPositionGL.first, ""});
     }
     m_graphicEngine.fillMenuWrite(m_writeConf, playerComp->m_menuMode, playerComp->m_currentCursorPos,
                                   {playerComp, m_currentLevelSecretsNumber, m_currentLevelEnemiesNumber});
@@ -1807,24 +1806,20 @@ void MainEngine::updateConfirmLoadingMenuInfo(PlayerConfComponent *playerComp)
     WriteComponent *writeComp = m_ecsManager.getComponentManager().
             searchComponentByType<WriteComponent>(playerComp->m_menuInfoWriteEntity, Components_e::WRITE_COMPONENT);
     assert(writeComp);
-    std::cerr << "CLEARBBB\n";
-    writeComp->m_fontSpriteData.clear();
+    writeComp->clear();
     writeComp->m_fontSpriteData.reserve(4);
-    writeComp->m_vectMessage.clear();
     writeComp->m_vectMessage.reserve(4);
     if(playerComp->m_menuMode == MenuMode_e::INPUT)
     {
         writeComp->m_upLeftPositionGL = {-0.6f, -0.7f};
-        writeComp->m_fontSpriteData.emplace_back(VectSpriteDataRef_t{});
-        writeComp->m_vectMessage.emplace_back(std::pair<double, std::string>{writeComp->m_upLeftPositionGL.first, ""});
+        writeComp->addTextLine({writeComp->m_upLeftPositionGL.first, ""});
         writeComp->m_vectMessage.back().second = playerComp->m_keyboardInputMenuMode ? "KEYBOARD\\SWITCH GAMEPAD : G OR RL" :
                                                                  "GAMEPAD\\SWITCH KEYBOARD : G OR RL";
     }
     else if(playerComp->m_menuMode == MenuMode_e::CONFIRM_QUIT_INPUT_FORM)
     {
         writeComp->m_upLeftPositionGL = {-0.6f, 0.3f};
-        writeComp->m_fontSpriteData.emplace_back(VectSpriteDataRef_t{});
-        writeComp->m_vectMessage.emplace_back(PairDoubleStr_t{writeComp->m_upLeftPositionGL.first, "DO YOU WANT TO SAVE CHANGES?"});
+        writeComp->addTextLine({writeComp->m_upLeftPositionGL.first, "DO YOU WANT TO SAVE CHANGES?"});
     }
     else if(playerComp->m_menuMode == MenuMode_e::CONFIRM_LOADING_GAME_FORM ||
             playerComp->m_menuMode == MenuMode_e::CONFIRM_RESTART_LEVEL ||
@@ -1834,12 +1829,8 @@ void MainEngine::updateConfirmLoadingMenuInfo(PlayerConfComponent *playerComp)
         if(!playerComp->m_firstMenu)
         {
             writeComp->m_upLeftPositionGL = {-0.8f, 0.3f};
-            writeComp->m_fontSpriteData.emplace_back(VectSpriteDataRef_t{});
-            writeComp->m_fontSpriteData.emplace_back(VectSpriteDataRef_t{});
-            writeComp->m_vectMessage.emplace_back(std::pair<double, std::string>{writeComp->m_upLeftPositionGL.first + 0.1,
-                                                                                 "ALL YOUR PROGRESS UNTIL LAST SAVE"});
-            writeComp->m_vectMessage.emplace_back(std::pair<double, std::string>{writeComp->m_upLeftPositionGL.first + 0.5,
-                                                                                 "WILL BE LOST"});
+            writeComp->addTextLine({writeComp->m_upLeftPositionGL.first + 0.1, "ALL YOUR PROGRESS UNTIL LAST SAVE"});
+            writeComp->addTextLine({writeComp->m_upLeftPositionGL.first + 0.5, "WILL BE LOST"});
         }
         else
         {
@@ -1849,13 +1840,11 @@ void MainEngine::updateConfirmLoadingMenuInfo(PlayerConfComponent *playerComp)
         {
             if(playerComp->m_previousMenuMode == MenuMode_e::NEW_GAME && checkSavedGameExists(playerComp->m_currentCursorPos + 1))
             {
-                writeComp->m_fontSpriteData.emplace_back(VectSpriteDataRef_t{});
-                writeComp->m_vectMessage.emplace_back(std::pair<double, std::string>{writeComp->m_upLeftPositionGL.first + 0.3, "PREVIOUS FILE WILL BE ERASED"});
+                writeComp->addTextLine({writeComp->m_upLeftPositionGL.first + 0.3, "PREVIOUS FILE WILL BE ERASED"});
             }
             if(!writeComp->m_vectMessage.empty())
             {
-                writeComp->m_fontSpriteData.emplace_back(VectSpriteDataRef_t{});
-                writeComp->m_vectMessage.emplace_back(std::pair<double, std::string>{writeComp->m_upLeftPositionGL.first + 0.1, "CONTINUE ANYWAY?"});
+                writeComp->addTextLine({writeComp->m_upLeftPositionGL.first + 0.1, "CONTINUE ANYWAY?"});
             }
             //TITLE MENU CASE
             else
@@ -1863,25 +1852,21 @@ void MainEngine::updateConfirmLoadingMenuInfo(PlayerConfComponent *playerComp)
                 writeComp->m_upLeftPositionGL = {-0.3f, 0.3f};
                 if(playerComp->m_previousMenuMode == MenuMode_e::NEW_GAME)
                 {
-                    writeComp->m_fontSpriteData.emplace_back(VectSpriteDataRef_t{});
-                    writeComp->m_vectMessage.emplace_back(std::pair<double, std::string>{writeComp->m_upLeftPositionGL.first, "BEGIN NEW GAME?"});
+                    writeComp->addTextLine({writeComp->m_upLeftPositionGL.first, "BEGIN NEW GAME?"});
                 }
                 else if(playerComp->m_previousMenuMode == MenuMode_e::LOAD_GAME)
                 {
-                    writeComp->m_fontSpriteData.emplace_back(VectSpriteDataRef_t{});
-                    writeComp->m_vectMessage.emplace_back(std::pair<double, std::string>{writeComp->m_upLeftPositionGL.first, "LOAD GAME?"});
+                    writeComp->addTextLine({writeComp->m_upLeftPositionGL.first, "LOAD GAME?"});
                 }
                 else if(playerComp->m_previousMenuMode == MenuMode_e::LOAD_CUSTOM_LEVEL)
                 {
-                    writeComp->m_fontSpriteData.emplace_back(VectSpriteDataRef_t{});
-                    writeComp->m_vectMessage.emplace_back(std::pair<double, std::string>{writeComp->m_upLeftPositionGL.first, "LOAD CUSTOM GAME?"});
+                    writeComp->addTextLine({writeComp->m_upLeftPositionGL.first, "LOAD CUSTOM GAME?"});
                 }
             }
         }
         else if(playerComp->m_menuMode == MenuMode_e::CONFIRM_QUIT_GAME)
         {
-            writeComp->m_fontSpriteData.emplace_back(VectSpriteDataRef_t{});
-            writeComp->m_vectMessage.emplace_back(std::pair<double, std::string>{writeComp->m_upLeftPositionGL.first, "DO YOU REALLY WANT TO QUIT THE GAME?"});
+            writeComp->addTextLine({writeComp->m_upLeftPositionGL.first, "DO YOU REALLY WANT TO QUIT THE GAME?"});
         }
     }
     m_graphicEngine.confWriteComponent(writeComp);
@@ -2831,8 +2816,7 @@ void MainEngine::confWriteEntities()
             searchComponentByType<WriteComponent>(numInfoWrite, Components_e::WRITE_COMPONENT);
     assert(writeConf);
     writeConf->m_upLeftPositionGL = {-0.3f, 0.7f};
-    writeConf->m_fontSpriteData.emplace_back(VectSpriteDataRef_t{});
-    writeConf->m_vectMessage.emplace_back(PairDoubleStr_t{writeConf->m_upLeftPositionGL.first, ""});
+    writeConf->addTextLine({writeConf->m_upLeftPositionGL.first, ""});
     writeConf->m_fontSize = STD_FONT_SIZE;
     //AMMO
     writeConf = m_ecsManager.getComponentManager().
@@ -2840,8 +2824,7 @@ void MainEngine::confWriteEntities()
     assert(writeConf);
     writeConf->m_upLeftPositionGL = {-0.95f, -0.9f};
     writeConf->m_fontSize = STD_FONT_SIZE;
-    writeConf->m_fontSpriteData.emplace_back(VectSpriteDataRef_t{});
-    writeConf->m_vectMessage.emplace_back(PairDoubleStr_t{writeConf->m_upLeftPositionGL.first, ""});
+    writeConf->addTextLine({writeConf->m_upLeftPositionGL.first, ""});
     m_graphicEngine.updateAmmoCount(writeConf, m_weaponComp);
     //LIFE
     writeConf = m_ecsManager.getComponentManager().
@@ -2849,8 +2832,7 @@ void MainEngine::confWriteEntities()
     assert(writeConf);
     writeConf->m_upLeftPositionGL = {-0.95f, -0.8f};
     writeConf->m_fontSize = STD_FONT_SIZE;
-    writeConf->m_fontSpriteData.emplace_back(VectSpriteDataRef_t{});
-    writeConf->m_vectMessage.emplace_back(PairDoubleStr_t{writeConf->m_upLeftPositionGL.first, ""});
+    writeConf->addTextLine({writeConf->m_upLeftPositionGL.first, ""});
     m_graphicEngine.updatePlayerLife(writeConf, m_playerConf);
     //MENU
     writeConf = m_ecsManager.getComponentManager().
@@ -2863,6 +2845,7 @@ void MainEngine::confWriteEntities()
             searchComponentByType<WriteComponent>(numTitleMenuWrite, Components_e::WRITE_COMPONENT);
     assert(writeConf);
     writeConf->m_upLeftPositionGL = {-0.3f, 0.9f};
+    writeConf->addTextLine({writeConf->m_upLeftPositionGL.first, ""});
     writeConf->m_fontSize = MENU_FONT_SIZE;
     //INPUT MENU MODE
     writeConf = m_ecsManager.getComponentManager().
@@ -2879,8 +2862,7 @@ void MainEngine::confWriteEntities()
     WriteComponent *writeComp = m_ecsManager.getComponentManager().
             searchComponentByType<WriteComponent>(m_playerConf->m_titleMenuEntity, Components_e::WRITE_COMPONENT);
     assert(writeComp);
-    writeConf->m_fontSpriteData.emplace_back(VectSpriteDataRef_t{});
-    writeComp->m_vectMessage.emplace_back(PairDoubleStr_t{-0.3f, ""});
+    writeConf->addTextLine({-0.3f, ""});
     WriteComponent *writeCompTitle = m_ecsManager.getComponentManager().
             searchComponentByType<WriteComponent>(m_playerConf->m_titleMenuEntity, Components_e::WRITE_COMPONENT);
     assert(writeCompTitle);
@@ -2901,8 +2883,7 @@ void MainEngine::confWriteEntitiesDisplayMenu()
     assert(writeConfA);
     if(writeConfA->m_vectMessage.empty())
     {
-        writeConfA->m_fontSpriteData.emplace_back(VectSpriteDataRef_t{});
-        writeConfA->m_vectMessage.emplace_back(std::pair<double, std::string>{writeConfA->m_upLeftPositionGL.first, ""});
+        writeConfA->addTextLine({writeConfA->m_upLeftPositionGL.first, ""});
     }
     writeConfA->m_upLeftPositionGL.first = MAP_MENU_DATA.at(MenuMode_e::DISPLAY).first.first + 1.0f;
     writeConfA->m_upLeftPositionGL.second = MAP_MENU_DATA.at(MenuMode_e::DISPLAY).first.second;
@@ -2916,8 +2897,7 @@ void MainEngine::confWriteEntitiesDisplayMenu()
     assert(writeConfB);
     if(writeConfB->m_vectMessage.empty())
     {
-        writeConfB->m_fontSpriteData.emplace_back(VectSpriteDataRef_t{});
-        writeConfB->m_vectMessage.emplace_back(std::pair<double, std::string>{writeConfB->m_upLeftPositionGL.first, ""});
+        writeConfB->addTextLine({writeConfB->m_upLeftPositionGL.first, ""});
     }
     writeConfB->m_upLeftPositionGL = {writeConfA->m_upLeftPositionGL.first, writeConfA->m_upLeftPositionGL.second - MENU_FONT_SIZE};
     writeConfB->m_fontSize = MENU_FONT_SIZE;

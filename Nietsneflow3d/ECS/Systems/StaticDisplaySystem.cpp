@@ -678,7 +678,7 @@ void modVertexPos(PositionVertexComponent *posComp, const PairFloat_t &mod)
 //===================================================================
 void StaticDisplaySystem::drawLineWriteVertex(PositionVertexComponent *posComp, WriteComponent *writeComp)
 {
-    if(writeComp->m_fontSpriteData.empty())
+    if(writeComp->m_fontSpriteData.empty() || writeComp->m_fontSpriteData[0].empty())
     {
         return;
     }
@@ -694,7 +694,6 @@ void StaticDisplaySystem::drawLineWriteVertex(PositionVertexComponent *posComp, 
         cmptSpriteData = 0;
         for(uint32_t j = 0; j < writeComp->m_vectMessage[i].second.size(); ++j)
         {
-            std::cerr << j << "  " <<  writeComp->m_vectMessage[i].second.size() <<  " j\n";
             if(writeComp->m_vectMessage[i].second[j] == ' ')
             {
                 currentX += writeComp->m_fontSize / 4.0f;

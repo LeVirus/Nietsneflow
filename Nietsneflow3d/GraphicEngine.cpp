@@ -329,7 +329,6 @@ void GraphicEngine::fillMenuWrite(WriteComponent *writeComp, MenuMode_e menuEntr
 //===================================================================
 void GraphicEngine::confWriteComponent(WriteComponent *writeComp)
 {
-    std::cerr << "CLEARAAA\n";
     writeComp->m_fontSpriteData.clear();
     for(uint32_t i = 0; i < writeComp->m_vectMessage.size(); ++i)
     {
