@@ -1819,7 +1819,7 @@ void MainEngine::updateConfirmLoadingMenuInfo(PlayerConfComponent *playerComp)
     else if(playerComp->m_menuMode == MenuMode_e::CONFIRM_QUIT_INPUT_FORM)
     {
         writeComp->m_upLeftPositionGL = {-0.6f, 0.3f};
-        writeComp->addTextLine({writeComp->m_upLeftPositionGL.first, "DO YOU WANT TO SAVE CHANGES?"});
+        writeComp->addTextLine({{}, "DO YOU WANT TO SAVE CHANGES?"});
     }
     else if(playerComp->m_menuMode == MenuMode_e::CONFIRM_LOADING_GAME_FORM ||
             playerComp->m_menuMode == MenuMode_e::CONFIRM_RESTART_LEVEL ||
@@ -1829,8 +1829,8 @@ void MainEngine::updateConfirmLoadingMenuInfo(PlayerConfComponent *playerComp)
         if(!playerComp->m_firstMenu)
         {
             writeComp->m_upLeftPositionGL = {-0.8f, 0.5f};
-            writeComp->addTextLine({writeComp->m_upLeftPositionGL.first + 0.1, "ALL YOUR PROGRESS UNTIL LAST SAVE"});
-            writeComp->addTextLine({writeComp->m_upLeftPositionGL.first + 0.5, "WILL BE LOST"});
+            writeComp->addTextLine({{}, "ALL YOUR PROGRESS UNTIL LAST SAVE"});
+            writeComp->addTextLine({{}, "WILL BE LOST"});
         }
         else
         {
@@ -1840,11 +1840,11 @@ void MainEngine::updateConfirmLoadingMenuInfo(PlayerConfComponent *playerComp)
         {
             if(playerComp->m_previousMenuMode == MenuMode_e::NEW_GAME && checkSavedGameExists(playerComp->m_currentCursorPos + 1))
             {
-                writeComp->addTextLine({writeComp->m_upLeftPositionGL.first + 0.3, "PREVIOUS FILE WILL BE ERASED"});
+                writeComp->addTextLine({{}, "PREVIOUS FILE WILL BE ERASED"});
             }
             if(!writeComp->m_vectMessage.empty())
             {
-                writeComp->addTextLine({writeComp->m_upLeftPositionGL.first + 0.1, "CONTINUE ANYWAY?"});
+                writeComp->addTextLine({{}, "CONTINUE ANYWAY?"});
             }
             //TITLE MENU CASE
             else
@@ -1852,21 +1852,21 @@ void MainEngine::updateConfirmLoadingMenuInfo(PlayerConfComponent *playerComp)
                 writeComp->m_upLeftPositionGL = {-0.3f, 0.3f};
                 if(playerComp->m_previousMenuMode == MenuMode_e::NEW_GAME)
                 {
-                    writeComp->addTextLine({writeComp->m_upLeftPositionGL.first, "BEGIN NEW GAME?"});
+                    writeComp->addTextLine({{}, "BEGIN NEW GAME?"});
                 }
                 else if(playerComp->m_previousMenuMode == MenuMode_e::LOAD_GAME)
                 {
-                    writeComp->addTextLine({writeComp->m_upLeftPositionGL.first, "LOAD GAME?"});
+                    writeComp->addTextLine({{}, "LOAD GAME?"});
                 }
                 else if(playerComp->m_previousMenuMode == MenuMode_e::LOAD_CUSTOM_LEVEL)
                 {
-                    writeComp->addTextLine({writeComp->m_upLeftPositionGL.first, "LOAD CUSTOM GAME?"});
+                    writeComp->addTextLine({{}, "LOAD CUSTOM GAME?"});
                 }
             }
         }
         else if(playerComp->m_menuMode == MenuMode_e::CONFIRM_QUIT_GAME)
         {
-            writeComp->addTextLine({writeComp->m_upLeftPositionGL.first, "DO YOU REALLY WANT TO QUIT THE GAME?"});
+            writeComp->addTextLine({{}, "DO YOU REALLY WANT TO QUIT THE GAME?"});
         }
     }
     m_graphicEngine.confWriteComponent(writeComp);
@@ -2816,7 +2816,7 @@ void MainEngine::confWriteEntities()
             searchComponentByType<WriteComponent>(numInfoWrite, Components_e::WRITE_COMPONENT);
     assert(writeConf);
     writeConf->m_upLeftPositionGL = {-0.3f, 0.7f};
-    writeConf->addTextLine({writeConf->m_upLeftPositionGL.first, ""});
+    writeConf->addTextLine({{}, ""});
     writeConf->m_fontSize = STD_FONT_SIZE;
     //AMMO
     writeConf = m_ecsManager.getComponentManager().
@@ -2845,7 +2845,7 @@ void MainEngine::confWriteEntities()
             searchComponentByType<WriteComponent>(numTitleMenuWrite, Components_e::WRITE_COMPONENT);
     assert(writeConf);
     writeConf->m_upLeftPositionGL = {-0.3f, 0.9f};
-    writeConf->addTextLine({writeConf->m_upLeftPositionGL.first, ""});
+    writeConf->addTextLine({{}, ""});
     writeConf->m_fontSize = MENU_FONT_SIZE;
     //INPUT MENU MODE
     writeConf = m_ecsManager.getComponentManager().

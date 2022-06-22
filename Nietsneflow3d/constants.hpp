@@ -418,6 +418,7 @@ inline const float FULL_MAP_SIZE_GL = MAP_FULL_TOP_LEFT_Y_GL * 2.0f;
 inline const float MAP_LOCAL_SIZE_GL = 1.0f;
 inline const float EMPTY_VALUE = -10000.0f;
 inline const float EPSILON_FLOAT = std::numeric_limits<float>::epsilon();
+inline const float EPSILON_DOUBLE = std::numeric_limits<double>::epsilon();
 inline const float TAN_PI_QUARTER = std::tan(45.0f);
 inline const float CONE_VISION = 60.0f;
 inline const float MAX_BAR_MENU_SIZE = 0.7f;
@@ -428,7 +429,7 @@ RAYCAST_GROUND_CEILING_NUMBER = RAYCAST_LINE_NUMBER / 2.0f;
 inline const float SCREEN_VERT_BACKGROUND_GL_STEP = 1.0f / RAYCAST_GROUND_CEILING_NUMBER;
 inline const float SCREEN_HORIZ_BACKGROUND_GL_STEP = 2.0f / RAYCAST_LINE_NUMBER;
 inline const PairFloat_t CURSOR_GL_SIZE = {0.20f, 0.25f};
-
+inline const double WRITE_LETTER_GL_OFFSET = 0.01;
 inline const std::string STR_PLAYER_LIFE = "LIFE::";
 inline const std::string STR_PLAYER_AMMO = "AMMO::";
 inline const std::string SHADER_DIR_STR = "../Nietsneflow3d/Ressources/Shader/";
