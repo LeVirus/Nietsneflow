@@ -1772,7 +1772,7 @@ void MainEngine::setMenuEntries(PlayerConfComponent *playerComp)
     m_writeConf->m_upLeftPositionGL = MAP_MENU_DATA.at(playerComp->m_menuMode).first;
     if(m_writeConf->m_vectMessage.empty())
     {
-        m_writeConf->addTextLine({m_writeConf->m_upLeftPositionGL.first, ""});
+        m_writeConf->addTextLine({{}, ""});
     }
     m_graphicEngine.fillMenuWrite(m_writeConf, playerComp->m_menuMode, playerComp->m_currentCursorPos,
                                   {playerComp, m_currentLevelSecretsNumber, m_currentLevelEnemiesNumber});
