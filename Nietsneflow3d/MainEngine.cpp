@@ -1798,6 +1798,16 @@ void MainEngine::setMenuEntries(PlayerConfComponent *playerComp)
     {
         playerComp->m_currentCursorPos = 0;
     }
+    if(playerComp->m_menuMode == MenuMode_e::DISPLAY || playerComp->m_menuMode == MenuMode_e::SOUND ||
+            playerComp->m_menuMode == MenuMode_e::INPUT || playerComp->m_menuMode == MenuMode_e::LOAD_GAME ||
+            playerComp->m_menuMode == MenuMode_e::LOAD_CUSTOM_LEVEL || playerComp->m_menuMode == MenuMode_e::NEW_GAME)
+    {
+        m_writeConf->m_vectMessage[0].first = m_writeConf->m_upLeftPositionGL.first;
+    }
+    else
+    {
+        m_writeConf->m_vectMessage[0].first = {};
+    }
 }
 
 //===================================================================
@@ -2881,13 +2891,13 @@ void MainEngine::confWriteEntitiesDisplayMenu()
     WriteComponent *writeConfA = m_ecsManager.getComponentManager().
             searchComponentByType<WriteComponent>(numMenuResolutionWrite, Components_e::WRITE_COMPONENT);
     assert(writeConfA);
+    writeConfA->m_upLeftPositionGL.first = MAP_MENU_DATA.at(MenuMode_e::DISPLAY).first.first + 1.0f;
+    writeConfA->m_upLeftPositionGL.second = MAP_MENU_DATA.at(MenuMode_e::DISPLAY).first.second;
+    writeConfA->m_fontSize = MENU_FONT_SIZE;
     if(writeConfA->m_vectMessage.empty())
     {
         writeConfA->addTextLine({writeConfA->m_upLeftPositionGL.first, ""});
     }
-    writeConfA->m_upLeftPositionGL.first = MAP_MENU_DATA.at(MenuMode_e::DISPLAY).first.first + 1.0f;
-    writeConfA->m_upLeftPositionGL.second = MAP_MENU_DATA.at(MenuMode_e::DISPLAY).first.second;
-    writeConfA->m_fontSize = MENU_FONT_SIZE;
     //OOOOK default resolution
     writeConfA->m_vectMessage[0].second = m_graphicEngine.getResolutions()[0].second;
     m_graphicEngine.confWriteComponent(writeConfA);
