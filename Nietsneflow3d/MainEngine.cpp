@@ -2905,12 +2905,12 @@ void MainEngine::confWriteEntitiesDisplayMenu()
     WriteComponent *writeConfB = m_ecsManager.getComponentManager().
                 searchComponentByType<WriteComponent>(numMenuFullscreenWrite, Components_e::WRITE_COMPONENT);
     assert(writeConfB);
+    writeConfB->m_upLeftPositionGL = {writeConfA->m_upLeftPositionGL.first, writeConfA->m_upLeftPositionGL.second - MENU_FONT_SIZE};
+    writeConfB->m_fontSize = MENU_FONT_SIZE;
     if(writeConfB->m_vectMessage.empty())
     {
         writeConfB->addTextLine({writeConfB->m_upLeftPositionGL.first, ""});
     }
-    writeConfB->m_upLeftPositionGL = {writeConfA->m_upLeftPositionGL.first, writeConfA->m_upLeftPositionGL.second - MENU_FONT_SIZE};
-    writeConfB->m_fontSize = MENU_FONT_SIZE;
     writeConfB->m_vectMessage[0].second = "";
     m_graphicEngine.confWriteComponent(writeConfB);
     m_ecsManager.getSystemManager().searchSystemByType<StaticDisplaySystem>(static_cast<uint32_t>(Systems_e::STATIC_DISPLAY_SYSTEM))->
