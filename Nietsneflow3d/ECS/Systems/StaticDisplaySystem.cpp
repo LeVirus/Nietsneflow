@@ -462,10 +462,15 @@ void StaticDisplaySystem::treatWeaponShootAnimation(PlayerConfComponent *playerC
     uint32_t spriteFirstAnim = currentWeapon.m_memPosSprite.first, spriteNumLastAnim = currentWeapon.m_lastAnimNum;
     if(++timerComp->m_cycleCountA > currentWeapon.m_intervalLatency)
     {
+        //STANDARD ANIMATION
         if(currentWeapon.m_animMode == AnimationMode_e::CONSTANT)
         {
             if(weaponComp->m_numWeaponSprite == spriteNumLastAnim)
             {
+                if(weaponComp->m_weaponsData[weaponComp->m_currentWeapon].m_ammunationsCount == 0)
+                {
+                    weaponComp->m_weaponToChange = true;
+                }
                 weaponComp->m_numWeaponSprite = spriteFirstAnim;
                 weaponComp->m_timerShootActive = false;
             }
@@ -474,20 +479,33 @@ void StaticDisplaySystem::treatWeaponShootAnimation(PlayerConfComponent *playerC
                 ++weaponComp->m_numWeaponSprite;
             }
         }
+        //RETURN ANIMATION (EX: SHOTGUN)
         else
         {
             if(weaponComp->m_shootFirstPhase)
             {
+                //end first phase
                 if(weaponComp->m_numWeaponSprite == currentWeapon.m_memPosSprite.second)
                 {
                     if(currentWeapon.m_animMode == AnimationMode_e::STANDART)
                     {
+                        if(weaponComp->m_weaponsData[weaponComp->m_currentWeapon].m_ammunationsCount == 0)
+                        {
+                            weaponComp->m_weaponToChange = true;
+                        }
                         weaponComp->m_numWeaponSprite = spriteFirstAnim;
                         weaponComp->m_timerShootActive = false;
                     }
                     else if(currentWeapon.m_animMode == AnimationMode_e::RETURN)
                     {
-                        --weaponComp->m_numWeaponSprite;
+                        if(weaponComp->m_weaponsData[weaponComp->m_currentWeapon].m_ammunationsCount == 0)
+                        {
+                            weaponComp->m_weaponToChange = true;
+                        }
+                        else
+                        {
+                            --weaponComp->m_numWeaponSprite;
+                        }
                     }
                     weaponComp->m_shootFirstPhase = false;
                 }
@@ -513,6 +531,10 @@ void StaticDisplaySystem::treatWeaponShootAnimation(PlayerConfComponent *playerC
                 }
                 else if(currentWeapon.m_animMode == AnimationMode_e::STANDART && weaponComp->m_numWeaponSprite == spriteFirstAnim)
                 {
+                    if(weaponComp->m_weaponsData[weaponComp->m_currentWeapon].m_ammunationsCount == 0)
+                    {
+                        weaponComp->m_weaponToChange = true;
+                    }
                     weaponComp->m_timerShootActive = false;
                     return;
                 }

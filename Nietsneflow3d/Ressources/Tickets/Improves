@@ -2,9 +2,6 @@ IMPROVE=========================================================================
 ==========================================================================================================
 
 ))
-Remove .fake file after level loading
-
-))
 Prevent standard level file to be swaped
 
 
@@ -22,6 +19,9 @@ Enemy animations========================~
 Improve Enemy behavour===!!!!!!===================~
 
 
+
+))
+Remove .fake file after level loading=========================In levelManager
 
 ))
 Improve menu write alignment===========================OK

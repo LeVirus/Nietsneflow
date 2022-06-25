@@ -176,6 +176,12 @@ void InputSystem::treatPlayerInput()
         WeaponComponent *weaponComp = stairwayToComponentManager().
                 searchComponentByType<WeaponComponent>(playerComp->m_weaponEntity, Components_e::WEAPON_COMPONENT);
         assert(weaponComp);
+        if(weaponComp->m_weaponToChange)
+        {
+            weaponComp->m_weaponToChange = false;
+            changeToTopPlayerWeapon(*weaponComp);
+            playerComp->m_playerShoot = false;
+        }
         treatPlayerMove(playerComp, moveComp, mapComp);
         std::optional<double> mouseXdiff = getXMouseMotion();
         if(checkPlayerKeyTriggered(ControlKey_e::TURN_RIGHT) ||
@@ -255,7 +261,7 @@ void InputSystem::treatPlayerInput()
             //SHOOT
             else if(checkPlayerKeyTriggered(ControlKey_e::SHOOT))
             {
-                if(!weaponComp->m_timerShootActive && weaponComp->m_weaponsData[weaponComp->m_currentWeapon].m_ammunationsCount > 0)
+                if(!weaponComp->m_timerShootActive)
                 {
                     playerComp->m_playerShoot = true;
                     AudioComponent *audioComp = stairwayToComponentManager().
@@ -263,15 +269,6 @@ void InputSystem::treatPlayerInput()
                     assert(audioComp);
                     audioComp->m_soundElements[weaponComp->m_currentWeapon]->m_toPlay = true;
                     m_mainEngine->playerAttack(mVectNumEntity[i], playerComp, mapComp->m_absoluteMapPositionPX, moveComp->m_degreeOrientation);
-                    if(weaponComp->m_weaponsData[weaponComp->m_currentWeapon].m_ammunationsCount == 0)
-                    {
-                        changeToTopPlayerWeapon(*weaponComp);
-                        playerComp->m_playerShoot = false;
-                    }
-                }
-                else
-                {
-                    changePlayerWeapon(*weaponComp, false);
                 }
             }
         }
