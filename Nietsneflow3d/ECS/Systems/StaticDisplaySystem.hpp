@@ -93,7 +93,6 @@ private:
                                 MemPositionsVertexComponents *memPosComp);
     void setWeaponMovement(PlayerConfComponent *playerComp, PositionVertexComponent *posComp,
                            MemPositionsVertexComponents *memPosComp);
-    double getGLLeftPosCenteredText(const std::string &str);
 private:
     MainEngine *m_mainEngine;
     FontData const *m_fontDataPtr;
@@ -112,51 +111,6 @@ private:
     uint32_t m_resolutionDisplayMenuEntity,
     m_fullscreenMenuEntity, m_infoWriteStandardInterval = 1.5 / FPS_VALUE;
     ArrayControlKey_t m_inputMenuKeyboardWriteKeysEntities, m_inputMenuGamepadWriteKeysEntities;
-    const std::map<char, double> LETTERS_SIZE = {
-        {'A', 0.0394995},
-        {'B', 0.0405},
-        {'C', 0.0405},
-        {'D', 0.0405},
-        {'E', 0.0399975},
-        {'F', 0.0399975},
-        {'G', 0.0399975},
-        {'H', 0.0399975},
-        {'I', 0.012},
-        {'J', 0.0399975},
-        {'K', 0.0399975},
-        {'L', 0.0399975},
-        {'M', 0.0564975},
-        {'N', 0.0399975},
-        {'O', 0.045495},
-        {'P', 0.0399975},
-        {'Q', 0.045},
-        {'R', 0.0339975},
-        {'S', 0.0405},
-        {'T', 0.0339975},
-        {'U', 0.0405},
-        {'V', 0.0405},
-        {'W', 0.057},
-        {'X', 0.0405},
-        {'Y', 0.0405},
-        {'Z', 0.0405},
-        {':', 0.012495},
-        {'?', 0.03945},
-        {' ', 0.06 / 4},
-        {'.', 0.0159975},
-        {'%', 0.039975},
-        {'-', 0.030975},
-        {'+', 0.03045},
-        {'1', 0.0345},
-        {'2', 0.0399975},
-        {'3', 0.0399975},
-        {'4', 0.0399975},
-        {'5', 0.0399975},
-        {'6', 0.0405},
-        {'7', 0.0405},
-        {'8', 0.0405},
-        {'9', 0.0405},
-        {'0', 0.0405}
-    };
 };
 float getLeftTextPosition(std::string_view str);
 std::string treatInfoMessageEndLine(const std::string &str, uint32_t lineSize = 20);

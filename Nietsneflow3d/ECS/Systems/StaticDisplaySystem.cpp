@@ -707,7 +707,7 @@ void StaticDisplaySystem::drawLineWriteVertex(PositionVertexComponent *posComp, 
             currentY = writeComp->m_upLeftPositionGL.second, diffY = writeComp->m_fontSize;
     std::array<PairFloat_t, 4> *memArray = &(writeComp->m_fontSpriteData[0][0].get().m_texturePosVertex);
     float cohef = ((*memArray)[2].second - (*memArray)[0].second) / writeComp->m_fontSize;
-    uint32_t cmptSpriteData;
+    uint32_t cmptSpriteData, currentVertexBeginCursor;
     for(uint32_t i = 0; i < writeComp->m_vectMessage.size(); ++i)
     {
         if(writeComp->m_vectMessage[i].first)
@@ -716,12 +716,11 @@ void StaticDisplaySystem::drawLineWriteVertex(PositionVertexComponent *posComp, 
         }
         else
         {
-            size_t find = writeComp->m_vectMessage[i].second.find('\\');
-            leftPos = (find != std::string::npos) ? getGLLeftPosCenteredText(writeComp->m_vectMessage[i].second.substr(0, find)) :
-                                                    getGLLeftPosCenteredText(writeComp->m_vectMessage[i].second);
+            leftPos = 0;
         }
         currentX = leftPos;
         cmptSpriteData = 0;
+        currentVertexBeginCursor = 0;
         for(uint32_t j = 0; j < writeComp->m_vectMessage[i].second.size(); ++j)
         {
             if(writeComp->m_vectMessage[i].second[j] == ' ')
@@ -733,10 +732,13 @@ void StaticDisplaySystem::drawLineWriteVertex(PositionVertexComponent *posComp, 
             {
                 if(!writeComp->m_vectMessage[i].first)
                 {
-                    size_t find = writeComp->m_vectMessage[i].second.find('\\', j + 1);
-                    currentX = (find != std::string::npos) ? getGLLeftPosCenteredText(writeComp->m_vectMessage[i].second.substr(j + 1, find - (j + 1))) :
-                                                            getGLLeftPosCenteredText(writeComp->m_vectMessage[i].second.substr(j + 1,
-                                                                writeComp->m_vectMessage[i].second.size() - j));
+                    float glLeftPos = -(currentX / 2);
+                    for(uint32_t k = currentVertexBeginCursor; k < posComp->m_vertex.size(); ++k)
+                    {
+                        posComp->m_vertex[k].first += glLeftPos;
+                    }
+                    currentVertexBeginCursor = posComp->m_vertex.size();
+                    currentX = 0;
                 }
                 else
                 {
@@ -755,25 +757,17 @@ void StaticDisplaySystem::drawLineWriteVertex(PositionVertexComponent *posComp, 
             currentX += diffX + WRITE_LETTER_GL_OFFSET;
             ++cmptSpriteData;
         }
+        //if centered
+        if(!writeComp->m_vectMessage[i].first)
+        {
+            float glLeftPos = -(currentX / 2);
+            for(uint32_t j = currentVertexBeginCursor; j < posComp->m_vertex.size(); ++j)
+            {
+                posComp->m_vertex[j].first += glLeftPos;
+            }
+        }
         currentY -= diffY;
     }
-}
-
-//===================================================================
-double StaticDisplaySystem::getGLLeftPosCenteredText(const std::string &str)
-{
-    double totalGLSize = EPSILON_DOUBLE;
-    for(uint32_t j = 0; j < str.size(); ++j)
-    {
-        assert(LETTERS_SIZE.find(str[j]) != LETTERS_SIZE.end());
-        if(str[j] != ' ')
-        {
-            totalGLSize += WRITE_LETTER_GL_OFFSET;
-        }
-        totalGLSize += LETTERS_SIZE.at(str[j]);
-    }
-    //half total GL size
-    return -totalGLSize / 2;
 }
 
 //===================================================================
