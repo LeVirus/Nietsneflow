@@ -707,7 +707,7 @@ void StaticDisplaySystem::drawLineWriteVertex(PositionVertexComponent *posComp, 
             currentY = writeComp->m_upLeftPositionGL.second, diffY = writeComp->m_fontSize;
     std::array<PairFloat_t, 4> *memArray = &(writeComp->m_fontSpriteData[0][0].get().m_texturePosVertex);
     float cohef = ((*memArray)[2].second - (*memArray)[0].second) / writeComp->m_fontSize;
-    uint32_t cmptSpriteData, currentVertexBeginCursor;
+    uint32_t cmptSpriteData, currentVertexBeginCursor = 0;
     for(uint32_t i = 0; i < writeComp->m_vectMessage.size(); ++i)
     {
         if(writeComp->m_vectMessage[i].first)
@@ -720,7 +720,6 @@ void StaticDisplaySystem::drawLineWriteVertex(PositionVertexComponent *posComp, 
         }
         currentX = leftPos;
         cmptSpriteData = 0;
-        currentVertexBeginCursor = 0;
         for(uint32_t j = 0; j < writeComp->m_vectMessage[i].second.size(); ++j)
         {
             if(writeComp->m_vectMessage[i].second[j] == ' ')
@@ -765,6 +764,7 @@ void StaticDisplaySystem::drawLineWriteVertex(PositionVertexComponent *posComp, 
             {
                 posComp->m_vertex[j].first += glLeftPos;
             }
+            currentVertexBeginCursor = posComp->m_vertex.size();
         }
         currentY -= diffY;
     }
