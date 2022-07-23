@@ -1,9 +1,6 @@
 BUGS======================================================================
 
 ))
-Checkpoint issue on second reload
-
-))
 When die and reload from checkpoint moveable wall bad place========================NOT REPRODUCIBLE
 
 ))
@@ -20,6 +17,9 @@ Wall exists inside door some time======================Bug in level editor
 
 
 
+
+))
+Checkpoint issue on second reload=======================OK
 
 ))
 shoot last bullet on fire weapon does not display shooting animation=========================OK

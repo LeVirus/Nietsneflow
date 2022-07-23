@@ -95,7 +95,16 @@ LevelState MainEngine::mainLoop(uint32_t levelNum, LevelState_e levelState, bool
         initLevel(levelNum, levelState);
         if(levelState != LevelState_e::LOAD_GAME)
         {
-            saveGameProgress(levelNum);
+            if(levelState == LevelState_e::RESTART_FROM_CHECKPOINT)
+            {
+                assert(m_memCheckpointData);
+                assert(m_currentSave);
+                saveGameProgress(levelNum, m_currentSave, &*m_memCheckpointData);
+            }
+            else
+            {
+                saveGameProgress(levelNum);
+            }
         }
     }
     std::chrono::duration<double> elapsed_seconds;
@@ -248,12 +257,11 @@ void MainEngine::saveGameProgressCheckpoint(uint32_t levelNum, const PairUI_t &c
     {
         revealedMap.emplace_back(it->second);
     }
-    MemCheckpointElementsState structCheckpointData =
-    {checkpointData.first, secretsFound, enemiesKilled, checkpointReached,
-                checkpointData.second, m_memEnemiesStateFromCheckpoint,
-                m_memMoveableWallCheckpointData, m_memTriggerWallMoveableWallCheckpointData,
-                m_memStaticEntitiesDeletedFromCheckpoint, revealedMap};
-    saveGameProgress(m_currentLevel, m_currentSave, &structCheckpointData);
+    m_memCheckpointData = {checkpointData.first, secretsFound, enemiesKilled, checkpointReached,
+                           checkpointData.second, m_memEnemiesStateFromCheckpoint,
+                           m_memMoveableWallCheckpointData, m_memTriggerWallMoveableWallCheckpointData,
+                           m_memStaticEntitiesDeletedFromCheckpoint, revealedMap};
+    saveGameProgress(m_currentLevel, m_currentSave, &(*m_memCheckpointData));
 }
 
 //===================================================================

@@ -385,6 +385,7 @@ private:
     std::map<uint32_t, std::pair<std::vector<uint32_t>, bool>> m_memTriggerWallMoveableWallCheckpointData;
     std::vector<PairUI_t> m_revealedMapData;
     std::unique_ptr<MemCustomLevelLoadedData> m_memCustomLevelLoadedData;
+    std::optional<MemCheckpointElementsState> m_memCheckpointData;
 };
 
 float getDegreeAngleFromDirection(Direction_e direction);
