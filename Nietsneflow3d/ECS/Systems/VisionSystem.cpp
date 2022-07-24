@@ -1,6 +1,7 @@
 #include <cassert>
 #include "VisionSystem.hpp"
 #include <constants.hpp>
+#include <MainEngine.hpp>
 #include <CollisionUtils.hpp>
 #include <PhysicalEngine.hpp>
 #include <ECS/ECSManager.hpp>
@@ -75,6 +76,12 @@ void VisionSystem::execSystem()
         updateSprites(mVectNumEntity[i], vectEntities);
     }
     updateWallSprites();
+}
+
+//===========================================================================
+void VisionSystem::memRefMainEngine(MainEngine *mainEngine)
+{
+    m_refMainEngine = mainEngine;
 }
 
 //===========================================================================
@@ -356,6 +363,10 @@ void VisionSystem::updateEnemySprites(uint32_t enemyEntity, uint32_t observerEnt
         if(enemyConfComp->m_currentSprite == it->second.second)
         {
             enemyConfComp->m_displayMode = EnemyDisplayMode_e::DEAD;
+            if(enemyConfComp->m_endLevel)
+            {
+                m_refMainEngine->activeEndLevel();
+            }
         }
         else if(++timerComp->m_cycleCountB >= enemyConfComp->m_cycleNumberDyingInterval)
         {

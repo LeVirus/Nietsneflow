@@ -915,12 +915,13 @@ void MainEngine::loadLevel(const LevelManager &levelManager)
                            levelManager.getPictureData().getCeilingData(),
                            levelManager);
     Level::initLevelElementArray();
-    loadStaticElementEntities(levelManager);
+    bool exit = loadStaticElementEntities(levelManager);
     loadBarrelElementEntities(levelManager);
     loadPlayerEntity(levelManager);
     loadWallEntities(levelManager.getMoveableWallData(), levelManager.getPictureData().getSpriteData());
     loadDoorEntities(levelManager);
-    loadEnemiesEntities(levelManager);
+    exit |= loadEnemiesEntities(levelManager);
+    assert(exit);
     loadCheckpointsEntities(levelManager);
     loadSecretsEntities(levelManager);
     loadLogsEntities(levelManager, levelManager.getPictureData().getSpriteData());
@@ -1315,10 +1316,11 @@ void MainEngine::loadDoorEntities(const LevelManager &levelManager)
 }
 
 //===================================================================
-void MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
+bool MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
 {
     const std::map<std::string, EnemyData> &enemiesData = levelManager.getEnemiesData();
     float collisionRay;
+    bool exit = false;
     bool loadFromCheckpoint = (!m_memEnemiesStateFromCheckpoint.empty());
     std::map<std::string, EnemyData>::const_iterator it = enemiesData.begin();
     m_currentLevelEnemiesNumber = 0;
@@ -1330,71 +1332,86 @@ void MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
                 getSpriteData()[it->second.m_staticFrontSprites[0]];
         for(uint32_t j = 0; j < it->second.m_TileGamePosition.size(); ++j)
         {
-            uint32_t numEntity = createEnemyEntity();
-            confBaseComponent(numEntity, memSpriteData, it->second.m_TileGamePosition[j],
-                              CollisionShape_e::CIRCLE_C, CollisionTag_e::ENEMY_CT);
-            EnemyConfComponent *enemyComp = m_ecsManager.getComponentManager().
-                    searchComponentByType<EnemyConfComponent>(numEntity,
-                                                              Components_e::ENEMY_CONF_COMPONENT);
-            FPSVisibleStaticElementComponent *fpsStaticComp = m_ecsManager.getComponentManager().
-                    searchComponentByType<FPSVisibleStaticElementComponent>(
-                        numEntity, Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
-            assert(enemyComp);
-            assert(fpsStaticComp);
-            fpsStaticComp->m_inGameSpriteSize = it->second.m_inGameSpriteSize;
-            fpsStaticComp->m_levelElementType = LevelStaticElementType_e::GROUND;
-            CircleCollisionComponent *circleComp = m_ecsManager.getComponentManager().
-                    searchComponentByType<CircleCollisionComponent>(numEntity, Components_e::CIRCLE_COLLISION_COMPONENT);
-            assert(circleComp);
-            circleComp->m_ray = collisionRay;
-            enemyComp->m_life = it->second.m_life;
-            enemyComp->m_visibleShot = !(it->second.m_visibleShootID.empty());
-            enemyComp->m_countTillLastAttack = 0;
-            if(it->second.m_meleeDamage)
-            {
-                enemyComp->m_meleeAttackDamage = *it->second.m_meleeDamage;
-            }
-            if(!it->second.m_dropedObjectID.empty())
-            {
-                enemyComp->m_dropedObjectEntity = createEnemyDropObject(levelManager, it->second, j, loadFromCheckpoint, m_currentLevelEnemiesNumber);
-            }
-            if(enemyComp->m_visibleShot)
-            {
-                if(!loadFromCheckpoint || !m_memEnemiesStateFromCheckpoint[j].m_dead)
-                {
-                    enemyComp->m_visibleAmmo.resize(4);
-                    confAmmoEntities(enemyComp->m_visibleAmmo, CollisionTag_e::BULLET_ENEMY_CT,
-                                     enemyComp->m_visibleShot, (*it).second.m_attackPower, (*it).second.m_shotVelocity);
-                }
-            }
-            else
-            {
-                loadNonVisibleEnemyAmmoStuff(loadFromCheckpoint, m_currentLevelEnemiesNumber, it->second, levelManager, enemyComp);
-            }
-            loadEnemySprites(levelManager.getPictureData().getSpriteData(),
-                             it->second, numEntity, enemyComp, levelManager.getVisibleShootDisplayData());
-            MoveableComponent *moveComp = m_ecsManager.getComponentManager().
-                    searchComponentByType<MoveableComponent>(numEntity, Components_e::MOVEABLE_COMPONENT);
-            assert(moveComp);
-            moveComp->m_velocity = it->second.m_velocity;
-            moveComp->m_currentDegreeMoveDirection = 0.0f;
-            moveComp->m_degreeOrientation = 0.0f;
-            AudioComponent *audiocomponent = m_ecsManager.getComponentManager().
-                    searchComponentByType<AudioComponent>(numEntity, Components_e::AUDIO_COMPONENT);
-            assert(audiocomponent);
-            audiocomponent->m_soundElements.reserve(3);
-            audiocomponent->m_soundElements.emplace_back(loadSound(it->second.m_normalBehaviourSoundFile));
-            audiocomponent->m_soundElements.emplace_back(loadSound(it->second.m_detectBehaviourSoundFile));
-            audiocomponent->m_soundElements.emplace_back(loadSound(it->second.m_attackSoundFile));
-            audiocomponent->m_maxDistance /= 5.0f;
-            TimerComponent *timerComponent = m_ecsManager.getComponentManager().
-                    searchComponentByType<TimerComponent>(numEntity, Components_e::TIMER_COMPONENT);
-            assert(timerComponent);
-            timerComponent->m_cycleCountA = 0;
-            memCheckpointEnemiesData(loadFromCheckpoint, numEntity, m_currentLevelEnemiesNumber);
-            ++m_currentLevelEnemiesNumber;
+            exit |= createEnemy(levelManager, memSpriteData, it->second, collisionRay, loadFromCheckpoint, j);
         }
     }
+    return exit;
+}
+
+//===================================================================
+bool MainEngine::createEnemy(const LevelManager &levelManager, const SpriteData &memSpriteData, const EnemyData &enemyData,
+                             float collisionRay, bool loadFromCheckpoint, uint32_t index)
+{
+    bool exit = false;
+    uint32_t numEntity = createEnemyEntity();
+    confBaseComponent(numEntity, memSpriteData, enemyData.m_TileGamePosition[index],
+                      CollisionShape_e::CIRCLE_C, CollisionTag_e::ENEMY_CT);
+    EnemyConfComponent *enemyComp = m_ecsManager.getComponentManager().
+            searchComponentByType<EnemyConfComponent>(numEntity,
+                                                      Components_e::ENEMY_CONF_COMPONENT);
+    FPSVisibleStaticElementComponent *fpsStaticComp = m_ecsManager.getComponentManager().
+            searchComponentByType<FPSVisibleStaticElementComponent>(
+                numEntity, Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
+    assert(enemyComp);
+    assert(fpsStaticComp);
+    if(enemyData.m_endLevelPos && (*enemyData.m_endLevelPos) == enemyData.m_TileGamePosition[index])
+    {
+        enemyComp->m_endLevel = true;
+        exit = true;
+    }
+    fpsStaticComp->m_inGameSpriteSize = enemyData.m_inGameSpriteSize;
+    fpsStaticComp->m_levelElementType = LevelStaticElementType_e::GROUND;
+    CircleCollisionComponent *circleComp = m_ecsManager.getComponentManager().
+            searchComponentByType<CircleCollisionComponent>(numEntity, Components_e::CIRCLE_COLLISION_COMPONENT);
+    assert(circleComp);
+    circleComp->m_ray = collisionRay;
+    enemyComp->m_life = enemyData.m_life;
+    enemyComp->m_visibleShot = !(enemyData.m_visibleShootID.empty());
+    enemyComp->m_countTillLastAttack = 0;
+    if(enemyData.m_meleeDamage)
+    {
+        enemyComp->m_meleeAttackDamage = *enemyData.m_meleeDamage;
+    }
+    if(!enemyData.m_dropedObjectID.empty())
+    {
+        enemyComp->m_dropedObjectEntity = createEnemyDropObject(levelManager, enemyData, index, loadFromCheckpoint, m_currentLevelEnemiesNumber);
+    }
+    if(enemyComp->m_visibleShot)
+    {
+        if(!loadFromCheckpoint || !m_memEnemiesStateFromCheckpoint[index].m_dead)
+        {
+            enemyComp->m_visibleAmmo.resize(4);
+            confAmmoEntities(enemyComp->m_visibleAmmo, CollisionTag_e::BULLET_ENEMY_CT,
+                             enemyComp->m_visibleShot, enemyData.m_attackPower, enemyData.m_shotVelocity);
+        }
+    }
+    else
+    {
+        loadNonVisibleEnemyAmmoStuff(loadFromCheckpoint, m_currentLevelEnemiesNumber, enemyData, levelManager, enemyComp);
+    }
+    loadEnemySprites(levelManager.getPictureData().getSpriteData(),
+                     enemyData, numEntity, enemyComp, levelManager.getVisibleShootDisplayData());
+    MoveableComponent *moveComp = m_ecsManager.getComponentManager().
+            searchComponentByType<MoveableComponent>(numEntity, Components_e::MOVEABLE_COMPONENT);
+    assert(moveComp);
+    moveComp->m_velocity = enemyData.m_velocity;
+    moveComp->m_currentDegreeMoveDirection = 0.0f;
+    moveComp->m_degreeOrientation = 0.0f;
+    AudioComponent *audiocomponent = m_ecsManager.getComponentManager().
+            searchComponentByType<AudioComponent>(numEntity, Components_e::AUDIO_COMPONENT);
+    assert(audiocomponent);
+    audiocomponent->m_soundElements.reserve(3);
+    audiocomponent->m_soundElements.emplace_back(loadSound(enemyData.m_normalBehaviourSoundFile));
+    audiocomponent->m_soundElements.emplace_back(loadSound(enemyData.m_detectBehaviourSoundFile));
+    audiocomponent->m_soundElements.emplace_back(loadSound(enemyData.m_attackSoundFile));
+    audiocomponent->m_maxDistance /= 5.0f;
+    TimerComponent *timerComponent = m_ecsManager.getComponentManager().
+            searchComponentByType<TimerComponent>(numEntity, Components_e::TIMER_COMPONENT);
+    assert(timerComponent);
+    timerComponent->m_cycleCountA = 0;
+    memCheckpointEnemiesData(loadFromCheckpoint, numEntity, m_currentLevelEnemiesNumber);
+    ++m_currentLevelEnemiesNumber;
+    return exit;
 }
 
 //===================================================================
@@ -2974,7 +2991,7 @@ void MainEngine::confMenuCursorEntity()
 }
 
 //===================================================================
-void MainEngine::loadStaticElementEntities(const LevelManager &levelManager)
+bool MainEngine::loadStaticElementEntities(const LevelManager &levelManager)
 {
     //LOAD CURSOR MENU
     const std::vector<SpriteData> &vectSprite = levelManager.getPictureData().getSpriteData();
@@ -2982,7 +2999,7 @@ void MainEngine::loadStaticElementEntities(const LevelManager &levelManager)
     loadStaticElementGroup(vectSprite, levelManager.getCeilingData(), LevelStaticElementType_e::CEILING);
     loadStaticElementGroup(vectSprite, levelManager.getObjectData(), LevelStaticElementType_e::OBJECT);
     loadStaticElementGroup(vectSprite, levelManager.getTeleportData(), LevelStaticElementType_e::TELEPORT, levelManager.getTeleportSoundFile());
-    loadExitElement(levelManager, levelManager.getExitElementData());
+    return loadExitElement(levelManager, levelManager.getExitElementData());
 }
 
 //===================================================================
@@ -3126,9 +3143,13 @@ uint32_t MainEngine::loadDisplayTeleportEntity(const LevelManager &levelManager)
 }
 
 //===================================================================
-void MainEngine::loadExitElement(const LevelManager &levelManager,
+bool MainEngine::loadExitElement(const LevelManager &levelManager,
                                  const StaticLevelElementData &exit)
 {
+    if(exit.m_TileGamePosition.empty())
+    {
+        return false;
+    }
     const SpriteData &memSpriteData = levelManager.getPictureData().
             getSpriteData()[exit.m_numSprite];
     uint32_t entityNum = createStaticEntity();
@@ -3138,7 +3159,6 @@ void MainEngine::loadExitElement(const LevelManager &levelManager,
     assert(fpsStaticComp);
     fpsStaticComp->m_inGameSpriteSize = exit.m_inGameSpriteSize;
     fpsStaticComp->m_levelElementType = LevelStaticElementType_e::CEILING;
-    assert(!exit.m_TileGamePosition.empty());
     confBaseComponent(entityNum, memSpriteData, exit.m_TileGamePosition[0],
             CollisionShape_e::CIRCLE_C, CollisionTag_e::EXIT_CT);
     confStaticComponent(entityNum, exit.m_inGameSpriteSize, LevelStaticElementType_e::GROUND);
@@ -3153,6 +3173,7 @@ void MainEngine::loadExitElement(const LevelManager &levelManager,
     assert(spriteComp);
     assert(mapComp);
     Level::addElementCase(spriteComp, mapComp->m_coord, LevelCaseType_e::EMPTY_LC, entityNum);
+    return true;
 }
 
 //===================================================================
@@ -3375,6 +3396,7 @@ void MainEngine::linkSystemsToGraphicEngine()
     StaticDisplaySystem *staticDisplay = m_ecsManager.getSystemManager().
             searchSystemByType<StaticDisplaySystem>(static_cast<uint32_t>(Systems_e::STATIC_DISPLAY_SYSTEM));
     staticDisplay->linkMainEngine(this);
+    vision->memRefMainEngine(this);
     m_graphicEngine.linkSystems(color, map, first, vision, staticDisplay);
 }
 

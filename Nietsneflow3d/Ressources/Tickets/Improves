@@ -4,9 +4,6 @@ IMPROVE=========================================================================
 ))
 Add a "transparent screen" to display behind life and ammo
 
-))
-Prevent standard level file to be swaped
-
 
 
 ))
@@ -25,6 +22,9 @@ Improve Enemy behavour===!!!!!!===================~
 
 ))
 Remove .fake file after level loading=========================In levelManager
+
+))
+Prevent standard level file to be swaped========================OK
 
 ))
 Improve menu write alignment===========================OK

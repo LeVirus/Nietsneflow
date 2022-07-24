@@ -274,7 +274,9 @@ private:
                           const std::vector<uint8_t> &numWallSprites, const std::vector<uint32_t> &timeMultiSpriteCase,
                           const std::vector<SpriteData> &vectSprite, TriggerBehaviourType_e triggerType, bool moveable = false);
     void loadDoorEntities(const LevelManager &levelManager);
-    void loadEnemiesEntities(const LevelManager &levelManager);
+    bool loadEnemiesEntities(const LevelManager &levelManager);
+    bool createEnemy(const LevelManager &levelManager, const SpriteData &memSpriteData, const EnemyData &enemyData,
+                         float collisionRay, bool loadFromCheckpoint, uint32_t index);
     void loadNonVisibleEnemyAmmoStuff(bool loadFromCheckpoint, uint32_t currentEnemy,
                                       const EnemyData &enemyData, const LevelManager &levelManager,
                                       EnemyConfComponent *enemyComp);
@@ -286,13 +288,13 @@ private:
     void loadRevealedMap();
     void loadTriggerEntityData(const MoveableWallData &moveWallData, const std::vector<uint32_t> &vectPosition, const std::vector<SpriteData> &vectSprite, TriggerWallMoveType_e type, uint32_t shapeNum);
     void confVisibleAmmo(uint32_t ammoEntity);
-    void loadStaticElementEntities(const LevelManager &levelManager);
+    bool loadStaticElementEntities(const LevelManager &levelManager);
     void loadBarrelElementEntities(const LevelManager &levelManager);
     SoundElement loadSound(const std::string &file);
     uint32_t loadDisplayTeleportEntity(const LevelManager &levelManager);
     void loadStaticElementGroup(const std::vector<SpriteData> &vectSpriteData, const std::map<std::string, StaticLevelElementData> &staticData,
                                 LevelStaticElementType_e elementType, const std::string &soundFile = "");
-    void loadExitElement(const LevelManager &levelManager, const StaticLevelElementData &exit);
+    bool loadExitElement(const LevelManager &levelManager, const StaticLevelElementData &exit);
     void createPlayerAmmoEntities(PlayerConfComponent *playerConf, CollisionTag_e collTag);
     void confAmmoEntities(std::vector<uint32_t> &ammoEntities, CollisionTag_e collTag,
                           bool visibleShot, uint32_t damage, float shotVelocity = 0,

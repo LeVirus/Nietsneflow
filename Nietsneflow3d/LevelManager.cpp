@@ -1349,11 +1349,12 @@ void LevelManager::loadEnemyData()
 }
 
 //===================================================================
-void LevelManager::loadPositionEnemyData()
+bool LevelManager::loadPositionEnemyData()
 {
     std::vector<std::string> vectINISections;
     vectINISections = m_ini.getSectionNamesContaining("Enemy");
     std::map<std::string, EnemyData>::iterator it;
+    bool exit = false;
     for(uint32_t i = 0; i < vectINISections.size(); ++i)
     {
         it = m_enemyData.find(vectINISections[i]);
@@ -1363,7 +1364,16 @@ void LevelManager::loadPositionEnemyData()
             continue;
         }
         fillStandartPositionVect(vectINISections[i], it->second.m_TileGamePosition);
+        std::optional<std::vector<uint32_t>> results = getBrutPositionData(vectINISections[i], "EndLevelEnemyPos");
+        if(results)
+        {
+            assert(results->size() == 2);
+            it->second.m_endLevelPos = {(*results)[0], (*results)[1]};
+            exit = true;
+            it->second.m_TileGamePosition.push_back({(*results)[0], (*results)[1]});
+        }
     }
+    return exit;
 }
 
 //===================================================================
@@ -1693,14 +1703,15 @@ LevelLoadState_e LevelManager::loadLevel(uint32_t levelNum, bool customLevel)
     loadPositionWall();
     loadPositionStaticElements();
     loadBarrelElements();
-    if(!loadPositionExit())
+    bool exit = loadPositionExit();
+    loadPositionDoorData();
+    exit |= loadPositionEnemyData();
+    if(!exit)
     {
         std::cout << "ERROR exit data cannot be loaded" << std::endl;
         std::cout << "Level " << path << " cannot be loaded" << std::endl;
         return LevelLoadState_e::FAIL;
     }
-    loadPositionDoorData();
-    loadPositionEnemyData();
     loadPositionCheckpointsData();
     loadPositionSecretsData();
     loadPositionLogsData();

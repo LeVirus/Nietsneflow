@@ -63,7 +63,7 @@ struct EnemyConfComponent : public ecs::Component
             return true;
         }
     }
-    bool m_stuck = false, m_touched = false, m_visibleShot;
+    bool m_stuck = false, m_touched = false, m_visibleShot, m_endLevel = false;
     uint32_t m_weaponEntity, m_life, m_countPlayerInvisibility = 0, m_currentSprite, m_cycleNumberSpriteUpdate = 0.2 / FPS_VALUE,
     m_cycleNumberDyingInterval = 0.11 / FPS_VALUE, m_cycleNumberAttackInterval = 0.15f / FPS_VALUE, m_standardSpriteInterval = 0.5 / FPS_VALUE,
     m_countTillLastAttack = 0;

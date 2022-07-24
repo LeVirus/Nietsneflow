@@ -14,6 +14,7 @@ struct TimerComponent;
 struct GeneralCollisionComponent;
 struct TimerComponent;
 struct TimerComponent;
+class MainEngine;
 
 using mapEnemySprite_t = std::map<EnemySpriteType_e, PairUI_t>;
 
@@ -35,6 +36,7 @@ public:
     {
         return m_vectBarrelsEntitiesToDelete;
     }
+    void memRefMainEngine(MainEngine *mainEngine);
 private:
     EnemySpriteType_e getOrientationFromAngle(uint32_t observerEntity, uint32_t targetEntity,
                                               float targetDegreeAngle);
@@ -67,6 +69,7 @@ private:
     uint32_t m_defaultInterval = 0.8 / FPS_VALUE;
     //first change sprite interval, second interval total time
     PairUI_t m_teleportIntervalTime = {0.1 / FPS_VALUE, 0.4 / FPS_VALUE};
+    MainEngine *m_refMainEngine;
 };
 
 mapEnemySprite_t::const_reverse_iterator findMapLastElement(const mapEnemySprite_t &map,

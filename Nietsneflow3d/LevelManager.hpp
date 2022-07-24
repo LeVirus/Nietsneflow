@@ -288,7 +288,8 @@ private:
     void loadDoorData();
     void loadPositionDoorData();
     void loadEnemyData();
-    void loadPositionEnemyData();
+    //return true if one enemy is end level
+    bool loadPositionEnemyData();
     void loadPositionCheckpointsData();
     void loadPositionSecretsData();
     void loadPositionLogsData();
