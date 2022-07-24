@@ -231,13 +231,19 @@ bool LevelManager::loadLevelData()
 }
 
 //===================================================================
-bool LevelManager::loadPositionPlayerData()
+bool LevelManager::loadPositionPlayerData(uint32_t levelNum)
 {
     std::optional<std::string> playerDepartureX = m_ini.getValue("PlayerInit", "playerDepartureX");
     std::optional<std::string> playerDepartureY = m_ini.getValue("PlayerInit", "playerDepartureY");
     std::optional<std::string> PlayerOrientation = m_ini.getValue("PlayerInit", "PlayerOrientation");
-    if(!playerDepartureX || !playerDepartureY || !PlayerOrientation)
+    std::optional<std::string> levelNumIni = m_ini.getValue("PlayerInit", "levelNum");
+    if(!playerDepartureX || !playerDepartureY || !PlayerOrientation || !levelNum)
     {
+        return false;
+    }
+    if(std::stoul(*levelNumIni) != levelNum)
+    {
+        std::cout << "Bad level number\n";
         return false;
     }
     m_level.setPlayerInitData({std::stoi(*playerDepartureX), std::stoi(*playerDepartureY)},
@@ -1678,7 +1684,7 @@ LevelLoadState_e LevelManager::loadLevel(uint32_t levelNum, bool customLevel)
         std::cout << "ERROR level " << path << " cannot be loaded" << std::endl;
         return LevelLoadState_e::FAIL;
     }
-    if(!loadPositionPlayerData())
+    if(!loadPositionPlayerData(levelNum))
     {
         std::cout << "ERROR player data cannot be loaded" << std::endl;
         std::cout << "Level " << path << " cannot be loaded" << std::endl;
