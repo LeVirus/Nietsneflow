@@ -38,10 +38,11 @@ public:
     void loadVertexWriteTextureComponent(const PositionVertexComponent &posComp,
                                          const WriteComponent &writeComp);
     float loadRaycastingEntity(const SpriteTextureComponent &spriteComp, const std::vector<RayCastingIntersect> &raycastingData);
-    PairFloat_t loadPointBackgroundRaycasting(const SpriteTextureComponent *spriteComp,
-                                              const PairFloat_t &observerPoint,
-                                              const PairFloat_t &textureSize,
-                                              const PairFloat_t &pairMod);
+    void loadPointBackgroundRaycasting(const SpriteTextureComponent *spriteComp,
+                                       const PairFloat_t &GLPosUpLeft,
+                                       const PairFloat_t &GLPosDownRight,
+                                       const PairFloat_t &textureSize,
+                                       const PairFloat_t &pairMod);
     void loadVertexTextureDrawByLineComponent(const PositionVertexComponent &posComp,
                                               const SpriteTextureComponent &spriteComp,
                                               uint32_t lineDrawNumber, DoorComponent *doorComp = nullptr);

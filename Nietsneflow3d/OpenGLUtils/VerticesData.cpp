@@ -212,23 +212,23 @@ void VerticesData::loadVertexWriteTextureComponent(const PositionVertexComponent
 }
 
 //===================================================================
-PairFloat_t VerticesData::loadPointBackgroundRaycasting(const SpriteTextureComponent *spriteComp,
-                                                        const PairFloat_t &GLPos,
-                                                        const PairFloat_t &textureSize,
-                                                        const PairFloat_t &pairMod)
+void VerticesData::loadPointBackgroundRaycasting(const SpriteTextureComponent *spriteComp,
+                                                 const PairFloat_t &GLPosUpLeft,
+                                                 const PairFloat_t &GLPosDownRight,
+                                                 const PairFloat_t &textureSize,
+                                                 const PairFloat_t &pairMod)
 {
     PairFloat_t texturePoint = getPointTextureCoord(spriteComp->m_spriteData->m_texturePosVertex,
                                                     textureSize, pairMod);
-    m_vertexBuffer.insert(m_vertexBuffer.end(), {GLPos.first, GLPos.second - SCREEN_VERT_BACKGROUND_GL_STEP,
+    m_vertexBuffer.insert(m_vertexBuffer.end(), {GLPosUpLeft.first, GLPosDownRight.second,
                                                  texturePoint.first, texturePoint.second,
-                                                 GLPos.first + SCREEN_HORIZ_BACKGROUND_GL_STEP,
-                                                 GLPos.second - SCREEN_VERT_BACKGROUND_GL_STEP,
+                                                 GLPosDownRight.first, GLPosDownRight.second,
                                                  texturePoint.first, texturePoint.second,
-                                                 GLPos.first + SCREEN_HORIZ_BACKGROUND_GL_STEP, GLPos.second,
+                                                 GLPosDownRight.first, GLPosUpLeft.second,
                                                  texturePoint.first, texturePoint.second,
-                                                 GLPos.first, GLPos.second, texturePoint.first, texturePoint.second});
+                                                 GLPosUpLeft.first, GLPosUpLeft.second,
+                                                 texturePoint.first, texturePoint.second});
     addIndices(BaseShapeTypeGL_e::RECTANGLE);
-    return texturePoint;
 }
 
 //===================================================================

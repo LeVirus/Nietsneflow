@@ -859,7 +859,12 @@ void FirstPersonDisplaySystem::calcVerticalBackgroundLineRaycast(const PairFloat
                                                                  float currentGLLatPos, float radiantObserverAngle)
 {
     SpriteTextureComponent *spriteGroundComp = nullptr, *spriteCeilingComp = nullptr;
-    PairFloat_t currentGroundGL = {currentGLLatPos, -1.0f}, currentCeilingGL = {currentGLLatPos, 1.0f};
+    PairFloat_t currentGroundGLA = {currentGLLatPos, -1.0f},
+            currentGroundGLB = {currentGLLatPos + SCREEN_HORIZ_BACKGROUND_GL_STEP,
+                                -1.0f + SCREEN_VERT_BACKGROUND_GL_STEP},
+            currentCeilingGLA = {currentGLLatPos, 1.0f},
+            currentCeilingGLB = {currentGLLatPos + SCREEN_HORIZ_BACKGROUND_GL_STEP,
+                                 1.0f - SCREEN_VERT_BACKGROUND_GL_STEP};
     PairFloat_t currentPoint, pairMod;;
     float totalDistanceTarget;
     float calcAngle = std::abs(radiantObserverAngle - currentRadiantAngle);
@@ -892,14 +897,14 @@ void FirstPersonDisplaySystem::calcVerticalBackgroundLineRaycast(const PairFloat
     if(!m_memBackgroundDistance)
     {
         m_memBackgroundDistance = std::array<float, RAYCAST_GROUND_CEILING_NUMBER>();
-        for(uint32_t i = 0; i < RAYCAST_GROUND_CEILING_NUMBER; ++i, currentGroundGL.second += SCREEN_VERT_BACKGROUND_GL_STEP)
+        for(uint32_t i = 0; i < RAYCAST_GROUND_CEILING_NUMBER; ++i, currentGroundGLA.second += SCREEN_VERT_BACKGROUND_GL_STEP)
         {
-            totalDistanceTarget = 30.0f / currentGroundGL.second;
+            totalDistanceTarget = 30.0f / currentGroundGLA.second;
             currentPoint = observerPos;
             moveElementFromAngle(totalDistanceTarget, currentRadiantAngle, currentPoint);
             (*m_memBackgroundDistance)[i] = getCameraDistance(observerPos, currentPoint, currentRadiantAngle);
         }
-        currentGroundGL = {currentGLLatPos, -1.0f};
+        currentGroundGLA = {currentGLLatPos, -1.0f};
     }
     for(uint32_t i = 0; i < RAYCAST_GROUND_CEILING_NUMBER; ++i)
     {
@@ -913,15 +918,17 @@ void FirstPersonDisplaySystem::calcVerticalBackgroundLineRaycast(const PairFloat
         }
         if(spriteGroundComp)
         {
-            m_groundTiledTextVertice.loadPointBackgroundRaycasting(spriteGroundComp, currentGroundGL,
+            m_groundTiledTextVertice.loadPointBackgroundRaycasting(spriteGroundComp, currentGroundGLA, currentGroundGLB,
                                                                    *m_groundTextureSize, pairMod);
-            currentGroundGL.second += SCREEN_VERT_BACKGROUND_GL_STEP;
+            currentGroundGLA.second += SCREEN_VERT_BACKGROUND_GL_STEP;
+            currentGroundGLB.second += SCREEN_VERT_BACKGROUND_GL_STEP;
         }
         if(spriteCeilingComp)
         {
-            m_ceilingTiledVertice.loadPointBackgroundRaycasting(spriteCeilingComp, currentCeilingGL,
+            m_ceilingTiledVertice.loadPointBackgroundRaycasting(spriteCeilingComp, currentCeilingGLA, currentCeilingGLB,
                                                                 *m_ceilingTextureSize, pairMod);
-            currentCeilingGL.second -= SCREEN_VERT_BACKGROUND_GL_STEP;
+            currentCeilingGLA.second -= SCREEN_VERT_BACKGROUND_GL_STEP;
+            currentCeilingGLB.second -= SCREEN_VERT_BACKGROUND_GL_STEP;
         }
     }
 }
