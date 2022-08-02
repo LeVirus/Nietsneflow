@@ -107,9 +107,9 @@ LevelState MainEngine::mainLoop(uint32_t levelNum, LevelState_e levelState, bool
             }
         }
     }
-    std::chrono::duration<double> elapsed_seconds;
+    std::chrono::duration<double> elapsed_seconds, fps;
     m_graphicEngine.unsetTransition(m_gamePaused);
-    std::chrono::time_point<std::chrono::system_clock> clock;
+    std::chrono::time_point<std::chrono::system_clock> clock, clockFrame;
     clock = std::chrono::system_clock::now();
     m_physicalEngine.updateMousePos();
     do

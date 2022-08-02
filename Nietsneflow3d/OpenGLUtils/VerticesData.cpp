@@ -212,44 +212,38 @@ void VerticesData::loadVertexWriteTextureComponent(const PositionVertexComponent
 }
 
 //===================================================================
-void VerticesData::loadPointBackgroundRaycasting(const SpriteTextureComponent *spriteComp,
-                                                 const PairFloat_t &GLPos,
-                                                 const PairFloat_t &currentPoint)
+PairFloat_t VerticesData::loadPointBackgroundRaycasting(const SpriteTextureComponent *spriteComp,
+                                                        const PairFloat_t &GLPos,
+                                                        const PairFloat_t &textureSize,
+                                                        const PairFloat_t &currentPoint,
+                                                        const PairFloat_t &pairMod)
 {
-    PairFloat_t texturePoint;
-    PairFloat_t textureSize = {spriteComp->m_spriteData->m_texturePosVertex[1].first -
-                               spriteComp->m_spriteData->m_texturePosVertex[0].first,
-                               spriteComp->m_spriteData->m_texturePosVertex[3].second -
-                               spriteComp->m_spriteData->m_texturePosVertex[0].second};
-
-    texturePoint = getPointTextureCoord(currentPoint,
+    PairFloat_t texturePoint = getPointTextureCoord(currentPoint,
                                         spriteComp->m_spriteData->m_texturePosVertex,
-                                        textureSize);
+                                        textureSize, pairMod);
     addTexturePoint({GLPos.first, GLPos.second - SCREEN_VERT_BACKGROUND_GL_STEP},
-    {texturePoint.first, texturePoint.second});
+                    {texturePoint.first, texturePoint.second});
     addTexturePoint({GLPos.first + SCREEN_HORIZ_BACKGROUND_GL_STEP,
                      GLPos.second - SCREEN_VERT_BACKGROUND_GL_STEP},
-    {texturePoint.first, texturePoint.second});
+                    {texturePoint.first, texturePoint.second});
     addTexturePoint({GLPos.first + SCREEN_HORIZ_BACKGROUND_GL_STEP, GLPos.second},
-    {texturePoint.first, texturePoint.second});
+                    {texturePoint.first, texturePoint.second});
     addTexturePoint({GLPos.first, GLPos.second},
-    {texturePoint.first, texturePoint.second});
-
+                    {texturePoint.first, texturePoint.second});
     addIndices(BaseShapeTypeGL_e::RECTANGLE);
+    return texturePoint;
 }
 
 //===================================================================
 PairFloat_t getPointTextureCoord(const PairFloat_t &point,
                                  const std::array<PairFloat_t, 4> &texturePosVertex,
-                                 const PairFloat_t &textureSize)
+                                 const PairFloat_t &textureSize, const PairFloat_t &pairMod)
 {
     PairFloat_t textCoord;
-    float mod = std::abs(std::fmod(point.first, LEVEL_TILE_SIZE_PX));
-        textCoord.first = texturePosVertex[0].first +
-                (mod / LEVEL_TILE_SIZE_PX) * textureSize.first;
-    mod = std::abs(std::fmod(point.second, LEVEL_TILE_SIZE_PX));
+    textCoord.first = texturePosVertex[0].first +
+                (pairMod.first / LEVEL_TILE_SIZE_PX) * textureSize.first;
     textCoord.second = texturePosVertex[0].second +
-            (mod / LEVEL_TILE_SIZE_PX) * textureSize.second;
+            (pairMod.second / LEVEL_TILE_SIZE_PX) * textureSize.second;
     return textCoord;
 }
 
@@ -326,12 +320,28 @@ void VerticesData::loadVertexTextureDrawByLineRect(const PairFloat_t &firstPos,
 }
 
 //===================================================================
+void VerticesData::reserveVertex(uint32_t size)
+{
+    m_vertexBuffer.reserve(size);
+}
+
+//===================================================================
+void VerticesData::reserveIndices(uint32_t size)
+{
+    m_indices.reserve(size);
+}
+
+//===================================================================
+void VerticesData::displayVertex()
+{
+    std::cerr << m_vertexBuffer.size() << " << Vert Indices >> " << m_indices.size() << "\n";
+}
+
+//===================================================================
 void VerticesData::addTexturePoint(const PairFloat_t &pos, const PairFloat_t &tex)
 {
-    m_vertexBuffer.emplace_back(pos.first);
-    m_vertexBuffer.emplace_back(pos.second);
-    m_vertexBuffer.emplace_back(tex.first);
-    m_vertexBuffer.emplace_back(tex.second);
+    m_vertexBuffer.insert(m_vertexBuffer.end(), {pos.first, pos.second,
+                                                 tex.first, tex.second});
 }
 
 //===================================================================
@@ -344,24 +354,16 @@ void VerticesData::addIndices(BaseShapeTypeGL_e shapeType)
     }
     uint32_t curent = m_cursor;
     //first triangle
-    m_indices.emplace_back(curent);//0
-    m_indices.emplace_back(++curent);//1
-    m_indices.emplace_back(++curent);//2
+    m_indices.insert(m_indices.end(), {curent, ++curent, ++curent});// 0 1 2
     //if Triangle stop here
     if(shapeType != BaseShapeTypeGL_e::TRIANGLE)
     {
-        m_indices.emplace_back(curent);//2
-        m_indices.emplace_back(++curent);//3
-        m_indices.emplace_back(curent - 3);//0
+        m_indices.insert(m_indices.end(), {curent, ++curent, curent - 3});// 2 3 0
     }
     if(shapeType == BaseShapeTypeGL_e::DOUBLE_RECT)
     {
-        m_indices.emplace_back(++curent);//1
-        m_indices.emplace_back(++curent);//4
-        m_indices.emplace_back(++curent);//5
-        m_indices.emplace_back(curent);//5
-        m_indices.emplace_back(++curent);//2
-        m_indices.emplace_back(curent - 3);//1
+        m_indices.insert(m_indices.end(), {++curent, ++curent, ++curent, curent,
+                                                ++curent, curent - 3});// 1 4 5 5 2 1
     }
     m_cursor = ++curent;
 }

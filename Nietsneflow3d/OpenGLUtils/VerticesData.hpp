@@ -38,8 +38,11 @@ public:
     void loadVertexWriteTextureComponent(const PositionVertexComponent &posComp,
                                          const WriteComponent &writeComp);
     float loadRaycastingEntity(const SpriteTextureComponent &spriteComp, const std::vector<RayCastingIntersect> &raycastingData);
-    void loadPointBackgroundRaycasting(const SpriteTextureComponent *spriteComp,
-                                       const PairFloat_t &observerPoint, const PairFloat_t &currentPoint);
+    PairFloat_t loadPointBackgroundRaycasting(const SpriteTextureComponent *spriteComp,
+                                              const PairFloat_t &observerPoint,
+                                              const PairFloat_t &textureSize,
+                                              const PairFloat_t &currentPoint,
+                                              const PairFloat_t &pairMod);
     void loadVertexTextureDrawByLineComponent(const PositionVertexComponent &posComp,
                                               const SpriteTextureComponent &spriteComp,
                                               uint32_t lineDrawNumber, DoorComponent *doorComp = nullptr);
@@ -47,6 +50,9 @@ public:
                                          const PairFloat_t &secondPos,
                                          const SpriteTextureComponent &spriteComp,
                                          uint32_t lineDrawNumber, DoorComponent *doorComp, bool doorPosBound);
+    void reserveVertex(uint32_t size);
+    void reserveIndices(uint32_t size);
+    void displayVertex();
 private:
     void addIndices(BaseShapeTypeGL_e shapeType);
     void init();
@@ -65,6 +71,7 @@ private:
 };
 
 PairFloat_t getTexturePixelFromCoord(const PairFloat_t &pointA, const std::array<PairFloat_t, 4> &texturePosVertex);
+//pairMod opti calc modulo before method call to prevent several calculation
 PairFloat_t getPointTextureCoord(const PairFloat_t &point,
                             const std::array<PairFloat_t, 4> &texturePosVertex,
-                            const PairFloat_t &textureSize);
+                            const PairFloat_t &textureSize, const PairFloat_t &pairMod);

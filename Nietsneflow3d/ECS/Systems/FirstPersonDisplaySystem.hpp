@@ -68,6 +68,8 @@ public:
         m_ceilingSimpleTextBackground = std::nullopt;
         m_groundCeilingSimpleTextureActive = false;
         m_backgroundRaycastActive = false;
+        m_ceilingTextureSize = {};
+        m_groundTextureSize = {};
     }
     //return target point, texture position and entity num if collision
     optionalTargetRaycast_t calcLineSegmentRaycast(float radiantAngle, const PairFloat_t &originPoint, bool visual, bool scratchMode = false);
@@ -113,6 +115,7 @@ private:
     std::multiset<EntityData> m_entitiesNumMem;
     std::vector<VerticesData> m_vectWallDoorVerticesData;
     VerticesData m_groundSimpleTextVertice, m_groundTiledTextVertice, m_ceilingSimpleVertice, m_ceilingTiledVertice;
+    std::optional<PairFloat_t> m_ceilingTextureSize, m_groundTextureSize;
     std::vector<Texture> *m_ptrVectTexture = nullptr;
     mapRayCastingData_t m_raycastingData;
     //number of entity to draw per player

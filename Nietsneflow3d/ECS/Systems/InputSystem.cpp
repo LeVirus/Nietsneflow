@@ -584,6 +584,8 @@ void InputSystem::treatReleaseInputMenu()
     {
         m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER] = false;
     }
+    m_scrollUp = false;
+    m_scrollDown = false;
 }
 
 //===================================================================

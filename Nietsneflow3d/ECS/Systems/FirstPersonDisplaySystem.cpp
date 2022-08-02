@@ -21,6 +21,7 @@
 #include <ECS/Systems/ColorDisplaySystem.hpp>
 #include <PictureData.hpp>
 #include <cmath>
+#include <chrono>
 
 //===================================================================
 FirstPersonDisplaySystem::FirstPersonDisplaySystem()
@@ -37,9 +38,22 @@ void FirstPersonDisplaySystem::setUsedComponents()
 //===================================================================
 void FirstPersonDisplaySystem::execSystem()
 {
+//    std::chrono::duration<double> fps;
+//    std::chrono::time_point<std::chrono::system_clock> clock;
+//    clock = std::chrono::system_clock::now();
     System::execSystem();
     confCompVertexMemEntities();
+    //display FPS
+//    fps = std::chrono::system_clock::now() - clock;
+//    std::cerr << 1.0f / fps.count() << "  " << fps.count() << " confCompVertexMemEntities FPS\n";
+//    clock = std::chrono::system_clock::now();
+
     drawVertex();
+    //display FPS
+//    fps = std::chrono::system_clock::now() - clock;
+//    std::cerr << 1.0f / fps.count() << "  " << fps.count() << " drawVertex FPS\n\n";
+//    clock = std::chrono::system_clock::now();
+
     drawPlayerColorEffects();
 }
 
@@ -768,6 +782,18 @@ bool FirstPersonDisplaySystem::rayCasting(uint32_t observerEntity)
     float radiantObserverAngle = getRadiantAngle(moveComp->m_degreeOrientation);
     float currentRadiantAngle = getRadiantAngle(leftAngle), currentLateralScreen = -1.0f;
     float cameraRadiantAngle = getRadiantAngle(moveComp->m_degreeOrientation);
+    if(m_groundTiledTextBackground)
+    {
+        m_groundTiledTextVertice.reserveVertex(RAYCAST_LINE_NUMBER *
+                                               RAYCAST_GROUND_CEILING_NUMBER * 16);
+        m_groundTiledTextVertice.reserveIndices(RAYCAST_LINE_NUMBER * RAYCAST_GROUND_CEILING_NUMBER * 6);
+    }
+    if(m_ceilingTiledTextBackground)
+    {
+        m_ceilingTiledVertice.reserveVertex(RAYCAST_LINE_NUMBER *
+                                            RAYCAST_GROUND_CEILING_NUMBER * 16);
+        m_ceilingTiledVertice.reserveIndices(RAYCAST_LINE_NUMBER * RAYCAST_GROUND_CEILING_NUMBER * 6);
+    }
     //mem entity num & distances
     for(uint32_t j = 0; j < RAYCAST_LINE_NUMBER; ++j)
     {
@@ -794,6 +820,11 @@ bool FirstPersonDisplaySystem::rayCasting(uint32_t observerEntity)
             currentRadiantAngle += PI_DOUBLE;
         }
     }
+//    std::cerr << "BASE " << RAYCAST_LINE_NUMBER *
+//                 RAYCAST_GROUND_CEILING_NUMBER * 16 << " VERT IND " <<
+//                 RAYCAST_LINE_NUMBER * RAYCAST_GROUND_CEILING_NUMBER * 6 << "\n";
+//    m_groundTiledTextVertice.displayVertex();
+//    m_ceilingTiledVertice.displayVertex();
     return false;
 }
 
@@ -829,7 +860,7 @@ void FirstPersonDisplaySystem::calcVerticalBackgroundLineRaycast(const PairFloat
 {
     SpriteTextureComponent *spriteGroundComp = nullptr, *spriteCeilingComp = nullptr;
     PairFloat_t currentGroundGL = {currentGLLatPos, -1.0f}, currentCeilingGL = {currentGLLatPos, 1.0f};
-    PairFloat_t currentPoint;
+    PairFloat_t currentPoint, pairMod;;
     float totalDistanceTarget;
     float calcAngle = std::abs(radiantObserverAngle - currentRadiantAngle);
     if(m_groundTiledTextBackground)
@@ -837,12 +868,26 @@ void FirstPersonDisplaySystem::calcVerticalBackgroundLineRaycast(const PairFloat
         spriteGroundComp = stairwayToComponentManager().
                 searchComponentByType<SpriteTextureComponent>(*m_groundTiledTextBackground, Components_e::SPRITE_TEXTURE_COMPONENT);
         assert(spriteGroundComp);
+        if(!m_groundTextureSize)
+        {
+            m_groundTextureSize = {spriteGroundComp->m_spriteData->m_texturePosVertex[1].first -
+                                   spriteGroundComp->m_spriteData->m_texturePosVertex[0].first,
+                                   spriteGroundComp->m_spriteData->m_texturePosVertex[3].second -
+                                   spriteGroundComp->m_spriteData->m_texturePosVertex[0].second};
+        }
     }
     if(m_ceilingTiledTextBackground)
     {
         spriteCeilingComp = stairwayToComponentManager().
                 searchComponentByType<SpriteTextureComponent>(*m_ceilingTiledTextBackground, Components_e::SPRITE_TEXTURE_COMPONENT);
         assert(spriteCeilingComp);
+        if(!m_ceilingTextureSize)
+        {
+            m_ceilingTextureSize = {spriteCeilingComp->m_spriteData->m_texturePosVertex[1].first -
+                                    spriteCeilingComp->m_spriteData->m_texturePosVertex[0].first,
+                                    spriteCeilingComp->m_spriteData->m_texturePosVertex[3].second -
+                                    spriteCeilingComp->m_spriteData->m_texturePosVertex[0].second};
+        }
     }
     if(!m_memBackgroundDistance)
     {
@@ -861,14 +906,21 @@ void FirstPersonDisplaySystem::calcVerticalBackgroundLineRaycast(const PairFloat
         totalDistanceTarget = (*m_memBackgroundDistance)[i] / std::cos(calcAngle);
         currentPoint = observerPos;
         moveElementFromAngle(totalDistanceTarget, currentRadiantAngle, currentPoint);
+        if(spriteGroundComp || spriteCeilingComp)
+        {
+            pairMod = {std::abs(std::fmod(currentPoint.first, LEVEL_TILE_SIZE_PX)),
+                       std::abs(std::fmod(currentPoint.second, LEVEL_TILE_SIZE_PX))};
+        }
         if(spriteGroundComp)
         {
-            m_groundTiledTextVertice.loadPointBackgroundRaycasting(spriteGroundComp, currentGroundGL, currentPoint);
+            m_groundTiledTextVertice.loadPointBackgroundRaycasting(spriteGroundComp, currentGroundGL,
+                                                                   *m_groundTextureSize, currentPoint, pairMod);
             currentGroundGL.second += SCREEN_VERT_BACKGROUND_GL_STEP;
         }
         if(spriteCeilingComp)
         {
-            m_ceilingTiledVertice.loadPointBackgroundRaycasting(spriteCeilingComp, currentCeilingGL, currentPoint);
+            m_ceilingTiledVertice.loadPointBackgroundRaycasting(spriteCeilingComp, currentCeilingGL,
+                                                                *m_ceilingTextureSize, currentPoint, pairMod);
             currentCeilingGL.second -= SCREEN_VERT_BACKGROUND_GL_STEP;
         }
     }
