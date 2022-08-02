@@ -914,13 +914,13 @@ void FirstPersonDisplaySystem::calcVerticalBackgroundLineRaycast(const PairFloat
         if(spriteGroundComp)
         {
             m_groundTiledTextVertice.loadPointBackgroundRaycasting(spriteGroundComp, currentGroundGL,
-                                                                   *m_groundTextureSize, currentPoint, pairMod);
+                                                                   *m_groundTextureSize, pairMod);
             currentGroundGL.second += SCREEN_VERT_BACKGROUND_GL_STEP;
         }
         if(spriteCeilingComp)
         {
             m_ceilingTiledVertice.loadPointBackgroundRaycasting(spriteCeilingComp, currentCeilingGL,
-                                                                *m_ceilingTextureSize, currentPoint, pairMod);
+                                                                *m_ceilingTextureSize, pairMod);
             currentCeilingGL.second -= SCREEN_VERT_BACKGROUND_GL_STEP;
         }
     }

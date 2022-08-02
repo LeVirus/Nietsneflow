@@ -215,36 +215,20 @@ void VerticesData::loadVertexWriteTextureComponent(const PositionVertexComponent
 PairFloat_t VerticesData::loadPointBackgroundRaycasting(const SpriteTextureComponent *spriteComp,
                                                         const PairFloat_t &GLPos,
                                                         const PairFloat_t &textureSize,
-                                                        const PairFloat_t &currentPoint,
                                                         const PairFloat_t &pairMod)
 {
-    PairFloat_t texturePoint = getPointTextureCoord(currentPoint,
-                                        spriteComp->m_spriteData->m_texturePosVertex,
-                                        textureSize, pairMod);
-    addTexturePoint({GLPos.first, GLPos.second - SCREEN_VERT_BACKGROUND_GL_STEP},
-                    {texturePoint.first, texturePoint.second});
-    addTexturePoint({GLPos.first + SCREEN_HORIZ_BACKGROUND_GL_STEP,
-                     GLPos.second - SCREEN_VERT_BACKGROUND_GL_STEP},
-                    {texturePoint.first, texturePoint.second});
-    addTexturePoint({GLPos.first + SCREEN_HORIZ_BACKGROUND_GL_STEP, GLPos.second},
-                    {texturePoint.first, texturePoint.second});
-    addTexturePoint({GLPos.first, GLPos.second},
-                    {texturePoint.first, texturePoint.second});
+    PairFloat_t texturePoint = getPointTextureCoord(spriteComp->m_spriteData->m_texturePosVertex,
+                                                    textureSize, pairMod);
+    m_vertexBuffer.insert(m_vertexBuffer.end(), {GLPos.first, GLPos.second - SCREEN_VERT_BACKGROUND_GL_STEP,
+                                                 texturePoint.first, texturePoint.second,
+                                                 GLPos.first + SCREEN_HORIZ_BACKGROUND_GL_STEP,
+                                                 GLPos.second - SCREEN_VERT_BACKGROUND_GL_STEP,
+                                                 texturePoint.first, texturePoint.second,
+                                                 GLPos.first + SCREEN_HORIZ_BACKGROUND_GL_STEP, GLPos.second,
+                                                 texturePoint.first, texturePoint.second,
+                                                 GLPos.first, GLPos.second, texturePoint.first, texturePoint.second});
     addIndices(BaseShapeTypeGL_e::RECTANGLE);
     return texturePoint;
-}
-
-//===================================================================
-PairFloat_t getPointTextureCoord(const PairFloat_t &point,
-                                 const std::array<PairFloat_t, 4> &texturePosVertex,
-                                 const PairFloat_t &textureSize, const PairFloat_t &pairMod)
-{
-    PairFloat_t textCoord;
-    textCoord.first = texturePosVertex[0].first +
-                (pairMod.first / LEVEL_TILE_SIZE_PX) * textureSize.first;
-    textCoord.second = texturePosVertex[0].second +
-            (pairMod.second / LEVEL_TILE_SIZE_PX) * textureSize.second;
-    return textCoord;
 }
 
 //===================================================================

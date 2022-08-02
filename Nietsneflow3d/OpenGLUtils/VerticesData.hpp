@@ -41,7 +41,6 @@ public:
     PairFloat_t loadPointBackgroundRaycasting(const SpriteTextureComponent *spriteComp,
                                               const PairFloat_t &observerPoint,
                                               const PairFloat_t &textureSize,
-                                              const PairFloat_t &currentPoint,
                                               const PairFloat_t &pairMod);
     void loadVertexTextureDrawByLineComponent(const PositionVertexComponent &posComp,
                                               const SpriteTextureComponent &spriteComp,
@@ -72,6 +71,11 @@ private:
 
 PairFloat_t getTexturePixelFromCoord(const PairFloat_t &pointA, const std::array<PairFloat_t, 4> &texturePosVertex);
 //pairMod opti calc modulo before method call to prevent several calculation
-PairFloat_t getPointTextureCoord(const PairFloat_t &point,
-                            const std::array<PairFloat_t, 4> &texturePosVertex,
-                            const PairFloat_t &textureSize, const PairFloat_t &pairMod);
+inline PairFloat_t getPointTextureCoord(const std::array<PairFloat_t, 4> &texturePosVertex,
+                            const PairFloat_t &textureSize, const PairFloat_t &pairMod)
+{
+    return {texturePosVertex[0].first +
+                (pairMod.first / LEVEL_TILE_SIZE_PX) * textureSize.first,
+                texturePosVertex[0].second +
+                (pairMod.second / LEVEL_TILE_SIZE_PX) * textureSize.second};
+}
