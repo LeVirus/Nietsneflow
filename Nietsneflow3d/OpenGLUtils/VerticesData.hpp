@@ -52,7 +52,6 @@ public:
                                          uint32_t lineDrawNumber, DoorComponent *doorComp, bool doorPosBound);
     void reserveVertex(uint32_t size);
     void reserveIndices(uint32_t size);
-    void displayVertex();
 private:
     void addIndices(BaseShapeTypeGL_e shapeType);
     void init();

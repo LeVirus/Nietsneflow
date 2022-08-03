@@ -1,9 +1,6 @@
 BUGS======================================================================
 
 ))
-Bad resolution when switch to fullscreen
-
-))
 When die and reload from checkpoint moveable wall bad place========================NOT REPRODUCIBLE
 
 ))
@@ -20,6 +17,9 @@ Wall exists inside door some time======================Bug in level editor
 
 
 
+
+))
+Bad resolution when switch to fullscreen===========================OK
 
 ))
 Checkpoint issue on second reload=======================OK

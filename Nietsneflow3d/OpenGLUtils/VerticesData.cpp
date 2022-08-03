@@ -316,12 +316,6 @@ void VerticesData::reserveIndices(uint32_t size)
 }
 
 //===================================================================
-void VerticesData::displayVertex()
-{
-    std::cerr << m_vertexBuffer.size() << " << Vert Indices >> " << m_indices.size() << "\n";
-}
-
-//===================================================================
 void VerticesData::addTexturePoint(const PairFloat_t &pos, const PairFloat_t &tex)
 {
     m_vertexBuffer.insert(m_vertexBuffer.end(), {pos.first, pos.second,

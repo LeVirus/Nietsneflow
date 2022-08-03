@@ -386,6 +386,7 @@ void GraphicEngine::setSizeResolution(const pairI_t &resolution)
         if(m_memGraphicResolution[i].first == resolution)
         {
             m_currentResolution = i;
+            m_currentDisplayedResolution = i;
             glfwSetWindowSize(m_window, m_memGraphicResolution[m_currentResolution].first.first,
                               m_memGraphicResolution[m_currentResolution].first.second);
             break;

@@ -38,22 +38,9 @@ void FirstPersonDisplaySystem::setUsedComponents()
 //===================================================================
 void FirstPersonDisplaySystem::execSystem()
 {
-//    std::chrono::duration<double> fps;
-//    std::chrono::time_point<std::chrono::system_clock> clock;
-//    clock = std::chrono::system_clock::now();
     System::execSystem();
     confCompVertexMemEntities();
-    //display FPS
-//    fps = std::chrono::system_clock::now() - clock;
-//    std::cerr << 1.0f / fps.count() << "  " << fps.count() << " confCompVertexMemEntities FPS\n";
-//    clock = std::chrono::system_clock::now();
-
     drawVertex();
-    //display FPS
-//    fps = std::chrono::system_clock::now() - clock;
-//    std::cerr << 1.0f / fps.count() << "  " << fps.count() << " drawVertex FPS\n\n";
-//    clock = std::chrono::system_clock::now();
-
     drawPlayerColorEffects();
 }
 
@@ -820,11 +807,6 @@ bool FirstPersonDisplaySystem::rayCasting(uint32_t observerEntity)
             currentRadiantAngle += PI_DOUBLE;
         }
     }
-//    std::cerr << "BASE " << RAYCAST_LINE_NUMBER *
-//                 RAYCAST_GROUND_CEILING_NUMBER * 16 << " VERT IND " <<
-//                 RAYCAST_LINE_NUMBER * RAYCAST_GROUND_CEILING_NUMBER * 6 << "\n";
-//    m_groundTiledTextVertice.displayVertex();
-//    m_ceilingTiledVertice.displayVertex();
     return false;
 }
 
