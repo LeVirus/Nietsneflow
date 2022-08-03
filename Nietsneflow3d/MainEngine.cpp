@@ -120,9 +120,9 @@ LevelState MainEngine::mainLoop(uint32_t levelNum, LevelState_e levelState, bool
             continue;
         }
         //display FPS
-//        fps = std::chrono::system_clock::now() - clockFrame;
-//        std::cout << 1.0f / fps.count() << "  " << fps.count() << " FPS\n";
-//        clockFrame = std::chrono::system_clock::now();
+        fps = std::chrono::system_clock::now() - clockFrame;
+        std::cout << 1.0f / fps.count() << "  " << fps.count() << " FPS\n";
+        clockFrame = std::chrono::system_clock::now();
         clock = std::chrono::system_clock::now();
         m_physicalEngine.runIteration(m_gamePaused);
         //LOAD if level to load break the loop

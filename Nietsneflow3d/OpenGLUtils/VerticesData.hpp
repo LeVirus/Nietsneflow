@@ -73,7 +73,7 @@ private:
 PairFloat_t getTexturePixelFromCoord(const PairFloat_t &pointA, const std::array<PairFloat_t, 4> &texturePosVertex);
 //pairMod opti calc modulo before method call to prevent several calculation
 inline PairFloat_t getPointTextureCoord(const std::array<PairFloat_t, 4> &texturePosVertex,
-                            const PairFloat_t &textureSize, const PairFloat_t &pairMod)
+                                        const PairFloat_t &textureSize, const PairFloat_t &pairMod)
 {
     return {texturePosVertex[0].first +
                 (pairMod.first / LEVEL_TILE_SIZE_PX) * textureSize.first,

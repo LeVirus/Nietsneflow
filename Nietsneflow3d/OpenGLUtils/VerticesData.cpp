@@ -338,16 +338,23 @@ void VerticesData::addIndices(BaseShapeTypeGL_e shapeType)
     }
     uint32_t curent = m_cursor;
     //first triangle
-    m_indices.insert(m_indices.end(), {curent, ++curent, ++curent});// 0 1 2
-    //if Triangle stop here
-    if(shapeType != BaseShapeTypeGL_e::TRIANGLE)
+    if(shapeType == BaseShapeTypeGL_e::TRIANGLE)
     {
-        m_indices.insert(m_indices.end(), {curent, ++curent, curent - 3});// 2 3 0
+        m_indices.insert(m_indices.end(), {curent, ++curent, ++curent});// 0 1 2
     }
-    if(shapeType == BaseShapeTypeGL_e::DOUBLE_RECT)
+    //if Triangle stop here
+    else if(shapeType == BaseShapeTypeGL_e::RECTANGLE)
     {
-        m_indices.insert(m_indices.end(), {++curent, ++curent, ++curent, curent,
-                                                ++curent, curent - 3});// 1 4 5 5 2 1
+        m_indices.insert(m_indices.end(), {curent, ++curent, ++curent,
+                                           curent, ++curent, curent - 3});// 0 1 2 2 3 0
+    }
+    else if(shapeType == BaseShapeTypeGL_e::DOUBLE_RECT)
+    {
+        // 0 1 2 2 3 0  1 4 5 5 2 1
+        m_indices.insert(m_indices.end(), {curent, ++curent, ++curent,
+                                           curent, ++curent, curent - 3,
+                                           ++curent, ++curent, ++curent,
+                                           curent, ++curent, curent - 3});
     }
     m_cursor = ++curent;
 }
