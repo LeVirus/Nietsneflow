@@ -107,9 +107,9 @@ LevelState MainEngine::mainLoop(uint32_t levelNum, LevelState_e levelState, bool
             }
         }
     }
-    std::chrono::duration<double> elapsed_seconds, fps;
+    std::chrono::duration<double> elapsed_seconds/*, fps*/;
     m_graphicEngine.unsetTransition(m_gamePaused);
-    std::chrono::time_point<std::chrono::system_clock> clock, clockFrame;
+    std::chrono::time_point<std::chrono::system_clock> clock/*, clockFrame*/;
     clock = std::chrono::system_clock::now();
     m_physicalEngine.updateMousePos();
     do
@@ -120,9 +120,9 @@ LevelState MainEngine::mainLoop(uint32_t levelNum, LevelState_e levelState, bool
             continue;
         }
         //display FPS
-        fps = std::chrono::system_clock::now() - clockFrame;
-        std::cout << 1.0f / fps.count() << "  " << fps.count() << " FPS\n";
-        clockFrame = std::chrono::system_clock::now();
+//        fps = std::chrono::system_clock::now() - clockFrame;
+//        std::cout << 1.0f / fps.count() << "  " << fps.count() << " FPS\n";
+//        clockFrame = std::chrono::system_clock::now();
         clock = std::chrono::system_clock::now();
         m_physicalEngine.runIteration(m_gamePaused);
         //LOAD if level to load break the loop

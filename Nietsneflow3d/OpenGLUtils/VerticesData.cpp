@@ -331,32 +331,27 @@ void VerticesData::addTexturePoint(const PairFloat_t &pos, const PairFloat_t &te
 //===================================================================
 void VerticesData::addIndices(BaseShapeTypeGL_e shapeType)
 {
-    if(shapeType == BaseShapeTypeGL_e::NONE)
-    {
-        assert(false);
-        return;
-    }
-    uint32_t curent = m_cursor;
+    assert(shapeType != BaseShapeTypeGL_e::NONE);
     //first triangle
     if(shapeType == BaseShapeTypeGL_e::TRIANGLE)
     {
-        m_indices.insert(m_indices.end(), {curent, ++curent, ++curent});// 0 1 2
+        m_indices.insert(m_indices.end(), {m_cursor, ++m_cursor, ++m_cursor});// 0 1 2
     }
     //if Triangle stop here
     else if(shapeType == BaseShapeTypeGL_e::RECTANGLE)
     {
-        m_indices.insert(m_indices.end(), {curent, ++curent, ++curent,
-                                           curent, ++curent, curent - 3});// 0 1 2 2 3 0
+        m_indices.insert(m_indices.end(), {m_cursor, ++m_cursor, ++m_cursor,
+                                           m_cursor, ++m_cursor, m_cursor - 3});// 0 1 2 2 3 0
     }
     else if(shapeType == BaseShapeTypeGL_e::DOUBLE_RECT)
     {
         // 0 1 2 2 3 0  1 4 5 5 2 1
-        m_indices.insert(m_indices.end(), {curent, ++curent, ++curent,
-                                           curent, ++curent, curent - 3,
-                                           ++curent, ++curent, ++curent,
-                                           curent, ++curent, curent - 3});
+        m_indices.insert(m_indices.end(), {m_cursor, ++m_cursor, ++m_cursor,
+                                           m_cursor, ++m_cursor, m_cursor - 3,
+                                           ++m_cursor, ++m_cursor, ++m_cursor,
+                                           m_cursor, ++m_cursor, m_cursor - 3});
     }
-    m_cursor = ++curent;
+    ++m_cursor;
 }
 
 //===================================================================
