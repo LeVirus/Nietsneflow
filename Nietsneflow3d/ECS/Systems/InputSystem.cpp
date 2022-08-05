@@ -1207,6 +1207,7 @@ void InputSystem::treatEnterPressedDisplayMenu(PlayerConfComponent *playerComp)
     {
         playerComp->m_menuMode = playerComp->m_firstMenu ? MenuMode_e::TITLE : MenuMode_e::BASE;
         m_mainEngine->setMenuEntries(playerComp);
+        m_mainEngine->reinitDisplayedResolution();
     }
     else if(menuPos == DisplayMenuCursorPos_e::VALID)
     {

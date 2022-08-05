@@ -92,6 +92,11 @@ public:
     {
         return m_existingCustomLevelsMenuWrite.size();
     }
+    //fix change resolution while toggle fullscreen
+    inline void reinitDisplayedResolution()
+    {
+        m_currentDisplayedResolution = m_currentResolution;
+    }
     void toogleMenuEntryFullscreen();
     void setCurrentResolution(uint32_t resolution);
     void setSizeResolution(const pairI_t &resolution);
