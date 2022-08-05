@@ -384,7 +384,6 @@ private:
     std::map<PairUI_t, uint32_t> m_memTriggerCreated, m_memWallPos;
     //first level num, second true :: customLevel
     std::optional<std::pair<uint32_t, bool>> m_levelToLoad;
-    std::optional<MemCheckpointLevelState> m_memCheckpointLevelState;
     uint32_t m_playerEntity;
     std::vector<MemCheckpointEnemiesState> m_memEnemiesStateFromCheckpoint;
     //first shape num, second number of actionned
@@ -393,6 +392,7 @@ private:
     std::map<uint32_t, std::pair<std::vector<uint32_t>, bool>> m_memTriggerWallMoveableWallCheckpointData;
     std::vector<PairUI_t> m_revealedMapData;
     std::unique_ptr<MemCustomLevelLoadedData> m_memCustomLevelLoadedData;
+    std::optional<MemCheckpointLevelState> m_memCheckpointLevelState;
     std::optional<MemCheckpointElementsState> m_memCheckpointData;
 };
 

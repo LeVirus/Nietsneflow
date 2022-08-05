@@ -233,7 +233,7 @@ void MainEngine::initLevel(uint32_t levelNum, LevelState_e levelState)
     {
         loadGameProgressCheckpoint();
     }
-    if(!m_memCheckpointLevelState)
+    else
     {
         m_memStaticEntitiesDeletedFromCheckpoint.clear();
         m_currentEntitiesDelete.clear();
@@ -2089,6 +2089,11 @@ void MainEngine::loadCheckpointSavedGame(const MemCheckpointElementsState &check
     m_memMoveableWallCheckpointData = checkpointData.m_moveableWallData;
     m_memTriggerWallMoveableWallCheckpointData = checkpointData.m_triggerWallMoveableWallData;
     m_revealedMapData = checkpointData.m_revealedMapData;
+    m_memCheckpointData = {checkpointData.m_checkpointNum, checkpointData.m_secretsNumber,
+                           checkpointData.m_enemiesKilled, checkpointData.m_checkpointPos,
+                           checkpointData.m_direction, m_memEnemiesStateFromCheckpoint,
+                           m_memMoveableWallCheckpointData, m_memTriggerWallMoveableWallCheckpointData,
+                           m_memStaticEntitiesDeletedFromCheckpoint, checkpointData.m_revealedMapData};
 }
 
 //===================================================================

@@ -1,12 +1,6 @@
 BUGS======================================================================
 
 ))
-Assert when reload checkpoint after load existing game
-
-))
-When die and reload from checkpoint moveable wall bad place========================NOT REPRODUCIBLE
-
-))
 Eject issue on moveable wall lateral====================~~
 
 ))
@@ -20,6 +14,9 @@ Wall exists inside door some time======================Bug in level editor
 
 
 
+
+))
+Assert when reload checkpoint after load existing game===========================OK
 
 ))
 Issue on actionable moveable wall after reload from checkpoint a door is displayed====================OK
