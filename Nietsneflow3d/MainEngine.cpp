@@ -1215,7 +1215,8 @@ void MainEngine::confBaseWallData(uint32_t wallEntity, const SpriteData &memSpri
     assert(spriteComp);
     LevelCaseType_e type = moveable ? LevelCaseType_e::WALL_MOVE_LC : LevelCaseType_e::WALL_LC;
     std::optional<ElementRaycast> element  = Level::getElementCase(coordLevel);
-    if(moveable && triggerType != TriggerBehaviourType_e::AUTO && (!element || element->m_typeStd != LevelCaseType_e::WALL_LC))
+    if(moveable && triggerType != TriggerBehaviourType_e::AUTO &&
+            (!element || element->m_typeStd != LevelCaseType_e::WALL_LC))
     {
         Level::memStaticMoveWallEntity(coordLevel, wallEntity);
     }

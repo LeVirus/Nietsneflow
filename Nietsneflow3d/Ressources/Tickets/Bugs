@@ -1,7 +1,7 @@
 BUGS======================================================================
 
 ))
-Issue on actionable moveable wall after reload from checkpoint a door is displayed
+Assert when reload checkpoint after load existing game
 
 ))
 When die and reload from checkpoint moveable wall bad place========================NOT REPRODUCIBLE
@@ -20,6 +20,9 @@ Wall exists inside door some time======================Bug in level editor
 
 
 
+
+))
+Issue on actionable moveable wall after reload from checkpoint a door is displayed====================OK
 
 ))
 Bad resolution when switch to fullscreen===========================OK

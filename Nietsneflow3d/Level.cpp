@@ -26,6 +26,7 @@ void Level::setPlayerInitData(const PairFloat_t &pairInitPlayerPos,
 //===================================================================
 void Level::initLevelElementArray()
 {
+    m_levelCaseType.clear();
     m_levelCaseType.resize(m_size.first * m_size.second);
     for(uint32_t i = 0; i < m_levelCaseType.size(); ++i)
     {
