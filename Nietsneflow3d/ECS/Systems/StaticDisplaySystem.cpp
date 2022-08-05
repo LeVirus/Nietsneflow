@@ -79,12 +79,28 @@ void StaticDisplaySystem::execSystem()
         assert(spriteComp);
         confWeaponsVertexFromComponent(playerComp, spriteComp);
         drawVertex(spriteComp->m_spriteData->m_textureNum, VertexID_e::WEAPON);
+        //DRAW PANNEL
+        PositionVertexComponent *posComp = stairwayToComponentManager().
+                searchComponentByType<PositionVertexComponent>(playerComp->m_lifeAmmoPannelEntity,
+                                                               Components_e::POSITION_VERTEX_COMPONENT);
+        spriteComp = stairwayToComponentManager().
+                searchComponentByType<SpriteTextureComponent>(playerComp->m_lifeAmmoPannelEntity,
+                                                              Components_e::SPRITE_TEXTURE_COMPONENT);
+        assert(spriteComp);
+        assert(posComp);
+        uint32_t index = static_cast<uint32_t>(VertexID_e::PANNEL);
+        if(m_vertices[index].empty())
+        {
+            m_vertices[index].loadVertexStandartTextureComponent(*posComp, *spriteComp);
+        }
+        drawVertex(spriteComp->m_spriteData->m_textureNum, VertexID_e::PANNEL);
+
+        drawWriteInfoPlayer(mVectNumEntity[i], playerComp);
         std::string strAmmoDisplay = STR_PLAYER_AMMO +
                 std::to_string(weaponComp->m_weaponsData[weaponComp->m_currentWeapon].m_ammunationsCount);
         drawWriteVertex(playerComp->m_ammoWriteEntity, VertexID_e::AMMO_WRITE, strAmmoDisplay);
         drawWriteVertex(playerComp->m_lifeWriteEntity, VertexID_e::LIFE_WRITE, STR_PLAYER_LIFE +
                          std::to_string(playerComp->m_life));
-        drawWriteInfoPlayer(mVectNumEntity[i], playerComp);
     }
 }
 

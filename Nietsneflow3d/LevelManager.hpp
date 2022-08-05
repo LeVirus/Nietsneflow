@@ -137,7 +137,14 @@ public:
     inline const PictureData &getPictureData()const {return m_pictureData;}
     inline const Level &getLevel()const {return m_level;}
     inline const FontData &getFontData()const {return m_fontData;}
-    inline std::string getCursorSpriteName()const {return m_spriteCursorName;}
+    inline std::string getCursorSpriteName()const
+    {
+        return m_spriteCursorName;
+    }
+    inline std::string getPannelSpriteName()const
+    {
+        return m_spritePannelName;
+    }
     inline const std::map<std::string, MoveableWallData> getMoveableWallData()const
     {
         return m_mainWallData;
@@ -312,7 +319,7 @@ private:
     PictureData m_pictureData;
     FontData m_fontData;
     Level m_level;
-    std::string m_spriteCursorName;
+    std::string m_spriteCursorName, m_spritePannelName;
     StaticLevelElementData m_exitStaticElement;
     std::map<std::string, WallData> m_wallData;
     std::map<std::string, MoveableWallData> m_mainWallData;

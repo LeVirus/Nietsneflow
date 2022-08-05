@@ -1467,6 +1467,9 @@ void LevelManager::loadUtilsData()
     std::optional<std::string> val = m_ini.getValue(vectINISections[0], "CursorSprite");
     assert(val);
     m_spriteCursorName = *val;
+    val = m_ini.getValue(vectINISections[0], "PannelSprite");
+    assert(val);
+    m_spritePannelName = *val;
 }
 
 //===================================================================

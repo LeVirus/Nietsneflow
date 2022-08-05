@@ -254,6 +254,7 @@ private:
     void confWriteEntitiesDisplayMenu();
     void confWriteEntitiesInputMenu();
     void confMenuCursorEntity();
+    void confLifeAmmoPannelEntity();
     void confWriteEntities();
     void linkSystemsToGraphicEngine();
     void linkSystemsToPhysicalEngine();
@@ -368,7 +369,8 @@ private:
     Game *m_refGame = nullptr;
     std::vector<std::pair<uint32_t, time_t>> m_vectMemPausedTimer;
     bool m_gamePaused = false, m_playerMemGear = false, m_levelEnd = false;
-    SpriteData const *m_memCursorSpriteData = nullptr, *m_memVisibleShotA = nullptr;
+    SpriteData const *m_memCursorSpriteData = nullptr, *m_memVisibleShotA = nullptr,
+    *m_memPannel = nullptr;
     WriteComponent *m_writeConf = nullptr;
     PlayerConfComponent *m_playerConf = nullptr;
     WeaponComponent *m_weaponComp;

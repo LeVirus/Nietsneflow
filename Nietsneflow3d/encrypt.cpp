@@ -3,9 +3,9 @@
 #include <iostream>
 
 //ENCRYPT_KEY_CONF_FILE
-//const uint32_t KEY = 42;
+const uint32_t KEY = 42;
 //STANDARD LEVEL
-const uint32_t KEY = 17;
+//const uint32_t KEY = 17;
 
 //===================================================================
 std::string encrypt(const std::string &str, uint32_t key)
@@ -20,17 +20,17 @@ std::string encrypt(const std::string &str, uint32_t key)
 
 int main(int argc, char *argv[])
 {
-		if(argc != 2)
-		{
-			std::cout << "Bad num Args\n";
-			return -1;
-		}
-		std::string path = argv[1];
+		//if(argc != 2)
+		//{
+		//	std::cout << "Bad num Args\n";
+		//	return -1;
+		//}
+		//std::string path = argv[1];
 		//std::ifstream inStream("./Ressources/fontData.ini.base");
-		//std::ifstream inStream("./Ressources/pictureData.ini.base");
-		std::cout << "./Ressources/" + path + "/level.ini.dd \n";
-		std::ifstream inStream("./Ressources/" + path + "/level.ini.dd");
-		//std::ifstream inStream("./Ressources/standardData.ini.base");
+		std::ifstream inStream("./Ressources/pictureData.ini.base");
+		//std::cout << "./Ressources/" + path + "/level.ini.dd \n";
+//		std::ifstream inStream("./Ressources/" + path + "/level.ini.dd");
+//		std::ifstream inStream("./Ressources/standardData.ini.base");
 		if(inStream.fail())
 		{
 				std::cout << "Fail\n";
@@ -43,8 +43,8 @@ int main(int argc, char *argv[])
 		std::string dataString = encrypt(ostringStream.str(), KEY);
 
 		//std::ofstream outStream("./Ressources/fontData.ini");
-		//std::ofstream outStream("./Ressources/pictureData.ini");
-		std::ofstream outStream("./Ressources/" + path + "/level.ini");
+		std::ofstream outStream("./Ressources/pictureData.ini");
+		//std::ofstream outStream("./Ressources/" + path + "/level.ini");
 		//std::ofstream outStream("./Ressources/standardData.ini");
 		outStream << dataString;
 		outStream.close();

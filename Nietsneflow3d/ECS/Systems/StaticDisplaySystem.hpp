@@ -37,6 +37,7 @@ enum class VertexID_e
     RESOLUTION_DISPLAY_MENU,
     FULLSCREEN,
     INPUT,
+    PANNEL,
     TOTAL
 };
 

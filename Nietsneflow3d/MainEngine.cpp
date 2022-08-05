@@ -2689,6 +2689,7 @@ void MainEngine::confPlayerEntity(const LevelManager &levelManager,
     staticDisplay->setWeaponSprite(numWeaponEntity, m_weaponComp->m_weaponsData[m_weaponComp->m_currentWeapon].m_memPosSprite.first);
     confWriteEntities();
     confMenuCursorEntity();
+    confLifeAmmoPannelEntity();
     confActionEntity();
     confMapDetectShapeEntity(map->m_absoluteMapPositionPX);
     for(uint32_t i = 0; i < weaponConf->m_weaponsData.size(); ++i)
@@ -2991,6 +2992,28 @@ void MainEngine::confMenuCursorEntity()
 }
 
 //===================================================================
+void MainEngine::confLifeAmmoPannelEntity()
+{
+    uint32_t lifeAmmoPannelEntity = createSimpleSpriteEntity();
+    PositionVertexComponent *posCursor = m_ecsManager.getComponentManager().
+            searchComponentByType<PositionVertexComponent>(lifeAmmoPannelEntity,
+                                                           Components_e::POSITION_VERTEX_COMPONENT);
+    SpriteTextureComponent *spriteCursor = m_ecsManager.getComponentManager().
+            searchComponentByType<SpriteTextureComponent>(lifeAmmoPannelEntity,
+                                                          Components_e::SPRITE_TEXTURE_COMPONENT);
+    assert(posCursor);
+    assert(spriteCursor);
+    m_playerConf->m_lifeAmmoPannelEntity = lifeAmmoPannelEntity;
+    spriteCursor->m_spriteData = m_memPannel;
+    posCursor->m_vertex.reserve(4);
+    float up = -0.78f, down = -0.97f,
+            left = -0.97f, right = -0.625f;
+    posCursor->m_vertex.insert(posCursor->m_vertex.end(), {{left, up}, {right, up},
+                                   {right, down},{left, down}});
+
+}
+
+//===================================================================
 bool MainEngine::loadStaticElementEntities(const LevelManager &levelManager)
 {
     //LOAD CURSOR MENU
@@ -3007,9 +3030,11 @@ void MainEngine::loadCursorEntities(const LevelManager &levelManager)
 {
     //LOAD CURSOR MENU
     uint8_t cursorSpriteId = *levelManager.getPictureData().
-            getIdentifier(levelManager.getCursorSpriteName());
-    const std::vector<SpriteData> &vectSprite = levelManager.getPictureData().getSpriteData();
-    m_memCursorSpriteData = &vectSprite[cursorSpriteId];
+            getIdentifier(levelManager.getCursorSpriteName()),
+            pannelSpriteId = *levelManager.getPictureData().
+            getIdentifier(levelManager.getPannelSpriteName());
+    m_memCursorSpriteData = &levelManager.getPictureData().getSpriteData()[cursorSpriteId];
+    m_memPannel = &levelManager.getPictureData().getSpriteData()[pannelSpriteId];
 }
 
 //===================================================================

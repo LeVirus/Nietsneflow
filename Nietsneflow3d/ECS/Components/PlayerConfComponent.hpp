@@ -36,7 +36,7 @@ struct PlayerConfComponent : public ecs::Component
     std::pair<bool, std::string> m_infoWriteData = {false, ""};
     std::set<uint32_t> m_card;
     uint32_t m_weaponEntity, m_ammoWriteEntity, m_currentCursorPos = 0, m_currentSelectedSaveFile,
-             m_titleMenuEntity, m_menuEntriesEntity, m_menuCursorEntity, m_menuInfoWriteEntity,
+             m_titleMenuEntity, m_menuEntriesEntity, m_menuCursorEntity, m_lifeAmmoPannelEntity, m_menuInfoWriteEntity,
              m_actionEntity, m_hitMeleeEntity, m_lifeWriteEntity, m_numInfoWriteEntity,
              m_life = 100, m_displayTeleportEntity, m_mapDetectShapeEntity, m_currentCustomLevelCusorMenu,
     m_levelToLoad;
