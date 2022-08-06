@@ -170,6 +170,7 @@ LevelState MainEngine::mainLoop(uint32_t levelNum, LevelState_e levelState, bool
             clearCheckpointData();
             //end level
             m_playerConf->m_inMovement = false;
+            m_playerConf->m_infoWriteData = {false, ""};
             savePlayerGear(true);
             m_graphicEngine.setTransition(m_gamePaused);
             displayTransitionMenu();
@@ -179,6 +180,7 @@ LevelState MainEngine::mainLoop(uint32_t levelNum, LevelState_e levelState, bool
         //Player dead
         else if(!m_playerConf->m_life)
         {
+            m_playerConf->m_infoWriteData = {false, ""};
             if(!m_memCheckpointLevelState)
             {
                 clearCheckpointData();
