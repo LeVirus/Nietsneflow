@@ -247,7 +247,7 @@ private:
     bool isLoadFromLevelBegin(LevelState_e levelState)const;
     void clearObjectToDelete();
     void loadPlayerGear(bool beginLevel);
-    void displayTransitionMenu();
+    void displayTransitionMenu(MenuMode_e mode = MenuMode_e::TRANSITION_LEVEL);
     void confMenuBarMenuEntity(uint32_t musicEntity, uint32_t effectEntity, uint32_t turnSensitivity);
     void confUnifiedColorEntity(uint32_t entityNum, const tupleFloat_t &color, bool transparent);
     void loadBackgroundEntities(const GroundCeilingData &groundData, const GroundCeilingData &backgroundData, const LevelManager &levelManager);
@@ -394,6 +394,7 @@ private:
     std::unique_ptr<MemCustomLevelLoadedData> m_memCustomLevelLoadedData;
     std::optional<MemCheckpointLevelState> m_memCheckpointLevelState;
     std::optional<MemCheckpointElementsState> m_memCheckpointData;
+    bool m_prologueActive, m_epilogueActive;
 };
 
 float getDegreeAngleFromDirection(Direction_e direction);

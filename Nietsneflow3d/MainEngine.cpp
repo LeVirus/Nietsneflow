@@ -93,6 +93,10 @@ LevelState MainEngine::mainLoop(uint32_t levelNum, LevelState_e levelState, bool
     if(!afterLoadFailure)
     {
         initLevel(levelNum, levelState);
+        if(m_prologueActive && !m_memCheckpointData)
+        {
+            displayTransitionMenu(MenuMode_e::LEVEL_PROLOGUE);
+        }
         if(levelState != LevelState_e::LOAD_GAME)
         {
             if(levelState == LevelState_e::RESTART_FROM_CHECKPOINT)
@@ -202,6 +206,12 @@ void MainEngine::initLevel(uint32_t levelNum, LevelState_e levelState)
         else if(!m_memCustomLevelLoadedData)
         {
             m_graphicEngine.updateSaveNum(levelNum, m_currentSave, {});
+        }
+        //Check for displaying prologue
+        if(!m_memCustomLevelLoadedData && (levelState == LevelState_e::NEW_GAME ||
+                                           levelState == LevelState_e::LOAD_GAME))
+        {
+            m_prologueActive = true;
         }
     }
     //don't load gear for custom level
@@ -396,9 +406,9 @@ void MainEngine::loadPlayerGear(bool beginLevel)
 }
 
 //===================================================================
-void MainEngine::displayTransitionMenu()
+void MainEngine::displayTransitionMenu(MenuMode_e mode)
 {
-    m_playerConf->m_menuMode = MenuMode_e::TRANSITION_LEVEL;
+    m_playerConf->m_menuMode = mode;
     setMenuEntries(m_playerConf);
     m_gamePaused = true;
     assert(m_writeConf);
@@ -413,7 +423,14 @@ void MainEngine::displayTransitionMenu()
     }while(m_gamePaused);
     m_physicalEngine.setModeTransitionMenu(false);
     m_graphicEngine.setTransition(true);
-    m_graphicEngine.fillMenuWrite(m_writeConf, MenuMode_e::BASE);
+    if(m_playerConf->m_menuMode == MenuMode_e::TRANSITION_LEVEL)
+    {
+        m_graphicEngine.fillMenuWrite(m_writeConf, MenuMode_e::BASE);
+    }
+    else
+    {
+
+    }
 }
 
 //===================================================================
@@ -926,6 +943,7 @@ void MainEngine::loadLevel(const LevelManager &levelManager)
     loadSecretsEntities(levelManager);
     loadLogsEntities(levelManager, levelManager.getPictureData().getSpriteData());
     loadRevealedMap();
+    m_graphicEngine.updatePrologueAndEpilogue(levelManager.getLevelPrologue(), levelManager.getLevelEpilogue());
     //MUUUUUUUUUUUUSSSSS
     m_audioEngine.loadMusicFromFile(levelManager.getLevel().getMusicFilename());
     m_audioEngine.playMusic();

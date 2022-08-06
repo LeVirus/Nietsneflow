@@ -801,6 +801,8 @@ void InputSystem::treatEnterPressedMenu(PlayerConfComponent *playerComp)
         treatEnterPressedInputMenu(playerComp);
         break;
     case MenuMode_e::TRANSITION_LEVEL:
+    case MenuMode_e::LEVEL_PROLOGUE:
+    case MenuMode_e::LEVEL_EPILOGUE:
         m_mainEngine->setUnsetPaused();
         break;
     case MenuMode_e::NEW_KEY:

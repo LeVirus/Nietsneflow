@@ -51,6 +51,7 @@ public:
     void updateStringWriteEntitiesInputMenu(bool keyboardInputMenuMode, bool defaultInput = true);
     const std::vector<uint32_t> &getBarrelEntitiesToDelete()const;
     void clearBarrelEntitiesToDelete();
+    void updatePrologueAndEpilogue(const std::string &prologue, const std::string &epilogue);
     inline MapDisplaySystem &getMapSystem()
     {
         return *m_mapSystem;
@@ -141,7 +142,7 @@ private:
     StaticDisplaySystem *m_staticDisplaySystem = nullptr;
     uint32_t m_transitionFrameNumber = 30;
     std::array<std::optional<DataLevelWriteMenu>, 3> m_memExistingLevelSave;
-    std::string m_saveStandardLevelMenuWrite;
+    std::string m_saveStandardLevelMenuWrite, m_levelPrologue, m_levelEpilogue;
     //First Write menu, second size menu
     std::vector<std::pair<std::string, uint32_t>> m_existingCustomLevelsMenuWrite;
     bool m_fullscreenMode = false, m_displayMenuFullscreenMode = m_fullscreenMode;

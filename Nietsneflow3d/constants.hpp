@@ -379,7 +379,9 @@ enum class MenuMode_e
     CONFIRM_RESTART_FROM_LAST_CHECKPOINT,
     CONFIRM_QUIT_GAME,
     NEW_KEY,
-    LOAD_CUSTOM_LEVEL
+    LOAD_CUSTOM_LEVEL,
+    LEVEL_PROLOGUE,
+    LEVEL_EPILOGUE
 };
 
 const uint32_t MIN_TURN_SENSITIVITY = 20, MAX_TURN_SENSITIVITY = 100,
@@ -444,6 +446,10 @@ inline const std::map<MenuMode_e, PairPairFloatStr_t> MAP_MENU_DATA =
      PairPairFloatStr_t{{-0.5f, 0.5f},
       "RETURN TO GAME\\SOUND CONF\\DISPLAY CONF\\INPUT CONF\\NEW GAME\\LOAD GAME\\RESTART FROM LAST CHECKPOINT\\RESTART LEVEL\\PLAY CUSTOM LEVELS\\EXIT GAME"}},
     {MenuMode_e::TRANSITION_LEVEL,
+     PairPairFloatStr_t{{-0.5f, 0.5f}, "CONTINUE"}},
+    {MenuMode_e::LEVEL_PROLOGUE,
+     PairPairFloatStr_t{{-0.5f, 0.5f}, "CONTINUE"}},
+    {MenuMode_e::LEVEL_EPILOGUE,
      PairPairFloatStr_t{{-0.5f, 0.5f}, "CONTINUE"}},
     {MenuMode_e::SOUND,
      PairPairFloatStr_t{{-0.7f, 0.5f}, "MUSIC VOLUME\\EFFECTS VOLUME\\RETURN"}},

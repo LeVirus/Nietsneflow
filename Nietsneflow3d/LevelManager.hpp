@@ -141,6 +141,14 @@ public:
     {
         return m_spriteCursorName;
     }
+    inline std::string getLevelPrologue()const
+    {
+        return m_prologue;
+    }
+    inline std::string getLevelEpilogue()const
+    {
+        return m_epilogue;
+    }
     inline std::string getPannelSpriteName()const
     {
         return m_spritePannelName;
@@ -300,6 +308,7 @@ private:
     void loadPositionCheckpointsData();
     void loadPositionSecretsData();
     void loadPositionLogsData();
+    void loadPrologueAndEpilogue();
     void loadUtilsData();
     void loadEnemySprites(const std::string &sectionName,
                           EnemySpriteElementType_e spriteTypeEnum, EnemyData &enemyData);
@@ -332,6 +341,7 @@ private:
     std::vector<MemSpriteData> m_displayTeleportData;
     std::vector<PairUI_t> m_secretsPos;
     std::vector<LogLevelData> m_logsLevelData;
+    std::string m_prologue, m_epilogue;
     //first ID, second Std data
     std::map<std::string, LogStdData> m_logStdData;
     std::vector<std::pair<PairUI_t, Direction_e>> m_checkpointsPos;

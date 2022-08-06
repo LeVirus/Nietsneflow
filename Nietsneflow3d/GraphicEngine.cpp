@@ -284,6 +284,9 @@ void GraphicEngine::fillTitleMenuWrite(WriteComponent *writeComp, MenuMode_e men
     case MenuMode_e::TRANSITION_LEVEL:
         writeComp->m_vectMessage[0].second = "";
         break;
+    case MenuMode_e::LEVEL_PROLOGUE:
+    case MenuMode_e::LEVEL_EPILOGUE:
+        break;
     }
     writeComp->m_fontSpriteData[0] = m_ptrFontData->getWriteData(writeComp->m_vectMessage[0].second, writeComp->m_numTexture);
 }
@@ -317,6 +320,14 @@ void GraphicEngine::fillMenuWrite(WriteComponent *writeComp, MenuMode_e menuEntr
         std::map<MenuMode_e, PairPairFloatStr_t>::const_iterator it = MAP_MENU_DATA.find(menuEntry);
         writeComp->m_vectMessage[0].second = it->second.second;
         writeComp->m_vectMessage[0].second += " " + m_mapInputActionStringAssociated.at(static_cast<InputMenuCursorPos_e>(cursorPos));
+    }
+    else if(menuEntry == MenuMode_e::LEVEL_PROLOGUE)
+    {
+        writeComp->m_vectMessage[0].second = m_levelPrologue + "\\\\PRESS ENTER TO CONTINUE";
+    }
+    else if(menuEntry == MenuMode_e::LEVEL_EPILOGUE)
+    {
+        writeComp->m_vectMessage[0].second = m_levelEpilogue + "\\\\PRESS ENTER TO CONTINUE";
     }
     else
     {
@@ -352,6 +363,13 @@ const std::vector<uint32_t> &GraphicEngine::getBarrelEntitiesToDelete()const
 void GraphicEngine::clearBarrelEntitiesToDelete()
 {
     m_visionSystem->clearVectObjectToDelete();
+}
+
+//===================================================================
+void GraphicEngine::updatePrologueAndEpilogue(const std::string &prologue, const std::string &epilogue)
+{
+    m_levelPrologue = prologue;
+    m_levelEpilogue = m_levelEpilogue;
 }
 
 //===================================================================

@@ -175,6 +175,8 @@ private:
         {MenuMode_e::DISPLAY, static_cast<uint32_t>(DisplayMenuCursorPos_e::TOTAL) - 1},
         {MenuMode_e::INPUT, static_cast<uint32_t>(InputMenuCursorPos_e::TOTAL) - 1},
         {MenuMode_e::TRANSITION_LEVEL, 1},
+        {MenuMode_e::LEVEL_PROLOGUE, 1},
+        {MenuMode_e::LEVEL_EPILOGUE, 1},
         {MenuMode_e::SOUND, static_cast<uint32_t>(SoundMenuCursorPos_e::TOTAL) - 1},
         {MenuMode_e::NEW_GAME, static_cast<uint32_t>(NewGameMenuCursorPos_e::TOTAL) - 1},
         {MenuMode_e::LOAD_GAME, static_cast<uint32_t>(LoadGameMenuCursorPos_e::TOTAL) - 1},

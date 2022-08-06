@@ -1459,6 +1459,21 @@ void LevelManager::loadPositionLogsData()
 }
 
 //===================================================================
+void LevelManager::loadPrologueAndEpilogue()
+{
+    std::optional<std::string> val = m_ini.getValue("LevelMessage", "prologue");
+    if(val)
+    {
+        m_prologue = *val;
+    }
+    val = m_ini.getValue("LevelMessage", "epilogue");
+    if(val)
+    {
+        m_epilogue = *val;
+    }
+}
+
+//===================================================================
 void LevelManager::loadUtilsData()
 {
     std::vector<std::string> vectINISections;
@@ -1718,6 +1733,7 @@ LevelLoadState_e LevelManager::loadLevel(uint32_t levelNum, bool customLevel)
     loadPositionCheckpointsData();
     loadPositionSecretsData();
     loadPositionLogsData();
+    loadPrologueAndEpilogue();
     if(!loadBackgroundData())
     {
         std::cout << "ERROR background data cannot be loaded" << std::endl;
@@ -1761,6 +1777,8 @@ void LevelManager::clearExistingPositionsElement()
         it->second.m_TileGamePosition.clear();
     }
     m_barrelElement.m_TileGamePosition.clear();
+    m_prologue.clear();
+    m_epilogue.clear();
 }
 
 //===================================================================

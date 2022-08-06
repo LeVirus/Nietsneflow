@@ -1,9 +1,6 @@
 IMPROVE===================================================================================================
 ==========================================================================================================
 
-))
-Add a "transparent screen" to display behind life and ammo
-
 
 
 ))
@@ -22,6 +19,9 @@ Improve Enemy behavour===!!!!!!===================~
 
 ))
 Remove .fake file after level loading=========================In levelManager
+
+))
+Add a "transparent screen" to display behind life and ammo====================OK
 
 ))
 Prevent standard level file to be swaped========================OK
