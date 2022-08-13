@@ -98,6 +98,14 @@ public:
     {
         m_currentDisplayedResolution = m_currentResolution;
     }
+    inline bool epilogueEmpty()const
+    {
+        return m_levelEpilogue.empty();
+    }
+    inline bool prologueEmpty()const
+    {
+        return m_levelPrologue.empty();
+    }
     void toogleMenuEntryFullscreen();
     void setCurrentResolution(uint32_t resolution);
     void setSizeResolution(const pairI_t &resolution);

@@ -139,7 +139,10 @@ void StaticDisplaySystem::displayMenu()
         SpriteTextureComponent *spriteComp = stairwayToComponentManager().
                 searchComponentByType<SpriteTextureComponent>(playerComp->m_menuCursorEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
         assert(spriteComp);
-        if(playerComp->m_menuMode != MenuMode_e::NEW_KEY)
+        if(playerComp->m_menuMode != MenuMode_e::NEW_KEY &&
+                playerComp->m_menuMode != MenuMode_e::LEVEL_EPILOGUE &&
+                playerComp->m_menuMode != MenuMode_e::LEVEL_PROLOGUE &&
+                playerComp->m_menuMode != MenuMode_e::TRANSITION_LEVEL)
         {
             updateMenuCursorPosition(playerComp);
             if(!m_cursorInit)

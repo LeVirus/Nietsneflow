@@ -369,7 +369,7 @@ void GraphicEngine::clearBarrelEntitiesToDelete()
 void GraphicEngine::updatePrologueAndEpilogue(const std::string &prologue, const std::string &epilogue)
 {
     m_levelPrologue = prologue;
-    m_levelEpilogue = m_levelEpilogue;
+    m_levelEpilogue = epilogue;
 }
 
 //===================================================================

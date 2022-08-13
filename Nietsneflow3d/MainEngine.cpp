@@ -93,7 +93,7 @@ LevelState MainEngine::mainLoop(uint32_t levelNum, LevelState_e levelState, bool
     if(!afterLoadFailure)
     {
         initLevel(levelNum, levelState);
-        if(m_prologueActive && !m_memCheckpointData)
+        if(m_prologueActive && !m_graphicEngine.prologueEmpty() && !m_memCheckpointData)
         {
             displayTransitionMenu(MenuMode_e::LEVEL_PROLOGUE);
         }
@@ -428,10 +428,6 @@ void MainEngine::displayTransitionMenu(MenuMode_e mode)
     if(m_playerConf->m_menuMode == MenuMode_e::TRANSITION_LEVEL)
     {
         m_graphicEngine.fillMenuWrite(m_writeConf, MenuMode_e::BASE);
-    }
-    else
-    {
-
     }
 }
 
