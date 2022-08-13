@@ -93,7 +93,7 @@ LevelState MainEngine::mainLoop(uint32_t levelNum, LevelState_e levelState, bool
     if(!afterLoadFailure)
     {
         initLevel(levelNum, levelState);
-        if(m_prologueActive && !m_graphicEngine.prologueEmpty() && !m_memCheckpointData)
+        if(!m_graphicEngine.prologueEmpty() && !m_memCheckpointData)
         {
             displayTransitionMenu(MenuMode_e::LEVEL_PROLOGUE);
         }
@@ -174,6 +174,10 @@ LevelState MainEngine::mainLoop(uint32_t levelNum, LevelState_e levelState, bool
             savePlayerGear(true);
             m_graphicEngine.setTransition(m_gamePaused);
             displayTransitionMenu();
+            if(!m_graphicEngine.epilogueEmpty())
+            {
+                displayTransitionMenu(MenuMode_e::LEVEL_EPILOGUE);
+            }
             m_memEnemiesStateFromCheckpoint.clear();
             return {m_currentLevelState, {}, customLevel};
         }
@@ -208,12 +212,6 @@ void MainEngine::initLevel(uint32_t levelNum, LevelState_e levelState)
         else if(!m_memCustomLevelLoadedData)
         {
             m_graphicEngine.updateSaveNum(levelNum, m_currentSave, {});
-        }
-        //Check for displaying prologue
-        if(!m_memCustomLevelLoadedData && (levelState == LevelState_e::NEW_GAME ||
-                                           levelState == LevelState_e::LOAD_GAME))
-        {
-            m_prologueActive = true;
         }
     }
     //don't load gear for custom level
@@ -410,10 +408,16 @@ void MainEngine::loadPlayerGear(bool beginLevel)
 //===================================================================
 void MainEngine::displayTransitionMenu(MenuMode_e mode)
 {
+    float topEpiloguePosition;
     m_playerConf->m_menuMode = mode;
     setMenuEntries(m_playerConf);
-    m_gamePaused = true;
     assert(m_writeConf);
+    if(mode == MenuMode_e::LEVEL_EPILOGUE)
+    {
+        topEpiloguePosition = getTopEpilogueVerticalPosition(m_writeConf);
+        m_writeConf->m_upLeftPositionGL.second = -1.0f;
+    }
+    m_gamePaused = true;
     m_physicalEngine.setModeTransitionMenu(true);
     m_graphicEngine.mainDisplay(m_gamePaused);
     m_playerConf->m_currentCursorPos = 0;
@@ -422,6 +426,14 @@ void MainEngine::displayTransitionMenu(MenuMode_e mode)
     {
         m_graphicEngine.runIteration(m_gamePaused);
         m_physicalEngine.runIteration(m_gamePaused);
+        if(mode == MenuMode_e::LEVEL_EPILOGUE)
+        {
+            m_writeConf->m_upLeftPositionGL.second += 0.005f;
+            if(m_writeConf->m_upLeftPositionGL.second > topEpiloguePosition)
+            {
+                m_gamePaused = false;
+            }
+        }
     }while(m_gamePaused);
     m_physicalEngine.setModeTransitionMenu(false);
     m_graphicEngine.setTransition(true);
@@ -429,6 +441,27 @@ void MainEngine::displayTransitionMenu(MenuMode_e mode)
     {
         m_graphicEngine.fillMenuWrite(m_writeConf, MenuMode_e::BASE);
     }
+}
+
+//===================================================================
+float getTopEpilogueVerticalPosition(const WriteComponent *writeComp)
+{
+    uint32_t nbLine = 1;
+    std::string::size_type pos = 0;
+    do
+    {
+        pos = writeComp->m_vectMessage[0].second.find('\\', ++pos);
+        if(pos != std::string::npos)
+        {
+            ++nbLine;
+        }
+        else
+        {
+            break;
+        }
+    }while(true);
+    //base position + line y size * line number
+    return 1.0f + (writeComp->m_fontSize * 2.0f) * nbLine;
 }
 
 //===================================================================

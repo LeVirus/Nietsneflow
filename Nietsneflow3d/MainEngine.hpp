@@ -394,9 +394,9 @@ private:
     std::unique_ptr<MemCustomLevelLoadedData> m_memCustomLevelLoadedData;
     std::optional<MemCheckpointLevelState> m_memCheckpointLevelState;
     std::optional<MemCheckpointElementsState> m_memCheckpointData;
-    bool m_prologueActive, m_epilogueActive;
 };
 
+float getTopEpilogueVerticalPosition(WriteComponent const *writeComp);
 float getDegreeAngleFromDirection(Direction_e direction);
 pairI_t getModifMoveableWallDataCheckpoint(const std::vector<std::pair<Direction_e, uint32_t>> &vectDir, uint32_t timesActionned, TriggerBehaviourType_e triggerBehaviour);
 void insertEnemySpriteFromType(const std::vector<SpriteData> &vectSprite, mapEnemySprite_t &mapSpriteAssociate,
