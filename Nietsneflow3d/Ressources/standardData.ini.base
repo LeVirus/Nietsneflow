@@ -57,6 +57,31 @@ Sprite = SpriteTriggerA
 SpriteWeightGame = 0.4
 SpriteHeightGame = 0.8
 
+[EnemyDemonClaw]
+StaticSpriteFront = SpriteDCMFA SpriteDCMFB
+StaticSpriteFrontLeft = SpriteDCMMFLA SpriteDCMMFLB
+StaticSpriteFrontRight = SpriteDCMMFRA SpriteDCMMFRB 
+StaticSpriteBack = SpriteDCMBA SpriteDCMBB
+StaticSpriteBackLeft = SpriteDCMMBLA SpriteDCMMBLB
+StaticSpriteBackRight = SpriteDCMMBRA SpriteDCMMBRB
+StaticSpriteLeft = SpriteDCMLA SpriteDCMLB
+StaticSpriteRight = SpriteDCMRA SpriteDCMRB
+AttackSprite = SpriteDCAA SpriteDCAB
+DyingSprite = SpriteDCDA SpriteDCDB SpriteDCDC SpriteDCDD SpriteDCDead
+Touched = SpriteDCDA
+ShootSpritesID = VisibleShootDemon
+MeleeDamage = 12
+ShotVelocity = 2
+Life = 15
+Velocity = 1.3
+Damage = 15
+SpriteWeightGame = 0.5 ; value in %
+SpriteHeightGame = 1.5
+traversable = false
+NormalBehaviourSound = Roar.wav
+DetectBehaviourSound = DemonDetect.wav
+AttackSound = DemonAttack.wav
+
 [EnemyDemon]
 StaticSpriteFront = SpriteDFA SpriteDFB
 StaticSpriteFrontLeft = SpriteDMFLA SpriteDMFLB

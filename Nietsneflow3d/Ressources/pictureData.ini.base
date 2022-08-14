@@ -1,5 +1,335 @@
 [PathToTexture]
-textures = walltest.jpg	Global.png FontTexture.png demon.png GeneralSprites.png Marine.png Stars.jpg Simetra_green.png
+textures = walltest.jpg	Global.png FontTexture.png EnemyDemon.png GeneralSprites.png EnemyMarine.png Stars.jpg Simetra_green.png BossArachnotron.png BossCyberDemon.png EnemyBaronOfHell.png EnemyCacodemon.png EnemyDemonClaw.png EnemyZombieSergeant.png
+#BossArac 8 EnemyClaw = 12
+
+# 480 x 643
+#Sprite death claw
+#DC Demon Claw S static
+
+#FRONT
+#180 2	225 61
+[SpriteDCFA]
+texture = 12
+texturePosX = 0.375
+texturePosY = 0.0031
+textureWeight = 0.0937
+textureHeight = 0.0917
+
+#274 2	319 61
+[SpriteDCFB]
+texture = 12
+texturePosX = 0.5708
+texturePosY = 0.0031
+textureWeight = 0.0937
+textureHeight = 0.0917
+
+#M Move
+#45 2  89 61
+[SpriteDCMFA]
+texture = 12
+texturePosX = 0.0937
+texturePosY = 0.0031
+textureWeight = 0.0937
+textureHeight = 0.0917
+
+#91 2 132 61
+[SpriteDCMFB]
+texture = 12
+texturePosX = 0.1895
+texturePosY = 0.0031
+textureWeight = 0.0854
+textureHeight = 0.0917
+
+#MIDDLE FRONT LEFT
+#236 64	 285 123
+[SpriteDCMFLA]
+texture = 12
+texturePosX = 0.4916
+texturePosY = 0.0995
+textureWeight = 0.102
+textureHeight = 0.0917
+
+#340 64  393 123
+[SpriteDCMFLB]
+texture = 12
+texturePosX = 0.7083
+texturePosY = 0.0995
+textureWeight = 0.1104
+textureHeight = 0.0917
+
+#64 64  115 123
+[SpriteDCMMFLA]
+texture = 12
+texturePosX = 0.1333
+texturePosY = 0.0995
+textureWeight = 0.1062
+textureHeight = 0.0917
+
+#177 64 234 123
+[SpriteDCMMFLB]
+texture = 12
+texturePosX = 0.3687
+texturePosY = 0.0995
+textureWeight = 0.1187
+textureHeight = 0.0917
+
+#LEFT
+#250 125  312 183
+[SpriteDCLA]
+texture = 12
+texturePosX = 0.5208
+texturePosY = 0.1944
+textureWeight = 0.1333
+textureHeight = 0.0902
+
+#385 125  456 183
+[SpriteDCLB]
+texture = 12
+texturePosX = 0.8020
+texturePosY = 0.1944
+textureWeight = 0.1479
+textureHeight = 0.0902
+
+#2 125  63 183
+[SpriteDCMLA]
+texture = 12
+texturePosX = 0.0041
+texturePosY = 0.1944
+textureWeight = 0.127
+textureHeight = 0.0902
+
+#189 125  249 183
+[SpriteDCMLB]
+texture = 12
+texturePosX = 0.3937
+texturePosY = 0.1944
+textureWeight = 0.125
+textureHeight = 0.0902
+
+#MIDDLE BACK LEFT
+#221 185  274 239
+[SpriteDCMBLA]
+texture = 12
+texturePosX = 0.4604
+texturePosY = 0.2877
+textureWeight = 0.1104
+textureHeight = 0.0824
+
+#334 185  392 239
+[SpriteDCMBLB]
+texture = 12
+texturePosX = 0.6958
+texturePosY = 0.2877
+textureWeight = 0.1208
+textureHeight = 0.0824
+
+#117 185  168 239
+[SpriteDCMMBLA]
+texture = 12
+texturePosX = 0.2437
+texturePosY = 0.2877
+textureWeight = 0.1062
+textureHeight = 0.0824
+
+#61 185  115 239
+[SpriteDCMMBLB]
+texture = 12
+texturePosX = 0.127
+texturePosY = 0.2877
+textureWeight = 0.1125
+textureHeight = 0.0824
+
+#BACK
+#162 241  205 296
+[SpriteDCBA]
+texture = 12
+texturePosX = 0.3375
+texturePosY = 0.3748
+textureWeight = 0.0895
+textureHeight = 0.0855
+
+#252 241  295 296
+[SpriteDCBB]
+texture = 12
+texturePosX = 0.525
+texturePosY = 0.3748
+textureWeight = 0.0895
+textureHeight = 0.0855
+
+#2 241  38 296
+[SpriteDCMBA]
+texture = 12
+texturePosX = 0.0041
+texturePosY = 0.3748
+textureWeight = 0.075
+textureHeight = 0.0855
+
+#82 241  118 296
+[SpriteDCMBB]
+texture = 12
+texturePosX = 0.1708
+texturePosY = 0.3748
+textureWeight = 0.075
+textureHeight = 0.0855
+
+#MIDDLE BACK  RIGHT
+#219 299  267 353
+[SpriteDCMBRA]
+texture = 12
+texturePosX = 0.4562
+texturePosY = 0.465
+textureWeight = 0.1
+textureHeight = 0.0839
+
+#326 299  381 353
+[SpriteDCMBRB]
+texture = 12
+texturePosX = 0.6791
+texturePosY = 0.465
+textureWeight = 0.1145
+textureHeight = 0.0839
+
+#51 299  102 353
+[SpriteDCMMBRA]
+texture = 12
+texturePosX = 0.1062
+texturePosY = 0.465
+textureWeight = 0.1062
+textureHeight = 0.0839
+
+#104 299  158 353
+[SpriteDCMMBRB]
+texture = 12
+texturePosX = 0.2166
+texturePosY = 0.465
+textureWeight = 0.1125
+textureHeight = 0.0839
+
+#RIGHT
+#251 354  310 412
+[SpriteDCRA]
+texture = 12
+texturePosX = 0.5229
+texturePosY = 0.5505
+textureWeight = 0.1229
+textureHeight = 0.0902
+
+#378 354  445 412
+[SpriteDCRB]
+texture = 12
+texturePosX = 0.7875
+texturePosY = 0.5505
+textureWeight = 0.1395
+textureHeight = 0.0902
+
+#63 354  125 412
+[SpriteDCMRA]
+texture = 12
+texturePosX = 0.1312
+texturePosY = 0.5505
+textureWeight = 0.1291
+textureHeight = 0.0902
+
+#127 354  186 412
+[SpriteDCMRB]
+texture = 12
+texturePosX = 0.2645
+texturePosY = 0.5505
+textureWeight = 0.1229
+textureHeight = 0.0902
+
+#MIDDLE FRONT RIGHT
+#60 413  119 474
+[SpriteDCMMFRA]
+texture = 12
+texturePosX = 0.125
+texturePosY = 0.6423
+textureWeight = 0.1229
+textureHeight = 0.0948
+
+#121 413  172 474
+[SpriteDCMMFRB]
+texture = 12
+texturePosX = 0.252
+texturePosY = 0.6423
+textureWeight = 0.1062
+textureHeight = 0.0948
+
+#236 413  290 474
+#[SpriteDCMMFRA]
+#texture = 12
+#texturePosX = 0.4916
+#texturePosY = 0.6423
+#textureWeight = 0.1125
+#textureHeight = 0.0948
+
+#350 413  408 474
+#[SpriteDCMMFRB]
+#texture = 12
+#texturePosX = 0.7291
+#texturePosY = 0.6423
+#textureWeight = 0.1208
+#textureHeight = 0.0948
+
+#ATTACK
+#227 2  272 61
+[SpriteDCAA]
+texture = 12
+texturePosX = 0.4729
+texturePosY = 0.0031
+textureWeight = 0.0937
+textureHeight = 0.0917
+
+#2 510  41 566
+[SpriteDCAB]
+texture = 12
+texturePosX = 0.0041
+texturePosY = 0.7931
+textureWeight = 0.0812
+textureHeight = 0.087
+
+#DYING
+#2 567  57 625
+[SpriteDCDA]
+texture = 12
+texturePosX = 0.0041
+texturePosY = 0.8818
+textureWeight = 0.1145
+textureHeight = 0.0902
+
+#59 567  120 625
+[SpriteDCDB]
+texture = 12
+texturePosX = 0.1229
+texturePosY = 0.8818
+textureWeight = 0.127
+textureHeight = 0.0902
+
+#122 567  175 625
+[SpriteDCDC]
+texture = 12
+texturePosX = 0.2541
+texturePosY = 0.8818
+textureWeight = 0.1104
+textureHeight = 0.0902
+
+#177 567  240 625
+[SpriteDCDD]
+texture = 12
+texturePosX = 0.3687
+texturePosY = 0.8818
+textureWeight = 0.1312
+textureHeight = 0.0902
+
+#309 567  374 625
+[SpriteDCDead]
+texture = 12
+texturePosX = 0.6437
+texturePosY = 0.8818
+textureWeight = 0.1354
+textureHeight = 0.0902
+
+
 
 # 0 0 1966 1
 [SpriteSimetraLogo]
