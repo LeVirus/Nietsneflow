@@ -1,6 +1,245 @@
 [PathToTexture]
 textures = walltest.jpg	Global.png FontTexture.png EnemyDemon.png GeneralSprites.png EnemyMarine.png Stars.jpg Simetra_green.png BossArachnotron.png BossCyberDemon.png EnemyBaronOfHell.png EnemyCacodemon.png EnemyDemonClaw.png EnemyZombieSergeant.png
 
+#================================Arachn
+
+#FRONT
+#FRONT LEFT
+#FRONT RIGHT
+#LEFT
+#RIGHT
+#BACK LEFT
+#BACK RIGHT
+#BACK
+#ATTACK
+#DYING
+
+#================================Cyber Demon
+
+#FRONT
+#FRONT LEFT
+#FRONT RIGHT
+#LEFT
+#RIGHT
+#BACK LEFT
+#BACK RIGHT
+#BACK
+#ATTACK
+#DYING
+
+#================================Baron of Hell
+
+#FRONT
+#376 186  70 74
+[SpriteBHFA]
+texture = 10
+texturePosX = 0.5562
+texturePosY = 0.5068
+textureWeight = 0.1035
+textureHeight = 0.2016
+
+#449
+[SpriteBHFB]
+texture = 10
+texturePosX = 0.6642
+texturePosY = 0.5068
+textureWeight = 0.1035
+textureHeight = 0.2016
+
+#FRONT LEFT
+#8 6    
+[SpriteBHFLA]
+texture = 10
+texturePosX = 0.0118
+texturePosY = 0.0088
+textureWeight = 0.0784
+textureHeight = 0.2043
+
+#65 
+[SpriteBHFLB]
+texture = 10
+texturePosX = 0.0961
+texturePosY = 0.0088
+textureWeight = 0.0784
+textureHeight = 0.2043
+
+#FRONT RIGHT
+#132
+[SpriteBHFRA]
+texture = 10
+texturePosX = 0.1952
+texturePosY = 0.0088
+textureWeight = 0.0784
+textureHeight = 0.2043
+
+#199
+[SpriteBHFRB]
+texture = 10
+texturePosX = 0.2943
+texturePosY = 0.0088
+textureWeight = 0.0784
+textureHeight = 0.2043
+
+#LEFT
+#145 97  51 70
+[SpriteBHLA]
+texture = 10
+texturePosX = 0.2144
+texturePosY = 0.2643
+textureWeight = 0.0754
+textureHeight = 0.1907
+
+#209
+[SpriteBHLB]
+texture = 10
+texturePosX = 0.3091
+texturePosY = 0.2643
+textureWeight = 0.0754
+textureHeight = 0.1907
+
+#RIGHT
+#13 
+[SpriteBHRA]
+texture = 10
+texturePosX = 0.0207
+texturePosY = 0.2643
+textureWeight = 0.0774
+textureHeight = 0.1907
+
+#79
+[SpriteBHRB]
+texture = 10
+texturePosX = 0.1168
+texturePosY = 0.2643
+textureWeight = 0.0754
+textureHeight = 0.1907
+
+#BACK LEFT
+#257
+[SpriteBHBLA]
+texture = 10
+texturePosX = 0.3801
+texturePosY = 0.0088
+textureWeight = 0.0784
+textureHeight = 0.2043
+
+#312
+[SpriteBHBLB]
+texture = 10
+texturePosX = 0.4615
+texturePosY = 0.0088
+textureWeight = 0.0784
+textureHeight = 0.2043
+
+#BACK RIGHT
+#368
+[SpriteBHBRA]
+texture = 10
+texturePosX = 0.5443
+texturePosY = 0.0088
+textureWeight = 0.0784
+textureHeight = 0.2043
+
+#420
+[SpriteBHBRB]
+texture = 10
+texturePosX = 0.6213
+texturePosY = 0.0088
+textureWeight = 0.0784
+textureHeight = 0.2043
+
+#BACK
+#529
+[SpriteBHBA]
+texture = 10
+texturePosX = 0.7825
+texturePosY = 0.5068
+textureWeight = 0.1035
+textureHeight = 0.2016
+
+#611
+[SpriteBHBB]
+texture = 10
+texturePosX = 0.9038
+texturePosY = 0.5068
+textureWeight = 0.1035
+textureHeight = 0.2016
+
+#ATTACK
+#11 277  
+[SpriteBHAA]
+texture = 10
+texturePosX = 0.0162
+texturePosY = 0.7547
+textureWeight = 0.0976
+textureHeight = 0.1934
+
+#84
+[SpriteBHAB]
+texture = 10
+texturePosX = 0.1242
+texturePosY = 0.7547
+textureWeight = 0.0976
+textureHeight = 0.1934
+
+#175
+[SpriteBHAC]
+texture = 10
+texturePosX = 0.2588
+texturePosY = 0.7547
+textureWeight = 0.0976
+textureHeight = 0.1934
+
+#DYING
+#252
+[SpriteBHDA]
+texture = 10
+texturePosX = 0.3727
+texturePosY = 0.7411
+textureWeight = 0.0976
+textureHeight = 0.1934
+
+#13
+[SpriteBHDB]
+texture = 10
+texturePosX = 0.0192
+texturePosY = 0.5068
+textureWeight = 0.1035
+textureHeight = 0.2016
+
+#87
+[SpriteBHDC]
+texture = 10
+texturePosX = 0.1286
+texturePosY = 0.5068
+textureWeight = 0.1035
+textureHeight = 0.2016
+
+#158
+[SpriteBHDD]
+texture = 10
+texturePosX = 0.2337
+texturePosY = 0.5068
+textureWeight = 0.1035
+textureHeight = 0.2016
+
+#234
+[SpriteBHDE]
+texture = 10
+texturePosX = 0.3461
+texturePosY = 0.5068
+textureWeight = 0.1035
+textureHeight = 0.2016
+
+#307
+[SpriteBHDead]
+texture = 10
+texturePosX = 0.4541
+texturePosY = 0.5068
+textureWeight = 0.1035
+textureHeight = 0.2016
+
+
 #================================Flying Demon
 
 #FRONT
