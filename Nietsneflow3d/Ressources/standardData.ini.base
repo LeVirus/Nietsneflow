@@ -57,6 +57,32 @@ Sprite = SpriteTriggerA
 SpriteWeightGame = 0.4
 SpriteHeightGame = 0.8
 
+[EnemyFlyingDemon]
+StaticSpriteFront = SpriteFDFA SpriteFDFB
+StaticSpriteFrontLeft = SpriteFDFLA SpriteFDFLB
+StaticSpriteFrontRight = SpriteFDFRA SpriteFDFRB 
+StaticSpriteBack = SpriteFDBA SpriteFDBB
+StaticSpriteBackLeft = SpriteFDBLA SpriteFDBLB
+StaticSpriteBackRight = SpriteFDBRA SpriteFDBRB
+StaticSpriteLeft = SpriteFDLA SpriteFDLB
+StaticSpriteRight = SpriteFDRA SpriteFDRB
+AttackSprite = SpriteFDAA SpriteFDAB SpriteFDAC
+DyingSprite = SpriteFDDA SpriteFDDB SpriteFDDC SpriteFDDD SpriteFDDE SpriteFDDead
+Touched = SpriteFDDA
+ShootSpritesID = VisibleShootDemon
+MeleeDamage = 12
+ShotVelocity = 2
+Life = 15
+Velocity = 1.3
+Damage = 15
+SpriteWeightGame = 0.5 ; value in %
+SpriteHeightGame = 1.5
+traversable = false
+NormalBehaviourSound = Roar.wav
+DetectBehaviourSound = DemonDetect.wav
+AttackSound = DemonAttack.wav
+
+
 [EnemyZombieShotgun]
 StaticSpriteFront = SpriteZSFA SpriteZSFB
 StaticSpriteFrontLeft = SpriteZSMFLA SpriteZSMFLB

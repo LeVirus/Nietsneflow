@@ -1,6 +1,219 @@
 [PathToTexture]
 textures = walltest.jpg	Global.png FontTexture.png EnemyDemon.png GeneralSprites.png EnemyMarine.png Stars.jpg Simetra_green.png BossArachnotron.png BossCyberDemon.png EnemyBaronOfHell.png EnemyCacodemon.png EnemyDemonClaw.png EnemyZombieSergeant.png
 
+#================================Flying Demon
+
+#FRONT
+#23 463  89 531
+[SpriteFDFA]
+texture = 11
+texturePosX = 0.0354
+texturePosY = 0.5396
+textureWeight = 0.1018
+textureHeight = 0.0792
+
+#244
+[SpriteFDFB]
+texture = 11
+texturePosX = 0.3765
+texturePosY = 0.5396
+textureWeight = 0.1018
+textureHeight = 0.0792
+
+#FRONT LEFT
+#24 537  88 605
+[SpriteFDFLA]
+texture = 11
+texturePosX = 0.0354
+texturePosY = 0.6258
+textureWeight = 0.0987
+textureHeight = 0.0792
+
+#176
+[SpriteFDFLB]
+texture = 11
+texturePosX = 0.2716
+texturePosY = 0.6258
+textureWeight = 0.0987
+textureHeight = 0.0792
+
+#FRONT RIGHT
+#264
+[SpriteFDFRA]
+texture = 11
+texturePosX = 0.4074
+texturePosY = 0.6258
+textureWeight = 0.0987
+textureHeight = 0.0792
+
+#345
+[SpriteFDFRB]
+texture = 11
+texturePosX = 0.5324
+texturePosY = 0.6258
+textureWeight = 0.0987
+textureHeight = 0.0792
+
+#LEFT
+#22 243  87 312
+[SpriteFDLA]
+texture = 11
+texturePosX = 0.0354
+texturePosY = 0.2832
+textureWeight = 0.1003
+textureHeight = 0.0804
+
+#476
+[SpriteFDLB]
+texture = 11
+texturePosX = 0.7345
+texturePosY = 0.2832
+textureWeight = 0.1003
+textureHeight = 0.0804
+
+#RIGHT
+#391
+[SpriteFDRA]
+texture = 11
+texturePosX = 0.6033
+texturePosY = 0.2832
+textureWeight = 0.1003
+textureHeight = 0.0804
+
+#563
+[SpriteFDRB]
+texture = 11
+texturePosX = 0.8688
+texturePosY = 0.2832
+textureWeight = 0.1003
+textureHeight = 0.0804
+
+#BACK LEFT
+#23 312  87 386
+[SpriteFDBLA]
+texture = 11
+texturePosX = 0.0354
+texturePosY = 0.3636
+textureWeight = 0.1018
+textureHeight = 0.0862
+
+#167
+[SpriteFDBLB]
+texture = 11
+texturePosX = 0.2577
+texturePosY = 0.3636
+textureWeight = 0.1018
+textureHeight = 0.0862
+
+#BACK RIGHT
+#391
+[SpriteFDBRA]
+texture = 11
+texturePosX = 0.6033
+texturePosY = 0.3636
+textureWeight = 0.1018
+textureHeight = 0.0862
+
+#245
+[SpriteFDBRB]
+texture = 11
+texturePosX = 0.378
+texturePosY = 0.3636
+textureWeight = 0.1018
+textureHeight = 0.0862
+
+#BACK
+#24 388  88 460
+[SpriteFDBA]
+texture = 11
+texturePosX = 0.0354
+texturePosY = 0.4522
+textureWeight = 0.0987
+textureHeight = 0.0839
+
+#166
+[SpriteFDBB]
+texture = 11
+texturePosX = 0.2561
+texturePosY = 0.4522
+textureWeight = 0.0987
+textureHeight = 0.0839
+
+#ATTACK
+#20 83  85 156
+[SpriteFDAA]
+texture = 11
+texturePosX = 0.0308
+texturePosY = 0.0967
+textureWeight = 0.1003
+textureHeight = 0.085
+
+#95
+[SpriteFDAB]
+texture = 11
+texturePosX = 0.1466
+texturePosY = 0.0967
+textureWeight = 0.1003
+textureHeight = 0.085
+
+#170
+[SpriteFDAC]
+texture = 11
+texturePosX = 0.2623
+texturePosY = 0.0967
+textureWeight = 0.1003
+textureHeight = 0.085
+
+#DYING
+#Weight==>64
+#92 462  157 531
+[SpriteFDDA]
+texture = 11
+texturePosX = 0.1419
+texturePosY = 0.5384
+textureWeight = 0.1003
+textureHeight = 0.0804
+
+#21 759  86 838
+[SpriteFDDB]
+texture = 11
+texturePosX = 0.0324
+texturePosY = 0.8846
+textureWeight = 0.108
+textureHeight = 0.092
+
+#91
+[SpriteFDDC]
+texture = 11
+texturePosX = 0.1404
+texturePosY = 0.8846
+textureWeight = 0.108
+textureHeight = 0.092
+
+#163    Weight=>70
+[SpriteFDDD]
+texture = 11
+texturePosX = 0.2515
+texturePosY = 0.8846
+textureWeight = 0.108
+textureHeight = 0.092
+
+#245
+[SpriteFDDE]
+texture = 11
+texturePosX = 0.378
+texturePosY = 0.8846
+textureWeight = 0.108
+textureHeight = 0.092
+
+#327
+[SpriteFDDead]
+texture = 11
+texturePosX = 0.5046
+texturePosY = 0.8846
+textureWeight = 0.1503
+textureHeight = 0.092
+
 #================================Zombie Shotgun
 
 #FRONT
