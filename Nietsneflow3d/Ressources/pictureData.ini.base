@@ -17,15 +17,238 @@ textures = walltest.jpg	Global.png FontTexture.png EnemyDemon.png GeneralSprites
 #================================Cyber Demon
 
 #FRONT
+#5 2  138 190  
+[SpriteCDFA]
+texture = 9
+texturePosX = 0.0042
+texturePosY = 0.0014
+textureWeight = 0.1042
+textureHeight = 0.1666
+
+#983
+[SpriteCDFB]
+texture = 9
+texturePosX = 0.8268
+texturePosY = 0.0014
+textureWeight = 0.1042
+textureHeight = 0.1666
+
 #FRONT LEFT
+#2 116  82 109
+[SpriteCDFLA]
+texture = 9
+texturePosX = 0.0016
+texturePosY = 0.1726
+textureWeight = 0.0798
+textureHeight = 0.1636
+
+#107
+[SpriteCDFLB]
+texture = 9
+texturePosX = 0.0899
+texturePosY = 0.1726
+textureWeight = 0.0798
+textureHeight = 0.1636
+
 #FRONT RIGHT
+#221
+[SpriteCDFRA]
+texture = 9
+texturePosX = 0.1857
+texturePosY = 0.1726
+textureWeight = 0.0798
+textureHeight = 0.1636
+
+#321
+[SpriteCDFRB]
+texture = 9
+texturePosX = 0.2697
+texturePosY = 0.1726
+textureWeight = 0.0798
+textureHeight = 0.1636
+
 #LEFT
+#2 161  80 108
+[SpriteCDLA]
+texture = 9
+texturePosX = 0.0016
+texturePosY = 0.3392
+textureWeight = 0.0672
+textureHeight = 0.1607
+
+#110
+[SpriteCDLB]
+texture = 9
+texturePosX = 0.0924
+texturePosY = 0.3392
+textureWeight = 0.0672
+textureHeight = 0.1607
+
 #RIGHT
+#239
+[SpriteCDRA]
+texture = 9
+texturePosX = 0.2008
+texturePosY = 0.3392
+textureWeight = 0.0672
+textureHeight = 0.1607
+
+#348
+[SpriteCDRB]
+texture = 9
+texturePosX = 0.2924
+texturePosY = 0.3392
+textureWeight = 0.0672
+textureHeight = 0.1607
+
 #BACK LEFT
+#443
+[SpriteCDBLA]
+texture = 9
+texturePosX = 0.3722
+texturePosY = 0.1726
+textureWeight = 0.0798
+textureHeight = 0.1636
+
+#544
+[SpriteCDBLB]
+texture = 9
+texturePosX = 0.4571
+texturePosY = 0.1726
+textureWeight = 0.0798
+textureHeight = 0.1636
+
 #BACK RIGHT
+#674
+[SpriteCDBRA]
+texture = 9
+texturePosX = 0.5663
+texturePosY = 0.1726
+textureWeight = 0.0798
+textureHeight = 0.1636
+
+#792
+[SpriteCDBRB]
+texture = 9
+texturePosX = 0.6655
+texturePosY = 0.1726
+textureWeight = 0.0798
+textureHeight = 0.1636
+
 #BACK
+#675
+[SpriteCDBA]
+texture = 9
+texturePosX = 0.5672
+texturePosY = 0.0014
+textureWeight = 0.1042
+textureHeight = 0.1666
+
+#832
+[SpriteCDBB]
+texture = 9
+texturePosX = 0.6991
+texturePosY = 0.0014
+textureWeight = 0.1042
+textureHeight = 0.1666
+
 #ATTACK
+#176
+[SpriteCDAA]
+texture = 9
+texturePosX = 0.1478
+texturePosY = 0.0014
+textureWeight = 0.1042
+textureHeight = 0.1666
+
+#356
+[SpriteCDAB]
+texture = 9
+texturePosX = 0.2991
+texturePosY = 0.0014
+textureWeight = 0.1042
+textureHeight = 0.1666
+
 #DYING
+#512
+[SpriteCDDA]
+texture = 9
+texturePosX = 0.4302
+texturePosY = 0.0014
+textureWeight = 0.1042
+textureHeight = 0.1666
+
+#7
+[SpriteCDDB]
+texture = 9
+texturePosX = 0.0058
+texturePosY = 0.4940
+textureWeight = 0.1159
+textureHeight = 0.2008
+
+#175
+[SpriteCDDC]
+texture = 9
+texturePosX = 0.147
+texturePosY = 0.4940
+textureWeight = 0.1159
+textureHeight = 0.2008
+
+#7 487
+[SpriteCDDD]
+texture = 9
+texturePosX = 0.0058
+texturePosY = 0.7247
+textureWeight = 0.1159
+textureHeight = 0.1755
+
+#159
+[SpriteCDDE]
+texture = 9
+texturePosX = 0.1336
+texturePosY = 0.7247
+textureWeight = 0.1159
+textureHeight = 0.1755
+
+#467
+[SpriteCDDF]
+texture = 9
+texturePosX = 0.3924
+texturePosY = 0.4940
+textureWeight = 0.1159
+textureHeight = 0.2008
+
+#595
+[SpriteCDDG]
+texture = 9
+texturePosX = 0.5
+texturePosY = 0.4940
+textureWeight = 0.1159
+textureHeight = 0.2008
+
+#734
+[SpriteCDDH]
+texture = 9
+texturePosX = 0.6168
+texturePosY = 0.4940
+textureWeight = 0.1159
+textureHeight = 0.2008
+
+#878
+[SpriteCDDI]
+texture = 9
+texturePosX = 0.7378
+texturePosY = 0.4940
+textureWeight = 0.1159
+textureHeight = 0.2008
+
+#1020
+[SpriteCDDead]
+texture = 9
+texturePosX = 0.8571
+texturePosY = 0.4940
+textureWeight = 0.1159
+textureHeight = 0.2008
 
 #================================Baron of Hell
 

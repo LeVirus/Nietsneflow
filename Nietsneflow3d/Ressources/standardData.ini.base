@@ -57,6 +57,29 @@ Sprite = SpriteTriggerA
 SpriteWeightGame = 0.4
 SpriteHeightGame = 0.8
 
+[EnemyCyberDemon]
+StaticSpriteFront = SpriteCDFA SpriteCDFB
+StaticSpriteFrontLeft = SpriteCDFLA SpriteCDFLB
+StaticSpriteFrontRight = SpriteCDFRA SpriteCDFRB 
+StaticSpriteBack = SpriteCDBA SpriteCDBB
+StaticSpriteBackLeft = SpriteCDBLA SpriteCDBLB
+StaticSpriteBackRight = SpriteCDBRA SpriteCDBRB
+StaticSpriteLeft = SpriteCDLA SpriteCDLB
+StaticSpriteRight = SpriteCDRA SpriteCDRB
+AttackSprite = SpriteCDAA SpriteCDAB 
+DyingSprite = SpriteCDDA SpriteCDDB SpriteCDDC SpriteCDDD SpriteCDDE SpriteCDDF SpriteCDDG SpriteCDDH SpriteCDDI SpriteCDDead
+Touched = SpriteCDDA
+ShotImpactID = ImpactStd
+Life = 5
+Velocity = 0.8
+Damage = 3
+SpriteWeightGame = 0.9 ; value in %
+SpriteHeightGame = 2.4
+traversable = false
+NormalBehaviourSound = Roar.wav
+DetectBehaviourSound = DemonDetect.wav
+AttackSound = DemonAttack.wav
+
 [EnemyBaronHell]
 StaticSpriteFront = SpriteBHFA SpriteBHFB
 StaticSpriteFrontLeft = SpriteBHFLA SpriteBHFLB
