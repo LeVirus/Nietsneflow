@@ -57,6 +57,31 @@ Sprite = SpriteTriggerA
 SpriteWeightGame = 0.4
 SpriteHeightGame = 0.8
 
+[EnemyZombieShotgun]
+StaticSpriteFront = SpriteZSFA SpriteZSFB
+StaticSpriteFrontLeft = SpriteZSMFLA SpriteZSMFLB
+StaticSpriteFrontRight = SpriteZSMFRA SpriteZSMFRB 
+StaticSpriteBack = SpriteZSBA SpriteZSBB
+StaticSpriteBackLeft = SpriteZSMBLA SpriteZSMBLB
+StaticSpriteBackRight = SpriteZSMBRA SpriteZSMBRB
+StaticSpriteLeft = SpriteZSLA SpriteZSLB
+StaticSpriteRight = SpriteZSRA SpriteZSRB
+AttackSprite = SpriteZSAA SpriteZSAB 
+DyingSprite = SpriteZSDA SpriteZSDB SpriteZSDC SpriteZSDD SpriteZSDE SpriteZSDead
+Touched = SpriteZSDA
+ShotImpactID = ImpactStd
+DropedObjectID = ObjectGunAmmo
+Life = 5
+Velocity = 2
+Damage = 3
+SpriteWeightGame = 0.5 ; value in %
+SpriteHeightGame = 1.4
+traversable = false
+NormalBehaviourSound = Roar.wav
+DetectBehaviourSound = DemonDetect.wav
+AttackSound = DemonAttack.wav
+
+
 [EnemyDemonClaw]
 StaticSpriteFront = SpriteDCMFA SpriteDCMFB
 StaticSpriteFrontLeft = SpriteDCMMFLA SpriteDCMMFLB
