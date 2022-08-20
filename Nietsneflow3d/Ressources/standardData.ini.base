@@ -57,6 +57,31 @@ Sprite = SpriteTriggerA
 SpriteWeightGame = 0.4
 SpriteHeightGame = 0.8
 
+[EnemyArachnotron]
+StaticSpriteFront = SpriteAFA SpriteAFB
+StaticSpriteFrontLeft = SpriteAFLA SpriteAFLB
+StaticSpriteFrontRight = SpriteAFRA SpriteAFRB 
+StaticSpriteBack = SpriteABA SpriteABB
+StaticSpriteBackLeft = SpriteABLA SpriteABLB
+StaticSpriteBackRight = SpriteABRA SpriteABRB
+StaticSpriteLeft = SpriteALA SpriteALB
+StaticSpriteRight = SpriteARA SpriteARB
+AttackSprite = SpriteAAA SpriteAAB SpriteAAC
+DyingSprite = SpriteADA SpriteADB SpriteADC SpriteADD SpriteADE SpriteADF
+Touched = SpriteADA
+ShootSpritesID = VisibleShootDemon
+MeleeDamage = 22
+ShotVelocity = 3
+Life = 15
+Velocity = 1.1
+Damage = 25
+SpriteWeightGame = 2.1 ; value in %
+SpriteHeightGame = 1.6
+traversable = false
+NormalBehaviourSound = Roar.wav
+DetectBehaviourSound = DemonDetect.wav
+AttackSound = DemonAttack.wav
+
 [EnemyCyberDemon]
 StaticSpriteFront = SpriteCDFA SpriteCDFB
 StaticSpriteFrontLeft = SpriteCDFLA SpriteCDFLB

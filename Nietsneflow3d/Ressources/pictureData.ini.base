@@ -4,15 +4,207 @@ textures = walltest.jpg	Global.png FontTexture.png EnemyDemon.png GeneralSprites
 #================================Arachn
 
 #FRONT
+#17 94  109 55
+[SpriteAFA]
+texture = 8
+texturePosX = 0.0111
+texturePosY = 0.1058
+textureWeight = 0.0718
+textureHeight = 0.0619
+
+#172 94  269 55
+[SpriteAFB]
+texture = 8
+texturePosX = 0.1133
+texturePosY = 0.1058
+textureWeight = 0.0638
+textureHeight = 0.0619
+
 #FRONT LEFT
+#15 172  145 51
+[SpriteAFLA]
+texture = 8
+texturePosX = 0.0098
+texturePosY = 0.1936
+textureWeight = 0.0856
+textureHeight = 0.0574
+
+#457 172  572 51
+[SpriteAFLB]
+texture = 8
+texturePosX = 0.301
+texturePosY = 0.1936
+textureWeight = 0.0757
+textureHeight = 0.0574
+
 #FRONT RIGHT
+#911 172  1026 51
+[SpriteAFRA]
+texture = 8
+texturePosX = 0.6001
+texturePosY = 0.1936
+textureWeight = 0.0757
+textureHeight = 0.0574
+
+#1338 172  1468 51
+[SpriteAFRB]
+texture = 8
+texturePosX = 0.8814
+texturePosY = 0.1936
+textureWeight = 0.0856
+textureHeight = 0.0574
+
 #LEFT
+#24 236  135 55
+[SpriteALA]
+texture = 8
+texturePosX = 0.0158
+texturePosY = 0.2657
+textureWeight = 0.0731
+textureHeight = 0.0619
+
+#444 236  556 55
+[SpriteALB]
+texture = 8
+texturePosX = 0.2924
+texturePosY = 0.2657
+textureWeight = 0.0737
+textureHeight = 0.0619
+
 #RIGHT
+#910 236  1021 55
+[SpriteARA]
+texture = 8
+texturePosX = 0.5994
+texturePosY = 0.2657
+textureWeight = 0.0731
+textureHeight = 0.0619
+
+#1332 236  1441 55
+[SpriteARB]
+texture = 8
+texturePosX = 0.8774
+texturePosY = 0.2657
+textureWeight = 0.0718
+textureHeight = 0.0619
+
 #BACK LEFT
+#23 316  132 56
+[SpriteABLA]
+texture = 8
+texturePosX = 0.0151
+texturePosY = 0.3558
+textureWeight = 0.0718
+textureHeight = 0.063
+
+#443 316  570 56
+[SpriteABLB]
+texture = 8
+texturePosX = 0.2918
+texturePosY = 0.3558
+textureWeight = 0.0836
+textureHeight = 0.063
+
 #BACK RIGHT
+#913 316  1040 56
+[SpriteABRA]
+texture = 8
+texturePosX = 0.6014
+texturePosY = 0.3558
+textureWeight = 0.0836
+textureHeight = 0.063
+
+#1351 316  1460 56
+[SpriteABRB]
+texture = 8
+texturePosX = 0.8899
+texturePosY = 0.3558
+textureWeight = 0.0718
+textureHeight = 0.063
+
 #BACK
+#24 394  134 53
+[SpriteABA]
+texture = 8
+texturePosX = 0.0158
+texturePosY = 0.4436
+textureWeight = 0.0724
+textureHeight = 0.0596
+
+#171 394  278 53
+[SpriteABB]
+texture = 8
+texturePosX = 0.1126
+texturePosY = 0.4436
+textureWeight = 0.0704
+textureHeight = 0.0596
+
 #ATTACK
+#13 483  110 54
+[SpriteAAA]
+texture = 8
+texturePosX = 0.0085
+texturePosY = 0.5439
+textureWeight = 0.0638
+textureHeight = 0.0608
+
+#132 483  229 54
+[SpriteAAB]
+texture = 8
+texturePosX = 0.0869
+texturePosY = 0.5439
+textureWeight = 0.0638
+textureHeight = 0.0608
+
 #DYING
+#12 814  99 59
+[SpriteADA]
+texture = 8
+texturePosX = 0.0079
+texturePosY = 0.9166
+textureWeight = 0.0652
+textureHeight = 0.0664
+
+#133 814  99 59
+[SpriteADB]
+texture = 8
+texturePosX = 0.0876
+texturePosY = 0.9166
+textureWeight = 0.0652
+textureHeight = 0.0664
+
+#244 814  99 59
+[SpriteADC]
+texture = 8
+texturePosX = 0.1607
+texturePosY = 0.9166
+textureWeight = 0.0652
+textureHeight = 0.0664
+
+#352 814  99 59
+[SpriteADD]
+texture = 8
+texturePosX = 0.2318
+texturePosY = 0.9166
+textureWeight = 0.0652
+textureHeight = 0.0664
+
+#462 814  99 59
+[SpriteADE]
+texture = 8
+texturePosX = 0.3043
+texturePosY = 0.9166
+textureWeight = 0.0652
+textureHeight = 0.0664
+
+#573 814  99 59
+[SpriteADF]
+texture = 8
+texturePosX = 0.3774
+texturePosY = 0.9166
+textureWeight = 0.0652
+textureHeight = 0.0664
+
 
 #================================Cyber Demon
 
