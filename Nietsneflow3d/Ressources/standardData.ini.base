@@ -7,6 +7,8 @@ TeleportSound = Teleport.wav
 [GraphicUtils]
 CursorSprite = SpriteSO
 PannelSprite = SpritePannel
+LifeIconSprite = SpriteLifeIcon
+AmmoIconSprite = SpriteAmmoIcon
 
 [TelepAnim]
 Sprite = SpriteAnimTeleportA SpriteAnimTeleportB

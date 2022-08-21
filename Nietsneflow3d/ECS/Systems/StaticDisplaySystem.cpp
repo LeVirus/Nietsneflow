@@ -79,21 +79,10 @@ void StaticDisplaySystem::execSystem()
         assert(spriteComp);
         confWeaponsVertexFromComponent(playerComp, spriteComp);
         drawVertex(spriteComp->m_spriteData->m_textureNum, VertexID_e::WEAPON);
-        //DRAW PANNEL
-        PositionVertexComponent *posComp = stairwayToComponentManager().
-                searchComponentByType<PositionVertexComponent>(playerComp->m_lifeAmmoPannelEntity,
-                                                               Components_e::POSITION_VERTEX_COMPONENT);
-        spriteComp = stairwayToComponentManager().
-                searchComponentByType<SpriteTextureComponent>(playerComp->m_lifeAmmoPannelEntity,
-                                                              Components_e::SPRITE_TEXTURE_COMPONENT);
-        assert(spriteComp);
-        assert(posComp);
-        uint32_t index = static_cast<uint32_t>(VertexID_e::PANNEL);
-        if(m_vertices[index].empty())
-        {
-            m_vertices[index].loadVertexStandartTextureComponent(*posComp, *spriteComp);
-        }
-        drawVertex(spriteComp->m_spriteData->m_textureNum, VertexID_e::PANNEL);
+
+        drawStandardStaticSprite(VertexID_e::PANNEL, playerComp);
+        drawStandardStaticSprite(VertexID_e::AMMO_ICON, playerComp);
+        drawStandardStaticSprite(VertexID_e::LIFE_ICON, playerComp);
 
         drawWriteInfoPlayer(mVectNumEntity[i], playerComp);
         std::string strAmmoDisplay = STR_PLAYER_AMMO +
@@ -102,6 +91,24 @@ void StaticDisplaySystem::execSystem()
         drawWriteVertex(playerComp->m_lifeWriteEntity, VertexID_e::LIFE_WRITE, STR_PLAYER_LIFE +
                          std::to_string(playerComp->m_life));
     }
+}
+
+//===================================================================
+void StaticDisplaySystem::drawStandardStaticSprite(VertexID_e spriteId, PlayerConfComponent *playerComp)
+{
+    uint32_t entity = getSpriteAssociateEntity(spriteId, playerComp);
+    PositionVertexComponent *posComp = stairwayToComponentManager().
+            searchComponentByType<PositionVertexComponent>(entity, Components_e::POSITION_VERTEX_COMPONENT);
+    SpriteTextureComponent *spriteComp = stairwayToComponentManager().
+            searchComponentByType<SpriteTextureComponent>(entity, Components_e::SPRITE_TEXTURE_COMPONENT);
+    assert(spriteComp);
+    assert(posComp);
+    uint32_t index = static_cast<uint32_t>(spriteId);
+    if(m_vertices[index].empty())
+    {
+        m_vertices[index].loadVertexStandartTextureComponent(*posComp, *spriteComp);
+    }
+    drawVertex(spriteComp->m_spriteData->m_textureNum, spriteId);
 }
 
 //===================================================================
@@ -889,4 +896,25 @@ float getLeftTextPosition(std::string_view str)
         currentPos = find;
     }while(find != std::string::npos);
     return maxLineSize * -0.02f;
+}
+
+//===================================================================
+uint32_t getSpriteAssociateEntity(VertexID_e spriteId, PlayerConfComponent* const playerComp)
+{
+    if(spriteId == VertexID_e::PANNEL)
+    {
+        return playerComp->m_lifeAmmoPannelEntity;
+    }
+    else if(spriteId == VertexID_e::AMMO_ICON)
+    {
+        return playerComp->m_lifeIconEntity;
+    }
+    else if(spriteId == VertexID_e::LIFE_ICON)
+    {
+        return playerComp->m_ammoIconEntity;
+    }
+    else
+    {
+        assert(false);
+    }
 }

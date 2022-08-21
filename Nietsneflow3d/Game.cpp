@@ -47,7 +47,7 @@ void Game::clearLevel(const LevelState &levelRet)
 void Game::loadStandardEntities()
 {
     m_mainEngine.loadColorEntities();
-    m_mainEngine.loadCursorEntities(m_levelManager);
+    m_mainEngine.loadStaticSpriteEntities(m_levelManager);
 }
 
 //===================================================================

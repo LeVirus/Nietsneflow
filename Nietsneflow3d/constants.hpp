@@ -432,8 +432,8 @@ inline const float SCREEN_VERT_BACKGROUND_GL_STEP = 1.0f / RAYCAST_GROUND_CEILIN
 inline const float SCREEN_HORIZ_BACKGROUND_GL_STEP = 2.0f / RAYCAST_LINE_NUMBER;
 inline const PairFloat_t CURSOR_GL_SIZE = {0.20f, 0.25f};
 inline const double WRITE_LETTER_GL_OFFSET = 0.01;
-inline const std::string STR_PLAYER_LIFE = "LIFE::";
-inline const std::string STR_PLAYER_AMMO = "AMMO::";
+inline const std::string STR_PLAYER_LIFE;
+inline const std::string STR_PLAYER_AMMO;
 inline const std::string SHADER_DIR_STR = "../Nietsneflow3d/Ressources/Shader/";
 inline const std::string LEVEL_RESSOURCES_DIR_STR = "../Nietsneflow3d/Ressources/";
 inline const std::string TEXTURES_DIR_STR = "../Nietsneflow3d/Ressources/Textures/";

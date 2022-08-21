@@ -2744,7 +2744,7 @@ void MainEngine::confPlayerEntity(const LevelManager &levelManager,
     staticDisplay->setWeaponSprite(numWeaponEntity, m_weaponComp->m_weaponsData[m_weaponComp->m_currentWeapon].m_memPosSprite.first);
     confWriteEntities();
     confMenuCursorEntity();
-    confLifeAmmoPannelEntity();
+    confLifeAmmoPannelEntities();
     confActionEntity();
     confMapDetectShapeEntity(map->m_absoluteMapPositionPX);
     for(uint32_t i = 0; i < weaponConf->m_weaponsData.size(); ++i)
@@ -2913,7 +2913,7 @@ void MainEngine::confWriteEntities()
     writeConf = m_ecsManager.getComponentManager().
             searchComponentByType<WriteComponent>(numAmmoWrite, Components_e::WRITE_COMPONENT);
     assert(writeConf);
-    writeConf->m_upLeftPositionGL = {-0.95f, -0.9f};
+    writeConf->m_upLeftPositionGL = {-0.75f, -0.9f};
     writeConf->m_fontSize = STD_FONT_SIZE;
     writeConf->addTextLine({writeConf->m_upLeftPositionGL.first, ""});
     m_graphicEngine.updateAmmoCount(writeConf, m_weaponComp);
@@ -2921,7 +2921,7 @@ void MainEngine::confWriteEntities()
     writeConf = m_ecsManager.getComponentManager().
             searchComponentByType<WriteComponent>(numLifeWrite, Components_e::WRITE_COMPONENT);
     assert(writeConf);
-    writeConf->m_upLeftPositionGL = {-0.95f, -0.8f};
+    writeConf->m_upLeftPositionGL = {-0.75f, -0.8f};
     writeConf->m_fontSize = STD_FONT_SIZE;
     writeConf->addTextLine({writeConf->m_upLeftPositionGL.first, ""});
     m_graphicEngine.updatePlayerLife(writeConf, m_playerConf);
@@ -3047,24 +3047,47 @@ void MainEngine::confMenuCursorEntity()
 }
 
 //===================================================================
-void MainEngine::confLifeAmmoPannelEntity()
+void MainEngine::confLifeAmmoPannelEntities()
 {
+    //PANNEL
     uint32_t lifeAmmoPannelEntity = createSimpleSpriteEntity();
     PositionVertexComponent *posCursor = m_ecsManager.getComponentManager().
-            searchComponentByType<PositionVertexComponent>(lifeAmmoPannelEntity,
-                                                           Components_e::POSITION_VERTEX_COMPONENT);
+            searchComponentByType<PositionVertexComponent>(lifeAmmoPannelEntity, Components_e::POSITION_VERTEX_COMPONENT);
     SpriteTextureComponent *spriteCursor = m_ecsManager.getComponentManager().
-            searchComponentByType<SpriteTextureComponent>(lifeAmmoPannelEntity,
-                                                          Components_e::SPRITE_TEXTURE_COMPONENT);
+            searchComponentByType<SpriteTextureComponent>(lifeAmmoPannelEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
     assert(posCursor);
     assert(spriteCursor);
     m_playerConf->m_lifeAmmoPannelEntity = lifeAmmoPannelEntity;
     spriteCursor->m_spriteData = m_memPannel;
     posCursor->m_vertex.reserve(4);
-    float up = -0.78f, down = -0.97f,
-            left = -0.97f, right = -0.625f;
-    posCursor->m_vertex.insert(posCursor->m_vertex.end(), {{left, up}, {right, up},
-                                   {right, down},{left, down}});
+    float up = -0.78f, down = -0.97f, left = -0.97f, right = -0.625f;
+    posCursor->m_vertex.insert(posCursor->m_vertex.end(), {{left, up}, {right, up}, {right, down},{left, down}});
+    //LIFE
+    uint32_t lifeIconEntity = createSimpleSpriteEntity();
+    posCursor = m_ecsManager.getComponentManager().
+            searchComponentByType<PositionVertexComponent>(lifeIconEntity, Components_e::POSITION_VERTEX_COMPONENT);
+    spriteCursor = m_ecsManager.getComponentManager().
+            searchComponentByType<SpriteTextureComponent>(lifeIconEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
+    assert(posCursor);
+    assert(spriteCursor);
+    m_playerConf->m_lifeIconEntity = lifeIconEntity;
+    spriteCursor->m_spriteData = m_memLifeIcon;
+    posCursor->m_vertex.reserve(4);
+    up = -0.8f, down = -0.87f, left = -0.95f, right = -0.9f;
+    posCursor->m_vertex.insert(posCursor->m_vertex.end(), {{left, up}, {right, up}, {right, down},{left, down}});
+    //AMMO
+    uint32_t ammoIconEntity = createSimpleSpriteEntity();
+    posCursor = m_ecsManager.getComponentManager().
+            searchComponentByType<PositionVertexComponent>(ammoIconEntity, Components_e::POSITION_VERTEX_COMPONENT);
+    spriteCursor = m_ecsManager.getComponentManager().
+            searchComponentByType<SpriteTextureComponent>(ammoIconEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
+    assert(posCursor);
+    assert(spriteCursor);
+    m_playerConf->m_ammoIconEntity = ammoIconEntity;
+    spriteCursor->m_spriteData = m_memAmmoIcon;
+    posCursor->m_vertex.reserve(4);
+    up = -0.9f, down = -0.95f, left = -0.95f, right = -0.9f;
+    posCursor->m_vertex.insert(posCursor->m_vertex.end(), {{left, up}, {right, up}, {right, down},{left, down}});
 
 }
 
@@ -3081,15 +3104,18 @@ bool MainEngine::loadStaticElementEntities(const LevelManager &levelManager)
 }
 
 //===================================================================
-void MainEngine::loadCursorEntities(const LevelManager &levelManager)
+void MainEngine::loadStaticSpriteEntities(const LevelManager &levelManager)
 {
     //LOAD CURSOR MENU
-    uint8_t cursorSpriteId = *levelManager.getPictureData().
-            getIdentifier(levelManager.getCursorSpriteName()),
-            pannelSpriteId = *levelManager.getPictureData().
-            getIdentifier(levelManager.getPannelSpriteName());
+    uint8_t cursorSpriteId = *levelManager.getPictureData().getIdentifier(levelManager.getCursorSpriteName()),
+            pannelSpriteId = *levelManager.getPictureData().getIdentifier(levelManager.getPannelSpriteName()),
+            lifeIconSpriteId = *levelManager.getPictureData().getIdentifier(levelManager.getLifeIconSpriteName()),
+            ammoIconSpriteId = *levelManager.getPictureData().getIdentifier(levelManager.getAmmoIconSpriteName());
+
     m_memCursorSpriteData = &levelManager.getPictureData().getSpriteData()[cursorSpriteId];
     m_memPannel = &levelManager.getPictureData().getSpriteData()[pannelSpriteId];
+    m_memLifeIcon = &levelManager.getPictureData().getSpriteData()[lifeIconSpriteId];
+    m_memAmmoIcon = &levelManager.getPictureData().getSpriteData()[ammoIconSpriteId];
 }
 
 //===================================================================

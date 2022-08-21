@@ -1485,6 +1485,12 @@ void LevelManager::loadUtilsData()
     val = m_ini.getValue(vectINISections[0], "PannelSprite");
     assert(val);
     m_spritePannelName = *val;
+    val = m_ini.getValue(vectINISections[0], "LifeIconSprite");
+    assert(val);
+    m_spriteLifeIcon= *val;
+    val = m_ini.getValue(vectINISections[0], "AmmoIconSprite");
+    assert(val);
+    m_spriteAmmoIcon = *val;
 }
 
 //===================================================================

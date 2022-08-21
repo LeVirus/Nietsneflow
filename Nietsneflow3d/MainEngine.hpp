@@ -237,7 +237,7 @@ public:
     void loadColorEntities();
     void loadPlayerEntity(const LevelManager &levelManager);
 //    void loadPlayerEntity(const LevelManager &levelManager);
-    void loadCursorEntities(const LevelManager &levelManager);
+    void loadStaticSpriteEntities(const LevelManager &levelManager);
     void savePlayerGear(bool beginLevel);
     void unsetFirstLaunch();
 private:
@@ -258,7 +258,7 @@ private:
     void confWriteEntitiesDisplayMenu();
     void confWriteEntitiesInputMenu();
     void confMenuCursorEntity();
-    void confLifeAmmoPannelEntity();
+    void confLifeAmmoPannelEntities();
     void confWriteEntities();
     void linkSystemsToGraphicEngine();
     void linkSystemsToPhysicalEngine();
@@ -374,7 +374,7 @@ private:
     std::vector<std::pair<uint32_t, time_t>> m_vectMemPausedTimer;
     bool m_gamePaused = false, m_playerMemGear = false, m_levelEnd = false;
     SpriteData const *m_memCursorSpriteData = nullptr, *m_memVisibleShotA = nullptr,
-    *m_memPannel = nullptr;
+    *m_memPannel = nullptr, *m_memLifeIcon = nullptr, *m_memAmmoIcon = nullptr;
     WriteComponent *m_writeConf = nullptr;
     PlayerConfComponent *m_playerConf = nullptr;
     WeaponComponent *m_weaponComp;

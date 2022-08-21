@@ -38,6 +38,8 @@ enum class VertexID_e
     FULLSCREEN,
     INPUT,
     PANNEL,
+    LIFE_ICON,
+    AMMO_ICON,
     TOTAL
 };
 
@@ -50,6 +52,7 @@ class StaticDisplaySystem : public ecs::System
 public:
     StaticDisplaySystem();
     void execSystem()override;
+    void drawStandardStaticSprite(VertexID_e spriteId, PlayerConfComponent *playerComp);
     void displayMenu();
     void setShader(Shader &shader);
     void setWeaponSprite(uint32_t weaponEntity, uint32_t weaponNumSprite);
@@ -113,6 +116,8 @@ private:
     m_fullscreenMenuEntity, m_infoWriteStandardInterval = 1.5 / FPS_VALUE;
     ArrayControlKey_t m_inputMenuKeyboardWriteKeysEntities, m_inputMenuGamepadWriteKeysEntities;
 };
+
+uint32_t getSpriteAssociateEntity(VertexID_e spriteId, PlayerConfComponent * const playerComp);
 float getLeftTextPosition(std::string_view str);
 std::string treatInfoMessageEndLine(const std::string &str, uint32_t lineSize = 20);
 void modVertexPos(PositionVertexComponent *posComp, const PairFloat_t &mod);

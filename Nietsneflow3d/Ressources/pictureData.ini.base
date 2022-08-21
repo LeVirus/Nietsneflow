@@ -1,6 +1,21 @@
 [PathToTexture]
 textures = walltest.jpg	Global.png FontTexture.png EnemyDemon.png GeneralSprites.png EnemyMarine.png Stars.jpg Simetra_green.png BossArachnotron.png BossCyberDemon.png EnemyBaronOfHell.png EnemyCacodemon.png EnemyDemonClaw.png EnemyZombieSergeant.png
 
+#223 2678  249 2704
+[SpriteLifeIcon]
+texture = 4
+texturePosX = 0.05
+texturePosY = 0.8897
+textureWeight = 0.0058
+textureHeight = 0.0086
+
+[SpriteAmmoIcon]
+texture = 1
+texturePosX = 0.55729
+texturePosY = 0.76674
+textureWeight = 0.0177
+textureHeight = 0.01339
+
 #================================Arachn
 
 #FRONT

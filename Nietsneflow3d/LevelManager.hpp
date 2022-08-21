@@ -153,6 +153,14 @@ public:
     {
         return m_spritePannelName;
     }
+    inline std::string getLifeIconSpriteName()const
+    {
+        return m_spriteLifeIcon;
+    }
+    inline std::string getAmmoIconSpriteName()const
+    {
+        return m_spriteAmmoIcon;
+    }
     inline const std::map<std::string, MoveableWallData> getMoveableWallData()const
     {
         return m_mainWallData;
@@ -328,7 +336,7 @@ private:
     PictureData m_pictureData;
     FontData m_fontData;
     Level m_level;
-    std::string m_spriteCursorName, m_spritePannelName;
+    std::string m_spriteCursorName, m_spritePannelName, m_spriteLifeIcon, m_spriteAmmoIcon;
     StaticLevelElementData m_exitStaticElement;
     std::map<std::string, WallData> m_wallData;
     std::map<std::string, MoveableWallData> m_mainWallData;
