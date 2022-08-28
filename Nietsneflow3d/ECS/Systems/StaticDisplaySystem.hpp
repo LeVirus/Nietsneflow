@@ -42,6 +42,7 @@ enum class VertexID_e
     LIFE_ICON,
     AMMO_ICON,
     POSSESSED_WEAPONS,
+    CURSOR_WEAPON,
     TOTAL
 };
 

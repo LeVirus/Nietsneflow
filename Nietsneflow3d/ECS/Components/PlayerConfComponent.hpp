@@ -39,7 +39,7 @@ struct PlayerConfComponent : public ecs::Component
              m_titleMenuEntity, m_menuEntriesEntity, m_menuCursorEntity, m_lifeAmmoPannelEntity, m_menuInfoWriteEntity,
              m_actionEntity, m_hitMeleeEntity, m_lifeWriteEntity, m_numInfoWriteEntity,
              m_life = 100, m_displayTeleportEntity, m_mapDetectShapeEntity, m_currentCustomLevelCusorMenu, m_levelToLoad,
-             m_lifeIconEntity, m_ammoIconEntity, m_weaponsPreviewEntity, m_cursorWeaponPreviewEntity;
+             m_lifeIconEntity, m_ammoIconEntity, m_cursorWeaponPreviewEntity;
     //display only weapons when changing weapons
     std::array<uint32_t, 6> m_vectPossessedWeaponsPreviewEntities;
     std::optional<uint32_t> m_secretsFound, m_enemiesKilled;

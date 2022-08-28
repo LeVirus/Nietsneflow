@@ -3096,7 +3096,6 @@ void MainEngine::confLifeAmmoPannelEntities()
 //===================================================================
 void MainEngine::confWeaponsPreviewEntities()
 {
-    m_playerConf->m_weaponsPreviewEntity = createSimpleSpriteEntity();
     m_playerConf->m_cursorWeaponPreviewEntity = createSimpleSpriteEntity();
     SpriteTextureComponent *spriteCursor = m_ecsManager.getComponentManager().
             searchComponentByType<SpriteTextureComponent>(m_playerConf->m_cursorWeaponPreviewEntity,

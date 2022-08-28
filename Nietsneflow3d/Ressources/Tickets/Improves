@@ -3,18 +3,14 @@ IMPROVE=========================================================================
 
 
 ))
-Display posseded weapons possessed weapons 
-
-))
 Add enemy physical attack only
 
 ))
 Play specific music on epilogue
 
 
-
 ))
-Changer Life et Ammo en icone=========OK
+Remove .fake file after level loading=========================In levelManager
 
 ))
 Display possess card===========~~A VOIR
@@ -31,7 +27,10 @@ Improve Enemy behavour===!!!!!!===================~
 
 
 ))
-Remove .fake file after level loading=========================In levelManager
+Changer Life et Ammo en icone=========OK
+
+))
+Display posseded weapons possessed weapons======================OK
 
 ))
 Add a "transparent screen" to display behind life and ammo====================OK
