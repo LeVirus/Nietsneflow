@@ -26,6 +26,7 @@ using MapVisibleShotData_t = std::map<std::string, std::pair<std::string ,std::v
 using PairImpactData_t = std::pair<std::vector<MemSpriteData>, MemSpriteData>;
 using MapImpactData_t = std::map<std::string, PairImpactData_t>;
 using pairI_t = std::pair<int, int>;
+using PairStrPairFloat_t = std::pair<std::string, PairFloat_t>;
 
 enum class LevelLoadState_e
 {
@@ -155,12 +156,38 @@ public:
     }
     inline std::string getLifeIconSpriteName()const
     {
-        return m_spriteLifeIcon;
+        return m_spriteLifeName;
     }
     inline std::string getAmmoIconSpriteName()const
     {
-        return m_spriteAmmoIcon;
+        return m_spriteAmmoName;
     }
+
+    inline std::string getFistIconSpriteName()const
+    {
+        return m_spriteFistName;
+    }
+    inline std::string getGunIconSpriteName()const
+    {
+        return m_spriteGunName;
+    }
+    inline std::string getShotgunIconSpriteName()const
+    {
+        return m_spriteShotgunName;
+    }
+    inline std::string getPlasmaRifleIconSpriteName()const
+    {
+        return m_spritePlasmaRifleName;
+    }
+    inline std::string getMachineGunIconSpriteName()const
+    {
+        return m_spriteMachineGunName;
+    }
+    inline std::string getBazookaIconSpriteName()const
+    {
+        return m_spriteBazookaName;
+    }
+
     inline const std::map<std::string, MoveableWallData> getMoveableWallData()const
     {
         return m_mainWallData;
@@ -253,6 +280,10 @@ public:
     {
         return m_logStdData;
     }
+    inline const std::vector<PairStrPairFloat_t> &getWeaponsPreviewData()const
+    {
+        return m_weaponsPreviewData;
+    }
     bool checkSavedGameExists(uint32_t saveNum) const;
 private:
     std::string getGamepadKeyIniString(const GamepadInputState &gamepadInputState) const;
@@ -318,6 +349,7 @@ private:
     void loadPositionLogsData();
     void loadPrologueAndEpilogue();
     void loadUtilsData();
+    PairStrPairFloat_t loadPreviewWeaponData(const std::string &iniObject);
     void loadEnemySprites(const std::string &sectionName,
                           EnemySpriteElementType_e spriteTypeEnum, EnemyData &enemyData);
     void deleteWall(const PairUI_t &coord);
@@ -336,7 +368,9 @@ private:
     PictureData m_pictureData;
     FontData m_fontData;
     Level m_level;
-    std::string m_spriteCursorName, m_spritePannelName, m_spriteLifeIcon, m_spriteAmmoIcon;
+    std::string m_spriteCursorName, m_spritePannelName, m_spriteLifeName, m_spriteAmmoName,
+    m_spriteFistName, m_spriteGunName, m_spriteShotgunName,
+    m_spritePlasmaRifleName, m_spriteMachineGunName, m_spriteBazookaName;
     StaticLevelElementData m_exitStaticElement;
     std::map<std::string, WallData> m_wallData;
     std::map<std::string, MoveableWallData> m_mainWallData;
@@ -353,6 +387,7 @@ private:
     //first ID, second Std data
     std::map<std::string, LogStdData> m_logStdData;
     std::vector<std::pair<PairUI_t, Direction_e>> m_checkpointsPos;
+    std::vector<PairStrPairFloat_t> m_weaponsPreviewData;
     //store the sprite number and the screen display size
     std::vector<WeaponINIData> m_vectWeaponsINIData;
     //first moving Shot sprite, all other destruct phase sprites

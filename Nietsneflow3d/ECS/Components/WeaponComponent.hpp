@@ -3,6 +3,7 @@
 #include <BaseECS/component.hpp>
 #include <constants.hpp>
 
+using PairStrPairFloat_t = std::pair<std::string, PairFloat_t>;
 
 struct WeaponData
 {
@@ -33,5 +34,6 @@ struct WeaponComponent : public ecs::Component
     PairFloat_t m_currentWeaponMove = {-0.005f, -0.003f};
     bool m_timerShootActive = false, m_shootFirstPhase, m_weaponChange = false,
     m_spritePositionCorrected = true, m_weaponToChange = false;
+    std::vector<PairStrPairFloat_t> m_previewDisplayData;
     virtual ~WeaponComponent() = default;
 };

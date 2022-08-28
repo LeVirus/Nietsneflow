@@ -9,6 +9,16 @@ CursorSprite = SpriteSO
 PannelSprite = SpritePannel
 LifeIconSprite = SpriteLifeIcon
 AmmoIconSprite = SpriteAmmoIcon
+FistIcon = SpriteFAA
+GunIcon = SpriteGSt
+SpriteWeightFist = 0.4
+SpriteHeightFist = 0.4
+SpriteWeightGun = 0.4
+SpriteHeightGun = 0.4
+ShotgunID = ObjectShotgun
+PlasmaRifleID = ObjectPlasmaRifle
+BazookaID = ObjectBazooka
+MachineGunID = ObjectMachineGun
 
 [TelepAnim]
 Sprite = SpriteAnimTeleportA SpriteAnimTeleportB
@@ -444,7 +454,7 @@ Containing = 10
 
 [ObjectShotgun]
 Sprite = SpriteSO
-SpriteWeightGame = 0.2 ; value in %
+SpriteWeightGame = 0.4 ; value in %
 SpriteHeightGame = 0.5
 Type = 0
 WeaponID = WeaponShotgun

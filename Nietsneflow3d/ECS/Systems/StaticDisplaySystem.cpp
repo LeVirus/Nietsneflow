@@ -90,6 +90,46 @@ void StaticDisplaySystem::execSystem()
         drawWriteVertex(playerComp->m_ammoWriteEntity, VertexID_e::AMMO_WRITE, strAmmoDisplay);
         drawWriteVertex(playerComp->m_lifeWriteEntity, VertexID_e::LIFE_WRITE, STR_PLAYER_LIFE +
                          std::to_string(playerComp->m_life));
+        if(weaponComp->m_weaponChange)
+        {
+            drawWeaponsPreviewPlayer(playerComp, weaponComp);
+        }
+    }
+}
+
+//===================================================================
+void StaticDisplaySystem::drawWeaponsPreviewPlayer(PlayerConfComponent const *playerComp,
+                                                   WeaponComponent const *weaponComp)
+{
+    float currentYCursorDown = -0.75, currentYCursorUp, currentXCursorRight;
+    uint32_t currentEntity;
+    uint32_t vertexIndex = static_cast<uint32_t>(VertexID_e::POSSESSED_WEAPONS);
+    m_vertices[vertexIndex].clear();
+    for(int32_t i = weaponComp->m_weaponsData.size() - 1; i > -1; --i)
+    {
+        currentEntity = playerComp->m_vectPossessedWeaponsPreviewEntities[i];
+        if(weaponComp->m_weaponsData[i].m_posses)
+        {
+            PositionVertexComponent *posComp = stairwayToComponentManager().
+                    searchComponentByType<PositionVertexComponent>(currentEntity, Components_e::POSITION_VERTEX_COMPONENT);
+            SpriteTextureComponent *spriteComp = stairwayToComponentManager().
+                    searchComponentByType<SpriteTextureComponent>(currentEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
+            assert(spriteComp);
+            assert(posComp);
+            if(posComp->m_vertex.empty())
+            {
+                posComp->m_vertex.resize(4);
+            }
+            currentYCursorUp = currentYCursorDown + weaponComp->m_previewDisplayData[i].second.second;
+            currentXCursorRight = WEAPONS_PREVIEW_GL_POS_LEFT + weaponComp->m_previewDisplayData[i].second.first;
+            posComp->m_vertex[0] = {WEAPONS_PREVIEW_GL_POS_LEFT, currentYCursorUp};
+            posComp->m_vertex[1] = {currentXCursorRight, currentYCursorUp};
+            posComp->m_vertex[2] = {currentXCursorRight, currentYCursorDown};
+            posComp->m_vertex[3] = {WEAPONS_PREVIEW_GL_POS_LEFT, currentYCursorDown};
+            m_vertices[vertexIndex].loadVertexStandartTextureComponent(*posComp, *spriteComp);
+            currentYCursorDown = currentYCursorUp + 0.01f;
+            drawVertex(spriteComp->m_spriteData->m_textureNum, VertexID_e::POSSESSED_WEAPONS);
+        }
     }
 }
 

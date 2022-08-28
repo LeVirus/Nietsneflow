@@ -1443,15 +1443,16 @@ textureHeight = 0.02455
 texture = 1
 texturePosX = 0.55729
 texturePosY = 0.76674
-textureWeight = 0.0177
-textureHeight = 0.01339
+textureWeight = 0.0141
+textureHeight = 0.0056
 
+#  2206
 [SpriteSO]
-texture = 1
-texturePosX = 0.0
-texturePosY = 0.185267
-textureWeight = 0.067708
-textureHeight = 0.06666
+texture = 4
+texturePosX = 0.0040
+texturePosY = 0.7328
+textureWeight = 0.0148
+textureHeight = 0.0063
 
 [SpriteItemShotgunAmmo]
 texture = 1

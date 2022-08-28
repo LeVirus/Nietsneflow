@@ -1476,21 +1476,75 @@ void LevelManager::loadPrologueAndEpilogue()
 //===================================================================
 void LevelManager::loadUtilsData()
 {
-    std::vector<std::string> vectINISections;
-    vectINISections = m_ini.getSectionNamesContaining("GraphicUtils");
-    assert(!vectINISections.empty());
-    std::optional<std::string> val = m_ini.getValue(vectINISections[0], "CursorSprite");
+    m_weaponsPreviewData.clear();
+    std::optional<std::string> val = m_ini.getValue("GraphicUtils", "CursorSprite");
     assert(val);
     m_spriteCursorName = *val;
-    val = m_ini.getValue(vectINISections[0], "PannelSprite");
+    val = m_ini.getValue("GraphicUtils", "PannelSprite");
     assert(val);
     m_spritePannelName = *val;
-    val = m_ini.getValue(vectINISections[0], "LifeIconSprite");
+    val = m_ini.getValue("GraphicUtils", "LifeIconSprite");
     assert(val);
-    m_spriteLifeIcon= *val;
-    val = m_ini.getValue(vectINISections[0], "AmmoIconSprite");
+    m_spriteLifeName= *val;
+    val = m_ini.getValue("GraphicUtils", "AmmoIconSprite");
     assert(val);
-    m_spriteAmmoIcon = *val;
+    m_spriteAmmoName = *val;
+    //Load visual weapons (changing)
+    PairStrPairFloat_t pair;
+    m_weaponsPreviewData.reserve(6);
+    //FIST
+    val = m_ini.getValue("GraphicUtils", "FistIcon");
+    assert(val);
+    m_spriteFistName = *val;
+    pair.first = *val;
+    val = m_ini.getValue("GraphicUtils", "SpriteWeightFist");
+    assert(val);
+    pair.second.first = std::stof(*val) / 2;
+    val = m_ini.getValue("GraphicUtils", "SpriteHeightFist");
+    assert(val);
+    pair.second.second = std::stof(*val) / 2;
+    m_weaponsPreviewData.emplace_back(pair);
+    //GUN
+    val = m_ini.getValue("GraphicUtils", "GunIcon");
+    assert(val);
+    m_spriteGunName = *val;
+    pair.first = *val;
+    val = m_ini.getValue("GraphicUtils", "SpriteWeightGun");
+    assert(val);
+    pair.second.first = std::stof(*val) / 2;
+    val = m_ini.getValue("GraphicUtils", "SpriteHeightGun");
+    assert(val);
+    pair.second.second = std::stof(*val) / 2;
+    m_weaponsPreviewData.emplace_back(pair);
+
+    val = m_ini.getValue("GraphicUtils", "ShotgunID");
+    assert(val);
+    m_weaponsPreviewData.emplace_back(loadPreviewWeaponData(*val));
+    m_spriteShotgunName = m_weaponsPreviewData.back().first;
+    val = m_ini.getValue("GraphicUtils", "PlasmaRifleID");
+    assert(val);
+    m_weaponsPreviewData.emplace_back(loadPreviewWeaponData(*val));
+    m_spritePlasmaRifleName = m_weaponsPreviewData.back().first;
+    val = m_ini.getValue("GraphicUtils", "MachineGunID");
+    assert(val);
+    m_weaponsPreviewData.emplace_back(loadPreviewWeaponData(*val));
+    m_spriteMachineGunName = m_weaponsPreviewData.back().first;
+    val = m_ini.getValue("GraphicUtils", "BazookaID");
+    assert(val);
+    m_weaponsPreviewData.emplace_back(loadPreviewWeaponData(*val));
+    m_spriteBazookaName = m_weaponsPreviewData.back().first;
+}
+
+//===================================================================
+PairStrPairFloat_t LevelManager::loadPreviewWeaponData(const std::string &iniObject)
+{
+    std::optional<std::string> sprite = m_ini.getValue(iniObject, "Sprite");
+    std::optional<std::string> spriteWeight = m_ini.getValue(iniObject, "SpriteWeightGame");
+    std::optional<std::string> spriteHeight = m_ini.getValue(iniObject, "SpriteHeightGame");
+    assert(sprite);
+    assert(spriteWeight);
+    assert(spriteHeight);
+    return {*sprite, {std::stof(*spriteWeight) / 2, std::stof(*spriteHeight) / 2}};
 }
 
 //===================================================================

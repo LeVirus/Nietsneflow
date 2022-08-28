@@ -15,6 +15,7 @@ struct PlayerConfComponent;
 struct MemPositionsVertexComponents;
 struct WriteComponent;
 struct MouseKeyboardInputState;
+struct WeaponComponent;
 class MainEngine;
 
 using ArrayControlKey_t = std::array<uint32_t, static_cast<uint32_t>(ControlKey_e::TOTAL)>;
@@ -40,6 +41,7 @@ enum class VertexID_e
     PANNEL,
     LIFE_ICON,
     AMMO_ICON,
+    POSSESSED_WEAPONS,
     TOTAL
 };
 
@@ -84,6 +86,8 @@ public:
     }
 private:
     void drawWriteInfoPlayer(uint32_t playerEntity, PlayerConfComponent *playerComp);
+    void drawWeaponsPreviewPlayer(const PlayerConfComponent *playerComp,
+                                  WeaponComponent const *weaponComp);
     void fillCursorMenuVertex(PlayerConfComponent *playerComp);
     void updateMenuCursorPosition(PlayerConfComponent *playerComp);
     void confWriteVertex(WriteComponent *writeComp, PositionVertexComponent *posComp,

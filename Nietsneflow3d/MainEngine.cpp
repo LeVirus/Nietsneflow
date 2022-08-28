@@ -1094,6 +1094,7 @@ uint32_t MainEngine::loadWeaponsEntity(const LevelManager &levelManager)
                                                         });
         }
     }
+    weaponComp->m_previewDisplayData = levelManager.getWeaponsPreviewData();
     assert(weaponComp->m_currentWeapon < vectWeapons.size());
     return weaponEntity;
 }
@@ -2745,6 +2746,7 @@ void MainEngine::confPlayerEntity(const LevelManager &levelManager,
     confWriteEntities();
     confMenuCursorEntity();
     confLifeAmmoPannelEntities();
+    confWeaponsPreviewEntities();
     confActionEntity();
     confMapDetectShapeEntity(map->m_absoluteMapPositionPX);
     for(uint32_t i = 0; i < weaponConf->m_weaponsData.size(); ++i)
@@ -3092,9 +3094,52 @@ void MainEngine::confLifeAmmoPannelEntities()
 }
 
 //===================================================================
+void MainEngine::confWeaponsPreviewEntities()
+{
+    m_playerConf->m_weaponsPreviewEntity = createSimpleSpriteEntity();
+    m_playerConf->m_cursorWeaponPreviewEntity = createSimpleSpriteEntity();
+    SpriteTextureComponent *spriteCursor = m_ecsManager.getComponentManager().
+            searchComponentByType<SpriteTextureComponent>(m_playerConf->m_cursorWeaponPreviewEntity,
+                                                          Components_e::SPRITE_TEXTURE_COMPONENT);
+    assert(spriteCursor);
+    spriteCursor->m_spriteData = m_memPannel;
+    for(uint32_t i = 0; i < m_playerConf->m_vectPossessedWeaponsPreviewEntities.size(); ++i)
+    {
+        m_playerConf->m_vectPossessedWeaponsPreviewEntities[i] = createSimpleSpriteEntity();
+        spriteCursor = m_ecsManager.getComponentManager().
+                    searchComponentByType<SpriteTextureComponent>(m_playerConf->m_vectPossessedWeaponsPreviewEntities[i],
+                    Components_e::SPRITE_TEXTURE_COMPONENT);
+        assert(spriteCursor);
+        switch(i)
+        {
+        case 0:
+            spriteCursor->m_spriteData = m_memPreviewFistIcon;
+            break;
+        case 1:
+            spriteCursor->m_spriteData = m_memPreviewGunIcon;
+            break;
+        case 2:
+            spriteCursor->m_spriteData = m_memPreviewShotgunIcon;
+            break;
+        case 3:
+            spriteCursor->m_spriteData = m_memPreviewPlasmaRifleIcon;
+            break;
+        case 4:
+            spriteCursor->m_spriteData = m_memPreviewBazookaIcon;
+            break;
+        case 5:
+            spriteCursor->m_spriteData = m_memPreviewMachineGunIcon;
+            break;
+        default:
+            assert(false);
+            break;
+        }
+    }
+}
+
+//===================================================================
 bool MainEngine::loadStaticElementEntities(const LevelManager &levelManager)
 {
-    //LOAD CURSOR MENU
     const std::vector<SpriteData> &vectSprite = levelManager.getPictureData().getSpriteData();
     loadStaticElementGroup(vectSprite, levelManager.getGroundData(), LevelStaticElementType_e::GROUND);
     loadStaticElementGroup(vectSprite, levelManager.getCeilingData(), LevelStaticElementType_e::CEILING);
@@ -3106,16 +3151,28 @@ bool MainEngine::loadStaticElementEntities(const LevelManager &levelManager)
 //===================================================================
 void MainEngine::loadStaticSpriteEntities(const LevelManager &levelManager)
 {
-    //LOAD CURSOR MENU
     uint8_t cursorSpriteId = *levelManager.getPictureData().getIdentifier(levelManager.getCursorSpriteName()),
             pannelSpriteId = *levelManager.getPictureData().getIdentifier(levelManager.getPannelSpriteName()),
             lifeIconSpriteId = *levelManager.getPictureData().getIdentifier(levelManager.getLifeIconSpriteName()),
-            ammoIconSpriteId = *levelManager.getPictureData().getIdentifier(levelManager.getAmmoIconSpriteName());
+            ammoIconSpriteId = *levelManager.getPictureData().getIdentifier(levelManager.getAmmoIconSpriteName()),
+            fistIconSpriteId = *levelManager.getPictureData().getIdentifier(levelManager.getFistIconSpriteName()),
+            gunIconSpriteId = *levelManager.getPictureData().getIdentifier(levelManager.getGunIconSpriteName()),
+            shotgunIconSpriteId = *levelManager.getPictureData().getIdentifier(levelManager.getShotgunIconSpriteName()),
+            plasmaRifleIconSpriteId = *levelManager.getPictureData().getIdentifier(levelManager.getPlasmaRifleIconSpriteName()),
+            machineGunIconSpriteId = *levelManager.getPictureData().getIdentifier(levelManager.getMachineGunIconSpriteName()),
+            bazookaIconSpriteId = *levelManager.getPictureData().getIdentifier(levelManager.getBazookaIconSpriteName());
 
     m_memCursorSpriteData = &levelManager.getPictureData().getSpriteData()[cursorSpriteId];
     m_memPannel = &levelManager.getPictureData().getSpriteData()[pannelSpriteId];
     m_memLifeIcon = &levelManager.getPictureData().getSpriteData()[lifeIconSpriteId];
     m_memAmmoIcon = &levelManager.getPictureData().getSpriteData()[ammoIconSpriteId];
+
+    m_memPreviewFistIcon = &levelManager.getPictureData().getSpriteData()[fistIconSpriteId];
+    m_memPreviewGunIcon = &levelManager.getPictureData().getSpriteData()[gunIconSpriteId];
+    m_memPreviewShotgunIcon = &levelManager.getPictureData().getSpriteData()[shotgunIconSpriteId];
+    m_memPreviewPlasmaRifleIcon = &levelManager.getPictureData().getSpriteData()[plasmaRifleIconSpriteId];
+    m_memPreviewMachineGunIcon = &levelManager.getPictureData().getSpriteData()[machineGunIconSpriteId];
+    m_memPreviewBazookaIcon = &levelManager.getPictureData().getSpriteData()[bazookaIconSpriteId];
 }
 
 //===================================================================
