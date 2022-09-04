@@ -2,9 +2,6 @@ IMPROVE=========================================================================
 ==========================================================================================================
 
 
-))
-Add enemy physical attack only
-
 
 ))
 Remove .fake file after level loading=========================In levelManager
@@ -22,6 +19,9 @@ Enemy animations========================~
 Improve Enemy behavour===!!!!!!===================~
 
 
+
+))
+Add enemy physical attack only======================OK
 
 ))
 Play specific music on epilogue============================OK

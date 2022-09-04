@@ -1421,6 +1421,7 @@ bool MainEngine::createEnemy(const LevelManager &levelManager, const SpriteData 
     enemyComp->m_life = enemyData.m_life;
     enemyComp->m_visibleShot = !(enemyData.m_visibleShootID.empty());
     enemyComp->m_countTillLastAttack = 0;
+    enemyComp->m_meleeOnly = enemyData.m_meleeOnly;
     if(enemyData.m_meleeDamage)
     {
         enemyComp->m_meleeAttackDamage = *enemyData.m_meleeDamage;

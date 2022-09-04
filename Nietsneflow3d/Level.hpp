@@ -89,7 +89,7 @@ struct EnemyData
     std::optional<uint32_t> m_meleeDamage;
     std::optional<PairUI_t> m_endLevelPos;
     float m_velocity, m_shotVelocity;
-    bool m_traversable;
+    bool m_traversable, m_meleeOnly;
 };
 
 class Level

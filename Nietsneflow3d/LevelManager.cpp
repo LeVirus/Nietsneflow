@@ -1333,6 +1333,17 @@ void LevelManager::loadEnemyData()
         val = m_ini.getValue(vectINISections[i], "AttackSound");
         assert(val);
         m_enemyData[vectINISections[i]].m_attackSoundFile = *val;
+        val = m_ini.getValue(vectINISections[i], "MeleeOnly");
+        if(val)
+        {
+            std::optional<bool> resBool = toBool(*val);
+            assert(resBool);
+            m_enemyData[vectINISections[i]].m_meleeOnly = *resBool;
+        }
+        else
+        {
+            m_enemyData[vectINISections[i]].m_meleeOnly = false;
+        }
         loadEnemySprites(vectINISections[i], EnemySpriteElementType_e::STATIC_FRONT, m_enemyData[vectINISections[i]]);
         loadEnemySprites(vectINISections[i], EnemySpriteElementType_e::STATIC_FRONT_LEFT, m_enemyData[vectINISections[i]]);
         loadEnemySprites(vectINISections[i], EnemySpriteElementType_e::STATIC_FRONT_RIGHT, m_enemyData[vectINISections[i]]);

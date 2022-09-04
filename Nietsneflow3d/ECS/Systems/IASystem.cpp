@@ -241,7 +241,7 @@ void IASystem::enemyShoot(EnemyConfComponent *enemyConfComp, MoveableComponent *
                           MapCoordComponent *enemyMapComp, float distancePlayer)
 {
     GeneralCollisionComponent *genComp;
-    if(enemyConfComp->m_meleeAttackDamage && distancePlayer < 25.0f)
+    if(enemyConfComp->m_meleeAttackDamage && distancePlayer < 32.0f)
     {
         m_playerComp->takeDamage(*enemyConfComp->m_meleeAttackDamage);
     }
@@ -287,14 +287,14 @@ void IASystem::treatEnemyBehaviourAttack(uint32_t enemyEntity, MapCoordComponent
     }
     if(enemyConfComp->m_stuck || ++timerComp->m_cycleCountB >= m_intervalEnemyBehaviour)
     {
-        if(enemyConfComp->m_countTillLastAttack > 3)
+        if(enemyConfComp->m_countTillLastAttack > 3 && (!enemyConfComp->m_meleeOnly || distancePlayer < 32.0f))
         {
             enemyConfComp->m_attackPhase = EnemyAttackPhase_e::SHOOT;
             enemyConfComp->m_stuck = false;
         }
         else
         {
-            uint32_t modulo = (enemyConfComp->m_countTillLastAttack < 2) ? static_cast<uint32_t>(EnemyAttackPhase_e::SHOOT) :
+            uint32_t modulo = (enemyConfComp->m_meleeOnly || enemyConfComp->m_countTillLastAttack < 2) ? static_cast<uint32_t>(EnemyAttackPhase_e::SHOOT) :
                                                                            static_cast<uint32_t>(EnemyAttackPhase_e::SHOOTED);
             enemyConfComp->m_attackPhase = static_cast<EnemyAttackPhase_e>(std::rand() / ((RAND_MAX + 1u) / modulo));
         }

@@ -218,6 +218,7 @@ traversable = false
 NormalBehaviourSound = Roar.wav
 DetectBehaviourSound = DemonDetect.wav
 AttackSound = DemonAttack.wav
+MeleeOnly = true
 
 [EnemyDemon]
 StaticSpriteFront = SpriteDFA SpriteDFB
