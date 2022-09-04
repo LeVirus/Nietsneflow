@@ -1333,13 +1333,13 @@ texturePosY = 0.02
 textureWeight = 0.0182
 textureHeight = 0.0622
 
-# 460 1947  203 1320  266 1367
+#4280 209  4410 283
 [SpritePannel]
-texture = 3
-texturePosX = 0.4413
-texturePosY = 0.6779
-textureWeight = 0.1369
-textureHeight = 0.0241
+texture = 7
+texturePosX = 0.9164
+texturePosY = 0.1
+textureWeight = 0.0278
+textureHeight = 0.0354
 
 [SpriteTeleport]
 texture = 1
