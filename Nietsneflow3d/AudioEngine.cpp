@@ -153,6 +153,18 @@ void AudioEngine::runIteration()
 }
 
 //===================================================================
+void AudioEngine::playEpilogueMusic()
+{
+    if(m_epilogueMusicFilename.empty() || m_epilogueMusicFilename == "None")
+    {
+        return;
+    }
+    m_soundSystem->stop(m_musicElement->first);
+    loadMusicFromFile(m_epilogueMusicFilename);
+    playMusic();
+}
+
+//===================================================================
 void AudioEngine::loadMusicFromFile(const std::string &filename)
 {
     std::optional<ALuint> memBuffer = loadBufferFromFile(filename, false);

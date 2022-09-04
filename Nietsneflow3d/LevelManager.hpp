@@ -150,6 +150,10 @@ public:
     {
         return m_epilogue;
     }
+    inline std::string getLevelEpilogueMusic()const
+    {
+        return m_epilogueMusic;
+    }
     inline std::string getPannelSpriteName()const
     {
         return m_spritePannelName;
@@ -383,7 +387,7 @@ private:
     std::vector<MemSpriteData> m_displayTeleportData;
     std::vector<PairUI_t> m_secretsPos;
     std::vector<LogLevelData> m_logsLevelData;
-    std::string m_prologue, m_epilogue;
+    std::string m_prologue, m_epilogue, m_epilogueMusic;
     //first ID, second Std data
     std::map<std::string, LogStdData> m_logStdData;
     std::vector<std::pair<PairUI_t, Direction_e>> m_checkpointsPos;

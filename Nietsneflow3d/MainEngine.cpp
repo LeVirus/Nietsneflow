@@ -416,6 +416,7 @@ void MainEngine::displayTransitionMenu(MenuMode_e mode)
     {
         topEpiloguePosition = getTopEpilogueVerticalPosition(m_writeConf);
         m_writeConf->m_upLeftPositionGL.second = -1.0f;
+        m_audioEngine.playEpilogueMusic();
     }
     m_gamePaused = true;
     m_physicalEngine.setModeTransitionMenu(true);
@@ -976,6 +977,7 @@ void MainEngine::loadLevel(const LevelManager &levelManager)
     loadRevealedMap();
     m_graphicEngine.updatePrologueAndEpilogue(levelManager.getLevelPrologue(), levelManager.getLevelEpilogue());
     //MUUUUUUUUUUUUSSSSS
+    m_audioEngine.memoriseEpilogueMusicFilename(levelManager.getLevelEpilogueMusic());
     m_audioEngine.loadMusicFromFile(levelManager.getLevel().getMusicFilename());
     m_audioEngine.playMusic();
 }

@@ -1471,6 +1471,11 @@ void LevelManager::loadPrologueAndEpilogue()
     {
         m_epilogue = *val;
     }
+    val = m_ini.getValue("LevelMessage", "epilogueMusic");
+    if(val)
+    {
+        m_epilogueMusic = *val;
+    }
 }
 
 //===================================================================
@@ -1839,6 +1844,7 @@ void LevelManager::clearExistingPositionsElement()
     m_barrelElement.m_TileGamePosition.clear();
     m_prologue.clear();
     m_epilogue.clear();
+    m_epilogueMusic.clear();
 }
 
 //===================================================================

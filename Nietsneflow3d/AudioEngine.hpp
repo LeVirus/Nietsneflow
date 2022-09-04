@@ -22,7 +22,12 @@ public:
     void playMusic();
     void clearSourceAndBuffer();
     void runIteration();
+    void playEpilogueMusic();
     void loadMusicFromFile(const std::string &filename);
+    inline void memoriseEpilogueMusicFilename(const std::string &filename)
+    {
+        m_epilogueMusicFilename = filename;
+    }
     std::optional<ALuint> loadSoundEffectFromFile(const std::string &filename);
     inline SoundSystem *getSoundSystem()
     {
@@ -66,6 +71,7 @@ private:
     void cleanUpAllBuffer();
     void cleanUpBuffer(ALuint buffer);
 private:
+    std::string m_epilogueMusicFilename;
     ALCdevice *m_device;
     ALCcontext *m_context;
     std::vector<std::string> m_vectDevices;
