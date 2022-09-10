@@ -30,6 +30,8 @@ enum class PlayerEntities_e
     LIFE_ICON,
     AMMO_ICON,
     CURSOR_WEAPON_PREVIEW,
+    MENU_GENERIC_BACKGROUND,
+    MENU_TITLE_BACKGROUND,
     TOTAL
 };
 

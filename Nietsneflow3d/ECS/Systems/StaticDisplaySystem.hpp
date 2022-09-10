@@ -43,6 +43,8 @@ enum class VertexID_e
     AMMO_ICON,
     POSSESSED_WEAPONS,
     CURSOR_WEAPON,
+    MENU_BACKGROUND_GENERIC,
+    MENU_BACKGROUND_TITLE,
     TOTAL
 };
 
@@ -107,7 +109,7 @@ private:
 private:
     MainEngine *m_mainEngine;
     FontData const *m_fontDataPtr;
-    bool m_cursorInit = false;
+    bool m_cursorInit = false, m_genericBackgroundInit = false;
     Shader *m_shader;
     std::array<VerticesData, static_cast<uint32_t>(VertexID_e::TOTAL)> m_vertices;
     std::vector<Texture> *m_ptrVectTexture = nullptr;

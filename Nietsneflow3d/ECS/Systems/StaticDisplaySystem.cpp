@@ -198,11 +198,26 @@ void StaticDisplaySystem::displayMenu()
         PlayerConfComponent *playerComp = stairwayToComponentManager().
                     searchComponentByType<PlayerConfComponent>(mVectNumEntity[i], Components_e::PLAYER_CONF_COMPONENT);
         assert(playerComp);
+
+        uint32_t backgroundEntity = playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_GENERIC_BACKGROUND)];
+        SpriteTextureComponent *spriteBackgroundComp = stairwayToComponentManager().
+                searchComponentByType<SpriteTextureComponent>(backgroundEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
+        assert(spriteBackgroundComp);
+        if(!m_genericBackgroundInit)
+        {
+            PositionVertexComponent *posComp = stairwayToComponentManager().
+                    searchComponentByType<PositionVertexComponent>(backgroundEntity, Components_e::POSITION_VERTEX_COMPONENT);
+            assert(posComp);
+            m_vertices[static_cast<uint32_t>(VertexID_e::MENU_BACKGROUND_GENERIC)].loadVertexStandartTextureComponent(*posComp, *spriteBackgroundComp);
+            m_genericBackgroundInit = true;
+        }
+        drawVertex(spriteBackgroundComp->m_spriteData->m_textureNum, VertexID_e::MENU_BACKGROUND_GENERIC);
         drawWriteVertex(playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_ENTRIES)], VertexID_e::MENU_WRITE);
         drawWriteVertex(playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::TITLE_MENU)], VertexID_e::MENU_WRITE);
         drawWriteInfoPlayer(mVectNumEntity[i], playerComp);
         SpriteTextureComponent *spriteComp = stairwayToComponentManager().
-                searchComponentByType<SpriteTextureComponent>(playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_CURSOR)], Components_e::SPRITE_TEXTURE_COMPONENT);
+                searchComponentByType<SpriteTextureComponent>(playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_CURSOR)],
+                Components_e::SPRITE_TEXTURE_COMPONENT);
         assert(spriteComp);
         if(playerComp->m_menuMode != MenuMode_e::NEW_KEY &&
                 playerComp->m_menuMode != MenuMode_e::LEVEL_EPILOGUE &&

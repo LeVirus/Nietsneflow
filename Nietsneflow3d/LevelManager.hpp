@@ -138,6 +138,10 @@ public:
     inline const PictureData &getPictureData()const {return m_pictureData;}
     inline const Level &getLevel()const {return m_level;}
     inline const FontData &getFontData()const {return m_fontData;}
+    inline std::string getGenericMenuSpriteName()const
+    {
+        return m_spriteGenericMenuName;
+    }
     inline std::string getCursorSpriteName()const
     {
         return m_spriteCursorName;
@@ -374,7 +378,7 @@ private:
     Level m_level;
     std::string m_spriteCursorName, m_spritePannelName, m_spriteLifeName, m_spriteAmmoName,
     m_spriteFistName, m_spriteGunName, m_spriteShotgunName,
-    m_spritePlasmaRifleName, m_spriteMachineGunName, m_spriteBazookaName;
+    m_spritePlasmaRifleName, m_spriteMachineGunName, m_spriteBazookaName, m_spriteGenericMenuName;
     StaticLevelElementData m_exitStaticElement;
     std::map<std::string, WallData> m_wallData;
     std::map<std::string, MoveableWallData> m_mainWallData;

@@ -258,7 +258,7 @@ private:
     void confTiledTextBackgroundComponents(uint32_t entity, const GroundCeilingData &backgroundData, const std::vector<SpriteData> &vectSprite);
     void confWriteEntitiesDisplayMenu();
     void confWriteEntitiesInputMenu();
-    void confMenuCursorEntity();
+    void confMenuEntities();
     void confLifeAmmoPannelEntities();
     void confWeaponsPreviewEntities();
     void confWriteEntities();
@@ -379,7 +379,7 @@ private:
     *m_memPannel = nullptr, *m_memLifeIcon = nullptr, *m_memAmmoIcon = nullptr,
     *m_memPreviewFistIcon = nullptr, *m_memPreviewGunIcon = nullptr, *m_memPreviewShotgunIcon = nullptr,
     *m_memPreviewPlasmaRifleIcon = nullptr, *m_memPreviewMachineGunIcon = nullptr,
-    *m_memPreviewBazookaIcon = nullptr;
+    *m_memPreviewBazookaIcon = nullptr, *m_memBackgroundGenericMenu = nullptr;
     WriteComponent *m_writeConf = nullptr;
     PlayerConfComponent *m_playerConf = nullptr;
     WeaponComponent *m_weaponComp;
