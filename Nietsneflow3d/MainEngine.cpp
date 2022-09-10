@@ -2,6 +2,7 @@
 #include "Game.hpp"
 #include "constants.hpp"
 #include <ECS/Components/PositionVertexComponent.hpp>
+#include <ECS/Components/ImpactShotComponent.hpp>
 #include <ECS/Components/ColorVertexComponent.hpp>
 #include <ECS/Components/MapCoordComponent.hpp>
 #include <ECS/Components/WallMultiSpriteConf.hpp>
@@ -550,8 +551,11 @@ void MainEngine::confPlayerBullet(PlayerConfComponent *playerComp,
     MoveableComponent *moveImpactComp = m_ecsManager.getComponentManager().
             searchComponentByType<MoveableComponent>(shotComp->m_impactEntity, Components_e::MOVEABLE_COMPONENT);
     assert(moveImpactComp);
+    ImpactShotComponent *impactComp = m_ecsManager.getComponentManager().
+            searchComponentByType<ImpactShotComponent>(shotComp->m_impactEntity, Components_e::IMPACT_CONF_COMPONENT);
+    assert(impactComp);
     assert(segmentColl);
-    confBullet(genColl, segmentColl, moveImpactComp, CollisionTag_e::BULLET_PLAYER_CT, point, degreeAngle);
+    confBullet(impactComp, genColl, segmentColl, moveImpactComp, CollisionTag_e::BULLET_PLAYER_CT, point, degreeAngle);
 }
 
 //===================================================================
@@ -565,7 +569,7 @@ void confActionShape(MapCoordComponent *mapCompAction, GeneralCollisionComponent
 }
 
 //===================================================================
-void confBullet(GeneralCollisionComponent *genColl, SegmentCollisionComponent *segmentColl, MoveableComponent *moveImpactComp,
+void confBullet(ImpactShotComponent *impactComp, GeneralCollisionComponent *genColl, SegmentCollisionComponent *segmentColl, MoveableComponent *moveImpactComp,
                 CollisionTag_e collTag, const PairFloat_t &point, float degreeAngle)
 {
     assert(collTag == CollisionTag_e::BULLET_ENEMY_CT || collTag == CollisionTag_e::BULLET_PLAYER_CT);
@@ -574,6 +578,7 @@ void confBullet(GeneralCollisionComponent *genColl, SegmentCollisionComponent *s
     genColl->m_shape = CollisionShape_e::SEGMENT_C;
     genColl->m_active = true;
     float diff = std::rand() / ((RAND_MAX + 1u) / 9) - 4.0f;
+    impactComp->m_currentVerticalPos = randFloat(-0.4f, -0.2f);
     segmentColl->m_degreeOrientation = degreeAngle + diff;
     if(segmentColl->m_degreeOrientation < EPSILON_FLOAT)
     {

@@ -12,6 +12,7 @@ struct MemSpriteData;
 struct WallData;
 struct MoveableWallData;
 struct AssociatedTriggerData;
+struct ImpactShotComponent;
 
 using mapEnemySprite_t = std::map<EnemySpriteType_e, PairUI_t>;
 using mapUiVectUI_t = std::map<uint32_t, std::vector<uint32_t>>;
@@ -406,7 +407,7 @@ pairI_t getModifMoveableWallDataCheckpoint(const std::vector<std::pair<Direction
 void insertEnemySpriteFromType(const std::vector<SpriteData> &vectSprite, mapEnemySprite_t &mapSpriteAssociate,
                                std::vector<SpriteData const *> &vectSpriteData, const std::vector<uint8_t> &enemyMemArray,
                                EnemySpriteType_e type);
-void confBullet(GeneralCollisionComponent *genColl, SegmentCollisionComponent *segmentColl, MoveableComponent *moveImpactComp,
+void confBullet(ImpactShotComponent *impactComp, GeneralCollisionComponent *genColl, SegmentCollisionComponent *segmentColl, MoveableComponent *moveImpactComp,
                 CollisionTag_e collTag, const PairFloat_t &point, float degreeAngle);
 void setWeaponPlayer();
 void confActionShape(MapCoordComponent *mapCompAction, GeneralCollisionComponent *genCompAction, const MapCoordComponent *attackerMapComp,

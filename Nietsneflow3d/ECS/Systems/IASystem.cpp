@@ -1,4 +1,5 @@
 #include <ECS/Components/EnemyConfComponent.hpp>
+#include <ECS/Components/ImpactShotComponent.hpp>
 #include <ECS/Components/MapCoordComponent.hpp>
 #include <ECS/Components/EnemyConfComponent.hpp>
 #include <ECS/Components/MoveableComponent.hpp>
@@ -260,12 +261,15 @@ void IASystem::enemyShoot(EnemyConfComponent *enemyConfComp, MoveableComponent *
         ShotConfComponent *shotComp = stairwayToComponentManager().
                 searchComponentByType<ShotConfComponent>(enemyConfComp->m_stdAmmo[0], Components_e::SHOT_CONF_COMPONENT);
         assert(shotComp);
+        ImpactShotComponent *impactComp = stairwayToComponentManager().
+                searchComponentByType<ImpactShotComponent>(shotComp->m_impactEntity, Components_e::IMPACT_CONF_COMPONENT);
+        assert(impactComp);
         MoveableComponent *impactMoveComp = stairwayToComponentManager().
                 searchComponentByType<MoveableComponent>(shotComp->m_impactEntity, Components_e::MOVEABLE_COMPONENT);
         assert(moveComp);
         assert(genComp);
         assert(segmentComp);
-        confBullet(genComp, segmentComp, impactMoveComp, CollisionTag_e::BULLET_ENEMY_CT,
+        confBullet(impactComp, genComp, segmentComp, impactMoveComp, CollisionTag_e::BULLET_ENEMY_CT,
                    enemyMapComp->m_absoluteMapPositionPX, moveComp->m_degreeOrientation);
     }
 }

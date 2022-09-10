@@ -617,7 +617,7 @@ void FirstPersonDisplaySystem::confNormalEntityVertex(uint32_t numEntity, Vision
         ImpactShotComponent *impactComp = stairwayToComponentManager().
             searchComponentByType<ImpactShotComponent>(numEntity, Components_e::IMPACT_CONF_COMPONENT);
         assert(impactComp);
-        downPos = (-0.3f + impactComp->m_moveUp) / distanceFactor;
+        downPos = (impactComp->m_currentVerticalPos + impactComp->m_moveUp) / distanceFactor;
         upPos = downPos + fpsStaticComp->m_inGameSpriteSize.second / distanceFactor;
     }
     else if(fpsStaticComp->m_levelElementType == LevelStaticElementType_e::CEILING)
@@ -1693,4 +1693,10 @@ float getDoorRaycastTexturePos(float textDoor, float radiantObserverAngle, bool 
     {
         return textPos - textDoor;
     }
+}
+
+//===================================================================
+float randFloat(float min, float max)
+{
+    return std::fmod(static_cast<float>(std::rand()), max) + min;
 }

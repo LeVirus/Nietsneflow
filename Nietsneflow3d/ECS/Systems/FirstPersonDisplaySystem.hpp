@@ -21,6 +21,9 @@ using pairRaycastingData_t = std::pair<uint32_t, std::vector<RayCastingIntersect
 using tupleTargetRaycast_t = std::tuple<PairFloat_t, float, std::optional<uint32_t>>;
 using optionalTargetRaycast_t = std::optional<tupleTargetRaycast_t>;
 using vectPairFloatPairFloat_t = std::vector<std::pair<float, PairFloat_t>>;
+
+float randFloat(float min, float max);
+
 struct GroundCeililngRayCastingIntersect
 {
     //first distance second texture pos
