@@ -5,7 +5,7 @@ HitSound = Hit.wav
 TeleportSound = Teleport.wav
 
 [GraphicUtils]
-CursorSprite = SpriteSO
+CursorSprite = SpriteMenuCursor
 PannelSprite = SpritePannel
 LifeIconSprite = SpriteLifeIcon
 AmmoIconSprite = SpriteAmmoIcon

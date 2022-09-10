@@ -431,7 +431,6 @@ inline const uint32_t RAYCAST_LINE_NUMBER = 300, RAYCAST_DEPTH = 20, MAX_SHOTS =
 RAYCAST_GROUND_CEILING_NUMBER = RAYCAST_LINE_NUMBER / 2.5;
 inline const float SCREEN_VERT_BACKGROUND_GL_STEP = 1.0f / RAYCAST_GROUND_CEILING_NUMBER;
 inline const float SCREEN_HORIZ_BACKGROUND_GL_STEP = 2.0f / RAYCAST_LINE_NUMBER;
-inline const PairFloat_t CURSOR_GL_SIZE = {0.20f, 0.25f};
 inline const double WRITE_LETTER_GL_OFFSET = 0.01;
 inline const std::string STR_PLAYER_LIFE;
 inline const std::string STR_PLAYER_AMMO;

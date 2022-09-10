@@ -79,7 +79,7 @@ void IASystem::execSystem()
     assert(m_playerComp);
     System::execSystem();
     WeaponComponent *weaponComp = stairwayToComponentManager().
-            searchComponentByType<WeaponComponent>(m_playerComp->m_vectDisplayableEntities[static_cast<uint32_t>(PlayerEntities_e::WEAPON)], Components_e::WEAPON_COMPONENT);
+            searchComponentByType<WeaponComponent>(m_playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::WEAPON)], Components_e::WEAPON_COMPONENT);
     assert(weaponComp);
     treatEject();
     for(uint32_t i = 0; i < weaponComp->m_weaponsData.size(); ++i)

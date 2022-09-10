@@ -46,6 +46,8 @@ enum class VertexID_e
     TOTAL
 };
 
+inline const PairFloat_t CURSOR_GL_SIZE = {0.085f, 0.15f};
+
 /**
  * @brief The StaticDisplaySystem class displays the menu
  * and the weapon in use.

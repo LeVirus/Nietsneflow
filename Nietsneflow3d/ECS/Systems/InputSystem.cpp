@@ -174,7 +174,7 @@ void InputSystem::treatPlayerInput()
             return;
         }
         WeaponComponent *weaponComp = stairwayToComponentManager().
-                searchComponentByType<WeaponComponent>(playerComp->m_vectDisplayableEntities[static_cast<uint32_t>(PlayerEntities_e::WEAPON)], Components_e::WEAPON_COMPONENT);
+                searchComponentByType<WeaponComponent>(playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::WEAPON)], Components_e::WEAPON_COMPONENT);
         assert(weaponComp);
         if(weaponComp->m_weaponToChange)
         {
@@ -231,10 +231,10 @@ void InputSystem::treatPlayerInput()
         if(checkPlayerKeyTriggered(ControlKey_e::ACTION))
         {
             MapCoordComponent *mapCompAction = stairwayToComponentManager().
-                    searchComponentByType<MapCoordComponent>(playerComp->m_vectDisplayableEntities[static_cast<uint32_t>(PlayerEntities_e::ACTION)], Components_e::MAP_COORD_COMPONENT);
+                    searchComponentByType<MapCoordComponent>(playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::ACTION)], Components_e::MAP_COORD_COMPONENT);
             assert(mapCompAction);
             GeneralCollisionComponent *genCompAction = stairwayToComponentManager().
-                    searchComponentByType<GeneralCollisionComponent>(playerComp->m_vectDisplayableEntities[static_cast<uint32_t>(PlayerEntities_e::ACTION)], Components_e::GENERAL_COLLISION_COMPONENT);
+                    searchComponentByType<GeneralCollisionComponent>(playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::ACTION)], Components_e::GENERAL_COLLISION_COMPONENT);
             assert(genCompAction);
             confActionShape(mapCompAction, genCompAction, mapComp, moveComp);
         }
@@ -265,7 +265,7 @@ void InputSystem::treatPlayerInput()
                 {
                     playerComp->m_playerShoot = true;
                     AudioComponent *audioComp = stairwayToComponentManager().
-                            searchComponentByType<AudioComponent>(playerComp->m_vectDisplayableEntities[static_cast<uint32_t>(PlayerEntities_e::WEAPON)], Components_e::AUDIO_COMPONENT);
+                            searchComponentByType<AudioComponent>(playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::WEAPON)], Components_e::AUDIO_COMPONENT);
                     assert(audioComp);
                     audioComp->m_soundElements[weaponComp->m_currentWeapon]->m_toPlay = true;
                     m_mainEngine->playerAttack(mVectNumEntity[i], playerComp, mapComp->m_absoluteMapPositionPX, moveComp->m_degreeOrientation);
@@ -1518,7 +1518,7 @@ void InputSystem::scroll_callback(GLFWwindow *window, double xOffset, double yOf
 void InputSystem::updateDetectRect(PlayerConfComponent *playerComp, MapCoordComponent *mapPlayerComp)
 {
     MapCoordComponent *mapComp = stairwayToComponentManager().
-            searchComponentByType<MapCoordComponent>(playerComp->m_vectDisplayableEntities[static_cast<uint32_t>(PlayerEntities_e::MAP_DETECT_SHAPE)], Components_e::MAP_COORD_COMPONENT);
+            searchComponentByType<MapCoordComponent>(playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MAP_DETECT_SHAPE)], Components_e::MAP_COORD_COMPONENT);
     assert(mapComp);
     mapComp->m_absoluteMapPositionPX = {mapPlayerComp->m_absoluteMapPositionPX.first - DETECT_RECT_SHAPE_HALF_SIZE,
                                        mapPlayerComp->m_absoluteMapPositionPX.second - DETECT_RECT_SHAPE_HALF_SIZE};
