@@ -12,6 +12,27 @@ enum class MapMode_e
     FULL_MAP
 };
 
+enum class PlayerEntities_e
+{
+    WEAPON,
+    AMMO_WRITE,
+    TITLE_MENU,
+    MENU_ENTRIES,
+    MENU_CURSOR,
+    LIFE_AMMO_PANNEL,
+    MENU_INFO_WRITE,
+    ACTION,
+    HIT_MELEE,
+    LIFE_WRITE,
+    NUM_INFO_WRITE,
+    DISPLAY_TELEPORT,
+    MAP_DETECT_SHAPE,
+    LIFE_ICON,
+    AMMO_ICON,
+    CURSOR_WEAPON_PREVIEW,
+    TOTAL
+};
+
 struct PlayerConfComponent : public ecs::Component
 {
     PlayerConfComponent()
@@ -35,11 +56,8 @@ struct PlayerConfComponent : public ecs::Component
     m_pickItem = false, m_crush = false, m_frozen = false, m_teleported, m_insideWall = false, m_keyboardInputMenuMode = true;
     std::pair<bool, std::string> m_infoWriteData = {false, ""};
     std::set<uint32_t> m_card;
-    uint32_t m_weaponEntity, m_ammoWriteEntity, m_currentCursorPos = 0, m_currentSelectedSaveFile,
-             m_titleMenuEntity, m_menuEntriesEntity, m_menuCursorEntity, m_lifeAmmoPannelEntity, m_menuInfoWriteEntity,
-             m_actionEntity, m_hitMeleeEntity, m_lifeWriteEntity, m_numInfoWriteEntity,
-             m_life = 100, m_displayTeleportEntity, m_mapDetectShapeEntity, m_currentCustomLevelCusorMenu, m_levelToLoad,
-             m_lifeIconEntity, m_ammoIconEntity, m_cursorWeaponPreviewEntity;
+    uint32_t m_currentCursorPos = 0, m_currentSelectedSaveFile, m_life = 100, m_currentCustomLevelCusorMenu, m_levelToLoad;
+    std::array<uint32_t, static_cast<uint32_t>(PlayerEntities_e::TOTAL)> m_vectDisplayableEntities;
     //display only weapons when changing weapons
     std::array<uint32_t, 6> m_vectPossessedWeaponsPreviewEntities;
     std::optional<uint32_t> m_secretsFound, m_enemiesKilled;

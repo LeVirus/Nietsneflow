@@ -1102,7 +1102,7 @@ void CollisionSystem::treatPlayerPickObject(CollisionArgs &args)
     ObjectConfComponent *objectComp = stairwayToComponentManager().
             searchComponentByType<ObjectConfComponent>(args.entityNumB, Components_e::OBJECT_CONF_COMPONENT);
     WeaponComponent *weaponComp = stairwayToComponentManager().
-            searchComponentByType<WeaponComponent>(playerComp->m_weaponEntity, Components_e::WEAPON_COMPONENT);
+            searchComponentByType<WeaponComponent>(playerComp->m_vectDisplayableEntities[static_cast<uint32_t>(PlayerEntities_e::WEAPON)], Components_e::WEAPON_COMPONENT);
     assert(weaponComp);
     assert(playerComp);
     assert(objectComp);
@@ -1176,13 +1176,13 @@ void CollisionSystem::treatPlayerTeleport(CollisionArgs &args)
     TeleportComponent *teleportComp = stairwayToComponentManager().
             searchComponentByType<TeleportComponent>(args.entityNumB, Components_e::TELEPORT_COMPONENT);
     GeneralCollisionComponent *genTeleportComp = stairwayToComponentManager().
-            searchComponentByType<GeneralCollisionComponent>(playerComp->m_displayTeleportEntity,
+            searchComponentByType<GeneralCollisionComponent>(playerComp->m_vectDisplayableEntities[static_cast<uint32_t>(PlayerEntities_e::DISPLAY_TELEPORT)],
                                                              Components_e::GENERAL_COLLISION_COMPONENT);
     MapCoordComponent *mapTeleportComp = stairwayToComponentManager().
-            searchComponentByType<MapCoordComponent>(playerComp->m_displayTeleportEntity,
+            searchComponentByType<MapCoordComponent>(playerComp->m_vectDisplayableEntities[static_cast<uint32_t>(PlayerEntities_e::DISPLAY_TELEPORT)],
                                                      Components_e::MAP_COORD_COMPONENT);
     TimerComponent *timerComp = stairwayToComponentManager().
-            searchComponentByType<TimerComponent>(playerComp->m_displayTeleportEntity,
+            searchComponentByType<TimerComponent>(playerComp->m_vectDisplayableEntities[static_cast<uint32_t>(PlayerEntities_e::DISPLAY_TELEPORT)],
                                                   Components_e::TIMER_COMPONENT);
     MoveableComponent *moveComp = stairwayToComponentManager().
             searchComponentByType<MoveableComponent>(args.entityNumA,
