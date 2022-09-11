@@ -20,7 +20,7 @@ using vectStr_t = std::vector<std::string>;
 struct GroundCeilingData
 {
     std::bitset<static_cast<uint32_t>(DisplayType_e::TOTAL)> m_apparence;
-    uint8_t m_spriteSimpleTextNum, m_spriteTiledTextNum;
+    uint16_t m_spriteSimpleTextNum, m_spriteTiledTextNum;
     std::array<tupleFloat_t, 4> m_color;
 };
 
@@ -53,7 +53,7 @@ public:
     void setTexturePath(const vectStr_t &vectTextures);
     void setBackgroundData(const GroundCeilingData &ground, const GroundCeilingData &ceiling);
     void setSpriteData(const SpriteData &spriteData, const std::string &identifier);
-    std::optional<uint8_t> getIdentifier(const std::string &spriteName)const;
+    std::optional<uint16_t> getIdentifier(const std::string &spriteName)const;
     void display();
     void clear();
     inline void setUpToDate(){m_upToDate = true;}
@@ -65,6 +65,6 @@ private:
     vectStr_t m_vectTexturePath;
     GroundCeilingData m_groundData, m_ceilingData;
     std::vector<SpriteData> m_vectSpriteData;
-    std::map<std::string, uint8_t> m_mapIdentifier;
+    std::map<std::string, uint16_t> m_mapIdentifier;
     bool m_upToDate = false;
 };

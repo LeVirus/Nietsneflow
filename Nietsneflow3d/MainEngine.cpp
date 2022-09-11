@@ -57,7 +57,7 @@ void MainEngine::init(Game *refGame)
 //===================================================================
 LevelState MainEngine::displayTitleMenu(const LevelManager &levelManager)
 {
-    uint8_t cursorSpriteId = *levelManager.getPictureData().getIdentifier(levelManager.getCursorSpriteName()),
+    uint16_t cursorSpriteId = *levelManager.getPictureData().getIdentifier(levelManager.getCursorSpriteName()),
             backgroundMenuSpriteId = *levelManager.getPictureData().getIdentifier(levelManager.getGenericMenuSpriteName());
     const std::vector<SpriteData> &vectSprite = levelManager.getPictureData().getSpriteData();
     m_memCursorSpriteData = &vectSprite[cursorSpriteId];
@@ -1253,7 +1253,7 @@ std::vector<uint32_t> MainEngine::loadWallEntitiesWallLoop(const std::vector<Spr
 //===================================================================
 void MainEngine::confBaseWallData(uint32_t wallEntity, const SpriteData &memSpriteData,
                                   const PairUI_t& coordLevel,
-                                  const std::vector<uint8_t> &numWallSprites,
+                                  const std::vector<uint16_t> &numWallSprites,
                                   const std::vector<uint32_t> &timeMultiSpriteCase,
                                   const std::vector<SpriteData> &vectSprite, TriggerBehaviourType_e triggerType, bool moveable)
 {
@@ -2297,7 +2297,7 @@ void MainEngine::loadEnemySprites(const std::vector<SpriteData> &vectSprite, con
 void insertEnemySpriteFromType(const std::vector<SpriteData> &vectSprite,
                                mapEnemySprite_t &mapSpriteAssociate,
                                std::vector<SpriteData const *> &vectSpriteData,
-                               const std::vector<uint8_t> &enemyMemArray,
+                               const std::vector<uint16_t> &enemyMemArray,
                                EnemySpriteType_e type)
 {
     //second pair {first pos last pos}
@@ -3175,7 +3175,7 @@ bool MainEngine::loadStaticElementEntities(const LevelManager &levelManager)
 //===================================================================
 void MainEngine::loadStaticSpriteEntities(const LevelManager &levelManager)
 {
-    uint8_t cursorSpriteId = *levelManager.getPictureData().getIdentifier(levelManager.getCursorSpriteName()),
+    uint16_t cursorSpriteId = *levelManager.getPictureData().getIdentifier(levelManager.getCursorSpriteName()),
             pannelSpriteId = *levelManager.getPictureData().getIdentifier(levelManager.getPannelSpriteName()),
             lifeIconSpriteId = *levelManager.getPictureData().getIdentifier(levelManager.getLifeIconSpriteName()),
             ammoIconSpriteId = *levelManager.getPictureData().getIdentifier(levelManager.getAmmoIconSpriteName()),

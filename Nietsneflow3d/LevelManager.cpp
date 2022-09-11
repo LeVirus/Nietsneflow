@@ -41,7 +41,7 @@ void LevelManager::loadSpriteData(const std::string &sectionName,
         val = m_ini.getValue(sections[i], "texture");
         assert(val);
         uint32_t textureNum = std::stoi(*val);
-        assert(textureNum != std::numeric_limits<uint8_t>::max() && "Bad textureNumber");
+        assert(textureNum != std::numeric_limits<uint16_t>::max() && "Bad textureNumber");
         val = m_ini.getValue(sections[i], "texturePosX");
         assert(val);
         double texturePosX = std::stof(*val);
@@ -118,7 +118,7 @@ bool LevelManager::loadBackgroundData()
                 std::cout << "Error while loading background picture" << std::endl;
                 return false;
             }
-            std::optional<uint8_t> picNum = m_pictureData.getIdentifier(*valA);
+            std::optional<uint16_t> picNum = m_pictureData.getIdentifier(*valA);
             if(!picNum)
             {
                 std::cout << "Error while loading background picture" << std::endl;
@@ -135,7 +135,7 @@ bool LevelManager::loadBackgroundData()
                 std::cout << "Error while loading background picture" << std::endl;
                 return false;
             }
-            std::optional<uint8_t> picNum = m_pictureData.getIdentifier(*valA);
+            std::optional<uint16_t> picNum = m_pictureData.getIdentifier(*valA);
             if(!picNum)
             {
                 std::cout << "Error while loading background picture" << std::endl;
@@ -176,7 +176,7 @@ bool LevelManager::loadBackgroundData()
                 std::cout << "Error while loading background picture" << std::endl;
                 return false;
             }
-            std::optional<uint8_t> picNum = m_pictureData.getIdentifier(*valA);
+            std::optional<uint16_t> picNum = m_pictureData.getIdentifier(*valA);
             if(!picNum)
             {
                 std::cout << "Error while loading background picture" << std::endl;
@@ -193,7 +193,7 @@ bool LevelManager::loadBackgroundData()
                 std::cout << "Error while loading background picture" << std::endl;
                 return false;
             }
-            std::optional<uint8_t> picNum = m_pictureData.getIdentifier(*valA);
+            std::optional<uint16_t> picNum = m_pictureData.getIdentifier(*valA);
             if(!picNum)
             {
                 std::cout << "Error while loading background picture" << std::endl;
@@ -322,7 +322,7 @@ void LevelManager::loadLogData()
     {
         val = m_ini.getValue(vectINISections[i], "Sprite");
         assert(val);
-        std::optional<uint8_t> spritenum = *m_pictureData.getIdentifier(*val);
+        std::optional<uint16_t> spritenum = *m_pictureData.getIdentifier(*val);
         val = m_ini.getValue(vectINISections[i], "SpriteWeightGame");
         assert(val);
         size.first = std::stof(*val);
@@ -335,18 +335,18 @@ void LevelManager::loadLogData()
 }
 
 //===================================================================
-std::vector<uint8_t> LevelManager::getVectSpriteNum(const std::string_view section, const std::string_view param)
+std::vector<uint16_t> LevelManager::getVectSpriteNum(const std::string_view section, const std::string_view param)
 {
     std::optional<std::string> val = m_ini.getValue(section.data(), param.data());
     assert(val);
     std::string str = *val;
     assert(!str.empty());
     vectStr_t vectSprite = convertStrToVectStr(str);
-    std::vector<uint8_t> retVect;
+    std::vector<uint16_t> retVect;
     retVect.reserve(vectSprite.size());
     for(uint32_t i = 0; i < vectSprite.size(); ++i)
     {
-        std::optional<uint8_t> id = m_pictureData.getIdentifier(vectSprite[i]);
+        std::optional<uint16_t> id = m_pictureData.getIdentifier(vectSprite[i]);
         assert(id);
         retVect.emplace_back(*id);
     }
@@ -831,11 +831,11 @@ void fillPositionDiagRectangle(const PairUI_t &origins, uint32_t size,
 }
 
 //===================================================================
-uint8_t LevelManager::getSpriteId(const std::string &sectionName)
+uint16_t LevelManager::getSpriteId(const std::string &sectionName)
 {
     std::optional<std::string> val = m_ini.getValue(sectionName, "Sprite");
     assert(val);
-    std::optional<uint8_t> id = m_pictureData.getIdentifier(*val);
+    std::optional<uint16_t> id = m_pictureData.getIdentifier(*val);
     assert(id && "picture data does not exists.");
     return *id;
 }
@@ -1119,7 +1119,9 @@ void LevelManager::loadWallData()
         //load sprites
         for(uint32_t j = 0; j < results.size(); ++j)
         {
-            m_wallData[vectINISections[i]].m_sprites.emplace_back(*m_pictureData.getIdentifier(results[j]));
+            std::optional<uint16_t> res = m_pictureData.getIdentifier(results[j]);
+            assert(res);
+            m_wallData[vectINISections[i]].m_sprites.emplace_back(*res);
         }
         //Time data
         datas = m_ini.getValue(vectINISections[i], "Time");
@@ -1570,7 +1572,7 @@ PairStrPairFloat_t LevelManager::loadPreviewWeaponData(const std::string &iniObj
 void LevelManager::loadEnemySprites(const std::string &sectionName,
                                     EnemySpriteElementType_e spriteTypeEnum, EnemyData &enemyData)
 {
-    std::vector<uint8_t> *vectPtr = nullptr;
+    std::vector<uint16_t> *vectPtr = nullptr;
     std::string spriteType;
     switch(spriteTypeEnum)
     {

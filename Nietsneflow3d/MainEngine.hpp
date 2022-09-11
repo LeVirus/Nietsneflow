@@ -278,7 +278,7 @@ private:
                                                    const std::pair<std::string, MoveableWallData> &currentShape, bool moveable,
                                                    uint32_t shapeNum, bool loadFromCheckpoint);
     void confBaseWallData(uint32_t wallEntity, const SpriteData &memSpriteData, const PairUI_t &coordLevel,
-                          const std::vector<uint8_t> &numWallSprites, const std::vector<uint32_t> &timeMultiSpriteCase,
+                          const std::vector<uint16_t> &numWallSprites, const std::vector<uint32_t> &timeMultiSpriteCase,
                           const std::vector<SpriteData> &vectSprite, TriggerBehaviourType_e triggerType, bool moveable = false);
     void loadDoorEntities(const LevelManager &levelManager);
     bool loadEnemiesEntities(const LevelManager &levelManager);
@@ -405,7 +405,7 @@ float getTopEpilogueVerticalPosition(WriteComponent const *writeComp);
 float getDegreeAngleFromDirection(Direction_e direction);
 pairI_t getModifMoveableWallDataCheckpoint(const std::vector<std::pair<Direction_e, uint32_t>> &vectDir, uint32_t timesActionned, TriggerBehaviourType_e triggerBehaviour);
 void insertEnemySpriteFromType(const std::vector<SpriteData> &vectSprite, mapEnemySprite_t &mapSpriteAssociate,
-                               std::vector<SpriteData const *> &vectSpriteData, const std::vector<uint8_t> &enemyMemArray,
+                               std::vector<SpriteData const *> &vectSpriteData, const std::vector<uint16_t> &enemyMemArray,
                                EnemySpriteType_e type);
 void confBullet(ImpactShotComponent *impactComp, GeneralCollisionComponent *genColl, SegmentCollisionComponent *segmentColl, MoveableComponent *moveImpactComp,
                 CollisionTag_e collTag, const PairFloat_t &point, float degreeAngle);

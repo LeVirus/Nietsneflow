@@ -22,7 +22,7 @@ struct TeleportData
 struct BarrelData
 {
     VectPairUI_t m_TileGamePosition;
-    std::vector<uint8_t> m_staticSprite, m_explosionSprite;
+    std::vector<uint16_t> m_staticSprite, m_explosionSprite;
     PairDouble_t m_inGameStaticSpriteSize;
     std::vector<PairFloat_t> m_vectinGameExplosionSpriteSize;
     std::string m_explosionSoundFile;
@@ -31,7 +31,7 @@ struct BarrelData
 struct StaticLevelElementData
 {
     //GLOBAL
-    uint8_t m_numSprite;
+    uint16_t m_numSprite;
     //In Game sprite size in % relative to a tile
     PairDouble_t m_inGameSpriteSize;
     VectPairUI_t m_TileGamePosition;
@@ -47,7 +47,7 @@ struct StaticLevelElementData
 
 struct DoorData
 {
-    uint8_t m_numSprite;
+    uint16_t m_numSprite;
     VectPairUI_t m_TileGamePosition;
     std::optional<std::pair<uint32_t, std::string>> m_cardID = std::nullopt;
     //Position of axe true = vertical false = horizontal
@@ -76,7 +76,7 @@ struct EnemyData
 
     //after dying animation the ennemy is represented by the last sprite
     //contained in m_dyingSprites
-    std::vector<uint8_t> m_staticFrontSprites, m_staticFrontLeftSprites, m_staticFrontRightSprites,
+    std::vector<uint16_t> m_staticFrontSprites, m_staticFrontLeftSprites, m_staticFrontRightSprites,
     m_staticBackSprites, m_staticBackLeftSprites, m_staticBackRightSprites,
     m_staticLeftSprites, m_staticRightSprites, m_attackSprites, m_dyingSprites, m_touched;
 

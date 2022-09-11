@@ -24,16 +24,16 @@ void PictureData::setSpriteData(const SpriteData &spriteData, const std::string 
 }
 
 //===================================================================
-std::optional<uint8_t> PictureData::getIdentifier(const std::string &spriteName) const
+std::optional<uint16_t> PictureData::getIdentifier(const std::string &spriteName) const
 {
     assert(m_upToDate && "PictureData isn't up to date.");
-    std::map<std::string, uint8_t>::const_iterator it = m_mapIdentifier.begin();
+    std::map<std::string, uint16_t>::const_iterator it = m_mapIdentifier.begin();
     it = m_mapIdentifier.find(spriteName);
     if(it == m_mapIdentifier.end())
     {
         return std::nullopt;
     }
-    return std::optional<uint8_t>{it->second};
+    return std::optional<uint16_t>{it->second};
 }
 
 //===================================================================

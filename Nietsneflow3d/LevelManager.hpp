@@ -17,7 +17,7 @@ struct MemLevelLoadedData;
 
 struct MemSpriteData
 {
-    uint8_t m_numSprite;
+    uint16_t m_numSprite;
     PairFloat_t m_GLSize;
 };
 
@@ -50,7 +50,7 @@ struct WeaponINIData
 
 struct WallData
 {
-    std::vector<uint8_t> m_sprites;
+    std::vector<uint16_t> m_sprites;
     std::set<PairUI_t> m_TileGamePosition, m_removeGamePosition;
     std::vector<uint32_t> m_cyclesTime;
 };
@@ -63,7 +63,7 @@ struct AssociatedTriggerData
 
 struct MoveableWallData
 {
-    std::vector<uint8_t> m_sprites;
+    std::vector<uint16_t> m_sprites;
     std::vector<uint32_t> m_cyclesTime;
     std::set<PairUI_t> m_TileGamePosition, m_removeGamePosition;
     std::vector<std::pair<Direction_e, uint32_t>> m_directionMove;
@@ -95,7 +95,7 @@ struct DataLevelWriteMenu
 
 struct LogStdData
 {
-    uint8_t m_spriteNum;
+    uint16_t m_spriteNum;
     PairFloat_t m_fpsSize;
 };
 
@@ -331,7 +331,7 @@ private:
     std::optional<PairUI_t> getPosition(const std::string_view sectionName, const std::string_view propertyName);
     bool fillWallPositionVect(const std::string &sectionName, const std::string &propertyName,
                               std::set<PairUI_t> &setPos);
-    uint8_t getSpriteId(const std::string &sectionName);
+    uint16_t getSpriteId(const std::string &sectionName);
     void loadVisibleShotDisplayData();
     void loadShotImpactDisplayData();
     void loadWeaponsData();
@@ -362,7 +362,7 @@ private:
                           EnemySpriteElementType_e spriteTypeEnum, EnemyData &enemyData);
     void deleteWall(const PairUI_t &coord);
     bool loadPositionExit();
-    std::vector<uint8_t> getVectSpriteNum(const std::string_view section, const std::string_view param);
+    std::vector<uint16_t> getVectSpriteNum(const std::string_view section, const std::string_view param);
     std::vector<PairFloat_t> getVectSpriteGLSize(const std::string_view section, const std::string_view weightParam,
                                                   const std::string_view heightParam);
     std::optional<std::vector<uint32_t>> getBrutPositionData(const std::string & sectionName,
