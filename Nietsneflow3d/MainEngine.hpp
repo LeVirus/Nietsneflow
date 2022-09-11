@@ -225,6 +225,11 @@ public:
     {
         m_graphicEngine.reinitDisplayedResolution();
     }
+    inline bool titleMenuMode()const
+    {
+        return m_titleMenuMode;
+    }
+
     void setPlayerDeparture(const PairUI_t &pos, Direction_e dir);
     void saveAudioSettings();
     void saveInputSettings(const std::map<ControlKey_e, GamepadInputState> &gamepadArray,
@@ -374,12 +379,12 @@ private:
     ECSManager m_ecsManager;
     Game *m_refGame = nullptr;
     std::vector<std::pair<uint32_t, time_t>> m_vectMemPausedTimer;
-    bool m_gamePaused = false, m_playerMemGear = false, m_levelEnd = false;
+    bool m_gamePaused = false, m_playerMemGear = false, m_levelEnd = false, m_titleMenuMode;
     SpriteData const *m_memCursorSpriteData = nullptr, *m_memVisibleShotA = nullptr,
     *m_memPannel = nullptr, *m_memLifeIcon = nullptr, *m_memAmmoIcon = nullptr,
     *m_memPreviewFistIcon = nullptr, *m_memPreviewGunIcon = nullptr, *m_memPreviewShotgunIcon = nullptr,
     *m_memPreviewPlasmaRifleIcon = nullptr, *m_memPreviewMachineGunIcon = nullptr,
-    *m_memPreviewBazookaIcon = nullptr, *m_memBackgroundGenericMenu = nullptr;
+    *m_memPreviewBazookaIcon = nullptr, *m_memBackgroundGenericMenu = nullptr, *m_memBackgroundTitleMenu = nullptr;
     WriteComponent *m_writeConf = nullptr;
     PlayerConfComponent *m_playerConf = nullptr;
     WeaponComponent *m_weaponComp;

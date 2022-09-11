@@ -203,15 +203,25 @@ void StaticDisplaySystem::displayMenu()
         SpriteTextureComponent *spriteBackgroundComp = stairwayToComponentManager().
                 searchComponentByType<SpriteTextureComponent>(backgroundEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
         assert(spriteBackgroundComp);
-        if(!m_genericBackgroundInit)
+
+        uint32_t backgroundTitleEntity = playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_TITLE_BACKGROUND)];
+        SpriteTextureComponent *spriteBackgroundTitleComp = stairwayToComponentManager().
+                searchComponentByType<SpriteTextureComponent>(backgroundTitleEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
+        assert(spriteBackgroundTitleComp);
+        if(!m_menuBackgroundInit)
         {
-            PositionVertexComponent *posComp = stairwayToComponentManager().
-                    searchComponentByType<PositionVertexComponent>(backgroundEntity, Components_e::POSITION_VERTEX_COMPONENT);
-            assert(posComp);
-            m_vertices[static_cast<uint32_t>(VertexID_e::MENU_BACKGROUND_GENERIC)].loadVertexStandartTextureComponent(*posComp, *spriteBackgroundComp);
-            m_genericBackgroundInit = true;
+            loadMenuBackground(backgroundEntity, spriteBackgroundComp, VertexID_e::MENU_BACKGROUND_GENERIC);
+            loadMenuBackground(backgroundTitleEntity, spriteBackgroundTitleComp, VertexID_e::MENU_BACKGROUND_TITLE);
         }
-        drawVertex(spriteBackgroundComp->m_spriteData->m_textureNum, VertexID_e::MENU_BACKGROUND_GENERIC);
+
+        if(m_mainEngine->titleMenuMode())
+        {
+            drawVertex(spriteBackgroundTitleComp->m_spriteData->m_textureNum, VertexID_e::MENU_BACKGROUND_TITLE);
+        }
+        else
+        {
+            drawVertex(spriteBackgroundComp->m_spriteData->m_textureNum, VertexID_e::MENU_BACKGROUND_GENERIC);
+        }
         drawWriteVertex(playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_ENTRIES)], VertexID_e::MENU_WRITE);
         drawWriteVertex(playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::TITLE_MENU)], VertexID_e::MENU_WRITE);
         drawWriteInfoPlayer(mVectNumEntity[i], playerComp);
@@ -274,6 +284,16 @@ void StaticDisplaySystem::displayMenu()
             drawWriteVertex(playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_INFO_WRITE)], VertexID_e::INPUT);
         }
     }
+}
+
+//===================================================================
+void StaticDisplaySystem::loadMenuBackground(uint32_t backgroundEntity, SpriteTextureComponent *spriteBackgroundComp, VertexID_e type)
+{
+    PositionVertexComponent *posComp = stairwayToComponentManager().
+            searchComponentByType<PositionVertexComponent>(backgroundEntity, Components_e::POSITION_VERTEX_COMPONENT);
+    assert(posComp);
+    m_vertices[static_cast<uint32_t>(type)].loadVertexStandartTextureComponent(*posComp, *spriteBackgroundComp);
+    m_menuBackgroundInit = true;
 }
 
 //===================================================================

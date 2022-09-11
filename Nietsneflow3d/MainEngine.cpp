@@ -58,14 +58,17 @@ void MainEngine::init(Game *refGame)
 LevelState MainEngine::displayTitleMenu(const LevelManager &levelManager)
 {
     uint16_t cursorSpriteId = *levelManager.getPictureData().getIdentifier(levelManager.getCursorSpriteName()),
-            backgroundMenuSpriteId = *levelManager.getPictureData().getIdentifier(levelManager.getGenericMenuSpriteName());
+            genericBackgroundMenuSpriteId = *levelManager.getPictureData().getIdentifier(levelManager.getGenericMenuSpriteName()),
+            titleBackgroundMenuSpriteId = *levelManager.getPictureData().getIdentifier(levelManager.getTitleMenuSpriteName());
     const std::vector<SpriteData> &vectSprite = levelManager.getPictureData().getSpriteData();
     m_memCursorSpriteData = &vectSprite[cursorSpriteId];
-    m_memBackgroundGenericMenu = &vectSprite[backgroundMenuSpriteId];
+    m_memBackgroundGenericMenu = &vectSprite[genericBackgroundMenuSpriteId];
+    m_memBackgroundTitleMenu = &vectSprite[titleBackgroundMenuSpriteId];
     assert(m_playerConf);
     m_playerConf->m_menuMode = MenuMode_e::TITLE;
     setMenuEntries(m_playerConf);
     m_gamePaused = true;
+    m_titleMenuMode = true;
     //prevent to exit
     m_currentLevelState = LevelState_e::EXIT;
     //game paused
@@ -78,6 +81,7 @@ LevelState MainEngine::displayTitleMenu(const LevelManager &levelManager)
             return {LevelState_e::EXIT, 0, false};
         }
     }while(m_currentLevelState != LevelState_e::NEW_GAME && m_currentLevelState != LevelState_e::LOAD_GAME);
+    m_titleMenuMode = false;
     uint32_t levelToLoad = m_levelToLoad->first;
     m_levelToLoad = {};
     return {m_currentLevelState, levelToLoad, m_playerConf->m_previousMenuMode == MenuMode_e::LOAD_CUSTOM_LEVEL};
@@ -3071,6 +3075,21 @@ void MainEngine::confMenuEntities()
     posCursor->m_vertex[1] = {1.0f, 1.0f};
     posCursor->m_vertex[2] = {1.0f, -1.0f};
     posCursor->m_vertex[3] = {-1.0f, -1.0f};
+
+    backgroundEntity = createSimpleSpriteEntity();
+    posCursor = m_ecsManager.getComponentManager().
+            searchComponentByType<PositionVertexComponent>(backgroundEntity, Components_e::POSITION_VERTEX_COMPONENT);
+    spriteCursor = m_ecsManager.getComponentManager().
+            searchComponentByType<SpriteTextureComponent>(backgroundEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
+    assert(posCursor);
+    assert(spriteCursor);
+    m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_TITLE_BACKGROUND)] = backgroundEntity;
+    spriteCursor->m_spriteData = m_memBackgroundTitleMenu;
+    posCursor->m_vertex.resize(4);
+    posCursor->m_vertex[0] = {-1.0f, 1.0f};
+    posCursor->m_vertex[1] = {1.0f, 1.0f};
+    posCursor->m_vertex[2] = {1.0f, -1.0f};
+    posCursor->m_vertex[3] = {-1.0f, -1.0f};
 }
 
 //===================================================================
@@ -3185,9 +3204,11 @@ void MainEngine::loadStaticSpriteEntities(const LevelManager &levelManager)
             plasmaRifleIconSpriteId = *levelManager.getPictureData().getIdentifier(levelManager.getPlasmaRifleIconSpriteName()),
             machineGunIconSpriteId = *levelManager.getPictureData().getIdentifier(levelManager.getMachineGunIconSpriteName()),
             GenericBackgroundSpriteId = *levelManager.getPictureData().getIdentifier(levelManager.getGenericMenuSpriteName()),
+            TitleBackgroundSpriteId = *levelManager.getPictureData().getIdentifier(levelManager.getTitleMenuSpriteName()),
             bazookaIconSpriteId = *levelManager.getPictureData().getIdentifier(levelManager.getBazookaIconSpriteName());
 
     m_memBackgroundGenericMenu = &levelManager.getPictureData().getSpriteData()[GenericBackgroundSpriteId];
+    m_memBackgroundTitleMenu = &levelManager.getPictureData().getSpriteData()[TitleBackgroundSpriteId];
     m_memCursorSpriteData = &levelManager.getPictureData().getSpriteData()[cursorSpriteId];
     m_memPannel = &levelManager.getPictureData().getSpriteData()[pannelSpriteId];
     m_memLifeIcon = &levelManager.getPictureData().getSpriteData()[lifeIconSpriteId];

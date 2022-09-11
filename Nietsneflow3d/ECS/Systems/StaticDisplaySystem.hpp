@@ -90,6 +90,7 @@ public:
         m_inputMenuGamepadWriteKeysEntities = memGamepadEntities;
     }
 private:
+    void loadMenuBackground(uint32_t backgroundEntity, SpriteTextureComponent *spriteBackgroundComp, VertexID_e type);
     void drawWriteInfoPlayer(uint32_t playerEntity, PlayerConfComponent *playerComp);
     void drawWeaponsPreviewPlayer(const PlayerConfComponent *playerComp,
                                   WeaponComponent const *weaponComp);
@@ -109,7 +110,7 @@ private:
 private:
     MainEngine *m_mainEngine;
     FontData const *m_fontDataPtr;
-    bool m_cursorInit = false, m_genericBackgroundInit = false;
+    bool m_cursorInit = false, m_menuBackgroundInit = false;
     Shader *m_shader;
     std::array<VerticesData, static_cast<uint32_t>(VertexID_e::TOTAL)> m_vertices;
     std::vector<Texture> *m_ptrVectTexture = nullptr;

@@ -1510,6 +1510,9 @@ void LevelManager::loadUtilsData()
     val = m_ini.getValue("GraphicUtils", "GenericMenuSprite");
     assert(val);
     m_spriteGenericMenuName = *val;
+    val = m_ini.getValue("GraphicUtils", "TitleMenuSprite");
+    assert(val);
+    m_spriteTitleMenuName = *val;
     //Load visual weapons (changing)
     PairStrPairFloat_t pair;
     m_weaponsPreviewData.reserve(6);
