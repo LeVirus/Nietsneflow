@@ -111,7 +111,7 @@ public:
     LevelManager();
     void loadTextureData(const std::string &INIFileName);
     void loadStandardData(const std::string &INIFileName);
-    void loadFontData(const std::string &INIFileName);
+    void loadFontData(const std::string &INIFileName, Font_e type);
     bool loadSettingsData();
     LevelLoadState_e loadLevel(uint32_t levelNum, bool customLevel = false);
     void clearExistingPositionsElement();
@@ -303,7 +303,7 @@ private:
     //texture and sprite loading
     void loadTexturePath();
     void loadSpriteData(const std::string &sectionName = "Sprite",
-                        bool font = false);
+                        bool font = false, std::optional<Font_e> type = {});
     bool loadBackgroundData();
     void loadMusicData();
     //Level element datas loading

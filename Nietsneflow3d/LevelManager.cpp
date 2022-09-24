@@ -31,8 +31,7 @@ void LevelManager::loadTexturePath()
 }
 
 //===================================================================
-void LevelManager::loadSpriteData(const std::string &sectionName,
-                                  bool font)
+void LevelManager::loadSpriteData(const std::string &sectionName, bool font, std::optional<Font_e> type)
 {
     std::vector<std::string> sections = m_ini.getSectionNamesContaining(sectionName);
     std::optional<std::string> val;
@@ -68,7 +67,8 @@ void LevelManager::loadSpriteData(const std::string &sectionName,
         };
         if(font)
         {
-            m_fontData.addCharSpriteData(spriteData, sections[i]);
+            assert(type);
+            m_fontData.addCharSpriteData(spriteData, sections[i], *type);
         }
         else
         {
@@ -1711,13 +1711,14 @@ void LevelManager::loadStandardData(const std::string &INIFileName)
 }
 
 //===================================================================
-void LevelManager::loadFontData(const std::string &INIFileName)
+void LevelManager::loadFontData(const std::string &INIFileName, Font_e type)
 {
-    if(!loadIniFile(LEVEL_RESSOURCES_DIR_STR + INIFileName, /*{}*/ENCRYPT_KEY_CONF_FILE))
+    if(!loadIniFile(LEVEL_RESSOURCES_DIR_STR + INIFileName, ENCRYPT_KEY_CONF_FILE))
     {
         assert("Error while reading INI file.");
     }
-    loadSpriteData("", true);
+    //load all sections
+    loadSpriteData("", true, type);
 }
 
 
