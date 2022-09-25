@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
 		//}
 		//std::string path = argv[1];
 		//std::ifstream inStream("./Ressources/fontData.ini.base");
-		std::ifstream inStream("./Ressources/pictureData.ini.base");
+		std::ifstream inStream("./Ressources/fontSelected.ini.base");
 		//std::cout << "./Ressources/" + path + "/level.ini.dd \n";
 		//std::ifstream inStream("./Ressources/" + path + "/level.ini.dec");
 //		std::ifstream inStream("./Ressources/standardData.ini.base");
@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
 		std::string dataString = encrypt(ostringStream.str(), KEY);
 
 		//std::ofstream outStream("./Ressources/fontData.ini");
-		std::ofstream outStream("./Ressources/pictureData.ini");
+		std::ofstream outStream("./Ressources/fontSelected.ini");
 		//std::ofstream outStream("./Ressources/" + path + "/level.ini");
 		//std::ofstream outStream("./Ressources/standardData.ini");
 		outStream << dataString;

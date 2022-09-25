@@ -6,6 +6,7 @@ void Game::loadStandardData()
     m_levelManager.loadTextureData("pictureData.ini");
     m_levelManager.loadStandardData("standardData.ini");
     m_levelManager.loadFontData("fontData.ini", Font_e::BASE);
+    m_levelManager.loadFontData("fontSelected.ini", Font_e::SELECTED);
     m_mainEngine.loadGraphicPicture(m_levelManager.getPictureData(), m_levelManager.getFontData());
     m_mainEngine.loadExistingLevelNumSaves(m_levelManager.getExistingLevelNumSaves());
     m_levelManager.loadExistingCustomLevelFilename();
