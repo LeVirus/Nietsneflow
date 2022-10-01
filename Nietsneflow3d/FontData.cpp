@@ -1,6 +1,7 @@
 #include "FontData.hpp"
 #include <iostream>
 #include <cassert>
+#include <ECS/Components/WriteComponent.hpp>
 
 //===================================================================
 FontData::FontData()
@@ -25,29 +26,30 @@ void FontData::clear()
 }
 
 //===================================================================
-VectSpriteDataRef_t FontData::getWriteData(const std::string &str, uint32_t &numTexture, Font_e type)const
+VectSpriteDataRef_t FontData::getWriteData(const std::string &str, WriteComponent *writeComp, Font_e type)const
 {
     if(str.empty())
     {
         return {};
     }
-    uint32_t pos = static_cast<uint32_t>(type);
+    uint32_t type_i = static_cast<uint32_t>(type);
     VectSpriteDataRef_t vect;
     vect.reserve(str.size());
     std::map<char, SpriteData>::const_iterator it;
+    writeComp->m_fontType = type;
     for(uint32_t i = 0; i < str.size(); ++i)
     {
-        it = m_mapFontData[pos].find(str[i]);
-        if(str[i] != ' ' && str[i] != '\\' && it == m_mapFontData[pos].end())
+        it = m_mapFontData[type_i].find(str[i]);
+        if(str[i] != ' ' && str[i] != '\\' && it == m_mapFontData[type_i].end())
         {
-            it = m_mapFontData[pos].find('?');
+            it = m_mapFontData[type_i].find('?');
         }
-        if(it != m_mapFontData[pos].end())
+        if(it != m_mapFontData[type_i].end())
         {
             vect.emplace_back(const_cast<SpriteData&>(it->second));
             if(i == 0)
             {
-                numTexture = it->second.m_textureNum;
+                writeComp->m_numTexture = it->second.m_textureNum;
             }
         }
     }

@@ -125,6 +125,12 @@ private:
     uint32_t m_resolutionDisplayMenuEntity,
     m_fullscreenMenuEntity, m_infoWriteStandardInterval = 1.5 / FPS_VALUE;
     ArrayControlKey_t m_inputMenuKeyboardWriteKeysEntities, m_inputMenuGamepadWriteKeysEntities;
+    const std::array<float, static_cast<uint32_t>(Font_e::TOTAL)> COHEF_WRITE_FONT =
+    {
+            4.0f,
+            4.0f,
+            1.3333f
+    };
 };
 
 uint32_t getSpriteAssociateEntity(VertexID_e spriteId, PlayerConfComponent * const playerComp);

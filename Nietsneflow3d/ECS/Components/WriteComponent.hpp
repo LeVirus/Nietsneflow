@@ -4,6 +4,7 @@
 #include <constants.hpp>
 #include <PictureData.hpp>
 #include <functional>
+#include "FontData.hpp"
 
 using VectSpriteDataRef_t = std::vector<std::reference_wrapper<SpriteData>>;
 using VectVectSpriteDataRef_t = std::vector<VectSpriteDataRef_t>;
@@ -31,5 +32,6 @@ struct WriteComponent : public ecs::Component
     float m_fontSize;
     PairFloat_t m_upLeftPositionGL;
     uint32_t m_numTexture;
+    Font_e m_fontType;
     virtual ~WriteComponent() = default;
 };

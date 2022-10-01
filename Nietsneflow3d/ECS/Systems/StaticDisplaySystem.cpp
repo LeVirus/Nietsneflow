@@ -364,7 +364,7 @@ void StaticDisplaySystem::updateDisplayMenuResolution(const std::string &str)
     PositionVertexComponent *posComp = stairwayToComponentManager().
                 searchComponentByType<PositionVertexComponent>(m_resolutionDisplayMenuEntity, Components_e::POSITION_VERTEX_COMPONENT);
     assert(posComp);
-    writeComp->m_fontSpriteData[0] = m_fontDataPtr->getWriteData(str, writeComp->m_numTexture, Font_e::BASE);
+    writeComp->m_fontSpriteData[0] = m_fontDataPtr->getWriteData(str, writeComp, Font_e::BASE);
     confWriteVertex(writeComp, posComp, VertexID_e::RESOLUTION_DISPLAY_MENU);
 }
 
@@ -383,7 +383,7 @@ void StaticDisplaySystem::updateMenuEntryFullscreen(bool displayMenufullscreenMo
     PositionVertexComponent *posComp = stairwayToComponentManager().
                 searchComponentByType<PositionVertexComponent>(m_fullscreenMenuEntity, Components_e::POSITION_VERTEX_COMPONENT);
     assert(posComp);
-    writeComp->m_fontSpriteData[0] = m_fontDataPtr->getWriteData(writeComp->m_vectMessage[0].second, writeComp->m_numTexture, Font_e::BASE);
+    writeComp->m_fontSpriteData[0] = m_fontDataPtr->getWriteData(writeComp->m_vectMessage[0].second, writeComp, Font_e::BASE);
     confWriteVertex(writeComp, posComp, VertexID_e::FULLSCREEN);
 }
 
@@ -509,7 +509,7 @@ void StaticDisplaySystem::drawWriteVertex(uint32_t numEntity, VertexID_e type, c
     {
         if(value != writeComp->m_vectMessage[0].second)
         {
-            writeComp->m_fontSpriteData[0] = m_fontDataPtr->getWriteData(value, writeComp->m_numTexture, Font_e::SELECTED);
+            writeComp->m_fontSpriteData[0] = m_fontDataPtr->getWriteData(value, writeComp, Font_e::SELECTED);
         }
         writeComp->m_vectMessage[0].second = value;
     }
@@ -824,8 +824,7 @@ void StaticDisplaySystem::drawLineWriteVertex(PositionVertexComponent *posComp, 
     posComp->m_vertex.reserve(writeComp->m_fontSpriteData.size() * 4);
     float currentX, diffX, leftPos,
             currentY = writeComp->m_upLeftPositionGL.second, diffY = writeComp->m_fontSize;
-    std::array<PairFloat_t, 4> *memArray = &(writeComp->m_fontSpriteData[0][0].get().m_texturePosVertex);
-    float cohef = ((*memArray)[2].second - (*memArray)[0].second) / writeComp->m_fontSize;
+    std::array<PairFloat_t, 4> *memArray;
     uint32_t cmptSpriteData, currentVertexBeginCursor = 0;
     for(uint32_t i = 0; i < writeComp->m_vectMessage.size(); ++i)
     {
@@ -867,7 +866,7 @@ void StaticDisplaySystem::drawLineWriteVertex(PositionVertexComponent *posComp, 
             }
             assert(cmptSpriteData < writeComp->m_fontSpriteData[i].size());
             memArray = &(writeComp->m_fontSpriteData[i][cmptSpriteData].get().m_texturePosVertex);
-            diffX = ((*memArray)[1].first - (*memArray)[0].first) / cohef;
+            diffX = ((*memArray)[1].first - (*memArray)[0].first) / COHEF_WRITE_FONT[static_cast<uint32_t>(writeComp->m_fontType)];
             posComp->m_vertex.emplace_back(PairFloat_t{currentX, currentY});
             posComp->m_vertex.emplace_back(PairFloat_t{currentX + diffX, currentY});
             posComp->m_vertex.emplace_back(PairFloat_t{currentX + diffX, currentY - diffY});

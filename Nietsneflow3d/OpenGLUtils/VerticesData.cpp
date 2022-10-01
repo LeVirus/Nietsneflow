@@ -192,8 +192,7 @@ float VerticesData::loadRaycastingEntity(const SpriteTextureComponent &spriteCom
 }
 
 //===================================================================
-void VerticesData::loadVertexWriteTextureComponent(const PositionVertexComponent &posComp,
-                                                   const WriteComponent &writeComp)
+void VerticesData::loadVertexWriteTextureComponent(const PositionVertexComponent &posComp, const WriteComponent &writeComp)
 {
     uint32_t size = writeComp.m_fontSpriteData.size();
     uint32_t l = 0;
