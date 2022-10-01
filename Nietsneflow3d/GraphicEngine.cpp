@@ -216,14 +216,14 @@ void GraphicEngine::updateAmmoCount(WriteComponent *writeComp, WeaponComponent *
 {
     writeComp->m_vectMessage[0].second = STR_PLAYER_AMMO + std::to_string(weaponComp->m_weaponsData[
                                                 weaponComp->m_currentWeapon].m_ammunationsCount);
-    writeComp->m_fontSpriteData[0] = m_ptrFontData->getWriteData(writeComp->m_vectMessage[0].second, writeComp, Font_e::SELECTED);
+    writeComp->m_fontSpriteData[0] = m_ptrFontData->getWriteData(writeComp->m_vectMessage[0].second, writeComp, Font_e::STANDARD);
 }
 
 //===================================================================
 void GraphicEngine::updatePlayerLife(WriteComponent *writeComp, PlayerConfComponent *playerComp)
 {
     writeComp->m_vectMessage[0].second = STR_PLAYER_LIFE + std::to_string(playerComp->m_life);
-    writeComp->m_fontSpriteData[0] = m_ptrFontData->getWriteData(writeComp->m_vectMessage[0].second, writeComp, Font_e::SELECTED);
+    writeComp->m_fontSpriteData[0] = m_ptrFontData->getWriteData(writeComp->m_vectMessage[0].second, writeComp, Font_e::STANDARD);
 }
 
 //===================================================================
@@ -287,7 +287,7 @@ void GraphicEngine::fillTitleMenuWrite(WriteComponent *writeComp, MenuMode_e men
     case MenuMode_e::LEVEL_EPILOGUE:
         break;
     }
-    writeComp->m_fontSpriteData[0] = m_ptrFontData->getWriteData(writeComp->m_vectMessage[0].second, writeComp, Font_e::SELECTED);
+    writeComp->m_fontSpriteData[0] = m_ptrFontData->getWriteData(writeComp->m_vectMessage[0].second, writeComp, Font_e::STANDARD);
 }
 
 //===================================================================
@@ -333,7 +333,7 @@ void GraphicEngine::fillMenuWrite(WriteComponent *writeComp, MenuMode_e menuEntr
         std::map<MenuMode_e, PairPairFloatStr_t>::const_iterator it = MAP_MENU_DATA.find(menuEntry);
         writeComp->m_vectMessage[0].second = it->second.second;
     }
-    writeComp->m_fontSpriteData[0] = m_ptrFontData->getWriteData(writeComp->m_vectMessage[0].second, writeComp, Font_e::SELECTED);
+    writeComp->m_fontSpriteData[0] = m_ptrFontData->getWriteData(writeComp->m_vectMessage[0].second, writeComp, Font_e::STANDARD);
 }
 
 //===================================================================
@@ -342,7 +342,7 @@ void GraphicEngine::confWriteComponent(WriteComponent *writeComp)
     writeComp->m_fontSpriteData.clear();
     for(uint32_t i = 0; i < writeComp->m_vectMessage.size(); ++i)
     {
-        writeComp->m_fontSpriteData.emplace_back(m_ptrFontData->getWriteData(writeComp->m_vectMessage[i].second, writeComp, Font_e::SELECTED));
+        writeComp->m_fontSpriteData.emplace_back(m_ptrFontData->getWriteData(writeComp->m_vectMessage[i].second, writeComp, Font_e::STANDARD));
     }
 }
 

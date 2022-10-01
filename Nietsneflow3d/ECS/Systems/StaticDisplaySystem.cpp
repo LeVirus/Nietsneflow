@@ -509,7 +509,7 @@ void StaticDisplaySystem::drawWriteVertex(uint32_t numEntity, VertexID_e type, c
     {
         if(value != writeComp->m_vectMessage[0].second)
         {
-            writeComp->m_fontSpriteData[0] = m_fontDataPtr->getWriteData(value, writeComp, Font_e::SELECTED);
+            writeComp->m_fontSpriteData[0] = m_fontDataPtr->getWriteData(value, writeComp, Font_e::STANDARD);
         }
         writeComp->m_vectMessage[0].second = value;
     }
