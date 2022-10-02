@@ -441,50 +441,50 @@ inline const std::map<MenuMode_e, PairPairFloatStr_t> MAP_MENU_DATA =
 {
     {MenuMode_e::TITLE,
      PairPairFloatStr_t{{-0.5f, 0.5f},
-        "NEW GAME\\LOAD GAME\\DISPLAY CONF\\SOUND CONF\\INPUT CONF\\PLAY CUSTOM LEVELS\\EXIT GAME"}},
+        "New Game\\Load Game\\Display Conf\\Sound Conf\\Input Conf\\Play Custom Levels\\Exit Game"}},
     {MenuMode_e::BASE,
      PairPairFloatStr_t{{-0.5f, 0.5f},
-      "RETURN TO GAME\\SOUND CONF\\DISPLAY CONF\\INPUT CONF\\NEW GAME\\LOAD GAME\\RESTART FROM LAST CHECKPOINT\\RESTART LEVEL\\PLAY CUSTOM LEVELS\\EXIT GAME"}},
+      "Return To Game\\Sound Conf\\Display Conf\\Input Conf\\New Game\\Load Game\\Restart From Last Checkpoint\\Restart Level\\Play Custom Levels\\Exit Game"}},
     {MenuMode_e::TRANSITION_LEVEL,
-     PairPairFloatStr_t{{-0.5f, 0.5f}, "CONTINUE"}},
+     PairPairFloatStr_t{{-0.5f, 0.5f}, "Continue"}},
     {MenuMode_e::LEVEL_PROLOGUE,
-     PairPairFloatStr_t{{-0.5f, 0.5f}, "CONTINUE"}},
+     PairPairFloatStr_t{{-0.5f, 0.5f}, "Continue"}},
     {MenuMode_e::LEVEL_EPILOGUE,
-     PairPairFloatStr_t{{-0.5f, 0.5f}, "CONTINUE"}},
+     PairPairFloatStr_t{{-0.5f, 0.5f}, "Continue"}},
     {MenuMode_e::SOUND,
-     PairPairFloatStr_t{{-0.7f, 0.5f}, "MUSIC VOLUME\\EFFECTS VOLUME\\RETURN"}},
+     PairPairFloatStr_t{{-0.7f, 0.5f}, "Music Volume\\Effects Volume\\Return"}},
     {MenuMode_e::DISPLAY,
-     PairPairFloatStr_t{{-0.7f, 0.5f}, "SET RESOLUTION\\FULLSCREEN\\RETURN\\VALID"}},
+     PairPairFloatStr_t{{-0.7f, 0.5f}, "Set Resolution\\Fullscreen\\Return\\Valid"}},
     {MenuMode_e::INPUT,
-     PairPairFloatStr_t{{-0.7f, 0.7f}, "MOVE FORWARD\\MOVE BACKWARD\\STRAFE LEFT\\"
-         "STRAFE RIGHT\\TURN LEFT\\TURN RIGHT\\ACTION\\SHOOT\\PREVIOUS WEAPON\\NEXT WEAPON\\TURN SENSITIVITY\\DEFAULT\\RETURN\\VALID"}
+     PairPairFloatStr_t{{-0.7f, 0.7f}, "Move Forward\\Move Backward\\Strafe Left\\"
+         "Strafe Right\\Turn Left\\Turn Right\\Action\\Shoot\\Previous Weapon\\Next Weapon\\Turn Sensitivity\\Default\\Return\\Valid"}
     },
     {MenuMode_e::NEW_GAME,
-     PairPairFloatStr_t{{-0.6f, 0.5f}, "1\\2\\3\\RETURN"}
+     PairPairFloatStr_t{{-0.6f, 0.5f}, "1\\2\\3\\Return"}
     },
     {MenuMode_e::LOAD_GAME,
-     PairPairFloatStr_t{{-0.6f, 0.5f}, "1\\2\\3\\RETURN"}
+     PairPairFloatStr_t{{-0.6f, 0.5f}, "1\\2\\3\\Return"}
     },
     {MenuMode_e::CONFIRM_QUIT_INPUT_FORM,
-     PairPairFloatStr_t{{-0.1f, 0.0f}, "YES\\NO"}
+     PairPairFloatStr_t{{-0.1f, 0.0f}, "Yes\\No"}
     },
     {MenuMode_e::CONFIRM_LOADING_GAME_FORM,
-     PairPairFloatStr_t{{-0.1f, 0.0f}, "YES\\NO"}
+     PairPairFloatStr_t{{-0.1f, 0.0f}, "Yes\\No"}
     },
     {MenuMode_e::CONFIRM_RESTART_LEVEL,
-     PairPairFloatStr_t{{-0.1f, 0.0f}, "YES\\NO"}
+     PairPairFloatStr_t{{-0.1f, 0.0f}, "Yes\\No"}
     },
     {MenuMode_e::CONFIRM_RESTART_FROM_LAST_CHECKPOINT,
-     PairPairFloatStr_t{{-0.1f, 0.0f}, "YES\\NO"}
+     PairPairFloatStr_t{{-0.1f, 0.0f}, "Yes\\No"}
     },
     {MenuMode_e::CONFIRM_QUIT_GAME,
-     PairPairFloatStr_t{{-0.1f, 0.0f}, "YES\\NO"}
+     PairPairFloatStr_t{{-0.1f, 0.0f}, "Yes\\No"}
     },
     {MenuMode_e::NEW_KEY,
-     PairPairFloatStr_t{{-0.6f, 0.1f}, "PRESS ESCAPE FOR CANCEL\\ENTER NEW KEY FOR ACTION :\\"}
+     PairPairFloatStr_t{{-0.6f, 0.1f}, "Press Escape For Cancel\\Enter New Key For Action :\\"}
     },
     {MenuMode_e::LOAD_CUSTOM_LEVEL,
-     PairPairFloatStr_t{{-0.7f, 0.7f}, "1\\2\\3\\4\\5\\PREVIOUS\\NEXT\\RETURN"}
+     PairPairFloatStr_t{{-0.7f, 0.7f}, "1\\2\\3\\4\\5\\Previous\\Next\\Return"}
     }
 };
 inline const std::map<Shader_e, std::string> SHADER_ID_MAP
@@ -494,12 +494,12 @@ inline const std::map<Shader_e, std::string> SHADER_ID_MAP
 };
 
 inline const std::map<uint32_t, std::string> INPUT_KEYBOARD_KEY_STRING = {
-    {GLFW_KEY_SPACE, "SPACE"},
-    {GLFW_KEY_APOSTROPHE, "APOSTROPHE"},
-    {GLFW_KEY_COMMA, "COMMA"},
-    {GLFW_KEY_MINUS, "MINUS"},
-    {GLFW_KEY_PERIOD, "PERIOD"},
-    {GLFW_KEY_SLASH, "SLASH"},
+    {GLFW_KEY_SPACE, "Space"},
+    {GLFW_KEY_APOSTROPHE, "Apostrophe"},
+    {GLFW_KEY_COMMA, "Comma"},
+    {GLFW_KEY_MINUS, "Minus"},
+    {GLFW_KEY_PERIOD, "Period"},
+    {GLFW_KEY_SLASH, "Slash"},
     {GLFW_KEY_0, "0"},
     {GLFW_KEY_1, "1"},
     {GLFW_KEY_2, "2"},
@@ -510,8 +510,8 @@ inline const std::map<uint32_t, std::string> INPUT_KEYBOARD_KEY_STRING = {
     {GLFW_KEY_7, "7"},
     {GLFW_KEY_8, "8"},
     {GLFW_KEY_9, "9"},
-    {GLFW_KEY_SEMICOLON, "SEMICOLON"},
-    {GLFW_KEY_EQUAL, "EQUAL"},
+    {GLFW_KEY_SEMICOLON, "Semicolon"},
+    {GLFW_KEY_EQUAL, "Equal"},
     {GLFW_KEY_A, "A"},
     {GLFW_KEY_B, "B"},
     {GLFW_KEY_C, "C"},
@@ -538,19 +538,19 @@ inline const std::map<uint32_t, std::string> INPUT_KEYBOARD_KEY_STRING = {
     {GLFW_KEY_X, "X"},
     {GLFW_KEY_Y, "Y"},
     {GLFW_KEY_Z, "Z"},
-    {GLFW_KEY_LEFT_BRACKET, "LEFT BRACKET"},
-    {GLFW_KEY_BACKSLASH, "BACKSLASH"},
-    {GLFW_KEY_RIGHT_BRACKET, "RIGHT BRACKET"},
-    {GLFW_KEY_GRAVE_ACCENT, "GRAVE ACCENT"},
-    {GLFW_KEY_INSERT, "INSERT"},
-    {GLFW_KEY_RIGHT, "RIGHT"},
-    {GLFW_KEY_LEFT, "LEFT"},
-    {GLFW_KEY_DOWN, "DOWN"},
-    {GLFW_KEY_UP, "UP"},
-    {GLFW_KEY_PAGE_UP, "PAGE UP"},
-    {GLFW_KEY_PAGE_DOWN, "PAGE DOWN"},
-    {GLFW_KEY_HOME, "HOME"},
-    {GLFW_KEY_END, "END"},
+    {GLFW_KEY_LEFT_BRACKET, "Left Bracket"},
+    {GLFW_KEY_BACKSLASH, "Backslash"},
+    {GLFW_KEY_RIGHT_BRACKET, "Right Bracket"},
+    {GLFW_KEY_GRAVE_ACCENT, "Grave Accent"},
+    {GLFW_KEY_INSERT, "Insert"},
+    {GLFW_KEY_RIGHT, "Right"},
+    {GLFW_KEY_LEFT, "Left"},
+    {GLFW_KEY_DOWN, "Down"},
+    {GLFW_KEY_UP, "Up"},
+    {GLFW_KEY_PAGE_UP, "Page Up"},
+    {GLFW_KEY_PAGE_DOWN, "Page Down"},
+    {GLFW_KEY_HOME, "Home"},
+    {GLFW_KEY_END, "End"},
     {GLFW_KEY_KP_0, "KP 0"},
     {GLFW_KEY_KP_1, "KP 1"},
     {GLFW_KEY_KP_2, "KP 2"},
@@ -561,57 +561,57 @@ inline const std::map<uint32_t, std::string> INPUT_KEYBOARD_KEY_STRING = {
     {GLFW_KEY_KP_7, "KP 7"},
     {GLFW_KEY_KP_8, "KP 8"},
     {GLFW_KEY_KP_9, "KP 9"},
-    {GLFW_KEY_KP_DECIMAL, "KP DECIMAL"},
-    {GLFW_KEY_KP_DIVIDE, "KP DIVIDE"},
-    {GLFW_KEY_KP_MULTIPLY, "KP MULTIPLY"},
-    {GLFW_KEY_KP_SUBTRACT, "KP SUBTRACT"},
-    {GLFW_KEY_KP_ADD, "KP ADD"},
-    {GLFW_KEY_KP_EQUAL, "KP EQUAL"},
-    {GLFW_KEY_LEFT_SHIFT, "LEFT SHIFT"},
-    {GLFW_KEY_LEFT_CONTROL, "LEFT CONTROL"},
-    {GLFW_KEY_LEFT_ALT, "LEFT ALT"},
-    {GLFW_KEY_LEFT_SUPER, "LEFT SUPER"},
-    {GLFW_KEY_RIGHT_SHIFT, "RIGHT SHIFT"},
-    {GLFW_KEY_RIGHT_CONTROL, "RIGHT CONTROL"},
-    {GLFW_KEY_RIGHT_ALT, "RIGHT ALT"},
-    {GLFW_KEY_RIGHT_SUPER, "RIGHT SUPER"},
-    {GLFW_KEY_MENU, "MENU"}
+    {GLFW_KEY_KP_DECIMAL, "KP Decimal"},
+    {GLFW_KEY_KP_DIVIDE, "KP Divide"},
+    {GLFW_KEY_KP_MULTIPLY, "KP Multiply"},
+    {GLFW_KEY_KP_SUBTRACT, "KP Substract"},
+    {GLFW_KEY_KP_ADD, "KP Add"},
+    {GLFW_KEY_KP_EQUAL, "KP Equal"},
+    {GLFW_KEY_LEFT_SHIFT, "Left Shift"},
+    {GLFW_KEY_LEFT_CONTROL, "Left Control"},
+    {GLFW_KEY_LEFT_ALT, "Left Alt"},
+    {GLFW_KEY_LEFT_SUPER, "Left Super"},
+    {GLFW_KEY_RIGHT_SHIFT, "Right Shift"},
+    {GLFW_KEY_RIGHT_CONTROL, "Right Control"},
+    {GLFW_KEY_RIGHT_ALT, "Right Alt"},
+    {GLFW_KEY_RIGHT_SUPER, "Right Super"},
+    {GLFW_KEY_MENU, "Menu"}
 };
 
 inline const std::map<uint32_t, std::string> INPUT_MOUSE_KEY_STRING = {
-    {GLFW_MOUSE_BUTTON_LEFT, "MOUSE LEFT"},
-    {GLFW_MOUSE_BUTTON_RIGHT, "MOUSE RIGHT"},
-    {GLFW_MOUSE_BUTTON_MIDDLE, "MOUSE MIDDLE"},
-    {GLFW_MOUSE_BUTTON_4, "MOUSE 4"},
-    {GLFW_MOUSE_BUTTON_5, "MOUSE 5"},
-    {GLFW_MOUSE_BUTTON_6, "MOUSE 6"},
-    {GLFW_MOUSE_BUTTON_7, "MOUSE 7"},
-    {GLFW_MOUSE_BUTTON_8, "MOUSE 8"}
+    {GLFW_MOUSE_BUTTON_LEFT, "Mouse Left"},
+    {GLFW_MOUSE_BUTTON_RIGHT, "Mouse Right"},
+    {GLFW_MOUSE_BUTTON_MIDDLE, "Mouse Middle"},
+    {GLFW_MOUSE_BUTTON_4, "Mouse 4"},
+    {GLFW_MOUSE_BUTTON_5, "Mouse 5"},
+    {GLFW_MOUSE_BUTTON_6, "Mouse 6"},
+    {GLFW_MOUSE_BUTTON_7, "Mouse 7"},
+    {GLFW_MOUSE_BUTTON_8, "Mouse 8"}
 };
 
 inline const std::map<uint32_t, std::string> INPUT_GAMEPAD_SIMPLE_BUTTONS_STRING = {
-    {GLFW_GAMEPAD_BUTTON_A, "BUTTON A"},
-    {GLFW_GAMEPAD_BUTTON_B, "BUTTON B"},
-    {GLFW_GAMEPAD_BUTTON_X, "BUTTON X"},
-    {GLFW_GAMEPAD_BUTTON_Y, "BUTTON Y"},
-    {GLFW_GAMEPAD_BUTTON_LEFT_BUMPER, "LEFT BUMPER"},
-    {GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER, "RIGHT BUMPER"},
-    {GLFW_GAMEPAD_BUTTON_BACK, "BACK"},
-    {GLFW_GAMEPAD_BUTTON_START, "START"},
-    {GLFW_GAMEPAD_BUTTON_GUIDE, "GUIDE"},
-    {GLFW_GAMEPAD_BUTTON_LEFT_THUMB, "LEFT THUMB"},
-    {GLFW_GAMEPAD_BUTTON_RIGHT_THUMB, "RIGHT THUMB"},
-    {GLFW_GAMEPAD_BUTTON_DPAD_UP, "DPAD UP"},
-    {GLFW_GAMEPAD_BUTTON_DPAD_RIGHT, "DPAD RIGHT"},
-    {GLFW_GAMEPAD_BUTTON_DPAD_DOWN, "DPAD DOWN"},
-    {GLFW_GAMEPAD_BUTTON_DPAD_LEFT, "DPAD LEFT"},
+    {GLFW_GAMEPAD_BUTTON_A, "Button A"},
+    {GLFW_GAMEPAD_BUTTON_B, "Button B"},
+    {GLFW_GAMEPAD_BUTTON_X, "Button X"},
+    {GLFW_GAMEPAD_BUTTON_Y, "Button Y"},
+    {GLFW_GAMEPAD_BUTTON_LEFT_BUMPER, "Left Bumper"},
+    {GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER, "Right Bumper"},
+    {GLFW_GAMEPAD_BUTTON_BACK, "Back"},
+    {GLFW_GAMEPAD_BUTTON_START, "Start"},
+    {GLFW_GAMEPAD_BUTTON_GUIDE, "Guide"},
+    {GLFW_GAMEPAD_BUTTON_LEFT_THUMB, "Left Thumb"},
+    {GLFW_GAMEPAD_BUTTON_RIGHT_THUMB, "Right Thumb"},
+    {GLFW_GAMEPAD_BUTTON_DPAD_UP, "Dpad Up"},
+    {GLFW_GAMEPAD_BUTTON_DPAD_RIGHT, "Dpad Right"},
+    {GLFW_GAMEPAD_BUTTON_DPAD_DOWN, "Dpad Down"},
+    {GLFW_GAMEPAD_BUTTON_DPAD_LEFT, "Dpad Left"},
 };
 
 inline const std::map<uint32_t, std::string> INPUT_GAMEPAD_AXIS_STRING = {
-    {GLFW_GAMEPAD_AXIS_LEFT_X, "AXIS LEFT X"},
-    {GLFW_GAMEPAD_AXIS_LEFT_Y, "AXIS LEFT Y"},
-    {GLFW_GAMEPAD_AXIS_RIGHT_X, "AXIS RIGHT X"},
-    {GLFW_GAMEPAD_AXIS_RIGHT_Y, "AXIS RIGHT Y"},
-    {GLFW_GAMEPAD_AXIS_LEFT_TRIGGER, "AXIS LEFT TRIGGER"},
-    {GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER, "AXIS RIGHT TRIGGER"}
+    {GLFW_GAMEPAD_AXIS_LEFT_X, "Axis Left X"},
+    {GLFW_GAMEPAD_AXIS_LEFT_Y, "Axis Left Y"},
+    {GLFW_GAMEPAD_AXIS_RIGHT_X, "Axis Right X"},
+    {GLFW_GAMEPAD_AXIS_RIGHT_Y, "Axis Right Y"},
+    {GLFW_GAMEPAD_AXIS_LEFT_TRIGGER, "Axis Left Trigger"},
+    {GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER, "Axis Right Trigger"}
 };

@@ -273,7 +273,7 @@ DetectBehaviourSound = DemonDetect.wav
 AttackSound = DemonAttack.wav
 
 [WeaponFist]
-WeaponName = FIST
+WeaponName = Fist
 Possess = true
 BaseAmmo = 1
 Order = 0
@@ -289,7 +289,7 @@ AnimationType = 1
 LastAnimNum = 1
 
 [WeaponGun]
-WeaponName = GUN
+WeaponName = Gun
 Possess = true
 BaseAmmo = 20
 Order = 1
@@ -307,7 +307,7 @@ LastAnimNum = 1
 SoundEffect = GunShotTMP.wav
 
 [WeaponShotgun]
-WeaponName = SHOTGUN
+WeaponName = Shotgun
 Order = 2
 StaticSprite = SpriteSSt
 AttackSprite = SpriteSSh SpriteSRA SpriteSRB SpriteSRC
@@ -325,7 +325,7 @@ SoundEffect = Western-Gunshot.wav
 ReloadSound = ShotgunReload.wav
 
 [WeaponPlasmaRifle]
-WeaponName = PLASMA RIFLE
+WeaponName = Pasma Rifle
 Order = 3
 StaticSprite = SpritePRS 
 AttackSprite = SpritePRAA SpritePRAB SpritePRR
@@ -342,7 +342,7 @@ LastAnimNum = 1
 SoundEffect = LaserShotTMP.wav
 
 [WeaponBazooka]
-WeaponName = BAZOOKA
+WeaponName = Bazooka
 Order = 4
 BaseAmmo = 20
 StaticSprite = SpriteBSt 
@@ -361,7 +361,7 @@ LastAnimNum = 1
 SoundEffect = Explosion.wav
 
 [WeaponMachineGun]
-WeaponName = MACHINE GUN
+WeaponName = Machine Gun
 Order = 5
 BaseAmmo = 0
 StaticSprite = SpriteMGSt 
@@ -487,7 +487,7 @@ Type = 2
 Containing = 10
 
 [ObjectPurpleCard]
-CardName = PURPLE CARD
+CardName = Purple Card
 Sprite = SpriteSimetraCardPurple
 SpriteWeightGame = 0.1365
 SpriteHeightGame = 0.4665
@@ -495,7 +495,7 @@ Type = 3
 CardID = 0
 
 [ObjectBlueCard]
-CardName = BLUE CARD
+CardName = Blue Card
 Sprite = SpriteSimetraCardBlue
 SpriteWeightGame = 0.1365
 SpriteHeightGame = 0.4665
@@ -503,7 +503,7 @@ Type = 3
 CardID = 1
 
 [ObjectGreenCard]
-CardName = GREEN CARD
+CardName = Green Card
 Sprite = SpriteSimetraCardGreen
 SpriteWeightGame = 0.1365
 SpriteHeightGame = 0.4665
@@ -511,7 +511,7 @@ Type = 3
 CardID = 2
 
 [ObjectGoldCard]
-CardName = GOLD CARD
+CardName = Gold Card
 Sprite = SpriteSimetraCardGold
 SpriteWeightGame = 0.1365
 SpriteHeightGame = 0.4665

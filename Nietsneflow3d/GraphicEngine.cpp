@@ -34,13 +34,13 @@ void GraphicEngine::loadExistingLevelNumSaves(const std::array<std::optional<Dat
         if(existingLevelNum[i - 1])
         {
             checkpoint = (existingLevelNum[i - 1]->m_checkpointNum == 0) ? "" :
-                " CHCKPT " + std::to_string(existingLevelNum[i - 1]->m_checkpointNum);
-            m_saveStandardLevelMenuWrite += "  LVL " + std::to_string(existingLevelNum[i - 1]->m_levelNum) +
+                " Chckpt " + std::to_string(existingLevelNum[i - 1]->m_checkpointNum);
+            m_saveStandardLevelMenuWrite += "  Lvl " + std::to_string(existingLevelNum[i - 1]->m_levelNum) +
                     checkpoint + " " + existingLevelNum[i - 1]->m_date;
         }
         m_saveStandardLevelMenuWrite += "\\";
     }
-    m_saveStandardLevelMenuWrite += "RETURN";
+    m_saveStandardLevelMenuWrite += "Return";
 }
 
 //===================================================================
@@ -65,7 +65,7 @@ void GraphicEngine::loadExistingCustomLevel(const std::vector<std::string> &cust
         strFinal += std::to_string(i + 1) + " " + levelName + "\\";
         if(currentSectionCursor == (CUSTOM_MENU_SECTION_SIZE - 1) || i == customLevels.size() - 1)
         {
-            strFinal += (size > 1) ? "PREVIOUS\\NEXT\\RETURN" : "RETURN";
+            strFinal += (size > 1) ? "Previous\\Next\\Return" : "Return";
             m_existingCustomLevelsMenuWrite[currentSection] = {strFinal, currentSectionCursor + ((size > 1) ? 3 : 1)};
             ++currentSection;
             currentSectionCursor = 0;

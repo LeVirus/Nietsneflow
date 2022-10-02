@@ -907,7 +907,7 @@ bool CollisionSystem::treatCollisionPlayer(CollisionArgs &args, CircleCollisionC
             assert(mapComp);
             playerComp->m_checkpointReached = mapComp->m_coord;
             playerComp->m_currentCheckpoint = {checkpointComp->m_checkpointNumber, checkpointComp->m_direction};
-            writePlayerInfo("CHECKPOINT REACHED");
+            writePlayerInfo("Checkpoint Reached");
         }
         m_vectEntitiesToDelete.push_back(args.entityNumB);
         return true;
@@ -917,7 +917,7 @@ bool CollisionSystem::treatCollisionPlayer(CollisionArgs &args, CircleCollisionC
         PlayerConfComponent *playerComp = stairwayToComponentManager().
                 searchComponentByType<PlayerConfComponent>(args.entityNumA, Components_e::PLAYER_CONF_COMPONENT);
         assert(playerComp);
-        writePlayerInfo("SECRET FOUND");
+        writePlayerInfo("Secret Found");
         if(!playerComp->m_secretsFound)
         {
             playerComp->m_secretsFound = 1;
@@ -1115,7 +1115,7 @@ void CollisionSystem::treatPlayerPickObject(CollisionArgs &args)
         {
             return;
         }
-        info = weaponComp->m_weaponsData[*objectComp->m_weaponID].m_weaponName + " AMMO PICKED UP";
+        info = weaponComp->m_weaponsData[*objectComp->m_weaponID].m_weaponName + " Ammo Picked Up";
     }
         break;
     case ObjectType_e::WEAPON:
@@ -1124,7 +1124,7 @@ void CollisionSystem::treatPlayerPickObject(CollisionArgs &args)
         {
             return;
         }
-        info = weaponComp->m_weaponsData[*objectComp->m_weaponID].m_weaponName + " PICKED UP";
+        info = weaponComp->m_weaponsData[*objectComp->m_weaponID].m_weaponName + " Picked Up";
     }
         break;
     case ObjectType_e::HEAL:
@@ -1138,13 +1138,13 @@ void CollisionSystem::treatPlayerPickObject(CollisionArgs &args)
         {
             playerComp->m_life = 100;
         }
-        info = "HEAL PICKED UP";
+        info = "Heal Picked Up";
         break;
     }
     case ObjectType_e::CARD:
     {
         playerComp->m_card.insert(*objectComp->m_cardID);
-        info = objectComp->m_cardName + " PICKED UP";
+        info = objectComp->m_cardName + " Picked Up";
         break;
     }
     case ObjectType_e::TOTAL:

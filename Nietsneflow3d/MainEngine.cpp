@@ -1913,13 +1913,13 @@ void MainEngine::updateConfirmLoadingMenuInfo(PlayerConfComponent *playerComp)
     {
         writeComp->m_upLeftPositionGL = {-0.6f, -0.7f};
         writeComp->addTextLine({writeComp->m_upLeftPositionGL.first, ""});
-        writeComp->m_vectMessage.back().second = playerComp->m_keyboardInputMenuMode ? "KEYBOARD\\SWITCH GAMEPAD : G OR RL" :
-                                                                 "GAMEPAD\\SWITCH KEYBOARD : G OR RL";
+        writeComp->m_vectMessage.back().second = playerComp->m_keyboardInputMenuMode ? "Keyboard\\Switch Gamepad : G Or RL" :
+                                                                 "Gamepad\\Switch Keyboard : G Or RL";
     }
     else if(playerComp->m_menuMode == MenuMode_e::CONFIRM_QUIT_INPUT_FORM)
     {
         writeComp->m_upLeftPositionGL = {-0.6f, 0.3f};
-        writeComp->addTextLine({{}, "DO YOU WANT TO SAVE CHANGES?"});
+        writeComp->addTextLine({{}, "Do You Want To Save Changes?"});
     }
     else if(playerComp->m_menuMode == MenuMode_e::CONFIRM_LOADING_GAME_FORM ||
             playerComp->m_menuMode == MenuMode_e::CONFIRM_RESTART_LEVEL ||
@@ -1929,8 +1929,8 @@ void MainEngine::updateConfirmLoadingMenuInfo(PlayerConfComponent *playerComp)
         if(!playerComp->m_firstMenu)
         {
             writeComp->m_upLeftPositionGL = {-0.8f, 0.5f};
-            writeComp->addTextLine({{}, "ALL YOUR PROGRESS UNTIL LAST SAVE"});
-            writeComp->addTextLine({{}, "WILL BE LOST"});
+            writeComp->addTextLine({{}, "All Your Progress Until Last Save"});
+            writeComp->addTextLine({{}, "Will Be Lost"});
         }
         else
         {
@@ -1940,11 +1940,11 @@ void MainEngine::updateConfirmLoadingMenuInfo(PlayerConfComponent *playerComp)
         {
             if(playerComp->m_previousMenuMode == MenuMode_e::NEW_GAME && checkSavedGameExists(playerComp->m_currentCursorPos + 1))
             {
-                writeComp->addTextLine({{}, "PREVIOUS FILE WILL BE ERASED"});
+                writeComp->addTextLine({{}, "Previous File Will Be Erased"});
             }
             if(!writeComp->m_vectMessage.empty())
             {
-                writeComp->addTextLine({{}, "CONTINUE ANYWAY?"});
+                writeComp->addTextLine({{}, "Continue Anyway?"});
             }
             //TITLE MENU CASE
             else
@@ -1952,21 +1952,21 @@ void MainEngine::updateConfirmLoadingMenuInfo(PlayerConfComponent *playerComp)
                 writeComp->m_upLeftPositionGL = {-0.3f, 0.3f};
                 if(playerComp->m_previousMenuMode == MenuMode_e::NEW_GAME)
                 {
-                    writeComp->addTextLine({{}, "BEGIN NEW GAME?"});
+                    writeComp->addTextLine({{}, "Begin New Game?"});
                 }
                 else if(playerComp->m_previousMenuMode == MenuMode_e::LOAD_GAME)
                 {
-                    writeComp->addTextLine({{}, "LOAD GAME?"});
+                    writeComp->addTextLine({{}, "Load Game?"});
                 }
                 else if(playerComp->m_previousMenuMode == MenuMode_e::LOAD_CUSTOM_LEVEL)
                 {
-                    writeComp->addTextLine({{}, "LOAD CUSTOM GAME?"});
+                    writeComp->addTextLine({{}, "Load Custom Game?"});
                 }
             }
         }
         else if(playerComp->m_menuMode == MenuMode_e::CONFIRM_QUIT_GAME)
         {
-            writeComp->addTextLine({{}, "DO YOU REALLY WANT TO QUIT THE GAME?"});
+            writeComp->addTextLine({{}, "Do You Really Want To Quit The Game?"});
         }
     }
     m_graphicEngine.confWriteComponent(writeComp);
