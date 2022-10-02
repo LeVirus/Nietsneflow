@@ -322,17 +322,23 @@ void GraphicEngine::fillMenuWrite(WriteComponent *writeComp, MenuMode_e menuEntr
     }
     else if(menuEntry == MenuMode_e::LEVEL_PROLOGUE)
     {
-        writeComp->m_vectMessage[0].second = m_levelPrologue + "\\\\PRESS ENTER TO CONTINUE";
+        writeComp->m_vectMessage[0].second = m_levelPrologue + "\\\\Press Enter To Continue";
     }
     else if(menuEntry == MenuMode_e::LEVEL_EPILOGUE)
     {
-        writeComp->m_vectMessage[0].second = m_levelEpilogue + "\\\\PRESS ENTER TO CONTINUE";
+        writeComp->m_vectMessage[0].second = m_levelEpilogue + "\\\\Press Enter To Continue";
     }
     else
     {
         std::map<MenuMode_e, PairPairFloatStr_t>::const_iterator it = MAP_MENU_DATA.find(menuEntry);
         writeComp->m_vectMessage[0].second = it->second.second;
     }
+    //OOOOOK TEST
+//    if(menuEntry == MenuMode_e::TITLE)
+//    {
+//        writeComp->m_vectMessage[0].second = "aA.bBc;Cd:D7%eEf+-F\\g?!/GhH;iIjJkK\\lLmM0n?!NoO?pP5qQrR;sStTuU\\8VvwWxXyYzZ\\HIJK,LMNOPQR+ST-UVWXYZ\\0123456789\\ \
+//                .,;:%+-?!/";
+//    }
     writeComp->m_fontSpriteData[0] = m_ptrFontData->getWriteData(writeComp->m_vectMessage[0].second, writeComp, Font_e::STANDARD);
 }
 
