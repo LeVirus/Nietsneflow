@@ -364,7 +364,7 @@ void StaticDisplaySystem::updateDisplayMenuResolution(const std::string &str)
     PositionVertexComponent *posComp = stairwayToComponentManager().
                 searchComponentByType<PositionVertexComponent>(m_resolutionDisplayMenuEntity, Components_e::POSITION_VERTEX_COMPONENT);
     assert(posComp);
-    writeComp->m_fontSpriteData[0] = m_fontDataPtr->getWriteData(str, writeComp, Font_e::BASE);
+    writeComp->m_fontSpriteData[0] = m_fontDataPtr->getWriteData(str, writeComp, Font_e::STANDARD);
     confWriteVertex(writeComp, posComp, VertexID_e::RESOLUTION_DISPLAY_MENU);
 }
 
@@ -383,7 +383,7 @@ void StaticDisplaySystem::updateMenuEntryFullscreen(bool displayMenufullscreenMo
     PositionVertexComponent *posComp = stairwayToComponentManager().
                 searchComponentByType<PositionVertexComponent>(m_fullscreenMenuEntity, Components_e::POSITION_VERTEX_COMPONENT);
     assert(posComp);
-    writeComp->m_fontSpriteData[0] = m_fontDataPtr->getWriteData(writeComp->m_vectMessage[0].second, writeComp, Font_e::BASE);
+    writeComp->m_fontSpriteData[0] = m_fontDataPtr->getWriteData(writeComp->m_vectMessage[0].second, writeComp, Font_e::STANDARD);
     confWriteVertex(writeComp, posComp, VertexID_e::FULLSCREEN);
 }
 
