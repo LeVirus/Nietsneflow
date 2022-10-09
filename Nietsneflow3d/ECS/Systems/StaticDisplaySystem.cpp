@@ -94,8 +94,8 @@ void StaticDisplaySystem::execSystem()
         drawWriteInfoPlayer(mVectNumEntity[i], playerComp);
         std::string strAmmoDisplay = STR_PLAYER_AMMO +
                 std::to_string(weaponComp->m_weaponsData[weaponComp->m_currentWeapon].m_ammunationsCount);
-        drawWriteVertex(playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::AMMO_WRITE)], VertexID_e::AMMO_WRITE, strAmmoDisplay);
-        drawWriteVertex(playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::LIFE_WRITE)], VertexID_e::LIFE_WRITE, STR_PLAYER_LIFE +
+        drawWriteVertex(playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::AMMO_WRITE)], VertexID_e::AMMO_WRITE, Font_e::STANDARD, strAmmoDisplay);
+        drawWriteVertex(playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::LIFE_WRITE)], VertexID_e::LIFE_WRITE, Font_e::STANDARD, STR_PLAYER_LIFE +
                          std::to_string(playerComp->m_life));
         if(weaponComp->m_weaponChange)
         {
@@ -184,7 +184,7 @@ void StaticDisplaySystem::drawWriteInfoPlayer(uint32_t playerEntity, PlayerConfC
         TimerComponent *timerComp = stairwayToComponentManager().
                 searchComponentByType<TimerComponent>(playerEntity, Components_e::TIMER_COMPONENT);
         assert(timerComp);
-        drawWriteVertex(playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::NUM_INFO_WRITE)], VertexID_e::INFO, playerComp->m_infoWriteData.second);
+        drawWriteVertex(playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::NUM_INFO_WRITE)], VertexID_e::INFO, Font_e::STANDARD, playerComp->m_infoWriteData.second);
         uint32_t maxTime = (!timerComp->m_timeIntervalOptional) ? m_infoWriteStandardInterval : *timerComp->m_timeIntervalOptional;
         if(++timerComp->m_cycleCountA >= maxTime)
         {
@@ -230,8 +230,8 @@ void StaticDisplaySystem::displayMenu()
             drawVertex(spriteBackgroundComp->m_spriteData->m_textureNum, VertexID_e::MENU_BACKGROUND_GENERIC);
         }
         drawWriteVertex(playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_ENTRIES)], VertexID_e::MENU_WRITE);
-        drawWriteVertex(playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::TITLE_MENU)], VertexID_e::MENU_WRITE);
-        drawWriteVertex(playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_SELECTED_LINE)], VertexID_e::MENU_WRITE);
+        drawWriteVertex(playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::TITLE_MENU)], VertexID_e::LIFE_WRITE);
+        drawWriteVertex(playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_SELECTED_LINE)], VertexID_e::AMMO_WRITE, Font_e::SELECTED);
 
         drawWriteInfoPlayer(mVectNumEntity[i], playerComp);
         SpriteTextureComponent *spriteComp = stairwayToComponentManager().
@@ -507,7 +507,7 @@ void StaticDisplaySystem::drawVertex(uint32_t numTexture, VertexID_e type)
 }
 
 //===================================================================
-void StaticDisplaySystem::drawWriteVertex(uint32_t numEntity, VertexID_e type, const std::string &value)
+void StaticDisplaySystem::drawWriteVertex(uint32_t numEntity, VertexID_e type, Font_e font, const std::string &value)
 {
     WriteComponent *writeComp = stairwayToComponentManager().
                 searchComponentByType<WriteComponent>(numEntity, Components_e::WRITE_COMPONENT);
@@ -519,9 +519,13 @@ void StaticDisplaySystem::drawWriteVertex(uint32_t numEntity, VertexID_e type, c
     {
         if(value != writeComp->m_vectMessage[0].second)
         {
-            writeComp->m_fontSpriteData[0] = m_fontDataPtr->getWriteData(value, writeComp, Font_e::STANDARD);
+            writeComp->m_fontSpriteData[0] = m_fontDataPtr->getWriteData(value, writeComp, font);
         }
         writeComp->m_vectMessage[0].second = value;
+    }
+    else
+    {
+        writeComp->m_fontSpriteData[0] = m_fontDataPtr->getWriteData(writeComp->m_vectMessage[0].second, writeComp, font);
     }
     if(type == VertexID_e::INFO)
     {

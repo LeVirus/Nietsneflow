@@ -340,26 +340,33 @@ void GraphicEngine::fillMenuWrite(WriteComponent *writeComp, MenuMode_e menuEntr
 //===================================================================
 void GraphicEngine::confMenuSelectedLine(PlayerConfComponent *playerConf,
                                          WriteComponent *writeMenuSelectedComp,
-                                         const WriteComponent *writeMenuComp)
+                                         WriteComponent *writeMenuComp)
 {
     if(writeMenuSelectedComp->m_vectMessage.empty())
     {
         writeMenuSelectedComp->addTextLine({{}, ""});
     }
-    writeMenuSelectedComp->m_vectMessage[0].second = getLineFromList(writeMenuComp->m_vectMessage[0].second,
+    //Reinit base menu writing
+    writeMenuComp->m_vectMessage[0].second = MAP_MENU_DATA.at(playerConf->m_menuMode).second;
+    std::pair<std::string, PairUI_t> ret = getLineFromList(writeMenuComp->m_vectMessage[0].second,
             playerConf->m_currentCursorPos);
+    //fill selected menu entry
+    writeMenuSelectedComp->m_vectMessage[0].second = ret.first;
+    //remove base menu selected entry
+    writeMenuComp->m_vectMessage[0].second.erase(ret.second.first, ret.second.second);
     writeMenuSelectedComp->m_fontSpriteData[0] = m_ptrFontData->getWriteData(writeMenuSelectedComp->m_vectMessage[0].second,
             writeMenuSelectedComp, Font_e::SELECTED);
 }
 
 //===================================================================
-std::string getLineFromList(const std::string &str, uint32_t lineNumber)
+std::pair<std::string, PairUI_t> getLineFromList(const std::string &str, uint32_t lineNumber)
 {
+    bool endString = false;
     std::string::size_type posA = 0, posB = str.find("\\");
     if(posB == std::string::npos)
     {
-        posB = str.size();
-        return str.substr(posA, posB);
+        posB = str.size() - posA;
+        return {str.substr(posA, posB), {posA, posB}};
     }
     ++posB;
     for(uint32_t i = 0; i < lineNumber; ++i)
@@ -369,11 +376,17 @@ std::string getLineFromList(const std::string &str, uint32_t lineNumber)
         if(posB == std::string::npos)
         {
             posB = str.size();
+            endString = true;
             break;
         }
         ++posB;
     }
-    return str.substr(posA, posB - posA);
+    posB -= posA;
+    if(endString)
+    {
+        return {str.substr(posA, posB), {posA, posB}};
+    }
+    return {str.substr(posA, posB), {posA, posB - 1}};
 }
 
 //===================================================================

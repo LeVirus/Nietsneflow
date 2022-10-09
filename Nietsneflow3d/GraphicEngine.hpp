@@ -48,7 +48,7 @@ public:
     void fillMenuWrite(WriteComponent *writeComp, MenuMode_e menuEntry,
                        uint32_t cursorPos = 0, const std::tuple<PlayerConfComponent *, uint32_t, uint32_t> &endLevelData = {});
     void confMenuSelectedLine(PlayerConfComponent *playerComp, WriteComponent *writeMenuSelectedComp,
-                              const WriteComponent *writeMenuComp);
+                              WriteComponent *writeMenuComp);
     void confWriteComponent(WriteComponent *writeComp);
     void updateStringWriteEntitiesInputMenu(bool keyboardInputMenuMode, bool defaultInput = true);
     const std::vector<uint32_t> &getBarrelEntitiesToDelete()const;
@@ -171,6 +171,7 @@ private:
 };
 
 //first lineNumber ==> 0
-std::string getLineFromList(const std::string &str, uint32_t lineNumber);
+//return string + position selected
+std::pair<std::string, PairUI_t> getLineFromList(const std::string &str, uint32_t lineNumber);
 std::string getEndLevelMenuStr(const std::tuple<const PlayerConfComponent *, uint32_t, uint32_t> &endLevelData);
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);

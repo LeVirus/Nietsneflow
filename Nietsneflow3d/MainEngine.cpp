@@ -1864,12 +1864,13 @@ void MainEngine::setMenuEntries(PlayerConfComponent *playerComp)
     {
         m_writeConf->addTextLine({{}, ""});
     }
-    m_graphicEngine.fillMenuWrite(m_writeConf, playerComp->m_menuMode, playerComp->m_currentCursorPos,
-                                  {playerComp, m_currentLevelSecretsNumber, m_currentLevelEnemiesNumber});
+    //SELECTED MENU ENTRY
     writeComp = m_ecsManager.getComponentManager().
             searchComponentByType<WriteComponent>(playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_SELECTED_LINE)], Components_e::WRITE_COMPONENT);
     assert(writeComp);
     m_graphicEngine.confMenuSelectedLine(playerComp, writeComp, m_writeConf);
+    m_graphicEngine.fillMenuWrite(m_writeConf, playerComp->m_menuMode, playerComp->m_currentCursorPos,
+                                  {playerComp, m_currentLevelSecretsNumber, m_currentLevelEnemiesNumber});
     if(playerComp->m_menuMode == MenuMode_e::NEW_KEY)
     {
         m_memInputCursorPos = playerComp->m_currentCursorPos;
