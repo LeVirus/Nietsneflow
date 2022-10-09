@@ -1866,6 +1866,10 @@ void MainEngine::setMenuEntries(PlayerConfComponent *playerComp)
     }
     m_graphicEngine.fillMenuWrite(m_writeConf, playerComp->m_menuMode, playerComp->m_currentCursorPos,
                                   {playerComp, m_currentLevelSecretsNumber, m_currentLevelEnemiesNumber});
+    writeComp = m_ecsManager.getComponentManager().
+            searchComponentByType<WriteComponent>(playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_SELECTED_LINE)], Components_e::WRITE_COMPONENT);
+    assert(writeComp);
+    m_graphicEngine.confMenuSelectedLine(playerComp, writeComp, m_writeConf);
     if(playerComp->m_menuMode == MenuMode_e::NEW_KEY)
     {
         m_memInputCursorPos = playerComp->m_currentCursorPos;
@@ -2053,6 +2057,20 @@ void MainEngine::setInfoDataWrite(std::string_view message)
 {
     assert(m_playerConf);
     m_playerConf->m_infoWriteData = {true, message.data()};
+}
+
+//===================================================================
+void MainEngine::confMenuSelectedLine()
+{
+    WriteComponent *writeMenuComp = m_ecsManager.getComponentManager().
+            searchComponentByType<WriteComponent>(m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_ENTRIES)],
+            Components_e::WRITE_COMPONENT);
+    assert(writeMenuComp);
+    WriteComponent *writeMenuSelectedComp = m_ecsManager.getComponentManager().
+            searchComponentByType<WriteComponent>(m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_SELECTED_LINE)],
+            Components_e::WRITE_COMPONENT);
+    assert(writeMenuSelectedComp);
+    m_graphicEngine.confMenuSelectedLine(m_playerConf, writeMenuSelectedComp, writeMenuComp);
 }
 
 //===================================================================
@@ -2918,7 +2936,8 @@ void MainEngine::confPlayerVisibleShotsSprite(const std::vector<SpriteData> &vec
 void MainEngine::confWriteEntities()
 {
     uint32_t numAmmoWrite = createWriteEntity(), numInfoWrite = createWriteEntity(), numLifeWrite = createWriteEntity(),
-            numMenuWrite = createWriteEntity(), numTitleMenuWrite = createWriteEntity(), numInputModeMenuWrite = createWriteEntity();
+            numMenuWrite = createWriteEntity(), numTitleMenuWrite = createWriteEntity(),
+            numInputModeMenuWrite = createWriteEntity(), numMenuSelectedLineWrite = createWriteEntity();
     //INFO
     WriteComponent *writeConf = m_ecsManager.getComponentManager().
             searchComponentByType<WriteComponent>(numInfoWrite, Components_e::WRITE_COMPONENT);
@@ -2967,6 +2986,7 @@ void MainEngine::confWriteEntities()
     m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_ENTRIES)] = numMenuWrite;
     m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::TITLE_MENU)] = numTitleMenuWrite;
     m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_INFO_WRITE)] = numInputModeMenuWrite;
+    m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_SELECTED_LINE)] = numMenuSelectedLineWrite;
     WriteComponent *writeComp = m_ecsManager.getComponentManager().
             searchComponentByType<WriteComponent>(m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::TITLE_MENU)], Components_e::WRITE_COMPONENT);
     assert(writeComp);
@@ -2975,6 +2995,15 @@ void MainEngine::confWriteEntities()
             searchComponentByType<WriteComponent>(m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::TITLE_MENU)], Components_e::WRITE_COMPONENT);
     assert(writeCompTitle);
     writeCompTitle->m_fontSpriteData.emplace_back(VectSpriteDataRef_t{});
+
+    //MENU SELECTED LINE
+    writeComp = m_ecsManager.getComponentManager().
+            searchComponentByType<WriteComponent>(numMenuSelectedLineWrite, Components_e::WRITE_COMPONENT);
+    assert(writeComp);
+    writeComp->m_fontSpriteData.emplace_back(VectSpriteDataRef_t{});
+    writeComp->m_fontSize = MENU_FONT_SIZE;
+    writeComp->m_fontType = Font_e::SELECTED;
+
     setMenuEntries(m_playerConf);
     m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::AMMO_WRITE)] = numAmmoWrite;
     m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::LIFE_WRITE)] = numLifeWrite;

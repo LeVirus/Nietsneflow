@@ -229,7 +229,7 @@ public:
     {
         return m_titleMenuMode;
     }
-
+    void confMenuSelectedLine();
     void setPlayerDeparture(const PairUI_t &pos, Direction_e dir);
     void saveAudioSettings();
     void saveInputSettings(const std::map<ControlKey_e, GamepadInputState> &gamepadArray,

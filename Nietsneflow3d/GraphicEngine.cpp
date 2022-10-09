@@ -333,13 +333,47 @@ void GraphicEngine::fillMenuWrite(WriteComponent *writeComp, MenuMode_e menuEntr
         std::map<MenuMode_e, PairPairFloatStr_t>::const_iterator it = MAP_MENU_DATA.find(menuEntry);
         writeComp->m_vectMessage[0].second = it->second.second;
     }
-    //OOOOOK TEST
-//    if(menuEntry == MenuMode_e::TITLE)
-//    {
-//        writeComp->m_vectMessage[0].second = "aA.bBc;Cd:D7%eEf+-F\\g?!/GhH;iIjJkK\\lLmM0n?!NoO?pP5qQrR;sStTuU\\8VvwWxXyYzZ\\HIJK,LMNOPQR+ST-UVWXYZ\\0123456789\\ \
-//                .,;:%+-?!/";
-//    }
-    writeComp->m_fontSpriteData[0] = m_ptrFontData->getWriteData(writeComp->m_vectMessage[0].second, writeComp, Font_e::STANDARD);
+    writeComp->m_fontSpriteData[0] = m_ptrFontData->getWriteData(writeComp->m_vectMessage[0].second,
+            writeComp, Font_e::STANDARD);
+}
+
+//===================================================================
+void GraphicEngine::confMenuSelectedLine(PlayerConfComponent *playerConf,
+                                         WriteComponent *writeMenuSelectedComp,
+                                         const WriteComponent *writeMenuComp)
+{
+    if(writeMenuSelectedComp->m_vectMessage.empty())
+    {
+        writeMenuSelectedComp->addTextLine({{}, ""});
+    }
+    writeMenuSelectedComp->m_vectMessage[0].second = getLineFromList(writeMenuComp->m_vectMessage[0].second,
+            playerConf->m_currentCursorPos);
+    writeMenuSelectedComp->m_fontSpriteData[0] = m_ptrFontData->getWriteData(writeMenuSelectedComp->m_vectMessage[0].second,
+            writeMenuSelectedComp, Font_e::SELECTED);
+}
+
+//===================================================================
+std::string getLineFromList(const std::string &str, uint32_t lineNumber)
+{
+    std::string::size_type posA = 0, posB = str.find("\\");
+    if(posB == std::string::npos)
+    {
+        posB = str.size();
+        return str.substr(posA, posB);
+    }
+    ++posB;
+    for(uint32_t i = 0; i < lineNumber; ++i)
+    {
+        posA = posB;
+        posB = str.find("\\", ++posB);
+        if(posB == std::string::npos)
+        {
+            posB = str.size();
+            break;
+        }
+        ++posB;
+    }
+    return str.substr(posA, posB - posA);
 }
 
 //===================================================================
