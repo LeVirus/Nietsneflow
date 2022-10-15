@@ -209,7 +209,7 @@ textureHeight = 0.0142
 
 #60
 [A]
-texture = 17
+texture = 15
 texturePosX = 0.2419
 texturePosY = 0.0049
 textureWeight = 0.1895
