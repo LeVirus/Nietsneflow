@@ -440,11 +440,11 @@ inline const std::string TEXTURES_DIR_STR = "../Nietsneflow3d/Ressources/Texture
 inline const std::map<MenuMode_e, PairPairFloatStr_t> MAP_MENU_DATA =
 {
     {MenuMode_e::TITLE,
-     PairPairFloatStr_t{{-0.5f, 0.5f},
-        "New Game\\Load Game\\Display Conf\\Sound Conf\\Input Conf\\Play Custom Levels\\Exit Game"}},
+     PairPairFloatStr_t{{-0.3f, 0.5f},
+        "New Game\\Load Game\\Display\\Sound\\Input\\Play Custom Levels\\Exit Game"}},
     {MenuMode_e::BASE,
-     PairPairFloatStr_t{{-0.5f, 0.5f},
-      "Return To Game\\Sound Conf\\Display Conf\\Input Conf\\New Game\\Load Game\\Restart From Last Checkpoint\\Restart Level\\Play Custom Levels\\Exit Game"}},
+     PairPairFloatStr_t{{-0.4f, 0.5f},
+      "Return To Game\\Sound\\Display\\Input\\New Game\\Load Game\\Restart From Last Checkpoint\\Restart Level\\Play Custom Levels\\Exit Game"}},
     {MenuMode_e::TRANSITION_LEVEL,
      PairPairFloatStr_t{{-0.5f, 0.5f}, "Continue"}},
     {MenuMode_e::LEVEL_PROLOGUE,

@@ -352,6 +352,7 @@ void GraphicEngine::confMenuSelectedLine(PlayerConfComponent *playerConf,
             playerConf->m_currentCursorPos);
     //fill selected menu entry
     writeMenuSelectedComp->m_vectMessage[0].second = ret.first;
+    writeMenuSelectedComp->m_vectMessage[0].first = writeMenuComp->m_vectMessage[0].first;
     //remove base menu selected entry
     writeMenuComp->m_vectMessage[0].second.erase(ret.second.first, ret.second.second);
     writeMenuSelectedComp->m_fontSpriteData[0] = m_ptrFontData->getWriteData(writeMenuSelectedComp->m_vectMessage[0].second,

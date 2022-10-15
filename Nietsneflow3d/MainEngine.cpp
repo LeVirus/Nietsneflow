@@ -1895,7 +1895,8 @@ void MainEngine::setMenuEntries(PlayerConfComponent *playerComp)
     }
     if(playerComp->m_menuMode == MenuMode_e::DISPLAY || playerComp->m_menuMode == MenuMode_e::SOUND ||
             playerComp->m_menuMode == MenuMode_e::INPUT || playerComp->m_menuMode == MenuMode_e::LOAD_GAME ||
-            playerComp->m_menuMode == MenuMode_e::LOAD_CUSTOM_LEVEL || playerComp->m_menuMode == MenuMode_e::NEW_GAME)
+            playerComp->m_menuMode == MenuMode_e::LOAD_CUSTOM_LEVEL || playerComp->m_menuMode == MenuMode_e::NEW_GAME ||
+            playerComp->m_menuMode == MenuMode_e::TITLE || playerComp->m_menuMode == MenuMode_e::BASE)
     {
         m_writeConf->m_vectMessage[0].first = m_writeConf->m_upLeftPositionGL.first;
     }
