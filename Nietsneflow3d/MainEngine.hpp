@@ -132,6 +132,7 @@ public:
     void updateStringWriteEntitiesInputMenu(bool keyboardInputMenuMode, bool defaultInput = true);
     void confGlobalSettings(const SettingsData &settingsData);
     void validDisplayMenu();
+    void reinitPlayerGear();
     void setInfoDataWrite(std::string_view message);
     inline bool currentSessionCustomLevel()const
     {
@@ -401,6 +402,8 @@ private:
     //MAP (first shape num, VECTOR number of actionned)
     std::map<uint32_t, std::pair<std::vector<uint32_t>, bool>> m_memTriggerWallMoveableWallCheckpointData;
     std::vector<PairUI_t> m_revealedMapData;
+    //first possess, second base ammo
+    std::vector<std::pair<bool, uint32_t>> m_vectMemWeaponsDefault;
     std::unique_ptr<MemCustomLevelLoadedData> m_memCustomLevelLoadedData;
     std::optional<MemCheckpointLevelState> m_memCheckpointLevelState;
     std::optional<MemCheckpointElementsState> m_memCheckpointData;

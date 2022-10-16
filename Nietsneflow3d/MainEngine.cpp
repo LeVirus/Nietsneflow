@@ -1032,15 +1032,12 @@ uint32_t MainEngine::loadWeaponsEntity(const LevelManager &levelManager)
     assert(weaponComp);
     assert(memSprite);
     assert(memPosVertex);
-    std::vector<bool> checkBitset(vectWeapons.size());
-    std::fill(checkBitset.begin(), checkBitset.end(), false);
     weaponComp->m_weaponsData.resize(vectWeapons.size());
     audioComp->m_soundElements.resize(vectWeapons.size());
+    m_vectMemWeaponsDefault.resize(vectWeapons.size());
+    std::fill(m_vectMemWeaponsDefault.begin(), m_vectMemWeaponsDefault.end(), std::pair<bool, uint32_t>{false, 0});
     for(uint32_t i = 0; i < weaponComp->m_weaponsData.size(); ++i)
     {
-        assert(vectWeapons[i].m_order < checkBitset.size());
-        assert(!checkBitset[vectWeapons[i].m_order]);
-        checkBitset[vectWeapons[i].m_order] = true;
         weaponComp->m_weaponsData[i].m_ammunationsCount = 0;
         weaponComp->m_weaponsData[i].m_posses = false;
     }
@@ -1057,12 +1054,14 @@ uint32_t MainEngine::loadWeaponsEntity(const LevelManager &levelManager)
         weaponToTreat = vectWeapons[i].m_order;
         if(vectWeapons[i].m_startingPossess)
         {
+            m_vectMemWeaponsDefault[i].first = true;
             weaponComp->m_weaponsData[weaponToTreat].m_posses = true;
             weaponComp->m_currentWeapon = vectWeapons[i].m_order;
             weaponComp->m_previousWeapon = vectWeapons[i].m_order;
         }
         if(vectWeapons[i].m_startingAmmoCount)
         {
+            m_vectMemWeaponsDefault[i].second = *vectWeapons[i].m_startingAmmoCount;
             weaponComp->m_weaponsData[weaponToTreat].m_ammunationsCount = *vectWeapons[i].m_startingAmmoCount;
         }
         weaponComp->m_weaponsData[weaponToTreat].m_weaponPower = vectWeapons[i].m_damage;
@@ -2052,6 +2051,32 @@ void MainEngine::validDisplayMenu()
     m_graphicEngine.validDisplayMenu();
     m_refGame->saveDisplaySettings(m_graphicEngine.getResolutions()[m_graphicEngine.getCurrentResolutionNum()].first,
             m_graphicEngine.fullscreenMode());
+}
+
+//===================================================================
+void MainEngine::reinitPlayerGear()
+{
+    WeaponComponent *weaponComp = m_ecsManager.getComponentManager().
+            searchComponentByType<WeaponComponent>(m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_ENTRIES)],
+            Components_e::WEAPON_COMPONENT);
+    //if first launch return
+    if(!weaponComp)
+    {
+        return;
+    }
+    assert(m_playerConf);
+    m_playerConf->m_card.clear();
+    m_playerConf->m_checkpointReached = {};
+    m_playerConf->m_currentCheckpoint = {};
+    m_playerConf->m_enemiesKilled = {};
+    m_playerConf->m_life = 100;
+    m_playerConf->m_secretsFound = {};
+    m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::WEAPON)];
+    for(uint32_t i = 0; i < weaponComp->m_weaponsData.size(); ++i)
+    {
+        weaponComp->m_weaponsData[i].m_posses = m_vectMemWeaponsDefault[i].first;
+        weaponComp->m_weaponsData[i].m_ammunationsCount = m_vectMemWeaponsDefault[i].second;
+    }
 }
 
 //===================================================================
