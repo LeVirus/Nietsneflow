@@ -326,7 +326,7 @@ void GraphicEngine::fillMenuWrite(WriteComponent *writeComp, MenuMode_e menuEntr
     }
     else if(menuEntry == MenuMode_e::LEVEL_EPILOGUE)
     {
-        writeComp->m_vectMessage[0].second = m_levelEpilogue + "\\\\Press Enter To Continue";
+        writeComp->m_vectMessage[0].second = m_levelEpilogue;
     }
     else
     {
@@ -348,16 +348,34 @@ void GraphicEngine::confMenuSelectedLine(PlayerConfComponent *playerConf,
     }
     bool loadLevel = (playerConf->m_menuMode == MenuMode_e::NEW_GAME || playerConf->m_menuMode == MenuMode_e::LOAD_GAME);
     //Reinit base menu writing
-    if(!loadLevel)
+    if(playerConf->m_menuMode == MenuMode_e::LOAD_CUSTOM_LEVEL)
     {
-        writeMenuComp->m_vectMessage[0].second = MAP_MENU_DATA.at(playerConf->m_menuMode).second;
+        writeMenuComp->m_vectMessage[0].second = m_existingCustomLevelsMenuWrite[playerConf->m_currentCustomLevelCusorMenu].first;
     }
-    else
+    else if(loadLevel)
     {
         writeMenuComp->m_vectMessage[0].second = m_saveStandardLevelMenuWrite;
     }
+    else
+    {
+        writeMenuComp->m_vectMessage[0].second = MAP_MENU_DATA.at(playerConf->m_menuMode).second;
+    }
     std::pair<std::string, PairUI_t> ret = loadLevel ? getLineFromList(m_saveStandardLevelMenuWrite, playerConf->m_currentCursorPos) :
         getLineFromList(writeMenuComp->m_vectMessage[0].second, playerConf->m_currentCursorPos);
+
+    if(playerConf->m_menuMode == MenuMode_e::LOAD_CUSTOM_LEVEL)
+    {
+        getLineFromList(m_existingCustomLevelsMenuWrite[playerConf->m_currentCustomLevelCusorMenu].first, playerConf->m_currentCustomLevelCusorMenu);
+    }
+    else if(loadLevel)
+    {
+        getLineFromList(m_saveStandardLevelMenuWrite, playerConf->m_currentCursorPos);
+    }
+    else
+    {
+        getLineFromList(writeMenuComp->m_vectMessage[0].second, playerConf->m_currentCursorPos);
+    }
+
     //fill selected menu entry
     writeMenuSelectedComp->m_vectMessage[0].second = ret.first;
     if(playerConf->m_menuMode == MenuMode_e::TRANSITION_LEVEL || playerConf->m_menuMode == MenuMode_e::LEVEL_EPILOGUE ||
