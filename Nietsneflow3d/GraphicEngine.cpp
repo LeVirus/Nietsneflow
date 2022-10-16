@@ -346,10 +346,18 @@ void GraphicEngine::confMenuSelectedLine(PlayerConfComponent *playerConf,
     {
         writeMenuSelectedComp->addTextLine({{}, ""});
     }
+    bool loadLevel = (playerConf->m_menuMode == MenuMode_e::NEW_GAME || playerConf->m_menuMode == MenuMode_e::LOAD_GAME);
     //Reinit base menu writing
-    writeMenuComp->m_vectMessage[0].second = MAP_MENU_DATA.at(playerConf->m_menuMode).second;
-    std::pair<std::string, PairUI_t> ret = getLineFromList(writeMenuComp->m_vectMessage[0].second,
-            playerConf->m_currentCursorPos);
+    if(!loadLevel)
+    {
+        writeMenuComp->m_vectMessage[0].second = MAP_MENU_DATA.at(playerConf->m_menuMode).second;
+    }
+    else
+    {
+        writeMenuComp->m_vectMessage[0].second = m_saveStandardLevelMenuWrite;
+    }
+    std::pair<std::string, PairUI_t> ret = loadLevel ? getLineFromList(m_saveStandardLevelMenuWrite, playerConf->m_currentCursorPos) :
+        getLineFromList(writeMenuComp->m_vectMessage[0].second, playerConf->m_currentCursorPos);
     //fill selected menu entry
     writeMenuSelectedComp->m_vectMessage[0].second = ret.first;
     writeMenuSelectedComp->m_vectMessage[0].first = writeMenuComp->m_vectMessage[0].first;
