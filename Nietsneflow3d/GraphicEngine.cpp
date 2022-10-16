@@ -360,7 +360,15 @@ void GraphicEngine::confMenuSelectedLine(PlayerConfComponent *playerConf,
         getLineFromList(writeMenuComp->m_vectMessage[0].second, playerConf->m_currentCursorPos);
     //fill selected menu entry
     writeMenuSelectedComp->m_vectMessage[0].second = ret.first;
-    writeMenuSelectedComp->m_vectMessage[0].first = writeMenuComp->m_vectMessage[0].first;
+    if(playerConf->m_menuMode == MenuMode_e::TRANSITION_LEVEL || playerConf->m_menuMode == MenuMode_e::LEVEL_EPILOGUE ||
+            playerConf->m_menuMode == MenuMode_e::LEVEL_PROLOGUE)
+    {
+        writeMenuSelectedComp->m_vectMessage[0].first = {};
+    }
+    else
+    {
+        writeMenuSelectedComp->m_vectMessage[0].first = writeMenuComp->m_vectMessage[0].first;
+    }
     //remove base menu selected entry
     writeMenuComp->m_vectMessage[0].second.erase(ret.second.first, ret.second.second);
     writeMenuSelectedComp->m_fontSpriteData[0] = m_ptrFontData->getWriteData(writeMenuSelectedComp->m_vectMessage[0].second,
@@ -663,7 +671,7 @@ std::string getEndLevelMenuStr(const std::tuple<const PlayerConfComponent*, uint
 {
     if(std::get<0>(endLevelData)->m_life == 0)
     {
-        return "PRESS ENTER TO RESTART";
+        return "Press Enter to Restart";
     }
     float enemiesKilledPercent =
             (!std::get<0>(endLevelData)->m_enemiesKilled || std::get<2>(endLevelData) == 0) ? EPSILON_FLOAT :
@@ -673,7 +681,7 @@ std::string getEndLevelMenuStr(const std::tuple<const PlayerConfComponent*, uint
             (!std::get<0>(endLevelData)->m_secretsFound || std::get<1>(endLevelData) == 0) ? EPSILON_FLOAT :
                 static_cast<float>(*std::get<0>(endLevelData)->m_secretsFound) /
                 static_cast<float>(std::get<1>(endLevelData)) * 100.0f;
-    return "ENEMIES KILLED :         " + std::to_string(static_cast<uint32_t>(enemiesKilledPercent)) +
-       "%\\\\SECRETS FOUND :         " + std::to_string(static_cast<uint32_t>(secretsFoundPercent)) +
-                    "%\\\\PRESS ENTER TO CONTINUE";
+    return "Enemies Killed:         " + std::to_string(static_cast<uint32_t>(enemiesKilledPercent)) +
+       "%\\\\Secrets Found:         " + std::to_string(static_cast<uint32_t>(secretsFoundPercent)) +
+                    "%\\\\Press Enter to Continue";
 }
