@@ -490,7 +490,7 @@ void InputSystem::treatMenu(uint32_t playerEntity)
         {
             playerComp->m_currentCursorPos = static_cast<uint32_t>(TitleMenuCursorPos_e::QUIT_GAME);
         }
-        else if(playerComp->m_menuMode != MenuMode_e::CONFIRM_QUIT_INPUT_FORM)
+        else if(playerComp->m_menuMode != MenuMode_e::CONFIRM_QUIT_INPUT_FORM && playerComp->m_menuMode != MenuMode_e::LEVEL_EPILOGUE)
         {
             if(playerComp->m_menuMode == MenuMode_e::SOUND)
             {
