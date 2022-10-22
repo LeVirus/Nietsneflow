@@ -7,7 +7,6 @@ TeleportSound = Teleport.wav
 [GraphicUtils]
 GenericMenuSprite = SpriteBackgroundGenericMenu
 TitleMenuSprite = SpriteBackgroundTitleMenu
-CursorSprite = SpriteMenuCursor
 PannelSprite = SpritePannel
 LifeIconSprite = SpriteLifeIcon
 AmmoIconSprite = SpriteAmmoIcon

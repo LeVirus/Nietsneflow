@@ -57,11 +57,9 @@ void MainEngine::init(Game *refGame)
 //===================================================================
 LevelState MainEngine::displayTitleMenu(const LevelManager &levelManager)
 {
-    uint16_t cursorSpriteId = *levelManager.getPictureData().getIdentifier(levelManager.getCursorSpriteName()),
-            genericBackgroundMenuSpriteId = *levelManager.getPictureData().getIdentifier(levelManager.getGenericMenuSpriteName()),
+    uint16_t genericBackgroundMenuSpriteId = *levelManager.getPictureData().getIdentifier(levelManager.getGenericMenuSpriteName()),
             titleBackgroundMenuSpriteId = *levelManager.getPictureData().getIdentifier(levelManager.getTitleMenuSpriteName());
     const std::vector<SpriteData> &vectSprite = levelManager.getPictureData().getSpriteData();
-    m_memCursorSpriteData = &vectSprite[cursorSpriteId];
     m_memBackgroundGenericMenu = &vectSprite[genericBackgroundMenuSpriteId];
     m_memBackgroundTitleMenu = &vectSprite[titleBackgroundMenuSpriteId];
     assert(m_playerConf);
@@ -3103,49 +3101,37 @@ void MainEngine::confWriteEntitiesInputMenu()
 //===================================================================
 void MainEngine::confMenuEntities()
 {
-    uint32_t cursorEntity = createSimpleSpriteEntity();
-    PositionVertexComponent *posCursor = m_ecsManager.getComponentManager().
-            searchComponentByType<PositionVertexComponent>(cursorEntity, Components_e::POSITION_VERTEX_COMPONENT);
-    SpriteTextureComponent *spriteCursor = m_ecsManager.getComponentManager().
-            searchComponentByType<SpriteTextureComponent>(cursorEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
-    assert(posCursor);
-    assert(spriteCursor);
-    assert(m_memCursorSpriteData);
     assert(m_memBackgroundGenericMenu);
-    m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_CURSOR)] = cursorEntity;
     m_playerConf->m_menuMode = MenuMode_e::BASE;
-    spriteCursor->m_spriteData = m_memCursorSpriteData;
-    posCursor->m_vertex.resize(4);
-
     uint32_t backgroundEntity = createSimpleSpriteEntity();
-    posCursor = m_ecsManager.getComponentManager().
+    PositionVertexComponent *posVertex = m_ecsManager.getComponentManager().
             searchComponentByType<PositionVertexComponent>(backgroundEntity, Components_e::POSITION_VERTEX_COMPONENT);
-    spriteCursor = m_ecsManager.getComponentManager().
+    SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().
             searchComponentByType<SpriteTextureComponent>(backgroundEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
-    assert(posCursor);
-    assert(spriteCursor);
+    assert(posVertex);
+    assert(spriteComp);
     m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_GENERIC_BACKGROUND)] = backgroundEntity;
-    spriteCursor->m_spriteData = m_memBackgroundGenericMenu;
-    posCursor->m_vertex.resize(4);
-    posCursor->m_vertex[0] = {-1.0f, 1.0f};
-    posCursor->m_vertex[1] = {1.0f, 1.0f};
-    posCursor->m_vertex[2] = {1.0f, -1.0f};
-    posCursor->m_vertex[3] = {-1.0f, -1.0f};
+    spriteComp->m_spriteData = m_memBackgroundGenericMenu;
+    posVertex->m_vertex.resize(4);
+    posVertex->m_vertex[0] = {-1.0f, 1.0f};
+    posVertex->m_vertex[1] = {1.0f, 1.0f};
+    posVertex->m_vertex[2] = {1.0f, -1.0f};
+    posVertex->m_vertex[3] = {-1.0f, -1.0f};
 
     backgroundEntity = createSimpleSpriteEntity();
-    posCursor = m_ecsManager.getComponentManager().
+    posVertex = m_ecsManager.getComponentManager().
             searchComponentByType<PositionVertexComponent>(backgroundEntity, Components_e::POSITION_VERTEX_COMPONENT);
-    spriteCursor = m_ecsManager.getComponentManager().
+    spriteComp = m_ecsManager.getComponentManager().
             searchComponentByType<SpriteTextureComponent>(backgroundEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
-    assert(posCursor);
-    assert(spriteCursor);
+    assert(posVertex);
+    assert(spriteComp);
     m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_TITLE_BACKGROUND)] = backgroundEntity;
-    spriteCursor->m_spriteData = m_memBackgroundTitleMenu;
-    posCursor->m_vertex.resize(4);
-    posCursor->m_vertex[0] = {-1.0f, 1.0f};
-    posCursor->m_vertex[1] = {1.0f, 1.0f};
-    posCursor->m_vertex[2] = {1.0f, -1.0f};
-    posCursor->m_vertex[3] = {-1.0f, -1.0f};
+    spriteComp->m_spriteData = m_memBackgroundTitleMenu;
+    posVertex->m_vertex.resize(4);
+    posVertex->m_vertex[0] = {-1.0f, 1.0f};
+    posVertex->m_vertex[1] = {1.0f, 1.0f};
+    posVertex->m_vertex[2] = {1.0f, -1.0f};
+    posVertex->m_vertex[3] = {-1.0f, -1.0f};
 }
 
 //===================================================================
@@ -3250,8 +3236,7 @@ bool MainEngine::loadStaticElementEntities(const LevelManager &levelManager)
 //===================================================================
 void MainEngine::loadStaticSpriteEntities(const LevelManager &levelManager)
 {
-    uint16_t cursorSpriteId = *levelManager.getPictureData().getIdentifier(levelManager.getCursorSpriteName()),
-            pannelSpriteId = *levelManager.getPictureData().getIdentifier(levelManager.getPannelSpriteName()),
+    uint16_t pannelSpriteId = *levelManager.getPictureData().getIdentifier(levelManager.getPannelSpriteName()),
             lifeIconSpriteId = *levelManager.getPictureData().getIdentifier(levelManager.getLifeIconSpriteName()),
             ammoIconSpriteId = *levelManager.getPictureData().getIdentifier(levelManager.getAmmoIconSpriteName()),
             fistIconSpriteId = *levelManager.getPictureData().getIdentifier(levelManager.getFistIconSpriteName()),
@@ -3265,7 +3250,6 @@ void MainEngine::loadStaticSpriteEntities(const LevelManager &levelManager)
 
     m_memBackgroundGenericMenu = &levelManager.getPictureData().getSpriteData()[GenericBackgroundSpriteId];
     m_memBackgroundTitleMenu = &levelManager.getPictureData().getSpriteData()[TitleBackgroundSpriteId];
-    m_memCursorSpriteData = &levelManager.getPictureData().getSpriteData()[cursorSpriteId];
     m_memPannel = &levelManager.getPictureData().getSpriteData()[pannelSpriteId];
     m_memLifeIcon = &levelManager.getPictureData().getSpriteData()[lifeIconSpriteId];
     m_memAmmoIcon = &levelManager.getPictureData().getSpriteData()[ammoIconSpriteId];

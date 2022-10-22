@@ -4,14 +4,6 @@
 [PathToTexture]
 textures = walltest.jpg	Global.png FontTexture.png EnemyDemon.png GeneralSprites.png EnemyMarine.png Stars.jpg Simetra_green.png BossArachnotron.png BossCyberDemon.png EnemyBaronOfHell.png EnemyCacodemon.png EnemyDemonClaw.png EnemyZombieSergeant.png MenuFilled.png Font.png TitleMenu.png
 
-#4482 223  4560 285
-[SpriteMenuCursor]
-texture = 7
-texturePosX = 0.9597
-texturePosY = 0.1066
-textureWeight = 0.0167
-textureHeight = 0.0296
-
 [SpriteBackgroundTitleMenu]
 texture = 16
 texturePosX = 0.0

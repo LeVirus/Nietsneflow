@@ -18,7 +18,6 @@ enum class PlayerEntities_e
     AMMO_WRITE,
     TITLE_MENU,
     MENU_ENTRIES,
-    MENU_CURSOR,
     LIFE_AMMO_PANNEL,
     MENU_INFO_WRITE,
     ACTION,

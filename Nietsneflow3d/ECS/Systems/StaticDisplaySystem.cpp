@@ -20,51 +20,20 @@ StaticDisplaySystem::StaticDisplaySystem()
 }
 
 //===================================================================
-void StaticDisplaySystem::fillCursorMenuVertex(PlayerConfComponent *playerComp)
-{
-    uint32_t index = static_cast<uint32_t>(VertexID_e::MENU_CURSOR);
-    SpriteTextureComponent *spriteComp = stairwayToComponentManager().
-            searchComponentByType<SpriteTextureComponent>(playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_CURSOR)],
-                                                          Components_e::SPRITE_TEXTURE_COMPONENT);
-    PositionVertexComponent *posComp = stairwayToComponentManager().
-            searchComponentByType<PositionVertexComponent>(playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_CURSOR)],
-                                                          Components_e::POSITION_VERTEX_COMPONENT);
-    assert(spriteComp);
-    assert(posComp);
-    m_vertices[index].clear();
-    m_vertices[index].loadVertexStandartTextureComponent(*posComp, *spriteComp);
-    m_cursorInit = true;
-}
-
-//===================================================================
 void StaticDisplaySystem::updateMenuCursorPosition(PlayerConfComponent *playerComp)
 {
-    PositionVertexComponent *posComp = stairwayToComponentManager().
-                searchComponentByType<PositionVertexComponent>(playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_CURSOR)],
-                                                               Components_e::POSITION_VERTEX_COMPONENT);
-    assert(posComp);
     WriteComponent *writeMenuComp = stairwayToComponentManager().
                 searchComponentByType<WriteComponent>(playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_ENTRIES)],
                                                       Components_e::WRITE_COMPONENT);
     assert(writeMenuComp);
     float upPos = writeMenuComp->m_upLeftPositionGL.second -
-            static_cast<float>(playerComp->m_currentCursorPos) * writeMenuComp->m_fontSize,
-            downPos = upPos - writeMenuComp->m_fontSize,
-            rightPos = playerComp->m_menuMode == MenuMode_e::BASE ? writeMenuComp->m_upLeftPositionGL.first - 0.18f :
-                                                                    writeMenuComp->m_upLeftPositionGL.first - 0.05f,
-            leftPos = rightPos - CURSOR_GL_SIZE.first;
-    posComp->m_vertex[0] = {leftPos, upPos};
-    posComp->m_vertex[1] = {rightPos, upPos};
-    posComp->m_vertex[2] = {rightPos, downPos};
-    posComp->m_vertex[3] = {leftPos, downPos};
-
+            static_cast<float>(playerComp->m_currentCursorPos) * writeMenuComp->m_fontSize;
     //Set selected menu line pos
     WriteComponent *writeMenuSelectedComp = stairwayToComponentManager().
                     searchComponentByType<WriteComponent>(playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_SELECTED_LINE)],
                                                           Components_e::WRITE_COMPONENT);
     assert(writeMenuSelectedComp);
     writeMenuSelectedComp->m_upLeftPositionGL.second = upPos;
-    m_cursorInit = false;
 }
 
 //===================================================================
@@ -234,10 +203,6 @@ void StaticDisplaySystem::displayMenu()
         drawWriteVertex(playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_SELECTED_LINE)], VertexID_e::AMMO_WRITE, Font_e::SELECTED);
 
         drawWriteInfoPlayer(mVectNumEntity[i], playerComp);
-        SpriteTextureComponent *spriteComp = stairwayToComponentManager().
-                searchComponentByType<SpriteTextureComponent>(playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_CURSOR)],
-                Components_e::SPRITE_TEXTURE_COMPONENT);
-        assert(spriteComp);
         if(playerComp->m_menuMode != MenuMode_e::NEW_KEY &&
                 playerComp->m_menuMode != MenuMode_e::LEVEL_EPILOGUE &&
                 playerComp->m_menuMode != MenuMode_e::LEVEL_PROLOGUE &&
@@ -245,11 +210,6 @@ void StaticDisplaySystem::displayMenu()
         {
             updateMenuCursorPosition(playerComp);
             m_mainEngine->confMenuSelectedLine();
-            if(!m_cursorInit)
-            {
-                fillCursorMenuVertex(playerComp);
-            }
-            drawVertex(spriteComp->m_spriteData->m_textureNum, VertexID_e::MENU_CURSOR);
         }
         if(playerComp->m_menuMode == MenuMode_e::SOUND)
         {

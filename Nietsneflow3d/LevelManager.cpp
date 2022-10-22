@@ -1495,10 +1495,7 @@ void LevelManager::loadPrologueAndEpilogue()
 void LevelManager::loadUtilsData()
 {
     m_weaponsPreviewData.clear();
-    std::optional<std::string> val = m_ini.getValue("GraphicUtils", "CursorSprite");
-    assert(val);
-    m_spriteCursorName = *val;
-    val = m_ini.getValue("GraphicUtils", "PannelSprite");
+    std::optional<std::string> val = m_ini.getValue("GraphicUtils", "PannelSprite");
     assert(val);
     m_spritePannelName = *val;
     val = m_ini.getValue("GraphicUtils", "LifeIconSprite");

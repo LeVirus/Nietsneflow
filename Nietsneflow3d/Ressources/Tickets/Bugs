@@ -1,13 +1,7 @@
 BUGS======================================================================
 
 ))
-Menu load custom level bad entries
-
-))
 Pad issue in menu release 
-
-))
-Display issue in prologue text
 
 ))
 Crash some time on level loading
@@ -25,6 +19,12 @@ If baron of hell stay stuck in door wall multi attack
 When reload several times a level assert (load bullets)
 
 
+
+))
+Menu load custom level bad entries======================OK
+
+))
+Display issue in prologue text===================OK
 
 ))
 New game for other level than 1 issue===============OK

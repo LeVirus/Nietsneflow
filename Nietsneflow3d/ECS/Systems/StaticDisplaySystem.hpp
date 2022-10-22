@@ -33,7 +33,6 @@ enum class VertexID_e
     LIFE_WRITE,
     AMMO_WRITE,
     MENU_WRITE,
-    MENU_CURSOR,
     INFO,
     RESOLUTION_DISPLAY_MENU,
     FULLSCREEN,
@@ -94,7 +93,6 @@ private:
     void drawWriteInfoPlayer(uint32_t playerEntity, PlayerConfComponent *playerComp);
     void drawWeaponsPreviewPlayer(const PlayerConfComponent *playerComp,
                                   WeaponComponent const *weaponComp);
-    void fillCursorMenuVertex(PlayerConfComponent *playerComp);
     void updateMenuCursorPosition(PlayerConfComponent *playerComp);
     void confWriteVertex(WriteComponent *writeComp, PositionVertexComponent *posComp,
                          VertexID_e type);
@@ -110,7 +108,7 @@ private:
 private:
     MainEngine *m_mainEngine;
     FontData const *m_fontDataPtr;
-    bool m_cursorInit = false, m_menuBackgroundInit = false;
+    bool m_menuBackgroundInit = false;
     Shader *m_shader;
     std::array<VerticesData, static_cast<uint32_t>(VertexID_e::TOTAL)> m_vertices;
     std::vector<Texture> *m_ptrVectTexture = nullptr;

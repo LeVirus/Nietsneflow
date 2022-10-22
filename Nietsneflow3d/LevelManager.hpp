@@ -146,10 +146,6 @@ public:
     {
         return m_spriteTitleMenuName;
     }
-    inline std::string getCursorSpriteName()const
-    {
-        return m_spriteCursorName;
-    }
     inline std::string getLevelPrologue()const
     {
         return m_prologue;
@@ -380,7 +376,7 @@ private:
     PictureData m_pictureData;
     FontData m_fontData;
     Level m_level;
-    std::string m_spriteCursorName, m_spritePannelName, m_spriteLifeName, m_spriteAmmoName,
+    std::string m_spritePannelName, m_spriteLifeName, m_spriteAmmoName,
     m_spriteFistName, m_spriteGunName, m_spriteShotgunName,
     m_spritePlasmaRifleName, m_spriteMachineGunName, m_spriteBazookaName, m_spriteGenericMenuName, m_spriteTitleMenuName;
     StaticLevelElementData m_exitStaticElement;
