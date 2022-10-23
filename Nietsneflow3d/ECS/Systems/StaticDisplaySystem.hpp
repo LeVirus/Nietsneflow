@@ -71,6 +71,7 @@ public:
     void updateNewInputKeyGamepad(ControlKey_e currentSelectedKey, uint32_t glKey, InputType_e inputType, bool axisSense = false);
     void updateNewInputKeyKeyboard(ControlKey_e currentSelectedKey, const MouseKeyboardInputState &state);
     void updateStringWriteEntitiesInputMenu(bool keyboardInputMenuMode, bool defaultInput = true);
+    void updateMenuCursorPosition(PlayerConfComponent *playerComp);
     inline void linkMainEngine(MainEngine *mainEngine)
     {
         m_mainEngine = mainEngine;
@@ -93,7 +94,6 @@ private:
     void drawWriteInfoPlayer(uint32_t playerEntity, PlayerConfComponent *playerComp);
     void drawWeaponsPreviewPlayer(const PlayerConfComponent *playerComp,
                                   WeaponComponent const *weaponComp);
-    void updateMenuCursorPosition(PlayerConfComponent *playerComp);
     void confWriteVertex(WriteComponent *writeComp, PositionVertexComponent *posComp,
                          VertexID_e type);
     void drawVertex(uint32_t numTexture, VertexID_e type);

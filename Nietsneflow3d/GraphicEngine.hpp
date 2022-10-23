@@ -108,6 +108,10 @@ public:
     {
         return m_levelPrologue.empty();
     }
+    inline void updateMenuCursorPosition(PlayerConfComponent *playerComp)
+    {
+        m_staticDisplaySystem->updateMenuCursorPosition(playerComp);
+    }
     void toogleMenuEntryFullscreen();
     void setCurrentResolution(uint32_t resolution);
     void setSizeResolution(const pairI_t &resolution);

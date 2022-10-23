@@ -1850,6 +1850,7 @@ void MainEngine::setMenuEntries(PlayerConfComponent *playerComp)
         playerComp->m_menuMode = MenuMode_e::BASE;
         return;
     }
+    m_playerConf->m_currentCursorPos = 0;
     //TITLE MENU
     WriteComponent *writeComp = m_ecsManager.getComponentManager().
             searchComponentByType<WriteComponent>(playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::TITLE_MENU)], Components_e::WRITE_COMPONENT);
@@ -1901,6 +1902,7 @@ void MainEngine::setMenuEntries(PlayerConfComponent *playerComp)
     {
         m_writeConf->m_vectMessage[0].first = {};
     }
+    m_graphicEngine.updateMenuCursorPosition(playerComp);
 }
 
 //===================================================================

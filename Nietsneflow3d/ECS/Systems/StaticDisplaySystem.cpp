@@ -22,6 +22,8 @@ StaticDisplaySystem::StaticDisplaySystem()
 //===================================================================
 void StaticDisplaySystem::updateMenuCursorPosition(PlayerConfComponent *playerComp)
 {
+    std::map<MenuMode_e, PairPairFloatStr_t>::const_iterator it = MAP_MENU_DATA.find(playerComp->m_menuMode);
+    assert(it != MAP_MENU_DATA.end());
     WriteComponent *writeMenuComp = stairwayToComponentManager().
                 searchComponentByType<WriteComponent>(playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_ENTRIES)],
                                                       Components_e::WRITE_COMPONENT);
@@ -33,7 +35,12 @@ void StaticDisplaySystem::updateMenuCursorPosition(PlayerConfComponent *playerCo
                     searchComponentByType<WriteComponent>(playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_SELECTED_LINE)],
                                                           Components_e::WRITE_COMPONENT);
     assert(writeMenuSelectedComp);
-    writeMenuSelectedComp->m_upLeftPositionGL.second = upPos;
+    writeMenuSelectedComp->m_upLeftPositionGL = {it->second.first.first, upPos};
+    if(writeMenuSelectedComp->m_vectMessage.empty())
+    {
+        writeMenuSelectedComp->addTextLine({{}, ""});
+    }
+    writeMenuSelectedComp->m_vectMessage[0].first = it->second.first.first;
 }
 
 //===================================================================
