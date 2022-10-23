@@ -36,11 +36,20 @@ void StaticDisplaySystem::updateMenuCursorPosition(PlayerConfComponent *playerCo
                                                           Components_e::WRITE_COMPONENT);
     assert(writeMenuSelectedComp);
     writeMenuSelectedComp->m_upLeftPositionGL = {it->second.first.first, upPos};
-    if(writeMenuSelectedComp->m_vectMessage.empty())
+    if(playerComp->m_menuMode != MenuMode_e::CONFIRM_QUIT_GAME)
     {
-        writeMenuSelectedComp->addTextLine({{}, ""});
+        if(writeMenuSelectedComp->m_vectMessage.empty())
+        {
+            writeMenuSelectedComp->addTextLine({{}, ""});
+        }
+        writeMenuSelectedComp->m_vectMessage[0].first = it->second.first.first;
     }
-    writeMenuSelectedComp->m_vectMessage[0].first = it->second.first.first;
+    if(playerComp->m_menuMode == MenuMode_e::CONFIRM_QUIT_GAME || playerComp->m_menuMode == MenuMode_e::CONFIRM_LOADING_GAME_FORM ||
+            playerComp->m_menuMode == MenuMode_e::CONFIRM_QUIT_INPUT_FORM || playerComp->m_menuMode == MenuMode_e::CONFIRM_RESTART_LEVEL ||
+            playerComp->m_menuMode == MenuMode_e::CONFIRM_RESTART_FROM_LAST_CHECKPOINT )
+    {
+        writeMenuSelectedComp->m_vectMessage[0].first = {};
+    }
 }
 
 //===================================================================
