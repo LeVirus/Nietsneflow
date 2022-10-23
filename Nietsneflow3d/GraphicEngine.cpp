@@ -332,6 +332,8 @@ void GraphicEngine::fillMenuWrite(WriteComponent *writeComp, MenuMode_e menuEntr
     {
         std::map<MenuMode_e, PairPairFloatStr_t>::const_iterator it = MAP_MENU_DATA.find(menuEntry);
         writeComp->m_vectMessage[0].second = it->second.second;
+        writeComp->m_upLeftPositionGL.first = it->second.first.first;
+        writeComp->m_vectMessage[0].first = it->second.first.first;
     }
     writeComp->m_fontSpriteData[0] = m_ptrFontData->getWriteData(writeComp->m_vectMessage[0].second,
             writeComp, Font_e::STANDARD);
