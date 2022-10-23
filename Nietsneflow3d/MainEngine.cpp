@@ -1440,7 +1440,7 @@ bool MainEngine::createEnemy(const LevelManager &levelManager, const SpriteData 
     }
     if(enemyComp->m_visibleShot)
     {
-        if(!loadFromCheckpoint || !m_memEnemiesStateFromCheckpoint[index].m_dead)
+        if(!loadFromCheckpoint || !m_memEnemiesStateFromCheckpoint[m_currentLevelEnemiesNumber].m_dead)
         {
             enemyComp->m_visibleAmmo.resize(4);
             confAmmoEntities(enemyComp->m_visibleAmmo, CollisionTag_e::BULLET_ENEMY_CT,
