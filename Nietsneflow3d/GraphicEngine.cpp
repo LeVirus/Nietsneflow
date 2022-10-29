@@ -377,7 +377,6 @@ void GraphicEngine::confMenuSelectedLine(PlayerConfComponent *playerConf,
     {
         getLineFromList(writeMenuComp->m_vectMessage[0].second, playerConf->m_currentCursorPos);
     }
-
     //fill selected menu entry
     writeMenuSelectedComp->m_vectMessage[0].second = ret.first;
     if(playerConf->m_menuMode == MenuMode_e::TRANSITION_LEVEL || playerConf->m_menuMode == MenuMode_e::LEVEL_EPILOGUE ||
