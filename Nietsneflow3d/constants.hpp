@@ -596,7 +596,7 @@ inline const std::map<uint32_t, std::string> INPUT_GAMEPAD_SIMPLE_BUTTONS_STRING
     {GLFW_GAMEPAD_BUTTON_Y, "Button Y"},
     {GLFW_GAMEPAD_BUTTON_LEFT_BUMPER, "Left Bumper"},
     {GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER, "Right Bumper"},
-    {GLFW_GAMEPAD_BUTTON_BACK, "Back"},
+//    {GLFW_GAMEPAD_BUTTON_BACK, "Back"},
     {GLFW_GAMEPAD_BUTTON_START, "Start"},
     {GLFW_GAMEPAD_BUTTON_GUIDE, "Guide"},
     {GLFW_GAMEPAD_BUTTON_LEFT_THUMB, "Left Thumb"},
@@ -604,7 +604,7 @@ inline const std::map<uint32_t, std::string> INPUT_GAMEPAD_SIMPLE_BUTTONS_STRING
     {GLFW_GAMEPAD_BUTTON_DPAD_UP, "Dpad Up"},
     {GLFW_GAMEPAD_BUTTON_DPAD_RIGHT, "Dpad Right"},
     {GLFW_GAMEPAD_BUTTON_DPAD_DOWN, "Dpad Down"},
-    {GLFW_GAMEPAD_BUTTON_DPAD_LEFT, "Dpad Left"},
+    {GLFW_GAMEPAD_BUTTON_DPAD_LEFT, "Dpad Left"}
 };
 
 inline const std::map<uint32_t, std::string> INPUT_GAMEPAD_AXIS_STRING = {

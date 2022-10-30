@@ -145,7 +145,8 @@ void InputSystem::treatPlayerInput()
         PlayerConfComponent *playerComp = stairwayToComponentManager().
                 searchComponentByType<PlayerConfComponent>(mVectNumEntity[i], Components_e::PLAYER_CONF_COMPONENT);
         assert(playerComp);
-        if(!m_changeMapMode && glfwGetKey(m_window, GLFW_KEY_TAB) == GLFW_PRESS)
+        if(!m_changeMapMode && (glfwGetKey(m_window, GLFW_KEY_TAB) == GLFW_PRESS ||
+                checkStandardButtonGamepadKeyStatus(GLFW_GAMEPAD_BUTTON_BACK, GLFW_PRESS)))
         {
             m_changeMapMode = true;
             if(playerComp->m_mapMode != MapMode_e::FULL_MAP)
@@ -159,7 +160,8 @@ void InputSystem::treatPlayerInput()
             }
 
         }
-        else if(m_changeMapMode && glfwGetKey(m_window, GLFW_KEY_TAB) == GLFW_RELEASE)
+        else if(m_changeMapMode && glfwGetKey(m_window, GLFW_KEY_TAB) == GLFW_RELEASE &&
+                !checkStandardButtonGamepadKeyStatus(GLFW_GAMEPAD_BUTTON_BACK, GLFW_PRESS))
         {
             m_changeMapMode = false;
         }
