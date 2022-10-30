@@ -126,7 +126,7 @@ public:
     void clearLevel();
     void confSystems();
     uint32_t createAmmoEntity(CollisionTag_e collTag, bool visibleShot);
-    void setMenuEntries(PlayerConfComponent *playerComp);
+    void setMenuEntries(PlayerConfComponent *playerComp, std::optional<uint32_t> cursorPos = {});
     void updateConfirmLoadingMenuInfo(PlayerConfComponent *playerComp);
     void updateWriteComp(WriteComponent *writeComp);
     void updateStringWriteEntitiesInputMenu(bool keyboardInputMenuMode, bool defaultInput = true);
@@ -373,7 +373,7 @@ private:
     }
 private:
     LevelState_e m_currentLevelState;
-    uint32_t m_memInputCursorPos = 0, m_currentSave = 1, m_currentLevel = 0;
+    uint32_t m_currentSave = 1, m_currentLevel = 0;
     GraphicEngine m_graphicEngine;
     PhysicalEngine m_physicalEngine;
     AudioEngine m_audioEngine;

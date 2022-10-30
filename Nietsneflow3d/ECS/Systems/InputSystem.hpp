@@ -159,6 +159,7 @@ private:
 
 private:
     uint32_t m_rotationSensibility = 40;
+    std::optional<uint32_t> m_memInputMenuCursor, m_memMainMenuCursor;
     std::pair<double, double> m_previousMousePosition;
     GLFWwindow *m_window = nullptr;
     MainEngine *m_mainEngine = nullptr;

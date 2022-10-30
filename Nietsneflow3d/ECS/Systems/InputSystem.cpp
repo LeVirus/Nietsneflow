@@ -474,7 +474,8 @@ void InputSystem::treatMenu(uint32_t playerEntity)
         else if(playerComp->m_menuMode == MenuMode_e::NEW_KEY)
         {
             playerComp->m_menuMode = MenuMode_e::INPUT;
-            m_mainEngine->setMenuEntries(playerComp);
+            m_mainEngine->setMenuEntries(playerComp, m_memInputMenuCursor);
+            m_memInputMenuCursor = {};
         }
         else if(playerComp->m_inputModified && playerComp->m_menuMode == MenuMode_e::INPUT)
         {
@@ -501,7 +502,8 @@ void InputSystem::treatMenu(uint32_t playerEntity)
                 m_mainEngine->saveTurnSensitivitySettings();
             }
             playerComp->m_menuMode = playerComp->m_firstMenu ? MenuMode_e::TITLE : MenuMode_e::BASE;
-            m_mainEngine->setMenuEntries(playerComp);
+            m_mainEngine->setMenuEntries(playerComp, m_memMainMenuCursor);
+            m_memMainMenuCursor = {};
         }
         return;
     }
@@ -512,7 +514,8 @@ void InputSystem::treatMenu(uint32_t playerEntity)
         {
             playerComp->m_inputModified = true;
             playerComp->m_menuMode = MenuMode_e::INPUT;
-            m_mainEngine->setMenuEntries(playerComp);
+            m_mainEngine->setMenuEntries(playerComp, m_memInputMenuCursor);
+            m_memInputMenuCursor = {};
             m_gamepadAxisKeyPressed.fill({false, false});
         }
     }
@@ -786,9 +789,11 @@ void InputSystem::treatEnterPressedMenu(PlayerConfComponent *playerComp)
     switch(playerComp->m_menuMode)
     {
     case MenuMode_e::TITLE:
+        m_memMainMenuCursor = playerComp->m_currentCursorPos;
         treatEnterPressedTitleMenu(playerComp);
         break;
     case MenuMode_e::BASE:
+        m_memMainMenuCursor = playerComp->m_currentCursorPos;
         treatEnterPressedMainMenu(playerComp);
         break;
     case MenuMode_e::SOUND:
@@ -1263,6 +1268,7 @@ void InputSystem::treatEnterPressedInputMenu(PlayerConfComponent *playerComp)
     //INPUT CHANGE
     else if(menuPos != InputMenuCursorPos_e::TURN_SENSITIVITY)
     {
+        m_memInputMenuCursor = playerComp->m_currentCursorPos;
         m_gamepadAxisKeyPressed.fill({true, true});
         playerComp->m_menuMode = MenuMode_e::NEW_KEY;
         m_mainEngine->setMenuEntries(playerComp);

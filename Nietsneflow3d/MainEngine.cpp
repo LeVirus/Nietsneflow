@@ -91,7 +91,6 @@ LevelState MainEngine::mainLoop(uint32_t levelNum, LevelState_e levelState, bool
     m_levelEnd = false;
     m_currentLevelState = levelState;
     m_currentLevel = levelNum;
-    m_memInputCursorPos = 0;
     m_graphicEngine.getMapSystem().confLevelData();
     m_physicalEngine.updateMousePos();
     if(!afterLoadFailure)
@@ -1843,14 +1842,14 @@ uint32_t MainEngine::createAmmoEntity(CollisionTag_e collTag, bool visibleShot)
 }
 
 //===================================================================
-void MainEngine::setMenuEntries(PlayerConfComponent *playerComp)
+void MainEngine::setMenuEntries(PlayerConfComponent *playerComp, std::optional<uint32_t> cursorPos)
 {
     if(playerComp->m_menuMode == MenuMode_e::CONFIRM_RESTART_FROM_LAST_CHECKPOINT && !m_memCheckpointLevelState)
     {
         playerComp->m_menuMode = MenuMode_e::BASE;
         return;
     }
-    m_playerConf->m_currentCursorPos = 0;
+    m_playerConf->m_currentCursorPos = cursorPos ? *cursorPos : 0;
     //TITLE MENU
     WriteComponent *writeComp = m_ecsManager.getComponentManager().
             searchComponentByType<WriteComponent>(playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::TITLE_MENU)], Components_e::WRITE_COMPONENT);
@@ -1869,15 +1868,9 @@ void MainEngine::setMenuEntries(PlayerConfComponent *playerComp)
     m_graphicEngine.fillMenuWrite(m_writeConf, playerComp->m_menuMode, playerComp->m_currentCursorPos,
                                   {playerComp, m_currentLevelSecretsNumber, m_currentLevelEnemiesNumber});
     m_graphicEngine.confMenuSelectedLine(playerComp, writeComp, m_writeConf);
-    if(playerComp->m_menuMode == MenuMode_e::NEW_KEY)
-    {
-        m_memInputCursorPos = playerComp->m_currentCursorPos;
-    }
-    else if(playerComp->m_menuMode == MenuMode_e::INPUT)
+    if(playerComp->m_menuMode == MenuMode_e::INPUT)
     {
         updateConfirmLoadingMenuInfo(playerComp);
-        playerComp->m_currentCursorPos = m_memInputCursorPos;
-        m_memInputCursorPos = 0;
     }
     else if(playerComp->m_menuMode == MenuMode_e::CONFIRM_QUIT_INPUT_FORM ||
             playerComp->m_menuMode == MenuMode_e::CONFIRM_LOADING_GAME_FORM ||
@@ -1887,7 +1880,8 @@ void MainEngine::setMenuEntries(PlayerConfComponent *playerComp)
         updateConfirmLoadingMenuInfo(playerComp);
         playerComp->m_currentCursorPos = 0;
     }
-    else if(playerComp->m_menuMode != MenuMode_e::NEW_KEY)
+    else if(playerComp->m_menuMode != MenuMode_e::NEW_KEY && playerComp->m_menuMode != MenuMode_e::TITLE
+            && playerComp->m_menuMode != MenuMode_e::BASE)
     {
         playerComp->m_currentCursorPos = 0;
     }
