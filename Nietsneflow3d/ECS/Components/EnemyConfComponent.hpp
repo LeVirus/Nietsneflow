@@ -63,7 +63,7 @@ struct EnemyConfComponent : public ecs::Component
             return true;
         }
     }
-    bool m_stuck = false, m_touched = false, m_visibleShot, m_endLevel = false, m_meleeOnly;
+    bool m_touched = false, m_visibleShot, m_endLevel = false, m_meleeOnly;
     uint32_t m_weaponEntity, m_life, m_countPlayerInvisibility = 0, m_currentSprite, m_cycleNumberSpriteUpdate = 0.2 / FPS_VALUE,
     m_cycleNumberDyingInterval = 0.11 / FPS_VALUE, m_cycleNumberAttackInterval = 0.15f / FPS_VALUE, m_standardSpriteInterval = 0.5 / FPS_VALUE,
     m_countTillLastAttack = 0;
@@ -74,7 +74,7 @@ struct EnemyConfComponent : public ecs::Component
     std::optional<uint32_t> m_dropedObjectEntity;
     EnemyBehaviourMode_e m_behaviourMode = EnemyBehaviourMode_e::PASSIVE;
     //fist previous -1, second previous -2
-    std::pair<EnemyAttackPhase_e, EnemyAttackPhase_e> m_previousMove = {EnemyAttackPhase_e::TOTAL, EnemyAttackPhase_e::TOTAL};
+    std::array<EnemyAttackPhase_e, 3> m_previousMove = {EnemyAttackPhase_e::TOTAL, EnemyAttackPhase_e::TOTAL, EnemyAttackPhase_e::TOTAL};
     EnemyAttackPhase_e m_attackPhase;
     std::optional<uint32_t> m_meleeAttackDamage;
     virtual ~EnemyConfComponent() = default;

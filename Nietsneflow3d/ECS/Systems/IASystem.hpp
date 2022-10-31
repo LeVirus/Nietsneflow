@@ -2,6 +2,7 @@
 
 #include <includesLib/BaseECS/system.hpp>
 #include "constants.hpp"
+#include <ECS/Components/EnemyConfComponent.hpp>
 
 struct MapCoordComponent;
 struct EnemyConfComponent;
