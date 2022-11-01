@@ -144,6 +144,10 @@ LevelState MainEngine::mainLoop(uint32_t levelNum, LevelState_e levelState, bool
             m_levelToLoad = {};
             if(m_currentLevelState == LevelState_e::NEW_GAME || m_currentLevelState == LevelState_e::RESTART_LEVEL)
             {
+                if(m_currentLevelState == LevelState_e::NEW_GAME)
+                {
+                    m_playerMemGear = false;
+                }
                 clearCheckpointData();
             }
             return {m_currentLevelState, levelToLoad, customLevelMode};

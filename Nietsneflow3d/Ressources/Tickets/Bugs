@@ -1,10 +1,10 @@
 BUGS======================================================================
 
 ))
-Issue displaying large element on limit angle (Arachnoid)
+Issue displaying menu screen inter level
 
 ))
-Load level 1 from upper level keep objects from previous game
+Issue displaying large element on limit angle (Arachnoid)
 
 
 ))
@@ -12,6 +12,9 @@ assert in audio engine AUdioEngine.cpp:117==================NON REPRODUCTIBLE
 
 ))
 Crash some time on level loading==================APPAREMMENT OK
+
+))
+Load level 1 from upper level keep objects from previous game==================OK
 
 ))
 If baron of hell stay stuck in door wall multi attack=====================OK
