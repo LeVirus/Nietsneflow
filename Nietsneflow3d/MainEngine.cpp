@@ -1871,6 +1871,12 @@ void MainEngine::setMenuEntries(PlayerConfComponent *playerComp, std::optional<u
     assert(writeComp);
     m_graphicEngine.fillMenuWrite(m_writeConf, playerComp->m_menuMode, playerComp->m_currentCursorPos,
                                   {playerComp, m_currentLevelSecretsNumber, m_currentLevelEnemiesNumber});
+    if(playerComp->m_menuMode == MenuMode_e::LEVEL_PROLOGUE ||
+            playerComp->m_menuMode == MenuMode_e::LEVEL_EPILOGUE ||
+            playerComp->m_menuMode == MenuMode_e::TRANSITION_LEVEL)
+    {
+        return;
+    }
     m_graphicEngine.confMenuSelectedLine(playerComp, writeComp, m_writeConf);
     if(playerComp->m_menuMode == MenuMode_e::INPUT)
     {
