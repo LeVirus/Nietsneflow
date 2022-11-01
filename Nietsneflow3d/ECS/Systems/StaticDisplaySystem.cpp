@@ -215,11 +215,11 @@ void StaticDisplaySystem::displayMenu()
             drawVertex(spriteBackgroundComp->m_spriteData->m_textureNum, VertexID_e::MENU_BACKGROUND_GENERIC);
         }
         drawWriteVertex(playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_ENTRIES)], VertexID_e::MENU_WRITE);
-        drawWriteVertex(playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::TITLE_MENU)], VertexID_e::LIFE_WRITE);
         if(playerComp->m_menuMode != MenuMode_e::LEVEL_PROLOGUE &&
                 playerComp->m_menuMode != MenuMode_e::LEVEL_EPILOGUE &&
                 playerComp->m_menuMode != MenuMode_e::TRANSITION_LEVEL)
         {
+            drawWriteVertex(playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::TITLE_MENU)], VertexID_e::LIFE_WRITE);
             drawWriteVertex(playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_SELECTED_LINE)], VertexID_e::AMMO_WRITE, Font_e::SELECTED);
         }
 

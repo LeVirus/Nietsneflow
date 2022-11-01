@@ -1,9 +1,6 @@
 BUGS======================================================================
 
 ))
-Issue displaying menu screen inter level
-
-))
 Issue displaying large element on limit angle (Arachnoid)
 
 
@@ -12,6 +9,9 @@ assert in audio engine AUdioEngine.cpp:117==================NON REPRODUCTIBLE
 
 ))
 Crash some time on level loading==================APPAREMMENT OK
+
+))
+Issue displaying menu screen inter level====================OK
 
 ))
 Load level 1 from upper level keep objects from previous game==================OK
