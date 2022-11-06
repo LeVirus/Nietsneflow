@@ -420,165 +420,164 @@ textureWeight = 0.1612
 textureHeight = 0.0159
 
 #NUMBER
-#10 2518  49 2564
+#127 2510   174 2660 
 [0]
 texture = 15
-texturePosX = 0.0403
-texturePosY = 0.5701
-textureWeight = 0.1572
-textureHeight = 0.0142
+texturePosX = 0.512
+texturePosY = 0.5683
+textureWeight = 0.1895
+textureHeight = 0.0159
 
-#19 2614  37 2660
-#46 H
+#136 2660 b  162
 [1]
 texture = 15
-texturePosX = 0.0766
-texturePosY = 0.5919
-textureWeight = 0.0725
-textureHeight = 0.0142
+texturePosX = 0.5483
+texturePosY = 0.5899
+textureWeight = 0.1048
+textureHeight = 0.0159
 
-#14 2710  44 2756
+#131 2702  2756 b  169
 [2]
 texture = 15
-texturePosX = 0.0564
-texturePosY = 0.6136
-textureWeight = 0.1209
-textureHeight = 0.0142
+texturePosX = 0.5282
+texturePosY = 0.6118
+textureWeight = 0.1532
+textureHeight = 0.0159
 
-#14 2806  45 2852
+#131 2798  2852 b  170
 [3]
 texture = 15
-texturePosX = 0.0564
-texturePosY = 0.6354
-textureWeight = 0.125
-textureHeight = 0.0142
+texturePosX = 0.5282
+texturePosY = 0.6336
+textureWeight = 0.1572
+textureHeight = 0.0159
 
-#11 2902  47 2948
+#128 2894  2948 b  172
 [4]
 texture = 15
-texturePosX = 0.0443
-texturePosY = 0.6571
-textureWeight = 0.1451
-textureHeight = 0.0142
+texturePosX = 0.5161
+texturePosY = 0.6553
+textureWeight = 0.1774
+textureHeight = 0.0159
 
-#13 2998  45 3044
+#130 2990  3044 b  171
 [5]
 texture = 15
-texturePosX = 0.0524
-texturePosY = 0.6788
-textureWeight = 0.129
-textureHeight = 0.0142
+texturePosX = 0.5241
+texturePosY = 0.6770
+textureWeight = 0.1653
+textureHeight = 0.0159
 
-#12 3094  46 3140
+#129 3086  3140 b  172
 [6]
 texture = 15
-texturePosX = 0.0483
-texturePosY = 0.7006
-textureWeight = 0.137
-textureHeight = 0.0142
+texturePosX = 0.5201
+texturePosY = 0.6988
+textureWeight = 0.1733
+textureHeight = 0.0159
 
-#10 3190  45 3236
+#127 3182  3236 b  170
 [7]
 texture = 15
-texturePosX = 0.0403
-texturePosY = 0.7223
-textureWeight = 0.1411
-textureHeight = 0.0142
+texturePosX = 0.5120
+texturePosY = 0.7205
+textureWeight = 0.1733
+textureHeight = 0.0159
 
-#11 3286  45 3332
+#128 3278  3332 b  171
 [8]
 texture = 15
-texturePosX = 0.0443
-texturePosY = 0.7441
-textureWeight = 0.137
-textureHeight = 0.0142
+texturePosX = 0.5161
+texturePosY = 0.7423
+textureWeight = 0.1733
+textureHeight = 0.0159
 
-#12 3382  47 3428
+#129 3374  3428 b  172
 [9]
 texture = 15
-texturePosX = 0.0483
-texturePosY = 0.7658
-textureWeight = 0.1411
-textureHeight = 0.0142
+texturePosX = 0.5201
+texturePosY = 0.7640
+textureWeight = 0.1733
+textureHeight = 0.0159
 
-#26 3780  32 3812
+#143   158
 [:]
 texture = 15
-texturePosX = 0.1048
-texturePosY = 0.8527 #0.8559
-textureWeight = 0.0241
-textureHeight = 0.0142
+texturePosX = 0.5725
+texturePosY = 0.8507
+textureWeight = 0.0645
+textureHeight = 0.0159
 
 
-#15 3969  43 3997
+#128
 [+]
 texture = 15
-texturePosX = 0.0604
-texturePosY = 0.8967 #0.8987
-textureWeight = 0.1129
-textureHeight = 0.0142
+texturePosX = 0.5161
+texturePosY = 0.8947
+textureWeight = 0.1699
+textureHeight = 0.0159
 
 
-#16 4076  41 4081
+#125
 [-]
 texture = 15
-texturePosX = 0.0645
-texturePosY = 0.9185 #0.923
-textureWeight = 0.1008
-textureHeight = 0.0142
+texturePosX = 0.504
+texturePosY = 0.9165
+textureWeight = 0.1568
+textureHeight = 0.0159
 
-#10 4342  49 4394
+#123 177
 [/]
 texture = 15
-texturePosX = 0.0403
-texturePosY = 0.9832
-textureWeight = 0.1572
-textureHeight = 0.0142
+texturePosX = 0.4959
+texturePosY = 0.9812
+textureWeight = 0.2177
+textureHeight = 0.0159
 
-#25 4246  32 4292
+#142 158
 [!]
 texture = 15
-texturePosX = 0.1008
-texturePosY = 0.9615
-textureWeight = 0.0282
-textureHeight = 0.0142
+texturePosX = 0.5725
+texturePosY = 0.9595
+textureWeight = 0.0645
+textureHeight = 0.0159
 
-#13 4150  42 4196
+#129 168
 [?]
 texture = 15
-texturePosX = 0.0524
-texturePosY = 0.9397 #0.9397
-textureWeight = 0.1169
-textureHeight = 0.0142
+texturePosX = 0.5201
+texturePosY = 0.9377
+textureWeight = 0.1572
+textureHeight = 0.0159
 
-#4 3861  55 3911
+#120 180
 [%]
 texture = 15
-texturePosX = 0.0161
-texturePosY = 0.8743
-textureWeight = 0.2056
-textureHeight = 0.0142
+texturePosX = 0.4798
+texturePosY = 0.8723
+textureWeight = 0.2419
+textureHeight = 0.0139
 
-#26 3517  32 3524
+#142 158
 [.]
 texture = 15
-texturePosX = 0.1048
-texturePosY = 0.7875 #0.7964
-textureWeight = 0.0241
-textureHeight = 0.0142
+texturePosX = 0.5725
+texturePosY = 0.7855
+textureWeight = 0.0645
+textureHeight = 0.0159
 
-#26 3613  32 3627
+#142 158
 [,]
 texture = 15
-texturePosX = 0.1048
-texturePosY = 0.8092 #0.8181
-textureWeight = 0.0241
-textureHeight = 0.0142
+texturePosX = 0.5725
+texturePosY = 0.8072
+textureWeight = 0.0645
+textureHeight = 0.0159
 
-#26 3684  32 3723
+#142  158
 [;]
 texture = 15
-texturePosX = 0.1048
-texturePosY = 0.831 #0.8342
-textureWeight = 0.0241
-textureHeight = 0.0142
+texturePosX = 0.5725
+texturePosY = 0.829
+textureWeight = 0.0645
+textureHeight = 0.0159
