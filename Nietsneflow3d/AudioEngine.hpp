@@ -1,6 +1,6 @@
 #pragma once
 
-typedef	struct SNDFILE_tag	SNDFILE;
+//typedef	struct SNDFILE_tag	SNDFILE;
 typedef unsigned int ALuint;
 typedef int ALenum;
 

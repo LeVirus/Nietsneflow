@@ -3,6 +3,7 @@
 #include <BaseECS/component.hpp>
 #include <map>
 #include <cassert>
+#include <functional>
 #include <constants.hpp>
 
 using pairEnemySprite_t = std::pair<EnemySpriteType_e, PairUI_t>;

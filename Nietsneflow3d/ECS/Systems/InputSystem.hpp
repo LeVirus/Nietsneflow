@@ -3,6 +3,7 @@
 #include <includesLib/BaseECS/system.hpp>
 #include <OpenGLUtils/glheaders.hpp>
 #include <constants.hpp>
+#include <functional>
 
 struct PlayerConfComponent;
 struct MoveableComponent;
