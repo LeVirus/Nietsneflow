@@ -317,12 +317,13 @@ void IASystem::treatEnemyBehaviourAttack(uint32_t enemyEntity, MapCoordComponent
             }
         }
     }
-    else if(enemyConfComp->m_attackPhase != EnemyAttackPhase_e::SHOOT &&
-//            enemyConfComp->m_attackPhase != EnemyAttackPhase_e::SHOOTED &&
-            distancePlayer > LEVEL_TILE_SIZE_PX)
+    else if(enemyConfComp->m_attackPhase != EnemyAttackPhase_e::SHOOT && distancePlayer > LEVEL_TILE_SIZE_PX)
     {
-        moveElementFromAngle(moveComp->m_velocity, getRadiantAngle(moveComp->m_degreeOrientation),
-                             enemyMapComp->m_absoluteMapPositionPX);
+        if(!enemyConfComp->m_frozenOnAttack || enemyConfComp->m_attackPhase != EnemyAttackPhase_e::SHOOTED)
+        {
+            moveElementFromAngle(moveComp->m_velocity, getRadiantAngle(moveComp->m_degreeOrientation),
+                                 enemyMapComp->m_absoluteMapPositionPX);
+        }
     }
 }
 

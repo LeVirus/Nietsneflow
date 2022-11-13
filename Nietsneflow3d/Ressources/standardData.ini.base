@@ -94,6 +94,7 @@ traversable = false
 NormalBehaviourSound = Roar.wav
 DetectBehaviourSound = DemonDetect.wav
 AttackSound = DemonAttack.wav
+FrozenOnAttack = false
 
 [EnemyCyberDemon]
 StaticSpriteFront = SpriteCDFA SpriteCDFB
@@ -117,6 +118,7 @@ traversable = false
 NormalBehaviourSound = Roar.wav
 DetectBehaviourSound = DemonDetect.wav
 AttackSound = DemonAttack.wav
+FrozenOnAttack = false
 
 [EnemyBaronHell]
 StaticSpriteFront = SpriteBHFA SpriteBHFB
@@ -142,6 +144,7 @@ traversable = false
 NormalBehaviourSound = Roar.wav
 DetectBehaviourSound = DemonDetect.wav
 AttackSound = DemonAttack.wav
+FrozenOnAttack = false
 
 
 [EnemyFlyingDemon]
@@ -168,6 +171,7 @@ traversable = false
 NormalBehaviourSound = Roar.wav
 DetectBehaviourSound = DemonDetect.wav
 AttackSound = DemonAttack.wav
+FrozenOnAttack = false
 
 
 [EnemyZombieShotgun]
@@ -193,6 +197,7 @@ traversable = false
 NormalBehaviourSound = Roar.wav
 DetectBehaviourSound = DemonDetect.wav
 AttackSound = DemonAttack.wav
+FrozenOnAttack = true
 
 
 [EnemyDemonClaw]
@@ -220,6 +225,7 @@ NormalBehaviourSound = Roar.wav
 DetectBehaviourSound = DemonDetect.wav
 AttackSound = DemonAttack.wav
 MeleeOnly = true
+FrozenOnAttack = false
 
 [EnemyDemon]
 StaticSpriteFront = SpriteDFA SpriteDFB
@@ -245,6 +251,7 @@ traversable = false
 NormalBehaviourSound = Roar.wav
 DetectBehaviourSound = DemonDetect.wav
 AttackSound = DemonAttack.wav
+FrozenOnAttack = true
 
 
 [EnemyMarine]
@@ -270,6 +277,7 @@ traversable = false
 NormalBehaviourSound = Roar.wav
 DetectBehaviourSound = DemonDetect.wav
 AttackSound = DemonAttack.wav
+FrozenOnAttack = true
 
 [WeaponFist]
 WeaponName = Fist

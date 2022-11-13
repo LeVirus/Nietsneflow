@@ -87,6 +87,7 @@ struct EnemyData
     std::string m_normalBehaviourSoundFile, m_detectBehaviourSoundFile, m_attackSoundFile;
     uint32_t m_attackPower, m_life;
     std::optional<uint32_t> m_meleeDamage;
+    bool m_frozenOnAttack;
     std::optional<PairUI_t> m_endLevelPos;
     float m_velocity, m_shotVelocity;
     bool m_traversable, m_meleeOnly;
