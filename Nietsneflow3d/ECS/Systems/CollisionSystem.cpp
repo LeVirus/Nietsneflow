@@ -610,7 +610,7 @@ bool CollisionSystem::treatDoorCollisionFirstCircle(CollisionArgs &args, const C
     PairFloat_t size = rectCompB.m_size;
     //Fix visible shot issue
     if(args.tagCompA->m_tagA != CollisionTag_e::BULLET_ENEMY_CT &&
-            args.tagCompA->m_tagA != CollisionTag_e::BULLET_PLAYER_CT)
+            args.tagCompA->m_tagA != CollisionTag_e::BULLET_PLAYER_CT && args.tagCompA->m_tagA != CollisionTag_e::IMPACT_CT)
     {
         if(doorComp->m_vertical)
         {
