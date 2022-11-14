@@ -1386,10 +1386,9 @@ bool MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
     float collisionRay;
     bool exit = false;
     bool loadFromCheckpoint = (!m_memEnemiesStateFromCheckpoint.empty());
-    std::map<std::string, EnemyData>::const_iterator it = enemiesData.begin();
     m_currentLevelEnemiesNumber = 0;
     m_currentLevelEnemiesKilled = 0;
-    for(; it != enemiesData.end(); ++it)
+    for(std::map<std::string, EnemyData>::const_iterator it = enemiesData.begin(); it != enemiesData.end(); ++it)
     {
         collisionRay = it->second.m_inGameSpriteSize.first * LEVEL_TWO_THIRD_TILE_SIZE_PX;
         const SpriteData &memSpriteData = levelManager.getPictureData().

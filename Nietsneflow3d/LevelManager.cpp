@@ -1635,9 +1635,12 @@ void LevelManager::loadEnemySprites(const std::string &sectionName,
     std::istringstream iss(sprites);
     vectStr_t results(std::istream_iterator<std::string>{iss}, std::istream_iterator<std::string>());
     vectPtr->reserve(results.size());
+    std::optional<uint16_t> optIdentifier;
     for(uint32_t i = 0; i < results.size(); ++i)
     {
-        vectPtr->emplace_back(*m_pictureData.getIdentifier(results[i]));
+        optIdentifier = m_pictureData.getIdentifier(results[i]);
+        assert(optIdentifier);
+        vectPtr->emplace_back(*optIdentifier);
     }
 }
 

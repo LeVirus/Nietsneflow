@@ -3,12 +3,12 @@ BUGS======================================================================
 ))
 When arachnid shoot crash (bad sprite data)
 
-))
-Issue displaying large element on limit angle (Arachnoid)
-
 
 ))
 assert in audio engine AUdioEngine.cpp:117==================NON REPRODUCTIBLE
+
+))
+Issue displaying large element on limit angle (Arachnoid)====================OK
 
 ))
 Crash some time on level loading==================APPAREMMENT OK
