@@ -587,7 +587,18 @@ void FirstPersonDisplaySystem::confNormalEntityVertex(uint32_t numEntity, Vision
     assert(positionComp);
     assert(visionComp);
     //quickfix
-    if(distance < 15.0f)
+    if(fpsStaticComp->m_inGameSpriteSize.first > 1.5f)
+    {
+        if(distance < 15.0f)
+        {
+            return;
+        }
+        else if(distance < 40.0f)
+        {
+            distance = 40.0f;
+        }
+    }
+    else if(distance < 15.0f)
     {
         distance = 15.0f;
     }
