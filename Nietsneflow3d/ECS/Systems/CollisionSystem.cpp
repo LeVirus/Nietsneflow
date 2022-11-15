@@ -23,6 +23,7 @@
 #include <ECS/Components/CheckpointComponent.hpp>
 #include <ECS/Components/TriggerComponent.hpp>
 #include <ECS/Components/MoveableWallConfComponent.hpp>
+#include <ECS/Components/FPSVisibleStaticElementComponent.hpp>
 #include <ECS/Systems/FirstPersonDisplaySystem.hpp>
 #include <ECS/Systems/ColorDisplaySystem.hpp>
 #include <BaseECS/engine.hpp>
@@ -695,6 +696,21 @@ bool CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args, bool shotEx
                     previousPos = args.mapCompA.m_absoluteMapPositionPX;
                 }
                 collisionCircleRectEject(args, circleCompA.m_ray, rectCompB);
+
+                if(checkStuck && std::abs(previousPos.first - args.mapCompA.m_absoluteMapPositionPX.first) < 3.0f &&
+                        std::abs(previousPos.second - args.mapCompA.m_absoluteMapPositionPX.second) < 3.0f)
+                {
+                    FPSVisibleStaticElementComponent *fpsComp = stairwayToComponentManager().searchComponentByType<FPSVisibleStaticElementComponent>(
+                                args.entityNumA, Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
+                    assert(fpsComp);
+                    if(fpsComp->m_inGameSpriteSize.first < 0.7f)
+                    {
+                        EnemyConfComponent *enemyComp = stairwayToComponentManager().searchComponentByType<EnemyConfComponent>(
+                                    args.entityNumA, Components_e::ENEMY_CONF_COMPONENT);
+                        assert(enemyComp);
+                        enemyComp->m_stuck = true;
+                    }
+                }
             }
             else if(args.tagCompA->m_tagA == CollisionTag_e::IMPACT_CT)
             {
