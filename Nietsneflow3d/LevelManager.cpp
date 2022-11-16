@@ -1897,7 +1897,7 @@ bool LevelManager::loadSettingsData()
     {
         std::optional<bool> resBool = toBool(*val);
         assert(resBool);
-        *m_settingsData.m_fullscreen = *resBool;
+        m_settingsData.m_fullscreen = *resBool;
     }
     else
     {

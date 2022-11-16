@@ -1,8 +1,14 @@
 BUGS======================================================================
 
 ))
-When arachnid shoot crash (bad sprite data)=======================OK~~
+If moveable wall move with a speed > 3 issue display 
 
+
+))
+Set fullscreen if mem============================OK
+
+))
+When arachnid shoot crash (bad sprite data)=======================OK~~
 
 ))
 assert in audio engine AUdioEngine.cpp:117==================NON REPRODUCTIBLE
