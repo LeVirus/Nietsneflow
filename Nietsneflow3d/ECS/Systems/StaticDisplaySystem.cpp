@@ -77,10 +77,9 @@ void StaticDisplaySystem::execSystem()
         drawStandardStaticSprite(VertexID_e::LIFE_ICON, playerComp);
 
         drawWriteInfoPlayer(mVectNumEntity[i], playerComp);
-        std::string strAmmoDisplay = STR_PLAYER_AMMO +
-                std::to_string(weaponComp->m_weaponsData[weaponComp->m_currentWeapon].m_ammunationsCount);
+        std::string strAmmoDisplay = std::to_string(weaponComp->m_weaponsData[weaponComp->m_currentWeapon].m_ammunationsCount);
         drawWriteVertex(playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::AMMO_WRITE)], VertexID_e::AMMO_WRITE, Font_e::STANDARD, strAmmoDisplay);
-        drawWriteVertex(playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::LIFE_WRITE)], VertexID_e::LIFE_WRITE, Font_e::STANDARD, STR_PLAYER_LIFE +
+        drawWriteVertex(playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::LIFE_WRITE)], VertexID_e::LIFE_WRITE, Font_e::STANDARD,
                          std::to_string(playerComp->m_life));
         if(weaponComp->m_weaponChange)
         {

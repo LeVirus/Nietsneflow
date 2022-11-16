@@ -432,8 +432,6 @@ RAYCAST_GROUND_CEILING_NUMBER = RAYCAST_LINE_NUMBER / 2.5;
 inline const float SCREEN_VERT_BACKGROUND_GL_STEP = 1.0f / RAYCAST_GROUND_CEILING_NUMBER;
 inline const float SCREEN_HORIZ_BACKGROUND_GL_STEP = 2.0f / RAYCAST_LINE_NUMBER;
 inline const double WRITE_LETTER_GL_OFFSET = 0.01;
-inline const std::string STR_PLAYER_LIFE;
-inline const std::string STR_PLAYER_AMMO;
 inline const std::string SHADER_DIR_STR = "../Nietsneflow3d/Ressources/Shader/";
 inline const std::string LEVEL_RESSOURCES_DIR_STR = "../Nietsneflow3d/Ressources/";
 inline const std::string TEXTURES_DIR_STR = "../Nietsneflow3d/Ressources/Textures/";

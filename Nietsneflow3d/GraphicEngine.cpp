@@ -214,7 +214,7 @@ void GraphicEngine::linkSystems(ColorDisplaySystem *colorSystem, MapDisplaySyste
 //===================================================================
 void GraphicEngine::updateAmmoCount(WriteComponent *writeComp, WeaponComponent *weaponComp)
 {
-    writeComp->m_vectMessage[0].second = STR_PLAYER_AMMO + std::to_string(weaponComp->m_weaponsData[
+    writeComp->m_vectMessage[0].second = std::to_string(weaponComp->m_weaponsData[
                                                 weaponComp->m_currentWeapon].m_ammunationsCount);
     writeComp->m_fontSpriteData[0] = m_ptrFontData->getWriteData(writeComp->m_vectMessage[0].second, writeComp, Font_e::STANDARD);
 }
@@ -222,7 +222,7 @@ void GraphicEngine::updateAmmoCount(WriteComponent *writeComp, WeaponComponent *
 //===================================================================
 void GraphicEngine::updatePlayerLife(WriteComponent *writeComp, PlayerConfComponent *playerComp)
 {
-    writeComp->m_vectMessage[0].second = STR_PLAYER_LIFE + std::to_string(playerComp->m_life);
+    writeComp->m_vectMessage[0].second = std::to_string(playerComp->m_life);
     writeComp->m_fontSpriteData[0] = m_ptrFontData->getWriteData(writeComp->m_vectMessage[0].second, writeComp, Font_e::STANDARD);
 }
 

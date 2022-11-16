@@ -2980,7 +2980,7 @@ void MainEngine::confWriteEntities()
     writeConf = m_ecsManager.getComponentManager().
             searchComponentByType<WriteComponent>(numAmmoWrite, Components_e::WRITE_COMPONENT);
     assert(writeConf);
-    writeConf->m_upLeftPositionGL = {-0.75f, -0.9f};
+    writeConf->m_upLeftPositionGL = {-0.8f, -0.9f};
     writeConf->m_fontSize = STD_FONT_SIZE;
     writeConf->addTextLine({writeConf->m_upLeftPositionGL.first, ""});
     m_graphicEngine.updateAmmoCount(writeConf, m_weaponComp);
@@ -2988,7 +2988,7 @@ void MainEngine::confWriteEntities()
     writeConf = m_ecsManager.getComponentManager().
             searchComponentByType<WriteComponent>(numLifeWrite, Components_e::WRITE_COMPONENT);
     assert(writeConf);
-    writeConf->m_upLeftPositionGL = {-0.75f, -0.8f};
+    writeConf->m_upLeftPositionGL = {-0.8f, -0.8f};
     writeConf->m_fontSize = STD_FONT_SIZE;
     writeConf->addTextLine({writeConf->m_upLeftPositionGL.first, ""});
     m_graphicEngine.updatePlayerLife(writeConf, m_playerConf);
