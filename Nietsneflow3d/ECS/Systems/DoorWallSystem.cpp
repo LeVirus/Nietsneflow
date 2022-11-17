@@ -172,10 +172,7 @@ void DoorWallSystem::treatMoveableWalls()
         if(next)
         {
             switchToNextPhaseMoveWall(m_vectMoveableWall[i], mapComp, moveWallComp, memPreviousPos);
-            if(moveWallComp->m_initPos)
-            {
-                setInitPhaseMoveWall(&mapCompCPY, moveWallComp, currentDir, m_vectMoveableWall[i]);
-            }
+            setInitPhaseMoveWall(&mapCompCPY, moveWallComp, currentDir, m_vectMoveableWall[i]);
         }
     }
 }
@@ -262,7 +259,6 @@ void DoorWallSystem::triggerMoveableWall(uint32_t wallEntity)
     }
     moveableWallComp->m_cycleInMovement = true;
     moveableWallComp->m_inMovement = true;
-    moveableWallComp->m_initPos = true;
     moveableWallComp->m_currentPhase = 0;
     moveableWallComp->m_currentMove = 0;
 }
@@ -277,7 +273,6 @@ void setInitPhaseMoveWall(MapCoordComponent *mapComp, MoveableWallConfComponent 
     {
         Level::setElementTypeCase(mapComp->m_coord, LevelCaseType_e::WALL_MOVE_LC);
     }
-    moveWallComp->m_initPos = false;
     switch(currentDir)
     {
     case Direction_e::EAST:
@@ -331,7 +326,6 @@ void DoorWallSystem::switchToNextPhaseMoveWall(uint32_t wallEntity, MapCoordComp
     {
         Level::resetMoveWallElementCase(previousPos, moveWallComp->muiGetIdEntityAssociated());
     }
-    moveWallComp->m_initPos = true;
     if(++moveWallComp->m_currentMove == moveWallComp->m_directionMove[moveWallComp->m_currentPhase].second)
     {
         moveWallComp->m_currentMove = 0;
