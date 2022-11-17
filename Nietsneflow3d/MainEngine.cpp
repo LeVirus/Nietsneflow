@@ -2024,7 +2024,7 @@ void MainEngine::confGlobalSettings(const SettingsData &settingsData)
         }
     }
     //DISPLAY
-    if(settingsData.m_fullscreen)
+    if(settingsData.m_fullscreen && *settingsData.m_fullscreen)
     {
         m_graphicEngine.toogleFullScreen();
     }
