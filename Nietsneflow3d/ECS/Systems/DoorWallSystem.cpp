@@ -128,15 +128,12 @@ void DoorWallSystem::treatMoveableWalls()
             stopMoveWallLevelLimitCase(mapComp, moveWallComp);
             continue;
         }
-        if(moveWallComp->m_initPos)
-        {
-            setInitPhaseMoveWall(mapComp, moveWallComp, currentDir, m_vectMoveableWall[i]);
-        }
         MoveableComponent *moveComp = stairwayToComponentManager().
                 searchComponentByType<MoveableComponent>(m_vectMoveableWall[i],
                                                          Components_e::MOVEABLE_COMPONENT);
         assert(moveComp);
         memPreviousPos = mapComp->m_coord;
+        MapCoordComponent mapCompCPY = *mapComp;
         switch(currentDir)
         {
         case Direction_e::EAST:
@@ -175,6 +172,10 @@ void DoorWallSystem::treatMoveableWalls()
         if(next)
         {
             switchToNextPhaseMoveWall(m_vectMoveableWall[i], mapComp, moveWallComp, memPreviousPos);
+            if(moveWallComp->m_initPos)
+            {
+                setInitPhaseMoveWall(&mapCompCPY, moveWallComp, currentDir, m_vectMoveableWall[i]);
+            }
         }
     }
 }
