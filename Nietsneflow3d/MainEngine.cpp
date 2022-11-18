@@ -739,7 +739,7 @@ void MainEngine::confMenuBarMenuEntity(uint32_t musicEntity, uint32_t effectEnti
     ColorVertexComponent *colorComp = m_ecsManager.getComponentManager().
             searchComponentByType<ColorVertexComponent>(musicEntity, Components_e::COLOR_VERTEX_COMPONENT);
     assert(colorComp);
-    float leftPos = 0.1f, rightPos = leftPos + (getMusicVolume() * MAX_BAR_MENU_SIZE) / 100.0f,
+    float leftPos = LEFT_POS_STD_MENU_BAR, rightPos = leftPos + 0.01f + (getMusicVolume() * MAX_BAR_MENU_SIZE) / 100.0f,
     upPos = MAP_MENU_DATA.at(MenuMode_e::SOUND).first.second - 0.01f,
     downPos = upPos - (MENU_FONT_SIZE - 0.02f);
     if(!posComp->m_vertex.empty())
@@ -769,7 +769,7 @@ void MainEngine::confMenuBarMenuEntity(uint32_t musicEntity, uint32_t effectEnti
     assert(colorComp);
     upPos -= MENU_FONT_SIZE;
     downPos -= MENU_FONT_SIZE;
-    rightPos = leftPos + (getEffectsVolume() * MAX_BAR_MENU_SIZE) / 100.0f;
+    rightPos = leftPos + 0.01f + (getEffectsVolume() * MAX_BAR_MENU_SIZE) / 100.0f;
     posComp->m_vertex.reserve(4);
     posComp->m_vertex.emplace_back(PairFloat_t{leftPos, upPos});
     posComp->m_vertex.emplace_back(PairFloat_t{rightPos, upPos});

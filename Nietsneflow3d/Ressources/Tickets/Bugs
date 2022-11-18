@@ -1,8 +1,12 @@
 BUGS======================================================================
 
 ))
-If moveable wall move with a speed > 3 issue display================OK 
+If moveable wall move with a speed > 3 issue display================ 
+	-->REGRESSION MOVEABLE trigg disappear
 
+
+))
+Conf bar in menu are not the same size when loded and modified==============OK
 
 ))
 Set fullscreen if mem============================OK
