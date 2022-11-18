@@ -132,6 +132,10 @@ void DoorWallSystem::treatMoveableWalls()
                 searchComponentByType<MoveableComponent>(m_vectMoveableWall[i],
                                                          Components_e::MOVEABLE_COMPONENT);
         assert(moveComp);
+        if(moveWallComp->m_initPos && moveWallComp->m_triggerBehaviour != TriggerBehaviourType_e::AUTO)
+        {
+            setInitPhaseMoveWall(mapComp, moveWallComp, currentDir, m_vectMoveableWall[i]);
+        }
         memPreviousPos = mapComp->m_coord;
         MapCoordComponent mapCompCPY = *mapComp;
         switch(currentDir)
@@ -172,9 +176,10 @@ void DoorWallSystem::treatMoveableWalls()
         if(next)
         {
             switchToNextPhaseMoveWall(m_vectMoveableWall[i], mapComp, moveWallComp, memPreviousPos);
-            if(moveWallComp->m_initPos)
+            if(moveWallComp->m_triggerBehaviour == TriggerBehaviourType_e::AUTO)
             {
                 setInitPhaseMoveWall(&mapCompCPY, moveWallComp, currentDir, m_vectMoveableWall[i]);
+//                moveWallComp->m_initPos = false;
             }
         }
     }
@@ -301,8 +306,7 @@ void setInitPhaseMoveWall(MapCoordComponent *mapComp, MoveableWallConfComponent 
         nextCase = {mapComp->m_coord.first, mapComp->m_coord.second + 1};
         break;
     }    
-    if(Level::getElementCase(nextCase)->m_type != LevelCaseType_e::WALL_LC ||
-            moveWallComp->m_triggerBehaviour == TriggerBehaviourType_e::AUTO)
+    if(Level::getElementCase(nextCase)->m_type != LevelCaseType_e::WALL_LC)
     {
         Level::memMoveWallEntity(nextCase, wallEntity);
         Level::setElementTypeCase(nextCase, LevelCaseType_e::WALL_MOVE_LC);
