@@ -21,7 +21,7 @@ struct MoveableWallConfComponent : public ecs::Component
     TriggerBehaviourType_e m_triggerBehaviour;
     //first shape num, wall num
     std::optional<std::pair<uint32_t, TriggerWallCheckpointData>> m_triggerWallCheckpointData;
-    bool m_cycleInMovement = false, m_inMovement = false, m_actionned = false,
+    bool m_cycleInMovement = false, m_inMovement = false, m_initPos = false, m_actionned = false,
     m_manualTrigger = false;
     virtual ~MoveableWallConfComponent() = default;
 };
