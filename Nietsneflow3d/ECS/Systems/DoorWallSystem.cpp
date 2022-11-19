@@ -179,7 +179,11 @@ void DoorWallSystem::treatMoveableWalls()
             if(moveWallComp->m_triggerBehaviour == TriggerBehaviourType_e::AUTO)
             {
                 setInitPhaseMoveWall(&mapCompCPY, moveWallComp, currentDir, m_vectMoveableWall[i]);
-//                moveWallComp->m_initPos = false;
+//                mapComp->m_absoluteMapPositionPX = getAbsolutePosition(memPreviousPos);
+            }
+            else
+            {
+                mapComp->m_absoluteMapPositionPX = getAbsolutePosition(mapComp->m_coord);
             }
         }
     }

@@ -102,6 +102,7 @@ void Level::memMoveWallEntity(const PairUI_t &tilePosition, uint32_t entity)
 void Level::setElementTypeCase(const PairUI_t &tilePosition, LevelCaseType_e type)
 {
     m_levelCaseType[getLevelCaseIndex(tilePosition)].m_type = type;
+    m_levelCaseType[getLevelCaseIndex(tilePosition)].m_tileGamePosition = tilePosition;
 }
 
 //===================================================================
