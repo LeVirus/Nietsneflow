@@ -176,7 +176,7 @@ void DoorWallSystem::treatMoveableWalls()
         {
             mapComp->m_absoluteMapPositionPX = getAbsolutePosition(mapComp->m_coord);
             switchToNextPhaseMoveWall(m_vectMoveableWall[i], mapComp, moveWallComp, memPreviousPos);
-            if(moveWallComp->m_triggerBehaviour == TriggerBehaviourType_e::AUTO)
+            if(!moveWallComp->m_initPos && moveWallComp->m_triggerBehaviour == TriggerBehaviourType_e::AUTO)
             {
                 setInitPhaseMoveWall(mapComp, moveWallComp, currentDir, m_vectMoveableWall[i]);
             }
