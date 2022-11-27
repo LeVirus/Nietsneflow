@@ -1,8 +1,11 @@
 BUGS======================================================================
 
 ))
-Display issue if 2 wall intercect in some case
+Display issue if 2 wall intercect in some case=================NOT REPRODUCIBLE ??
 
+
+))
+Issue when load or die for checkpoint for object and moveable wall issue==================OK
 
 ))
 If moveable wall move with a speed > 3 issue display================OK
