@@ -5,7 +5,6 @@
 #include <AL/al.h>
 #include <AL/alc.h>
 #include <cassert>
-#include "sndfile.h"
 #include <algorithm>
 
 //===================================================================

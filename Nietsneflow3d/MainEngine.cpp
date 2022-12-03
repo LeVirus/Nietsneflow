@@ -192,6 +192,12 @@ LevelState MainEngine::mainLoop(uint32_t levelNum, LevelState_e levelState, bool
         else if(!m_playerConf->m_life)
         {
             m_playerConf->m_infoWriteData = {false, ""};
+            AudioComponent *audioComp = m_ecsManager.getComponentManager().
+                    searchComponentByType<AudioComponent>(m_playerEntity, Components_e::AUDIO_COMPONENT);
+            assert(audioComp);
+            //play death sound
+            audioComp->m_soundElements[1]->m_toPlay = true;
+            m_audioEngine.getSoundSystem()->execSystem();
             if(!m_memCheckpointLevelState)
             {
                 clearCheckpointData();
@@ -2778,7 +2784,9 @@ void MainEngine::confPlayerEntity(const LevelManager &levelManager,
     AudioComponent *audioComp = m_ecsManager.getComponentManager().
             searchComponentByType<AudioComponent>(entityNum, Components_e::AUDIO_COMPONENT);
     assert(audioComp);
-    audioComp->m_soundElements.push_back(loadSound(levelManager.getPickObjectSoundFile()));
+    audioComp->m_soundElements.reserve(2);
+    audioComp->m_soundElements.emplace_back(loadSound(levelManager.getPickObjectSoundFile()));
+    audioComp->m_soundElements.emplace_back(loadSound(levelManager.getPlayerDeathSoundFile()));
     assert(pos);
     assert(map);
     assert(move);

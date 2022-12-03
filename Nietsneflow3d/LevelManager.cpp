@@ -954,6 +954,10 @@ void LevelManager::loadGeneralSoundData()
     assert(val);
     m_teleportSound = *val;
     assert(!m_teleportSound.empty());
+    val = m_ini.getValue("SoundUtils", "PlayerDeath");
+    assert(val);
+    m_playerDeath = *val;
+    assert(!m_playerDeath.empty());
 }
 
 //===================================================================
