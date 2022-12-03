@@ -22,6 +22,8 @@ public:
     void drawScratchWall();
     void drawVisiblePickUpObject();
     void setTransition(uint32_t current, uint32_t total);
+    void setRedTransition();
+    void unsetRedTransition();
     void display()const;
     void clearEntities();
     void updateMusicVolumeBar(uint32_t volume);

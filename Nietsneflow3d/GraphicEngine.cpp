@@ -104,8 +104,12 @@ void GraphicEngine::runIteration(bool gamePaused)
 }
 
 //===================================================================
-void GraphicEngine::setTransition(bool gamePaused)
+void GraphicEngine::setTransition(bool gamePaused, bool redTransition)
 {
+    if(redTransition)
+    {
+        m_colorSystem->setRedTransition();
+    }
     for(uint32_t i = 0; i < m_transitionFrameNumber; ++i)
     {
         preDisplay();
@@ -116,7 +120,7 @@ void GraphicEngine::setTransition(bool gamePaused)
 }
 
 //===================================================================
-void GraphicEngine::unsetTransition(bool gamePaused)
+void GraphicEngine::unsetTransition(bool gamePaused, bool unsetRedTransition)
 {
     for(uint32_t i = m_transitionFrameNumber; i > 0; --i)
     {
@@ -124,6 +128,10 @@ void GraphicEngine::unsetTransition(bool gamePaused)
         mainDisplay(gamePaused);
         m_colorSystem->setTransition(i, m_transitionFrameNumber);
         postDisplay();
+    }
+    if(unsetRedTransition)
+    {
+        m_colorSystem->unsetRedTransition();
     }
 }
 

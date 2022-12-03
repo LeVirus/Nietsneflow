@@ -122,8 +122,8 @@ public:
     void memColorSystemEntity(uint32_t entity);
     void memGroundBackgroundFPSSystemEntity(uint32_t entity, bool simpleTexture);
     void memCeilingBackgroundFPSSystemEntity(uint32_t entity, bool simpleTexture);
-    void setTransition(bool gamePaused);
-    void unsetTransition(bool gamePaused);
+    void setTransition(bool gamePaused, bool redTransition = false);
+    void unsetTransition(bool gamePaused, bool unsetRedTransition = false);
     void mainDisplay(bool gamePaused);
     void toogleFullScreen();
     void validDisplayMenu();

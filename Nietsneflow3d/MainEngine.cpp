@@ -196,8 +196,9 @@ LevelState MainEngine::mainLoop(uint32_t levelNum, LevelState_e levelState, bool
             {
                 clearCheckpointData();
             }
-            m_graphicEngine.setTransition(m_gamePaused);
-            displayTransitionMenu();
+            //display red transition
+            m_graphicEngine.setTransition(m_gamePaused, true);
+            displayTransitionMenu(MenuMode_e::TRANSITION_LEVEL, true);
             return {LevelState_e::GAME_OVER, {}, customLevel};
         }
     }while(!m_graphicEngine.windowShouldClose());
@@ -414,7 +415,7 @@ void MainEngine::loadPlayerGear(bool beginLevel)
 }
 
 //===================================================================
-void MainEngine::displayTransitionMenu(MenuMode_e mode)
+void MainEngine::displayTransitionMenu(MenuMode_e mode, bool redTransition)
 {
     float topEpiloguePosition;
     m_playerConf->m_menuMode = mode;
@@ -430,7 +431,7 @@ void MainEngine::displayTransitionMenu(MenuMode_e mode)
     m_physicalEngine.setModeTransitionMenu(true);
     m_graphicEngine.mainDisplay(m_gamePaused);
     m_playerConf->m_currentCursorPos = 0;
-    m_graphicEngine.unsetTransition(m_gamePaused);
+    m_graphicEngine.unsetTransition(m_gamePaused, redTransition);
     do
     {
         m_graphicEngine.runIteration(m_gamePaused);

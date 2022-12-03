@@ -166,6 +166,24 @@ void ColorDisplaySystem::setTransition(uint32_t current, uint32_t total)
 }
 
 //===================================================================
+void ColorDisplaySystem::setRedTransition()
+{
+    std::get<0>(m_transitionMemComponents.second->m_vertex[0]) = 0.8f;
+    std::get<0>(m_transitionMemComponents.second->m_vertex[1]) = 0.8f;
+    std::get<0>(m_transitionMemComponents.second->m_vertex[2]) = 0.8f;
+    std::get<0>(m_transitionMemComponents.second->m_vertex[3]) = 0.8f;
+}
+
+//===================================================================
+void ColorDisplaySystem::unsetRedTransition()
+{
+    std::get<0>(m_transitionMemComponents.second->m_vertex[0]) = 0.0f;
+    std::get<0>(m_transitionMemComponents.second->m_vertex[1]) = 0.0f;
+    std::get<0>(m_transitionMemComponents.second->m_vertex[2]) = 0.0f;
+    std::get<0>(m_transitionMemComponents.second->m_vertex[3]) = 0.0f;
+}
+
+//===================================================================
 void ColorDisplaySystem::display()const
 {
     m_shader->display();
