@@ -1,13 +1,12 @@
 BUGS======================================================================
 
 ))
-Some items not reapear if reload level
-	-Player die after a checkpoint 
-	-relaunch game 
-
-))
 Display issue if 2 wall intercect in some case=================NOT REPRODUCIBLE ??
 
+))
+Some items not reapear if reload level==============================OK
+	-Player die after a checkpoint 
+	-relaunch game 
 
 ))
 Issue when load or die for checkpoint for object and moveable wall issue==================OK

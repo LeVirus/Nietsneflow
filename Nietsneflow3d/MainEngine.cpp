@@ -106,7 +106,6 @@ LevelState MainEngine::mainLoop(uint32_t levelNum, LevelState_e levelState, bool
             {
                 assert(m_memCheckpointData);
                 assert(m_currentSave);
-                saveGameProgress(levelNum, m_currentSave, &*m_memCheckpointData);
             }
             else
             {
