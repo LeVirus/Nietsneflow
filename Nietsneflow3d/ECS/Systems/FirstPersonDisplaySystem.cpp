@@ -749,6 +749,19 @@ void FirstPersonDisplaySystem::memCeilingBackgroundEntity(uint32_t entity, bool 
 }
 
 //===================================================================
+void FirstPersonDisplaySystem::clearBackgroundData()
+{
+    m_ceilingTiledTextBackground = std::nullopt;
+    m_groundTiledTextBackground = std::nullopt;
+    m_groundSimpleTextBackground = std::nullopt;
+    m_ceilingSimpleTextBackground = std::nullopt;
+    m_groundCeilingSimpleTextureActive = false;
+    m_backgroundRaycastActive = false;
+    m_ceilingTextureSize = {};
+    m_groundTextureSize = {};
+}
+
+//===================================================================
 bool FirstPersonDisplaySystem::rayCasting(uint32_t observerEntity)
 {
     optionalTargetRaycast_t targetPoint;

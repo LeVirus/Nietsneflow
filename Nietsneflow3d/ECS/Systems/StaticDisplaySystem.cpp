@@ -99,7 +99,7 @@ void StaticDisplaySystem::drawWeaponsPreviewPlayer(PlayerConfComponent const *pl
     m_vertices[vertexIndex].clear();
     m_vertices[vertexIndexCursor].clear();
 
-    for(int32_t i = weaponComp->m_weaponsData.size() - 1; i > -1; --i)
+    for(uint32_t i = 0; i < weaponComp->m_weaponsData.size(); ++i)
     {
         currentEntity = playerComp->m_vectPossessedWeaponsPreviewEntities[i];
         if(weaponComp->m_weaponsData[i].m_posses)

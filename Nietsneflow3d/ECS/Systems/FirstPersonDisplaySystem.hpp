@@ -63,17 +63,7 @@ public:
     void setShader(Shader &shader);
     void memGroundBackgroundEntity(uint32_t entity, bool simpleTexture);
     void memCeilingBackgroundEntity(uint32_t entity, bool simpleTexture);
-    inline void clearBackgroundData()
-    {        
-        m_ceilingTiledTextBackground = std::nullopt;
-        m_groundTiledTextBackground = std::nullopt;
-        m_groundSimpleTextBackground = std::nullopt;
-        m_ceilingSimpleTextBackground = std::nullopt;
-        m_groundCeilingSimpleTextureActive = false;
-        m_backgroundRaycastActive = false;
-        m_ceilingTextureSize = {};
-        m_groundTextureSize = {};
-    }
+    void clearBackgroundData();
     //return target point, texture position and entity num if collision
     optionalTargetRaycast_t calcLineSegmentRaycast(float radiantAngle, const PairFloat_t &originPoint, bool visual, bool scratchMode = false);
 private:
