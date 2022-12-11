@@ -483,7 +483,7 @@ inline const std::map<MenuMode_e, PairPairFloatStr_t> MAP_MENU_DATA =
      PairPairFloatStr_t{{-0.6f, 0.1f}, "Press Escape For Cancel\\Enter New Key For Action :\\"}
     },
     {MenuMode_e::LOAD_CUSTOM_LEVEL,
-     PairPairFloatStr_t{{-0.7f, 0.7f}, "1\\2\\3\\4\\5\\Previous\\Next\\Return"}
+     PairPairFloatStr_t{{-0.4f, 0.7f}, "1\\2\\3\\4\\5\\Previous\\Next\\Return"}
     }
 };
 inline const std::map<Shader_e, std::string> SHADER_ID_MAP

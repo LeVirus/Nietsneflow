@@ -13,6 +13,7 @@ struct WallData;
 struct MoveableWallData;
 struct AssociatedTriggerData;
 struct ImpactShotComponent;
+enum class PlayerEntities_e;
 
 using mapEnemySprite_t = std::map<EnemySpriteType_e, PairUI_t>;
 using mapUiVectUI_t = std::map<uint32_t, std::vector<uint32_t>>;
@@ -265,6 +266,7 @@ private:
     void confWriteEntitiesDisplayMenu();
     void confWriteEntitiesInputMenu();
     void confMenuEntities();
+    void confMenuEntity(PlayerEntities_e entityType);
     void confLifeAmmoPannelEntities();
     void confWeaponsPreviewEntities();
     void confWriteEntities();
@@ -385,7 +387,8 @@ private:
     *m_memPannel = nullptr, *m_memLifeIcon = nullptr, *m_memAmmoIcon = nullptr,
     *m_memPreviewFistIcon = nullptr, *m_memPreviewGunIcon = nullptr, *m_memPreviewShotgunIcon = nullptr,
     *m_memPreviewPlasmaRifleIcon = nullptr, *m_memPreviewMachineGunIcon = nullptr,
-    *m_memPreviewBazookaIcon = nullptr, *m_memBackgroundGenericMenu = nullptr, *m_memBackgroundTitleMenu = nullptr;
+    *m_memPreviewBazookaIcon = nullptr, *m_memBackgroundGenericMenu = nullptr, *m_memBackgroundTitleMenu = nullptr,
+    *m_memBackgroundLeftMenu = nullptr, *m_memBackgroundRightLeftMenu = nullptr;
     WriteComponent *m_writeConf = nullptr;
     PlayerConfComponent *m_playerConf = nullptr;
     WeaponComponent *m_weaponComp;

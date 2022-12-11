@@ -199,19 +199,42 @@ void StaticDisplaySystem::displayMenu()
         SpriteTextureComponent *spriteBackgroundTitleComp = stairwayToComponentManager().
                 searchComponentByType<SpriteTextureComponent>(backgroundTitleEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
         assert(spriteBackgroundTitleComp);
+
+        uint32_t backgroundLeftEntity = playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_LEFT_BACKGROUND)];
+        SpriteTextureComponent *spriteBackgroundLeftComp = stairwayToComponentManager().
+                searchComponentByType<SpriteTextureComponent>(backgroundLeftEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
+        assert(backgroundLeftEntity);
+        uint32_t backgroundRightLeftEntity = playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_RIGHT_LEFT_BACKGROUND)];
+        SpriteTextureComponent *spriteBackgroundRightLeftComp = stairwayToComponentManager().
+                searchComponentByType<SpriteTextureComponent>(backgroundRightLeftEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
+        assert(backgroundRightLeftEntity);
         if(!m_menuBackgroundInit)
         {
             loadMenuBackground(backgroundEntity, spriteBackgroundComp, VertexID_e::MENU_BACKGROUND_GENERIC);
             loadMenuBackground(backgroundTitleEntity, spriteBackgroundTitleComp, VertexID_e::MENU_BACKGROUND_TITLE);
+            loadMenuBackground(backgroundLeftEntity, spriteBackgroundLeftComp, VertexID_e::MENU_BACKGROUND_LEFT);
+            loadMenuBackground(backgroundRightLeftEntity, spriteBackgroundRightLeftComp, VertexID_e::MENU_BACKGROUND_RIGHT_LEFT);
         }
 
         if(m_mainEngine->titleMenuMode())
         {
             drawVertex(spriteBackgroundTitleComp->m_spriteData->m_textureNum, VertexID_e::MENU_BACKGROUND_TITLE);
         }
-        else
+        else if(playerComp->m_menuMode == MenuMode_e::BASE ||
+                playerComp->m_menuMode == MenuMode_e::LOAD_CUSTOM_LEVEL ||
+                playerComp->m_menuMode == MenuMode_e::LEVEL_EPILOGUE ||
+                playerComp->m_menuMode == MenuMode_e::LEVEL_PROLOGUE)
         {
             drawVertex(spriteBackgroundComp->m_spriteData->m_textureNum, VertexID_e::MENU_BACKGROUND_GENERIC);
+        }
+        else if(playerComp->m_menuMode == MenuMode_e::LOAD_GAME ||
+                playerComp->m_menuMode == MenuMode_e::NEW_GAME)
+        {
+            drawVertex(spriteBackgroundRightLeftComp->m_spriteData->m_textureNum, VertexID_e::MENU_BACKGROUND_RIGHT_LEFT);
+        }
+        else
+        {
+            drawVertex(spriteBackgroundLeftComp->m_spriteData->m_textureNum, VertexID_e::MENU_BACKGROUND_LEFT);
         }
         drawWriteVertex(playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_ENTRIES)], VertexID_e::MENU_WRITE);
         if(playerComp->m_menuMode != MenuMode_e::LEVEL_PROLOGUE &&

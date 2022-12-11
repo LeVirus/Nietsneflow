@@ -146,6 +146,14 @@ public:
     {
         return m_spriteTitleMenuName;
     }
+    inline std::string getLeftMenuSpriteName()const
+    {
+        return m_spriteLeftMenuName;
+    }
+    inline std::string getRightLeftMenuSpriteName()const
+    {
+        return m_spriteRightLeftMenuName;
+    }
     inline std::string getLevelPrologue()const
     {
         return m_prologue;
@@ -382,7 +390,8 @@ private:
     Level m_level;
     std::string m_spritePannelName, m_spriteLifeName, m_spriteAmmoName,
     m_spriteFistName, m_spriteGunName, m_spriteShotgunName,
-    m_spritePlasmaRifleName, m_spriteMachineGunName, m_spriteBazookaName, m_spriteGenericMenuName, m_spriteTitleMenuName;
+    m_spritePlasmaRifleName, m_spriteMachineGunName, m_spriteBazookaName,
+    m_spriteGenericMenuName, m_spriteTitleMenuName, m_spriteLeftMenuName, m_spriteRightLeftMenuName;
     StaticLevelElementData m_exitStaticElement;
     std::map<std::string, WallData> m_wallData;
     std::map<std::string, MoveableWallData> m_mainWallData;

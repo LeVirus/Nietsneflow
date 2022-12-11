@@ -58,10 +58,14 @@ void MainEngine::init(Game *refGame)
 LevelState MainEngine::displayTitleMenu(const LevelManager &levelManager)
 {
     uint16_t genericBackgroundMenuSpriteId = *levelManager.getPictureData().getIdentifier(levelManager.getGenericMenuSpriteName()),
-            titleBackgroundMenuSpriteId = *levelManager.getPictureData().getIdentifier(levelManager.getTitleMenuSpriteName());
+            titleBackgroundMenuSpriteId = *levelManager.getPictureData().getIdentifier(levelManager.getTitleMenuSpriteName()),
+            leftBackgroundMenuSpriteId = *levelManager.getPictureData().getIdentifier(levelManager.getLeftMenuSpriteName()),
+            rightLeftBackgroundMenuSpriteId = *levelManager.getPictureData().getIdentifier(levelManager.getRightLeftMenuSpriteName());
     const std::vector<SpriteData> &vectSprite = levelManager.getPictureData().getSpriteData();
     m_memBackgroundGenericMenu = &vectSprite[genericBackgroundMenuSpriteId];
     m_memBackgroundTitleMenu = &vectSprite[titleBackgroundMenuSpriteId];
+    m_memBackgroundLeftMenu = &vectSprite[leftBackgroundMenuSpriteId];
+    m_memBackgroundRightLeftMenu = &vectSprite[rightLeftBackgroundMenuSpriteId];
     assert(m_playerConf);
     m_playerConf->m_menuMode = MenuMode_e::TITLE;
     setMenuEntries(m_playerConf);
@@ -3119,6 +3123,15 @@ void MainEngine::confMenuEntities()
 {
     assert(m_memBackgroundGenericMenu);
     m_playerConf->m_menuMode = MenuMode_e::BASE;
+    confMenuEntity(PlayerEntities_e::MENU_TITLE_BACKGROUND);
+    confMenuEntity(PlayerEntities_e::MENU_GENERIC_BACKGROUND);
+    confMenuEntity(PlayerEntities_e::MENU_LEFT_BACKGROUND);
+    confMenuEntity(PlayerEntities_e::MENU_RIGHT_LEFT_BACKGROUND);
+}
+
+//===================================================================
+void MainEngine::confMenuEntity(PlayerEntities_e entityType)
+{
     uint32_t backgroundEntity = createSimpleSpriteEntity();
     PositionVertexComponent *posVertex = m_ecsManager.getComponentManager().
             searchComponentByType<PositionVertexComponent>(backgroundEntity, Components_e::POSITION_VERTEX_COMPONENT);
@@ -3126,23 +3139,27 @@ void MainEngine::confMenuEntities()
             searchComponentByType<SpriteTextureComponent>(backgroundEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
     assert(posVertex);
     assert(spriteComp);
-    m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_GENERIC_BACKGROUND)] = backgroundEntity;
-    spriteComp->m_spriteData = m_memBackgroundGenericMenu;
-    posVertex->m_vertex.resize(4);
-    posVertex->m_vertex[0] = {-1.0f, 1.0f};
-    posVertex->m_vertex[1] = {1.0f, 1.0f};
-    posVertex->m_vertex[2] = {1.0f, -1.0f};
-    posVertex->m_vertex[3] = {-1.0f, -1.0f};
-
-    backgroundEntity = createSimpleSpriteEntity();
-    posVertex = m_ecsManager.getComponentManager().
-            searchComponentByType<PositionVertexComponent>(backgroundEntity, Components_e::POSITION_VERTEX_COMPONENT);
-    spriteComp = m_ecsManager.getComponentManager().
-            searchComponentByType<SpriteTextureComponent>(backgroundEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
-    assert(posVertex);
-    assert(spriteComp);
-    m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_TITLE_BACKGROUND)] = backgroundEntity;
-    spriteComp->m_spriteData = m_memBackgroundTitleMenu;
+    m_playerConf->m_vectEntities[static_cast<uint32_t>(entityType)] = backgroundEntity;
+    if(entityType == PlayerEntities_e::MENU_GENERIC_BACKGROUND)
+    {
+        spriteComp->m_spriteData = m_memBackgroundGenericMenu;
+    }
+    else if(entityType == PlayerEntities_e::MENU_TITLE_BACKGROUND)
+    {
+        spriteComp->m_spriteData = m_memBackgroundTitleMenu;
+    }
+    else if(entityType == PlayerEntities_e::MENU_LEFT_BACKGROUND)
+    {
+        spriteComp->m_spriteData = m_memBackgroundLeftMenu;
+    }
+    else if(entityType == PlayerEntities_e::MENU_RIGHT_LEFT_BACKGROUND)
+    {
+        spriteComp->m_spriteData = m_memBackgroundRightLeftMenu;
+    }
+    else
+    {
+        assert(false);
+    }
     posVertex->m_vertex.resize(4);
     posVertex->m_vertex[0] = {-1.0f, 1.0f};
     posVertex->m_vertex[1] = {1.0f, 1.0f};
@@ -3262,10 +3279,14 @@ void MainEngine::loadStaticSpriteEntities(const LevelManager &levelManager)
             machineGunIconSpriteId = *levelManager.getPictureData().getIdentifier(levelManager.getMachineGunIconSpriteName()),
             GenericBackgroundSpriteId = *levelManager.getPictureData().getIdentifier(levelManager.getGenericMenuSpriteName()),
             TitleBackgroundSpriteId = *levelManager.getPictureData().getIdentifier(levelManager.getTitleMenuSpriteName()),
+            leftBackgroundSpriteId = *levelManager.getPictureData().getIdentifier(levelManager.getLeftMenuSpriteName()),
+            rightLeftBackgroundSpriteId = *levelManager.getPictureData().getIdentifier(levelManager.getRightLeftMenuSpriteName()),
             bazookaIconSpriteId = *levelManager.getPictureData().getIdentifier(levelManager.getBazookaIconSpriteName());
 
     m_memBackgroundGenericMenu = &levelManager.getPictureData().getSpriteData()[GenericBackgroundSpriteId];
     m_memBackgroundTitleMenu = &levelManager.getPictureData().getSpriteData()[TitleBackgroundSpriteId];
+    m_memBackgroundLeftMenu = &levelManager.getPictureData().getSpriteData()[leftBackgroundSpriteId];
+    m_memBackgroundRightLeftMenu = &levelManager.getPictureData().getSpriteData()[rightLeftBackgroundSpriteId];
     m_memPannel = &levelManager.getPictureData().getSpriteData()[pannelSpriteId];
     m_memLifeIcon = &levelManager.getPictureData().getSpriteData()[lifeIconSpriteId];
     m_memAmmoIcon = &levelManager.getPictureData().getSpriteData()[ammoIconSpriteId];

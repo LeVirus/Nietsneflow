@@ -8,6 +8,8 @@ PlayerDeath = Death.flac
 [GraphicUtils]
 GenericMenuSprite = SpriteBackgroundGenericMenu
 TitleMenuSprite = SpriteBackgroundTitleMenu
+LeftMenuSprite = SpriteBackgroundLeftMenu
+RightLeftMenuSprite = SpriteBackgroundRightLeftMenu
 PannelSprite = SpritePannel
 LifeIconSprite = SpriteLifeIcon
 AmmoIconSprite = SpriteAmmoIcon
