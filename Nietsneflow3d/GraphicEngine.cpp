@@ -106,15 +106,21 @@ void GraphicEngine::runIteration(bool gamePaused)
 //===================================================================
 void GraphicEngine::setTransition(bool gamePaused, bool redTransition)
 {
+    uint32_t transitionTotal;
     if(redTransition)
     {
+        transitionTotal = m_redTransitionFrameNumber;
         m_colorSystem->setRedTransition();
     }
-    for(uint32_t i = 0; i < m_transitionFrameNumber; ++i)
+    else
+    {
+        transitionTotal = m_transitionFrameNumber;
+    }
+    for(uint32_t i = 0; i < transitionTotal; ++i)
     {
         preDisplay();
         mainDisplay(gamePaused);
-        m_colorSystem->setTransition(i, m_transitionFrameNumber);
+        m_colorSystem->setTransition(i, transitionTotal);
         postDisplay();
     }
 }
@@ -698,7 +704,7 @@ std::string getEndLevelMenuStr(const std::tuple<const PlayerConfComponent*, uint
 {
     if(std::get<0>(endLevelData)->m_life == 0)
     {
-        return "Press Enter to Restart";
+        return "You are dead\\Press Enter to Restart";
     }
     float enemiesKilledPercent =
             (!std::get<0>(endLevelData)->m_enemiesKilled || std::get<2>(endLevelData) == 0) ? EPSILON_FLOAT :

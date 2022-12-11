@@ -154,7 +154,7 @@ private:
     FirstPersonDisplaySystem *m_firstPersonSystem = nullptr;
     VisionSystem *m_visionSystem = nullptr;
     StaticDisplaySystem *m_staticDisplaySystem = nullptr;
-    uint32_t m_transitionFrameNumber = 30;
+    uint32_t m_transitionFrameNumber = 30, m_redTransitionFrameNumber = 70;
     std::array<std::optional<DataLevelWriteMenu>, 3> m_memExistingLevelSave;
     std::string m_saveStandardLevelMenuWrite, m_levelPrologue, m_levelEpilogue;
     //First Write menu, second size menu
