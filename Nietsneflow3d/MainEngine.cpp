@@ -1003,7 +1003,9 @@ void MainEngine::loadLevel(const LevelManager &levelManager)
     loadSecretsEntities(levelManager);
     loadLogsEntities(levelManager, levelManager.getPictureData().getSpriteData());
     loadRevealedMap();
-    m_graphicEngine.updatePrologueAndEpilogue(levelManager.getLevelPrologue(), levelManager.getLevelEpilogue());
+    std::string prologue = treatInfoMessageEndLine(levelManager.getLevelPrologue()),
+            epilogue = treatInfoMessageEndLine(levelManager.getLevelEpilogue());
+    m_graphicEngine.updatePrologueAndEpilogue(prologue, epilogue);
     //MUUUUUUUUUUUUSSSSS
     m_audioEngine.memoriseEpilogueMusicFilename(levelManager.getLevelEpilogueMusic());
     m_audioEngine.loadMusicFromFile(levelManager.getLevel().getMusicFilename());

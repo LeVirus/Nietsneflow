@@ -2,10 +2,10 @@ IMPROVE=========================================================================
 ==========================================================================================================
 
 ))
-Epilogue and prologue text limit
+Remove .fake file after level loading=========================In levelManager
 
 ))
-Remove .fake file after level loading=========================In levelManager
+Epilogue and prologue text limit======================OK
 
 ))
 When die change transition color in red and MAYBE add a sound==================OK
