@@ -12,6 +12,7 @@
 #include <ECS/Components/CircleCollisionComponent.hpp>
 #include <ECS/Components/RectangleCollisionComponent.hpp>
 #include <ECS/Components/VisionComponent.hpp>
+#include <ECS/Components/WallMultiSpriteConf.hpp>
 #include <ECS/Systems/ColorDisplaySystem.hpp>
 #include <constants.hpp>
 #include <PhysicalEngine.hpp>
@@ -192,6 +193,17 @@ void MapDisplaySystem::fillMiniMapVertexFromEntities()
                 searchComponentByType<SpriteTextureComponent>(m_entitiesToDisplay[i],
                                                             Components_e::SPRITE_TEXTURE_COMPONENT);
         assert(posComp);
+        if(!spriteComp)
+        {
+            GeneralCollisionComponent *genComp = stairwayToComponentManager().
+                    searchComponentByType<GeneralCollisionComponent>(m_entitiesToDisplay[i],
+                                                                Components_e::GENERAL_COLLISION_COMPONENT);
+            assert(genComp);
+            if(genComp->m_tagA == CollisionTag_e::TRIGGER_CT)
+            {
+                continue;
+            }
+        }
         assert(spriteComp);
         assert(spriteComp->m_spriteData->m_textureNum < m_vectMapVerticesData.size());
         m_vectMapVerticesData[spriteComp->m_spriteData->m_textureNum].
@@ -216,6 +228,17 @@ void MapDisplaySystem::fillFullMapVertexFromEntities()
                 searchComponentByType<SpriteTextureComponent>(it->first,
                                                               Components_e::SPRITE_TEXTURE_COMPONENT);
         assert(posComp);
+        if(!spriteComp)
+        {
+            GeneralCollisionComponent *genComp = stairwayToComponentManager().
+                    searchComponentByType<GeneralCollisionComponent>(it->first,
+                                                                Components_e::GENERAL_COLLISION_COMPONENT);
+            assert(genComp);
+            if(genComp->m_tagA == CollisionTag_e::TRIGGER_CT)
+            {
+                continue;
+            }
+        }
         assert(spriteComp);
         assert(spriteComp->m_spriteData->m_textureNum < m_vectMapVerticesData.size());
         m_vectMapVerticesData[spriteComp->m_spriteData->m_textureNum].
