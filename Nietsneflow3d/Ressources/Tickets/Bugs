@@ -1,6 +1,9 @@
 BUGS======================================================================
 
 ))
+Moveable wall direction set issue========================OK
+
+))
 Display issue if 2 wall intercect in some case=================NOT REPRODUCIBLE ??
 
 ))

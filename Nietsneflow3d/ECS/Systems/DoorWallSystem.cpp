@@ -356,8 +356,7 @@ void DoorWallSystem::switchToNextPhaseMoveWall(uint32_t wallEntity, MapCoordComp
             }
             else
             {
-                if(moveWallComp->m_triggerBehaviour == TriggerBehaviourType_e::REVERSABLE ||
-                        autoMode)
+                if(moveWallComp->m_triggerBehaviour == TriggerBehaviourType_e::REVERSABLE)
                 {
                     reverseDirection(moveWallComp);
                 }
