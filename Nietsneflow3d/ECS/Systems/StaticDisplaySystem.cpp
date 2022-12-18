@@ -958,9 +958,9 @@ std::string treatInfoMessageEndLine(const std::string &str, uint32_t lineSize)
     {
         return str;
     }
-    std::string ret = str;
-    uint32_t currentPos = 0;
-    size_t found = 0;
+    std::string ret = str, currentLine;
+    uint32_t currentPos = 0, currentPosLine = 0;
+    size_t found = 0, foundLastSpace;
     while(currentPos < ret.size())
     {
         found = ret.find('\\', currentPos + 1);
@@ -975,7 +975,17 @@ std::string treatInfoMessageEndLine(const std::string &str, uint32_t lineSize)
         }
         for(uint32_t i = currentPos + lineSize; i < found; i += lineSize)
         {
-            ret.insert(ret.begin() + i, '\\');
+            currentLine = ret.substr(currentPosLine, lineSize);
+            foundLastSpace = currentLine.find_last_of(' ');
+            if(foundLastSpace != std::string::npos)
+            {
+                ret.insert(ret.begin() + static_cast<size_t>(currentPosLine) + foundLastSpace, '\\');
+            }
+            else
+            {
+                ret.insert(ret.begin() + i, '\\');
+            }
+            currentPosLine = i;
         }
         currentPos = found;
     }
