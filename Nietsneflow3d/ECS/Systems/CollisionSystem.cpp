@@ -54,7 +54,6 @@ void CollisionSystem::execSystem()
 {
     SegmentCollisionComponent *segmentCompA;
     System::execSystem();
-    m_pair = !m_pair;
     m_memPlayerTeleport = false;
     for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
     {
@@ -83,24 +82,7 @@ void CollisionSystem::execSystem()
         {
             segmentCompA = nullptr;
         }
-        if(tagCompA->m_tagA == CollisionTag_e::PLAYER_CT)
-        {
-            PlayerConfComponent *playerComp = stairwayToComponentManager().
-                    searchComponentByType<PlayerConfComponent>(mVectNumEntity[i], Components_e::PLAYER_CONF_COMPONENT);
-            assert(playerComp);
-            if(m_pair)
-            {
-                if(!playerComp->m_crush)
-                {
-                    playerComp->m_frozen = false;
-                }
-                else
-                {
-                    playerComp->m_crush = false;
-                }
-            }
-        }
-        else if(tagCompA->m_tagA == CollisionTag_e::ENEMY_CT)
+        if(tagCompA->m_tagA == CollisionTag_e::ENEMY_CT)
         {
             if(checkEnemyRemoveCollisionMask(mVectNumEntity[i]))
             {
@@ -196,10 +178,6 @@ bool CollisionSystem::checkEnemyRemoveCollisionMask(uint32_t entityNum)
 //===================================================================
 void CollisionSystem::treatGeneralCrushing(uint32_t entityNum)
 {
-    if(m_memCrush.empty())
-    {
-        return;
-    }
     MapCoordComponent *mapComp = stairwayToComponentManager().
             searchComponentByType<MapCoordComponent>(entityNum, Components_e::MAP_COORD_COMPONENT);
     assert(mapComp);
@@ -229,6 +207,22 @@ void CollisionSystem::treatGeneralCrushing(uint32_t entityNum)
                 }
             }
         }
+    }
+    if(collComp->m_tagA != CollisionTag_e::PLAYER_CT)
+    {
+        return;
+    }
+    PlayerConfComponent *playerComp = stairwayToComponentManager().
+            searchComponentByType<PlayerConfComponent>(entityNum, Components_e::PLAYER_CONF_COMPONENT);
+    assert(playerComp);
+    if(!crush && !playerComp->m_insideWall)
+    {
+        playerComp->m_crush = false;
+        playerComp->m_frozen = false;
+    }
+    if(playerComp->m_crush)
+    {
+        playerComp->takeDamage(1);
     }
 }
 
@@ -1222,7 +1216,6 @@ void CollisionSystem::treatCrushing(uint32_t entityNum)
     {
         playerComp->m_crush = true;
         playerComp->m_frozen = true;
-        playerComp->takeDamage(1);
     }
     else
     {

@@ -69,7 +69,6 @@ void FirstPersonDisplaySystem::drawPlayerColorEffects()
         {
             mptrSystemManager->searchSystemByType<ColorDisplaySystem>(
                         static_cast<uint32_t>(Systems_e::COLOR_DISPLAY_SYSTEM))->drawScratchWall();
-            playerComp->m_insideWall = false;
         }
     }
 }
@@ -786,6 +785,10 @@ bool FirstPersonDisplaySystem::rayCasting(uint32_t observerEntity)
         playerComp->m_insideWall = true;
         return true;
     }
+    else
+    {
+        playerComp->m_insideWall = false;
+    }
     MoveableComponent *moveComp = stairwayToComponentManager().
             searchComponentByType<MoveableComponent>(observerEntity, Components_e::MOVEABLE_COMPONENT);
     assert(moveComp);
@@ -839,21 +842,53 @@ bool FirstPersonDisplaySystem::isInsideWall(const PairFloat_t &pos)
 {
     std::optional<ElementRaycast> element = Level::getElementCase({static_cast<uint32_t>(pos.first / LEVEL_TILE_SIZE_PX),
                                                                    static_cast<uint32_t>(pos.second / LEVEL_TILE_SIZE_PX)});
-    if(element && element->m_memMoveWall)
+    if(element)
     {
         MapCoordComponent *mapComp;
         RectangleCollisionComponent *rectComp;
-        for(std::set<uint32_t>::const_iterator it = element->m_memMoveWall->begin(); it != element->m_memMoveWall->end(); ++it)
+        if(element->m_typeStd == LevelCaseType_e::WALL_LC)
         {
             mapComp = stairwayToComponentManager().
-                    searchComponentByType<MapCoordComponent>(*it, Components_e::MAP_COORD_COMPONENT);
+                    searchComponentByType<MapCoordComponent>(element->m_numEntity, Components_e::MAP_COORD_COMPONENT);
             assert(mapComp);
             rectComp = stairwayToComponentManager().
-                    searchComponentByType<RectangleCollisionComponent>(*it, Components_e::RECTANGLE_COLLISION_COMPONENT);
+                    searchComponentByType<RectangleCollisionComponent>(element->m_numEntity, Components_e::RECTANGLE_COLLISION_COMPONENT);
             assert(rectComp);
             if(checkPointRectCollision(pos, mapComp->m_absoluteMapPositionPX, rectComp->m_size))
             {
                 return true;
+            }
+        }
+        if(element->m_memMoveWall)
+        {
+            for(std::set<uint32_t>::const_iterator it = element->m_memMoveWall->begin(); it != element->m_memMoveWall->end(); ++it)
+            {
+                mapComp = stairwayToComponentManager().
+                        searchComponentByType<MapCoordComponent>(*it, Components_e::MAP_COORD_COMPONENT);
+                assert(mapComp);
+                rectComp = stairwayToComponentManager().
+                        searchComponentByType<RectangleCollisionComponent>(*it, Components_e::RECTANGLE_COLLISION_COMPONENT);
+                assert(rectComp);
+                if(checkPointRectCollision(pos, mapComp->m_absoluteMapPositionPX, rectComp->m_size))
+                {
+                    return true;
+                }
+            }
+        }
+        if(element->m_memStaticMoveableWall)
+        {
+            for(std::set<uint32_t>::const_iterator it = element->m_memStaticMoveableWall->begin(); it != element->m_memMoveWall->end(); ++it)
+            {
+                mapComp = stairwayToComponentManager().
+                        searchComponentByType<MapCoordComponent>(*it, Components_e::MAP_COORD_COMPONENT);
+                assert(mapComp);
+                rectComp = stairwayToComponentManager().
+                        searchComponentByType<RectangleCollisionComponent>(*it, Components_e::RECTANGLE_COLLISION_COMPONENT);
+                assert(rectComp);
+                if(checkPointRectCollision(pos, mapComp->m_absoluteMapPositionPX, rectComp->m_size))
+                {
+                    return true;
+                }
             }
         }
     }

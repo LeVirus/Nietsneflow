@@ -108,7 +108,7 @@ private:
     std::vector<PairUI_t> m_vectMemShots;
     std::vector<uint32_t> m_vectEntitiesToDelete, m_vectBarrelsEntitiesDestruct;
     PlayerConfComponent *m_playerComp = nullptr;
-    bool m_pair = true, m_memPlayerTeleport;
+    bool m_memPlayerTeleport;
     //0 movement eject, 1 angle behaviour, 2 Direction,
     //3 if moveable wall current direction
     std::vector<std::tuple<PairFloat_t, bool, Direction_e, std::optional<Direction_e>>> m_memCrush;
