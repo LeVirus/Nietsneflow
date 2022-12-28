@@ -1252,7 +1252,9 @@ std::vector<uint32_t> MainEngine::loadWallEntitiesWallLoop(const std::vector<Spr
         moveWallConfComp->setIDEntityAssociated(numEntity);
         moveWallConfComp->m_directionMove = currentShape.second.m_directionMove;
         moveWallConfComp->m_triggerType = currentShape.second.m_triggerType;
-        if(moveWallConfComp->m_triggerType == TriggerWallMoveType_e::WALL)
+        if(moveWallConfComp->m_triggerType == TriggerWallMoveType_e::WALL &&
+                !(currentShape.second.m_triggerBehaviourType == TriggerBehaviourType_e::ONCE &&
+                  m_memTriggerWallMoveableWallCheckpointData[shapeNum].first[wallNum] > 0))
         {
             moveWallConfComp->m_triggerWallCheckpointData = {shapeNum, {wallNum, 0}};
             GeneralCollisionComponent *genCollComp = m_ecsManager.getComponentManager().
