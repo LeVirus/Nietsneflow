@@ -1186,7 +1186,6 @@ std::vector<uint32_t> MainEngine::loadWallEntitiesWallLoop(const std::vector<Spr
     const SpriteData &memSpriteData = vectSprite[currentShape.second.m_sprites[0]];
     uint32_t wallNum = 0;
     pairI_t moveableWallCorrectedPos;
-    //if load from checkpoint
     //Wall Loop
     for(std::set<PairUI_t>::const_iterator it = currentShape.second.m_TileGamePosition.begin();
         it != currentShape.second.m_TileGamePosition.end(); ++it, ++wallNum)
@@ -1208,15 +1207,32 @@ std::vector<uint32_t> MainEngine::loadWallEntitiesWallLoop(const std::vector<Spr
         {
             m_memWallPos.insert({*it, numEntity});
         }
-        //if load from checkpoint
         if(loadFromCheckpoint && moveable && !m_memTriggerWallMoveableWallCheckpointData.empty() &&
-                currentShape.second.m_triggerType == TriggerWallMoveType_e::WALL)
+                        currentShape.second.m_triggerType == TriggerWallMoveType_e::WALL)
+                {
+                    assert(m_memTriggerWallMoveableWallCheckpointData.find(shapeNum) != m_memTriggerWallMoveableWallCheckpointData.end());
+                    assert(wallNum < m_memTriggerWallMoveableWallCheckpointData[shapeNum].first.size());
+                    moveableWallCorrectedPos = getModifMoveableWallDataCheckpoint(currentShape.second.m_directionMove,
+                                                                                  m_memTriggerWallMoveableWallCheckpointData[shapeNum].first[wallNum],
+                                                                                  currentShape.second.m_triggerBehaviourType);
+        }
+        //if load from checkpoint
+        if(loadFromCheckpoint)
         {
-            assert(m_memTriggerWallMoveableWallCheckpointData.find(shapeNum) != m_memTriggerWallMoveableWallCheckpointData.end());
-            assert(wallNum < m_memTriggerWallMoveableWallCheckpointData[shapeNum].first.size());
-            moveableWallCorrectedPos = getModifMoveableWallDataCheckpoint(currentShape.second.m_directionMove,
-                                                                          m_memTriggerWallMoveableWallCheckpointData[shapeNum].first[wallNum],
-                                                                          currentShape.second.m_triggerBehaviourType);
+            if(!m_memMoveableWallCheckpointData.empty() && currentShape.second.m_triggerType != TriggerWallMoveType_e::WALL)
+            {
+                moveableWallCorrectedPos = getModifMoveableWallDataCheckpoint(currentShape.second.m_directionMove,
+                                                                              m_memMoveableWallCheckpointData[shapeNum].first,
+                                                                              currentShape.second.m_triggerBehaviourType);
+            }
+            else if(moveable && !m_memTriggerWallMoveableWallCheckpointData.empty() && currentShape.second.m_triggerType == TriggerWallMoveType_e::WALL)
+            {
+                assert(m_memTriggerWallMoveableWallCheckpointData.find(shapeNum) != m_memTriggerWallMoveableWallCheckpointData.end());
+                assert(wallNum < m_memTriggerWallMoveableWallCheckpointData[shapeNum].first.size());
+                moveableWallCorrectedPos = getModifMoveableWallDataCheckpoint(currentShape.second.m_directionMove,
+                                                                              m_memTriggerWallMoveableWallCheckpointData[shapeNum].first[wallNum],
+                                                                              currentShape.second.m_triggerBehaviourType);
+            }
         }
         moveableWallCorrectedPos = {it->first + moveableWallCorrectedPos.first, it->second + moveableWallCorrectedPos.second};
         if(moveableWallCorrectedPos.first < 0)
