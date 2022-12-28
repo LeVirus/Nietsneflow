@@ -89,13 +89,6 @@ void CollisionSystem::execSystem()
                 rmEnemyCollisionMaskEntity(mVectNumEntity[i]);
             }
         }
-        else if(tagCompA->m_shape == CollisionShape_e::CIRCLE_C &&
-                (tagCompA->m_tagA == CollisionTag_e::BULLET_ENEMY_CT || tagCompA->m_tagA == CollisionTag_e::BULLET_PLAYER_CT))
-        {
-            ShotConfComponent *shotConfComp = stairwayToComponentManager().
-                    searchComponentByType<ShotConfComponent>(mVectNumEntity[i], Components_e::SHOT_CONF_COMPONENT);
-            assert(shotConfComp);
-        }
         secondEntitiesLoop(mVectNumEntity[i], i, tagCompA);
         if(tagCompA->m_tagA == CollisionTag_e::EXPLOSION_CT)
         {
@@ -817,7 +810,6 @@ bool CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args, bool shotEx
                 {
                     RectangleCollisionComponent &rectCompB = getRectangleComponent(args.entityNumB);
                     collisionCircleRectEject(args, circleCompA.m_ray, rectCompB, shotExplosionEject);
-                    return true;
                 }
                 else if(!shotConfComp->m_ejectMode)
                 {
