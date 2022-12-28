@@ -1207,15 +1207,6 @@ std::vector<uint32_t> MainEngine::loadWallEntitiesWallLoop(const std::vector<Spr
         {
             m_memWallPos.insert({*it, numEntity});
         }
-        if(loadFromCheckpoint && moveable && !m_memTriggerWallMoveableWallCheckpointData.empty() &&
-                        currentShape.second.m_triggerType == TriggerWallMoveType_e::WALL)
-                {
-                    assert(m_memTriggerWallMoveableWallCheckpointData.find(shapeNum) != m_memTriggerWallMoveableWallCheckpointData.end());
-                    assert(wallNum < m_memTriggerWallMoveableWallCheckpointData[shapeNum].first.size());
-                    moveableWallCorrectedPos = getModifMoveableWallDataCheckpoint(currentShape.second.m_directionMove,
-                                                                                  m_memTriggerWallMoveableWallCheckpointData[shapeNum].first[wallNum],
-                                                                                  currentShape.second.m_triggerBehaviourType);
-        }
         //if load from checkpoint
         if(loadFromCheckpoint)
         {
@@ -1770,6 +1761,11 @@ void MainEngine::loadTriggerEntityData(const MoveableWallData &moveWallData,
         circleComp->m_ray = 10.0f;
         mapComp->m_coord = pos;
         mapComp->m_absoluteMapPositionPX = getCenteredAbsolutePosition(mapComp->m_coord);
+    }
+    //if shape wall already actionned and once behaviour
+    if(moveWallData.m_triggerBehaviourType == TriggerBehaviourType_e::ONCE && m_memMoveableWallCheckpointData[shapeNum].first > 0)
+    {
+        return;
     }
     //add new entity num to trigger
     TriggerComponent *triggerComp = m_ecsManager.getComponentManager().
