@@ -82,6 +82,12 @@ LevelState MainEngine::displayTitleMenu(const LevelManager &levelManager)
         {
             return {LevelState_e::EXIT, 0, false};
         }
+        if(m_physicalEngine.toogledFullScreenSignal())
+        {
+            m_graphicEngine.toogleFullScreen();
+            validDisplayMenu();
+            m_physicalEngine.reinitToggleFullScreen();
+        }
     }while(m_currentLevelState != LevelState_e::NEW_GAME && m_currentLevelState != LevelState_e::LOAD_GAME);
     m_titleMenuMode = false;
     uint32_t levelToLoad = m_levelToLoad->first;
