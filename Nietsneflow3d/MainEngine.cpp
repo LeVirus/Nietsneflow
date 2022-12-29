@@ -113,6 +113,10 @@ LevelState MainEngine::mainLoop(uint32_t levelNum, LevelState_e levelState, bool
             }
             else
             {
+                if(levelState == LevelState_e::RESTART_LEVEL)
+                {
+                    m_graphicEngine.setRestartLevelMode();
+                }
                 saveGameProgress(levelNum);
             }
         }

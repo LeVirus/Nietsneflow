@@ -54,6 +54,10 @@ public:
     const std::vector<uint32_t> &getBarrelEntitiesToDelete()const;
     void clearBarrelEntitiesToDelete();
     void updatePrologueAndEpilogue(const std::string &prologue, const std::string &epilogue);
+    inline void setRestartLevelMode()
+    {
+        m_restartLevelMode = true;
+    }
     inline MapDisplaySystem &getMapSystem()
     {
         return *m_mapSystem;
@@ -159,7 +163,7 @@ private:
     std::string m_saveStandardLevelMenuWrite, m_levelPrologue, m_levelEpilogue;
     //First Write menu, second size menu
     std::vector<std::pair<std::string, uint32_t>> m_existingCustomLevelsMenuWrite;
-    bool m_fullscreenMode = false, m_displayMenuFullscreenMode = m_fullscreenMode;
+    bool m_fullscreenMode = false, m_displayMenuFullscreenMode = m_fullscreenMode, m_restartLevelMode = false;
     const std::map<InputMenuCursorPos_e, std::string> m_mapInputActionStringAssociated = {
         {InputMenuCursorPos_e::ACTION, "ACTION"},
         {InputMenuCursorPos_e::MOVE_BACKWARD, "MOVE BACKWARD"},
