@@ -123,7 +123,9 @@ void DoorWallSystem::treatMoveableWalls()
         assert(mapComp);
         Direction_e currentDir = moveWallComp->m_directionMove[moveWallComp->m_currentPhase].first;
         if((currentDir == Direction_e::WEST && mapComp->m_coord.first == 0) ||
-                (currentDir == Direction_e::NORTH && mapComp->m_coord.second == 0))
+                (currentDir == Direction_e::NORTH && mapComp->m_coord.second == 0) ||
+                (currentDir == Direction_e::SOUTH && mapComp->m_coord.second == Level::getSize().second - 1) ||
+                (currentDir == Direction_e::EAST && mapComp->m_coord.first == Level::getSize().first - 1))
         {
             stopMoveWallLevelLimitCase(mapComp, moveWallComp);
             continue;
