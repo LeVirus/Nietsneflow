@@ -32,7 +32,8 @@ int main()
             //if no more level
             if(levelRetState == LevelLoadState_e::END)
             {
-                break;
+                firstLaunch = true;
+                continue;
             }
             else if(levelRetState == LevelLoadState_e::OK)
             {
@@ -53,7 +54,8 @@ int main()
             //if no more level
             if(levelRetState == LevelLoadState_e::END)
             {
-                break;
+                firstLaunch = true;
+                continue;
             }
             else if(levelRetState == LevelLoadState_e::OK)
             {
