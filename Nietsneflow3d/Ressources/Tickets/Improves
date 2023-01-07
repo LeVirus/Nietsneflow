@@ -2,7 +2,13 @@ IMPROVE=========================================================================
 ==========================================================================================================
 
 ))
+Teleport animation set to absolute screen position
+
+))
 If big enemy don't display if too close
+
+))
+Slow down player speed move + rotation===================OK
 
 ))
 Set return to main menu if final level finished==================OK
