@@ -32,6 +32,10 @@ public:
     {
         m_vectBarrelsEntitiesToDelete.clear();
     }
+    inline void memTeleportAnimEntity(uint32_t teleportAnimEntity)
+    {
+        m_memTeleportAnimEntity = teleportAnimEntity;
+    }
     inline const std::vector<uint32_t> &getBarrelEntitiesToDelete()const
     {
         return m_vectBarrelsEntitiesToDelete;
@@ -45,6 +49,7 @@ private:
                       uint32_t numEntity);
     void updateSprites(uint32_t observerEntity, const std::vector<uint32_t> &vectEntities);
     void updateWallSprites();
+    void updateTeleportAnimationSprites();
     void memMultiSpritesWallEntities();
     void updateVisibleShotSprite(uint32_t shotEntity, MemSpriteDataComponent *memSpriteComp,
                                  SpriteTextureComponent *spriteComp,
@@ -60,13 +65,10 @@ private:
     void updateImpactSprites(uint32_t entityImpact, MemSpriteDataComponent *memSpriteComp,
                              SpriteTextureComponent *spriteComp,
                              TimerComponent *timerComp, GeneralCollisionComponent *genComp);
-    void updateTeleportDisplaySprite(MemSpriteDataComponent *memSpriteComp,
-                                     SpriteTextureComponent *spriteComp,
-                                     TimerComponent *timerComp, GeneralCollisionComponent *genComp);
 private:
     const ECSManager* m_memECSManager;
     std::vector<uint32_t> m_memMultiSpritesWallEntities, m_vectBarrelsEntitiesToDelete;
-    uint32_t m_defaultInterval = 0.8 / FPS_VALUE;
+    uint32_t m_defaultInterval = 0.8 / FPS_VALUE, m_memTeleportAnimEntity;
     //first change sprite interval, second interval total time
     PairUI_t m_teleportIntervalTime = {0.1 / FPS_VALUE, 0.4 / FPS_VALUE};
     MainEngine *m_refMainEngine;

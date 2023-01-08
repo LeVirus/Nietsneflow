@@ -1176,27 +1176,16 @@ void CollisionSystem::treatPlayerTeleport(CollisionArgs &args)
     GeneralCollisionComponent *genTeleportComp = stairwayToComponentManager().
             searchComponentByType<GeneralCollisionComponent>(playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::DISPLAY_TELEPORT)],
                                                              Components_e::GENERAL_COLLISION_COMPONENT);
-    MapCoordComponent *mapTeleportComp = stairwayToComponentManager().
-            searchComponentByType<MapCoordComponent>(playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::DISPLAY_TELEPORT)],
-                                                     Components_e::MAP_COORD_COMPONENT);
     TimerComponent *timerComp = stairwayToComponentManager().
             searchComponentByType<TimerComponent>(playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::DISPLAY_TELEPORT)],
                                                   Components_e::TIMER_COMPONENT);
-    MoveableComponent *moveComp = stairwayToComponentManager().
-            searchComponentByType<MoveableComponent>(args.entityNumA,
-                                                     Components_e::MOVEABLE_COMPONENT);
     activeSound(args.entityNumB);
-    assert(moveComp);
     assert(timerComp);
     assert(genTeleportComp);
-    assert(mapTeleportComp);
     assert(mapPlayerComp);
     assert(teleportComp);
     mapPlayerComp->m_coord = teleportComp->m_targetPos;
     mapPlayerComp->m_absoluteMapPositionPX = getCenteredAbsolutePosition(mapPlayerComp->m_coord);
-    mapTeleportComp->m_absoluteMapPositionPX = mapPlayerComp->m_absoluteMapPositionPX;
-    moveElementFromAngle(LEVEL_TILE_SIZE_PX, getRadiantAngle(moveComp->m_degreeOrientation),
-                         mapTeleportComp->m_absoluteMapPositionPX);
     playerComp->m_teleported = true;
     genTeleportComp->m_active = true;
     timerComp->m_cycleCountA = 0;

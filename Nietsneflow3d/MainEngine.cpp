@@ -2474,13 +2474,9 @@ uint32_t MainEngine::createDisplayTeleportEntity()
     std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComponents;
     bitsetComponents[Components_e::POSITION_VERTEX_COMPONENT] = true;
     bitsetComponents[Components_e::SPRITE_TEXTURE_COMPONENT] = true;
-    bitsetComponents[Components_e::MAP_COORD_COMPONENT] = true;
-    bitsetComponents[Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT] = true;
     bitsetComponents[Components_e::MEM_SPRITE_DATA_COMPONENT] = true;
     bitsetComponents[Components_e::TIMER_COMPONENT] = true;
     bitsetComponents[Components_e::GENERAL_COLLISION_COMPONENT] = true;
-    bitsetComponents[Components_e::CIRCLE_COLLISION_COMPONENT] = true;
-    bitsetComponents[Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT] = true;
     return m_ecsManager.addEntity(bitsetComponents);
 }
 
@@ -3423,36 +3419,30 @@ uint32_t MainEngine::loadDisplayTeleportEntity(const LevelManager &levelManager)
     MemSpriteDataComponent *memSpriteComp = m_ecsManager.getComponentManager().
             searchComponentByType<MemSpriteDataComponent>(numEntity,
                                                           Components_e::MEM_SPRITE_DATA_COMPONENT);
-    GeneralCollisionComponent *genComp = m_ecsManager.getComponentManager().
-            searchComponentByType<GeneralCollisionComponent>(numEntity,
-                                                             Components_e::GENERAL_COLLISION_COMPONENT);
-    assert(genComp);
-    CircleCollisionComponent *circleComp = m_ecsManager.getComponentManager().
-            searchComponentByType<CircleCollisionComponent>(numEntity,
-                                                            Components_e::CIRCLE_COLLISION_COMPONENT);
-    FPSVisibleStaticElementComponent *fpsComp = m_ecsManager.getComponentManager().
-            searchComponentByType<FPSVisibleStaticElementComponent>(numEntity,
-                                                                    Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
-    assert(fpsComp);
-    assert(circleComp);
+    PositionVertexComponent *posCursor = m_ecsManager.getComponentManager().
+            searchComponentByType<PositionVertexComponent>(numEntity, Components_e::POSITION_VERTEX_COMPONENT);
+    assert(posCursor);
+    GeneralCollisionComponent *genColl = m_ecsManager.getComponentManager().
+            searchComponentByType<GeneralCollisionComponent>(numEntity, Components_e::GENERAL_COLLISION_COMPONENT);
+    assert(genColl);
+    genColl->m_tagA = CollisionTag_e::GHOST_CT;
+    genColl->m_tagB = CollisionTag_e::TELEPORT_ANIM_CT;
+    genColl->m_active = false;
+    posCursor->m_vertex.reserve(4);
+    float up = 0.75f, down = -0.75f, left = -0.75f, right = 0.75f;
+    posCursor->m_vertex.insert(posCursor->m_vertex.end(), {{left, up}, {right, up}, {right, down},{left, down}});
     assert(memSpriteComp);
     assert(spriteComp);
-    circleComp->m_ray = 10.0f;
-    genComp->m_tagA = CollisionTag_e::GHOST_CT;
-    genComp->m_tagB = CollisionTag_e::TELEPORT_ANIM_CT;
-    genComp->m_shape = CollisionShape_e::CIRCLE_C;
-    genComp->m_active = false;
     const std::vector<SpriteData> &vectSprite = levelManager.getPictureData().getSpriteData();
     const std::vector<MemSpriteData> &visibleTeleportData = levelManager.getVisibleTeleportData();
     memSpriteComp->m_vectSpriteData.reserve(visibleTeleportData.size());
-    fpsComp->m_inGameSpriteSize = visibleTeleportData[0].m_GLSize;
-    fpsComp->m_levelElementType = LevelStaticElementType_e::GROUND;
     for(uint32_t j = 0; j < visibleTeleportData.size(); ++j)
     {
         memSpriteComp->m_current = 0;
         memSpriteComp->m_vectSpriteData.emplace_back(&vectSprite[visibleTeleportData[j].m_numSprite]);
     }
     spriteComp->m_spriteData = memSpriteComp->m_vectSpriteData[0];
+    m_graphicEngine.getVisionSystem().memTeleportAnimEntity(numEntity);
     return numEntity;
 }
 

@@ -66,6 +66,10 @@ public:
     {
         return *m_firstPersonSystem;
     }
+    inline VisionSystem &getVisionSystem()
+    {
+        return *m_visionSystem;
+    }
     inline GLFWwindow &getGLWindow()
     {
         return *m_window;

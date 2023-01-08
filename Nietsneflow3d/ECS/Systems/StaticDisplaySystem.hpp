@@ -46,6 +46,7 @@ enum class VertexID_e
     MENU_BACKGROUND_TITLE,
     MENU_BACKGROUND_LEFT,
     MENU_BACKGROUND_RIGHT_LEFT,
+    TELEPORT_ANIM,
     TOTAL
 };
 
@@ -92,6 +93,7 @@ public:
         m_inputMenuGamepadWriteKeysEntities = memGamepadEntities;
     }
 private:
+    void drawTeleportAnimation(PlayerConfComponent *playerComp);
     void loadMenuBackground(uint32_t backgroundEntity, SpriteTextureComponent *spriteBackgroundComp, VertexID_e type);
     void drawWriteInfoPlayer(uint32_t playerEntity, PlayerConfComponent *playerComp);
     void drawWeaponsPreviewPlayer(const PlayerConfComponent *playerComp,

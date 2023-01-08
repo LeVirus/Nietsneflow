@@ -8,6 +8,7 @@
 #include <ECS/Components/TimerComponent.hpp>
 #include <ECS/Components/WriteComponent.hpp>
 #include <ECS/Components/WeaponComponent.hpp>
+#include <ECS/Components/GeneralCollisionComponent.hpp>>
 #include <ECS/Components/AudioComponent.hpp>
 #include <ECS/Systems/ColorDisplaySystem.hpp>
 #include <cassert>
@@ -75,7 +76,7 @@ void StaticDisplaySystem::execSystem()
         drawStandardStaticSprite(VertexID_e::PANNEL, playerComp);
         drawStandardStaticSprite(VertexID_e::AMMO_ICON, playerComp);
         drawStandardStaticSprite(VertexID_e::LIFE_ICON, playerComp);
-
+        drawTeleportAnimation(playerComp);
         drawWriteInfoPlayer(mVectNumEntity[i], playerComp);
         std::string strAmmoDisplay = std::to_string(weaponComp->m_weaponsData[weaponComp->m_currentWeapon].m_ammunationsCount);
         drawWriteVertex(playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::AMMO_WRITE)], VertexID_e::AMMO_WRITE, Font_e::STANDARD, strAmmoDisplay);
@@ -85,6 +86,30 @@ void StaticDisplaySystem::execSystem()
         {
             drawWeaponsPreviewPlayer(playerComp, weaponComp);
         }
+    }
+}
+
+//===================================================================
+void StaticDisplaySystem::drawTeleportAnimation(PlayerConfComponent *playerComp)
+{
+    GeneralCollisionComponent *tagColl = stairwayToComponentManager().
+            searchComponentByType<GeneralCollisionComponent>(playerComp->m_vectEntities[static_cast<uint32_t>(
+                PlayerEntities_e::DISPLAY_TELEPORT)],
+                                                     Components_e::GENERAL_COLLISION_COMPONENT);
+    assert(tagColl);
+    if(tagColl->m_active)
+    {
+        SpriteTextureComponent *spriteComp = stairwayToComponentManager().
+                searchComponentByType<SpriteTextureComponent>(playerComp->m_vectEntities[static_cast<uint32_t>(
+                    PlayerEntities_e::DISPLAY_TELEPORT)], Components_e::SPRITE_TEXTURE_COMPONENT);
+        assert(spriteComp);
+        PositionVertexComponent *posComp = stairwayToComponentManager().
+                searchComponentByType<PositionVertexComponent>(playerComp->m_vectEntities[static_cast<uint32_t>(
+                    PlayerEntities_e::DISPLAY_TELEPORT)], Components_e::POSITION_VERTEX_COMPONENT);
+        assert(posComp);
+        m_vertices[static_cast<uint32_t>(VertexID_e::TELEPORT_ANIM)].clear();
+        m_vertices[static_cast<uint32_t>(VertexID_e::TELEPORT_ANIM)].loadVertexStandartTextureComponent(*posComp, *spriteComp);
+        drawVertex(spriteComp->m_spriteData->m_textureNum, VertexID_e::TELEPORT_ANIM);
     }
 }
 
@@ -1031,6 +1056,10 @@ uint32_t getSpriteAssociateEntity(VertexID_e spriteId, PlayerConfComponent* cons
     else if(spriteId == VertexID_e::LIFE_ICON)
     {
         return playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::AMMO_ICON)];
+    }
+    else if(spriteId == VertexID_e::TELEPORT_ANIM)
+    {
+        return playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::DISPLAY_TELEPORT)];
     }
     else
     {

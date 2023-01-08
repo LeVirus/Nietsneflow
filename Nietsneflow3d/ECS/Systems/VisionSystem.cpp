@@ -42,13 +42,13 @@ void VisionSystem::setUsedComponents()
 void VisionSystem::execSystem()
 {
     System::execSystem();
-    GeneralCollisionComponent *collCompB;
     VisionComponent *visionCompA;
     MapCoordComponent *mapCompA;
     MoveableComponent *moveCompA;
     std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComp;
     bitsetComp[Components_e::MAP_COORD_COMPONENT] = true;
     bitsetComp[Components_e::SPRITE_TEXTURE_COMPONENT] = true;
+    bitsetComp[Components_e::GENERAL_COLLISION_COMPONENT] = true;
     bitsetComp[Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT] = true;
     std::vector<uint32_t> vectEntities = m_memECSManager->getEntitiesContainingComponents(bitsetComp);
     for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
@@ -67,15 +67,12 @@ void VisionSystem::execSystem()
             {
                 continue;
             }
-            collCompB = stairwayToComponentManager().
-                    searchComponentByType<GeneralCollisionComponent>(vectEntities[j],
-                                          Components_e::GENERAL_COLLISION_COMPONENT);
-            assert(collCompB);
             treatVisible(visionCompA, moveCompA, vectEntities[j]);
         }
         updateSprites(mVectNumEntity[i], vectEntities);
     }
     updateWallSprites();
+    updateTeleportAnimationSprites();
 }
 
 //===========================================================================
@@ -128,10 +125,6 @@ void VisionSystem::updateSprites(uint32_t observerEntity,
         else if(genComp->m_tagB == CollisionTag_e::IMPACT_CT)
         {
             updateImpactSprites(vectEntities[i], memSpriteComp, spriteComp, timerComp, genComp);
-        }
-        else if(genComp->m_tagB == CollisionTag_e::TELEPORT_ANIM_CT)
-        {
-            updateTeleportDisplaySprite(memSpriteComp, spriteComp, timerComp, genComp);
         }
         //OOOOK put enemy tag to tagB
         else if(genComp->m_tagA == CollisionTag_e::ENEMY_CT || genComp->m_tagA == CollisionTag_e::GHOST_CT)
@@ -193,6 +186,40 @@ void VisionSystem::updateWallSprites()
             spriteComp->m_spriteData = memSpriteComp->m_vectSpriteData[memSpriteComp->m_current];
             timerComp->m_cycleCountA = 0;
         }
+    }
+}
+
+//===========================================================================
+void VisionSystem::updateTeleportAnimationSprites()
+{
+    MemSpriteDataComponent *memSpriteComp = stairwayToComponentManager().
+            searchComponentByType<MemSpriteDataComponent>(m_memTeleportAnimEntity, Components_e::MEM_SPRITE_DATA_COMPONENT);
+    assert(memSpriteComp);
+    TimerComponent *timerComp = stairwayToComponentManager().
+            searchComponentByType<TimerComponent>(m_memTeleportAnimEntity, Components_e::TIMER_COMPONENT);
+    assert(timerComp);
+    GeneralCollisionComponent *genComp = stairwayToComponentManager().
+            searchComponentByType<GeneralCollisionComponent>(m_memTeleportAnimEntity, Components_e::GENERAL_COLLISION_COMPONENT);
+    assert(genComp);
+    SpriteTextureComponent *spriteComp = stairwayToComponentManager().
+            searchComponentByType<SpriteTextureComponent>(m_memTeleportAnimEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
+    assert(spriteComp);
+    if(++timerComp->m_cycleCountA >= m_teleportIntervalTime.second)
+    {
+        genComp->m_active = false;
+    }
+    else if(++timerComp->m_cycleCountB >= m_teleportIntervalTime.first)
+    {
+        timerComp->m_cycleCountB = 0;
+        if(memSpriteComp->m_current < memSpriteComp->m_vectSpriteData.size() - 1)
+        {
+            ++memSpriteComp->m_current;
+        }
+        else
+        {
+            memSpriteComp->m_current = 0;
+        }
+        spriteComp->m_spriteData = memSpriteComp->m_vectSpriteData[memSpriteComp->m_current];
     }
 }
 
@@ -478,29 +505,6 @@ void VisionSystem::updateImpactSprites(uint32_t entityImpact, MemSpriteDataCompo
         {
             genComp->m_active = false;
         }
-    }
-}
-
-//===========================================================================
-void VisionSystem::updateTeleportDisplaySprite(MemSpriteDataComponent *memSpriteComp, SpriteTextureComponent *spriteComp,
-                                               TimerComponent *timerComp, GeneralCollisionComponent *genComp)
-{
-    if(++timerComp->m_cycleCountA >= m_teleportIntervalTime.second)
-    {
-        genComp->m_active = false;
-    }
-    else if(++timerComp->m_cycleCountB >= m_teleportIntervalTime.first)
-    {
-        timerComp->m_cycleCountB = 0;
-        if(memSpriteComp->m_current < memSpriteComp->m_vectSpriteData.size() - 1)
-        {
-            ++memSpriteComp->m_current;
-        }
-        else
-        {
-            memSpriteComp->m_current = 0;
-        }
-        spriteComp->m_spriteData = memSpriteComp->m_vectSpriteData[memSpriteComp->m_current];
     }
 }
 
