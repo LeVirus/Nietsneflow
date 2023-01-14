@@ -195,7 +195,7 @@ void DoorWallSystem::treatTriggers()
                 searchComponentByType<TriggerComponent>(m_vectTrigger[i],
                                                         Components_e::TRIGGER_COMPONENT);
         assert(triggerComp);
-        if(!triggerComp->m_actionned)
+        if(!triggerComp->m_actionned || triggerComp->m_mapElementEntities.empty())
         {
             continue;
         }
@@ -213,6 +213,7 @@ void DoorWallSystem::treatTriggers()
                 return;
             }
         }
+        m_refMainEngine->playTriggerSound();
         //Wall Shape loop
         for(std::map<uint32_t, std::vector<uint32_t>>::const_iterator it = triggerComp->m_mapElementEntities.begin();
             it != triggerComp->m_mapElementEntities.end();)

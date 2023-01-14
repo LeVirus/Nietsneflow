@@ -135,6 +135,7 @@ public:
     void validDisplayMenu();
     void reinitPlayerGear();
     void setInfoDataWrite(std::string_view message);
+    void playTriggerSound();
     inline bool currentSessionCustomLevel()const
     {
         return m_memCustomLevelLoadedData != nullptr;

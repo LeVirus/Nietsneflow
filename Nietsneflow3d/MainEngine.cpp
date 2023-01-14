@@ -2110,7 +2110,6 @@ void MainEngine::reinitPlayerGear()
     m_playerConf->m_enemiesKilled = {};
     m_playerConf->m_life = 100;
     m_playerConf->m_secretsFound = {};
-    m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::WEAPON)];
     for(uint32_t i = 0; i < weaponComp->m_weaponsData.size(); ++i)
     {
         weaponComp->m_weaponsData[i].m_posses = m_vectMemWeaponsDefault[i].first;
@@ -2123,6 +2122,16 @@ void MainEngine::setInfoDataWrite(std::string_view message)
 {
     assert(m_playerConf);
     m_playerConf->m_infoWriteData = {true, message.data()};
+}
+
+//===================================================================
+void MainEngine::playTriggerSound()
+{
+    AudioComponent *audioComp = m_ecsManager.getComponentManager().
+            searchComponentByType<AudioComponent>(m_playerEntity, Components_e::AUDIO_COMPONENT);
+    assert(audioComp);
+    audioComp->m_soundElements[2]->m_toPlay = true;
+    m_audioEngine.getSoundSystem()->execSystem();
 }
 
 //===================================================================
@@ -2809,9 +2818,10 @@ void MainEngine::confPlayerEntity(const LevelManager &levelManager,
     AudioComponent *audioComp = m_ecsManager.getComponentManager().
             searchComponentByType<AudioComponent>(entityNum, Components_e::AUDIO_COMPONENT);
     assert(audioComp);
-    audioComp->m_soundElements.reserve(2);
+    audioComp->m_soundElements.reserve(3);
     audioComp->m_soundElements.emplace_back(loadSound(levelManager.getPickObjectSoundFile()));
     audioComp->m_soundElements.emplace_back(loadSound(levelManager.getPlayerDeathSoundFile()));
+    audioComp->m_soundElements.emplace_back(loadSound(levelManager.getTriggerSoundFile()));
     assert(pos);
     assert(map);
     assert(move);

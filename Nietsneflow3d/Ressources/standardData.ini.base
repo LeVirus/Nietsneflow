@@ -3,7 +3,8 @@ PickUpObjectSound = PickObject.wav
 DoorOpeningSound = DoorOpening.wav
 HitSound = Hit.wav
 TeleportSound = Teleport.wav
-PlayerDeath = Death.flac
+PlayerDeathSound = Death.flac
+TriggerSound = Trigger.flac
 
 [GraphicUtils]
 GenericMenuSprite = SpriteBackgroundGenericMenu
