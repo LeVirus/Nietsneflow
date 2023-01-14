@@ -141,7 +141,7 @@ void FirstPersonDisplaySystem::confCompVertexMemEntities()
 //===================================================================
 void FirstPersonDisplaySystem::confSimpleTextVertexGroundCeiling(float observerAngle)
 {
-    float midPos = std::fmod(observerAngle, 180.0f) / 90.0f - 1.0f, leftPos = midPos - 2.0f, rightPos = midPos + 2.0f;
+    float midPos = std::fmod(observerAngle, 90.0f) / 45.0f - 1.0f, leftPos = midPos - 2.0f, rightPos = midPos + 2.0f;
     if(m_groundSimpleTextBackground)
     {
         PositionVertexComponent *posComp = stairwayToComponentManager().
