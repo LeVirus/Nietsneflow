@@ -74,6 +74,7 @@ struct MemCheckpointElementsState
     std::map<uint32_t, std::pair<std::vector<uint32_t>, bool>> m_triggerWallMoveableWallData;
     std::set<PairUI_t> m_staticElementDeleted;
     std::vector<PairUI_t> m_revealedMapData;
+    std::set<uint32_t> m_card;
 };
 
 struct MemLevelLoadedData

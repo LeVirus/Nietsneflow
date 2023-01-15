@@ -308,9 +308,9 @@ public:
     {
         return m_weaponsPreviewData;
     }
-    bool checkSavedGameExists(uint32_t saveNum) const;
+    bool checkSavedGameExists(uint32_t saveNum)const;
 private:
-    std::string getGamepadKeyIniString(const GamepadInputState &gamepadInputState) const;
+    std::string getGamepadKeyIniString(const GamepadInputState &gamepadInputState)const;
     void fillSettingsFileFromMemory();
     //texture and sprite loading
     void loadTexturePath();
@@ -330,11 +330,13 @@ private:
     void saveMoveableWallDataGameProgress(const std::map<uint32_t, std::pair<uint32_t, bool> > &moveableWallData);
     void saveTriggerWallMoveableWallDataGameProgress(const std::map<uint32_t, std::pair<std::vector<uint32_t>, bool> > &triggerWallMoveableWallData);
     void saveEnemiesDataGameProgress(const std::vector<MemCheckpointEnemiesState> &enemiesData);
+    void saveCardGameProgress(const std::set<uint32_t> &cardData);
     std::vector<MemCheckpointEnemiesState> loadEnemiesDataGameProgress();
     void saveStaticElementsDataGameProgress(const std::set<PairUI_t> &staticElementData);
     void saveRevealedMapGameProgress(const std::vector<PairUI_t> &revealedMapData);
     std::set<PairUI_t> loadStaticElementsDataGameProgress();
     std::vector<PairUI_t> loadRevealedMapDataGameProgress();
+    std::set<uint32_t> loadCardGameProgress();
     void generateSavedFile(uint32_t numSaveFile);
     void readStandardStaticElement(StaticLevelElementData &staticElement,
                                    const std::string &sectionName,

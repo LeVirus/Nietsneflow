@@ -2,6 +2,7 @@
 #include <MainEngine.hpp>
 #include <cassert>
 #include <sstream>
+#include <set>
 #include <iostream>
 #include <iterator>
 #include <filesystem>
@@ -2189,6 +2190,7 @@ void LevelManager::saveElementsGameProgress(const MemCheckpointElementsState &ch
     saveMoveableWallDataGameProgress(checkpointData.m_moveableWallData);
     saveTriggerWallMoveableWallDataGameProgress(checkpointData.m_triggerWallMoveableWallData);
     saveRevealedMapGameProgress(checkpointData.m_revealedMapData);
+    saveCardGameProgress(checkpointData.m_card);
 }
 
 //===================================================================
@@ -2246,6 +2248,17 @@ void LevelManager::saveEnemiesDataGameProgress(const std::vector<MemCheckpointEn
     m_ini.setValue("Enemies", "ObjectPickedUp", strObjectPickedUp);
     m_ini.setValue("Enemies", "Pos", strPos);
     m_ini.setValue("Enemies", "Life", strLife);
+}
+
+//===================================================================
+void LevelManager::saveCardGameProgress(const std::set<uint32_t> &cardData)
+{
+    std::string str;
+    for(std::set<uint32_t>::const_iterator it = cardData.begin(); it != cardData.end(); ++it)
+    {
+        str += std::to_string(*it) + " ";
+    }
+    m_ini.setValue("Card", "Num", str);
 }
 
 //===================================================================
@@ -2419,7 +2432,7 @@ std::unique_ptr<MemCheckpointElementsState> LevelManager::loadCheckpointDataSave
                     checkpointNum, secretsFound, enemiesKilled, pos, direction,
                     loadEnemiesDataGameProgress(), loadMoveableWallDataGameProgress(),
                     loadTriggerWallMoveableWallDataGameProgress(),
-                    loadStaticElementsDataGameProgress(), loadRevealedMapDataGameProgress()});
+                    loadStaticElementsDataGameProgress(), loadRevealedMapDataGameProgress(), loadCardGameProgress()});
 }
 
 //===================================================================
@@ -2540,6 +2553,19 @@ std::vector<PairUI_t> LevelManager::loadRevealedMapDataGameProgress()
         vectRet.emplace_back(PairUI_t{vectPos[i], vectPos[i + 1]});
     }
     return vectRet;
+}
+
+//===================================================================
+std::set<uint32_t> LevelManager::loadCardGameProgress()
+{
+    std::set<uint32_t> set;
+    std::optional<std::string> val = m_ini.getValue("Card", "Num");
+    std::vector<uint32_t> vectPos = convertStrToVectUI(*val);
+    for(uint32_t i = 0; i < vectPos.size(); ++i)
+    {
+        set.insert(vectPos[i]);
+    }
+    return set;
 }
 
 //===================================================================

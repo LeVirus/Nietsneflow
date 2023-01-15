@@ -283,7 +283,8 @@ void MainEngine::saveGameProgressCheckpoint(uint32_t levelNum, const PairUI_t &c
 {
     uint32_t enemiesKilled = (m_playerConf->m_enemiesKilled) ? *m_playerConf->m_enemiesKilled : 0;
     uint32_t secretsFound = (m_playerConf->m_secretsFound) ? *m_playerConf->m_secretsFound : 0;
-    m_memCheckpointLevelState = {levelNum, checkpointData.first, secretsFound, enemiesKilled, checkpointData.second, checkpointReached};
+    m_memCheckpointLevelState = {levelNum, checkpointData.first, secretsFound, enemiesKilled, checkpointData.second,
+                                 checkpointReached};
     //OOOK SAVE GEAR BEGIN LEVEL
     savePlayerGear(false);
     saveEnemiesCheckpoint();
@@ -297,7 +298,7 @@ void MainEngine::saveGameProgressCheckpoint(uint32_t levelNum, const PairUI_t &c
     m_memCheckpointData = {checkpointData.first, secretsFound, enemiesKilled, checkpointReached,
                            checkpointData.second, m_memEnemiesStateFromCheckpoint,
                            m_memMoveableWallCheckpointData, m_memTriggerWallMoveableWallCheckpointData,
-                           m_memStaticEntitiesDeletedFromCheckpoint, revealedMap};
+                           m_memStaticEntitiesDeletedFromCheckpoint, revealedMap, m_playerConf->m_card};
     saveGameProgress(m_currentLevel, m_currentSave, &(*m_memCheckpointData));
 }
 
@@ -2240,7 +2241,8 @@ bool MainEngine::loadCustomLevelGame(uint32_t saveNum, LevelState_e levelMode)
 void MainEngine::loadCheckpointSavedGame(const MemCheckpointElementsState &checkpointData, bool loadFromSameLevel)
 {
     m_memCheckpointLevelState = {m_levelToLoad->first, checkpointData.m_checkpointNum, checkpointData.m_secretsNumber,
-                                 checkpointData.m_enemiesKilled, checkpointData.m_direction, checkpointData.m_checkpointPos};
+                                 checkpointData.m_enemiesKilled, checkpointData.m_direction,
+                                 checkpointData.m_checkpointPos};
     if(!loadFromSameLevel)
     {
         m_currentEntitiesDelete = checkpointData.m_staticElementDeleted;
@@ -2253,7 +2255,8 @@ void MainEngine::loadCheckpointSavedGame(const MemCheckpointElementsState &check
                            checkpointData.m_enemiesKilled, checkpointData.m_checkpointPos,
                            checkpointData.m_direction, m_memEnemiesStateFromCheckpoint,
                            m_memMoveableWallCheckpointData, m_memTriggerWallMoveableWallCheckpointData,
-                           m_memStaticEntitiesDeletedFromCheckpoint, checkpointData.m_revealedMapData};
+                           m_memStaticEntitiesDeletedFromCheckpoint, checkpointData.m_revealedMapData, checkpointData.m_card};
+    m_playerConf->m_card = m_memCheckpointData->m_card;
 }
 
 //===================================================================
@@ -2811,7 +2814,6 @@ void MainEngine::confPlayerEntity(const LevelManager &levelManager,
     playerConf->m_levelToLoad = m_currentLevel;
     playerConf->setIDEntityAssociated(entityNum);
     playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::DISPLAY_TELEPORT)] = numDisplayTeleportEntity;
-
     WeaponComponent *weaponConf = m_ecsManager.getComponentManager().
             searchComponentByType<WeaponComponent>(playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::WEAPON)],
                                                    Components_e::WEAPON_COMPONENT);
