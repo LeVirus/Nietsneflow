@@ -452,6 +452,10 @@ void CollisionSystem::initArrayTag()
     m_tagArray.insert({CollisionTag_e::DETECT_MAP_CT, CollisionTag_e::LOG_CT});
 
     m_tagArray.insert({CollisionTag_e::BARREL_CT, CollisionTag_e::BARREL_CT});
+    m_tagArray.insert({CollisionTag_e::BARREL_CT, CollisionTag_e::WALL_CT});
+    m_tagArray.insert({CollisionTag_e::BARREL_CT, CollisionTag_e::DOOR_CT});
+    m_tagArray.insert({CollisionTag_e::BARREL_CT, CollisionTag_e::STATIC_SET_CT});
+    m_tagArray.insert({CollisionTag_e::BARREL_CT, CollisionTag_e::LOG_CT});
 
     m_tagArray.insert({CollisionTag_e::PLAYER_ACTION_CT, CollisionTag_e::DOOR_CT});
     m_tagArray.insert({CollisionTag_e::PLAYER_ACTION_CT, CollisionTag_e::EXIT_CT});
@@ -703,7 +707,8 @@ bool CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args, bool shotEx
                     }
                 }
             }
-            else if(args.tagCompA->m_tagA == CollisionTag_e::IMPACT_CT)
+            else if(args.tagCompA->m_tagA == CollisionTag_e::IMPACT_CT ||
+                    args.tagCompA->m_tagA == CollisionTag_e::BARREL_CT)
             {
                 collisionCircleRectEject(args, circleCompA.m_ray, rectCompB);
             }
