@@ -47,6 +47,13 @@ void Level::addElementCase(SpriteTextureComponent *spriteComp, const PairUI_t &t
                            LevelCaseType_e type, uint32_t numEntity)
 {
     uint32_t index = getLevelCaseIndex(tilePosition);
+    //Debug if moveable wall saved at this position don't treat
+    if(type == LevelCaseType_e::DOOR_LC &&
+            (m_levelCaseType[index].m_type == LevelCaseType_e::WALL_LC ||
+            m_levelCaseType[index].m_type == LevelCaseType_e::WALL_MOVE_LC))
+    {
+        return;
+    }
     m_levelCaseType[index].m_numEntity = numEntity;
     if(type != LevelCaseType_e::WALL_MOVE_LC)
     {
