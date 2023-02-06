@@ -993,6 +993,9 @@ void MainEngine::loadExistingCustomLevel(const std::vector<std::string> &customL
 void MainEngine::loadLevel(const LevelManager &levelManager)
 {
     m_memWallPos.clear();
+    m_physicalEngine.clearVectObjectToDelete();
+    m_physicalEngine.clearVectBarrelsDestruct();
+    m_graphicEngine.clearBarrelEntitiesToDelete();
     loadBackgroundEntities(levelManager.getPictureData().getGroundData(),
                            levelManager.getPictureData().getCeilingData(),
                            levelManager);
