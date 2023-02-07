@@ -772,11 +772,24 @@ bool CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args, bool shotEx
             }
             if((args.tagCompA->m_tagA == CollisionTag_e::PLAYER_CT || args.tagCompA->m_tagA == CollisionTag_e::ENEMY_CT ||
                      args.tagCompA->m_tagB == CollisionTag_e::BARREL_CT || args.tagCompA->m_tagA == CollisionTag_e::IMPACT_CT) &&
-                    (args.tagCompB->m_tagA == CollisionTag_e::LOG_CT || args.tagCompB->m_tagA == CollisionTag_e::WALL_CT || args.tagCompB->m_tagA == CollisionTag_e::PLAYER_CT ||
+                    (args.tagCompB->m_tagA == CollisionTag_e::LOG_CT || args.tagCompB->m_tagA == CollisionTag_e::WALL_CT ||
+                     args.tagCompB->m_tagA == CollisionTag_e::PLAYER_CT ||
                      args.tagCompB->m_tagA == CollisionTag_e::ENEMY_CT || args.tagCompB->m_tagA == CollisionTag_e::STATIC_SET_CT ||
                      args.tagCompB->m_tagB == CollisionTag_e::BARREL_CT))
             {
-                collisionCircleCircleEject(args, circleCompA, circleCompB);
+                if(args.tagCompA->m_tagA == CollisionTag_e::PLAYER_CT &&
+                        args.tagCompB->m_tagA == CollisionTag_e::ENEMY_CT &&
+                        circleCompB.m_ray > 10.0f)
+                {
+                    if(m_memCrush.empty())
+                    {
+                        collisionCircleCircleEject(args, circleCompA, circleCompB);
+                    }
+                }
+                else
+                {
+                    collisionCircleCircleEject(args, circleCompA, circleCompB);
+                }
             }
         }
     }
