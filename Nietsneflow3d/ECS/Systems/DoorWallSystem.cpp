@@ -301,7 +301,11 @@ void setInitPhaseMoveWall(MapCoordComponent *mapComp, MoveableWallConfComponent 
         break;
     }
     moveWallComp->m_nextPhasePos = getAbsolutePosition(nextCase);
-    if(Level::getElementCase(nextCase)->m_type != LevelCaseType_e::WALL_LC)
+    if(Level::getElementCase(nextCase)->m_typeStd == LevelCaseType_e::EMPTY_LC &&
+            !(Level::getElementCase(nextCase)->m_type == LevelCaseType_e::WALL_LC &&
+             Level::getElementCase(nextCase)->m_typeStd == LevelCaseType_e::EMPTY_LC &&
+              (Level::getElementCase(nextCase)->m_memStaticMoveableWall &&
+               !Level::getElementCase(nextCase)->m_memStaticMoveableWall->empty())))
     {
         Level::memMoveWallEntity(nextCase, wallEntity);
         Level::setElementTypeCase(nextCase, LevelCaseType_e::WALL_MOVE_LC);

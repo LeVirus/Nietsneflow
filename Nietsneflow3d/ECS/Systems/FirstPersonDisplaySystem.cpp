@@ -811,7 +811,6 @@ bool FirstPersonDisplaySystem::rayCasting(uint32_t observerEntity)
     //mem entity num & distances
     for(uint32_t j = 0; j < RAYCAST_LINE_NUMBER; ++j)
     {
-        //mem ground and ceiling
         targetPoint = calcLineSegmentRaycast(currentRadiantAngle, mapCompCamera->m_absoluteMapPositionPX, true, playerComp->m_frozen);
         if(targetPoint)
         {
