@@ -320,7 +320,7 @@ private:
     void loadMusicData();
     //Level element datas loading
     bool loadLevelData();
-    bool loadPositionPlayerData(uint32_t levelNum);
+    bool loadPositionPlayerData(uint32_t levelNum, bool customLevel);
     void loadGeneralStaticElements(LevelStaticElementType_e elementType);
     void loadPositionStaticElements();
     void loadBarrelElements();
