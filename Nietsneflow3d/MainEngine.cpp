@@ -1002,9 +1002,17 @@ void MainEngine::loadLevel(const LevelManager &levelManager)
     Level::initLevelElementArray();
     if(m_memCheckpointLevelState)
     {
-        std::optional<MemLevelLoadedData> savedData = m_refGame->loadSavedGame(m_currentSave);
-        assert(savedData);
-        loadCheckpointSavedGame(*savedData->m_checkpointLevelData, true);
+        if(m_memCustomLevelLoadedData)
+        {
+            assert(m_memCustomLevelLoadedData->m_checkpointLevelData);
+            loadCheckpointSavedGame(*m_memCustomLevelLoadedData->m_checkpointLevelData, true);
+        }
+        else
+        {
+            std::optional<MemLevelLoadedData> savedData = m_refGame->loadSavedGame(m_currentSave);
+            assert(savedData);
+            loadCheckpointSavedGame(*savedData->m_checkpointLevelData, true);
+        }
     }
     bool exit = loadStaticElementEntities(levelManager);
     loadBarrelElementEntities(levelManager);
@@ -2236,7 +2244,10 @@ bool MainEngine::loadCustomLevelGame(uint32_t saveNum, LevelState_e levelMode)
     m_currentLevelState = levelMode;
     m_levelToLoad = {saveNum, true};
     m_playerConf->m_levelToLoad = saveNum;
-    m_memCustomLevelLoadedData = std::make_unique<MemCustomLevelLoadedData>();
+    if(!m_memCustomLevelLoadedData)
+    {
+        m_memCustomLevelLoadedData = std::make_unique<MemCustomLevelLoadedData>();
+    }
     return true;
 }
 
