@@ -868,7 +868,7 @@ void InputSystem::treatEnterPressedConfirmRestartLevelMenu(PlayerConfComponent *
         {
             m_mainEngine->setTransition(true);
         }
-        else if(m_mainEngine->currentSessionCustomLevel() && m_mainEngine->loadCustomLevelGame(playerComp->m_levelToLoad, LevelState_e::RESTART_LEVEL))
+        else if(m_mainEngine->currentSessionCustomLevel() && m_mainEngine->loadCustomLevelGame(LevelState_e::RESTART_LEVEL))
         {
             m_mainEngine->setTransition(true);
         }
@@ -891,7 +891,7 @@ void InputSystem::treatEnterPressedConfirmRestartFromLastCheckpointMenu(PlayerCo
         {
             m_mainEngine->setTransition(true);
         }
-        else if(m_mainEngine->currentSessionCustomLevel() && m_mainEngine->loadCustomLevelGame(playerComp->m_levelToLoad, LevelState_e::RESTART_FROM_CHECKPOINT))
+        else if(m_mainEngine->currentSessionCustomLevel() && m_mainEngine->loadCustomLevelGame(LevelState_e::RESTART_FROM_CHECKPOINT))
         {
             m_mainEngine->setTransition(true);
         }
@@ -938,7 +938,7 @@ void InputSystem::treatEnterPressedConfirmLoadGameMenu(PlayerConfComponent *play
         //LOAD CUSTOM LEVEL
         else if(playerComp->m_previousMenuMode == MenuMode_e::LOAD_CUSTOM_LEVEL)
         {
-            m_mainEngine->loadCustomLevelGame(playerComp->m_levelToLoad, LevelState_e::LOAD_GAME);
+            m_mainEngine->loadCustomLevelGame(LevelState_e::LOAD_GAME);
             m_mainEngine->setTransition(true);
         }
         //LOAD

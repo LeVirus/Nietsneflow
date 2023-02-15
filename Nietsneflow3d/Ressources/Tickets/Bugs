@@ -1,6 +1,9 @@
 BUGS======================================================================
 
 ))
+When pass custom level, if reload level go back to previous level=============OK
+
+))
 Crash on load from checkpoint in custom level==================OK
 
 ))

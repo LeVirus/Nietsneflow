@@ -240,7 +240,7 @@ public:
                            const std::map<ControlKey_e, MouseKeyboardInputState> &keyboardArray);
     void saveTurnSensitivitySettings();
     bool loadSavedGame(uint32_t saveNum, LevelState_e levelMode);
-    bool loadCustomLevelGame(uint32_t saveNum, LevelState_e levelMode);
+    bool loadCustomLevelGame(LevelState_e levelMode);
     void loadCheckpointSavedGame(const MemCheckpointElementsState &checkpointData, bool loadFromSameLevel = false);
     bool checkSavedGameExists(uint32_t saveNum)const;
     void clearCheckpointData();

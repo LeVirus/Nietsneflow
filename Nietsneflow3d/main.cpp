@@ -92,7 +92,14 @@ int main()
             levelIndex = 1;
             continue;
         case LevelState_e::LEVEL_END:
-            ++levelIndex;
+            if(levelState.m_customLevel)
+            {
+                firstLaunch = true;
+            }
+            else
+            {
+                ++levelIndex;
+            }
             break;
         case LevelState_e::GAME_OVER:
             break;

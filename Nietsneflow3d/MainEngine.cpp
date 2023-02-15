@@ -2239,11 +2239,11 @@ bool MainEngine::loadSavedGame(uint32_t saveNum, LevelState_e levelMode)
 }
 
 //===================================================================
-bool MainEngine::loadCustomLevelGame(uint32_t saveNum, LevelState_e levelMode)
+bool MainEngine::loadCustomLevelGame(LevelState_e levelMode)
 {
     m_currentLevelState = levelMode;
-    m_levelToLoad = {saveNum, true};
-    m_playerConf->m_levelToLoad = saveNum;
+    m_levelToLoad = {m_playerConf->m_levelToLoad, true};
+    m_currentLevel = m_playerConf->m_levelToLoad;
     if(!m_memCustomLevelLoadedData)
     {
         m_memCustomLevelLoadedData = std::make_unique<MemCustomLevelLoadedData>();
