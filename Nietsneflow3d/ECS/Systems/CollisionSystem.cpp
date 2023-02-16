@@ -253,6 +253,7 @@ void CollisionSystem::treatEnemyTakeDamage(uint32_t enemyEntityNum, uint32_t dam
         }
         enemyConfCompB->m_behaviourMode = EnemyBehaviourMode_e::DYING;
         enemyConfCompB->m_touched = false;
+        enemyConfCompB->m_playDeathSound = true;
         if(enemyConfCompB->m_dropedObjectEntity)
         {
             confDropedObject(*enemyConfCompB->m_dropedObjectEntity, enemyEntityNum);

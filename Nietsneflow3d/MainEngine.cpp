@@ -1507,10 +1507,11 @@ bool MainEngine::createEnemy(const LevelManager &levelManager, const SpriteData 
     AudioComponent *audiocomponent = m_ecsManager.getComponentManager().
             searchComponentByType<AudioComponent>(numEntity, Components_e::AUDIO_COMPONENT);
     assert(audiocomponent);
-    audiocomponent->m_soundElements.reserve(3);
+    audiocomponent->m_soundElements.reserve(4);
     audiocomponent->m_soundElements.emplace_back(loadSound(enemyData.m_normalBehaviourSoundFile));
     audiocomponent->m_soundElements.emplace_back(loadSound(enemyData.m_detectBehaviourSoundFile));
     audiocomponent->m_soundElements.emplace_back(loadSound(enemyData.m_attackSoundFile));
+    audiocomponent->m_soundElements.emplace_back(loadSound(enemyData.m_deathSoundFile));
     audiocomponent->m_maxDistance /= 5.0f;
     TimerComponent *timerComponent = m_ecsManager.getComponentManager().
             searchComponentByType<TimerComponent>(numEntity, Components_e::TIMER_COMPONENT);

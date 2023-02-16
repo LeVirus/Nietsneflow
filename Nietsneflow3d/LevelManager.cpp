@@ -1344,6 +1344,9 @@ void LevelManager::loadEnemyData()
         val = m_ini.getValue(vectINISections[i], "AttackSound");
         assert(val);
         m_enemyData[vectINISections[i]].m_attackSoundFile = *val;
+        val = m_ini.getValue(vectINISections[i], "DeathSound");
+        assert(val);
+        m_enemyData[vectINISections[i]].m_deathSoundFile = *val;
 
         val = m_ini.getValue(vectINISections[i], "FrozenOnAttack");
         assert(val);

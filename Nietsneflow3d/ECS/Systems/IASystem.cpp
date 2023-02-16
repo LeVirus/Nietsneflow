@@ -106,6 +106,11 @@ void IASystem::execSystem()
         if(enemyConfComp->m_behaviourMode == EnemyBehaviourMode_e::DEAD ||
                 enemyConfComp->m_behaviourMode == EnemyBehaviourMode_e::DYING)
         {
+            if(enemyConfComp->m_playDeathSound)
+            {
+                activeSound(mVectNumEntity[i], static_cast<uint32_t>(EnemySoundEffect_e::DEATH));
+                enemyConfComp->m_playDeathSound = false;
+            }
             continue;
         }
         enemyMapComp = stairwayToComponentManager().searchComponentByType<MapCoordComponent>(
