@@ -40,6 +40,9 @@ Sprite = SpriteBackStars
 SpriteWeightGame = 0.4
 SpriteHeightGame = 0.6
 
+[WallBackroom]
+Sprite = SpriteWallBackroom
+
 [WallA]
 Sprite = SpriteWallMetalCol
 
