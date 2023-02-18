@@ -41,12 +41,24 @@ SpriteWeightGame = 0.4
 SpriteHeightGame = 0.6
 
 [WallA]
-Sprite = SpriteWallA SpriteWallB 
+Sprite = SpriteWallMetalCol
 
-[WallB]
-Sprite = SpriteWallB
+[WallD]
+Sprite = SpriteMetalGroundA
 
 [WallC]
+Sprite = SpriteMetalGroundB
+
+[WallB]
+Sprite = SpriteWallLight
+
+[WallOldA]
+Sprite = SpriteWallA SpriteWallB 
+
+[WallOldB]
+Sprite = SpriteWallB
+
+[WallOldC]
 Sprite = SpriteWallC
 
 [WallScreen]
@@ -57,15 +69,15 @@ Time = 0.5 1.5
 Sprite = SpriteSimetraLogo
 
 [DoorVertical]
-Sprite = SpriteDoorA
+Sprite = SpriteMetalDoor
 Vertical = true
 
 [DoorHorizontal]
-Sprite = SpriteDoorA
+Sprite = SpriteMetalDoor
 Vertical = false
 
 [DoorCardV]
-Sprite = SpriteDoorA
+Sprite = SpriteMetalDoor
 Vertical = true
 CardID = ObjectPurpleCard
 
