@@ -2294,6 +2294,7 @@ void MainEngine::clearCheckpointData()
     {
         m_memCustomLevelLoadedData->m_checkpointLevelData = std::nullopt;
     }
+    m_memCheckpointData.reset();
 }
 
 //===================================================================
