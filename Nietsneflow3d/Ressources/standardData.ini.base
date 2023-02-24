@@ -3,7 +3,7 @@ PickUpObjectSound = PickObject.wav
 DoorOpeningSound = DoorOpening.wav
 HitSound = Hit.wav
 TeleportSound = Teleport.wav
-PlayerDeathSound = Death.flac
+PlayerDeathSound = Death.wav
 TriggerSound = Trigger.flac
 
 [GraphicUtils]
@@ -113,7 +113,7 @@ traversable = false
 NormalBehaviourSound = Roar.wav
 DetectBehaviourSound = DemonDetect.wav
 AttackSound = DemonAttack.wav
-DeathSound = DeathRobot.flac
+DeathSound = DeathRobot.wav
 FrozenOnAttack = false
 
 [EnemyCyberDemon]
@@ -138,7 +138,7 @@ traversable = false
 NormalBehaviourSound = Roar.wav
 DetectBehaviourSound = DemonDetect.wav
 AttackSound = DemonAttack.wav
-DeathSound = Death3.flac
+DeathSound = Death3.wav
 FrozenOnAttack = false
 
 [EnemyBaronHell]
@@ -165,7 +165,7 @@ traversable = false
 NormalBehaviourSound = Roar.wav
 DetectBehaviourSound = DemonDetect.wav
 AttackSound = DemonAttack.wav
-DeathSound = Death2.flac
+DeathSound = Death2.wav
 FrozenOnAttack = false
 
 
@@ -193,7 +193,7 @@ traversable = false
 NormalBehaviourSound = Roar.wav
 DetectBehaviourSound = DemonDetect.wav
 AttackSound = DemonAttack.wav
-DeathSound = Death4.flac
+DeathSound = Death4.wav
 FrozenOnAttack = false
 
 
@@ -220,7 +220,7 @@ traversable = false
 NormalBehaviourSound = Roar.wav
 DetectBehaviourSound = DemonDetect.wav
 AttackSound = DemonAttack.wav
-DeathSound = Death1.flac
+DeathSound = Death1.wav
 FrozenOnAttack = true
 
 
@@ -248,7 +248,7 @@ traversable = false
 NormalBehaviourSound = Roar.wav
 DetectBehaviourSound = DemonDetect.wav
 AttackSound = DemonAttack.wav
-DeathSound = Death4.flac
+DeathSound = Death4.wav
 MeleeOnly = true
 FrozenOnAttack = false
 
@@ -276,7 +276,7 @@ traversable = false
 NormalBehaviourSound = Roar.wav
 DetectBehaviourSound = DemonDetect.wav
 AttackSound = DemonAttack.wav
-DeathSound = Death1.flac
+DeathSound = Death1.wav
 FrozenOnAttack = true
 
 
@@ -303,7 +303,7 @@ traversable = false
 NormalBehaviourSound = Roar.wav
 DetectBehaviourSound = DemonDetect.wav
 AttackSound = DemonAttack.wav
-DeathSound = Death4.flac
+DeathSound = Death4.wav
 FrozenOnAttack = true
 
 [WeaponFist]
