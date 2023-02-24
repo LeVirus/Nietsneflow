@@ -37,7 +37,7 @@ public:
     void runIteration(bool gamePaused);
     bool windowShouldClose();
     void updateSaveNum(uint32_t levelNum, uint32_t saveNum, std::optional<uint32_t> checkpointNum,
-                       const std::string &date = "");
+                       const std::string &date = "", bool beginLevel = false);
     void linkSystems(ColorDisplaySystem *colorSystem, MapDisplaySystem *mapSystem,
                      FirstPersonDisplaySystem *firstPersonSystem, VisionSystem *visionSystem,
                      StaticDisplaySystem *staticDisplaySystem);

@@ -28,15 +28,15 @@ void GraphicEngine::loadExistingLevelNumSaves(const std::array<std::optional<Dat
     m_memExistingLevelSave = existingLevelNum;
     m_saveStandardLevelMenuWrite.clear();
     std::string checkpoint;
-    for(uint32_t i = 1; i < 4; ++i)
+    for(uint32_t i = 0; i < 3; ++i)
     {
-        m_saveStandardLevelMenuWrite += std::to_string(i);
-        if(existingLevelNum[i - 1])
+        m_saveStandardLevelMenuWrite += std::to_string(i + 1);
+        if(existingLevelNum[i])
         {
-            checkpoint = (existingLevelNum[i - 1]->m_checkpointNum == 0 || m_restartLevelMode) ? "" :
-                " Chckpt " + std::to_string(existingLevelNum[i - 1]->m_checkpointNum);
-            m_saveStandardLevelMenuWrite += "  Lvl " + std::to_string(existingLevelNum[i - 1]->m_levelNum) +
-                    checkpoint + " " + existingLevelNum[i - 1]->m_date;
+            checkpoint = (existingLevelNum[i]->m_checkpointNum == 0 || m_restartLevelMode) ? "" :
+                " Chckpt " + std::to_string(existingLevelNum[i]->m_checkpointNum);
+            m_saveStandardLevelMenuWrite += "  Lvl " + std::to_string(existingLevelNum[i]->m_levelNum) +
+                    checkpoint + " " + existingLevelNum[i]->m_date;
         }
         m_saveStandardLevelMenuWrite += "\\";
     }
@@ -198,14 +198,18 @@ bool GraphicEngine::windowShouldClose()
 
 //===================================================================
 void GraphicEngine::updateSaveNum(uint32_t levelNum, uint32_t saveNum, std::optional<uint32_t> checkpointNum,
-                                  const std::string &date)
+                                  const std::string &date, bool beginLevel)
 {
     m_memExistingLevelSave[saveNum - 1]->m_levelNum = levelNum;
     if(!date.empty())
     {
         m_memExistingLevelSave[saveNum - 1]->m_date = date;
     }
-    if(checkpointNum)
+    if(beginLevel)
+    {
+        m_memExistingLevelSave[saveNum - 1]->m_checkpointNum = 0;
+    }
+    else if(checkpointNum)
     {
         m_memExistingLevelSave[saveNum - 1]->m_checkpointNum = *checkpointNum;
     }

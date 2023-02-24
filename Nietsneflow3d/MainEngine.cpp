@@ -234,11 +234,11 @@ void MainEngine::initLevel(uint32_t levelNum, LevelState_e levelState)
         m_playerConf->m_currentCheckpoint->first = 0;
         if(levelState == LevelState_e::NEW_GAME)
         {
-            m_graphicEngine.updateSaveNum(levelNum, m_currentSave, 0);
+            m_graphicEngine.updateSaveNum(levelNum, m_currentSave, 0, "", true);
         }
         else if(!m_memCustomLevelLoadedData)
         {
-            m_graphicEngine.updateSaveNum(levelNum, m_currentSave, {});
+            m_graphicEngine.updateSaveNum(levelNum, m_currentSave, {}, "", true);
         }
     }
     //don't load gear for custom level
