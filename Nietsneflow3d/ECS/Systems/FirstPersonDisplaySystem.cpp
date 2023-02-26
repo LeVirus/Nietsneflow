@@ -24,7 +24,8 @@
 #include <chrono>
 
 //===================================================================
-FirstPersonDisplaySystem::FirstPersonDisplaySystem()
+FirstPersonDisplaySystem::FirstPersonDisplaySystem() : m_groundTiledTextVertice(Shader_e::COLORED_TEXTURE_S),
+    m_ceilingTiledVertice(Shader_e::COLORED_TEXTURE_S)
 {
     setUsedComponents();
 }
@@ -552,13 +553,13 @@ VerticesData &FirstPersonDisplaySystem::getClearedVertice(uint32_t index)
     if(index < m_vectWallDoorVerticesData.size())
     {
         m_vectWallDoorVerticesData[index].clear();
-        m_vectWallDoorVerticesData[index].setShaderType(Shader_e::TEXTURE_S);
+        m_vectWallDoorVerticesData[index].setShaderType(Shader_e::COLORED_TEXTURE_S);
     }
     else
     {
         do
         {
-            m_vectWallDoorVerticesData.push_back(VerticesData(Shader_e::TEXTURE_S));
+            m_vectWallDoorVerticesData.push_back(VerticesData(Shader_e::COLORED_TEXTURE_S));
         }
         while(index >= m_vectWallDoorVerticesData.size());
         assert(index < m_vectWallDoorVerticesData.size());
@@ -600,6 +601,18 @@ void FirstPersonDisplaySystem::confNormalEntityVertex(uint32_t numEntity, Vision
     else if(distance < 15.0f)
     {
         distance = 15.0f;
+    }
+    SpriteTextureComponent *spriteComp = stairwayToComponentManager().
+            searchComponentByType<SpriteTextureComponent>(numEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
+    assert(spriteComp);
+    //OOOOOK TEST
+    if(distance < 500.0f)
+    {
+        spriteComp->m_transparency = 0.0f;
+    }
+    else
+    {
+        spriteComp->m_transparency = 0.5f;
     }
     positionComp->m_vertex.resize(4);
     //convert to GL context

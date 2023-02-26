@@ -301,6 +301,7 @@ enum class Shader_e
 {
     COLOR_S,
     TEXTURE_S,
+    COLORED_TEXTURE_S,
     TOTAL_SHADER_S
 };
 
@@ -488,8 +489,9 @@ inline const std::map<MenuMode_e, PairPairFloatStr_t> MAP_MENU_DATA =
 };
 inline const std::map<Shader_e, std::string> SHADER_ID_MAP
 {
-    {Shader_e::COLOR_S, "ceilingFloor"},
-    {Shader_e::TEXTURE_S, "wall"}
+    {Shader_e::COLOR_S, "color"},
+    {Shader_e::TEXTURE_S, "texture"},
+    {Shader_e::COLORED_TEXTURE_S, "coloredTexture"}
 };
 
 inline const std::map<uint32_t, std::string> INPUT_KEYBOARD_KEY_STRING = {
