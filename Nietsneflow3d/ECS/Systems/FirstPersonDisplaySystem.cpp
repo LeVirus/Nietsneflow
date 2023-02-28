@@ -675,6 +675,10 @@ void FirstPersonDisplaySystem::drawVertex()
         for(std::multiset<EntityData>::const_iterator it = m_entitiesNumMem.begin(); it != m_entitiesNumMem.end(); ++it)
         {
             numIteration = it->m_iterationNum;
+            if(m_vectWallDoorVerticesData[numIteration].getNumberOfIndex() == 0)
+            {
+                continue;
+            }
             assert(numIteration < m_vectWallDoorVerticesData.size());
             m_ptrVectTexture->operator[](static_cast<uint32_t>(it->m_textureNum)).bind();
             m_vectWallDoorVerticesData[numIteration].confVertexBuffer();

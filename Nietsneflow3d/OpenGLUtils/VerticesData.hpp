@@ -29,6 +29,10 @@ public:
     inline void setShaderType(Shader_e shaderNum){m_shaderNum = shaderNum;}
     inline const std::vector<float> &getVectVertex()const{return m_vertexBuffer;}
     inline bool empty()const{return m_vertexBuffer.empty();}
+    inline uint32_t getNumberOfIndex()const
+    {
+        return m_indices.size();
+    }
     inline const std::vector<uint32_t> &getVectIndices()const{return m_indices;}
     bool loadVertexColorComponent(const PositionVertexComponent *posComp,
                                   const ColorVertexComponent *colorComp);
@@ -61,7 +65,7 @@ private:
     void bindGLBuffers();
     void attribGLVertexPointer();
     void addTexturePoint(const PairFloat_t &pos, const PairFloat_t &tex);
-    void addColoredTexturePoint(const PairFloat_t &pos, const PairFloat_t &tex, const std::array<float, 4> color);
+    void addColoredTexturePoint(const PairFloat_t &pos/*, const PairFloat_t &tex*/, const std::array<float, 4> &color);
 private:
     std::vector<float> m_vertexBuffer;
     std::vector<uint32_t> m_indices, m_shaderInterpretData;

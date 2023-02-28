@@ -45,7 +45,7 @@ void VerticesData::setVectGLPointer()
         m_shaderInterpretData = {2, 2};
         break;
     case Shader_e::COLORED_TEXTURE_S:
-        m_shaderInterpretData = {2, 2, 4};
+        m_shaderInterpretData = {2, /*2,*/ 4};
         break;
     case Shader_e::TOTAL_SHADER_S:
         assert("Incoherant shader enum.");
@@ -157,17 +157,17 @@ void VerticesData::loadVertexStandardEntityByLine(const PositionVertexComponent 
                 static_cast<float>(i) / static_cast<float>(totalLine) * diffTotalTexturePos;
         assert(spriteComp.m_transparency);
         addColoredTexturePoint({lateralGLPosA, posComp.m_vertex[0].second},
-                               {lateralText, spriteComp.m_spriteData->m_texturePosVertex[0].second},
-                               {1.0f, 1.0f, 0.0f, *spriteComp.m_transparency});
+//                               {lateralText, spriteComp.m_spriteData->m_texturePosVertex[0].second},
+                               {1.0f, 1.0f, 0.0f, 1.0f/**spriteComp.m_transparency*/});
         addColoredTexturePoint({lateralGLPosB, posComp.m_vertex[0].second},
-                               {lateralText, spriteComp.m_spriteData->m_texturePosVertex[1].second},
-                               {1.0f, 1.0f, 0.0f, *spriteComp.m_transparency});
+//                               {lateralText, spriteComp.m_spriteData->m_texturePosVertex[1].second},
+                               {1.0f, 1.0f, 0.0f, 1.0f/**spriteComp.m_transparency*/});
         addColoredTexturePoint({lateralGLPosB, posComp.m_vertex[2].second},
-                               {lateralText, spriteComp.m_spriteData->m_texturePosVertex[2].second},
-                               {1.0f, 1.0f, 0.0f, *spriteComp.m_transparency});
+//                               {lateralText, spriteComp.m_spriteData->m_texturePosVertex[2].second},
+                               {1.0f, 1.0f, 0.0f, 1.0f/**spriteComp.m_transparency*/});
         addColoredTexturePoint({lateralGLPosA, posComp.m_vertex[2].second},
-                               {lateralText, spriteComp.m_spriteData->m_texturePosVertex[3].second},
-                               {1.0f, 1.0f, 0.0f, *spriteComp.m_transparency});
+//                               {lateralText, spriteComp.m_spriteData->m_texturePosVertex[3].second},
+                               {1.0f, 1.0f, 0.0f, 1.0f/**spriteComp.m_transparency*/});
         addIndices(BaseShapeTypeGL_e::RECTANGLE);
     }
 }
@@ -192,14 +192,18 @@ float VerticesData::loadRaycastingEntity(const SpriteTextureComponent &spriteCom
         verticalPos = RAYCAST_VERTICAL_SIZE / (raycastingData[i].m_distance / LEVEL_TILE_SIZE_PX);
         lateralText = spriteComp.m_spriteData->m_texturePosVertex[0].first +
                 (raycastingData[i].m_texturePos / LEVEL_TILE_SIZE_PX) * diffTotalTexturePos;
-        addColoredTexturePoint({lateralGLPosA, verticalPos}, {lateralText, spriteComp.m_spriteData->m_texturePosVertex[0].second},
-                               {1.0f, 1.0f, 0.0f, *spriteComp.m_transparency});
-        addColoredTexturePoint({lateralGLPosB, verticalPos}, {lateralText, spriteComp.m_spriteData->m_texturePosVertex[1].second},
-                               {1.0f, 1.0f, 0.0f, *spriteComp.m_transparency});
-        addColoredTexturePoint({lateralGLPosB, -verticalPos}, {lateralText, spriteComp.m_spriteData->m_texturePosVertex[2].second},
-                               {1.0f, 1.0f, 0.0f, *spriteComp.m_transparency});
-        addColoredTexturePoint({lateralGLPosA, -verticalPos}, {lateralText, spriteComp.m_spriteData->m_texturePosVertex[3].second},
-                               {1.0f, 1.0f, 0.0f, *spriteComp.m_transparency});
+        addColoredTexturePoint({lateralGLPosA, verticalPos},
+                               //{lateralText, spriteComp.m_spriteData->m_texturePosVertex[0].second},
+                               {1.0f, 1.0f, 1.0f, 1.0f/**spriteComp.m_transparency*/});
+        addColoredTexturePoint({lateralGLPosB, verticalPos},
+//                               {lateralText, spriteComp.m_spriteData->m_texturePosVertex[1].second},
+                               {1.0f, 1.0f, 1.0f, 1.0f/**spriteComp.m_transparency*/});
+        addColoredTexturePoint({lateralGLPosB, -verticalPos},
+//                               {lateralText, spriteComp.m_spriteData->m_texturePosVertex[2].second},
+                               {1.0f, 1.0f, 1.0f, 1.0f/**spriteComp.m_transparency*/});
+        addColoredTexturePoint({lateralGLPosA, -verticalPos},
+//                               {lateralText, spriteComp.m_spriteData->m_texturePosVertex[3].second},
+                               {1.0f, 1.0f, 1.0f, 1.0f/**spriteComp.m_transparency*/});
         addIndices(BaseShapeTypeGL_e::RECTANGLE);
         if(raycastingData[i].m_distance > distantDist)
         {
@@ -238,16 +242,16 @@ void VerticesData::loadPointBackgroundRaycasting(const SpriteTextureComponent *s
     PairFloat_t texturePoint = getPointTextureCoord(spriteComp->m_spriteData->m_texturePosVertex,
                                                     textureSize, pairMod);
     m_vertexBuffer.insert(m_vertexBuffer.end(), {GLPosUpLeft.first, GLPosDownRight.second,
-                                                 texturePoint.first, texturePoint.second,
+//                                                 texturePoint.first, texturePoint.second,
                                                  0.5f, 0.5f, 0.5f, 0.5f,
                                                  GLPosDownRight.first, GLPosDownRight.second,
-                                                 texturePoint.first, texturePoint.second,
+//                                                 texturePoint.first, texturePoint.second,
                                                  0.5f, 0.5f, 0.5f, 0.5f,
                                                  GLPosDownRight.first, GLPosUpLeft.second,
-                                                 texturePoint.first, texturePoint.second,
+//                                                 texturePoint.first, texturePoint.second,
                                                  0.5f, 0.5f, 0.5f, 0.5f,
                                                  GLPosUpLeft.first, GLPosUpLeft.second,
-                                                 texturePoint.first, texturePoint.second,
+//                                                 texturePoint.first, texturePoint.second,
                                                  0.5f, 0.5f, 0.5f, 0.5f});
     addIndices(BaseShapeTypeGL_e::RECTANGLE);
 }
@@ -343,9 +347,9 @@ void VerticesData::addTexturePoint(const PairFloat_t &pos, const PairFloat_t &te
 }
 
 //===================================================================
-void VerticesData::addColoredTexturePoint(const PairFloat_t &pos, const PairFloat_t &tex, const std::array<float, 4> color)
+void VerticesData::addColoredTexturePoint(const PairFloat_t &pos/*, const PairFloat_t &tex*/, const std::array<float, 4> &color)
 {
-    m_vertexBuffer.insert(m_vertexBuffer.end(), {pos.first, pos.second, tex.first, tex.second, color[0], color[1], color[2], color[3]});
+    m_vertexBuffer.insert(m_vertexBuffer.end(), {pos.first, pos.second/*, tex.first, tex.second*/, color[0], color[1], color[2], color[3]});
 }
 
 //===================================================================
