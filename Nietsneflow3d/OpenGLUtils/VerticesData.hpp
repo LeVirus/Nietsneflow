@@ -65,7 +65,7 @@ private:
     void bindGLBuffers();
     void attribGLVertexPointer();
     void addTexturePoint(const PairFloat_t &pos, const PairFloat_t &tex);
-    void addColoredTexturePoint(const PairFloat_t &pos/*, const PairFloat_t &tex*/, const std::array<float, 4> &color);
+    void addColoredTexturePoint(const PairFloat_t &pos, const PairFloat_t &tex, const std::array<float, 4> &color);
 private:
     std::vector<float> m_vertexBuffer;
     std::vector<uint32_t> m_indices, m_shaderInterpretData;

@@ -606,7 +606,7 @@ void FirstPersonDisplaySystem::confNormalEntityVertex(uint32_t numEntity, Vision
             searchComponentByType<SpriteTextureComponent>(numEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
     assert(spriteComp);
     //OOOOOK TEST
-    if(distance < 500.0f)
+    if(distance < 100.0f)
     {
         spriteComp->m_transparency = 0.0f;
     }
