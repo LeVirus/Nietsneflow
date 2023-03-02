@@ -12,6 +12,6 @@ struct SpriteTextureComponent : public ecs::Component
         muiTypeComponent = Components_e::SPRITE_TEXTURE_COMPONENT;
     }
     SpriteData const *m_spriteData;
-    std::optional<float> m_transparency;
+    std::optional<float> m_visibilityRate;
     virtual ~SpriteTextureComponent() = default;
 };

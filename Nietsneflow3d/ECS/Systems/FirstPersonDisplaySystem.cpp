@@ -606,13 +606,13 @@ void FirstPersonDisplaySystem::confNormalEntityVertex(uint32_t numEntity, Vision
             searchComponentByType<SpriteTextureComponent>(numEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
     assert(spriteComp);
     //OOOOOK TEST
-    if(distance < 100.0f)
+    if(distance < MIN_DISTANCE_FOG)
     {
-        spriteComp->m_transparency = 0.0f;
+        spriteComp->m_visibilityRate = 1.0f;
     }
     else
     {
-        spriteComp->m_transparency = 0.5f;
+        spriteComp->m_visibilityRate = std::abs(((distance - MIN_DISTANCE_FOG) / TOTAL_DISTANCE_FOG) - 1.0f);
     }
     positionComp->m_vertex.resize(4);
     //convert to GL context
