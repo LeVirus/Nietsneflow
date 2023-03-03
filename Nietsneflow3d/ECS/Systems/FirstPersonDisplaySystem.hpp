@@ -16,7 +16,7 @@ struct RayCastingIntersect;
 struct ElementRaycast;
 
 using vectUI_t = std::vector<uint32_t>;
-using mapRayCastingData_t = std::map<uint32_t, std::vector<RayCastingIntersect>>;
+using MapRayCastingData_t = std::map<uint32_t, std::vector<RayCastingIntersect>>;
 using pairRaycastingData_t = std::pair<uint32_t, std::vector<RayCastingIntersect>>;
 using tupleTargetRaycast_t = std::tuple<PairFloat_t, float, std::optional<uint32_t>>;
 using optionalTargetRaycast_t = std::optional<tupleTargetRaycast_t>;
@@ -110,7 +110,7 @@ private:
     VerticesData m_groundSimpleTextVertice, m_groundTiledTextVertice, m_ceilingSimpleVertice, m_ceilingTiledVertice;
     std::optional<PairFloat_t> m_ceilingTextureSize, m_groundTextureSize;
     std::vector<Texture> *m_ptrVectTexture = nullptr;
-    mapRayCastingData_t m_raycastingData;
+    MapRayCastingData_t m_raycastingData;
     //number of entity to draw per player
     vectUI_t m_numVertexToDraw;
     float m_stepAngle = getRadiantAngle(CONE_VISION / static_cast<float>(RAYCAST_LINE_NUMBER));
@@ -122,6 +122,7 @@ private:
     std::optional<std::array<float, RAYCAST_GROUND_CEILING_NUMBER>> m_memBackgroundDistance;
 };
 
+float getFogIntensity(float distance);
 float getRaycastTexturePos(float radiantObserverAngle, bool lateral, const PairFloat_t &pos);
 float getDoorRaycastTexturePos(float textDoor, float radiantObserverAngle, bool lateral, const PairFloat_t &pos);
 //if player pos is on limit case modify position to prevent display issue

@@ -114,7 +114,7 @@ void FirstPersonDisplaySystem::confCompVertexMemEntities()
         }
         m_memWallEntityDistances.clear();
         //draw wall and door
-        for(mapRayCastingData_t::const_iterator it = m_raycastingData.begin(); it != m_raycastingData.end(); ++it, ++numIteration)
+        for(MapRayCastingData_t::const_iterator it = m_raycastingData.begin(); it != m_raycastingData.end(); ++it, ++numIteration)
         {
             writeVertexWallDoorRaycasting(*it, numIteration);
         }
@@ -605,15 +605,7 @@ void FirstPersonDisplaySystem::confNormalEntityVertex(uint32_t numEntity, Vision
     SpriteTextureComponent *spriteComp = stairwayToComponentManager().
             searchComponentByType<SpriteTextureComponent>(numEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
     assert(spriteComp);
-    //OOOOOK TEST
-    if(distance < MIN_DISTANCE_FOG)
-    {
-        spriteComp->m_visibilityRate = 1.0f;
-    }
-    else
-    {
-        spriteComp->m_visibilityRate = std::abs(((distance - MIN_DISTANCE_FOG) / TOTAL_DISTANCE_FOG) - 1.0f);
-    }
+    spriteComp->m_reverseVisibilityRate = getFogIntensity(distance);
     positionComp->m_vertex.resize(4);
     //convert to GL context
     float distanceFactor = distance / LEVEL_TILE_SIZE_PX;
@@ -1501,7 +1493,7 @@ std::optional<PairUI_t> getCorrectedCoord(const PairFloat_t &currentPoint,
 void FirstPersonDisplaySystem::memRaycastDistance(uint32_t numEntity, uint32_t lateralScreenPos,
                                                   float distance, float texturePos)
 {
-    mapRayCastingData_t::iterator it = m_raycastingData.find(numEntity);
+    MapRayCastingData_t::iterator it = m_raycastingData.find(numEntity);
     if(it == m_raycastingData.end())
     {
         m_raycastingData.insert({numEntity, {{distance, texturePos, lateralScreenPos}}});
@@ -1774,4 +1766,22 @@ float getDoorRaycastTexturePos(float textDoor, float radiantObserverAngle, bool 
 float randFloat(float min, float max)
 {
     return std::fmod(static_cast<float>(std::rand()), max) + min;
+}
+
+//===================================================================
+float getFogIntensity(float distance)
+{
+    if(distance < MIN_DISTANCE_FOG)
+    {
+        return 1.0f;
+    }
+    else
+    {
+        float distFog = distance - MIN_DISTANCE_FOG;
+        if(distFog >= TOTAL_DISTANCE_FOG)
+        {
+            return 0.0f;
+        }
+        return std::abs((distFog / TOTAL_DISTANCE_FOG) - 1.0f);
+    }
 }

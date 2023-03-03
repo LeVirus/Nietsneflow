@@ -13,7 +13,7 @@ struct DoorComponent;
 struct RayCastingIntersect;
 struct WriteComponent;
 
-using mapRayCastingData_t = std::map<uint32_t, std::vector<RayCastingIntersect>>;
+using MapRayCastingData_t = std::map<uint32_t, std::vector<RayCastingIntersect>>;
 using pairRaycastingData_t = std::pair<uint32_t, std::vector<RayCastingIntersect>>;
 
 struct GroundCeililngRayCastingIntersect;

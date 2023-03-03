@@ -156,19 +156,19 @@ void VerticesData::loadVertexStandardEntityByLine(const PositionVertexComponent 
         }
         lateralText = spriteComp.m_spriteData->m_texturePosVertex[0].first +
                 static_cast<float>(i) / static_cast<float>(totalLine) * diffTotalTexturePos;
-        assert(spriteComp.m_visibilityRate);
+        assert(spriteComp.m_reverseVisibilityRate);
         addColoredTexturePoint({lateralGLPosA, posComp.m_vertex[0].second},
         {lateralText, spriteComp.m_spriteData->m_texturePosVertex[0].second},
-        {*spriteComp.m_visibilityRate, *spriteComp.m_visibilityRate, *spriteComp.m_visibilityRate, 1.0f});
+        {*spriteComp.m_reverseVisibilityRate, *spriteComp.m_reverseVisibilityRate, *spriteComp.m_reverseVisibilityRate, 1.0f});
         addColoredTexturePoint({lateralGLPosB, posComp.m_vertex[0].second},
         {lateralText, spriteComp.m_spriteData->m_texturePosVertex[1].second},
-        {*spriteComp.m_visibilityRate, *spriteComp.m_visibilityRate, *spriteComp.m_visibilityRate, 1.0f});
+        {*spriteComp.m_reverseVisibilityRate, *spriteComp.m_reverseVisibilityRate, *spriteComp.m_reverseVisibilityRate, 1.0f});
         addColoredTexturePoint({lateralGLPosB, posComp.m_vertex[2].second},
         {lateralText, spriteComp.m_spriteData->m_texturePosVertex[2].second},
-        {*spriteComp.m_visibilityRate, *spriteComp.m_visibilityRate, *spriteComp.m_visibilityRate, 1.0f});
+        {*spriteComp.m_reverseVisibilityRate, *spriteComp.m_reverseVisibilityRate, *spriteComp.m_reverseVisibilityRate, 1.0f});
         addColoredTexturePoint({lateralGLPosA, posComp.m_vertex[2].second},
         {lateralText, spriteComp.m_spriteData->m_texturePosVertex[3].second},
-        {*spriteComp.m_visibilityRate, *spriteComp.m_visibilityRate, *spriteComp.m_visibilityRate, 1.0f});
+        {*spriteComp.m_reverseVisibilityRate, *spriteComp.m_reverseVisibilityRate, *spriteComp.m_reverseVisibilityRate, 1.0f});
         addIndices(BaseShapeTypeGL_e::RECTANGLE);
     }
 }
@@ -178,6 +178,7 @@ float VerticesData::loadRaycastingEntity(const SpriteTextureComponent &spriteCom
 {
     float lateralGLPosA, lateralGLPosB, verticalPos, lateralText, distantDist = raycastingData[0].m_distance;
     float diffTotalTexturePos = (spriteComp.m_spriteData->m_texturePosVertex[1].first - spriteComp.m_spriteData->m_texturePosVertex[0].first);
+    float fogIntensity;
     for(uint32_t i = 0; i < raycastingData.size(); ++i)
     {
         if(i > 0 && raycastingData[i].m_lateral == raycastingData[i - 1].m_lateral - 1)
@@ -193,19 +194,19 @@ float VerticesData::loadRaycastingEntity(const SpriteTextureComponent &spriteCom
         verticalPos = RAYCAST_VERTICAL_SIZE / (raycastingData[i].m_distance / LEVEL_TILE_SIZE_PX);
         lateralText = spriteComp.m_spriteData->m_texturePosVertex[0].first +
                 (raycastingData[i].m_texturePos / LEVEL_TILE_SIZE_PX) * diffTotalTexturePos;
-        //OOOOK TMP
+        fogIntensity = getFogIntensity(raycastingData[i].m_distance + LEVEL_TILE_SIZE_PX);
         addColoredTexturePoint({lateralGLPosA, verticalPos},
         {lateralText, spriteComp.m_spriteData->m_texturePosVertex[0].second},
-        {1.0f, 1.0f, 1.0f, 1.0f});
+        {fogIntensity, fogIntensity, fogIntensity, 1.0f});
         addColoredTexturePoint({lateralGLPosB, verticalPos},
         {lateralText, spriteComp.m_spriteData->m_texturePosVertex[1].second},
-        {1.0f, 1.0f, 1.0f, 1.0f});
+        {fogIntensity, fogIntensity, fogIntensity, 1.0f});
         addColoredTexturePoint({lateralGLPosB, -verticalPos},
         {lateralText, spriteComp.m_spriteData->m_texturePosVertex[2].second},
-        {1.0f, 1.0f, 1.0f, 1.0f});
+        {fogIntensity, fogIntensity, fogIntensity, 1.0f});
         addColoredTexturePoint({lateralGLPosA, -verticalPos},
         {lateralText, spriteComp.m_spriteData->m_texturePosVertex[3].second},
-        {1.0f, 1.0f, 1.0f, 1.0f});
+        {fogIntensity, fogIntensity, fogIntensity, 1.0f});
         addIndices(BaseShapeTypeGL_e::RECTANGLE);
         if(raycastingData[i].m_distance > distantDist)
         {
@@ -244,16 +245,16 @@ void VerticesData::loadPointBackgroundRaycasting(const SpriteTextureComponent *s
     PairFloat_t texturePoint = getPointTextureCoord(spriteComp->m_spriteData->m_texturePosVertex,
                                                     textureSize, pairMod);
     m_vertexBuffer.insert(m_vertexBuffer.end(), {GLPosUpLeft.first, GLPosDownRight.second,
-                                                 0.5f, 0.5f, 0.5f, 0.5f,
+                                                 0.5f, 0.5f, 0.5f, 1.0f,
                                                  texturePoint.first, texturePoint.second,
                                                  GLPosDownRight.first, GLPosDownRight.second,
-                                                 0.5f, 0.5f, 0.5f, 0.5f,
+                                                 0.5f, 0.5f, 0.5f, 1.0f,
                                                  texturePoint.first, texturePoint.second,
                                                  GLPosDownRight.first, GLPosUpLeft.second,
-                                                 0.5f, 0.5f, 0.5f, 0.5f,
+                                                 0.5f, 0.5f, 0.5f, 1.0f,
                                                  texturePoint.first, texturePoint.second,
                                                  GLPosUpLeft.first, GLPosUpLeft.second,
-                                                 0.5f, 0.5f, 0.5f, 0.5f,
+                                                 0.5f, 0.5f, 0.5f, 1.0f,
                                                  texturePoint.first, texturePoint.second});
     addIndices(BaseShapeTypeGL_e::RECTANGLE);
 }

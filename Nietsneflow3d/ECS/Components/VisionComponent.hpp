@@ -13,7 +13,7 @@ struct VisionComponent : public ecs::Component
         muiTypeComponent = Components_e::VISION_COMPONENT;
     }
     //first point angle ref
-    float m_distanceVisibility = 500.0f;
+    float m_distanceVisibility = MAX_DISTANCE_VIEW;
     std::vector<uint32_t> m_vectVisibleEntities;
     //absolute position
     std::array<PairFloat_t, 3> m_triangleVision;
