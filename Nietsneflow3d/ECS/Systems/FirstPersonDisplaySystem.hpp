@@ -60,13 +60,14 @@ public:
     void execSystem()override;
     void drawPlayerColorEffects();
     void setVectTextures(std::vector<Texture> &vectTexture);
-    void setShader(Shader &shader);
+    void addShaders(Shader &shaderTextColor, Shader &shaderText);
     void memGroundBackgroundEntity(uint32_t entity, bool simpleTexture);
     void memCeilingBackgroundEntity(uint32_t entity, bool simpleTexture);
     void clearBackgroundData();
     //return target point, texture position and entity num if collision
     optionalTargetRaycast_t calcLineSegmentRaycast(float radiantAngle, const PairFloat_t &originPoint, bool visual, bool scratchMode = false);
 private:
+    void setShader(Shader &shader);
     optionalTargetRaycast_t calcDoorSegmentRaycast(float radiantAngle, std::optional<float> lateralLeadCoef,
                                                    std::optional<float> verticalLeadCoef, PairFloat_t &currentPoint,
                                                    const ElementRaycast &element);
@@ -120,6 +121,8 @@ private:
     bool m_backgroundRaycastActive = false, m_groundCeilingSimpleTextureActive = false;
     std::array<float, RAYCAST_LINE_NUMBER> m_memRaycastDist;
     std::optional<std::array<float, RAYCAST_GROUND_CEILING_NUMBER>> m_memBackgroundDistance;
+    //first coloredTexture, second texture
+    std::pair<Shader*, Shader*> m_memShaders;
 };
 
 float getFogIntensity(float distance);

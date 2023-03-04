@@ -24,7 +24,8 @@
 #include <chrono>
 
 //===================================================================
-FirstPersonDisplaySystem::FirstPersonDisplaySystem() : m_groundTiledTextVertice(Shader_e::COLORED_TEXTURE_S),
+FirstPersonDisplaySystem::FirstPersonDisplaySystem() :
+    m_groundTiledTextVertice(Shader_e::COLORED_TEXTURE_S),
     m_ceilingTiledVertice(Shader_e::COLORED_TEXTURE_S)
 {
     setUsedComponents();
@@ -687,6 +688,7 @@ void FirstPersonDisplaySystem::drawTextureBackground()
         SpriteTextureComponent *spriteComp = stairwayToComponentManager().
                 searchComponentByType<SpriteTextureComponent>(*m_groundSimpleTextBackground, Components_e::SPRITE_TEXTURE_COMPONENT);
         assert(spriteComp);
+        setShader(*m_memShaders.second);
         m_ptrVectTexture->operator[](static_cast<uint32_t>(spriteComp->m_spriteData->m_textureNum)).bind();
         m_groundSimpleTextVertice.confVertexBuffer();
         m_groundSimpleTextVertice.drawElement();
@@ -696,10 +698,12 @@ void FirstPersonDisplaySystem::drawTextureBackground()
         SpriteTextureComponent *spriteComp = stairwayToComponentManager().
                 searchComponentByType<SpriteTextureComponent>(*m_ceilingSimpleTextBackground, Components_e::SPRITE_TEXTURE_COMPONENT);
         assert(spriteComp);
+        setShader(*m_memShaders.second);
         m_ptrVectTexture->operator[](static_cast<uint32_t>(spriteComp->m_spriteData->m_textureNum)).bind();
         m_ceilingSimpleVertice.confVertexBuffer();
         m_ceilingSimpleVertice.drawElement();
     }
+    setShader(*m_memShaders.first);
     if(m_groundTiledTextBackground)
     {
         SpriteTextureComponent *spriteComp = stairwayToComponentManager().
@@ -721,9 +725,17 @@ void FirstPersonDisplaySystem::drawTextureBackground()
 }
 
 //===================================================================
+void FirstPersonDisplaySystem::addShaders(Shader &shaderTextColor, Shader &shaderText)
+{
+    m_memShaders = {&shaderTextColor, &shaderText};
+    setShader(*m_memShaders.first);
+}
+
+//===================================================================
 void FirstPersonDisplaySystem::setShader(Shader &shader)
 {
     m_shader = &shader;
+    m_shader->use();
 }
 
 //===================================================================

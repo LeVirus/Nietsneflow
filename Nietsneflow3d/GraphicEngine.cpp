@@ -684,7 +684,8 @@ void GraphicEngine::setShaderToLocalSystems()
     assert(m_mapSystem && "mapSystem is null");
     m_colorSystem->setShader(m_vectShader[static_cast<uint32_t>(Shader_e::COLOR_S)]);
     m_mapSystem->setShader(m_vectShader[static_cast<uint32_t>(Shader_e::TEXTURE_S)]);
-    m_firstPersonSystem->setShader(m_vectShader[static_cast<uint32_t>(Shader_e::COLORED_TEXTURE_S)]);
+    m_firstPersonSystem->addShaders(m_vectShader[static_cast<uint32_t>(Shader_e::COLORED_TEXTURE_S)],
+            m_vectShader[static_cast<uint32_t>(Shader_e::TEXTURE_S)]);
     m_staticDisplaySystem->setShader(m_vectShader[static_cast<uint32_t>(Shader_e::TEXTURE_S)]);
 }
 
