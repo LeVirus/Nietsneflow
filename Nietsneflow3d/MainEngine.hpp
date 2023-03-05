@@ -261,6 +261,7 @@ private:
     void confMenuBarMenuEntity(uint32_t musicEntity, uint32_t effectEntity, uint32_t turnSensitivity);
     void confUnifiedColorEntity(uint32_t entityNum, const tupleFloat_t &color, bool transparent);
     void loadBackgroundEntities(const GroundCeilingData &groundData, const GroundCeilingData &backgroundData, const LevelManager &levelManager);
+    void loadFogEntities();
     void confColorBackgroundComponents(uint32_t entity, const GroundCeilingData &groundData, bool ground);
     void confGroundSimpleTextBackgroundComponents(uint32_t entity, const GroundCeilingData &groundData, const std::vector<SpriteData> &vectSprite);
     void confCeilingSimpleTextBackgroundComponents(uint32_t entity, const GroundCeilingData &groundData, const std::vector<SpriteData> &vectSprite);
@@ -366,6 +367,10 @@ private:
     inline void memColorSystemEntity(uint32_t entity)
     {
         m_graphicEngine.memColorSystemEntity(entity);
+    }
+    inline void memFogColorEntity(uint32_t entityGround, uint32_t entityCeiling)
+    {
+        m_graphicEngine.memFogColorEntity(entityGround, entityCeiling);
     }
     inline void memCeilingBackgroundFPSSystemEntity(uint32_t entity, bool simpleTexture)
     {

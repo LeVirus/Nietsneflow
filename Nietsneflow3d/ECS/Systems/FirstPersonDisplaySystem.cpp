@@ -722,6 +722,9 @@ void FirstPersonDisplaySystem::drawTextureBackground()
         m_ceilingTiledVertice.confVertexBuffer();
         m_ceilingTiledVertice.drawElement();
     }
+    mptrSystemManager->searchSystemByType<ColorDisplaySystem>(
+                static_cast<uint32_t>(Systems_e::COLOR_DISPLAY_SYSTEM))->drawBackgroundFog();
+    setShader(*m_memShaders.first);
 }
 
 //===================================================================

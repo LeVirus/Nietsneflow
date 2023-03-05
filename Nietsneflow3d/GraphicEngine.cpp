@@ -593,6 +593,12 @@ void GraphicEngine::memColorSystemEntity(uint32_t entity)
 }
 
 //===================================================================
+void GraphicEngine::memFogColorEntity(uint32_t entityGround, uint32_t entityCeiling)
+{
+    m_colorSystem->addFogColorEntity(entityGround, entityCeiling);
+}
+
+//===================================================================
 void GraphicEngine::memGroundBackgroundFPSSystemEntity(uint32_t entity, bool simpleTexture)
 {
     m_firstPersonSystem->memGroundBackgroundEntity(entity, simpleTexture);

@@ -66,6 +66,29 @@ void ColorDisplaySystem::addColorSystemEntity(uint32_t entity)
 }
 
 //===================================================================
+void ColorDisplaySystem::addFogColorEntity(uint32_t entityGround, uint32_t entityCeiling)
+{
+    PositionVertexComponent *posComp = stairwayToComponentManager().
+            searchComponentByType<PositionVertexComponent>(entityGround,
+                                                           Components_e::POSITION_VERTEX_COMPONENT);
+    ColorVertexComponent *colorComp = stairwayToComponentManager().
+            searchComponentByType<ColorVertexComponent>(entityGround,
+                                                        Components_e::COLOR_VERTEX_COMPONENT);
+    assert(posComp);
+    assert(colorComp);
+    m_groundFogComponent = {posComp, colorComp};
+    posComp = stairwayToComponentManager().
+            searchComponentByType<PositionVertexComponent>(entityCeiling,
+                                                           Components_e::POSITION_VERTEX_COMPONENT);
+    colorComp = stairwayToComponentManager().
+            searchComponentByType<ColorVertexComponent>(entityCeiling,
+                                                        Components_e::COLOR_VERTEX_COMPONENT);
+    assert(posComp);
+    assert(colorComp);
+    m_ceilingFogComponent = {posComp, colorComp};
+}
+
+//===================================================================
 void ColorDisplaySystem::loadColorEntities(uint32_t damage, uint32_t getObject, uint32_t transition, uint32_t scratchEntity,
                                            uint32_t musicVolume, uint32_t effectVolume, uint32_t turnSensitivity)
 {
@@ -119,6 +142,13 @@ void ColorDisplaySystem::drawEntity(const PositionVertexComponent *posComp, cons
     m_verticesData.clear();
     m_verticesData.loadVertexColorComponent(posComp, colorComp);
     drawVertex();
+}
+
+//===================================================================
+void ColorDisplaySystem::drawBackgroundFog()
+{
+    drawEntity(m_groundFogComponent.first, m_groundFogComponent.second);
+    drawEntity(m_ceilingFogComponent.first, m_ceilingFogComponent.second);
 }
 
 //===================================================================
