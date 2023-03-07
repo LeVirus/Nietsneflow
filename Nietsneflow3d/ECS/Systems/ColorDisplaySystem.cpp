@@ -66,26 +66,17 @@ void ColorDisplaySystem::addColorSystemEntity(uint32_t entity)
 }
 
 //===================================================================
-void ColorDisplaySystem::addFogColorEntity(uint32_t entityGround, uint32_t entityCeiling)
+void ColorDisplaySystem::addFogColorEntity(uint32_t entity)
 {
     PositionVertexComponent *posComp = stairwayToComponentManager().
-            searchComponentByType<PositionVertexComponent>(entityGround,
+            searchComponentByType<PositionVertexComponent>(entity,
                                                            Components_e::POSITION_VERTEX_COMPONENT);
     ColorVertexComponent *colorComp = stairwayToComponentManager().
-            searchComponentByType<ColorVertexComponent>(entityGround,
+            searchComponentByType<ColorVertexComponent>(entity,
                                                         Components_e::COLOR_VERTEX_COMPONENT);
     assert(posComp);
     assert(colorComp);
-    m_groundFogComponent = {posComp, colorComp};
-    posComp = stairwayToComponentManager().
-            searchComponentByType<PositionVertexComponent>(entityCeiling,
-                                                           Components_e::POSITION_VERTEX_COMPONENT);
-    colorComp = stairwayToComponentManager().
-            searchComponentByType<ColorVertexComponent>(entityCeiling,
-                                                        Components_e::COLOR_VERTEX_COMPONENT);
-    assert(posComp);
-    assert(colorComp);
-    m_ceilingFogComponent = {posComp, colorComp};
+    m_fogComponent = {posComp, colorComp};
 }
 
 //===================================================================
@@ -147,8 +138,7 @@ void ColorDisplaySystem::drawEntity(const PositionVertexComponent *posComp, cons
 //===================================================================
 void ColorDisplaySystem::drawBackgroundFog()
 {
-    drawEntity(m_groundFogComponent.first, m_groundFogComponent.second);
-    drawEntity(m_ceilingFogComponent.first, m_ceilingFogComponent.second);
+    drawEntity(m_fogComponent.first, m_fogComponent.second);
 }
 
 //===================================================================

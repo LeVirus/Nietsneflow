@@ -14,7 +14,7 @@ public:
     void execSystem()override;
     void setShader(Shader &shader);
     void addColorSystemEntity(uint32_t entity);
-    void addFogColorEntity(uint32_t entityGround, uint32_t entityCeiling);
+    void addFogColorEntity(uint32_t entity);
     void drawBackgroundFog();
     void loadColorEntities(uint32_t damage, uint32_t getObject, uint32_t transition, uint32_t scratchEntity, uint32_t musicVolume, uint32_t effectVolume, uint32_t turnSensitivity);
     void drawEntity(const PositionVertexComponent *posComp, const ColorVertexComponent *colorComp);
@@ -50,6 +50,5 @@ private:
     m_menuEffectsVolumeComponents = {nullptr, nullptr},
     m_menuTurnSensitivityComponents = {nullptr, nullptr},
     m_insideWallScratchMemComponents = {nullptr, nullptr},
-    m_groundFogComponent = {nullptr, nullptr},
-    m_ceilingFogComponent = {nullptr, nullptr};
+    m_fogComponent = {nullptr, nullptr};
 };

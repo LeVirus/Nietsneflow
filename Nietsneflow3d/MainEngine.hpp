@@ -368,9 +368,9 @@ private:
     {
         m_graphicEngine.memColorSystemEntity(entity);
     }
-    inline void memFogColorEntity(uint32_t entityGround, uint32_t entityCeiling)
+    inline void memFogColorEntity(uint32_t entity)
     {
-        m_graphicEngine.memFogColorEntity(entityGround, entityCeiling);
+        m_graphicEngine.memFogColorEntity(entity);
     }
     inline void memCeilingBackgroundFPSSystemEntity(uint32_t entity, bool simpleTexture)
     {

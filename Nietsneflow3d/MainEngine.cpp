@@ -959,43 +959,50 @@ void MainEngine::loadBackgroundEntities(const GroundCeilingData &groundData, con
 //===================================================================
 void MainEngine::loadFogEntities()
 {
-    uint32_t entityG = createBackgroundEntity(true),
-    entityC = createBackgroundEntity(true);
+    uint32_t entity = createBackgroundEntity(true);
     //GROUND
     PositionVertexComponent *posComp = m_ecsManager.getComponentManager().
-            searchComponentByType<PositionVertexComponent>(entityG, Components_e::POSITION_VERTEX_COMPONENT);
+            searchComponentByType<PositionVertexComponent>(entity, Components_e::POSITION_VERTEX_COMPONENT);
     assert(posComp);
     ColorVertexComponent *colorComp = m_ecsManager.getComponentManager().
-            searchComponentByType<ColorVertexComponent>(entityG, Components_e::COLOR_VERTEX_COMPONENT);
+            searchComponentByType<ColorVertexComponent>(entity, Components_e::COLOR_VERTEX_COMPONENT);
     assert(colorComp);
-    posComp->m_vertex.reserve(4);
-    posComp->m_vertex.emplace_back(-1.0f, 0.0f);
-    posComp->m_vertex.emplace_back(1.0f, 0.0f);
-    posComp->m_vertex.emplace_back(1.0f, -0.5f);
-    posComp->m_vertex.emplace_back(-1.0f, -0.5f);
-    colorComp->m_vertex.reserve(4);
-    colorComp->m_vertex.emplace_back(0.0f, 0.0f, 0.0f, 1.0f);
-    colorComp->m_vertex.emplace_back(0.0f, 0.0f, 0.0f, 1.0f);
-    colorComp->m_vertex.emplace_back(0.0f, 0.0f, 0.0f, 0.0f);
-    colorComp->m_vertex.emplace_back(0.0f, 0.0f, 0.0f, 0.0f);
-    //CEILING
-    posComp = m_ecsManager.getComponentManager().
-            searchComponentByType<PositionVertexComponent>(entityC, Components_e::POSITION_VERTEX_COMPONENT);
-    assert(posComp);
-    colorComp = m_ecsManager.getComponentManager().
-            searchComponentByType<ColorVertexComponent>(entityC, Components_e::COLOR_VERTEX_COMPONENT);
-    assert(colorComp);
-    posComp->m_vertex.reserve(4);
-    posComp->m_vertex.emplace_back(-1.0f, 0.5f);
-    posComp->m_vertex.emplace_back(1.0f, 0.5f);
-    posComp->m_vertex.emplace_back(1.0f, 0.0f);
-    posComp->m_vertex.emplace_back(-1.0f, 0.0f);
-    colorComp->m_vertex.reserve(4);
+    //ceiling + dark fog middle + Ground
+    posComp->m_vertex.reserve(12);
+    colorComp->m_vertex.reserve(12);
+    //ceiling
+    posComp->m_vertex.emplace_back(-1.0f, 0.3f);
+    posComp->m_vertex.emplace_back(1.0f, 0.3f);
+    posComp->m_vertex.emplace_back(1.0f, 0.12f);
+    posComp->m_vertex.emplace_back(-1.0f, 0.12f);
+
     colorComp->m_vertex.emplace_back(0.0f, 0.0f, 0.0f, 0.0f);
     colorComp->m_vertex.emplace_back(0.0f, 0.0f, 0.0f, 0.0f);
     colorComp->m_vertex.emplace_back(0.0f, 0.0f, 0.0f, 1.0f);
     colorComp->m_vertex.emplace_back(0.0f, 0.0f, 0.0f, 1.0f);
-    memFogColorEntity(entityG, entityC);
+
+    //fog
+    posComp->m_vertex.emplace_back(-1.0f, 0.12f);
+    posComp->m_vertex.emplace_back(1.0f, 0.12f);
+    posComp->m_vertex.emplace_back(1.0f, -0.12f);
+    posComp->m_vertex.emplace_back(-1.0f, -0.12f);
+
+    colorComp->m_vertex.emplace_back(0.0f, 0.0f, 0.0f, 1.0f);
+    colorComp->m_vertex.emplace_back(0.0f, 0.0f, 0.0f, 1.0f);
+    colorComp->m_vertex.emplace_back(0.0f, 0.0f, 0.0f, 1.0f);
+    colorComp->m_vertex.emplace_back(0.0f, 0.0f, 0.0f, 1.0f);
+
+    //ground
+    posComp->m_vertex.emplace_back(-1.0f, -0.12f);
+    posComp->m_vertex.emplace_back(1.0f, -0.12f);
+    posComp->m_vertex.emplace_back(1.0f, -0.3f);
+    posComp->m_vertex.emplace_back(-1.0f, -0.3f);
+
+    colorComp->m_vertex.emplace_back(0.0f, 0.0f, 0.0f, 1.0f);
+    colorComp->m_vertex.emplace_back(0.0f, 0.0f, 0.0f, 1.0f);
+    colorComp->m_vertex.emplace_back(0.0f, 0.0f, 0.0f, 0.0f);
+    colorComp->m_vertex.emplace_back(0.0f, 0.0f, 0.0f, 0.0f);
+    memFogColorEntity(entity);
 }
 
 //===================================================================

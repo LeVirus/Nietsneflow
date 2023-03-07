@@ -65,6 +65,7 @@ bool VerticesData::loadVertexColorComponent(const PositionVertexComponent *posCo
     }
     assert(posComp && "Position component is Null.");
     assert(colorComp && "Color component is Null.");
+    assert(posComp->m_vertex.size() == colorComp->m_vertex.size() && "Color and Pos Component does not match.");
     size_t sizeVertex = posComp->m_vertex.size();
     for(uint32_t j = 0; j < sizeVertex; ++j)
     {
@@ -74,6 +75,16 @@ bool VerticesData::loadVertexColorComponent(const PositionVertexComponent *posCo
         m_vertexBuffer.emplace_back(std::get<1>(colorComp->m_vertex[j]));
         m_vertexBuffer.emplace_back(std::get<2>(colorComp->m_vertex[j]));
         m_vertexBuffer.emplace_back(std::get<3>(colorComp->m_vertex[j]));
+    }
+    if(sizeVertex > 4)
+    {
+        assert(sizeVertex % 4 == 0);
+        uint32_t rectNumber = sizeVertex / 4;
+        for(uint32_t j = 0; j < rectNumber; ++j)
+        {
+            addIndices(BaseShapeTypeGL_e::RECTANGLE);
+        }
+        return true;
     }
     BaseShapeTypeGL_e shapeType = (sizeVertex == 3 ? BaseShapeTypeGL_e::TRIANGLE : BaseShapeTypeGL_e::RECTANGLE);
     addIndices(shapeType);

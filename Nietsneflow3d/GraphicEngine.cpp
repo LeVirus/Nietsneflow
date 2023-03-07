@@ -593,9 +593,9 @@ void GraphicEngine::memColorSystemEntity(uint32_t entity)
 }
 
 //===================================================================
-void GraphicEngine::memFogColorEntity(uint32_t entityGround, uint32_t entityCeiling)
+void GraphicEngine::memFogColorEntity(uint32_t entity)
 {
-    m_colorSystem->addFogColorEntity(entityGround, entityCeiling);
+    m_colorSystem->addFogColorEntity(entity);
 }
 
 //===================================================================

@@ -128,7 +128,7 @@ public:
     void updateTurnSensitivityBar(uint32_t turnSensitivity);
     void clearSystems();
     void memColorSystemEntity(uint32_t entity);
-    void memFogColorEntity(uint32_t entityGround, uint32_t entityCeiling);
+    void memFogColorEntity(uint32_t entity);
     void memGroundBackgroundFPSSystemEntity(uint32_t entity, bool simpleTexture);
     void memCeilingBackgroundFPSSystemEntity(uint32_t entity, bool simpleTexture);
     void setTransition(bool gamePaused, bool redTransition = false);
