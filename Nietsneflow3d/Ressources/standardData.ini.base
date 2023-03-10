@@ -165,7 +165,7 @@ traversable = false
 NormalBehaviourSound = Roar.wav
 DetectBehaviourSound = DemonDetect.wav
 AttackSound = DemonAttack.wav
-DeathSound = Death2.wav
+DeathSound = Death3.wav
 FrozenOnAttack = false
 
 
