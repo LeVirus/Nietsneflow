@@ -84,6 +84,41 @@ Sprite = SpriteMetalDoor
 Vertical = true
 CardID = ObjectPurpleCard
 
+[DoorCardPurpleH]
+Sprite = SpriteMetalDoor
+Vertical = false
+CardID = ObjectPurpleCard
+
+[DoorCardGreenV]
+Sprite = SpriteMetalDoor
+Vertical = true
+CardID = ObjectGreenCard
+
+[DoorCardGreenH]
+Sprite = SpriteMetalDoor
+Vertical = false
+CardID = ObjectGreenCard
+
+[DoorCardBlueV]
+Sprite = SpriteMetalDoor
+Vertical = true
+CardID = ObjectBlueCard
+
+[DoorCardBlueH]
+Sprite = SpriteMetalDoor
+Vertical = false
+CardID = ObjectBlueCard
+
+[DoorCardGoldV]
+Sprite = SpriteMetalDoor
+Vertical = true
+CardID = ObjectGoldCard
+
+[DoorCardGoldH]
+Sprite = SpriteMetalDoor
+Vertical = false
+CardID = ObjectGoldCard
+
 [TriggerA]
 Sprite = SpriteTriggerA
 SpriteWeightGame = 0.4
