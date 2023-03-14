@@ -330,10 +330,7 @@ void DoorWallSystem::switchToNextPhaseMoveWall(uint32_t wallEntity, MapCoordComp
                                                const PairUI_t &previousPos)
 {
     bool autoMode = (moveWallComp->m_triggerBehaviour == TriggerBehaviourType_e::AUTO);
-    if(!autoMode)
-    {
-        Level::resetMoveWallElementCase(previousPos, moveWallComp->muiGetIdEntityAssociated());
-    }
+    Level::resetMoveWallElementCase(previousPos, moveWallComp->muiGetIdEntityAssociated());
     moveWallComp->m_initPos = true;
     if(++moveWallComp->m_currentMove == moveWallComp->m_directionMove[moveWallComp->m_currentPhase].second)
     {

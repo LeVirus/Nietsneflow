@@ -1,6 +1,9 @@
 BUGS======================================================================
 
 ))
+Assert on audioengine l 113~ when reload from checkpoint
+
+))
 Demon does not display==============OK~~
 
 ))
@@ -10,7 +13,7 @@ Demon too big
 Crash when press alt F4
 
 ))
-Issue raycast display when moveable wall travers static wall
+Issue raycast display when moveable wall travers static wall====================OK
 
 ))
 When pass custom level, if reload level go back to previous level=============OK
