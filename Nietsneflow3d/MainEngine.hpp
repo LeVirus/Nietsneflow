@@ -90,6 +90,13 @@ struct MemCustomLevelLoadedData
     std::optional<MemCheckpointElementsState> m_checkpointLevelData;
 };
 
+struct MemSoundElement
+{
+    std::optional<SoundElement> m_teleports, m_barrels, m_damageZone;
+    std::optional<std::array<SoundElement, 4>> m_enemies;
+    std::optional<std::map<std::string, SoundElement>> m_visibleShots;
+};
+
 struct LevelState
 {
     LevelState_e m_levelState;
@@ -251,6 +258,7 @@ public:
     void savePlayerGear(bool beginLevel);
     void unsetFirstLaunch();
 private:
+    void clearMemSoundElements();
     void initLevel(uint32_t levelNum, LevelState_e levelState);
     void memCustomLevelRevealedMap();
     void saveEnemiesCheckpoint();
@@ -294,7 +302,7 @@ private:
     void loadDoorEntities(const LevelManager &levelManager);
     bool loadEnemiesEntities(const LevelManager &levelManager);
     bool createEnemy(const LevelManager &levelManager, const SpriteData &memSpriteData, const EnemyData &enemyData,
-                         float collisionRay, bool loadFromCheckpoint, uint32_t index);
+                         float collisionRay, bool loadFromCheckpoint, uint32_t index, const std::array<SoundElement, 4> &soundElements);
     void loadNonVisibleEnemyAmmoStuff(bool loadFromCheckpoint, uint32_t currentEnemy,
                                       const EnemyData &enemyData, const LevelManager &levelManager,
                                       EnemyConfComponent *enemyComp);
@@ -334,7 +342,7 @@ private:
     uint32_t confObjectEntity(const StaticLevelElementData &objectData);
     uint32_t confTeleportEntity(const StaticLevelElementData &teleportData, uint32_t iterationNum, const std::string &soundFile);
     uint32_t createMeleeAttackEntity(bool sound = false);
-    uint32_t createDamageZoneEntity(uint32_t damage, CollisionTag_e tag, float ray = 10.0f, const std::string soundFile = "");
+    uint32_t createDamageZoneEntity(uint32_t damage, CollisionTag_e tag, float ray = 10.0f, const std::string &soundFile = "");
     uint32_t loadWeaponsEntity(const LevelManager &levelManager);
     uint32_t createBackgroundEntity(bool color);
     uint32_t createWeaponEntity();
@@ -417,6 +425,7 @@ private:
     std::unique_ptr<MemCustomLevelLoadedData> m_memCustomLevelLoadedData;
     std::optional<MemCheckpointLevelState> m_memCheckpointLevelState;
     std::optional<MemCheckpointElementsState> m_memCheckpointData;
+    MemSoundElement m_memSoundElements;
 };
 
 float getTopEpilogueVerticalPosition(WriteComponent const *writeComp);

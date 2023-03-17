@@ -412,6 +412,16 @@ void MainEngine::unsetFirstLaunch()
 }
 
 //===================================================================
+void MainEngine::clearMemSoundElements()
+{
+    m_memSoundElements.m_teleports = std::nullopt;
+    m_memSoundElements.m_enemies = std::nullopt;
+    m_memSoundElements.m_barrels = std::nullopt;
+    m_memSoundElements.m_damageZone = std::nullopt;
+    m_memSoundElements.m_visibleShots = std::nullopt;
+}
+
+//===================================================================
 void MainEngine::loadPlayerGear(bool beginLevel)
 {
     assert(m_playerConf);
@@ -649,6 +659,7 @@ void MainEngine::clearLevel()
     m_memTriggerCreated.clear();
     m_ecsManager.getEngine().RmAllEntity();
     m_memWall.clear();
+    clearMemSoundElements();
 }
 
 //===================================================================
@@ -1402,6 +1413,7 @@ void MainEngine::loadDoorEntities(const LevelManager &levelManager)
     MemSpriteDataComponent *memSpriteComp;
     const std::vector<SpriteData> &vectSprite = levelManager.getPictureData().getSpriteData();
     std::map<std::string, DoorData>::const_iterator it = doorData.begin();
+    SoundElement currentSoundElement = loadSound(levelManager.getDoorOpeningSoundFile());
     for(; it != doorData.end(); ++it)
     {
         const SpriteData &memSpriteData = levelManager.getPictureData().getSpriteData()[it->second.m_numSprite];
@@ -1426,7 +1438,7 @@ void MainEngine::loadDoorEntities(const LevelManager &levelManager)
                     searchComponentByType<TimerComponent>(numEntity, Components_e::TIMER_COMPONENT);
             assert(audioComp);
             timerComp->m_cycleCountA = 0;
-            audioComp->m_soundElements.push_back(loadSound(levelManager.getDoorOpeningSoundFile()));
+            audioComp->m_soundElements.push_back(currentSoundElement);
             if(it->second.m_vertical)
             {
                 mapComp->m_absoluteMapPositionPX.first += DOOR_CASE_POS_PX;
@@ -1477,17 +1489,22 @@ bool MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
     const std::map<std::string, EnemyData> &enemiesData = levelManager.getEnemiesData();
     float collisionRay;
     bool exit = false;
+    std::array<SoundElement, 4> currentSoundElements;
     bool loadFromCheckpoint = (!m_memEnemiesStateFromCheckpoint.empty());
     m_currentLevelEnemiesNumber = 0;
     m_currentLevelEnemiesKilled = 0;
     for(std::map<std::string, EnemyData>::const_iterator it = enemiesData.begin(); it != enemiesData.end(); ++it)
     {
+        currentSoundElements[0] = loadSound(it->second.m_normalBehaviourSoundFile);
+        currentSoundElements[1] = loadSound(it->second.m_detectBehaviourSoundFile);
+        currentSoundElements[2] = loadSound(it->second.m_attackSoundFile);
+        currentSoundElements[3] = loadSound(it->second.m_deathSoundFile);
         collisionRay = it->second.m_inGameSpriteSize.first * LEVEL_TWO_THIRD_TILE_SIZE_PX;
         const SpriteData &memSpriteData = levelManager.getPictureData().
                 getSpriteData()[it->second.m_staticFrontSprites[0]];
         for(uint32_t j = 0; j < it->second.m_TileGamePosition.size(); ++j)
         {
-            exit |= createEnemy(levelManager, memSpriteData, it->second, collisionRay, loadFromCheckpoint, j);
+            exit |= createEnemy(levelManager, memSpriteData, it->second, collisionRay, loadFromCheckpoint, j, currentSoundElements);
         }
     }
     return exit;
@@ -1495,7 +1512,7 @@ bool MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
 
 //===================================================================
 bool MainEngine::createEnemy(const LevelManager &levelManager, const SpriteData &memSpriteData, const EnemyData &enemyData,
-                             float collisionRay, bool loadFromCheckpoint, uint32_t index)
+                             float collisionRay, bool loadFromCheckpoint, uint32_t index, const std::array<SoundElement, 4> &soundElements)
 {
     bool exit = false;
     uint32_t numEntity = createEnemyEntity();
@@ -1558,10 +1575,10 @@ bool MainEngine::createEnemy(const LevelManager &levelManager, const SpriteData 
             searchComponentByType<AudioComponent>(numEntity, Components_e::AUDIO_COMPONENT);
     assert(audiocomponent);
     audiocomponent->m_soundElements.reserve(4);
-    audiocomponent->m_soundElements.emplace_back(loadSound(enemyData.m_normalBehaviourSoundFile));
-    audiocomponent->m_soundElements.emplace_back(loadSound(enemyData.m_detectBehaviourSoundFile));
-    audiocomponent->m_soundElements.emplace_back(loadSound(enemyData.m_attackSoundFile));
-    audiocomponent->m_soundElements.emplace_back(loadSound(enemyData.m_deathSoundFile));
+    audiocomponent->m_soundElements.emplace_back(soundElements[0]);
+    audiocomponent->m_soundElements.emplace_back(soundElements[1]);
+    audiocomponent->m_soundElements.emplace_back(soundElements[2]);
+    audiocomponent->m_soundElements.emplace_back(soundElements[3]);
     audiocomponent->m_maxDistance /= 5.0f;
     TimerComponent *timerComponent = m_ecsManager.getComponentManager().
             searchComponentByType<TimerComponent>(numEntity, Components_e::TIMER_COMPONENT);
@@ -2504,7 +2521,15 @@ void MainEngine::loadVisibleShotData(const std::vector<SpriteData> &vectSprite, 
         assert(memSpriteComp);
         MapVisibleShotData_t::const_iterator it = visibleShot.find(visibleShootID);
         assert(it != visibleShot.end());
-        audioComp->m_soundElements.push_back(loadSound(it->second.first));
+        if(!m_memSoundElements.m_visibleShots)
+        {
+            m_memSoundElements.m_visibleShots = std::map<std::string, SoundElement>();
+        }
+        if(m_memSoundElements.m_visibleShots->find(it->second.first) == m_memSoundElements.m_visibleShots->end())
+        {
+            m_memSoundElements.m_visibleShots->insert({it->second.first, loadSound(it->second.first)});
+        }
+        audioComp->m_soundElements.push_back(m_memSoundElements.m_visibleShots->at(it->second.first));
         memSpriteComp->m_vectSpriteData.reserve(it->second.second.size());
         memFPSGLSizeComp->m_memGLSizeData.reserve(it->second.second.size());
         for(uint32_t l = 0; l < it->second.second.size(); ++l)
@@ -3010,7 +3035,7 @@ uint32_t MainEngine::createMeleeAttackEntity(bool sound)
 
 //===================================================================
 uint32_t MainEngine::createDamageZoneEntity(uint32_t damage, CollisionTag_e tag,
-                                            float ray, const std::string soundFile)
+                                            float ray, const std::string &soundFile)
 {
     uint32_t entityNum = createMeleeAttackEntity(!soundFile.empty());
     GeneralCollisionComponent *genCollComp = m_ecsManager.getComponentManager().
@@ -3027,7 +3052,11 @@ uint32_t MainEngine::createDamageZoneEntity(uint32_t damage, CollisionTag_e tag,
         AudioComponent *audioComp = m_ecsManager.getComponentManager().
                 searchComponentByType<AudioComponent>(entityNum, Components_e::AUDIO_COMPONENT);
         assert(audioComp);
-        audioComp->m_soundElements.push_back(loadSound(soundFile));
+        if(!m_memSoundElements.m_damageZone)
+        {
+            m_memSoundElements.m_damageZone = loadSound(soundFile);
+        }
+        audioComp->m_soundElements.push_back(m_memSoundElements.m_damageZone);
     }
     genCollComp->m_active = false;
     genCollComp->m_shape = CollisionShape_e::CIRCLE_C;
@@ -3442,7 +3471,11 @@ void MainEngine::loadBarrelElementEntities(const LevelManager &levelManager)
         assert(circleComp);
         assert(memSpriteComp);
         assert(spriteComp);
-        audioComp->m_soundElements.push_back(loadSound(barrelData.m_explosionSoundFile));
+        if(!m_memSoundElements.m_barrels)
+        {
+            m_memSoundElements.m_barrels = loadSound(barrelData.m_explosionSoundFile);
+        }
+        audioComp->m_soundElements.push_back(*m_memSoundElements.m_barrels);
         mapComp->m_coord = barrelData.m_TileGamePosition[i];
         Level::addElementCase(spriteComp, barrelData.m_TileGamePosition[i], LevelCaseType_e::EMPTY_LC, barrelEntity);
         mapComp->m_absoluteMapPositionPX = getCenteredAbsolutePosition(mapComp->m_coord);
@@ -3648,7 +3681,11 @@ uint32_t MainEngine::confTeleportEntity(const StaticLevelElementData &teleportDa
             searchComponentByType<AudioComponent>(entityNum, Components_e::AUDIO_COMPONENT);
     assert(teleportComp);
     assert(audioComp);
-    audioComp->m_soundElements.push_back(loadSound(soundFile));
+    if(!m_memSoundElements.m_teleports)
+    {
+        m_memSoundElements.m_teleports = loadSound(soundFile);
+    }
+    audioComp->m_soundElements.push_back(*m_memSoundElements.m_teleports);
     teleportComp->m_targetPos = teleportData.m_teleportData->m_targetTeleport[iterationNum];
     return entityNum;
 }

@@ -3,6 +3,7 @@
 #include <includesLib/BaseECS/system.hpp>
 #include "constants.hpp"
 #include <ECS/Components/EnemyConfComponent.hpp>
+#include <ECS/Components/AudioComponent.hpp>>>
 
 struct MapCoordComponent;
 struct EnemyConfComponent;
@@ -42,5 +43,6 @@ private:
     MainEngine *m_mainEngine;
     std::vector<uint32_t> m_vectMoveableEntities;
     ECSManager *m_memECSManager;
+    std::vector<SoundElement> m_memPlayerVisibleShot;
 };
 
