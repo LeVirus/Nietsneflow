@@ -160,11 +160,6 @@ void VerticesData::loadVertexStandardEntityByLine(const PositionVertexComponent 
         {
             break;
         }
-        if(currentLine < 0 || (memRaycastDist[currentLine] > 15.0f &&
-                               entityDistance > memRaycastDist[currentLine]))
-        {
-            continue;
-        }
         lateralText = spriteComp.m_spriteData->m_texturePosVertex[0].first +
                 static_cast<float>(i) / static_cast<float>(totalLine) * diffTotalTexturePos;
         assert(spriteComp.m_reverseVisibilityRate);
