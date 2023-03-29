@@ -1,0 +1,14 @@
+Installer::
+	Ardour
+	jackd
+		qjackctl (GUI)
+	fluidsynth
+		qsynth	(GUI)
+
+Lancer ardour aprés avoir lancer les 2 services jackd et fluidsynth via leurs interfaces respectives
+Pour une nouvelle session choisir jack
+pour ajouter une nouvelle piste ::
+	menu piste -> ajouter une piste...
+		selectionner piste MIDI
+		Choisir calf fluid ou ACE fluid (pour avoir acces au banque de son MIDI auxiliaire)
+	Connecter le clavier midi dans le menu des entrés de la piste créé
