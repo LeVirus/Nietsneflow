@@ -11,4 +11,4 @@ pour ajouter une nouvelle piste ::
 	menu piste -> ajouter une piste...
 		selectionner piste MIDI
 		Choisir calf fluid ou ACE fluid (pour avoir acces au banque de son MIDI auxiliaire)
-	Connecter le clavier midi dans le menu des entrés de la piste créé
+	Connecter le clavier midi dans le menu des entrés et onglet track de la piste créé
