@@ -25,7 +25,7 @@ void PhysicalEngine::runIteration(bool gamePaused)
     {
         m_doorSystem->execSystem();
         m_collisionSystem->execSystem();
-        m_iaSystem->execSystem();
+//        m_iaSystem->execSystem();
     }
     m_inputSystem->execSystem();
 }
