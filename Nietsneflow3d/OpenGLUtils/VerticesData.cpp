@@ -142,10 +142,12 @@ void VerticesData::loadVertexStandartTextureComponent(const PositionVertexCompon
 }
 
 //===================================================================
-void VerticesData::loadVertexStandardEntityByLine(const PositionVertexComponent &posComp,
+bool VerticesData::loadVertexStandardEntityByLine(const PositionVertexComponent &posComp,
                                                   SpriteTextureComponent &spriteComp, float entityDistance,
-                                                  const std::array<float, RAYCAST_LINE_NUMBER> &memRaycastDist)
+                                                  const std::array<float, RAYCAST_LINE_NUMBER> &memRaycastDist,
+                                                  bool displayBehindWall)
 {
+    bool isBehindWall = false, wallBeforeElement;
     float lateralGLPosA, lateralGLPosB, lateralText;
     int32_t currentLine = (((posComp.m_vertex[0].first + 1.0f) * RAYCAST_LINE_NUMBER) / 2.0f),
             finalLine = (((posComp.m_vertex[1].first + 1.0f) * RAYCAST_LINE_NUMBER) / 2.0f),
@@ -159,6 +161,16 @@ void VerticesData::loadVertexStandardEntityByLine(const PositionVertexComponent 
         if(currentLine > static_cast<int32_t>(RAYCAST_LINE_NUMBER))
         {
             break;
+        }
+        wallBeforeElement = (memRaycastDist[currentLine] > -0.5f) && (entityDistance > memRaycastDist[currentLine]);
+        if(currentLine < 0 || (!displayBehindWall && memRaycastDist[currentLine] > 15.0f &&
+                               wallBeforeElement))
+        {
+            continue;
+        }
+        if(displayBehindWall && wallBeforeElement)
+        {
+            isBehindWall = true;
         }
         lateralText = spriteComp.m_spriteData->m_texturePosVertex[0].first +
                 static_cast<float>(i) / static_cast<float>(totalLine) * diffTotalTexturePos;
@@ -177,6 +189,7 @@ void VerticesData::loadVertexStandardEntityByLine(const PositionVertexComponent 
         {*spriteComp.m_reverseVisibilityRate, *spriteComp.m_reverseVisibilityRate, *spriteComp.m_reverseVisibilityRate, 1.0f});
         addIndices(BaseShapeTypeGL_e::RECTANGLE);
     }
+    return isBehindWall;
 }
 
 //===================================================================

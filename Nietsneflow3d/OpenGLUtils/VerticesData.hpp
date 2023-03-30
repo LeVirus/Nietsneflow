@@ -38,8 +38,8 @@ public:
                                   const ColorVertexComponent *colorComp);
     void loadVertexStandartTextureComponent(const PositionVertexComponent &posComp,
                                             SpriteTextureComponent &spriteComp);
-    void loadVertexStandardEntityByLine(const PositionVertexComponent &posComp,
-                                            SpriteTextureComponent &spriteComp, float entityDistance, const std::array<float, RAYCAST_LINE_NUMBER> &memRaycastDist);
+    bool loadVertexStandardEntityByLine(const PositionVertexComponent &posComp,
+                                            SpriteTextureComponent &spriteComp, float entityDistance, const std::array<float, RAYCAST_LINE_NUMBER> &memRaycastDist, bool displayBehindWall);
     void loadVertexWriteTextureComponent(const PositionVertexComponent &posComp,
                                          const WriteComponent &writeComp);
     float loadRaycastingEntity(const SpriteTextureComponent &spriteComp, const std::vector<RayCastingIntersect> &raycastingData);

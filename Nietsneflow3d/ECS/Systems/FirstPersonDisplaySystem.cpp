@@ -541,10 +541,30 @@ void FirstPersonDisplaySystem::fillVertexFromEntity(uint32_t numEntity, uint32_t
             searchComponentByType<PositionVertexComponent>(numEntity, Components_e::POSITION_VERTEX_COMPONENT);
     SpriteTextureComponent *spriteComp = stairwayToComponentManager().
             searchComponentByType<SpriteTextureComponent>(numEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
+    GeneralCollisionComponent *collComp = stairwayToComponentManager().
+            searchComponentByType<GeneralCollisionComponent>(numEntity, Components_e::GENERAL_COLLISION_COMPONENT);
+    assert(collComp);
     assert(posComp);
     assert(spriteComp);
+    bool displayBehindWall = false;
+    if(collComp->m_tagA == CollisionTag_e::ENEMY_CT)
+    {
+        FPSVisibleStaticElementComponent *fpsComp = stairwayToComponentManager().
+                searchComponentByType<FPSVisibleStaticElementComponent>(numEntity, Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
+        assert(fpsComp);
+        //if height sprite > 2 display even if behind wall
+        if(fpsComp->m_inGameSpriteSize.second > 2.0f)
+        {
+            displayBehindWall = true;
+        }
+    }
+    //if behind wall
+    if(vertex.loadVertexStandardEntityByLine(*posComp, *spriteComp, distance,
+                                             m_memRaycastDist, displayBehindWall) && displayBehindWall)
+    {
+        distance += 20.0f;
+    }
     m_entitiesNumMem.insert(EntityData(distance, spriteComp->m_spriteData->m_textureNum, numIteration));
-    vertex.loadVertexStandardEntityByLine(*posComp, *spriteComp, distance, m_memRaycastDist);
 }
 
 //===================================================================
