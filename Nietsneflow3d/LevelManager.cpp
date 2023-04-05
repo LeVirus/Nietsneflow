@@ -1301,6 +1301,11 @@ void LevelManager::loadEnemyData()
         val = m_ini.getValue(vectINISections[i], "SpriteHeightGame");
         assert(val);
         m_enemyData[vectINISections[i]].m_inGameSpriteSize.second = std::stof(*val);
+        val = m_ini.getValue(vectINISections[i], "DamageZoneRay");
+        if(val)
+        {
+            m_enemyData[vectINISections[i]].m_damageZone = std::stof(*val);
+        }
         val = m_ini.getValue(vectINISections[i], "ShootSpritesID");
         if(val)
         {

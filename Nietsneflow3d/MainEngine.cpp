@@ -1556,7 +1556,8 @@ bool MainEngine::createEnemy(const LevelManager &levelManager, const SpriteData 
         {
             enemyComp->m_visibleAmmo.resize(4);
             confAmmoEntities(enemyComp->m_visibleAmmo, CollisionTag_e::BULLET_ENEMY_CT,
-                             enemyComp->m_visibleShot, enemyData.m_attackPower, enemyData.m_shotVelocity);
+                             enemyComp->m_visibleShot, enemyData.m_attackPower,
+                             enemyData.m_shotVelocity, enemyData.m_damageZone);
         }
     }
     else
