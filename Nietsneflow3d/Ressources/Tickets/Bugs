@@ -1,6 +1,12 @@
 BUGS======================================================================
 
-If teleporter is in angle wall raycast display teleport behind wall
+))
+when finish custom level don't reset gear on new game=========OK
+
+))
+Door does not appear anymore on custom level from editor========OK
+
+If teleporter is in angle wall raycast display teleport behind wall===========OK
 
 ))
 Demon too big=====================OK

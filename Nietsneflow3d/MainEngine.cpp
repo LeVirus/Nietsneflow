@@ -385,6 +385,10 @@ void MainEngine::memCustomLevelRevealedMap()
 //===================================================================
 void MainEngine::savePlayerGear(bool beginLevel)
 {
+    if(m_memCustomLevelLoadedData)
+    {
+        return;
+    }
     assert(m_playerConf);
     MemPlayerConf &playerConf = beginLevel ? m_memPlayerConfBeginLevel : m_memPlayerConfCheckpoint;
     playerConf.m_ammunationsCount.resize(m_weaponComp->m_weaponsData.size());
