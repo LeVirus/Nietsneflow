@@ -1,8 +1,226 @@
 #walltest.jpg ==> 0 Global.png ==> 1  FontTexture.png ==> 2 EnemyDemon.png ==> 3 GeneralSprites.png ==> 4 EnemyMarine.png ==> 5 Stars.jpg ==> 6 Simetra_green.png ==> 7 BossArachnotron.png ==> 8 BossCyberDemon.png ==> 9
 #EnemyBaronOfHell.png ==> 10 EnemyCacodemon.png ==> 11 EnemyDemonClaw.png ==> 12 EnemyZombieSergeant.png ==> 13  MenuFilled.png ==> 14 Font.png ==> 15  TitleMenu.png ==> 16 MenuLeft.png ==> 17  MenuRightLeft.png ==> 18 
-#NouvText.png ==> 19 BackroomText.png ==> 20
+#NouvText.png ==> 19 BackroomText.png ==> 20   TreesFree.png ==> 21
 [PathToTexture]
-textures = walltest.jpg	Global.png FontTexture.png EnemyDemon.png GeneralSprites.png EnemyMarine.png Stars.jpg Simetra_green.png BossArachnotron.png BossCyberDemon.png EnemyBaronOfHell.png EnemyCacodemon.png EnemyDemonClaw.png EnemyZombieSergeant.png MenuFilled.png Font.png TitleMenu.png MenuLeft.png MenuRightLeft.png NouvText.png BackroomText.png
+textures = walltest.jpg	Global.png FontTexture.png EnemyDemon.png GeneralSprites.png EnemyMarine.png Stars.jpg Simetra_green.png BossArachnotron.png BossCyberDemon.png EnemyBaronOfHell.png EnemyCacodemon.png EnemyDemonClaw.png EnemyZombieSergeant.png MenuFilled.png Font.png TitleMenu.png MenuLeft.png MenuRightLeft.png NouvText.png BackroomText.png TreesFree.png
+
+
+#262
+[SpriteWallD]
+texture = 21
+texturePosX = 0.0
+texturePosY = 0.0
+textureWeight = 0.246
+textureHeight = 0.256
+
+#249 0  498 262
+[SpriteWallE]
+texture = 21
+texturePosX = 0.246
+texturePosY = 0.0
+textureWeight = 0.246
+textureHeight = 0.2563
+
+#499 0  761 262
+[SpriteWallF]
+texture = 21
+texturePosX = 0.493
+texturePosY = 0.0
+textureWeight = 0.258
+textureHeight = 0.256
+
+#762 0  1012 262
+[SpriteWallG]
+texture = 21
+texturePosX = 0.752
+texturePosY = 0.0
+textureWeight = 0.247
+textureHeight = 0.256
+
+#0 263  260 521
+[SpriteGrassA]
+texture = 21
+texturePosX = 0.0
+texturePosY = 0.259
+textureWeight = 0.256
+textureHeight = 0.252
+
+#261 263  514 521
+[SpriteGrassB]
+texture = 21
+texturePosX = 0.257
+texturePosY = 0.259
+textureWeight = 0.25
+textureHeight = 0.252
+
+#580 416  645 520
+[SpriteDeadTreeA]
+texture = 21
+texturePosX = 0.573
+texturePosY = 0.407
+textureWeight = 0.064
+textureHeight = 0.101
+
+#649 433  700 520
+[SpriteDeadTreeB]
+texture = 21
+texturePosX = 0.641
+texturePosY = 0.423
+textureWeight = 0.05
+textureHeight = 0.085
+
+#707 419  749 520
+[SpriteDeadTreeC]
+texture = 21
+texturePosX = 0.698
+texturePosY = 0.409
+textureWeight = 0.041
+textureHeight = 0.098
+
+#762 381  803 519
+[SpriteDeadTreeD]
+texture = 21
+texturePosX = 0.752
+texturePosY = 0.372
+textureWeight = 0.04
+textureHeight = 0.135
+
+#675 563  770 594
+[SpriteGigerGroundA]
+texture = 21
+texturePosX = 0.666
+texturePosY = 0.55
+textureWeight = 0.095
+textureHeight = 0.05
+
+#683 612  758 647
+[SpriteGigerGroundB]
+texture = 21
+texturePosX = 0.674
+texturePosY = 0.598
+textureWeight = 0.076
+textureHeight = 0.036
+
+#893 566  948 653
+[SpriteGigerGroundC]
+texture = 21
+texturePosX = 0.882
+texturePosY = 0.553
+textureWeight = 0.056
+textureHeight = 0.087
+
+#797 560  860 655
+[SpriteGigerCeilingA]
+texture = 21
+texturePosX = 0.787
+texturePosY = 0.547
+textureWeight = 0.064
+textureHeight = 0.094
+
+#805 676  844 739
+[SpriteGigerCeilingB]
+texture = 21
+texturePosX = 0.795
+texturePosY = 0.661
+textureWeight = 0.040
+textureHeight = 0.063
+
+#872 685  959 740
+[SpriteGigerCeilingC]
+texture = 21
+texturePosX = 0.861
+texturePosY = 0.67
+textureWeight = 0.087
+textureHeight = 0.055
+
+#848 821  887 956
+[SpriteGigerCeilingD]
+texture = 21
+texturePosX = 0.837
+texturePosY = 0.803
+textureWeight = 0.040
+textureHeight = 0.134
+
+#794 768  935 795
+[SpriteGigerTeleport]
+texture = 21
+texturePosX = 0.784
+texturePosY = 0.751
+textureWeight = 0.141
+textureHeight = 0.028
+
+#31 533  238 758
+[SpriteTreeA]
+texture = 21
+texturePosX = 0.03
+texturePosY = 0.521
+textureWeight = 0.206
+textureHeight = 0.222
+
+#307 586  492 770
+[SpriteTreeB]
+texture = 21
+texturePosX = 0.303
+texturePosY = 0.573
+textureWeight = 0.184
+textureHeight = 0.182
+
+#501 555  638 762
+[SpriteTreeC]
+texture = 21
+texturePosX = 0.495
+texturePosY = 0.543
+textureWeight = 0.137
+textureHeight = 0.204
+
+#27 762  137 943
+[SpriteTreeD]
+texture = 21
+texturePosX = 0.026
+texturePosY = 0.745
+textureWeight = 0.110
+textureHeight = 0.179
+
+#333 796  500 928
+[SpriteTreeE]
+texture = 21
+texturePosX = 0.329
+texturePosY = 0.778
+textureWeight = 0.167
+textureHeight = 0.131
+
+#514 795  641 933 
+[SpriteTreeF]
+texture = 21
+texturePosX = 0.507
+texturePosY = 0.777
+textureWeight = 0.127
+textureHeight = 0.137
+
+#673 690  781 932
+[SpriteTreeG]
+texture = 21
+texturePosX = 0.665
+texturePosY = 0.675
+textureWeight = 0.108
+textureHeight = 0.238
+
+#2390 2510  2423 2543
+[SpriteShotA]
+texture = 4
+texturePosX = 0.537
+texturePosY = 0.833
+textureWeight = 0.008
+textureHeight = 0.012
+
+#2606 2507  2645 2543
+[SpriteShotB]
+texture = 4
+texturePosX = 0.584
+texturePosY = 0.832
+textureWeight = 0.010
+textureHeight = 0.013
+
 
 [SpriteWallBackroom]
 texture = 20
@@ -1475,13 +1693,6 @@ texture = 3
 texturePosX = 0.35565
 texturePosY = 0.7801
 textureWeight = 0.11695
-textureHeight = 0.04057
-
-[SpriteWallC]
-texture = 3
-texturePosX = 0.13695
-texturePosY = 0.78017
-textureWeight = 0.115217
 textureHeight = 0.04057
 
 [SpriteWallC]

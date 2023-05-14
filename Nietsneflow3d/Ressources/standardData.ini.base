@@ -46,14 +46,26 @@ Sprite = SpriteWallBackroom
 [WallA]
 Sprite = SpriteWallMetalCol
 
-[WallD]
-Sprite = SpriteMetalGroundA
+[WallB]
+Sprite = SpriteWallLight
 
 [WallC]
 Sprite = SpriteMetalGroundB
 
-[WallB]
-Sprite = SpriteWallLight
+[WallD]
+Sprite = SpriteMetalGroundA
+
+[WallE]
+Sprite = SpriteWallD
+
+[WallF]
+Sprite = SpriteWallE
+
+[WallG]
+Sprite = SpriteWallF
+
+[WallH]
+Sprite = SpriteWallG
 
 [WallOldA]
 Sprite = SpriteWallA SpriteWallB 
@@ -136,7 +148,7 @@ StaticSpriteRight = SpriteARA SpriteARB
 AttackSprite = SpriteAAA SpriteAAB 
 DyingSprite = SpriteADA SpriteADB SpriteADC SpriteADD SpriteADE SpriteADF
 Touched = SpriteADA
-ShootSpritesID = VisibleShootDemon
+ShootSpritesID = VisibleShootDemonB
 MeleeDamage = 22
 ShotVelocity = 5
 Life = 200
@@ -188,7 +200,7 @@ StaticSpriteRight = SpriteBHRA SpriteBHRB
 AttackSprite = SpriteBHAA SpriteBHAB SpriteBHAC
 DyingSprite = SpriteBHDA SpriteBHDB SpriteBHDC SpriteBHDD SpriteBHDE SpriteBHDead
 Touched = SpriteBHDA
-ShootSpritesID = VisibleShootDemon
+ShootSpritesID = VisibleShootDemonB
 MeleeDamage = 12
 ShotVelocity = 2
 Life = 45
@@ -272,7 +284,7 @@ StaticSpriteRight = SpriteDCMRA SpriteDCMRB
 AttackSprite = SpriteDCAA SpriteDCAB
 DyingSprite = SpriteDCDA SpriteDCDB SpriteDCDC SpriteDCDD SpriteDCDead
 Touched = SpriteDCDA
-ShootSpritesID = VisibleShootDemon
+ShootSpritesID = VisibleShootDemonA
 MeleeDamage = 12
 ShotVelocity = 2
 Life = 15
@@ -300,7 +312,7 @@ StaticSpriteRight = SpriteDRA SpriteDRB
 AttackSprite = SpriteEAA SpriteEAB SpriteEAC
 DyingSprite = SpriteDDAA SpriteDDAB SpriteDDAC SpriteDDAD SpriteDDAE
 Touched = SpriteDTF
-ShootSpritesID = VisibleShootDemon
+ShootSpritesID = VisibleShootDemonA
 MeleeDamage = 3
 ShotVelocity = 2
 Life = 2
@@ -459,8 +471,14 @@ SpriteTouched = SpriteShotImpactTouched
 SpriteWeightGame = 0.1
 SpriteHeightGame = 0.15
 
-[VisibleShootDemon]
-Sprites = SpriteEnemyShot SpriteShotDestructA SpriteShotDestructB SpriteShotDestructC
+[VisibleShootDemonA]
+Sprites = SpriteShotA SpriteShotDestructA SpriteShotDestructB SpriteShotDestructC
+SpriteWeightGame = 0.2 0.5 0.8 0.6
+SpriteHeightGame = 0.5 1.0 1.0 1.0
+ImpactSound = ImpactExpl.wav
+
+[VisibleShootDemonB]
+Sprites = SpriteShotB SpriteShotDestructA SpriteShotDestructB SpriteShotDestructC
 SpriteWeightGame = 0.2 0.5 0.8 0.6
 SpriteHeightGame = 0.5 1.0 1.0 1.0
 ImpactSound = ImpactExpl.wav
@@ -612,10 +630,118 @@ SpriteWeightGame = 0.4
 SpriteHeightGame = 1.2
 traversable = false
 
+[GroundDeadTreeA]
+Sprite = SpriteDeadTreeA
+SpriteWeightGame = 0.4
+SpriteHeightGame = 2.1
+traversable = false
+
+[GroundDeadTreeB]
+Sprite = SpriteDeadTreeB
+SpriteWeightGame = 0.3
+SpriteHeightGame = 1.9
+traversable = false
+
+[GroundDeadTreeC]
+Sprite = SpriteDeadTreeC
+SpriteWeightGame = 0.3
+SpriteHeightGame = 2.1
+traversable = false
+
+[GroundDeadTreeD]
+Sprite = SpriteDeadTreeD
+SpriteWeightGame = 0.4
+SpriteHeightGame = 2.5
+traversable = false
+
+[GroundGigerA]
+Sprite = SpriteGigerGroundA
+SpriteWeightGame = 0.8
+SpriteHeightGame = 0.5
+traversable = false
+
+[GroundGigerB]
+Sprite = SpriteGigerGroundB
+SpriteWeightGame = 0.8
+SpriteHeightGame = 0.5
+traversable = false
+
+[GroundGigerC]
+Sprite = SpriteGigerGroundC
+SpriteWeightGame = 0.54
+SpriteHeightGame = 0.85
+traversable = false
+
+[CeilingGigerA]
+Sprite = SpriteGigerCeilingA
+SpriteWeightGame = 0.62
+SpriteHeightGame = 0.92
+traversable = false
+
+[CeilingGigerB]
+Sprite = SpriteGigerCeilingB
+SpriteWeightGame = 0.38
+SpriteHeightGame = 0.61
+traversable = false
+
+[CeilingGigerC]
+Sprite = SpriteGigerCeilingC
+SpriteWeightGame = 0.85
+SpriteHeightGame = 0.53
+traversable = false
+
+[CeilingGigerD]
+Sprite = SpriteGigerCeilingD
+SpriteWeightGame = 0.38
+SpriteHeightGame = 1.32
+traversable = false
+
+[GroundTreeA]
+Sprite = SpriteTreeA
+SpriteWeightGame = 1.0
+SpriteHeightGame = 2.02
+traversable = false
+
+[GroundTreeB]
+Sprite = SpriteTreeB
+SpriteWeightGame = 1.02
+SpriteHeightGame = 2.0
+traversable = false
+
+[GroundTreeC]
+Sprite = SpriteTreeC
+SpriteWeightGame = 0.9
+SpriteHeightGame = 2.2
+traversable = false
+
+[GroundTreeD]
+Sprite = SpriteTreeD
+SpriteWeightGame = 0.7
+SpriteHeightGame = 2.1
+traversable = false
+
+[GroundTreeE]
+Sprite = SpriteTreeE
+SpriteWeightGame = 1.2
+SpriteHeightGame = 2.0
+traversable = false
+
+[GroundTreeF]
+Sprite = SpriteTreeF
+SpriteWeightGame = 0.8
+SpriteHeightGame = 2.2
+traversable = false
+
+[GroundTreeG]
+Sprite = SpriteTreeG
+SpriteWeightGame = 0.7
+SpriteHeightGame = 2.2
+traversable = false
+
 [Teleport]
-Sprite = SpriteTeleport
-SpriteWeightGame = 0.6
-SpriteHeightGame = 1.8
+Sprite = SpriteGigerTeleport
+SpriteWeightGame = 1.0
+SpriteHeightGame = 0.46
 traversable = true
 
 [Barrel]
