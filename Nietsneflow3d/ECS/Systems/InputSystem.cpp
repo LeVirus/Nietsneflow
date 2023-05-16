@@ -158,7 +158,6 @@ void InputSystem::treatPlayerInput()
             {
                 playerComp->m_mapMode = MapMode_e::NONE;
             }
-
         }
         else if(m_changeMapMode && glfwGetKey(m_window, GLFW_KEY_TAB) == GLFW_RELEASE &&
                 !checkStandardButtonGamepadKeyStatus(GLFW_GAMEPAD_BUTTON_BACK, GLFW_PRESS))
