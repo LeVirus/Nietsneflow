@@ -70,6 +70,8 @@ inline const std::map<ControlKey_e, GamepadInputState> MAP_GAMEPAD_DEFAULT_KEY= 
     {ControlKey_e::NEXT_WEAPON, GamepadInputState{true, GLFW_GAMEPAD_BUTTON_B, {}}}
 };
 
+bool checkOppositeDir(MoveOrientation_e previousMove, MoveOrientation_e currentMove);
+
 //!!!WARNING!!!
 // GLFW_GAMEPAD_AXIS_LEFT_X --> OK
 // GLFW_GAMEPAD_AXIS_LEFT_Y --> POS & NEG REVERSED

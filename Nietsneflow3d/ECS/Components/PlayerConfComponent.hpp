@@ -60,7 +60,7 @@ struct PlayerConfComponent : public ecs::Component
     m_pickItem = false, m_crush = false, m_frozen = false, m_teleported, m_insideWall = false, m_keyboardInputMenuMode = true;
     std::pair<bool, std::string> m_infoWriteData = {false, ""};
     std::set<uint32_t> m_card;
-    uint32_t m_currentCursorPos = 0, m_currentSelectedSaveFile, m_life = 100, m_currentCustomLevelCusorMenu, m_levelToLoad;
+    uint32_t m_currentCursorPos = 0, m_currentSelectedSaveFile, m_life = 100, m_currentCustomLevelCusorMenu, m_levelToLoad, m_velocityInertie = 0;
     std::array<uint32_t, static_cast<uint32_t>(PlayerEntities_e::TOTAL)> m_vectEntities;
     //display only weapons when changing weapons
     std::array<uint32_t, 6> m_vectPossessedWeaponsPreviewEntities;
@@ -69,5 +69,6 @@ struct PlayerConfComponent : public ecs::Component
     std::optional<PairUI_t> m_checkpointReached;
     MenuMode_e m_menuMode, m_previousMenuMode;
     MapMode_e m_mapMode = MapMode_e::NONE;
+    MoveOrientation_e m_previousMove = MoveOrientation_e::FORWARD;
     virtual ~PlayerConfComponent() = default;
 };
