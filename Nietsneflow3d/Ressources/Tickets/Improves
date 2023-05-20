@@ -2,10 +2,7 @@ IMPROVE=========================================================================
 ==========================================================================================================
 
 ))
-if get weapons or ammo while not ammo change this weapon if it is upper than current
-
-))
-If big enemy don't display if too close
+if get weapons or ammo while not ammo change this weapon if it is upper than current===============OK
 
 ))
 Set move inertie to prevent motion sickness==========================OK

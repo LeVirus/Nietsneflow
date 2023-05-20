@@ -1132,7 +1132,7 @@ void CollisionSystem::treatPlayerPickObject(CollisionArgs &args)
         {
             return;
         }
-        info = weaponComp->m_weaponsData[*objectComp->m_weaponID].m_weaponName + " Ammo Picked Up";
+        info = weaponComp->m_weaponsData[*objectComp->m_weaponID].m_weaponName + " Ammo";
     }
         break;
     case ObjectType_e::WEAPON:
@@ -1141,7 +1141,7 @@ void CollisionSystem::treatPlayerPickObject(CollisionArgs &args)
         {
             return;
         }
-        info = weaponComp->m_weaponsData[*objectComp->m_weaponID].m_weaponName + " Picked Up";
+        info = weaponComp->m_weaponsData[*objectComp->m_weaponID].m_weaponName;
     }
         break;
     case ObjectType_e::HEAL:
@@ -1155,13 +1155,13 @@ void CollisionSystem::treatPlayerPickObject(CollisionArgs &args)
         {
             playerComp->m_life = 100;
         }
-        info = "Heal Picked Up";
+        info = "Heal";
         break;
     }
     case ObjectType_e::CARD:
     {
         playerComp->m_card.insert(*objectComp->m_cardID);
-        info = objectComp->m_cardName + " Picked Up";
+        info = objectComp->m_cardName;
         break;
     }
     case ObjectType_e::TOTAL:
@@ -1240,6 +1240,13 @@ bool pickUpAmmo(uint32_t numWeapon, WeaponComponent *weaponComp,
     if(objectWeapon.m_ammunationsCount == objectWeapon.m_maxAmmunations)
     {
         return false;
+    }
+    if(objectWeapon.m_posses && objectWeapon.m_ammunationsCount == 0)
+    {
+        if(weaponComp->m_currentWeapon < numWeapon)
+        {
+            setPlayerWeapon(*weaponComp, numWeapon);
+        }
     }
     objectWeapon.m_ammunationsCount += objectContaining;
     if(objectWeapon.m_ammunationsCount > objectWeapon.m_maxAmmunations)

@@ -388,7 +388,6 @@ void InputSystem::treatPlayerMove(PlayerConfComponent *playerComp, MoveableCompo
         }
         playerComp->m_inMovement = true;
     }
-    std::cerr << playerComp->m_inMovement << " MOVE?\n";
     if(!playerComp->m_inMovement || checkOppositeDir(playerComp->m_previousMove, currentMoveDirection))
     {
         playerComp->m_velocityInertie = 10;
@@ -445,7 +444,6 @@ bool checkOppositeDir(MoveOrientation_e previousMove, MoveOrientation_e currentM
         if(previousMove == MoveOrientation_e::FORWARD || previousMove == MoveOrientation_e::FORWARD_LEFT ||
             previousMove == MoveOrientation_e::FORWARD_LEFT)
         {
-            std::cerr << "F  \n";
             return false;
         }
         break;
@@ -453,7 +451,6 @@ bool checkOppositeDir(MoveOrientation_e previousMove, MoveOrientation_e currentM
         if(previousMove == MoveOrientation_e::LEFT || previousMove == MoveOrientation_e::FORWARD_LEFT ||
             previousMove == MoveOrientation_e::FORWARD)
         {
-            std::cerr << "FL  \n";
             return false;
         }
         break;
@@ -461,7 +458,6 @@ bool checkOppositeDir(MoveOrientation_e previousMove, MoveOrientation_e currentM
         if(previousMove == MoveOrientation_e::FORWARD_RIGHT || previousMove == MoveOrientation_e::FORWARD ||
             previousMove == MoveOrientation_e::RIGHT)
         {
-            std::cerr << "FR  \n";
             return false;
         }
         break;
@@ -469,7 +465,6 @@ bool checkOppositeDir(MoveOrientation_e previousMove, MoveOrientation_e currentM
         if(previousMove == MoveOrientation_e::BACKWARD || previousMove == MoveOrientation_e::BACKWARD_LEFT ||
             previousMove == MoveOrientation_e::BACKWARD_LEFT)
         {
-            std::cerr << "B \n";
             return false;
         }
         break;
@@ -477,7 +472,6 @@ bool checkOppositeDir(MoveOrientation_e previousMove, MoveOrientation_e currentM
         if(previousMove == MoveOrientation_e::BACKWARD || previousMove == MoveOrientation_e::BACKWARD_LEFT ||
             previousMove == MoveOrientation_e::LEFT)
         {
-            std::cerr << "BL  \n";
             return false;
         }
         break;
@@ -485,7 +479,6 @@ bool checkOppositeDir(MoveOrientation_e previousMove, MoveOrientation_e currentM
         if(previousMove == MoveOrientation_e::BACKWARD || previousMove == MoveOrientation_e::RIGHT ||
             previousMove == MoveOrientation_e::BACKWARD_RIGHT)
         {
-            std::cerr << "BR  \n";
             return false;
         }
         break;
@@ -493,7 +486,6 @@ bool checkOppositeDir(MoveOrientation_e previousMove, MoveOrientation_e currentM
         if(previousMove == MoveOrientation_e::LEFT || previousMove == MoveOrientation_e::FORWARD_LEFT ||
             previousMove == MoveOrientation_e::BACKWARD_LEFT)
         {
-            std::cerr << "L  \n";
             return false;
         }
         break;
@@ -501,12 +493,10 @@ bool checkOppositeDir(MoveOrientation_e previousMove, MoveOrientation_e currentM
         if(previousMove == MoveOrientation_e::RIGHT || previousMove == MoveOrientation_e::FORWARD_RIGHT ||
             previousMove == MoveOrientation_e::BACKWARD_RIGHT)
         {
-            std::cerr << "R  \n";
             return false;
         }
         break;
     }
-    std::cerr << "TRUE  \n";
     return true;
 }
 
