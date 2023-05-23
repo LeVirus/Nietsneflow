@@ -94,7 +94,7 @@ private:
                             MapCoordComponent *mapCompB, VisionComponent *visionComp,
                             uint32_t &toRemove, float degreeObserverAngle, uint32_t numIteration, uint32_t currentNormal);
     bool elementBehindDoor(const ElementRaycast &elementCase, float radiantObserverAngle, const MapCoordComponent *mapComp);
-    void confNormalEntityVertex(uint32_t numEntity, VisionComponent *visionComp, CollisionTag_e tag, float lateralPosGL, float distance);
+    bool confNormalEntityVertex(const std::pair<uint32_t, bool> &entityData, VisionComponent *visionComp, CollisionTag_e tag, float lateralPosGL, float distance);
     void drawVertex();
     void drawTextureBackground();
     PairFloat_t getCenterPosition(MapCoordComponent const *mapComp, GeneralCollisionComponent *genCollComp, float numEntity);

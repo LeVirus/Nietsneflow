@@ -124,10 +124,10 @@ void FirstPersonDisplaySystem::confCompVertexMemEntities()
         for(uint32_t j = 0; j < m_numVertexToDraw[i]; ++j, ++numIteration)
         {
             genCollComp = stairwayToComponentManager().
-                    searchComponentByType<GeneralCollisionComponent>(visionComp->m_vectVisibleEntities[j],
+                    searchComponentByType<GeneralCollisionComponent>(visionComp->m_vectVisibleEntities[j].first,
                                                                      Components_e::GENERAL_COLLISION_COMPONENT);
             mapCompB = stairwayToComponentManager().
-                    searchComponentByType<MapCoordComponent>(visionComp->m_vectVisibleEntities[j], Components_e::MAP_COORD_COMPONENT);
+                    searchComponentByType<MapCoordComponent>(visionComp->m_vectVisibleEntities[j].first, Components_e::MAP_COORD_COMPONENT);
             assert(mapCompB);
             assert(genCollComp);
             if(genCollComp->m_active)
@@ -221,7 +221,7 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
                                                   MapCoordComponent *mapCompB, VisionComponent *visionComp,
                                                   uint32_t &toRemove, float degreeObserverAngle, uint32_t numIteration, uint32_t currentNormal)
 {
-    uint32_t numEntity = visionComp->m_vectVisibleEntities[currentNormal];
+    uint32_t numEntity = visionComp->m_vectVisibleEntities[currentNormal].first;
     assert(visionComp->m_vectVisibleEntities.size() > currentNormal);
     PairFloat_t centerPosB = getCenterPosition(mapCompB, genCollComp, numEntity);
     float radiantObserverAngle = getRadiantAngle(degreeObserverAngle),
@@ -244,7 +244,10 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
     {
         return;
     }
-    confNormalEntityVertex(numEntity, visionComp, genCollComp->m_tagA, lateralPos, cameraDistance);
+    if(!confNormalEntityVertex(visionComp->m_vectVisibleEntities[currentNormal], visionComp, genCollComp->m_tagA, lateralPos, cameraDistance))
+    {
+        return;
+    }
     fillVertexFromEntity(numEntity, numIteration, displayDistance);
 }
 
@@ -596,9 +599,10 @@ void FirstPersonDisplaySystem::setVectTextures(std::vector<Texture> &vectTexture
 }
 
 //===================================================================
-void FirstPersonDisplaySystem::confNormalEntityVertex(uint32_t numEntity, VisionComponent *visionComp,
+bool FirstPersonDisplaySystem::confNormalEntityVertex(const std::pair<uint32_t, bool> &entityData, VisionComponent *visionComp,
                                                       CollisionTag_e tag, float lateralPosGL, float distance)
 {
+    uint32_t numEntity = entityData.first;
     PositionVertexComponent *positionComp = stairwayToComponentManager().
             searchComponentByType<PositionVertexComponent>(numEntity, Components_e::POSITION_VERTEX_COMPONENT);
     FPSVisibleStaticElementComponent *fpsStaticComp = stairwayToComponentManager().
@@ -608,16 +612,33 @@ void FirstPersonDisplaySystem::confNormalEntityVertex(uint32_t numEntity, Vision
     assert(positionComp);
     assert(visionComp);
     //quickfix
-    if(fpsStaticComp->m_inGameSpriteSize.first > 1.5f)
+//    std::cerr << fpsStaticComp->m_inGameSpriteSize.first << "  " << distance << " ddd\n";
+
+    if(entityData.second && fpsStaticComp->m_inGameSpriteSize.first > 2.0f)
     {
-        if(distance < 15.0f)
+        std::cerr << fpsStaticComp->m_inGameSpriteSize.first << "  " << distance << "\n";
+        if(distance < fpsStaticComp->m_inGameSpriteSize.first * LEVEL_TILE_SIZE_PX)
         {
-            return;
+            return false;
         }
-        else if(distance < 40.0f)
+        else if(distance < 70.0f)
         {
-            distance = 40.0f;
+            distance = 70.0f;
         }
+    }
+    else if(entityData.second && fpsStaticComp->m_inGameSpriteSize.first > 0.7f)
+    {
+        distance *= 1.2f;
+//        float distanceMin = fpsStaticComp->m_inGameSpriteSize.first * LEVEL_TILE_SIZE_PX * 0.7f;
+//        if(distance < distanceMin)
+//        {
+//            distance = distanceMin;
+//        }
+//        std::cerr << fpsStaticComp->m_inGameSpriteSize.first << "  " << distance << "\n";
+//        if(distance < 35.0f)
+//        {
+//            distance = 35.0f;
+//        }
     }
     else if(distance < 15.0f)
     {
@@ -674,6 +695,7 @@ void FirstPersonDisplaySystem::confNormalEntityVertex(uint32_t numEntity, Vision
     positionComp->m_vertex[2].second = downPos;
     positionComp->m_vertex[3].first = lateralPosGL - halfLateralSize;
     positionComp->m_vertex[3].second = downPos;
+    return true;
 }
 
 //===================================================================

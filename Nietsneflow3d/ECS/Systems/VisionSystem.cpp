@@ -567,9 +567,15 @@ void VisionSystem::treatVisible(VisionComponent *visionComp, MoveableComponent *
     float angleElement = getTrigoAngle(std::get<0>(visionComp->m_triangleVision),
                                        mapCompB->m_absoluteMapPositionPX),
             diffAngle = std::abs(angleElement - moveCompA->m_degreeOrientation);
-    if(diffAngle < HALF_CONE_VISION + 30.0f || diffAngle > 275.0f)
+    if(diffAngle < HALF_CONE_VISION + 30.0f || diffAngle > 270.0f)
     {
-        visionComp->m_vectVisibleEntities.push_back(numEntity);
+        //peripheric view
+        if(diffAngle > 30.0f)
+        {
+
+        }
+        std::cerr << diffAngle << " DIFFFFFF\n";
+        visionComp->m_vectVisibleEntities.push_back({numEntity, (diffAngle > 30.0f)});
     }
 }
 
