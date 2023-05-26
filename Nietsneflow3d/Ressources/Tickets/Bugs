@@ -4,10 +4,10 @@ BUGS======================================================================
 Visible shot dissapear if run over wall
 
 ))
-Big object display issue on edge vision
+diag rect remove extreme wall
 
 ))
-diag rect remove extreme wall
+Big object display issue on edge vision=========================OK
 
 ))
 when finish custom level don't reset gear on new game=========OK

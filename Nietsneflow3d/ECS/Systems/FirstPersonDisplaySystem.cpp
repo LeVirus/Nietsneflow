@@ -612,35 +612,7 @@ bool FirstPersonDisplaySystem::confNormalEntityVertex(const std::pair<uint32_t, 
     assert(positionComp);
     assert(visionComp);
     //quickfix
-//    std::cerr << fpsStaticComp->m_inGameSpriteSize.first << "  " << distance << " ddd\n";
-
-    if(entityData.second && fpsStaticComp->m_inGameSpriteSize.first > 2.0f)
-    {
-        std::cerr << fpsStaticComp->m_inGameSpriteSize.first << "  " << distance << "\n";
-        if(distance < fpsStaticComp->m_inGameSpriteSize.first * LEVEL_TILE_SIZE_PX)
-        {
-            return false;
-        }
-        else if(distance < 70.0f)
-        {
-            distance = 70.0f;
-        }
-    }
-    else if(entityData.second && fpsStaticComp->m_inGameSpriteSize.first > 0.7f)
-    {
-        distance *= 1.2f;
-//        float distanceMin = fpsStaticComp->m_inGameSpriteSize.first * LEVEL_TILE_SIZE_PX * 0.7f;
-//        if(distance < distanceMin)
-//        {
-//            distance = distanceMin;
-//        }
-//        std::cerr << fpsStaticComp->m_inGameSpriteSize.first << "  " << distance << "\n";
-//        if(distance < 35.0f)
-//        {
-//            distance = 35.0f;
-//        }
-    }
-    else if(distance < 15.0f)
+    if(distance < 15.0f)
     {
         distance = 15.0f;
     }

@@ -569,12 +569,6 @@ void VisionSystem::treatVisible(VisionComponent *visionComp, MoveableComponent *
             diffAngle = std::abs(angleElement - moveCompA->m_degreeOrientation);
     if(diffAngle < HALF_CONE_VISION + 30.0f || diffAngle > 270.0f)
     {
-        //peripheric view
-        if(diffAngle > 30.0f)
-        {
-
-        }
-        std::cerr << diffAngle << " DIFFFFFF\n";
         visionComp->m_vectVisibleEntities.push_back({numEntity, (diffAngle > 30.0f)});
     }
 }
