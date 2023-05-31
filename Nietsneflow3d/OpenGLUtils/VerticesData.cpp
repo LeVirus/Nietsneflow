@@ -168,8 +168,7 @@ bool VerticesData::loadVertexStandardEntityByLine(const PositionVertexComponent 
         {
             continue;
         }
-        if(displayBehindWall && wallBeforeElement &&
-                std::abs(entityDistance - memRaycastDist[currentLine]) < LEVEL_HALF_TILE_SIZE_PX)
+        if(wallBeforeElement)
         {
             isBehindWall = true;
         }

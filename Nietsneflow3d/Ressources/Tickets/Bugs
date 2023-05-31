@@ -1,13 +1,13 @@
 BUGS======================================================================
 
 ))
-Big enemies appear if behind angle wall
+Visible shot dissapear if run over wall===============~
 
 ))
-Visible shot dissapear if run over wall
+diag rect remove extreme wall=====================NR?
 
 ))
-diag rect remove extreme wall
+Big enemies appear if behind angle wall================OK
 
 ))
 Big object display issue on edge vision=========================OK
