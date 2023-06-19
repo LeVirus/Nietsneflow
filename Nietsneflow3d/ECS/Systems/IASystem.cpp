@@ -29,7 +29,9 @@
 #include "MainEngine.hpp"
 
 //===================================================================
-IASystem::IASystem(ECSManager* memECSManager) : m_memECSManager(memECSManager)
+IASystem::IASystem(NewComponentManager &newComponentManager, ECSManager* memECSManager) :
+    m_newComponentManager(newComponentManager),
+    m_memECSManager(memECSManager)
 {
     std::srand(std::time(nullptr));
     bAddComponentToSystem(Components_e::ENEMY_CONF_COMPONENT);

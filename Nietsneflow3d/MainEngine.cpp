@@ -205,8 +205,7 @@ LevelState MainEngine::mainLoop(uint32_t levelNum, LevelState_e levelState, bool
         else if(!m_playerConf->m_life)
         {
             m_playerConf->m_infoWriteData = {false, ""};
-            AudioComponent *audioComp = m_ecsManager.getComponentManager().
-                    searchComponentByType<AudioComponent>(m_playerEntity, Components_e::AUDIO_COMPONENT);
+            AudioComponent *audioComp = m_ecsManager.getComponentManager().getAudioComponent(m_playerEntity);
             assert(audioComp);
             //play death sound
             audioComp->m_soundElements[1]->m_toPlay = true;
@@ -309,13 +308,9 @@ void MainEngine::saveEnemiesCheckpoint()
     vectEnemiesData.reserve(m_memEnemiesStateFromCheckpoint.size());
     for(uint32_t i = 0; i < m_memEnemiesStateFromCheckpoint.size(); ++i)
     {
-        EnemyConfComponent *enemyComp = m_ecsManager.getComponentManager().
-                searchComponentByType<EnemyConfComponent>(m_memEnemiesStateFromCheckpoint[i].m_entityNum,
-                Components_e::ENEMY_CONF_COMPONENT);
+        EnemyConfComponent *enemyComp = m_ecsManager.getComponentManager().getEnemyConfComponent(m_memEnemiesStateFromCheckpoint[i].m_entityNum);
         assert(enemyComp);
-        MapCoordComponent *mapComp = m_ecsManager.getComponentManager().
-                searchComponentByType<MapCoordComponent>(m_memEnemiesStateFromCheckpoint[i].m_entityNum,
-                Components_e::MAP_COORD_COMPONENT);
+        MapCoordComponent *mapComp = m_ecsManager.getComponentManager().getMapCoordComponent(m_memEnemiesStateFromCheckpoint[i].m_entityNum);
         assert(mapComp);
         m_memEnemiesStateFromCheckpoint[i].m_dead = (enemyComp->m_behaviourMode == EnemyBehaviourMode_e::DEAD ||
                                                      enemyComp->m_behaviourMode == EnemyBehaviourMode_e::DYING);
@@ -326,8 +321,7 @@ void MainEngine::saveEnemiesCheckpoint()
         {
             //check if entity still exists
             GeneralCollisionComponent *genCompObject = m_ecsManager.getComponentManager().
-                    searchComponentByType<GeneralCollisionComponent>(*enemyComp->m_dropedObjectEntity,
-                    Components_e::GENERAL_COLLISION_COMPONENT);
+                                                       getGeneralCollisionComponent(*enemyComp->m_dropedObjectEntity);
             if(!genCompObject)
             {
                 m_memEnemiesStateFromCheckpoint[i].m_objectPickedUp = true;
@@ -524,15 +518,12 @@ void MainEngine::playerAttack(uint32_t playerEntity, PlayerConfComponent *player
     AttackType_e attackType = currentWeapon.m_attackType;
     if(attackType == AttackType_e::MELEE)
     {
-        GeneralCollisionComponent *actionGenColl = m_ecsManager.getComponentManager().
-                searchComponentByType<GeneralCollisionComponent>(playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::HIT_MELEE)],
-                Components_e::GENERAL_COLLISION_COMPONENT);
-        MoveableComponent *playerMoveComp = m_ecsManager.getComponentManager().
-                searchComponentByType<MoveableComponent>(playerEntity, Components_e::MOVEABLE_COMPONENT);
-        MapCoordComponent *actionMapComp = m_ecsManager.getComponentManager().
-                searchComponentByType<MapCoordComponent>(playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::HIT_MELEE)], Components_e::MAP_COORD_COMPONENT);
-        MapCoordComponent *playerMapComp = m_ecsManager.getComponentManager().
-                searchComponentByType<MapCoordComponent>(playerEntity, Components_e::MAP_COORD_COMPONENT);
+        GeneralCollisionComponent *actionGenColl = m_ecsManager.getComponentManager().getGeneralCollisionComponent(
+            playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::HIT_MELEE)]);
+        MoveableComponent *playerMoveComp = m_ecsManager.getComponentManager().getMoveableComponent(playerEntity);
+        MapCoordComponent *actionMapComp = m_ecsManager.getComponentManager().getMapCoordComponent(
+            playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::HIT_MELEE)]);
+        MapCoordComponent *playerMapComp = m_ecsManager.getComponentManager().getMapCoordComponent(playerEntity);
         assert(actionMapComp);
         assert(playerMoveComp);
         assert(actionGenColl);
@@ -577,24 +568,18 @@ void MainEngine::confPlayerBullet(PlayerConfComponent *playerComp,
                                   uint32_t numBullet)
 {
     assert(numBullet < MAX_SHOTS);
-    WeaponComponent *weaponComp = m_ecsManager.getComponentManager().
-            searchComponentByType<WeaponComponent>(playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::WEAPON)],
-            Components_e::WEAPON_COMPONENT);
+    WeaponComponent *weaponComp = m_ecsManager.getComponentManager().getWeaponComponent(
+        playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::WEAPON)]);
     assert(weaponComp);
     uint32_t bulletEntity = (*weaponComp->m_weaponsData[weaponComp->m_currentWeapon].m_segmentShootEntities)[numBullet];
-    GeneralCollisionComponent *genColl = m_ecsManager.getComponentManager().
-            searchComponentByType<GeneralCollisionComponent>(bulletEntity, Components_e::GENERAL_COLLISION_COMPONENT);
-    SegmentCollisionComponent *segmentColl = m_ecsManager.getComponentManager().
-            searchComponentByType<SegmentCollisionComponent>(bulletEntity, Components_e::SEGMENT_COLLISION_COMPONENT);
+    GeneralCollisionComponent *genColl = m_ecsManager.getComponentManager().getGeneralCollisionComponent(bulletEntity);
+    SegmentCollisionComponent *segmentColl = m_ecsManager.getComponentManager().getSegmentCollisionComponent(bulletEntity);
     assert(genColl);
-    ShotConfComponent *shotComp = m_ecsManager.getComponentManager().
-            searchComponentByType<ShotConfComponent>(bulletEntity, Components_e::SHOT_CONF_COMPONENT);
+    ShotConfComponent *shotComp = m_ecsManager.getComponentManager().getShotConfComponent(bulletEntity);
     assert(shotComp);
-    MoveableComponent *moveImpactComp = m_ecsManager.getComponentManager().
-            searchComponentByType<MoveableComponent>(shotComp->m_impactEntity, Components_e::MOVEABLE_COMPONENT);
+    MoveableComponent *moveImpactComp = m_ecsManager.getComponentManager().getMoveableComponent(shotComp->m_impactEntity);
     assert(moveImpactComp);
-    ImpactShotComponent *impactComp = m_ecsManager.getComponentManager().
-            searchComponentByType<ImpactShotComponent>(shotComp->m_impactEntity, Components_e::IMPACT_CONF_COMPONENT);
+    ImpactShotComponent *impactComp = m_ecsManager.getComponentManager().getImpactShotComponent(shotComp->m_impactEntity);
     assert(impactComp);
     assert(segmentColl);
     confBullet(impactComp, genColl, segmentColl, moveImpactComp, CollisionTag_e::BULLET_PLAYER_CT, point, degreeAngle);
@@ -684,8 +669,7 @@ void MainEngine::clearObjectToDelete()
     }
     for(uint32_t i = 0; i < vect.size(); ++i)
     {
-        MapCoordComponent *mapComp = m_ecsManager.getComponentManager().
-                searchComponentByType<MapCoordComponent>(vect[i], Components_e::MAP_COORD_COMPONENT);
+        MapCoordComponent *mapComp = m_ecsManager.getComponentManager().getMapCoordComponent(vect[i]);
         assert(mapComp);
         m_memStaticEntitiesDeletedFromCheckpoint.insert(mapComp->m_coord);
         m_ecsManager.bRmEntity(vect[i]);
@@ -693,16 +677,14 @@ void MainEngine::clearObjectToDelete()
     //mem destruct barrel current checkpoint
     for(uint32_t i = 0; i < vectBarrelsCheckpointRem.size(); ++i)
     {
-        MapCoordComponent *mapComp = m_ecsManager.getComponentManager().
-                searchComponentByType<MapCoordComponent>(vectBarrelsCheckpointRem[i], Components_e::MAP_COORD_COMPONENT);
+        MapCoordComponent *mapComp = m_ecsManager.getComponentManager().getMapCoordComponent(vectBarrelsCheckpointRem[i]);
         assert(mapComp);
         m_memStaticEntitiesDeletedFromCheckpoint.insert(mapComp->m_coord);
     }
     //clear barrel current game entities
     for(uint32_t i = 0; i < vectBarrels.size(); ++i)
     {
-        MapCoordComponent *mapComp = m_ecsManager.getComponentManager().
-                searchComponentByType<MapCoordComponent>(vectBarrels[i], Components_e::MAP_COORD_COMPONENT);
+        MapCoordComponent *mapComp = m_ecsManager.getComponentManager().getMapCoordComponent(vectBarrels[i]);
         assert(mapComp);
         m_ecsManager.bRmEntity(vectBarrels[i]);
     }
@@ -722,7 +704,7 @@ void MainEngine::memTimerPausedValue()
     m_vectMemPausedTimer.reserve(vectEntities.size());
     for(uint32_t i = 0; i < vectEntities.size(); ++i)
     {
-        timerComp = m_ecsManager.getComponentManager().searchComponentByType<TimerComponent>(vectEntities[i], Components_e::TIMER_COMPONENT);
+        timerComp = m_ecsManager.getComponentManager().getTimerComponent(vectEntities[i]);
         assert(timerComp);
         time_t time = (std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()) -
                        std::chrono::system_clock::to_time_t(timerComp->m_clock));
@@ -736,9 +718,7 @@ void MainEngine::applyTimerPausedValue()
     TimerComponent *timerComp;
     for(uint32_t i = 0; i < m_vectMemPausedTimer.size(); ++i)
     {
-        timerComp = m_ecsManager.getComponentManager().
-                searchComponentByType<TimerComponent>(m_vectMemPausedTimer[i].first,
-                                                      Components_e::TIMER_COMPONENT);
+        timerComp = m_ecsManager.getComponentManager().getTimerComponent(m_vectMemPausedTimer[i].first);
         assert(timerComp);
         timerComp->m_clock = std::chrono::system_clock::from_time_t( std::chrono::system_clock::to_time_t(
                     std::chrono::system_clock::now()) - m_vectMemPausedTimer[i].second);
@@ -756,6 +736,8 @@ void MainEngine::loadColorEntities()
             musicVolume = createColorEntity(),
             turnSensitivity = createColorEntity(),
             effectVolume = createColorEntity();
+    std::cerr << damageEntity << " ssssssssssss " << getObjectEntity << "  " << scratchEntity << "  " << transitionEntity << "  " <<
+        musicVolume << "  " << turnSensitivity << "  " << effectVolume << "\n";
     confUnifiedColorEntity(transitionEntity, {0.0f, 0.0f, 0.0f}, true);
     confUnifiedColorEntity(damageEntity, {0.7f, 0.2f, 0.1f}, true);
     confUnifiedColorEntity(getObjectEntity, {0.1f, 0.7f, 0.5f}, true);
@@ -769,11 +751,9 @@ void MainEngine::loadColorEntities()
 void MainEngine::confMenuBarMenuEntity(uint32_t musicEntity, uint32_t effectEntity, uint32_t turnSensitivity)
 {
     //MUSIC VOLUME
-    PositionVertexComponent *posComp = m_ecsManager.getComponentManager().
-            searchComponentByType<PositionVertexComponent>(musicEntity, Components_e::POSITION_VERTEX_COMPONENT);
+    PositionVertexComponent *posComp = m_ecsManager.getComponentManager().getPosVertexComponent(musicEntity);
     assert(posComp);
-    ColorVertexComponent *colorComp = m_ecsManager.getComponentManager().
-            searchComponentByType<ColorVertexComponent>(musicEntity, Components_e::COLOR_VERTEX_COMPONENT);
+    ColorVertexComponent *colorComp = m_ecsManager.getComponentManager().getColorVertexComponent(musicEntity);
     assert(colorComp);
     float leftPos = LEFT_POS_STD_MENU_BAR, rightPos = leftPos + 0.01f + (getMusicVolume() * MAX_BAR_MENU_SIZE) / 100.0f,
     upPos = MAP_MENU_DATA.at(MenuMode_e::SOUND).first.second - 0.01f,
@@ -797,11 +777,9 @@ void MainEngine::confMenuBarMenuEntity(uint32_t musicEntity, uint32_t effectEnti
     colorComp->m_vertex.emplace_back(TupleTetraFloat_t{0.5f, 0.0f, 0.0f, 1.0f});
     colorComp->m_vertex.emplace_back(TupleTetraFloat_t{0.5f, 0.0f, 0.0f, 1.0f});
     //EFFECT VOLUME
-    posComp = m_ecsManager.getComponentManager().
-            searchComponentByType<PositionVertexComponent>(effectEntity, Components_e::POSITION_VERTEX_COMPONENT);
+    posComp = m_ecsManager.getComponentManager().getPosVertexComponent(effectEntity);
     assert(posComp);
-    colorComp = m_ecsManager.getComponentManager().
-            searchComponentByType<ColorVertexComponent>(effectEntity, Components_e::COLOR_VERTEX_COMPONENT);
+    colorComp = m_ecsManager.getComponentManager().getColorVertexComponent(effectEntity);
     assert(colorComp);
     upPos -= MENU_FONT_SIZE;
     downPos -= MENU_FONT_SIZE;
@@ -817,11 +795,9 @@ void MainEngine::confMenuBarMenuEntity(uint32_t musicEntity, uint32_t effectEnti
     colorComp->m_vertex.emplace_back(TupleTetraFloat_t{0.5f, 0.0f, 0.0f, 1.0f});
     colorComp->m_vertex.emplace_back(TupleTetraFloat_t{0.5f, 0.0f, 0.0f, 1.0f});
     //TURN SENSITIVITY
-    posComp = m_ecsManager.getComponentManager().
-            searchComponentByType<PositionVertexComponent>(turnSensitivity, Components_e::POSITION_VERTEX_COMPONENT);
+    posComp = m_ecsManager.getComponentManager().getPosVertexComponent(turnSensitivity);
     assert(posComp);
-    colorComp = m_ecsManager.getComponentManager().
-            searchComponentByType<ColorVertexComponent>(turnSensitivity, Components_e::COLOR_VERTEX_COMPONENT);
+    colorComp = m_ecsManager.getComponentManager().getColorVertexComponent(turnSensitivity);
     assert(colorComp);
     upPos = (MAP_MENU_DATA.at(MenuMode_e::INPUT).first.second - 0.01f) -
             MENU_FONT_SIZE * static_cast<uint32_t>(InputMenuCursorPos_e::TURN_SENSITIVITY),
@@ -843,8 +819,7 @@ void MainEngine::confMenuBarMenuEntity(uint32_t musicEntity, uint32_t effectEnti
 //===================================================================
 void MainEngine::confUnifiedColorEntity(uint32_t entityNum, const tupleFloat_t &color, bool transparent)
 {
-    PositionVertexComponent *posComp = m_ecsManager.getComponentManager().
-            searchComponentByType<PositionVertexComponent>(entityNum, Components_e::POSITION_VERTEX_COMPONENT);
+    PositionVertexComponent *posComp = m_ecsManager.getComponentManager().getPosVertexComponent(entityNum);
     assert(posComp);
     if(!posComp->m_vertex.empty())
     {
@@ -855,8 +830,7 @@ void MainEngine::confUnifiedColorEntity(uint32_t entityNum, const tupleFloat_t &
     posComp->m_vertex.emplace_back(PairFloat_t{1.0f, 1.0f});
     posComp->m_vertex.emplace_back(PairFloat_t{1.0f, -1.0f});
     posComp->m_vertex.emplace_back(PairFloat_t{-1.0f, -1.0f});
-    ColorVertexComponent *colorComp = m_ecsManager.getComponentManager().
-            searchComponentByType<ColorVertexComponent>(entityNum, Components_e::COLOR_VERTEX_COMPONENT);
+    ColorVertexComponent *colorComp = m_ecsManager.getComponentManager().getColorVertexComponent(entityNum);
     assert(colorComp);
     if(!colorComp->m_vertex.empty())
     {
@@ -976,11 +950,9 @@ void MainEngine::loadFogEntities()
 {
     uint32_t entity = createBackgroundEntity(true);
     //GROUND
-    PositionVertexComponent *posComp = m_ecsManager.getComponentManager().
-            searchComponentByType<PositionVertexComponent>(entity, Components_e::POSITION_VERTEX_COMPONENT);
+    PositionVertexComponent *posComp = m_ecsManager.getComponentManager().getPosVertexComponent(entity);
     assert(posComp);
-    ColorVertexComponent *colorComp = m_ecsManager.getComponentManager().
-            searchComponentByType<ColorVertexComponent>(entity, Components_e::COLOR_VERTEX_COMPONENT);
+    ColorVertexComponent *colorComp = m_ecsManager.getComponentManager().getColorVertexComponent(entity);
     assert(colorComp);
     //ceiling + dark fog middle + Ground
     posComp->m_vertex.reserve(12);
@@ -1102,14 +1074,11 @@ void MainEngine::loadLevel(const LevelManager &levelManager)
 //===================================================================
 void MainEngine::loadGameProgressCheckpoint()
 {
-    MapCoordComponent *mapComp = m_ecsManager.getComponentManager().
-            searchComponentByType<MapCoordComponent>(m_playerEntity, Components_e::MAP_COORD_COMPONENT);
+    MapCoordComponent *mapComp = m_ecsManager.getComponentManager().getMapCoordComponent(m_playerEntity);
     assert(mapComp);
-    MoveableComponent *moveComp = m_ecsManager.getComponentManager().
-            searchComponentByType<MoveableComponent>(m_playerEntity, Components_e::MOVEABLE_COMPONENT);
+    MoveableComponent *moveComp = m_ecsManager.getComponentManager().getMoveableComponent(m_playerEntity);
     assert(moveComp);
-    PositionVertexComponent *pos = m_ecsManager.getComponentManager().
-            searchComponentByType<PositionVertexComponent>(m_playerEntity, Components_e::POSITION_VERTEX_COMPONENT);
+    PositionVertexComponent *pos = m_ecsManager.getComponentManager().getPosVertexComponent(m_playerEntity);
     assert(pos);
     mapComp->m_absoluteMapPositionPX = getCenteredAbsolutePosition(m_memCheckpointLevelState->m_playerPos);
     moveComp->m_degreeOrientation = getDegreeAngleFromDirection(m_memCheckpointLevelState->m_direction);
@@ -1126,14 +1095,10 @@ uint32_t MainEngine::loadWeaponsEntity(const LevelManager &levelManager)
     uint32_t weaponEntity = createWeaponEntity(), weaponToTreat;
     const std::vector<SpriteData> &vectSprite = levelManager.getPictureData().getSpriteData();
     const std::vector<WeaponINIData> &vectWeapons = levelManager.getWeaponsData();
-    MemSpriteDataComponent *memSprite = m_ecsManager.getComponentManager().
-            searchComponentByType<MemSpriteDataComponent>(weaponEntity, Components_e::MEM_SPRITE_DATA_COMPONENT);
-    MemPositionsVertexComponents *memPosVertex = m_ecsManager.getComponentManager().
-            searchComponentByType<MemPositionsVertexComponents>(weaponEntity, Components_e::MEM_POSITIONS_VERTEX_COMPONENT);
-    WeaponComponent *weaponComp = m_ecsManager.getComponentManager().
-            searchComponentByType<WeaponComponent>(weaponEntity, Components_e::WEAPON_COMPONENT);
-    AudioComponent *audioComp = m_ecsManager.getComponentManager().
-            searchComponentByType<AudioComponent>(weaponEntity, Components_e::AUDIO_COMPONENT);
+    MemSpriteDataComponent *memSprite = m_ecsManager.getComponentManager().getMemSpriteDataComponent(weaponEntity);
+    MemPositionsVertexComponents *memPosVertex = m_ecsManager.getComponentManager().getMemPositionsVertexComponent(weaponEntity);
+    WeaponComponent *weaponComp = m_ecsManager.getComponentManager().getWeaponComponent(weaponEntity);
+    AudioComponent *audioComp = m_ecsManager.getComponentManager().getAudioComponent(weaponEntity);
     assert(audioComp);
     assert(weaponComp);
     assert(memSprite);
@@ -1329,12 +1294,10 @@ std::vector<uint32_t> MainEngine::loadWallEntitiesWallLoop(const std::vector<Spr
             continue;
         }
         vectMemEntities.emplace_back(numEntity);
-        MoveableComponent *moveComp = m_ecsManager.getComponentManager().
-                searchComponentByType<MoveableComponent>(numEntity, Components_e::MOVEABLE_COMPONENT);
+        MoveableComponent *moveComp = m_ecsManager.getComponentManager().getMoveableComponent(numEntity);
         assert(moveComp);
         moveComp->m_velocity = currentShape.second.m_velocity;
-        MoveableWallConfComponent *moveWallConfComp = m_ecsManager.getComponentManager().
-                searchComponentByType<MoveableWallConfComponent>(numEntity, Components_e::MOVEABLE_WALL_CONF_COMPONENT);
+        MoveableWallConfComponent *moveWallConfComp = m_ecsManager.getComponentManager().getMoveableWallConfComponent(numEntity);
         assert(moveWallConfComp);
         moveWallConfComp->setIDEntityAssociated(numEntity);
         moveWallConfComp->m_directionMove = currentShape.second.m_directionMove;
@@ -1344,8 +1307,7 @@ std::vector<uint32_t> MainEngine::loadWallEntitiesWallLoop(const std::vector<Spr
                   m_memTriggerWallMoveableWallCheckpointData[shapeNum].first[wallNum] > 0))
         {
             moveWallConfComp->m_triggerWallCheckpointData = {shapeNum, {wallNum, 0}};
-            GeneralCollisionComponent *genCollComp = m_ecsManager.getComponentManager().
-                    searchComponentByType<GeneralCollisionComponent>(numEntity, Components_e::GENERAL_COLLISION_COMPONENT);
+            GeneralCollisionComponent *genCollComp = m_ecsManager.getComponentManager().getGeneralCollisionComponent(numEntity);
             assert(genCollComp);
             genCollComp->m_tagB = CollisionTag_e::TRIGGER_CT;
         }
@@ -1375,13 +1337,11 @@ void MainEngine::confBaseWallData(uint32_t wallEntity, const SpriteData &memSpri
                       CollisionShape_e::RECTANGLE_C, CollisionTag_e::WALL_CT);
     if(!timeMultiSpriteCase.empty())
     {
-        WallMultiSpriteConf *multiSpriteConf = m_ecsManager.getComponentManager().
-                searchComponentByType<WallMultiSpriteConf>(wallEntity, Components_e::WALL_MULTI_SPRITE_CONF);
+        WallMultiSpriteConf *multiSpriteConf = m_ecsManager.getComponentManager().getWallMultiSpriteConfComponent(wallEntity);
         assert(multiSpriteConf);
         multiSpriteConf->m_cyclesTime = timeMultiSpriteCase;
     }
-    spriteComp = m_ecsManager.getComponentManager().
-            searchComponentByType<SpriteTextureComponent>(wallEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
+    spriteComp = m_ecsManager.getComponentManager().getSpriteTextureComponent(wallEntity);
     assert(spriteComp);
     LevelCaseType_e type = moveable ? LevelCaseType_e::WALL_MOVE_LC : LevelCaseType_e::WALL_LC;
     std::optional<ElementRaycast> element  = Level::getElementCase(coordLevel);
@@ -1395,8 +1355,7 @@ void MainEngine::confBaseWallData(uint32_t wallEntity, const SpriteData &memSpri
     {
         return;
     }
-    memSpriteComp = m_ecsManager.getComponentManager().
-            searchComponentByType<MemSpriteDataComponent>(wallEntity, Components_e::MEM_SPRITE_DATA_COMPONENT);
+    memSpriteComp = m_ecsManager.getComponentManager().getMemSpriteDataComponent(wallEntity);
     assert(memSpriteComp);
     uint32_t vectSize = numWallSprites.size();
     memSpriteComp->m_vectSpriteData.reserve(static_cast<uint32_t>(WallSpriteType_e::TOTAL_SPRITE));
@@ -1404,8 +1363,7 @@ void MainEngine::confBaseWallData(uint32_t wallEntity, const SpriteData &memSpri
     {
         memSpriteComp->m_vectSpriteData.emplace_back(&vectSprite[numWallSprites[j]]);
     }
-    timerComp = m_ecsManager.getComponentManager().
-            searchComponentByType<TimerComponent>(wallEntity, Components_e::TIMER_COMPONENT);
+    timerComp = m_ecsManager.getComponentManager().getTimerComponent(wallEntity);
     assert(timerComp);
     timerComp->m_cycleCountA = 0;
 }
@@ -1426,20 +1384,15 @@ void MainEngine::loadDoorEntities(const LevelManager &levelManager)
             uint32_t numEntity = createDoorEntity();
             confBaseComponent(numEntity, memSpriteData, it->second.m_TileGamePosition[j],
                               CollisionShape_e::RECTANGLE_C, CollisionTag_e::DOOR_CT);
-            MapCoordComponent *mapComp = m_ecsManager.getComponentManager().
-                    searchComponentByType<MapCoordComponent>(numEntity, Components_e::MAP_COORD_COMPONENT);
+            MapCoordComponent *mapComp = m_ecsManager.getComponentManager().getMapCoordComponent(numEntity);
             assert(mapComp);
-            RectangleCollisionComponent *rectComp = m_ecsManager.getComponentManager().
-                    searchComponentByType<RectangleCollisionComponent>(numEntity, Components_e::RECTANGLE_COLLISION_COMPONENT);
+            RectangleCollisionComponent *rectComp = m_ecsManager.getComponentManager().getRectangleCollisionComponent(numEntity);
             assert(rectComp);
-            DoorComponent *doorComp = m_ecsManager.getComponentManager().
-                    searchComponentByType<DoorComponent>(numEntity, Components_e::DOOR_COMPONENT);
+            DoorComponent *doorComp = m_ecsManager.getComponentManager().getDoorComponent(numEntity);
             assert(doorComp);
-            AudioComponent *audioComp = m_ecsManager.getComponentManager().
-                    searchComponentByType<AudioComponent>(numEntity, Components_e::AUDIO_COMPONENT);
+            AudioComponent *audioComp = m_ecsManager.getComponentManager().getAudioComponent(numEntity);
             assert(audioComp);
-            TimerComponent *timerComp = m_ecsManager.getComponentManager().
-                    searchComponentByType<TimerComponent>(numEntity, Components_e::TIMER_COMPONENT);
+            TimerComponent *timerComp = m_ecsManager.getComponentManager().getTimerComponent(numEntity);
             assert(audioComp);
             timerComp->m_cycleCountA = 0;
             audioComp->m_soundElements.push_back(currentSoundElement);
@@ -1470,12 +1423,8 @@ void MainEngine::loadDoorEntities(const LevelManager &levelManager)
                 }
                 doorComp->m_cardID = {(*it->second.m_cardID).first, str};
             }
-            memSpriteComp = m_ecsManager.getComponentManager().
-                    searchComponentByType<MemSpriteDataComponent>(numEntity,
-                                                                  Components_e::MEM_SPRITE_DATA_COMPONENT);
-
-            SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().
-                    searchComponentByType<SpriteTextureComponent>(numEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
+            memSpriteComp = m_ecsManager.getComponentManager().getMemSpriteDataComponent(numEntity);
+            SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().getSpriteTextureComponent(numEntity);
             assert(spriteComp);
             Level::addElementCase(spriteComp, it->second.m_TileGamePosition[j], LevelCaseType_e::DOOR_LC, numEntity);
             if(!memSpriteComp)
@@ -1522,12 +1471,8 @@ bool MainEngine::createEnemy(const LevelManager &levelManager, const SpriteData 
     uint32_t numEntity = createEnemyEntity();
     confBaseComponent(numEntity, memSpriteData, enemyData.m_TileGamePosition[index],
                       CollisionShape_e::CIRCLE_C, CollisionTag_e::ENEMY_CT);
-    EnemyConfComponent *enemyComp = m_ecsManager.getComponentManager().
-            searchComponentByType<EnemyConfComponent>(numEntity,
-                                                      Components_e::ENEMY_CONF_COMPONENT);
-    FPSVisibleStaticElementComponent *fpsStaticComp = m_ecsManager.getComponentManager().
-            searchComponentByType<FPSVisibleStaticElementComponent>(
-                numEntity, Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
+    EnemyConfComponent *enemyComp = m_ecsManager.getComponentManager().getEnemyConfComponent(numEntity);
+    FPSVisibleStaticElementComponent *fpsStaticComp = m_ecsManager.getComponentManager().getFPSVisibleStaticElementComponent(numEntity);
     assert(enemyComp);
     assert(fpsStaticComp);
     if(enemyData.m_endLevelPos && (*enemyData.m_endLevelPos) == enemyData.m_TileGamePosition[index])
@@ -1537,8 +1482,7 @@ bool MainEngine::createEnemy(const LevelManager &levelManager, const SpriteData 
     }
     fpsStaticComp->m_inGameSpriteSize = enemyData.m_inGameSpriteSize;
     fpsStaticComp->m_levelElementType = LevelStaticElementType_e::GROUND;
-    CircleCollisionComponent *circleComp = m_ecsManager.getComponentManager().
-            searchComponentByType<CircleCollisionComponent>(numEntity, Components_e::CIRCLE_COLLISION_COMPONENT);
+    CircleCollisionComponent *circleComp = m_ecsManager.getComponentManager().getCircleCollComponent(numEntity);
     assert(circleComp);
     circleComp->m_ray = collisionRay;
     enemyComp->m_life = enemyData.m_life;
@@ -1570,14 +1514,12 @@ bool MainEngine::createEnemy(const LevelManager &levelManager, const SpriteData 
     }
     loadEnemySprites(levelManager.getPictureData().getSpriteData(),
                      enemyData, numEntity, enemyComp, levelManager.getVisibleShootDisplayData());
-    MoveableComponent *moveComp = m_ecsManager.getComponentManager().
-            searchComponentByType<MoveableComponent>(numEntity, Components_e::MOVEABLE_COMPONENT);
+    MoveableComponent *moveComp = m_ecsManager.getComponentManager().getMoveableComponent(numEntity);
     assert(moveComp);
     moveComp->m_velocity = enemyData.m_velocity;
     moveComp->m_currentDegreeMoveDirection = 0.0f;
     moveComp->m_degreeOrientation = 0.0f;
-    AudioComponent *audiocomponent = m_ecsManager.getComponentManager().
-            searchComponentByType<AudioComponent>(numEntity, Components_e::AUDIO_COMPONENT);
+    AudioComponent *audiocomponent = m_ecsManager.getComponentManager().getAudioComponent(numEntity);
     assert(audiocomponent);
     audiocomponent->m_soundElements.reserve(4);
     audiocomponent->m_soundElements.emplace_back(soundElements[0]);
@@ -1585,8 +1527,7 @@ bool MainEngine::createEnemy(const LevelManager &levelManager, const SpriteData 
     audiocomponent->m_soundElements.emplace_back(soundElements[2]);
     audiocomponent->m_soundElements.emplace_back(soundElements[3]);
     audiocomponent->m_maxDistance /= 5.0f;
-    TimerComponent *timerComponent = m_ecsManager.getComponentManager().
-            searchComponentByType<TimerComponent>(numEntity, Components_e::TIMER_COMPONENT);
+    TimerComponent *timerComponent = m_ecsManager.getComponentManager().getTimerComponent(numEntity);
     assert(timerComponent);
     timerComponent->m_cycleCountA = 0;
     memCheckpointEnemiesData(loadFromCheckpoint, numEntity, m_currentLevelEnemiesNumber);
@@ -1649,9 +1590,7 @@ void MainEngine::loadNonVisibleEnemyAmmoStuff(bool loadFromCheckpoint, uint32_t 
     assert(itt != map.end());
     for(uint32_t j = 0; j < enemyComp->m_stdAmmo.size(); ++j)
     {
-        ShotConfComponent *shotComp = m_ecsManager.getComponentManager().
-                searchComponentByType<ShotConfComponent>(enemyComp->m_stdAmmo[j],
-                                                         Components_e::SHOT_CONF_COMPONENT);
+        ShotConfComponent *shotComp = m_ecsManager.getComponentManager().getShotConfComponent(enemyComp->m_stdAmmo[j]);
         assert(shotComp);
         shotComp->m_impactEntity = confShotImpactEntity(levelManager.getPictureSpriteData(), itt->second);
     }
@@ -1663,11 +1602,9 @@ void MainEngine::memCheckpointEnemiesData(bool loadFromCheckpoint, uint32_t enem
     if(loadFromCheckpoint)
     {
         m_memEnemiesStateFromCheckpoint[cmpt].m_entityNum = enemyEntity;
-        MapCoordComponent *mapComp = m_ecsManager.getComponentManager().
-                searchComponentByType<MapCoordComponent>(enemyEntity, Components_e::MAP_COORD_COMPONENT);
+        MapCoordComponent *mapComp = m_ecsManager.getComponentManager().getMapCoordComponent(enemyEntity);
         assert(mapComp);
-        EnemyConfComponent *enemyComp = m_ecsManager.getComponentManager().
-                searchComponentByType<EnemyConfComponent>(enemyEntity, Components_e::ENEMY_CONF_COMPONENT);
+        EnemyConfComponent *enemyComp = m_ecsManager.getComponentManager().getEnemyConfComponent(enemyEntity);
         assert(enemyComp);
         mapComp->m_absoluteMapPositionPX = m_memEnemiesStateFromCheckpoint[cmpt].m_enemyPos;
         enemyComp->m_life = m_memEnemiesStateFromCheckpoint[cmpt].m_life;
@@ -1697,8 +1634,7 @@ void MainEngine::loadCheckpointsEntities(const LevelManager &levelManager)
         }
         entityNum = createCheckpointEntity();
         initStdCollisionCase(entityNum, container[i].first, CollisionTag_e::CHECKPOINT_CT);
-        CheckpointComponent *checkComponent = m_ecsManager.getComponentManager().
-                searchComponentByType<CheckpointComponent>(entityNum, Components_e::CHECKPOINT_COMPONENT);
+        CheckpointComponent *checkComponent = m_ecsManager.getComponentManager().getCheckpointComponent(entityNum);
         assert(checkComponent);
         checkComponent->m_checkpointNumber = i + 1;
         checkComponent->m_direction = container[i].second;
@@ -1736,25 +1672,19 @@ void MainEngine::loadLogsEntities(const LevelManager &levelManager, const std::v
         it = stdLogData.find(container[i].m_id);
         confBaseComponent(entityNum, vectSprite[it->second.m_spriteNum], container[i].m_pos,
                 CollisionShape_e::CIRCLE_C, CollisionTag_e::LOG_CT);
-        FPSVisibleStaticElementComponent *fpsStaticComp = m_ecsManager.getComponentManager().
-                searchComponentByType<FPSVisibleStaticElementComponent>(
-                    entityNum, Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
+        FPSVisibleStaticElementComponent *fpsStaticComp = m_ecsManager.getComponentManager().getFPSVisibleStaticElementComponent(entityNum);
         assert(fpsStaticComp);
         assert(it != stdLogData.end());
         fpsStaticComp->m_inGameSpriteSize = it->second.m_fpsSize;
         fpsStaticComp->m_levelElementType = LevelStaticElementType_e::GROUND;
-        CircleCollisionComponent *circleComp = m_ecsManager.getComponentManager().
-                searchComponentByType<CircleCollisionComponent>(entityNum, Components_e::CIRCLE_COLLISION_COMPONENT);
+        CircleCollisionComponent *circleComp = m_ecsManager.getComponentManager().getCircleCollComponent(entityNum);
         assert(circleComp);
         circleComp->m_ray = 10.0f;
-        LogComponent *logComp = m_ecsManager.getComponentManager().
-                searchComponentByType<LogComponent>(entityNum, Components_e::LOG_COMPONENT);
+        LogComponent *logComp = m_ecsManager.getComponentManager().getLogComponent(entityNum);
         assert(logComp);
         logComp->m_message = treatInfoMessageEndLine(container[i].m_message);
-        SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().
-                searchComponentByType<SpriteTextureComponent>(entityNum, Components_e::SPRITE_TEXTURE_COMPONENT);
-        MapCoordComponent *mapComp = m_ecsManager.getComponentManager().
-                searchComponentByType<MapCoordComponent>(entityNum, Components_e::MAP_COORD_COMPONENT);
+        SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().getSpriteTextureComponent(entityNum);
+        MapCoordComponent *mapComp = m_ecsManager.getComponentManager().getMapCoordComponent(entityNum);
         assert(spriteComp);
         assert(mapComp);
         Level::addElementCase(spriteComp, mapComp->m_coord, LevelCaseType_e::EMPTY_LC, entityNum);
@@ -1776,18 +1706,15 @@ void MainEngine::loadRevealedMap()
 //===================================================================
 void MainEngine::initStdCollisionCase(uint32_t entityNum, const PairUI_t &mapPos, CollisionTag_e tag)
 {
-    MapCoordComponent *mapComponent = m_ecsManager.getComponentManager().
-            searchComponentByType<MapCoordComponent>(entityNum, Components_e::MAP_COORD_COMPONENT);
+    MapCoordComponent *mapComponent = m_ecsManager.getComponentManager().getMapCoordComponent(entityNum);
     assert(mapComponent);
     mapComponent->m_coord = mapPos;
     mapComponent->m_absoluteMapPositionPX = {mapPos.first * LEVEL_TILE_SIZE_PX, mapPos.second * LEVEL_TILE_SIZE_PX};
-    GeneralCollisionComponent *genCompComponent = m_ecsManager.getComponentManager().
-            searchComponentByType<GeneralCollisionComponent>(entityNum, Components_e::GENERAL_COLLISION_COMPONENT);
+    GeneralCollisionComponent *genCompComponent = m_ecsManager.getComponentManager().getGeneralCollisionComponent(entityNum);
     assert(genCompComponent);
     genCompComponent->m_shape = CollisionShape_e::RECTANGLE_C;
     genCompComponent->m_tagA = tag;
-    RectangleCollisionComponent *rectComponent = m_ecsManager.getComponentManager().
-            searchComponentByType<RectangleCollisionComponent>(entityNum, Components_e::RECTANGLE_COLLISION_COMPONENT);
+    RectangleCollisionComponent *rectComponent = m_ecsManager.getComponentManager().getRectangleCollisionComponent(entityNum);
     assert(rectComponent);
     rectComponent->m_size = {LEVEL_TILE_SIZE_PX, LEVEL_TILE_SIZE_PX};
 }
@@ -1827,21 +1754,16 @@ void MainEngine::loadTriggerEntityData(const MoveableWallData &moveWallData,
     if(newTrigger)
     {
         m_memTriggerCreated.insert({pos, numEntity});
-        GeneralCollisionComponent *genComp = m_ecsManager.getComponentManager().
-                searchComponentByType<GeneralCollisionComponent>(numEntity, Components_e::GENERAL_COLLISION_COMPONENT);
-        MapCoordComponent *mapComp = m_ecsManager.getComponentManager().
-                searchComponentByType<MapCoordComponent>(numEntity, Components_e::MAP_COORD_COMPONENT);
-        CircleCollisionComponent *circleComp = m_ecsManager.getComponentManager().
-                searchComponentByType<CircleCollisionComponent>(numEntity, Components_e::CIRCLE_COLLISION_COMPONENT);
+        GeneralCollisionComponent *genComp = m_ecsManager.getComponentManager().getGeneralCollisionComponent(numEntity);
+        MapCoordComponent *mapComp = m_ecsManager.getComponentManager().getMapCoordComponent(numEntity);
+        CircleCollisionComponent *circleComp = m_ecsManager.getComponentManager().getCircleCollComponent(numEntity);
         assert(circleComp);
         assert(mapComp);
         assert(genComp);
         if(button)
         {
-            SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().
-                    searchComponentByType<SpriteTextureComponent>(numEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
-            FPSVisibleStaticElementComponent *fpsComp = m_ecsManager.getComponentManager().
-                    searchComponentByType<FPSVisibleStaticElementComponent>(numEntity, Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
+            SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().getSpriteTextureComponent(numEntity);
+            FPSVisibleStaticElementComponent *fpsComp = m_ecsManager.getComponentManager().getFPSVisibleStaticElementComponent(numEntity);
             assert(fpsComp);
             assert(spriteComp);
             spriteComp->m_spriteData = &vectSprite[moveWallData.m_associatedTriggerData->m_displayData.m_numSprite];
@@ -1865,8 +1787,7 @@ void MainEngine::loadTriggerEntityData(const MoveableWallData &moveWallData,
         return;
     }
     //add new entity num to trigger
-    TriggerComponent *triggerComp = m_ecsManager.getComponentManager().
-            searchComponentByType<TriggerComponent>(numEntity, Components_e::TRIGGER_COMPONENT);
+    TriggerComponent *triggerComp = m_ecsManager.getComponentManager().getTriggerComponent(numEntity);
     assert(triggerComp);
     triggerComp->m_mapElementEntities.insert({shapeNum, vectPosition});
 }
@@ -1880,16 +1801,14 @@ uint32_t MainEngine::createEnemyDropObject(const LevelManager &levelManager, con
     std::optional<uint32_t> objectEntity = createStaticElementEntity(LevelStaticElementType_e::OBJECT, itt->second,
                                                       levelManager.getPictureSpriteData(), iterationNum, true);
     assert(objectEntity);
-    GeneralCollisionComponent *genComp = m_ecsManager.getComponentManager().
-            searchComponentByType<GeneralCollisionComponent>(*objectEntity, Components_e::GENERAL_COLLISION_COMPONENT);
+    GeneralCollisionComponent *genComp = m_ecsManager.getComponentManager().getGeneralCollisionComponent(*objectEntity);
     assert(genComp);
     genComp->m_active = false;
     if(loadFromCheckpoint && m_memEnemiesStateFromCheckpoint[cmpt].m_dead &&
             !m_memEnemiesStateFromCheckpoint[cmpt].m_objectPickedUp)
     {
         genComp->m_active = true;
-        MapCoordComponent *mapComp = m_ecsManager.getComponentManager().
-                searchComponentByType<MapCoordComponent>(*objectEntity, Components_e::MAP_COORD_COMPONENT);
+        MapCoordComponent *mapComp = m_ecsManager.getComponentManager().getMapCoordComponent(*objectEntity);
         assert(mapComp);
         mapComp->m_absoluteMapPositionPX = m_memEnemiesStateFromCheckpoint[cmpt].m_enemyPos;
     }
@@ -1899,9 +1818,8 @@ uint32_t MainEngine::createEnemyDropObject(const LevelManager &levelManager, con
 //===================================================================
 void MainEngine::createPlayerAmmoEntities(PlayerConfComponent *playerConf, CollisionTag_e collTag)
 {
-    WeaponComponent *weaponComp = m_ecsManager.getComponentManager().
-            searchComponentByType<WeaponComponent>(
-                playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::WEAPON)], Components_e::WEAPON_COMPONENT);
+    WeaponComponent *weaponComp = m_ecsManager.getComponentManager().getWeaponComponent(
+        playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::WEAPON)]);
     assert(weaponComp);
     for(uint32_t i = 0; i < weaponComp->m_weaponsData.size(); ++i)
     {
@@ -1922,8 +1840,7 @@ void MainEngine::confAmmoEntities(std::vector<uint32_t> &ammoEntities, Collision
     for(uint32_t j = 0; j < ammoEntities.size(); ++j)
     {
         ammoEntities[j] = createAmmoEntity(collTag, visibleShot);
-        ShotConfComponent *shotConfComp = m_ecsManager.getComponentManager().
-                searchComponentByType<ShotConfComponent>(ammoEntities[j], Components_e::SHOT_CONF_COMPONENT);
+        ShotConfComponent *shotConfComp = m_ecsManager.getComponentManager().getShotConfComponent(ammoEntities[j]);
         assert(shotConfComp);
         shotConfComp->m_damage = damage;
         if(damageRay)
@@ -1932,8 +1849,7 @@ void MainEngine::confAmmoEntities(std::vector<uint32_t> &ammoEntities, Collision
         }
         if(visibleShot)
         {
-            MoveableComponent *moveComp = m_ecsManager.getComponentManager().
-                    searchComponentByType<MoveableComponent>(ammoEntities[j], Components_e::MOVEABLE_COMPONENT);
+            MoveableComponent *moveComp = m_ecsManager.getComponentManager().getMoveableComponent(ammoEntities[j]);
             assert(moveComp);
             moveComp->m_velocity = shotVelocity;
         }
@@ -1952,8 +1868,7 @@ uint32_t MainEngine::createAmmoEntity(CollisionTag_e collTag, bool visibleShot)
     {
         ammoNum = createVisibleShotEntity();
     }
-    GeneralCollisionComponent *genColl = m_ecsManager.getComponentManager().
-            searchComponentByType<GeneralCollisionComponent>(ammoNum,Components_e::GENERAL_COLLISION_COMPONENT);
+    GeneralCollisionComponent *genColl = m_ecsManager.getComponentManager().getGeneralCollisionComponent(ammoNum);
     assert(genColl);
     genColl->m_active = false;
     genColl->m_tagA = collTag;
@@ -1975,8 +1890,8 @@ void MainEngine::setMenuEntries(PlayerConfComponent *playerComp, std::optional<u
     }
     m_playerConf->m_currentCursorPos = cursorPos ? *cursorPos : 0;
     //TITLE MENU
-    WriteComponent *writeComp = m_ecsManager.getComponentManager().
-            searchComponentByType<WriteComponent>(playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::TITLE_MENU)], Components_e::WRITE_COMPONENT);
+    WriteComponent *writeComp = m_ecsManager.getComponentManager().getWriteComponent(
+        playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::TITLE_MENU)]);
     assert(writeComp);
     m_graphicEngine.fillTitleMenuWrite(writeComp, playerComp->m_menuMode, playerComp->m_previousMenuMode);
     //MENU ENTRIES
@@ -1986,8 +1901,8 @@ void MainEngine::setMenuEntries(PlayerConfComponent *playerComp, std::optional<u
         m_writeConf->addTextLine({{}, ""});
     }
     //SELECTED MENU ENTRY
-    writeComp = m_ecsManager.getComponentManager().
-            searchComponentByType<WriteComponent>(playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_SELECTED_LINE)], Components_e::WRITE_COMPONENT);
+    writeComp = m_ecsManager.getComponentManager().getWriteComponent(
+        playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_SELECTED_LINE)]);
     assert(writeComp);
     m_graphicEngine.fillMenuWrite(m_writeConf, playerComp->m_menuMode, playerComp->m_currentCursorPos,
                                   {playerComp, m_currentLevelSecretsNumber, m_currentLevelEnemiesNumber});
@@ -2032,8 +1947,8 @@ void MainEngine::setMenuEntries(PlayerConfComponent *playerComp, std::optional<u
 //===================================================================
 void MainEngine::updateConfirmLoadingMenuInfo(PlayerConfComponent *playerComp)
 {
-    WriteComponent *writeComp = m_ecsManager.getComponentManager().
-            searchComponentByType<WriteComponent>(playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_INFO_WRITE)], Components_e::WRITE_COMPONENT);
+    WriteComponent *writeComp = m_ecsManager.getComponentManager().getWriteComponent(
+        playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_INFO_WRITE)]);
     assert(writeComp);
     writeComp->clear();
     writeComp->m_fontSpriteData.reserve(4);
@@ -2180,9 +2095,8 @@ void MainEngine::validDisplayMenu()
 //===================================================================
 void MainEngine::reinitPlayerGear()
 {
-    WeaponComponent *weaponComp = m_ecsManager.getComponentManager().
-            searchComponentByType<WeaponComponent>(m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_ENTRIES)],
-            Components_e::WEAPON_COMPONENT);
+    WeaponComponent *weaponComp = m_ecsManager.getComponentManager().getWeaponComponent(
+        m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_ENTRIES)]);
     //if first launch return
     if(!weaponComp)
     {
@@ -2212,8 +2126,7 @@ void MainEngine::setInfoDataWrite(std::string_view message)
 //===================================================================
 void MainEngine::playTriggerSound()
 {
-    AudioComponent *audioComp = m_ecsManager.getComponentManager().
-            searchComponentByType<AudioComponent>(m_playerEntity, Components_e::AUDIO_COMPONENT);
+    AudioComponent *audioComp = m_ecsManager.getComponentManager().getAudioComponent(m_playerEntity);
     assert(audioComp);
     audioComp->m_soundElements[2]->m_toPlay = true;
     m_audioEngine.getSoundSystem()->execSystem();
@@ -2222,13 +2135,11 @@ void MainEngine::playTriggerSound()
 //===================================================================
 void MainEngine::confMenuSelectedLine()
 {
-    WriteComponent *writeMenuComp = m_ecsManager.getComponentManager().
-            searchComponentByType<WriteComponent>(m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_ENTRIES)],
-            Components_e::WRITE_COMPONENT);
+    WriteComponent *writeMenuComp = m_ecsManager.getComponentManager().getWriteComponent(
+        m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_ENTRIES)]);
     assert(writeMenuComp);
-    WriteComponent *writeMenuSelectedComp = m_ecsManager.getComponentManager().
-            searchComponentByType<WriteComponent>(m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_SELECTED_LINE)],
-            Components_e::WRITE_COMPONENT);
+    WriteComponent *writeMenuSelectedComp = m_ecsManager.getComponentManager().getWriteComponent(
+        m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_SELECTED_LINE)]);
     assert(writeMenuSelectedComp);
     m_graphicEngine.confMenuSelectedLine(m_playerConf, writeMenuSelectedComp, writeMenuComp);
 }
@@ -2236,10 +2147,8 @@ void MainEngine::confMenuSelectedLine()
 //===================================================================
 void MainEngine::setPlayerDeparture(const PairUI_t &pos, Direction_e dir)
 {
-    MapCoordComponent *mapComp = m_ecsManager.getComponentManager().
-            searchComponentByType<MapCoordComponent>(m_playerEntity, Components_e::MAP_COORD_COMPONENT);
-    MoveableComponent *moveComp = m_ecsManager.getComponentManager().
-            searchComponentByType<MoveableComponent>(m_playerEntity, Components_e::MOVEABLE_COMPONENT);
+    MapCoordComponent *mapComp = m_ecsManager.getComponentManager().getMapCoordComponent(m_playerEntity);
+    MoveableComponent *moveComp = m_ecsManager.getComponentManager().getMoveableComponent(m_playerEntity);
     assert(mapComp);
     assert(moveComp);
     mapComp->m_absoluteMapPositionPX = getCenteredAbsolutePosition(pos);
@@ -2412,9 +2321,8 @@ void MainEngine::createPlayerImpactEntities(const std::vector<SpriteData> &vectS
             assert(weaponConf->m_weaponsData[i].m_segmentShootEntities);
             for(uint32_t j = 0; j < weaponConf->m_weaponsData[i].m_segmentShootEntities->size(); ++j)
             {
-                ShotConfComponent *shotComp = m_ecsManager.getComponentManager().
-                        searchComponentByType<ShotConfComponent>((*weaponConf->m_weaponsData[i].m_segmentShootEntities)[j],
-                                                                 Components_e::SHOT_CONF_COMPONENT);
+                ShotConfComponent *shotComp = m_ecsManager.getComponentManager().getShotConfComponent(
+                    (*weaponConf->m_weaponsData[i].m_segmentShootEntities)[j]);
                 assert(shotComp);
                 shotComp->m_impactEntity = confShotImpactEntity(vectSpriteData, it->second);
             }
@@ -2427,13 +2335,9 @@ uint32_t MainEngine::confShotImpactEntity(const std::vector<SpriteData> &vectSpr
                                           const PairImpactData_t &shootDisplayData)
 {
     uint32_t impactEntity = createShotImpactEntity();
-    FPSVisibleStaticElementComponent *fpsStaticComp = m_ecsManager.getComponentManager().
-            searchComponentByType<FPSVisibleStaticElementComponent>(
-                impactEntity, Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
-    GeneralCollisionComponent *genComp = m_ecsManager.getComponentManager().
-            searchComponentByType<GeneralCollisionComponent>(impactEntity, Components_e::GENERAL_COLLISION_COMPONENT);
-    CircleCollisionComponent *circleComp = m_ecsManager.getComponentManager().
-            searchComponentByType<CircleCollisionComponent>(impactEntity, Components_e::CIRCLE_COLLISION_COMPONENT);
+    FPSVisibleStaticElementComponent *fpsStaticComp = m_ecsManager.getComponentManager().getFPSVisibleStaticElementComponent(impactEntity);
+    GeneralCollisionComponent *genComp = m_ecsManager.getComponentManager().getGeneralCollisionComponent(impactEntity);
+    CircleCollisionComponent *circleComp = m_ecsManager.getComponentManager().getCircleCollComponent(impactEntity);
     assert(circleComp);
     assert(genComp);
     assert(fpsStaticComp);
@@ -2452,9 +2356,7 @@ uint32_t MainEngine::confShotImpactEntity(const std::vector<SpriteData> &vectSpr
 void MainEngine::loadEnemySprites(const std::vector<SpriteData> &vectSprite, const EnemyData &enemiesData, uint32_t numEntity,
                                   EnemyConfComponent *enemyComp, const MapVisibleShotData_t &visibleShot)
 {
-    MemSpriteDataComponent *memSpriteComp = m_ecsManager.getComponentManager().
-            searchComponentByType<MemSpriteDataComponent>(numEntity,
-                                                          Components_e::MEM_SPRITE_DATA_COMPONENT);
+    MemSpriteDataComponent *memSpriteComp = m_ecsManager.getComponentManager().getMemSpriteDataComponent(numEntity);
     assert(memSpriteComp);
     insertEnemySpriteFromType(vectSprite, enemyComp->m_mapSpriteAssociate, memSpriteComp->m_vectSpriteData,
                               enemiesData.m_staticFrontSprites, EnemySpriteType_e::STATIC_FRONT);
@@ -2506,18 +2408,12 @@ void MainEngine::loadVisibleShotData(const std::vector<SpriteData> &vectSprite, 
 {
     for(uint32_t k = 0; k < visibleAmmo.size(); ++k)
     {
-        SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().
-                searchComponentByType<SpriteTextureComponent>(visibleAmmo[k], Components_e::SPRITE_TEXTURE_COMPONENT);
-        MemSpriteDataComponent *memSpriteComp = m_ecsManager.getComponentManager().
-                searchComponentByType<MemSpriteDataComponent>(visibleAmmo[k], Components_e::MEM_SPRITE_DATA_COMPONENT);
-        FPSVisibleStaticElementComponent *fpsStaticComp = m_ecsManager.getComponentManager().
-                searchComponentByType<FPSVisibleStaticElementComponent>(visibleAmmo[k], Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
-        MemFPSGLSizeComponent *memFPSGLSizeComp = m_ecsManager.getComponentManager().
-                searchComponentByType<MemFPSGLSizeComponent>(visibleAmmo[k], Components_e::MEM_FPS_GLSIZE_COMPONENT);
-        AudioComponent *audioComp = m_ecsManager.getComponentManager().
-                searchComponentByType<AudioComponent>(visibleAmmo[k], Components_e::AUDIO_COMPONENT);
-        ShotConfComponent *shotComp = m_ecsManager.getComponentManager().
-                searchComponentByType<ShotConfComponent>(visibleAmmo[k], Components_e::SHOT_CONF_COMPONENT);
+        SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().getSpriteTextureComponent(visibleAmmo[k]);
+        MemSpriteDataComponent *memSpriteComp = m_ecsManager.getComponentManager().getMemSpriteDataComponent(visibleAmmo[k]);
+        FPSVisibleStaticElementComponent *fpsStaticComp = m_ecsManager.getComponentManager().getFPSVisibleStaticElementComponent(visibleAmmo[k]);
+        MemFPSGLSizeComponent *memFPSGLSizeComp = m_ecsManager.getComponentManager().getMemFPSGLSizeComponent(visibleAmmo[k]);
+        AudioComponent *audioComp = m_ecsManager.getComponentManager().getAudioComponent(visibleAmmo[k]);
+        ShotConfComponent *shotComp = m_ecsManager.getComponentManager().getShotConfComponent(visibleAmmo[k]);
         assert(shotComp);
         assert(audioComp);
         assert(memFPSGLSizeComp);
@@ -2562,12 +2458,9 @@ void MainEngine::confVisibleAmmo(uint32_t ammoEntity)
 {
     PairFloat_t pairSpriteSize = {0.2f, 0.3f};
     float collisionRay = pairSpriteSize.first * LEVEL_HALF_TILE_SIZE_PX;
-    CircleCollisionComponent *circleComp = m_ecsManager.getComponentManager().
-            searchComponentByType<CircleCollisionComponent>(ammoEntity, Components_e::CIRCLE_COLLISION_COMPONENT);
-    FPSVisibleStaticElementComponent *fpsStaticComp = m_ecsManager.getComponentManager().
-            searchComponentByType<FPSVisibleStaticElementComponent>(ammoEntity, Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
-    MoveableComponent *moveComp = m_ecsManager.getComponentManager().
-            searchComponentByType<MoveableComponent>(ammoEntity, Components_e::MOVEABLE_COMPONENT);
+    CircleCollisionComponent *circleComp = m_ecsManager.getComponentManager().getCircleCollComponent(ammoEntity);
+    FPSVisibleStaticElementComponent *fpsStaticComp = m_ecsManager.getComponentManager().getFPSVisibleStaticElementComponent(ammoEntity);
+    MoveableComponent *moveComp = m_ecsManager.getComponentManager().getMoveableComponent(ammoEntity);
     assert(circleComp);
     assert(fpsStaticComp);
     assert(moveComp);
@@ -2805,10 +2698,8 @@ void MainEngine::confBaseComponent(uint32_t entityNum, const SpriteData &memSpri
                                    const std::optional<PairUI_t> &coordLevel, CollisionShape_e collisionShape,
                                    CollisionTag_e tag)
 {
-    SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().
-            searchComponentByType<SpriteTextureComponent>(entityNum, Components_e::SPRITE_TEXTURE_COMPONENT);
-    MapCoordComponent *mapComp = m_ecsManager.getComponentManager().
-            searchComponentByType<MapCoordComponent>(entityNum, Components_e::MAP_COORD_COMPONENT);
+    SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().getSpriteTextureComponent(entityNum);
+    MapCoordComponent *mapComp = m_ecsManager.getComponentManager().getMapCoordComponent(entityNum);
     assert(spriteComp);
     assert(mapComp);
     spriteComp->m_spriteData = &memSpriteData;
@@ -2824,14 +2715,12 @@ void MainEngine::confBaseComponent(uint32_t entityNum, const SpriteData &memSpri
             mapComp->m_absoluteMapPositionPX = getCenteredAbsolutePosition(*coordLevel);
         }
     }
-    GeneralCollisionComponent *tagComp = m_ecsManager.getComponentManager().
-            searchComponentByType<GeneralCollisionComponent>(entityNum, Components_e::GENERAL_COLLISION_COMPONENT);
+    GeneralCollisionComponent *tagComp = m_ecsManager.getComponentManager().getGeneralCollisionComponent(entityNum);
     assert(tagComp);
     tagComp->m_shape = collisionShape;
     if(collisionShape == CollisionShape_e::RECTANGLE_C)
     {
-        RectangleCollisionComponent *rectComp = m_ecsManager.getComponentManager().
-                searchComponentByType<RectangleCollisionComponent>(entityNum, Components_e::RECTANGLE_COLLISION_COMPONENT);
+        RectangleCollisionComponent *rectComp = m_ecsManager.getComponentManager().getRectangleCollisionComponent(entityNum);
         assert(rectComp);
         rectComp->m_size = {LEVEL_TILE_SIZE_PX, LEVEL_TILE_SIZE_PX};
     }
@@ -2842,8 +2731,7 @@ void MainEngine::confBaseComponent(uint32_t entityNum, const SpriteData &memSpri
 void MainEngine::confStaticComponent(uint32_t entityNum, const PairFloat_t& elementSize,
                                      LevelStaticElementType_e elementType)
 {
-    FPSVisibleStaticElementComponent *staticComp = m_ecsManager.getComponentManager().
-            searchComponentByType<FPSVisibleStaticElementComponent>(entityNum, Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
+    FPSVisibleStaticElementComponent *staticComp = m_ecsManager.getComponentManager().getFPSVisibleStaticElementComponent(entityNum);
     assert(staticComp);
     staticComp->m_inGameSpriteSize = elementSize;
     staticComp->m_levelElementType = elementType;
@@ -2885,36 +2773,20 @@ void MainEngine::confPlayerEntity(const LevelManager &levelManager,
     m_playerEntity = entityNum;
     const std::vector<SpriteData> &vectSpriteData =
             levelManager.getPictureData().getSpriteData();
-    PositionVertexComponent *pos = m_ecsManager.getComponentManager().
-            searchComponentByType<PositionVertexComponent>(entityNum,
-                                                           Components_e::POSITION_VERTEX_COMPONENT);
-    MapCoordComponent *map = m_ecsManager.getComponentManager().
-            searchComponentByType<MapCoordComponent>(entityNum,
-                                                     Components_e::MAP_COORD_COMPONENT);
-    MoveableComponent *move = m_ecsManager.getComponentManager().
-            searchComponentByType<MoveableComponent>(entityNum,
-                                                     Components_e::MOVEABLE_COMPONENT);
-    ColorVertexComponent *color = m_ecsManager.getComponentManager().
-            searchComponentByType<ColorVertexComponent>(entityNum,
-                                                     Components_e::COLOR_VERTEX_COMPONENT);
-    CircleCollisionComponent *circleColl = m_ecsManager.getComponentManager().
-            searchComponentByType<CircleCollisionComponent>(entityNum,
-                                                     Components_e::CIRCLE_COLLISION_COMPONENT);
-    GeneralCollisionComponent *tagColl = m_ecsManager.getComponentManager().
-            searchComponentByType<GeneralCollisionComponent>(entityNum,
-                                                     Components_e::GENERAL_COLLISION_COMPONENT);
-    PlayerConfComponent *playerConf = m_ecsManager.getComponentManager().
-            searchComponentByType<PlayerConfComponent>(entityNum,
-                                                     Components_e::PLAYER_CONF_COMPONENT);
+    PositionVertexComponent *pos = m_ecsManager.getComponentManager().getPosVertexComponent(entityNum);
+    MapCoordComponent *map = m_ecsManager.getComponentManager().getMapCoordComponent(entityNum);
+    MoveableComponent *move = m_ecsManager.getComponentManager().getMoveableComponent(entityNum);
+    ColorVertexComponent *color = m_ecsManager.getComponentManager().getColorVertexComponent(entityNum);
+    CircleCollisionComponent *circleColl = m_ecsManager.getComponentManager().getCircleCollComponent(entityNum);
+    GeneralCollisionComponent *tagColl = m_ecsManager.getComponentManager().getGeneralCollisionComponent(entityNum);
+    PlayerConfComponent *playerConf = m_ecsManager.getComponentManager().getPlayerConfComponent(entityNum);
     playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::WEAPON)] = numWeaponEntity;
     playerConf->m_levelToLoad = m_currentLevel;
     playerConf->setIDEntityAssociated(entityNum);
     playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::DISPLAY_TELEPORT)] = numDisplayTeleportEntity;
-    WeaponComponent *weaponConf = m_ecsManager.getComponentManager().
-            searchComponentByType<WeaponComponent>(playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::WEAPON)],
-                                                   Components_e::WEAPON_COMPONENT);
-    AudioComponent *audioComp = m_ecsManager.getComponentManager().
-            searchComponentByType<AudioComponent>(entityNum, Components_e::AUDIO_COMPONENT);
+    WeaponComponent *weaponConf = m_ecsManager.getComponentManager().getWeaponComponent(
+        playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::WEAPON)]);
+    AudioComponent *audioComp = m_ecsManager.getComponentManager().getAudioComponent(entityNum);
     assert(audioComp);
     audioComp->m_soundElements.reserve(3);
     audioComp->m_soundElements.emplace_back(loadSound(levelManager.getPickObjectSoundFile()));
@@ -2977,15 +2849,9 @@ void MainEngine::confActionEntity()
     bitsetComponents[Components_e::MAP_COORD_COMPONENT] = true;
     bitsetComponents[Components_e::CIRCLE_COLLISION_COMPONENT] = true;
     uint32_t entityNum = m_ecsManager.addEntity(bitsetComponents);
-    GeneralCollisionComponent *genCollComp = m_ecsManager.getComponentManager().
-            searchComponentByType<GeneralCollisionComponent>(entityNum,
-                                                             Components_e::GENERAL_COLLISION_COMPONENT);
-    MapCoordComponent *mapComp = m_ecsManager.getComponentManager().
-            searchComponentByType<MapCoordComponent>(entityNum,
-                                                     Components_e::MAP_COORD_COMPONENT);
-    CircleCollisionComponent *circleColl = m_ecsManager.getComponentManager().
-            searchComponentByType<CircleCollisionComponent>(entityNum,
-                                                     Components_e::CIRCLE_COLLISION_COMPONENT);
+    GeneralCollisionComponent *genCollComp = m_ecsManager.getComponentManager().getGeneralCollisionComponent(entityNum);
+    MapCoordComponent *mapComp = m_ecsManager.getComponentManager().getMapCoordComponent(entityNum);
+    CircleCollisionComponent *circleColl = m_ecsManager.getComponentManager().getCircleCollComponent(entityNum);
     assert(genCollComp);
     assert(mapComp);
     assert(circleColl);
@@ -3004,15 +2870,12 @@ void MainEngine::confMapDetectShapeEntity(const PairFloat_t &playerPos)
     bitsetComponents[Components_e::RECTANGLE_COLLISION_COMPONENT] = true;
     bitsetComponents[Components_e::MAP_COORD_COMPONENT] = true;
     m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MAP_DETECT_SHAPE)] = m_ecsManager.addEntity(bitsetComponents);
-    RectangleCollisionComponent *rectColl = m_ecsManager.getComponentManager().
-            searchComponentByType<RectangleCollisionComponent>(m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MAP_DETECT_SHAPE)],
-                                                               Components_e::RECTANGLE_COLLISION_COMPONENT);
-    MapCoordComponent *mapComp= m_ecsManager.getComponentManager().
-            searchComponentByType<MapCoordComponent>(m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MAP_DETECT_SHAPE)],
-                                                     Components_e::MAP_COORD_COMPONENT);
-    GeneralCollisionComponent *genComp = m_ecsManager.getComponentManager().
-            searchComponentByType<GeneralCollisionComponent>(m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MAP_DETECT_SHAPE)],
-                                                             Components_e::GENERAL_COLLISION_COMPONENT);
+    RectangleCollisionComponent *rectColl = m_ecsManager.getComponentManager().getRectangleCollisionComponent(
+        m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MAP_DETECT_SHAPE)]);
+    MapCoordComponent *mapComp= m_ecsManager.getComponentManager().getMapCoordComponent(
+        m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MAP_DETECT_SHAPE)]);
+    GeneralCollisionComponent *genComp = m_ecsManager.getComponentManager().getGeneralCollisionComponent(
+        m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MAP_DETECT_SHAPE)]);
     assert(rectColl);
     assert(mapComp);
     assert(genComp);
@@ -3043,19 +2906,15 @@ uint32_t MainEngine::createDamageZoneEntity(uint32_t damage, CollisionTag_e tag,
                                             float ray, const std::string &soundFile)
 {
     uint32_t entityNum = createMeleeAttackEntity(!soundFile.empty());
-    GeneralCollisionComponent *genCollComp = m_ecsManager.getComponentManager().
-            searchComponentByType<GeneralCollisionComponent>(entityNum, Components_e::GENERAL_COLLISION_COMPONENT);
-    CircleCollisionComponent *circleColl = m_ecsManager.getComponentManager().
-            searchComponentByType<CircleCollisionComponent>(entityNum, Components_e::CIRCLE_COLLISION_COMPONENT);
-    ShotConfComponent *shotComp = m_ecsManager.getComponentManager().
-            searchComponentByType<ShotConfComponent>(entityNum, Components_e::SHOT_CONF_COMPONENT);
+    GeneralCollisionComponent *genCollComp = m_ecsManager.getComponentManager().getGeneralCollisionComponent(entityNum);
+    CircleCollisionComponent *circleColl = m_ecsManager.getComponentManager().getCircleCollComponent(entityNum);
+    ShotConfComponent *shotComp = m_ecsManager.getComponentManager().getShotConfComponent(entityNum);
     assert(shotComp);
     assert(genCollComp);
     assert(circleColl);
     if(!soundFile.empty())
     {
-        AudioComponent *audioComp = m_ecsManager.getComponentManager().
-                searchComponentByType<AudioComponent>(entityNum, Components_e::AUDIO_COMPONENT);
+        AudioComponent *audioComp = m_ecsManager.getComponentManager().getAudioComponent(entityNum);
         assert(audioComp);
         if(!m_memSoundElements.m_damageZone)
         {
@@ -3076,12 +2935,8 @@ void MainEngine::loadShotImpactSprite(const std::vector<SpriteData> &vectSpriteD
                                       const PairImpactData_t &shootDisplayData,
                                       uint32_t impactEntity)
 {
-    MemSpriteDataComponent *memComp = m_ecsManager.getComponentManager().
-            searchComponentByType<MemSpriteDataComponent>(impactEntity,
-                                                          Components_e::MEM_SPRITE_DATA_COMPONENT);
-    SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().
-            searchComponentByType<SpriteTextureComponent>(impactEntity,
-                                                          Components_e::SPRITE_TEXTURE_COMPONENT);
+    MemSpriteDataComponent *memComp = m_ecsManager.getComponentManager().getMemSpriteDataComponent(impactEntity);
+    SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().getSpriteTextureComponent(impactEntity);
     assert(memComp);
     assert(spriteComp);
     for(uint32_t l = 0; l < shootDisplayData.first.size(); ++l)
@@ -3119,44 +2974,38 @@ void MainEngine::confWriteEntities()
             numMenuWrite = createWriteEntity(), numTitleMenuWrite = createWriteEntity(),
             numInputModeMenuWrite = createWriteEntity(), numMenuSelectedLineWrite = createWriteEntity();
     //INFO
-    WriteComponent *writeConf = m_ecsManager.getComponentManager().
-            searchComponentByType<WriteComponent>(numInfoWrite, Components_e::WRITE_COMPONENT);
+    WriteComponent *writeConf = m_ecsManager.getComponentManager().getWriteComponent(numInfoWrite);
     assert(writeConf);
     writeConf->m_upLeftPositionGL = {-0.3f, 0.7f};
     writeConf->addTextLine({{}, ""});
     writeConf->m_fontSize = STD_FONT_SIZE;
     //AMMO
-    writeConf = m_ecsManager.getComponentManager().
-            searchComponentByType<WriteComponent>(numAmmoWrite, Components_e::WRITE_COMPONENT);
+    writeConf = m_ecsManager.getComponentManager().getWriteComponent(numAmmoWrite);
     assert(writeConf);
     writeConf->m_upLeftPositionGL = {-0.8f, -0.9f};
     writeConf->m_fontSize = STD_FONT_SIZE;
     writeConf->addTextLine({writeConf->m_upLeftPositionGL.first, ""});
     m_graphicEngine.updateAmmoCount(writeConf, m_weaponComp);
     //LIFE
-    writeConf = m_ecsManager.getComponentManager().
-            searchComponentByType<WriteComponent>(numLifeWrite, Components_e::WRITE_COMPONENT);
+    writeConf = m_ecsManager.getComponentManager().getWriteComponent(numLifeWrite);
     assert(writeConf);
     writeConf->m_upLeftPositionGL = {-0.8f, -0.8f};
     writeConf->m_fontSize = STD_FONT_SIZE;
     writeConf->addTextLine({writeConf->m_upLeftPositionGL.first, ""});
     m_graphicEngine.updatePlayerLife(writeConf, m_playerConf);
     //MENU
-    writeConf = m_ecsManager.getComponentManager().
-            searchComponentByType<WriteComponent>(numMenuWrite, Components_e::WRITE_COMPONENT);
+    writeConf = m_ecsManager.getComponentManager().getWriteComponent(numMenuWrite);
     assert(writeConf);
     m_writeConf = writeConf;
     writeConf->m_fontSize = MENU_FONT_SIZE;
     //TITLE MENU
-    writeConf = m_ecsManager.getComponentManager().
-            searchComponentByType<WriteComponent>(numTitleMenuWrite, Components_e::WRITE_COMPONENT);
+    writeConf = m_ecsManager.getComponentManager().getWriteComponent(numTitleMenuWrite);
     assert(writeConf);
     writeConf->m_upLeftPositionGL = {-0.3f, 0.9f};
     writeConf->addTextLine({{}, ""});
     writeConf->m_fontSize = MENU_FONT_SIZE;
     //INPUT MENU MODE
-    writeConf = m_ecsManager.getComponentManager().
-            searchComponentByType<WriteComponent>(numInputModeMenuWrite, Components_e::WRITE_COMPONENT);
+    writeConf = m_ecsManager.getComponentManager().getWriteComponent(numInputModeMenuWrite);
     assert(writeConf);
     writeConf->m_upLeftPositionGL = {-0.6f, -0.7f};
     writeConf->m_fontSize = MENU_FONT_SIZE;
@@ -3167,18 +3016,17 @@ void MainEngine::confWriteEntities()
     m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::TITLE_MENU)] = numTitleMenuWrite;
     m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_INFO_WRITE)] = numInputModeMenuWrite;
     m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_SELECTED_LINE)] = numMenuSelectedLineWrite;
-    WriteComponent *writeComp = m_ecsManager.getComponentManager().
-            searchComponentByType<WriteComponent>(m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::TITLE_MENU)], Components_e::WRITE_COMPONENT);
+    WriteComponent *writeComp = m_ecsManager.getComponentManager().getWriteComponent(
+        m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::TITLE_MENU)]);
     assert(writeComp);
     writeConf->addTextLine({-0.3f, ""});
-    WriteComponent *writeCompTitle = m_ecsManager.getComponentManager().
-            searchComponentByType<WriteComponent>(m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::TITLE_MENU)], Components_e::WRITE_COMPONENT);
+    WriteComponent *writeCompTitle = m_ecsManager.getComponentManager().getWriteComponent(
+        m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::TITLE_MENU)]);
     assert(writeCompTitle);
     writeCompTitle->m_fontSpriteData.emplace_back(VectSpriteDataRef_t{});
 
     //MENU SELECTED LINE
-    writeComp = m_ecsManager.getComponentManager().
-            searchComponentByType<WriteComponent>(numMenuSelectedLineWrite, Components_e::WRITE_COMPONENT);
+    writeComp = m_ecsManager.getComponentManager().getWriteComponent(numMenuSelectedLineWrite);
     assert(writeComp);
     writeComp->m_fontSpriteData.emplace_back(VectSpriteDataRef_t{});
     writeComp->m_fontSize = MENU_FONT_SIZE;
@@ -3195,8 +3043,7 @@ void MainEngine::confWriteEntitiesDisplayMenu()
 {
     uint32_t numMenuResolutionWrite = createWriteEntity(), numMenuFullscreenWrite = createWriteEntity();
     //Resolution
-    WriteComponent *writeConfA = m_ecsManager.getComponentManager().
-            searchComponentByType<WriteComponent>(numMenuResolutionWrite, Components_e::WRITE_COMPONENT);
+    WriteComponent *writeConfA = m_ecsManager.getComponentManager().getWriteComponent(numMenuResolutionWrite);
     assert(writeConfA);
     writeConfA->m_upLeftPositionGL.first = MAP_MENU_DATA.at(MenuMode_e::DISPLAY).first.first + 1.0f;
     writeConfA->m_upLeftPositionGL.second = MAP_MENU_DATA.at(MenuMode_e::DISPLAY).first.second;
@@ -3209,8 +3056,7 @@ void MainEngine::confWriteEntitiesDisplayMenu()
     writeConfA->m_vectMessage[0].second = m_graphicEngine.getResolutions()[0].second;
     m_graphicEngine.confWriteComponent(writeConfA);
     //Fullscreen
-    WriteComponent *writeConfB = m_ecsManager.getComponentManager().
-                searchComponentByType<WriteComponent>(numMenuFullscreenWrite, Components_e::WRITE_COMPONENT);
+    WriteComponent *writeConfB = m_ecsManager.getComponentManager().getWriteComponent(numMenuFullscreenWrite);
     assert(writeConfB);
     writeConfB->m_upLeftPositionGL = {writeConfA->m_upLeftPositionGL.first, writeConfA->m_upLeftPositionGL.second - MENU_FONT_SIZE};
     writeConfB->m_fontSize = MENU_FONT_SIZE;
@@ -3234,15 +3080,13 @@ void MainEngine::confWriteEntitiesInputMenu()
     {
         //KEYBOARD
         memKeyboardEntities[i] = createWriteEntity();
-        writeConf = m_ecsManager.getComponentManager().
-                searchComponentByType<WriteComponent>(memKeyboardEntities[i], Components_e::WRITE_COMPONENT);
+        writeConf = m_ecsManager.getComponentManager().getWriteComponent(memKeyboardEntities[i]);
         assert(writeConf);
         writeConf->m_upLeftPositionGL = currentUpLeftPos;
         writeConf->m_fontSize = MENU_FONT_SIZE;
         //GAMEPAD
         memGamepadEntities[i] = createWriteEntity();
-        writeConf = m_ecsManager.getComponentManager().
-                searchComponentByType<WriteComponent>(memGamepadEntities[i], Components_e::WRITE_COMPONENT);
+        writeConf = m_ecsManager.getComponentManager().getWriteComponent(memGamepadEntities[i]);
         assert(writeConf);
         writeConf->m_upLeftPositionGL = currentUpLeftPos;
         writeConf->m_fontSize = MENU_FONT_SIZE;
@@ -3268,10 +3112,8 @@ void MainEngine::confMenuEntities()
 void MainEngine::confMenuEntity(PlayerEntities_e entityType)
 {
     uint32_t backgroundEntity = createSimpleSpriteEntity();
-    PositionVertexComponent *posVertex = m_ecsManager.getComponentManager().
-            searchComponentByType<PositionVertexComponent>(backgroundEntity, Components_e::POSITION_VERTEX_COMPONENT);
-    SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().
-            searchComponentByType<SpriteTextureComponent>(backgroundEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
+    PositionVertexComponent *posVertex = m_ecsManager.getComponentManager().getPosVertexComponent(backgroundEntity);
+    SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().getSpriteTextureComponent(backgroundEntity);
     assert(posVertex);
     assert(spriteComp);
     m_playerConf->m_vectEntities[static_cast<uint32_t>(entityType)] = backgroundEntity;
@@ -3307,10 +3149,8 @@ void MainEngine::confLifeAmmoPannelEntities()
 {
     //PANNEL
     uint32_t lifeAmmoPannelEntity = createSimpleSpriteEntity();
-    PositionVertexComponent *posCursor = m_ecsManager.getComponentManager().
-            searchComponentByType<PositionVertexComponent>(lifeAmmoPannelEntity, Components_e::POSITION_VERTEX_COMPONENT);
-    SpriteTextureComponent *spriteCursor = m_ecsManager.getComponentManager().
-            searchComponentByType<SpriteTextureComponent>(lifeAmmoPannelEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
+    PositionVertexComponent *posCursor = m_ecsManager.getComponentManager().getPosVertexComponent(lifeAmmoPannelEntity);
+    SpriteTextureComponent *spriteCursor = m_ecsManager.getComponentManager().getSpriteTextureComponent(lifeAmmoPannelEntity);
     assert(posCursor);
     assert(spriteCursor);
     m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::LIFE_AMMO_PANNEL)] = lifeAmmoPannelEntity;
@@ -3320,10 +3160,8 @@ void MainEngine::confLifeAmmoPannelEntities()
     posCursor->m_vertex.insert(posCursor->m_vertex.end(), {{left, up}, {right, up}, {right, down},{left, down}});
     //LIFE
     uint32_t lifeIconEntity = createSimpleSpriteEntity();
-    posCursor = m_ecsManager.getComponentManager().
-            searchComponentByType<PositionVertexComponent>(lifeIconEntity, Components_e::POSITION_VERTEX_COMPONENT);
-    spriteCursor = m_ecsManager.getComponentManager().
-            searchComponentByType<SpriteTextureComponent>(lifeIconEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
+    posCursor = m_ecsManager.getComponentManager().getPosVertexComponent(lifeIconEntity);
+    spriteCursor = m_ecsManager.getComponentManager().getSpriteTextureComponent(lifeIconEntity);
     assert(posCursor);
     assert(spriteCursor);
     m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::LIFE_ICON)] = lifeIconEntity;
@@ -3333,10 +3171,8 @@ void MainEngine::confLifeAmmoPannelEntities()
     posCursor->m_vertex.insert(posCursor->m_vertex.end(), {{left, up}, {right, up}, {right, down},{left, down}});
     //AMMO
     uint32_t ammoIconEntity = createSimpleSpriteEntity();
-    posCursor = m_ecsManager.getComponentManager().
-            searchComponentByType<PositionVertexComponent>(ammoIconEntity, Components_e::POSITION_VERTEX_COMPONENT);
-    spriteCursor = m_ecsManager.getComponentManager().
-            searchComponentByType<SpriteTextureComponent>(ammoIconEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
+    posCursor = m_ecsManager.getComponentManager().getPosVertexComponent(ammoIconEntity);
+    spriteCursor = m_ecsManager.getComponentManager().getSpriteTextureComponent(ammoIconEntity);
     assert(posCursor);
     assert(spriteCursor);
     m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::AMMO_ICON)] = ammoIconEntity;
@@ -3351,17 +3187,14 @@ void MainEngine::confLifeAmmoPannelEntities()
 void MainEngine::confWeaponsPreviewEntities()
 {
     m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::CURSOR_WEAPON_PREVIEW)] = createSimpleSpriteEntity();
-    SpriteTextureComponent *spriteCursor = m_ecsManager.getComponentManager().
-            searchComponentByType<SpriteTextureComponent>(m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::CURSOR_WEAPON_PREVIEW)],
-                                                          Components_e::SPRITE_TEXTURE_COMPONENT);
+    SpriteTextureComponent *spriteCursor = m_ecsManager.getComponentManager().getSpriteTextureComponent(
+        m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::CURSOR_WEAPON_PREVIEW)]);
     assert(spriteCursor);
     spriteCursor->m_spriteData = m_memPannel;
     for(uint32_t i = 0; i < m_playerConf->m_vectPossessedWeaponsPreviewEntities.size(); ++i)
     {
         m_playerConf->m_vectPossessedWeaponsPreviewEntities[i] = createSimpleSpriteEntity();
-        spriteCursor = m_ecsManager.getComponentManager().
-                    searchComponentByType<SpriteTextureComponent>(m_playerConf->m_vectPossessedWeaponsPreviewEntities[i],
-                    Components_e::SPRITE_TEXTURE_COMPONENT);
+        spriteCursor = m_ecsManager.getComponentManager().getSpriteTextureComponent(m_playerConf->m_vectPossessedWeaponsPreviewEntities[i]);
         assert(spriteCursor);
         switch(i)
         {
@@ -3446,26 +3279,16 @@ void MainEngine::loadBarrelElementEntities(const LevelManager &levelManager)
             continue;
         }
         uint32_t barrelEntity = createBarrelEntity();
-        SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().
-                searchComponentByType<SpriteTextureComponent>(barrelEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
-        MemSpriteDataComponent *memSpriteComp = m_ecsManager.getComponentManager().
-                searchComponentByType<MemSpriteDataComponent>(barrelEntity, Components_e::MEM_SPRITE_DATA_COMPONENT);
-        GeneralCollisionComponent *genComp = m_ecsManager.getComponentManager().
-                searchComponentByType<GeneralCollisionComponent>(barrelEntity, Components_e::GENERAL_COLLISION_COMPONENT);
-        CircleCollisionComponent *circleComp = m_ecsManager.getComponentManager().
-                searchComponentByType<CircleCollisionComponent>(barrelEntity, Components_e::CIRCLE_COLLISION_COMPONENT);
-        FPSVisibleStaticElementComponent *fpsComp = m_ecsManager.getComponentManager().
-                searchComponentByType<FPSVisibleStaticElementComponent>(barrelEntity, Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
-        BarrelComponent *barrelComp = m_ecsManager.getComponentManager().
-                searchComponentByType<BarrelComponent>(barrelEntity, Components_e::BARREL_COMPONENT);
-        MemFPSGLSizeComponent *memGLSizeComp = m_ecsManager.getComponentManager().
-                searchComponentByType<MemFPSGLSizeComponent>(barrelEntity, Components_e::MEM_FPS_GLSIZE_COMPONENT);
-        MapCoordComponent *mapComp = m_ecsManager.getComponentManager().
-                searchComponentByType<MapCoordComponent>(barrelEntity, Components_e::MAP_COORD_COMPONENT);
-        TimerComponent *timerComp = m_ecsManager.getComponentManager().
-                searchComponentByType<TimerComponent>(barrelEntity, Components_e::TIMER_COMPONENT);
-        AudioComponent *audioComp = m_ecsManager.getComponentManager().
-                searchComponentByType<AudioComponent>(barrelEntity, Components_e::AUDIO_COMPONENT);
+        SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().getSpriteTextureComponent(barrelEntity);
+        MemSpriteDataComponent *memSpriteComp = m_ecsManager.getComponentManager().getMemSpriteDataComponent(barrelEntity);
+        GeneralCollisionComponent *genComp = m_ecsManager.getComponentManager().getGeneralCollisionComponent(barrelEntity);
+        CircleCollisionComponent *circleComp = m_ecsManager.getComponentManager().getCircleCollComponent(barrelEntity);
+        FPSVisibleStaticElementComponent *fpsComp = m_ecsManager.getComponentManager().getFPSVisibleStaticElementComponent(barrelEntity);
+        BarrelComponent *barrelComp = m_ecsManager.getComponentManager().getBarrelComponent(barrelEntity);
+        MemFPSGLSizeComponent *memGLSizeComp = m_ecsManager.getComponentManager().getMemFPSGLSizeComponent(barrelEntity);
+        MapCoordComponent *mapComp = m_ecsManager.getComponentManager().getMapCoordComponent(barrelEntity);
+        TimerComponent *timerComp = m_ecsManager.getComponentManager().getTimerComponent(barrelEntity);
+        AudioComponent *audioComp = m_ecsManager.getComponentManager().getAudioComponent(barrelEntity);
         assert(audioComp);
         assert(timerComp);
         assert(mapComp);
@@ -3529,17 +3352,11 @@ SoundElement MainEngine::loadSound(const std::string &file)
 uint32_t MainEngine::loadDisplayTeleportEntity(const LevelManager &levelManager)
 {
     uint32_t numEntity = createDisplayTeleportEntity();
-    SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().
-            searchComponentByType<SpriteTextureComponent>(numEntity,
-                                                          Components_e::SPRITE_TEXTURE_COMPONENT);
-    MemSpriteDataComponent *memSpriteComp = m_ecsManager.getComponentManager().
-            searchComponentByType<MemSpriteDataComponent>(numEntity,
-                                                          Components_e::MEM_SPRITE_DATA_COMPONENT);
-    PositionVertexComponent *posCursor = m_ecsManager.getComponentManager().
-            searchComponentByType<PositionVertexComponent>(numEntity, Components_e::POSITION_VERTEX_COMPONENT);
+    SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().getSpriteTextureComponent(numEntity);
+    MemSpriteDataComponent *memSpriteComp = m_ecsManager.getComponentManager().getMemSpriteDataComponent(numEntity);
+    PositionVertexComponent *posCursor = m_ecsManager.getComponentManager().getPosVertexComponent(numEntity);
     assert(posCursor);
-    GeneralCollisionComponent *genColl = m_ecsManager.getComponentManager().
-            searchComponentByType<GeneralCollisionComponent>(numEntity, Components_e::GENERAL_COLLISION_COMPONENT);
+    GeneralCollisionComponent *genColl = m_ecsManager.getComponentManager().getGeneralCollisionComponent(numEntity);
     assert(genColl);
     genColl->m_tagA = CollisionTag_e::GHOST_CT;
     genColl->m_tagB = CollisionTag_e::TELEPORT_ANIM_CT;
@@ -3573,23 +3390,18 @@ bool MainEngine::loadExitElement(const LevelManager &levelManager,
     const SpriteData &memSpriteData = levelManager.getPictureData().
             getSpriteData()[exit.m_numSprite];
     uint32_t entityNum = createStaticEntity();
-    FPSVisibleStaticElementComponent *fpsStaticComp = m_ecsManager.getComponentManager().
-            searchComponentByType<FPSVisibleStaticElementComponent>(
-                entityNum, Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
+    FPSVisibleStaticElementComponent *fpsStaticComp = m_ecsManager.getComponentManager().getFPSVisibleStaticElementComponent(entityNum);
     assert(fpsStaticComp);
     fpsStaticComp->m_inGameSpriteSize = exit.m_inGameSpriteSize;
     fpsStaticComp->m_levelElementType = LevelStaticElementType_e::CEILING;
     confBaseComponent(entityNum, memSpriteData, exit.m_TileGamePosition[0],
             CollisionShape_e::CIRCLE_C, CollisionTag_e::EXIT_CT);
     confStaticComponent(entityNum, exit.m_inGameSpriteSize, LevelStaticElementType_e::GROUND);
-    CircleCollisionComponent *circleComp = m_ecsManager.getComponentManager().
-            searchComponentByType<CircleCollisionComponent>(entityNum, Components_e::CIRCLE_COLLISION_COMPONENT);
+    CircleCollisionComponent *circleComp = m_ecsManager.getComponentManager().getCircleCollComponent(entityNum);
     assert(circleComp);
     circleComp->m_ray = 5.0f;
-    SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().
-            searchComponentByType<SpriteTextureComponent>(entityNum, Components_e::SPRITE_TEXTURE_COMPONENT);
-    MapCoordComponent *mapComp = m_ecsManager.getComponentManager().
-            searchComponentByType<MapCoordComponent>(entityNum, Components_e::MAP_COORD_COMPONENT);
+    SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().getSpriteTextureComponent(entityNum);
+    MapCoordComponent *mapComp = m_ecsManager.getComponentManager().getMapCoordComponent(entityNum);
     assert(spriteComp);
     assert(mapComp);
     Level::addElementCase(spriteComp, mapComp->m_coord, LevelCaseType_e::EMPTY_LC, entityNum);
@@ -3645,8 +3457,7 @@ std::optional<uint32_t> MainEngine::createStaticElementEntity(LevelStaticElement
         }
         entityNum = createStaticEntity();
     }
-    FPSVisibleStaticElementComponent *fpsStaticComp = m_ecsManager.getComponentManager().
-            searchComponentByType<FPSVisibleStaticElementComponent>(entityNum, Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
+    FPSVisibleStaticElementComponent *fpsStaticComp = m_ecsManager.getComponentManager().getFPSVisibleStaticElementComponent(entityNum);
     assert(fpsStaticComp);
     fpsStaticComp->m_inGameSpriteSize = staticElementData.m_inGameSpriteSize;
     fpsStaticComp->m_levelElementType = elementType;
@@ -3659,16 +3470,13 @@ std::optional<uint32_t> MainEngine::createStaticElementEntity(LevelStaticElement
     {
         confBaseComponent(entityNum, memSpriteData, staticElementData.m_TileGamePosition[iterationNum], CollisionShape_e::CIRCLE_C, tag);
     }
-    CircleCollisionComponent *circleComp = m_ecsManager.getComponentManager().
-            searchComponentByType<CircleCollisionComponent>(entityNum, Components_e::CIRCLE_COLLISION_COMPONENT);
+    CircleCollisionComponent *circleComp = m_ecsManager.getComponentManager().getCircleCollComponent(entityNum);
     assert(circleComp);
     circleComp->m_ray = staticElementData.m_inGameSpriteSize.first * LEVEL_THIRD_TILE_SIZE_PX;
     confStaticComponent(entityNum, staticElementData.m_inGameSpriteSize, elementType);
-    SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().
-            searchComponentByType<SpriteTextureComponent>(entityNum, Components_e::SPRITE_TEXTURE_COMPONENT);
+    SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().getSpriteTextureComponent(entityNum);
     assert(spriteComp);
-    MapCoordComponent *mapComp = m_ecsManager.getComponentManager().
-            searchComponentByType<MapCoordComponent>(entityNum, Components_e::MAP_COORD_COMPONENT);
+    MapCoordComponent *mapComp = m_ecsManager.getComponentManager().getMapCoordComponent(entityNum);
     assert(mapComp);
     Level::addElementCase(spriteComp, mapComp->m_coord, LevelCaseType_e::EMPTY_LC, entityNum);
     return entityNum;
@@ -3680,10 +3488,8 @@ uint32_t MainEngine::confTeleportEntity(const StaticLevelElementData &teleportDa
                                         const std::string &soundFile)
 {
     uint32_t entityNum = createTeleportEntity();
-    TeleportComponent *teleportComp = m_ecsManager.getComponentManager().
-            searchComponentByType<TeleportComponent>(entityNum, Components_e::TELEPORT_COMPONENT);
-    AudioComponent *audioComp = m_ecsManager.getComponentManager().
-            searchComponentByType<AudioComponent>(entityNum, Components_e::AUDIO_COMPONENT);
+    TeleportComponent *teleportComp = m_ecsManager.getComponentManager().getTeleportComponent(entityNum);
+    AudioComponent *audioComp = m_ecsManager.getComponentManager().getAudioComponent(entityNum);
     assert(teleportComp);
     assert(audioComp);
     if(!m_memSoundElements.m_teleports)
@@ -3699,8 +3505,7 @@ uint32_t MainEngine::confTeleportEntity(const StaticLevelElementData &teleportDa
 uint32_t MainEngine::confObjectEntity(const StaticLevelElementData &objectData)
 {
     uint32_t entityNum = createObjectEntity();
-    ObjectConfComponent *objComp = m_ecsManager.getComponentManager().
-            searchComponentByType<ObjectConfComponent>(entityNum, Components_e::OBJECT_CONF_COMPONENT);
+    ObjectConfComponent *objComp = m_ecsManager.getComponentManager().getObjectConfComponent(entityNum);
     assert(objComp);
     objComp->m_type = objectData.m_type;
     if(objComp->m_type == ObjectType_e::AMMO_WEAPON || objComp->m_type == ObjectType_e::WEAPON ||
@@ -3721,8 +3526,7 @@ uint32_t MainEngine::confObjectEntity(const StaticLevelElementData &objectData)
 //===================================================================
 void MainEngine::confColorBackgroundComponents(uint32_t entity, const GroundCeilingData &groundData, bool ground)
 {
-    PositionVertexComponent *posComp = m_ecsManager.getComponentManager().
-            searchComponentByType<PositionVertexComponent>(entity, Components_e::POSITION_VERTEX_COMPONENT);
+    PositionVertexComponent *posComp = m_ecsManager.getComponentManager().getPosVertexComponent(entity);
     assert(posComp);
     posComp->m_vertex.reserve(4);
     if(ground)
@@ -3739,8 +3543,7 @@ void MainEngine::confColorBackgroundComponents(uint32_t entity, const GroundCeil
         posComp->m_vertex.emplace_back(1.0f, 0.0f);
         posComp->m_vertex.emplace_back(-1.0f, 0.0f);
     }
-    ColorVertexComponent *colorComp = m_ecsManager.getComponentManager().
-            searchComponentByType<ColorVertexComponent>(entity, Components_e::COLOR_VERTEX_COMPONENT);
+    ColorVertexComponent *colorComp = m_ecsManager.getComponentManager().getColorVertexComponent(entity);
     assert(colorComp);
     colorComp->m_vertex.reserve(4);
     colorComp->m_vertex.emplace_back(std::get<0>(groundData.m_color[0]), std::get<1>(groundData.m_color[0]),
@@ -3757,8 +3560,7 @@ void MainEngine::confColorBackgroundComponents(uint32_t entity, const GroundCeil
 void MainEngine::confGroundSimpleTextBackgroundComponents(uint32_t entity, const GroundCeilingData &groundData,
                                                           const std::vector<SpriteData> &vectSprite)
 {
-    PositionVertexComponent *posComp = m_ecsManager.getComponentManager().
-            searchComponentByType<PositionVertexComponent>(entity, Components_e::POSITION_VERTEX_COMPONENT);
+    PositionVertexComponent *posComp = m_ecsManager.getComponentManager().getPosVertexComponent(entity);
     assert(posComp);
     posComp->m_vertex.reserve(6);
     posComp->m_vertex.emplace_back(-1.0f, 0.0f);
@@ -3767,8 +3569,7 @@ void MainEngine::confGroundSimpleTextBackgroundComponents(uint32_t entity, const
     posComp->m_vertex.emplace_back(-1.0f, -1.0f);
     posComp->m_vertex.emplace_back(3.0f, 0.0f);
     posComp->m_vertex.emplace_back(3.0f, -1.0f);
-    SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().
-            searchComponentByType<SpriteTextureComponent>(entity, Components_e::SPRITE_TEXTURE_COMPONENT);
+    SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().getSpriteTextureComponent(entity);
     assert(spriteComp);
     assert(vectSprite.size() >= groundData.m_spriteSimpleTextNum);
     spriteComp->m_spriteData = &vectSprite[groundData.m_spriteSimpleTextNum];
@@ -3778,8 +3579,7 @@ void MainEngine::confGroundSimpleTextBackgroundComponents(uint32_t entity, const
 void MainEngine::confCeilingSimpleTextBackgroundComponents(uint32_t entity, const GroundCeilingData &groundData,
                                                            const std::vector<SpriteData> &vectSprite)
 {
-    PositionVertexComponent *posComp = m_ecsManager.getComponentManager().
-            searchComponentByType<PositionVertexComponent>(entity, Components_e::POSITION_VERTEX_COMPONENT);
+    PositionVertexComponent *posComp = m_ecsManager.getComponentManager().getPosVertexComponent(entity);
     assert(posComp);
     posComp->m_vertex.reserve(6);
     posComp->m_vertex.emplace_back(-1.0f, 1.0f);
@@ -3788,8 +3588,7 @@ void MainEngine::confCeilingSimpleTextBackgroundComponents(uint32_t entity, cons
     posComp->m_vertex.emplace_back(-1.0f, 0.0f);
     posComp->m_vertex.emplace_back(3.0f, 1.0f);
     posComp->m_vertex.emplace_back(3.0f, 0.0f);
-    SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().
-            searchComponentByType<SpriteTextureComponent>(entity, Components_e::SPRITE_TEXTURE_COMPONENT);
+    SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().getSpriteTextureComponent(entity);
     assert(spriteComp);
     assert(vectSprite.size() >= groundData.m_spriteSimpleTextNum);
     spriteComp->m_spriteData = &vectSprite[groundData.m_spriteSimpleTextNum];
@@ -3799,8 +3598,7 @@ void MainEngine::confCeilingSimpleTextBackgroundComponents(uint32_t entity, cons
 void MainEngine::confTiledTextBackgroundComponents(uint32_t entity, const GroundCeilingData &backgroundData,
                                                    const std::vector<SpriteData> &vectSprite)
 {
-    SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().
-            searchComponentByType<SpriteTextureComponent>(entity, Components_e::SPRITE_TEXTURE_COMPONENT);
+    SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().getSpriteTextureComponent(entity);
     assert(spriteComp);
     assert(vectSprite.size() >= backgroundData.m_spriteTiledTextNum);
     spriteComp->m_spriteData = &vectSprite[backgroundData.m_spriteTiledTextNum];

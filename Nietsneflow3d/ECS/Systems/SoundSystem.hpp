@@ -1,14 +1,14 @@
 #pragma once
 
-#include "constants.hpp"
 #include <includesLib/BaseECS/system.hpp>
+#include <ECS/NewComponentManager.hpp>
 
 typedef unsigned int ALuint;
 
 class SoundSystem : public ecs::System
 {
 public:
-    SoundSystem();
+    SoundSystem(NewComponentManager &newComponentManager);
     ~SoundSystem();
     void execSystem()override;
     void play(ALuint source);
@@ -30,6 +30,7 @@ public:
         m_sourceMenuAudio = source;
     }
 private:
+    NewComponentManager &m_newComponentManager;
     std::optional<float> getVolumeFromDistance(uint32_t distantEntity, float maxDistance);
 private:
     ALuint m_sourceMenuAudio;

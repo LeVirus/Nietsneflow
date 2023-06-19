@@ -15,7 +15,7 @@
 
 
 //===================================================================
-StaticDisplaySystem::StaticDisplaySystem()
+StaticDisplaySystem::StaticDisplaySystem(NewComponentManager &newComponentManager) : m_newComponentManager(newComponentManager)
 {
     bAddComponentToSystem(Components_e::VISION_COMPONENT);
 }

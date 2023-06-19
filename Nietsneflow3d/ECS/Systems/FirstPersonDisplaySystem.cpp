@@ -24,7 +24,7 @@
 #include <chrono>
 
 //===================================================================
-FirstPersonDisplaySystem::FirstPersonDisplaySystem() :
+FirstPersonDisplaySystem::FirstPersonDisplaySystem(NewComponentManager &newComponentManager) : m_newComponentManager(newComponentManager),
     m_groundTiledTextVertice(Shader_e::COLORED_TEXTURE_S),
     m_ceilingTiledVertice(Shader_e::COLORED_TEXTURE_S)
 {

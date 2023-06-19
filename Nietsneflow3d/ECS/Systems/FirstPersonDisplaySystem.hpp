@@ -9,6 +9,7 @@
 #include <OpenGLUtils/Texture.hpp>
 #include <ECS/Systems/MapDisplaySystem.hpp>
 #include <PhysicalEngine.hpp>
+#include <ECS/NewComponentManager.hpp>
 
 struct GeneralCollisionComponent;
 struct RectangleCollisionComponent;
@@ -56,7 +57,7 @@ struct EntityData
 class FirstPersonDisplaySystem : public ecs::System
 {
 public:
-    FirstPersonDisplaySystem();
+    FirstPersonDisplaySystem(NewComponentManager &newComponentManager);
     void execSystem()override;
     void drawPlayerColorEffects();
     void setVectTextures(std::vector<Texture> &vectTexture);
@@ -103,6 +104,7 @@ private:
     void confSimpleTextVertexGroundCeiling(float observerAngle);
     void writeSimpleTextVertexGroundCeiling();
 private:
+    NewComponentManager &m_newComponentManager;
     Shader *m_shader;
     std::map<uint32_t, uint32_t> m_memDoorDistance;
     std::map<uint32_t, float> m_memWallEntityDistances;

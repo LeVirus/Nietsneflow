@@ -20,7 +20,7 @@ bool InputSystem::m_scrollUp;
 bool InputSystem::m_scrollDown;
 
 //===================================================================
-InputSystem::InputSystem()
+InputSystem::InputSystem(NewComponentManager &newComponentManager) : m_newComponentManager(newComponentManager)
 {
     setUsedComponents();
     gamepadUpdate();

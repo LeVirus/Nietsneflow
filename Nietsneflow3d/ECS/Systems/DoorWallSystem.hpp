@@ -2,6 +2,7 @@
 
 #include <includesLib/BaseECS/system.hpp>
 #include <constants.hpp>
+#include <ECS/NewComponentManager.hpp>
 
 class ECSManager;
 struct DoorComponent;
@@ -12,7 +13,7 @@ class MainEngine;
 class DoorWallSystem : public ecs::System
 {
 public:
-    DoorWallSystem(const ECSManager* memECSManager);
+    DoorWallSystem(NewComponentManager &newComponentManager, const ECSManager* memECSManager);
     void execSystem()override;
     void clearSystem();
     void memRefMainEngine(MainEngine *mainEngine);
@@ -28,6 +29,7 @@ private:
                                    MoveableWallConfComponent *moveWallComp,
                                    const PairUI_t &previousPos);
 private:
+    NewComponentManager &m_newComponentManager;
     double m_doorCyclesForClose;
     std::vector<uint32_t> m_vectMoveableWall, m_vectTrigger;
     ECSManager const *m_ECSManager;

@@ -1,9 +1,10 @@
 #pragma once
 
-#include <includesLib/BaseECS/componentmanager.hpp>
+//#include <includesLib/BaseECS/componentmanager.hpp>
 #include <includesLib/BaseECS/systemmanager.hpp>
 #include <includesLib/BaseECS/engine.hpp>
 #include <constants.hpp>
+#include <ECS/NewComponentManager.hpp>
 
 class ECSManager
 {
@@ -13,22 +14,21 @@ public:
     uint32_t addEntity(const std::bitset<Components_e::TOTAL_COMPONENTS> &bitsetComponents);
     inline bool bRmEntity(uint32_t numEntity)
     {
-        bool ret = m_ecsEngine.bRmEntity(numEntity);
-        m_componentManager->updateComponentFromEntity();
-        return ret;
+        return m_ecsEngine.bRmEntity(numEntity);
     }
     std::vector<uint32_t> getEntitiesContainingComponents(const std::bitset<Components_e::TOTAL_COMPONENTS> &bitsetComponents)const;
     inline ecs::Engine &getEngine(){return m_ecsEngine;}
-    inline ecs::ComponentManager &getComponentManager(){return *m_componentManager;}
+    inline NewComponentManager &getComponentManager()
+    {
+        return m_newComponentManager;
+    }
     inline ecs::SystemManager &getSystemManager(){return *m_systemManager;}
 private:
     void initComponents();
     void initSystems();
-    void syncComponentsFromEntities(uint32_t numEntity, const std::vector<Components_e> &vectComp);
-    void instanciatePositionVertexComponent(uint32_t numEntity);
-    void instanciateColorVertexComponent(uint32_t numEntity);
 private:
     ecs::Engine m_ecsEngine;
     ecs::ComponentManager *m_componentManager = nullptr;
     ecs::SystemManager *m_systemManager = nullptr;
+    NewComponentManager m_newComponentManager;
 };

@@ -16,7 +16,9 @@
 #include <cassert>
 
 //===================================================================
-DoorWallSystem::DoorWallSystem(const ECSManager *memECSManager) : m_ECSManager(memECSManager)
+DoorWallSystem::DoorWallSystem(NewComponentManager &newComponentManager, const ECSManager *memECSManager) :
+    m_newComponentManager(newComponentManager),
+    m_ECSManager(memECSManager)
 {
     bAddComponentToSystem(Components_e::DOOR_COMPONENT);
 }

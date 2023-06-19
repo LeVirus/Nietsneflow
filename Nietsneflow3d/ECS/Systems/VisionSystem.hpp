@@ -2,6 +2,7 @@
 
 #include <BaseECS/system.hpp>
 #include <constants.hpp>
+#include <ECS/NewComponentManager.hpp>
 
 class ECSManager;
 struct VisionComponent;
@@ -21,7 +22,7 @@ using mapEnemySprite_t = std::map<EnemySpriteType_e, PairUI_t>;
 class VisionSystem : public ecs::System
 {
 public:
-    VisionSystem(const ECSManager* memECSManager);
+    VisionSystem(NewComponentManager &newComponentManager, const ECSManager* memECSManager);
     void memECSManager(const ECSManager *memECSMan);
     void execSystem()override;
     inline void clearMemMultiSpritesWall()
@@ -66,6 +67,7 @@ private:
                              SpriteTextureComponent *spriteComp,
                              TimerComponent *timerComp, GeneralCollisionComponent *genComp);
 private:
+    NewComponentManager &m_newComponentManager;
     const ECSManager* m_memECSManager;
     std::vector<uint32_t> m_memMultiSpritesWallEntities, m_vectBarrelsEntitiesToDelete;
     uint32_t m_defaultInterval = 0.8 / FPS_VALUE, m_memTeleportAnimEntity;

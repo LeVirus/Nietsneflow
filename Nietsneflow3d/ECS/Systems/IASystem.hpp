@@ -3,7 +3,8 @@
 #include <includesLib/BaseECS/system.hpp>
 #include "constants.hpp"
 #include <ECS/Components/EnemyConfComponent.hpp>
-#include <ECS/Components/AudioComponent.hpp>>>
+#include <ECS/Components/AudioComponent.hpp>
+#include <ECS/NewComponentManager.hpp>
 
 struct MapCoordComponent;
 struct EnemyConfComponent;
@@ -15,7 +16,7 @@ class ECSManager;
 class IASystem : public ecs::System
 {
 public:
-    IASystem(ECSManager *memECSManager);
+    IASystem(NewComponentManager &newComponentManager, ECSManager *memECSManager);
     void execSystem()override;
     void memPlayerDatas(uint32_t playerEntity);
     void confVisibleShoot(std::vector<uint32_t> &visibleShots, const PairFloat_t &point, float degreeAngle, CollisionTag_e tag);
@@ -35,6 +36,7 @@ private:
     void treatVisibleShot(uint32_t numEntity);
     void activeSound(uint32_t entityNum, uint32_t soundNum);
 private:
+    NewComponentManager &m_newComponentManager;
     uint32_t m_playerEntity, m_intervalEnemyBehaviour = 0.4 / FPS_VALUE, m_intervalVisibleShotLifeTime = 5.0 / FPS_VALUE,
     m_intervalEnemyPlayPassiveSound = 5.0 / FPS_VALUE;
     MapCoordComponent *m_playerMapComp = nullptr;

@@ -4,6 +4,7 @@
 #include <OpenGLUtils/glheaders.hpp>
 #include <constants.hpp>
 #include <functional>
+#include <ECS/NewComponentManager.hpp>
 
 struct PlayerConfComponent;
 struct MoveableComponent;
@@ -83,7 +84,7 @@ bool checkOppositeDir(MoveOrientation_e previousMove, MoveOrientation_e currentM
 class InputSystem : public ecs::System
 {
 public:
-    InputSystem();
+    InputSystem(NewComponentManager &newComponentManager);
     void init(GLFWwindow &window);
     void execSystem()override;
     inline void linkMainEngine(MainEngine *mainEngine)
@@ -161,6 +162,7 @@ private:
     static void window_focus_callback(GLFWwindow* window, int focused);
 
 private:
+    NewComponentManager &m_newComponentManager;
     uint32_t m_rotationSensibility = 40;
     std::optional<uint32_t> m_memInputMenuCursor, m_memMainMenuCursor;
     std::pair<double, double> m_previousMousePosition;

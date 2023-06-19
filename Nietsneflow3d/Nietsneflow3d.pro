@@ -10,6 +10,7 @@ LIBS += -L../Nietsneflow3d/lib  -lECS -lglad -ldl -lglfw -lX11 -lXxf86vm -lXrand
 
 SOURCES += main.cpp \
     AudioEngine.cpp \
+    ECS/NewComponentManager.cpp \
     ECS/Systems/DoorWallSystem.cpp \
     ECS/Systems/IASystem.cpp \
     ECS/Systems/SoundSystem.cpp \
@@ -36,6 +37,7 @@ SOURCES += main.cpp \
 
 HEADERS += \
     AudioEngine.hpp \
+    ComponentsGroup.hpp \
     ECS/Components/AudioComponent.hpp \
     ECS/Components/BarrelComponent.hpp \
     ECS/Components/CheckpointComponent.hpp \
@@ -54,6 +56,8 @@ HEADERS += \
     ECS/Components/WallMultiSpriteConf.hpp \
     ECS/Components/WeaponComponent.hpp \
     ECS/Components/WriteComponent.hpp \
+    ECS/ComponentsGroup.hpp \
+    ECS/NewComponentManager.hpp \
     ECS/Systems/DoorWallSystem.hpp \
     ECS/Systems/IASystem.hpp \
     ECS/Systems/SoundSystem.hpp \

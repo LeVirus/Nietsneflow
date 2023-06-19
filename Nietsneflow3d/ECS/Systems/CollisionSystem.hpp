@@ -3,6 +3,7 @@
 #include <includesLib/BaseECS/system.hpp>
 #include "constants.hpp"
 #include <map>
+#include <ECS/NewComponentManager.hpp>
 
 struct CircleCollisionComponent;
 struct RectangleCollisionComponent;
@@ -18,10 +19,12 @@ struct MoveableWallConfComponent;
 struct ShotConfComponent;
 class MainEngine;
 
+using OptUint_t = std::optional<uint32_t>;
+
 class CollisionSystem : public ecs::System
 {
 public:
-    CollisionSystem();
+    CollisionSystem(NewComponentManager &newComponentManager);
     void execSystem()override;
     inline const std::vector<uint32_t> &getStaticEntitiesToDelete()const
     {
@@ -43,7 +46,6 @@ public:
     {
         m_refMainEngine = mainEngine;
     }
-    void memPlayerDatas(uint32_t playerEntity);
     void writePlayerInfo(const std::string &info);
 private:
     void checkCollisionFirstRect(CollisionArgs &args);
@@ -55,8 +57,8 @@ private:
     void initArrayTag();
     bool checkTag(CollisionTag_e entityTagA, CollisionTag_e entityTagB);
     //return false if new collision iteration have to be done
-    bool treatCollision(uint32_t entityNumA, uint32_t entityNumB, GeneralCollisionComponent *tagCompA,
-                        GeneralCollisionComponent *tagCompB, bool shotExplosionEject = false);
+    bool treatCollision(uint32_t entityNumA, uint32_t entityNumB, GeneralCollisionComponent &tagCompA,
+                        GeneralCollisionComponent &tagCompB, bool shotExplosionEject = false);
     //Collisions detection
     void treatCollisionFirstRect(CollisionArgs &args);
     bool treatDoorCollisionFirstCircle(CollisionArgs &args, const CircleCollisionComponent &circleCompA,
@@ -92,7 +94,7 @@ private:
     SegmentCollisionComponent &getSegmentComponent(uint32_t entityNum);
     MapCoordComponent &getMapComponent(uint32_t entityNum);
     void checkCollisionFirstSegment(uint32_t numEntityA, uint32_t numEntityB,
-                                    GeneralCollisionComponent *tagCompB,
+                                    GeneralCollisionComponent &tagCompB,
                                     MapCoordComponent &mapCompB);
     void calcBulletSegment(SegmentCollisionComponent &segmentCompA);
     void treatEnemyTakeDamage(uint32_t enemyEntityNum, uint32_t damage = 1);
@@ -100,14 +102,15 @@ private:
     void activeSound(uint32_t entityNum);
     bool checkEnemyRemoveCollisionMask(uint32_t entityNum);
     void treatGeneralCrushing(uint32_t entityNum);
-    void secondEntitiesLoop(uint32_t entityA, uint32_t currentIteration, GeneralCollisionComponent *tagCompA, bool shotExplosionEject = false);
+    void secondEntitiesLoop(uint32_t entityA, uint32_t currentIteration, GeneralCollisionComponent &tagCompA, bool shotExplosionEject = false);
 private:
+    NewComponentManager &m_newComponentManager;
+    ComponentsGroup &m_componentsContainer;
     std::multimap<CollisionTag_e, CollisionTag_e> m_tagArray;
     std::pair<std::optional<uint32_t>, float> m_memDistCurrentBulletColl;
     //first bullet second target
     std::vector<PairUI_t> m_vectMemShots;
     std::vector<uint32_t> m_vectEntitiesToDelete, m_vectBarrelsEntitiesDestruct;
-    PlayerConfComponent *m_playerComp = nullptr;
     bool m_memPlayerTeleport;
     //0 movement eject, 1 angle behaviour, 2 Direction,
     //3 if moveable wall current direction
@@ -116,16 +119,15 @@ private:
 };
 
 bool opposingDirection(Direction_e dirA, Direction_e dirB);
-bool pickUpWeapon(uint32_t numWeapon, WeaponComponent *weaponComp,
+bool pickUpWeapon(uint32_t numWeapon, WeaponComponent &weaponComp,
                   uint32_t objectContaining);
-bool pickUpAmmo(uint32_t numWeapon, WeaponComponent *weaponComp,
-                uint32_t objectContaining);
+bool pickUpAmmo(uint32_t numWeapon, WeaponComponent &weaponComp, uint32_t objectContaining);
 Direction_e getDirection(float diffX, float diffY);
 
 struct CollisionArgs
 {
     uint32_t entityNumA, entityNumB;
-    GeneralCollisionComponent *tagCompA, *tagCompB;
+    GeneralCollisionComponent &tagCompA, &tagCompB;
     MapCoordComponent &mapCompA, &mapCompB;
 };
 

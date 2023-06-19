@@ -6,7 +6,8 @@
 #include <cassert>
 
 //===================================================================
-ColorDisplaySystem::ColorDisplaySystem() : m_verticesData(Shader_e::COLOR_S)
+ColorDisplaySystem::ColorDisplaySystem(NewComponentManager &newComponentManager) : m_newComponentManager(newComponentManager),
+    m_verticesData(Shader_e::COLOR_S)
 {
     setUsedComponents();
 }
@@ -26,12 +27,8 @@ void ColorDisplaySystem::fillVertexFromEntities()
     m_verticesData.clear();
     for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
     {
-        PositionVertexComponent *posComp = stairwayToComponentManager().
-                searchComponentByType<PositionVertexComponent>(mVectNumEntity[i],
-                                                               Components_e::POSITION_VERTEX_COMPONENT);
-        ColorVertexComponent *colorComp = stairwayToComponentManager().
-                searchComponentByType<ColorVertexComponent>(mVectNumEntity[i],
-                                                            Components_e::COLOR_VERTEX_COMPONENT);
+        PositionVertexComponent *posComp = m_newComponentManager.getPosVertexComponent(mVectNumEntity[i]);
+        ColorVertexComponent *colorComp = m_newComponentManager.getColorVertexComponent(mVectNumEntity[i]);
         assert(posComp);
         assert(colorComp);
         m_verticesData.loadVertexColorComponent(posComp, colorComp);
@@ -68,12 +65,8 @@ void ColorDisplaySystem::addColorSystemEntity(uint32_t entity)
 //===================================================================
 void ColorDisplaySystem::addFogColorEntity(uint32_t entity)
 {
-    PositionVertexComponent *posComp = stairwayToComponentManager().
-            searchComponentByType<PositionVertexComponent>(entity,
-                                                           Components_e::POSITION_VERTEX_COMPONENT);
-    ColorVertexComponent *colorComp = stairwayToComponentManager().
-            searchComponentByType<ColorVertexComponent>(entity,
-                                                        Components_e::COLOR_VERTEX_COMPONENT);
+    PositionVertexComponent *posComp = m_newComponentManager.getPosVertexComponent(entity);
+    ColorVertexComponent *colorComp = m_newComponentManager.getColorVertexComponent(entity);
     assert(posComp);
     assert(colorComp);
     m_fogComponent = {posComp, colorComp};
@@ -83,46 +76,32 @@ void ColorDisplaySystem::addFogColorEntity(uint32_t entity)
 void ColorDisplaySystem::loadColorEntities(uint32_t damage, uint32_t getObject, uint32_t transition, uint32_t scratchEntity,
                                            uint32_t musicVolume, uint32_t effectVolume, uint32_t turnSensitivity)
 {
-    m_damageMemComponents.first = stairwayToComponentManager().
-            searchComponentByType<PositionVertexComponent>(damage, Components_e::POSITION_VERTEX_COMPONENT);
-    m_damageMemComponents.second = stairwayToComponentManager().
-            searchComponentByType<ColorVertexComponent>(damage, Components_e::COLOR_VERTEX_COMPONENT);
+    m_damageMemComponents.first = m_newComponentManager.getPosVertexComponent(damage);
+    m_damageMemComponents.second = m_newComponentManager.getColorVertexComponent(damage);
     assert(m_damageMemComponents.first);
     assert(m_damageMemComponents.second);
-    m_getObjectMemComponents.first = stairwayToComponentManager().
-            searchComponentByType<PositionVertexComponent>(getObject, Components_e::POSITION_VERTEX_COMPONENT);
-    m_getObjectMemComponents.second = stairwayToComponentManager().
-            searchComponentByType<ColorVertexComponent>(getObject, Components_e::COLOR_VERTEX_COMPONENT);
+    m_getObjectMemComponents.first = m_newComponentManager.getPosVertexComponent(getObject);
+    m_getObjectMemComponents.second = m_newComponentManager.getColorVertexComponent(getObject);
     assert(m_getObjectMemComponents.first);
     assert(m_getObjectMemComponents.second);
-    m_transitionMemComponents.first = stairwayToComponentManager().
-            searchComponentByType<PositionVertexComponent>(transition, Components_e::POSITION_VERTEX_COMPONENT);
-    m_transitionMemComponents.second = stairwayToComponentManager().
-            searchComponentByType<ColorVertexComponent>(transition, Components_e::COLOR_VERTEX_COMPONENT);
+    m_transitionMemComponents.first = m_newComponentManager.getPosVertexComponent(transition);
+    m_transitionMemComponents.second = m_newComponentManager.getColorVertexComponent(transition);
     assert(m_transitionMemComponents.first);
     assert(m_transitionMemComponents.second);
-    m_insideWallScratchMemComponents.first = stairwayToComponentManager().
-            searchComponentByType<PositionVertexComponent>(scratchEntity, Components_e::POSITION_VERTEX_COMPONENT);
-    m_insideWallScratchMemComponents.second = stairwayToComponentManager().
-            searchComponentByType<ColorVertexComponent>(scratchEntity, Components_e::COLOR_VERTEX_COMPONENT);
+    m_insideWallScratchMemComponents.first = m_newComponentManager.getPosVertexComponent(scratchEntity);
+    m_insideWallScratchMemComponents.second = m_newComponentManager.getColorVertexComponent(scratchEntity);
     assert(m_insideWallScratchMemComponents.first);
     assert(m_insideWallScratchMemComponents.second);
-    m_menuMusicVolumeComponents.first = stairwayToComponentManager().
-            searchComponentByType<PositionVertexComponent>(musicVolume, Components_e::POSITION_VERTEX_COMPONENT);
-    m_menuMusicVolumeComponents.second = stairwayToComponentManager().
-            searchComponentByType<ColorVertexComponent>(musicVolume, Components_e::COLOR_VERTEX_COMPONENT);
+    m_menuMusicVolumeComponents.first = m_newComponentManager.getPosVertexComponent(musicVolume);
+    m_menuMusicVolumeComponents.second = m_newComponentManager.getColorVertexComponent(musicVolume);
     assert(m_menuMusicVolumeComponents.first);
     assert(m_menuMusicVolumeComponents.second);
-    m_menuEffectsVolumeComponents.first = stairwayToComponentManager().
-            searchComponentByType<PositionVertexComponent>(effectVolume, Components_e::POSITION_VERTEX_COMPONENT);
-    m_menuEffectsVolumeComponents.second = stairwayToComponentManager().
-            searchComponentByType<ColorVertexComponent>(effectVolume, Components_e::COLOR_VERTEX_COMPONENT);
+    m_menuEffectsVolumeComponents.first = m_newComponentManager.getPosVertexComponent(effectVolume);
+    m_menuEffectsVolumeComponents.second = m_newComponentManager.getColorVertexComponent(effectVolume);
     assert(m_menuEffectsVolumeComponents.first);
     assert(m_menuEffectsVolumeComponents.second);
-    m_menuTurnSensitivityComponents.first = stairwayToComponentManager().
-            searchComponentByType<PositionVertexComponent>(turnSensitivity, Components_e::POSITION_VERTEX_COMPONENT);
-    m_menuTurnSensitivityComponents.second = stairwayToComponentManager().
-            searchComponentByType<ColorVertexComponent>(turnSensitivity, Components_e::COLOR_VERTEX_COMPONENT);
+    m_menuTurnSensitivityComponents.first = m_newComponentManager.getPosVertexComponent(turnSensitivity);
+    m_menuTurnSensitivityComponents.second = m_newComponentManager.getColorVertexComponent(turnSensitivity);
     assert(m_menuTurnSensitivityComponents.first);
     assert(m_menuTurnSensitivityComponents.second);
 }

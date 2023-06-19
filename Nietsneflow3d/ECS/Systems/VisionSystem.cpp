@@ -26,7 +26,8 @@
 #include <ECS/Components/ImpactShotComponent.hpp>
 
 //===========================================================================
-VisionSystem::VisionSystem(const ECSManager *memECSManager) :
+VisionSystem::VisionSystem(NewComponentManager &newComponentManager, const ECSManager *memECSManager) :
+    m_newComponentManager(newComponentManager),
     m_memECSManager(memECSManager)
 {
     setUsedComponents();

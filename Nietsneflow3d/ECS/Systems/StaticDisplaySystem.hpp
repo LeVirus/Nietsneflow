@@ -9,6 +9,7 @@
 #include <OpenGLUtils/VerticesData.hpp>
 #include <OpenGLUtils/Texture.hpp>
 #include <map>
+#include <ECS/NewComponentManager.hpp>
 
 struct TimerComponent;
 struct PlayerConfComponent;
@@ -59,7 +60,7 @@ inline const PairFloat_t CURSOR_GL_SIZE = {0.085f, 0.15f};
 class StaticDisplaySystem : public ecs::System
 {
 public:
-    StaticDisplaySystem();
+    StaticDisplaySystem(NewComponentManager &newComponentManager);
     void execSystem()override;
     void drawStandardStaticSprite(VertexID_e spriteId, PlayerConfComponent *playerComp);
     void displayMenu();
@@ -110,6 +111,7 @@ private:
     void setWeaponMovement(PlayerConfComponent *playerComp, PositionVertexComponent *posComp,
                            MemPositionsVertexComponents *memPosComp);
 private:
+    NewComponentManager &m_newComponentManager;
     MainEngine *m_mainEngine;
     FontData const *m_fontDataPtr;
     bool m_menuBackgroundInit = false;

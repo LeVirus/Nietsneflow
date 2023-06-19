@@ -19,7 +19,7 @@
 
 //===================================================================
 //WARNING CONSIDER THAT LENGHT AND WEIGHT ARE THE SAME
-MapDisplaySystem::MapDisplaySystem()
+MapDisplaySystem::MapDisplaySystem(NewComponentManager &newComponentManager) : m_newComponentManager(newComponentManager)
 {
     setUsedComponents();
 }

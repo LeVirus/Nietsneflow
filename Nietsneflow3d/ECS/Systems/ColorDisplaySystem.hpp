@@ -4,13 +4,14 @@
 #include <OpenGLUtils/Shader.hpp>
 #include <OpenGLUtils/glheaders.hpp>
 #include <OpenGLUtils/VerticesData.hpp>
+#include <ECS/NewComponentManager.hpp>
 
 using PairCompPosColor_t = std::pair<PositionVertexComponent*, ColorVertexComponent*>;
 
 class ColorDisplaySystem : public ecs::System
 {
 public:
-    ColorDisplaySystem();
+    ColorDisplaySystem(NewComponentManager &newComponentManager);
     void execSystem()override;
     void setShader(Shader &shader);
     void addColorSystemEntity(uint32_t entity);
@@ -41,6 +42,7 @@ private:
      */
     void setUsedComponents();
 private:
+    NewComponentManager &m_newComponentManager;
     Shader *m_shader;
     VerticesData m_verticesData;
     PairCompPosColor_t m_transitionMemComponents = {nullptr, nullptr},

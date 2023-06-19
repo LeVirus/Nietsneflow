@@ -7,6 +7,7 @@
 #include <OpenGLUtils/glheaders.hpp>
 #include <OpenGLUtils/VerticesData.hpp>
 #include <OpenGLUtils/Texture.hpp>
+#include <ECS/NewComponentManager.hpp>
 
 struct MapCoordComponent;
 struct VisionComponent;
@@ -26,7 +27,7 @@ struct PlayerComp
 class MapDisplaySystem : public ecs::System
 {
 public:
-    MapDisplaySystem();
+    MapDisplaySystem(NewComponentManager &newComponentManager);
     void confLevelData();
     void confPlayerComp(uint32_t playerNum);
     void setVectTextures(std::vector<Texture> &vectTexture);
@@ -71,6 +72,7 @@ private:
     void getMapDisplayLimit(PairFloat_t &playerPos, PairUI_t &min, PairUI_t &max);
     PairFloat_t getUpLeftCorner(const MapCoordComponent *mapCoordComp, uint32_t entityNum);
 private:
+    NewComponentManager &m_newComponentManager;
     std::map<uint32_t, PairUI_t> m_entitiesDetectedData;
     std::vector<uint32_t> m_entitiesToDisplay;
     PairFloat_t m_sizeLevelPX, m_fullMapTileSizePX, m_fullMapTileSizeGL;

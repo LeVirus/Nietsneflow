@@ -8,7 +8,7 @@
 #include <algorithm>
 
 //===================================================================
-SoundSystem::SoundSystem()
+SoundSystem::SoundSystem(NewComponentManager &newComponentManager) : m_newComponentManager(newComponentManager)
 {
     bAddComponentToSystem(Components_e::AUDIO_COMPONENT);
 }
