@@ -28,7 +28,7 @@ void StaticDisplaySystem::updateMenuCursorPosition(PlayerConfComponent &playerCo
     assert(it != MAP_MENU_DATA.end());
     OptUint_t compNum = m_newComponentManager.getComponentEmplacement(
         playerComp.m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_ENTRIES)],
-        Components_e::GENERAL_COLLISION_COMPONENT);
+        Components_e::WRITE_COMPONENT);
     assert(compNum);
     WriteComponent &writeMenuComp = m_componentsContainer.m_vectWriteComp[*compNum];
     float upPos = writeMenuComp.m_upLeftPositionGL.second -
@@ -36,7 +36,7 @@ void StaticDisplaySystem::updateMenuCursorPosition(PlayerConfComponent &playerCo
     //Set selected menu line pos
     compNum = m_newComponentManager.getComponentEmplacement(
         playerComp.m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_SELECTED_LINE)],
-        Components_e::GENERAL_COLLISION_COMPONENT);
+        Components_e::WRITE_COMPONENT);
     assert(compNum);
     WriteComponent &writeMenuSelectedComp = m_componentsContainer.m_vectWriteComp[*compNum];
     writeMenuSelectedComp.m_upLeftPositionGL = {it->second.first.first, upPos};
@@ -349,7 +349,7 @@ void StaticDisplaySystem::updateStringWriteEntitiesInputMenu(bool keyboardInputM
         for(uint32_t i = 0; i < m_inputMenuKeyboardWriteKeysEntities.size(); ++i)
         {
             compNum = m_newComponentManager.getComponentEmplacement(m_inputMenuKeyboardWriteKeysEntities[i],
-                Components_e::GENERAL_COLLISION_COMPONENT);
+                Components_e::WRITE_COMPONENT);
             assert(compNum);
             WriteComponent &writeConf = m_componentsContainer.m_vectWriteComp[*compNum];
             if(writeConf.m_vectMessage.empty())
@@ -370,7 +370,7 @@ void StaticDisplaySystem::updateStringWriteEntitiesInputMenu(bool keyboardInputM
         for(uint32_t i = 0; i < m_inputMenuGamepadWriteKeysEntities.size(); ++i)
         {
             compNum = m_newComponentManager.getComponentEmplacement(m_inputMenuKeyboardWriteKeysEntities[i],
-                                                                    Components_e::GENERAL_COLLISION_COMPONENT);
+                                                                    Components_e::WRITE_COMPONENT);
             assert(compNum);
             WriteComponent &writeConf = m_componentsContainer.m_vectWriteComp[*compNum];
             if(writeConf.m_vectMessage.empty())
@@ -394,7 +394,7 @@ void StaticDisplaySystem::updateStringWriteEntitiesInputMenu(bool keyboardInputM
 //===================================================================
 void StaticDisplaySystem::updateDisplayMenuResolution(const std::string &str)
 {
-    OptUint_t compNum = m_newComponentManager.getComponentEmplacement(m_resolutionDisplayMenuEntity, Components_e::GENERAL_COLLISION_COMPONENT);
+    OptUint_t compNum = m_newComponentManager.getComponentEmplacement(m_resolutionDisplayMenuEntity, Components_e::WRITE_COMPONENT);
     assert(compNum);
     WriteComponent &writeComp = m_componentsContainer.m_vectWriteComp[*compNum];
     if(writeComp.m_vectMessage.empty())
@@ -413,7 +413,7 @@ void StaticDisplaySystem::updateDisplayMenuResolution(const std::string &str)
 //===================================================================
 void StaticDisplaySystem::updateMenuEntryFullscreen(bool displayMenufullscreenMode)
 {
-    OptUint_t compNum = m_newComponentManager.getComponentEmplacement(m_fullscreenMenuEntity, Components_e::GENERAL_COLLISION_COMPONENT);
+    OptUint_t compNum = m_newComponentManager.getComponentEmplacement(m_fullscreenMenuEntity, Components_e::WRITE_COMPONENT);
     assert(compNum);
     WriteComponent &writeComp = m_componentsContainer.m_vectWriteComp[*compNum];
     if(writeComp.m_vectMessage.empty())
@@ -487,7 +487,7 @@ void StaticDisplaySystem::updateNewInputKeyGamepad(ControlKey_e currentSelectedK
                                                    InputType_e inputType, bool axisSense)
 {
     uint32_t entityWrite = m_inputMenuGamepadWriteKeysEntities[static_cast<uint32_t>(currentSelectedKey)];
-    OptUint_t compNum = m_newComponentManager.getComponentEmplacement(entityWrite, Components_e::GENERAL_COLLISION_COMPONENT);
+    OptUint_t compNum = m_newComponentManager.getComponentEmplacement(entityWrite, Components_e::WRITE_COMPONENT);
     assert(compNum);
     WriteComponent &writeComp = m_componentsContainer.m_vectWriteComp[*compNum];
     assert(!writeComp.m_vectMessage.empty());
@@ -541,7 +541,7 @@ void StaticDisplaySystem::drawVertex(uint32_t numTexture, VertexID_e type)
 //===================================================================
 void StaticDisplaySystem::drawWriteVertex(uint32_t numEntity, VertexID_e type, Font_e font, const std::string &value)
 {
-    OptUint_t compNum = m_newComponentManager.getComponentEmplacement(numEntity, Components_e::GENERAL_COLLISION_COMPONENT);
+    OptUint_t compNum = m_newComponentManager.getComponentEmplacement(numEntity, Components_e::WRITE_COMPONENT);
     assert(compNum);
     WriteComponent &writeComp = m_componentsContainer.m_vectWriteComp[*compNum];
     compNum = m_newComponentManager.getComponentEmplacement(numEntity, Components_e::POSITION_VERTEX_COMPONENT);
