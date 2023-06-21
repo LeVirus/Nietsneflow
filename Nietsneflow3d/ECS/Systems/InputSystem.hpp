@@ -126,7 +126,7 @@ public:
     static void addGamepad(int gamepadID);
     static void scroll_callback(GLFWwindow* window, double xOffset, double yOffset);
 private:
-    void updateDetectRect(PlayerConfComponent *playerComp, MapCoordComponent *mapPlayerComp);
+    void updateDetectRect(PlayerConfComponent &playerComp, MapCoordComponent &mapPlayerComp);
     void gamepadUpdate();
     bool checkStandardButtonGamepadKeyStatus(uint32_t key, uint32_t status);
     bool checkAxisGamepadKeyStatus(uint32_t key, bool positive);
@@ -135,34 +135,35 @@ private:
     void treatPlayerInput();
     std::optional<double> getXMouseMotion();
     bool checkPlayerKeyTriggered(ControlKey_e key);
-    void treatMenu(uint32_t playerEntity);
+    void treatMenu();
     void treatAxisRelease();
     void treatReleaseInputMenu();
-    void treatGeneralKeysMenu(PlayerConfComponent *playerComp);
-    void toogleInputMenuGamepadKeyboard(PlayerConfComponent *playerComp);
-    bool treatNewKey(PlayerConfComponent *playerComp);
-    void treatEnterPressedMenu(PlayerConfComponent *playerComp);
-    void treatLeftPressedMenu(PlayerConfComponent *playerComp);
-    void treatRightPressedMenu(PlayerConfComponent *playerComp);
-    void treatEnterPressedTitleMenu(PlayerConfComponent *playerComp);
-    void treatEnterPressedMainMenu(PlayerConfComponent *playerComp);
-    void treatEnterPressedSoundMenu(PlayerConfComponent *playerComp);
-    void treatEnterPressedDisplayMenu(PlayerConfComponent *playerComp);
-    void treatEnterPressedInputMenu(PlayerConfComponent *playerComp);
-    void treatEnterPressedNewGameMenu(PlayerConfComponent *playerComp);
-    void treatEnterPressedLoadGameMenu(PlayerConfComponent *playerComp);
-    void treatEnterPressedLoadCustomGameMenu(PlayerConfComponent *playerComp);
-    void treatEnterPressedConfirmInputMenu(PlayerConfComponent *playerComp);
-    void treatEnterPressedConfirmLoadGameMenu(PlayerConfComponent *playerComp);
-    void treatEnterPressedConfirmRestartLevelMenu(PlayerConfComponent *playerComp);
-    void treatEnterPressedConfirmRestartFromLastCheckpointMenu(PlayerConfComponent *playerComp);
-    void treatEnterPressedConfirmQuitGame(PlayerConfComponent *playerComp);
-    void validInputMenu(PlayerConfComponent *playerComp);
-    void treatPlayerMove(PlayerConfComponent *playerComp, MoveableComponent *moveComp, MapCoordComponent *mapComp);
+    void treatGeneralKeysMenu(PlayerConfComponent &playerComp);
+    void toogleInputMenuGamepadKeyboard(PlayerConfComponent &playerComp);
+    bool treatNewKey(PlayerConfComponent &playerComp);
+    void treatEnterPressedMenu(PlayerConfComponent &playerComp);
+    void treatLeftPressedMenu(PlayerConfComponent &playerComp);
+    void treatRightPressedMenu(PlayerConfComponent &playerComp);
+    void treatEnterPressedTitleMenu(PlayerConfComponent &playerComp);
+    void treatEnterPressedMainMenu(PlayerConfComponent &playerComp);
+    void treatEnterPressedSoundMenu(PlayerConfComponent &playerComp);
+    void treatEnterPressedDisplayMenu(PlayerConfComponent &playerComp);
+    void treatEnterPressedInputMenu(PlayerConfComponent &playerComp);
+    void treatEnterPressedNewGameMenu(PlayerConfComponent &playerComp);
+    void treatEnterPressedLoadGameMenu(PlayerConfComponent &playerComp);
+    void treatEnterPressedLoadCustomGameMenu(PlayerConfComponent &playerComp);
+    void treatEnterPressedConfirmInputMenu(PlayerConfComponent &playerComp);
+    void treatEnterPressedConfirmLoadGameMenu(PlayerConfComponent &playerComp);
+    void treatEnterPressedConfirmRestartLevelMenu(PlayerConfComponent &playerComp);
+    void treatEnterPressedConfirmRestartFromLastCheckpointMenu(PlayerConfComponent &playerComp);
+    void treatEnterPressedConfirmQuitGame(PlayerConfComponent &playerComp);
+    void validInputMenu(PlayerConfComponent &playerComp);
+    void treatPlayerMove(PlayerConfComponent &playerComp, MoveableComponent &moveComp, MapCoordComponent &mapComp);
     static void window_focus_callback(GLFWwindow* window, int focused);
 
 private:
     NewComponentManager &m_newComponentManager;
+    ComponentsGroup &m_componentsContainer;
     uint32_t m_rotationSensibility = 40;
     std::optional<uint32_t> m_memInputMenuCursor, m_memMainMenuCursor;
     std::pair<double, double> m_previousMousePosition;
@@ -217,8 +218,8 @@ private:
 };
 
 
-void decrementMenuPosition(PlayerConfComponent *playerConf, uint32_t maxIndex);
-void incrementMenuPosition(PlayerConfComponent *playerConf, uint32_t maxIndex);
+void decrementMenuPosition(PlayerConfComponent &playerConf, uint32_t maxIndex);
+void incrementMenuPosition(PlayerConfComponent &playerConf, uint32_t maxIndex);
 void changePlayerWeapon(WeaponComponent &weaponComp, bool next);
 void changeToTopPlayerWeapon(WeaponComponent &weaponComp);
 void setPlayerWeapon(WeaponComponent &weaponComp, uint32_t weapon);

@@ -8,7 +8,8 @@
 #include <algorithm>
 
 //===================================================================
-SoundSystem::SoundSystem(NewComponentManager &newComponentManager) : m_newComponentManager(newComponentManager)
+SoundSystem::SoundSystem(NewComponentManager &newComponentManager) : m_newComponentManager(newComponentManager),
+    m_componentsContainer(m_newComponentManager.getComponentsContainer())
 {
     bAddComponentToSystem(Components_e::AUDIO_COMPONENT);
 }
@@ -16,24 +17,25 @@ SoundSystem::SoundSystem(NewComponentManager &newComponentManager) : m_newCompon
 //===================================================================
 void SoundSystem::execSystem()
 {
+    OptUint_t compNum;
     System::execSystem();
     for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
     {
-        AudioComponent *audioComp = stairwayToComponentManager().
-                searchComponentByType<AudioComponent>(mVectNumEntity[i], Components_e::AUDIO_COMPONENT);
-        assert(audioComp);
-        for(uint32_t j = 0; j < audioComp->m_soundElements.size(); ++j)
+        compNum = m_newComponentManager.getComponentEmplacement(mVectNumEntity[i], Components_e::AUDIO_COMPONENT);
+        assert(compNum);
+        AudioComponent &audioComp = m_componentsContainer.m_vectAudioComp[*compNum];
+        for(uint32_t j = 0; j < audioComp.m_soundElements.size(); ++j)
         {
-            if(audioComp->m_soundElements[j] && audioComp->m_soundElements[j]->m_toPlay)
+            if(audioComp.m_soundElements[j] && audioComp.m_soundElements[j]->m_toPlay)
             {
-                std::optional<float> volume = getVolumeFromDistance(mVectNumEntity[i], audioComp->m_maxDistance);
+                std::optional<float> volume = getVolumeFromDistance(mVectNumEntity[i], audioComp.m_maxDistance);
                 if(volume)
                 {
-                    alSourcef(audioComp->m_soundElements[j]->m_sourceALID, AL_GAIN,
+                    alSourcef(audioComp.m_soundElements[j]->m_sourceALID, AL_GAIN,
                               *volume * static_cast<float>(m_effectsVolume) / 100.0f);
-                    play(audioComp->m_soundElements[j]->m_sourceALID);
+                    play(audioComp.m_soundElements[j]->m_sourceALID);
                 }
-                audioComp->m_soundElements[j]->m_toPlay = false;
+                audioComp.m_soundElements[j]->m_toPlay = false;
             }
         }
     }
@@ -42,16 +44,17 @@ void SoundSystem::execSystem()
 //===================================================================
 std::optional<float> SoundSystem::getVolumeFromDistance(uint32_t distantEntity, float maxDistance)
 {
-    MapCoordComponent *playerMapComp = stairwayToComponentManager().
-            searchComponentByType<MapCoordComponent>(m_playerEntity, Components_e::MAP_COORD_COMPONENT);
-    assert(playerMapComp);
-    MapCoordComponent *distantElementMapComp = stairwayToComponentManager().
-            searchComponentByType<MapCoordComponent>(distantEntity, Components_e::MAP_COORD_COMPONENT);
-    if(!distantElementMapComp)
+    OptUint_t compNum = m_newComponentManager.getComponentEmplacement(m_playerEntity, Components_e::MAP_COORD_COMPONENT);
+    assert(compNum);
+    MapCoordComponent &playerMapComp = m_componentsContainer.m_vectMapCoordComp[*compNum];
+    compNum = m_newComponentManager.getComponentEmplacement(distantEntity, Components_e::MAP_COORD_COMPONENT);
+    assert(compNum);
+    if(!compNum)
     {
         return 1.0f;
     }
-    float distance = getDistance(playerMapComp->m_absoluteMapPositionPX, distantElementMapComp->m_absoluteMapPositionPX);
+    MapCoordComponent &distantElementMapComp = m_componentsContainer.m_vectMapCoordComp[*compNum];
+    float distance = getDistance(playerMapComp.m_absoluteMapPositionPX, distantElementMapComp.m_absoluteMapPositionPX);
     if(distance >= maxDistance)
     {
         return {};

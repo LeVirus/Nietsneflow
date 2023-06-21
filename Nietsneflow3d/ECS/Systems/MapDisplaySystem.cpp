@@ -19,7 +19,8 @@
 
 //===================================================================
 //WARNING CONSIDER THAT LENGHT AND WEIGHT ARE THE SAME
-MapDisplaySystem::MapDisplaySystem(NewComponentManager &newComponentManager) : m_newComponentManager(newComponentManager)
+MapDisplaySystem::MapDisplaySystem(NewComponentManager &newComponentManager) : m_newComponentManager(newComponentManager),
+    m_componentsContainer(m_newComponentManager.getComponentsContainer())
 {
     setUsedComponents();
 }
@@ -90,18 +91,18 @@ void MapDisplaySystem::drawFullMap()
 //===================================================================
 void MapDisplaySystem::confFullMapPositionVertexEntities()
 {
+    OptUint_t compNum;
     PairFloat_t corner;
     for(std::map<uint32_t, PairUI_t>::const_iterator it = m_entitiesDetectedData.begin();
         it != m_entitiesDetectedData.end();)
     {
-        MapCoordComponent *mapComp = stairwayToComponentManager().
-                searchComponentByType<MapCoordComponent>(it->first,
-                                                         Components_e::MAP_COORD_COMPONENT);
-        if(!mapComp)
+        compNum = m_newComponentManager.getComponentEmplacement(it->first, Components_e::MAP_COORD_COMPONENT);
+        if(!compNum)
         {
             it = m_entitiesDetectedData.erase(it);
             continue;
         }
+        MapCoordComponent &mapComp = m_componentsContainer.m_vectMapCoordComp[*compNum];
         //get absolute position corner
         corner = getUpLeftCorner(mapComp, it->first);
         //convert absolute position to relative
@@ -145,6 +146,7 @@ void MapDisplaySystem::confVertexPlayerOnFullMap()
 //===================================================================
 void MapDisplaySystem::confMiniMapPositionVertexEntities()
 {
+    OptUint_t compNum;
     assert(m_playerComp.m_mapCoordComp);
     PairFloat_t playerPos = m_playerComp.m_mapCoordComp->m_absoluteMapPositionPX;
     PairFloat_t corner, diffPosPX, relativePosMapGL;
@@ -155,15 +157,15 @@ void MapDisplaySystem::confMiniMapPositionVertexEntities()
     for(std::map<uint32_t, PairUI_t>::const_iterator it = m_entitiesDetectedData.begin();
          it != m_entitiesDetectedData.end(); ++it)
     {
-        MapCoordComponent *mapComp = stairwayToComponentManager().
-                searchComponentByType<MapCoordComponent>(it->first,
-                                                         Components_e::MAP_COORD_COMPONENT);
-        if(!mapComp)
+        compNum = m_newComponentManager.getComponentEmplacement(it->first, Components_e::MAP_COORD_COMPONENT);
+        assert(compNum);
+        if(!compNum)
         {
             it = m_entitiesDetectedData.erase(it);
             continue;
         }
-        if(checkBoundEntityMap(*mapComp, min, max))
+        MapCoordComponent &mapComp = m_componentsContainer.m_vectMapCoordComp[*compNum];
+        if(checkBoundEntityMap(mapComp, min, max))
         {
             //get absolute position corner
             corner = getUpLeftCorner(mapComp, it->first);
@@ -184,36 +186,35 @@ void MapDisplaySystem::fillMiniMapVertexFromEntities()
     {
         m_vectMapVerticesData[h].clear();
     }
+    OptUint_t numCom;
     for(uint32_t i = 0; i < m_entitiesToDisplay.size(); ++i)
     {
-        PositionVertexComponent *posComp = stairwayToComponentManager().
-                searchComponentByType<PositionVertexComponent>(m_entitiesToDisplay[i],
-                                                               Components_e::POSITION_VERTEX_COMPONENT);
-        SpriteTextureComponent *spriteComp = stairwayToComponentManager().
-                searchComponentByType<SpriteTextureComponent>(m_entitiesToDisplay[i],
-                                                            Components_e::SPRITE_TEXTURE_COMPONENT);
-        assert(posComp);
-        if(!spriteComp)
+        numCom = m_newComponentManager.getComponentEmplacement(m_entitiesToDisplay[i], Components_e::POSITION_VERTEX_COMPONENT);
+        assert(numCom);
+        PositionVertexComponent &posComp = m_componentsContainer.m_vectPositionVertexComp[*numCom];
+        numCom = m_newComponentManager.getComponentEmplacement(m_entitiesToDisplay[i], Components_e::SPRITE_TEXTURE_COMPONENT);
+        assert(numCom);
+        if(!numCom)
         {
-            GeneralCollisionComponent *genComp = stairwayToComponentManager().
-                    searchComponentByType<GeneralCollisionComponent>(m_entitiesToDisplay[i],
-                                                                Components_e::GENERAL_COLLISION_COMPONENT);
-            assert(genComp);
-            if(genComp->m_tagA == CollisionTag_e::TRIGGER_CT)
+            numCom = m_newComponentManager.getComponentEmplacement(m_entitiesToDisplay[i], Components_e::GENERAL_COLLISION_COMPONENT);
+            assert(numCom);
+            GeneralCollisionComponent &genComp = m_componentsContainer.m_vectGeneralCollisionComp[*numCom];
+            if(genComp.m_tagA == CollisionTag_e::TRIGGER_CT)
             {
                 continue;
             }
         }
-        assert(spriteComp);
-        assert(spriteComp->m_spriteData->m_textureNum < m_vectMapVerticesData.size());
-        m_vectMapVerticesData[spriteComp->m_spriteData->m_textureNum].
-                loadVertexStandartTextureComponent(*posComp, *spriteComp);
+        SpriteTextureComponent &spriteComp = m_componentsContainer.m_vectSpriteTextureComp[*numCom];
+        assert(spriteComp.m_spriteData->m_textureNum < m_vectMapVerticesData.size());
+        m_vectMapVerticesData[spriteComp.m_spriteData->m_textureNum].
+                loadVertexStandartTextureComponent(posComp, spriteComp);
     }
 }
 
 //===================================================================
 void MapDisplaySystem::fillFullMapVertexFromEntities()
 {
+    OptUint_t numCom;
     for(uint32_t h = 0; h < m_vectMapVerticesData.size(); ++h)
     {
         m_vectMapVerticesData[h].clear();
@@ -221,55 +222,50 @@ void MapDisplaySystem::fillFullMapVertexFromEntities()
     for(std::map<uint32_t, PairUI_t>::const_iterator it = m_entitiesDetectedData.begin();
          it != m_entitiesDetectedData.end(); ++it)
     {
-        PositionVertexComponent *posComp = stairwayToComponentManager().
-                searchComponentByType<PositionVertexComponent>(it->first,
-                                                               Components_e::POSITION_VERTEX_COMPONENT);
-        SpriteTextureComponent *spriteComp = stairwayToComponentManager().
-                searchComponentByType<SpriteTextureComponent>(it->first,
-                                                              Components_e::SPRITE_TEXTURE_COMPONENT);
-        assert(posComp);
-        if(!spriteComp)
+        numCom = m_newComponentManager.getComponentEmplacement(it->first, Components_e::POSITION_VERTEX_COMPONENT);
+        assert(numCom);
+        PositionVertexComponent &posComp = m_componentsContainer.m_vectPositionVertexComp[*numCom];
+        numCom = m_newComponentManager.getComponentEmplacement(it->first, Components_e::SPRITE_TEXTURE_COMPONENT);
+        if(!numCom)
         {
-            GeneralCollisionComponent *genComp = stairwayToComponentManager().
-                    searchComponentByType<GeneralCollisionComponent>(it->first,
-                                                                Components_e::GENERAL_COLLISION_COMPONENT);
-            assert(genComp);
-            if(genComp->m_tagA == CollisionTag_e::TRIGGER_CT)
+            numCom = m_newComponentManager.getComponentEmplacement(it->first, Components_e::GENERAL_COLLISION_COMPONENT);
+            assert(numCom);
+            GeneralCollisionComponent &genComp = m_componentsContainer.m_vectGeneralCollisionComp[*numCom];
+            if(genComp.m_tagA == CollisionTag_e::TRIGGER_CT)
             {
                 continue;
             }
         }
-        assert(spriteComp);
-        assert(spriteComp->m_spriteData->m_textureNum < m_vectMapVerticesData.size());
-        m_vectMapVerticesData[spriteComp->m_spriteData->m_textureNum].
-                loadVertexStandartTextureComponent(*posComp, *spriteComp);
+        SpriteTextureComponent &spriteComp = m_componentsContainer.m_vectSpriteTextureComp[*numCom];
+        assert(spriteComp.m_spriteData->m_textureNum < m_vectMapVerticesData.size());
+        m_vectMapVerticesData[spriteComp.m_spriteData->m_textureNum].
+                loadVertexStandartTextureComponent(posComp, spriteComp);
     }
 }
 
 //===================================================================
-PairFloat_t MapDisplaySystem::getUpLeftCorner(const MapCoordComponent *mapCoordComp, uint32_t entityNum)
+PairFloat_t MapDisplaySystem::getUpLeftCorner(const MapCoordComponent &mapCoordComp, uint32_t entityNum)
 {
-    GeneralCollisionComponent *genCollComp = stairwayToComponentManager().
-            searchComponentByType<GeneralCollisionComponent>(entityNum, Components_e::GENERAL_COLLISION_COMPONENT);
-    assert(genCollComp);
-    assert(mapCoordComp);
-    if(genCollComp->m_shape == CollisionShape_e::CIRCLE_C)
+    OptUint_t numCom = m_newComponentManager.getComponentEmplacement(entityNum, Components_e::GENERAL_COLLISION_COMPONENT);
+    assert(numCom);
+    GeneralCollisionComponent &genCollComp = m_componentsContainer.m_vectGeneralCollisionComp[*numCom];
+    if(genCollComp.m_shape == CollisionShape_e::CIRCLE_C)
     {
-        CircleCollisionComponent *circleCollComp = stairwayToComponentManager().
-                searchComponentByType<CircleCollisionComponent>(entityNum, Components_e::CIRCLE_COLLISION_COMPONENT);
-        assert(circleCollComp);
-        return getCircleUpLeftCorner(mapCoordComp->m_absoluteMapPositionPX, circleCollComp->m_ray);
+        numCom = m_newComponentManager.getComponentEmplacement(entityNum, Components_e::CIRCLE_COLLISION_COMPONENT);
+        assert(numCom);
+        CircleCollisionComponent &circleCollComp = m_componentsContainer.m_vectCircleCollisionComp[*numCom];
+        return getCircleUpLeftCorner(mapCoordComp.m_absoluteMapPositionPX, circleCollComp.m_ray);
     }
     else
     {
-        if(genCollComp->m_tagA == CollisionTag_e::DOOR_CT)
+        if(genCollComp.m_tagA == CollisionTag_e::DOOR_CT)
         {
-            return {mapCoordComp->m_absoluteMapPositionPX.first - std::fmod(mapCoordComp->m_absoluteMapPositionPX.first, LEVEL_TILE_SIZE_PX),
-                        mapCoordComp->m_absoluteMapPositionPX.second - std::fmod(mapCoordComp->m_absoluteMapPositionPX.second, LEVEL_TILE_SIZE_PX)};
+            return {mapCoordComp.m_absoluteMapPositionPX.first - std::fmod(mapCoordComp.m_absoluteMapPositionPX.first, LEVEL_TILE_SIZE_PX),
+                        mapCoordComp.m_absoluteMapPositionPX.second - std::fmod(mapCoordComp.m_absoluteMapPositionPX.second, LEVEL_TILE_SIZE_PX)};
         }
         else
         {
-            return mapCoordComp->m_absoluteMapPositionPX;
+            return mapCoordComp.m_absoluteMapPositionPX;
         }
     }
 }
@@ -309,38 +305,36 @@ void MapDisplaySystem::getMapDisplayLimit(PairFloat_t &playerPos,
 void MapDisplaySystem::confMiniMapVertexElement(const PairFloat_t &glPosition,
                                          uint32_t entityNum)
 {
-    PositionVertexComponent *posComp = stairwayToComponentManager().
-            searchComponentByType<PositionVertexComponent>(entityNum,
-                                                           Components_e::POSITION_VERTEX_COMPONENT);
-    assert(posComp);
-    posComp->m_vertex.resize(4);
+    OptUint_t numCom = m_newComponentManager.getComponentEmplacement(entityNum, Components_e::POSITION_VERTEX_COMPONENT);
+    assert(numCom);
+    PositionVertexComponent &posComp = m_componentsContainer.m_vectPositionVertexComp[*numCom];
+    posComp.m_vertex.resize(4);
     //CONSIDER THAT MAP X AND Y ARE THE SAME
-    if(posComp->m_vertex.empty())
+    if(posComp.m_vertex.empty())
     {
-        posComp->m_vertex.resize(4);
+        posComp.m_vertex.resize(4);
     }
-    posComp->m_vertex[0] = {MAP_LOCAL_CENTER_X_GL + glPosition.first,
+    posComp.m_vertex[0] = {MAP_LOCAL_CENTER_X_GL + glPosition.first,
                             MAP_LOCAL_CENTER_Y_GL + glPosition.second};
-    posComp->m_vertex[1] = {MAP_LOCAL_CENTER_X_GL + glPosition.first + m_miniMapTileSizeGL,
+    posComp.m_vertex[1] = {MAP_LOCAL_CENTER_X_GL + glPosition.first + m_miniMapTileSizeGL,
                             MAP_LOCAL_CENTER_Y_GL + glPosition.second};
-    posComp->m_vertex[2] = {MAP_LOCAL_CENTER_X_GL + glPosition.first + m_miniMapTileSizeGL,
+    posComp.m_vertex[2] = {MAP_LOCAL_CENTER_X_GL + glPosition.first + m_miniMapTileSizeGL,
                             MAP_LOCAL_CENTER_Y_GL + glPosition.second - m_miniMapTileSizeGL};
-    posComp->m_vertex[3] = {MAP_LOCAL_CENTER_X_GL + glPosition.first,
+    posComp.m_vertex[3] = {MAP_LOCAL_CENTER_X_GL + glPosition.first,
                             MAP_LOCAL_CENTER_Y_GL + glPosition.second - m_miniMapTileSizeGL};
 }
 
 //===================================================================
 void MapDisplaySystem::confFullMapVertexElement(const PairFloat_t &absolutePositionPX, uint32_t entityNum)
 {
-    PositionVertexComponent *posComp = stairwayToComponentManager().
-            searchComponentByType<PositionVertexComponent>(entityNum,
-                                                           Components_e::POSITION_VERTEX_COMPONENT);
-    assert(posComp);
-    posComp->m_vertex.resize(4);
+    OptUint_t numCom = m_newComponentManager.getComponentEmplacement(entityNum, Components_e::POSITION_VERTEX_COMPONENT);
+    assert(numCom);
+    PositionVertexComponent &posComp = m_componentsContainer.m_vectPositionVertexComp[*numCom];
+    posComp.m_vertex.resize(4);
     //CONSIDER THAT MAP X AND Y ARE THE SAME
-    if(posComp->m_vertex.empty())
+    if(posComp.m_vertex.empty())
     {
-        posComp->m_vertex.resize(4);
+        posComp.m_vertex.resize(4);
     }
     double leftPos = MAP_FULL_TOP_LEFT_X_GL +
             ((absolutePositionPX.first / m_sizeLevelPX.first) * FULL_MAP_SIZE_GL),
@@ -348,10 +342,10 @@ void MapDisplaySystem::confFullMapVertexElement(const PairFloat_t &absolutePosit
             topPos = MAP_FULL_TOP_LEFT_Y_GL -
             ((absolutePositionPX.second  / m_sizeLevelPX.second) * FULL_MAP_SIZE_GL),
             downPos = topPos - m_fullMapTileSizeGL.second;
-    posComp->m_vertex[0] = {leftPos, topPos};
-    posComp->m_vertex[1] = {rightPos, topPos};
-    posComp->m_vertex[2] = {rightPos, downPos};
-    posComp->m_vertex[3] = {leftPos, downPos};
+    posComp.m_vertex[0] = {leftPos, topPos};
+    posComp.m_vertex[1] = {rightPos, topPos};
+    posComp.m_vertex[2] = {rightPos, downPos};
+    posComp.m_vertex[3] = {leftPos, downPos};
 }
 
 //===================================================================
@@ -406,33 +400,31 @@ void MapDisplaySystem::drawPlayerOnMap()
 //===================================================================
 void MapDisplaySystem::confPlayerComp(uint32_t playerNum)
 {
-    m_playerComp.m_mapCoordComp = stairwayToComponentManager().
-            searchComponentByType<MapCoordComponent>(playerNum,
-                                                     Components_e::MAP_COORD_COMPONENT);
-    m_playerComp.m_posComp = stairwayToComponentManager().
-            searchComponentByType<PositionVertexComponent>(playerNum,
-                                                           Components_e::POSITION_VERTEX_COMPONENT);
-    m_playerComp.m_colorComp = stairwayToComponentManager().
-            searchComponentByType<ColorVertexComponent>(playerNum,
-                                                        Components_e::COLOR_VERTEX_COMPONENT);
-    m_playerComp.m_moveableComp = stairwayToComponentManager().
-            searchComponentByType<MoveableComponent>(playerNum, Components_e::MOVEABLE_COMPONENT);
-    m_playerComp.m_playerConfComp = stairwayToComponentManager().
-            searchComponentByType<PlayerConfComponent>(playerNum, Components_e::PLAYER_CONF_COMPONENT);
-    VisionComponent *visionComp = stairwayToComponentManager().
-            searchComponentByType<VisionComponent>(playerNum,
-                                                   Components_e::VISION_COMPONENT);
-    assert(visionComp);
+    OptUint_t compNum = m_newComponentManager.getComponentEmplacement(playerNum, Components_e::MAP_COORD_COMPONENT);
+    assert(compNum);
+    m_playerComp.m_mapCoordComp = &m_componentsContainer.m_vectMapCoordComp[*compNum];
+    compNum = m_newComponentManager.getComponentEmplacement(playerNum, Components_e::POSITION_VERTEX_COMPONENT);
+    assert(compNum);
+    m_playerComp.m_posComp = &m_componentsContainer.m_vectPositionVertexComp[*compNum];
+    compNum = m_newComponentManager.getComponentEmplacement(playerNum, Components_e::COLOR_VERTEX_COMPONENT);
+    assert(compNum);
+    m_playerComp.m_colorComp = &m_componentsContainer.m_vectColorVertexComp[*compNum];
+    compNum = m_newComponentManager.getComponentEmplacement(playerNum, Components_e::MOVEABLE_COMPONENT);
+    assert(compNum);
+    m_playerComp.m_moveableComp = &m_componentsContainer.m_vectMoveableComp[*compNum];
+    m_playerComp.m_playerConfComp = &m_componentsContainer.m_playerConfComp;
+    compNum = m_newComponentManager.getComponentEmplacement(playerNum, Components_e::VISION_COMPONENT);
+    assert(compNum);
+    m_playerComp.m_visionComp = &m_componentsContainer.m_vectVisionComp[*compNum];
     assert(m_playerComp.m_posComp);
     assert(m_playerComp.m_colorComp);
     assert(m_playerComp.m_mapCoordComp);
     assert(m_playerComp.m_moveableComp);
     assert(m_playerComp.m_playerConfComp);
-    visionComp->m_colorVertexComp.m_vertex.reserve(3);
-    visionComp->m_colorVertexComp.m_vertex.emplace_back(0.00f, 100.00f, 0.00f, 1.0f);
-    visionComp->m_colorVertexComp.m_vertex.emplace_back(0.00f, 10.00f, 0.00f, 1.0f);
-    visionComp->m_colorVertexComp.m_vertex.emplace_back(0.00f, 10.00f, 0.00f, 1.0f);
-    m_playerComp.m_visionComp = visionComp;
+    m_playerComp.m_visionComp->m_colorVertexComp.m_vertex.reserve(3);
+    m_playerComp.m_visionComp->m_colorVertexComp.m_vertex.emplace_back(0.00f, 100.00f, 0.00f, 1.0f);
+    m_playerComp.m_visionComp->m_colorVertexComp.m_vertex.emplace_back(0.00f, 10.00f, 0.00f, 1.0f);
+    m_playerComp.m_visionComp->m_colorVertexComp.m_vertex.emplace_back(0.00f, 10.00f, 0.00f, 1.0f);
 }
 
 //===================================================================

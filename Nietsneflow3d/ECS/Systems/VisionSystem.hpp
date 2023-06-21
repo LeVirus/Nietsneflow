@@ -46,28 +46,28 @@ private:
     EnemySpriteType_e getOrientationFromAngle(uint32_t observerEntity, uint32_t targetEntity,
                                               float targetDegreeAngle);
     void setUsedComponents();
-    void treatVisible(VisionComponent *visionComp, MoveableComponent *moveCompA,
+    void treatVisible(VisionComponent &visionComp, MoveableComponent &moveCompA,
                       uint32_t numEntity);
     void updateSprites(uint32_t observerEntity, const std::vector<uint32_t> &vectEntities);
     void updateWallSprites();
     void updateTeleportAnimationSprites();
     void memMultiSpritesWallEntities();
-    void updateVisibleShotSprite(uint32_t shotEntity, MemSpriteDataComponent *memSpriteComp,
-                                 SpriteTextureComponent *spriteComp,
-                                 TimerComponent *timerComp, GeneralCollisionComponent *genComp);
-    void updateBarrelSprite(uint32_t barrelEntity, MemSpriteDataComponent *memSpriteComp, SpriteTextureComponent *spriteComp,
-                            TimerComponent *timerComp, GeneralCollisionComponent *genComp);
-    void updateEnemySprites(uint32_t enemyEntity, uint32_t observerEntity,
-                            MemSpriteDataComponent *memSpriteComp,
-                            SpriteTextureComponent *spriteComp,
-                            TimerComponent *timerComp, EnemyConfComponent *enemyConfComp);
-    void updateEnemyNormalSprite(EnemyConfComponent *enemyConfComp, TimerComponent *timerComp,
+    void updateVisibleShotSprite(uint32_t shotEntity, MemSpriteDataComponent &memSpriteComp,
+                                 SpriteTextureComponent &spriteComp,
+                                 TimerComponent &timerComp, GeneralCollisionComponent &genComp);
+    void updateBarrelSprite(uint32_t barrelEntity, MemSpriteDataComponent &memSpriteComp, SpriteTextureComponent &spriteComp,
+                            TimerComponent &timerComp, GeneralCollisionComponent &genComp);
+    void updateEnemySprites(uint32_t enemyEntity, uint32_t observerEntity, MemSpriteDataComponent &memSpriteComp,
+                            SpriteTextureComponent &spriteComp,
+                            TimerComponent &timerComp, EnemyConfComponent &enemyConfComp);
+    void updateEnemyNormalSprite(EnemyConfComponent &enemyConfComp, TimerComponent &timerComp,
                                  uint32_t enemyEntity, uint32_t observerEntity);
-    void updateImpactSprites(uint32_t entityImpact, MemSpriteDataComponent *memSpriteComp,
-                             SpriteTextureComponent *spriteComp,
-                             TimerComponent *timerComp, GeneralCollisionComponent *genComp);
+    void updateImpactSprites(uint32_t entityImpact, MemSpriteDataComponent &memSpriteComp,
+                             SpriteTextureComponent &spriteComp,
+                             TimerComponent &timerComp, GeneralCollisionComponent &genComp);
 private:
     NewComponentManager &m_newComponentManager;
+    ComponentsGroup &m_componentsContainer;
     const ECSManager* m_memECSManager;
     std::vector<uint32_t> m_memMultiSpritesWallEntities, m_vectBarrelsEntitiesToDelete;
     uint32_t m_defaultInterval = 0.8 / FPS_VALUE, m_memTeleportAnimEntity;
@@ -78,6 +78,6 @@ private:
 
 mapEnemySprite_t::const_reverse_iterator findMapLastElement(const mapEnemySprite_t &map,
                                                             EnemySpriteType_e key);
-void updateTriangleVisionFromPosition(VisionComponent *visionComp, const MapCoordComponent *mapComp,
-                                      const MoveableComponent *movComp);
-void updateEnemyAttackSprite(EnemyConfComponent *enemyConfComp, TimerComponent *timerComp);
+void updateTriangleVisionFromPosition(VisionComponent &visionComp, MapCoordComponent &mapComp,
+                                      MoveableComponent &movComp);
+void updateEnemyAttackSprite(EnemyConfComponent &enemyConfComp, TimerComponent &timerComp);

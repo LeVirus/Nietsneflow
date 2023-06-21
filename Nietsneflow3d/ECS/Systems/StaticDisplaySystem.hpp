@@ -62,7 +62,7 @@ class StaticDisplaySystem : public ecs::System
 public:
     StaticDisplaySystem(NewComponentManager &newComponentManager);
     void execSystem()override;
-    void drawStandardStaticSprite(VertexID_e spriteId, PlayerConfComponent *playerComp);
+    void drawStandardStaticSprite(VertexID_e spriteId, PlayerConfComponent &playerComp);
     void displayMenu();
     void setShader(Shader &shader);
     void setWeaponSprite(uint32_t weaponEntity, uint32_t weaponNumSprite);
@@ -75,7 +75,7 @@ public:
     void updateNewInputKeyGamepad(ControlKey_e currentSelectedKey, uint32_t glKey, InputType_e inputType, bool axisSense = false);
     void updateNewInputKeyKeyboard(ControlKey_e currentSelectedKey, const MouseKeyboardInputState &state);
     void updateStringWriteEntitiesInputMenu(bool keyboardInputMenuMode, bool defaultInput = true);
-    void updateMenuCursorPosition(PlayerConfComponent *playerComp);
+    void updateMenuCursorPosition(PlayerConfComponent &playerComp);
     inline void linkMainEngine(MainEngine *mainEngine)
     {
         m_mainEngine = mainEngine;
@@ -94,24 +94,25 @@ public:
         m_inputMenuGamepadWriteKeysEntities = memGamepadEntities;
     }
 private:
-    void drawTeleportAnimation(PlayerConfComponent *playerComp);
-    void loadMenuBackground(uint32_t backgroundEntity, SpriteTextureComponent *spriteBackgroundComp, VertexID_e type);
-    void drawWriteInfoPlayer(uint32_t playerEntity, PlayerConfComponent *playerComp);
-    void drawWeaponsPreviewPlayer(const PlayerConfComponent *playerComp,
-                                  WeaponComponent const *weaponComp);
-    void confWriteVertex(WriteComponent *writeComp, PositionVertexComponent *posComp,
+    void drawTeleportAnimation(PlayerConfComponent &playerComp);
+    void loadMenuBackground(uint32_t backgroundEntity, SpriteTextureComponent &spriteBackgroundComp, VertexID_e type);
+    void drawWriteInfoPlayer(uint32_t playerEntity, PlayerConfComponent &playerComp);
+    void drawWeaponsPreviewPlayer(const PlayerConfComponent &playerComp,
+                                  const WeaponComponent &weaponComp);
+    void confWriteVertex(WriteComponent &writeComp, PositionVertexComponent &posComp,
                          VertexID_e type);
     void drawVertex(uint32_t numTexture, VertexID_e type);
     void drawWriteVertex(uint32_t numEntity, VertexID_e type, Font_e font = Font_e::STANDARD, const std::string &value = "");
-    void drawLineWriteVertex(PositionVertexComponent *posComp, WriteComponent *writeComp);
-    void confWeaponsVertexFromComponent(PlayerConfComponent *playerComp, SpriteTextureComponent *weaponSpriteComp);
-    void treatWeaponShootAnimation(PlayerConfComponent *playerComp, TimerComponent *timerComp);
-    void setDisplayWeaponChange(PositionVertexComponent *posComp, PlayerConfComponent *playerComp,
-                                MemPositionsVertexComponents *memPosComp);
-    void setWeaponMovement(PlayerConfComponent *playerComp, PositionVertexComponent *posComp,
-                           MemPositionsVertexComponents *memPosComp);
+    void drawLineWriteVertex(PositionVertexComponent &posComp, WriteComponent &writeComp);
+    void confWeaponsVertexFromComponent(PlayerConfComponent &playerComp, SpriteTextureComponent &weaponSpriteComp);
+    void treatWeaponShootAnimation(PlayerConfComponent &playerComp, TimerComponent &timerComp);
+    void setDisplayWeaponChange(PositionVertexComponent &posComp, PlayerConfComponent &playerComp,
+                                MemPositionsVertexComponents &memPosComp);
+    void setWeaponMovement(PlayerConfComponent &playerComp, PositionVertexComponent &posComp,
+                           MemPositionsVertexComponents &memPosComp);
 private:
     NewComponentManager &m_newComponentManager;
+    ComponentsGroup &m_componentsContainer;
     MainEngine *m_mainEngine;
     FontData const *m_fontDataPtr;
     bool m_menuBackgroundInit = false;
@@ -137,7 +138,7 @@ private:
     };
 };
 
-uint32_t getSpriteAssociateEntity(VertexID_e spriteId, PlayerConfComponent * const playerComp);
+uint32_t getSpriteAssociateEntity(VertexID_e spriteId, PlayerConfComponent &playerComp);
 float getLeftTextPosition(std::string_view str);
 std::string treatInfoMessageEndLine(const std::string &str, uint32_t lineSize = 20);
-void modVertexPos(PositionVertexComponent *posComp, const PairFloat_t &mod);
+void modVertexPos(PositionVertexComponent &posComp, const PairFloat_t &mod);

@@ -362,7 +362,6 @@ void CollisionSystem::confImpactShots(uint32_t numBullet, CollisionTag_e targetT
     OptUint_t compNum = m_newComponentManager.getComponentEmplacement(m_vectMemShots[numBullet].first, Components_e::SHOT_CONF_COMPONENT);
     assert(compNum);
     ShotConfComponent &shotComp = m_componentsContainer.m_vectShotConfComp[*compNum];
-
     //remove warning
     uint32_t impactEntity = shotComp.m_impactEntity;
     compNum = m_newComponentManager.getComponentEmplacement(impactEntity, Components_e::GENERAL_COLLISION_COMPONENT);
@@ -377,7 +376,6 @@ void CollisionSystem::confImpactShots(uint32_t numBullet, CollisionTag_e targetT
     compNum = m_newComponentManager.getComponentEmplacement(impactEntity, Components_e::MAP_COORD_COMPONENT);
     assert(compNum);
     MapCoordComponent &mapImpact = m_componentsContainer.m_vectMapCoordComp[*compNum];
-
     compNum = m_newComponentManager.getComponentEmplacement(impactEntity, Components_e::TIMER_COMPONENT);
     assert(compNum);
     TimerComponent &timerImpact = m_componentsContainer.m_vectTimerComp[*compNum];

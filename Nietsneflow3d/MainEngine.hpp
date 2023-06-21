@@ -120,7 +120,7 @@ public:
     void saveGameProgressCheckpoint(uint32_t levelNum, const PairUI_t &checkpointReached, const std::pair<uint32_t, Direction_e> &checkpointData);
     void saveGameProgress(uint32_t levelNum, std::optional<uint32_t> numSaveFile = {},
                           const MemCheckpointElementsState *checkpointData = nullptr);
-    void playerAttack(uint32_t playerEntity, PlayerConfComponent *playerComp,
+    void playerAttack(uint32_t playerEntity, PlayerConfComponent &playerComp,
                       const PairFloat_t &point, float degreeAngle);
     void setUnsetPaused();
     void updateTriggerWallMoveableWallDataCheckpoint(const std::pair<uint32_t, TriggerWallCheckpointData> &pairShapeWallNum);
@@ -135,9 +135,9 @@ public:
     void clearLevel();
     void confSystems();
     uint32_t createAmmoEntity(CollisionTag_e collTag, bool visibleShot);
-    void setMenuEntries(PlayerConfComponent *playerComp, std::optional<uint32_t> cursorPos = {});
-    void updateConfirmLoadingMenuInfo(PlayerConfComponent *playerComp);
-    void updateWriteComp(WriteComponent *writeComp);
+    void setMenuEntries(PlayerConfComponent &playerComp, std::optional<uint32_t> cursorPos = {});
+    void updateConfirmLoadingMenuInfo(PlayerConfComponent &playerComp);
+    void updateWriteComp(WriteComponent &writeComp);
     void updateStringWriteEntitiesInputMenu(bool keyboardInputMenuMode, bool defaultInput = true);
     void confGlobalSettings(const SettingsData &settingsData);
     void validDisplayMenu();
@@ -434,8 +434,8 @@ pairI_t getModifMoveableWallDataCheckpoint(const std::vector<std::pair<Direction
 void insertEnemySpriteFromType(const std::vector<SpriteData> &vectSprite, mapEnemySprite_t &mapSpriteAssociate,
                                std::vector<SpriteData const *> &vectSpriteData, const std::vector<uint16_t> &enemyMemArray,
                                EnemySpriteType_e type);
-void confBullet(ImpactShotComponent *impactComp, GeneralCollisionComponent *genColl, SegmentCollisionComponent *segmentColl, MoveableComponent *moveImpactComp,
+void confBullet(ImpactShotComponent &impactComp, GeneralCollisionComponent &genColl, SegmentCollisionComponent &segmentColl, MoveableComponent &moveImpactComp,
                 CollisionTag_e collTag, const PairFloat_t &point, float degreeAngle);
 void setWeaponPlayer();
-void confActionShape(MapCoordComponent *mapCompAction, GeneralCollisionComponent *genCompAction, const MapCoordComponent *attackerMapComp,
-                     const MoveableComponent *attackerMoveComp);
+void confActionShape(MapCoordComponent &mapCompAction, GeneralCollisionComponent &genCompAction, const MapCoordComponent &attackerMapComp,
+                     const MoveableComponent &attackerMoveComp);

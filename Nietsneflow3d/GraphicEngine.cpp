@@ -231,99 +231,99 @@ void GraphicEngine::linkSystems(ColorDisplaySystem *colorSystem, MapDisplaySyste
 
 
 //===================================================================
-void GraphicEngine::updateAmmoCount(WriteComponent *writeComp, WeaponComponent *weaponComp)
+void GraphicEngine::updateAmmoCount(WriteComponent &writeComp, WeaponComponent &weaponComp)
 {
-    writeComp->m_vectMessage[0].second = std::to_string(weaponComp->m_weaponsData[
-                                                weaponComp->m_currentWeapon].m_ammunationsCount);
-    writeComp->m_fontSpriteData[0] = m_ptrFontData->getWriteData(writeComp->m_vectMessage[0].second, writeComp, Font_e::STANDARD);
+    writeComp.m_vectMessage[0].second = std::to_string(weaponComp.m_weaponsData[
+                                                weaponComp.m_currentWeapon].m_ammunationsCount);
+    writeComp.m_fontSpriteData[0] = m_ptrFontData->getWriteData(writeComp.m_vectMessage[0].second, writeComp, Font_e::STANDARD);
 }
 
 //===================================================================
-void GraphicEngine::updatePlayerLife(WriteComponent *writeComp, PlayerConfComponent *playerComp)
+void GraphicEngine::updatePlayerLife(WriteComponent &writeComp, PlayerConfComponent &playerComp)
 {
-    writeComp->m_vectMessage[0].second = std::to_string(playerComp->m_life);
-    writeComp->m_fontSpriteData[0] = m_ptrFontData->getWriteData(writeComp->m_vectMessage[0].second, writeComp, Font_e::STANDARD);
+    writeComp.m_vectMessage[0].second = std::to_string(playerComp.m_life);
+    writeComp.m_fontSpriteData[0] = m_ptrFontData->getWriteData(writeComp.m_vectMessage[0].second, writeComp, Font_e::STANDARD);
 }
 
 //===================================================================
-void GraphicEngine::fillTitleMenuWrite(WriteComponent *writeComp, MenuMode_e menuEntry, MenuMode_e previousMenuEntry)
+void GraphicEngine::fillTitleMenuWrite(WriteComponent &writeComp, MenuMode_e menuEntry, MenuMode_e previousMenuEntry)
 {
-    writeComp->m_upLeftPositionGL.first = -0.3f;
+    writeComp.m_upLeftPositionGL.first = -0.3f;
     switch (menuEntry)
     {
     case MenuMode_e::TITLE:
-        writeComp->m_vectMessage[0].second = "TITLE MENU";
+        writeComp.m_vectMessage[0].second = "TITLE MENU";
         break;
     case MenuMode_e::BASE:
-        writeComp->m_vectMessage[0].second = "MAIN MENU";
+        writeComp.m_vectMessage[0].second = "MAIN MENU";
         break;
     case MenuMode_e::LOAD_GAME:
-        writeComp->m_vectMessage[0].second = "LOAD GAME";
+        writeComp.m_vectMessage[0].second = "LOAD GAME";
         break;
     case MenuMode_e::LOAD_CUSTOM_LEVEL:
-        writeComp->m_vectMessage[0].second = "LOAD CUSTOM GAME";
+        writeComp.m_vectMessage[0].second = "LOAD CUSTOM GAME";
         break;
     case MenuMode_e::CONFIRM_LOADING_GAME_FORM:
     {
         if(previousMenuEntry == MenuMode_e::LOAD_GAME)
         {
-            writeComp->m_vectMessage[0].second = "LOAD GAME";
+            writeComp.m_vectMessage[0].second = "LOAD GAME";
         }
         else if(previousMenuEntry == MenuMode_e::LOAD_GAME)
         {
-            writeComp->m_vectMessage[0].second = "NEW GAME";
+            writeComp.m_vectMessage[0].second = "NEW GAME";
         }
         break;
     }
     case MenuMode_e::NEW_GAME:
-        writeComp->m_vectMessage[0].second = "NEW GAME";
+        writeComp.m_vectMessage[0].second = "NEW GAME";
         break;
     case MenuMode_e::DISPLAY:
-        writeComp->m_vectMessage[0].second = "GRAPHIC MENU";
+        writeComp.m_vectMessage[0].second = "GRAPHIC MENU";
         break;
     case MenuMode_e::INPUT:
     case MenuMode_e::NEW_KEY:
     case MenuMode_e::CONFIRM_QUIT_INPUT_FORM:
-        writeComp->m_vectMessage[0].second = "INPUT MENU";
+        writeComp.m_vectMessage[0].second = "INPUT MENU";
         break;
     case MenuMode_e::CONFIRM_RESTART_LEVEL:
-        writeComp->m_vectMessage[0].second = "RESTART LEVEL";
+        writeComp.m_vectMessage[0].second = "RESTART LEVEL";
         break;
     case MenuMode_e::CONFIRM_QUIT_GAME:
-        writeComp->m_vectMessage[0].second = "QUIT GAME?";
+        writeComp.m_vectMessage[0].second = "QUIT GAME?";
         break;
     case MenuMode_e::CONFIRM_RESTART_FROM_LAST_CHECKPOINT:
-        writeComp->m_upLeftPositionGL.first = -0.5f;
-        writeComp->m_vectMessage[0].second = "RESTART FROM LAST CHECKPOINT";
+        writeComp.m_upLeftPositionGL.first = -0.5f;
+        writeComp.m_vectMessage[0].second = "RESTART FROM LAST CHECKPOINT";
         break;
     case MenuMode_e::SOUND:
-        writeComp->m_vectMessage[0].second = "AUDIO MENU";
+        writeComp.m_vectMessage[0].second = "AUDIO MENU";
         break;
     case MenuMode_e::TRANSITION_LEVEL:
-        writeComp->m_vectMessage[0].second = "";
+        writeComp.m_vectMessage[0].second = "";
         break;
     case MenuMode_e::LEVEL_PROLOGUE:
     case MenuMode_e::LEVEL_EPILOGUE:
         break;
     }
-    writeComp->m_fontSpriteData[0] = m_ptrFontData->getWriteData(writeComp->m_vectMessage[0].second, writeComp, Font_e::STANDARD);
+    writeComp.m_fontSpriteData[0] = m_ptrFontData->getWriteData(writeComp.m_vectMessage[0].second, writeComp, Font_e::STANDARD);
 }
 
 //===================================================================
-void GraphicEngine::fillMenuWrite(WriteComponent *writeComp, MenuMode_e menuEntry, uint32_t cursorPos,
-                                  const std::tuple<PlayerConfComponent*, uint32_t, uint32_t> &endLevelData)
+void GraphicEngine::fillMenuWrite(WriteComponent &writeComp, MenuMode_e menuEntry, uint32_t cursorPos,
+                                  const std::tuple<PlayerConfComponent *, uint32_t, uint32_t> &endLevelData)
 {
     if(menuEntry == MenuMode_e::LOAD_GAME || menuEntry == MenuMode_e::NEW_GAME)
     {
-        writeComp->m_vectMessage[0].second = m_saveStandardLevelMenuWrite;
+        writeComp.m_vectMessage[0].second = m_saveStandardLevelMenuWrite;
     }
     else if(menuEntry == MenuMode_e::LOAD_CUSTOM_LEVEL)
     {
-        writeComp->m_vectMessage[0].second = m_existingCustomLevelsMenuWrite[std::get<0>(endLevelData)->m_currentCustomLevelCusorMenu].first;
+        writeComp.m_vectMessage[0].second = m_existingCustomLevelsMenuWrite[std::get<0>(endLevelData)->m_currentCustomLevelCusorMenu].first;
     }
     else if(menuEntry == MenuMode_e::TRANSITION_LEVEL)
     {
-        writeComp->m_vectMessage[0].second = getEndLevelMenuStr(endLevelData);
+        writeComp.m_vectMessage[0].second = getEndLevelMenuStr(endLevelData);
     }
     else if(menuEntry == MenuMode_e::DISPLAY)
     {
@@ -331,85 +331,84 @@ void GraphicEngine::fillMenuWrite(WriteComponent *writeComp, MenuMode_e menuEntr
         m_displayMenuFullscreenMode = m_fullscreenMode;
         setCurrentResolution(m_currentDisplayedResolution);
         std::map<MenuMode_e, PairPairFloatStr_t>::const_iterator it = MAP_MENU_DATA.find(menuEntry);
-        writeComp->m_vectMessage[0].second = it->second.second;
+        writeComp.m_vectMessage[0].second = it->second.second;
     }
     else if(menuEntry == MenuMode_e::NEW_KEY)
     {
         std::map<MenuMode_e, PairPairFloatStr_t>::const_iterator it = MAP_MENU_DATA.find(menuEntry);
-        writeComp->m_vectMessage[0].second = it->second.second;
-        writeComp->m_vectMessage[0].second += " " + m_mapInputActionStringAssociated.at(static_cast<InputMenuCursorPos_e>(cursorPos));
+        writeComp.m_vectMessage[0].second = it->second.second;
+        writeComp.m_vectMessage[0].second += " " + m_mapInputActionStringAssociated.at(static_cast<InputMenuCursorPos_e>(cursorPos));
     }
     else if(menuEntry == MenuMode_e::LEVEL_PROLOGUE)
     {
-        writeComp->m_vectMessage[0].second = m_levelPrologue + "\\\\Press Enter To Continue";
+        writeComp.m_vectMessage[0].second = m_levelPrologue + "\\\\Press Enter To Continue";
     }
     else if(menuEntry == MenuMode_e::LEVEL_EPILOGUE)
     {
-        writeComp->m_vectMessage[0].second = m_levelEpilogue;
+        writeComp.m_vectMessage[0].second = m_levelEpilogue;
     }
     else
     {
         std::map<MenuMode_e, PairPairFloatStr_t>::const_iterator it = MAP_MENU_DATA.find(menuEntry);
-        writeComp->m_vectMessage[0].second = it->second.second;
-        writeComp->m_upLeftPositionGL.first = it->second.first.first;
-        writeComp->m_vectMessage[0].first = it->second.first.first;
+        writeComp.m_vectMessage[0].second = it->second.second;
+        writeComp.m_upLeftPositionGL.first = it->second.first.first;
+        writeComp.m_vectMessage[0].first = it->second.first.first;
     }
-    writeComp->m_fontSpriteData[0] = m_ptrFontData->getWriteData(writeComp->m_vectMessage[0].second,
+    writeComp.m_fontSpriteData[0] = m_ptrFontData->getWriteData(writeComp.m_vectMessage[0].second,
             writeComp, Font_e::STANDARD);
 }
 
 //===================================================================
-void GraphicEngine::confMenuSelectedLine(PlayerConfComponent *playerConf,
-                                         WriteComponent *writeMenuSelectedComp,
-                                         WriteComponent *writeMenuComp)
+void GraphicEngine::confMenuSelectedLine(PlayerConfComponent &playerConf, WriteComponent &writeMenuSelectedComp,
+                                         WriteComponent &writeMenuComp)
 {
-    if(writeMenuSelectedComp->m_vectMessage.empty())
+    if(writeMenuSelectedComp.m_vectMessage.empty())
     {
-        writeMenuSelectedComp->addTextLine({{}, ""});
+        writeMenuSelectedComp.addTextLine({{}, ""});
     }
-    bool loadLevel = (playerConf->m_menuMode == MenuMode_e::NEW_GAME || playerConf->m_menuMode == MenuMode_e::LOAD_GAME);
+    bool loadLevel = (playerConf.m_menuMode == MenuMode_e::NEW_GAME || playerConf.m_menuMode == MenuMode_e::LOAD_GAME);
     //Reinit base menu writing
-    if(playerConf->m_menuMode == MenuMode_e::LOAD_CUSTOM_LEVEL)
+    if(playerConf.m_menuMode == MenuMode_e::LOAD_CUSTOM_LEVEL)
     {
-        writeMenuComp->m_vectMessage[0].second = m_existingCustomLevelsMenuWrite[playerConf->m_currentCustomLevelCusorMenu].first;
+        writeMenuComp.m_vectMessage[0].second = m_existingCustomLevelsMenuWrite[playerConf.m_currentCustomLevelCusorMenu].first;
     }
     else if(loadLevel)
     {
-        writeMenuComp->m_vectMessage[0].second = m_saveStandardLevelMenuWrite;
+        writeMenuComp.m_vectMessage[0].second = m_saveStandardLevelMenuWrite;
     }
     else
     {
-        writeMenuComp->m_vectMessage[0].second = MAP_MENU_DATA.at(playerConf->m_menuMode).second;
+        writeMenuComp.m_vectMessage[0].second = MAP_MENU_DATA.at(playerConf.m_menuMode).second;
     }
-    std::pair<std::string, PairUI_t> ret = loadLevel ? getLineFromList(m_saveStandardLevelMenuWrite, playerConf->m_currentCursorPos) :
-        getLineFromList(writeMenuComp->m_vectMessage[0].second, playerConf->m_currentCursorPos);
+    std::pair<std::string, PairUI_t> ret = loadLevel ? getLineFromList(m_saveStandardLevelMenuWrite, playerConf.m_currentCursorPos) :
+        getLineFromList(writeMenuComp.m_vectMessage[0].second, playerConf.m_currentCursorPos);
 
-    if(playerConf->m_menuMode == MenuMode_e::LOAD_CUSTOM_LEVEL)
+    if(playerConf.m_menuMode == MenuMode_e::LOAD_CUSTOM_LEVEL)
     {
-        getLineFromList(m_existingCustomLevelsMenuWrite[playerConf->m_currentCustomLevelCusorMenu].first, playerConf->m_currentCustomLevelCusorMenu);
+        getLineFromList(m_existingCustomLevelsMenuWrite[playerConf.m_currentCustomLevelCusorMenu].first, playerConf.m_currentCustomLevelCusorMenu);
     }
     else if(loadLevel)
     {
-        getLineFromList(m_saveStandardLevelMenuWrite, playerConf->m_currentCursorPos);
+        getLineFromList(m_saveStandardLevelMenuWrite, playerConf.m_currentCursorPos);
     }
     else
     {
-        getLineFromList(writeMenuComp->m_vectMessage[0].second, playerConf->m_currentCursorPos);
+        getLineFromList(writeMenuComp.m_vectMessage[0].second, playerConf.m_currentCursorPos);
     }
     //fill selected menu entry
-    writeMenuSelectedComp->m_vectMessage[0].second = ret.first;
-    if(playerConf->m_menuMode == MenuMode_e::TRANSITION_LEVEL || playerConf->m_menuMode == MenuMode_e::LEVEL_EPILOGUE ||
-            playerConf->m_menuMode == MenuMode_e::LEVEL_PROLOGUE)
+    writeMenuSelectedComp.m_vectMessage[0].second = ret.first;
+    if(playerConf.m_menuMode == MenuMode_e::TRANSITION_LEVEL || playerConf.m_menuMode == MenuMode_e::LEVEL_EPILOGUE ||
+            playerConf.m_menuMode == MenuMode_e::LEVEL_PROLOGUE)
     {
-        writeMenuSelectedComp->m_vectMessage[0].first = {};
+        writeMenuSelectedComp.m_vectMessage[0].first = {};
     }
     else
     {
-        writeMenuSelectedComp->m_vectMessage[0].first = writeMenuComp->m_vectMessage[0].first;
+        writeMenuSelectedComp.m_vectMessage[0].first = writeMenuComp.m_vectMessage[0].first;
     }
     //remove base menu selected entry
-    writeMenuComp->m_vectMessage[0].second.erase(ret.second.first, ret.second.second);
-    writeMenuSelectedComp->m_fontSpriteData[0] = m_ptrFontData->getWriteData(writeMenuSelectedComp->m_vectMessage[0].second,
+    writeMenuComp.m_vectMessage[0].second.erase(ret.second.first, ret.second.second);
+    writeMenuSelectedComp.m_fontSpriteData[0] = m_ptrFontData->getWriteData(writeMenuSelectedComp.m_vectMessage[0].second,
             writeMenuSelectedComp, Font_e::SELECTED);
 }
 
@@ -445,12 +444,12 @@ std::pair<std::string, PairUI_t> getLineFromList(const std::string &str, uint32_
 }
 
 //===================================================================
-void GraphicEngine::confWriteComponent(WriteComponent *writeComp)
+void GraphicEngine::confWriteComponent(WriteComponent &writeComp)
 {
-    writeComp->m_fontSpriteData.clear();
-    for(uint32_t i = 0; i < writeComp->m_vectMessage.size(); ++i)
+    writeComp.m_fontSpriteData.clear();
+    for(uint32_t i = 0; i < writeComp.m_vectMessage.size(); ++i)
     {
-        writeComp->m_fontSpriteData.emplace_back(m_ptrFontData->getWriteData(writeComp->m_vectMessage[i].second, writeComp, Font_e::STANDARD));
+        writeComp.m_fontSpriteData.emplace_back(m_ptrFontData->getWriteData(writeComp.m_vectMessage[i].second, writeComp, Font_e::STANDARD));
     }
 }
 
@@ -712,9 +711,9 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 }
 
 //===================================================================
-std::string getEndLevelMenuStr(const std::tuple<const PlayerConfComponent*, uint32_t, uint32_t> &endLevelData)
+std::string getEndLevelMenuStr(const std::tuple<PlayerConfComponent*, uint32_t, uint32_t> &endLevelData)
 {
-    if(std::get<0>(endLevelData)->m_life == 0)
+  if(std::get<0>(endLevelData)->m_life == 0)
     {
         return "You are dead\\Press Enter to Restart";
     }

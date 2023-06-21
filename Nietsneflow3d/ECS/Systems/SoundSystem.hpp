@@ -5,6 +5,7 @@
 
 typedef unsigned int ALuint;
 
+using OptUint_t = std::optional<uint32_t>;
 class SoundSystem : public ecs::System
 {
 public:
@@ -31,6 +32,7 @@ public:
     }
 private:
     NewComponentManager &m_newComponentManager;
+    ComponentsGroup &m_componentsContainer;
     std::optional<float> getVolumeFromDistance(uint32_t distantEntity, float maxDistance);
 private:
     ALuint m_sourceMenuAudio;

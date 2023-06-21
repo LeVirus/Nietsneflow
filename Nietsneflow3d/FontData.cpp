@@ -26,7 +26,7 @@ void FontData::clear()
 }
 
 //===================================================================
-VectSpriteDataRef_t FontData::getWriteData(const std::string &str, WriteComponent *writeComp, Font_e type)const
+VectSpriteDataRef_t FontData::getWriteData(const std::string &str, WriteComponent &writeComp, Font_e type)const
 {
     if(str.empty())
     {
@@ -36,7 +36,7 @@ VectSpriteDataRef_t FontData::getWriteData(const std::string &str, WriteComponen
     VectSpriteDataRef_t vect;
     vect.reserve(str.size());
     std::map<char, SpriteData>::const_iterator it;
-    writeComp->m_fontType = type;
+    writeComp.m_fontType = type;
     for(uint32_t i = 0; i < str.size(); ++i)
     {
         it = m_mapFontData[type_i].find(str[i]);
@@ -49,7 +49,7 @@ VectSpriteDataRef_t FontData::getWriteData(const std::string &str, WriteComponen
             vect.emplace_back(const_cast<SpriteData&>(it->second));
             if(i == 0)
             {
-                writeComp->m_numTexture = it->second.m_textureNum;
+                writeComp.m_numTexture = it->second.m_textureNum;
             }
         }
     }

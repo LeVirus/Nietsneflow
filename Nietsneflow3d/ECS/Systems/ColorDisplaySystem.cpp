@@ -7,6 +7,7 @@
 
 //===================================================================
 ColorDisplaySystem::ColorDisplaySystem(NewComponentManager &newComponentManager) : m_newComponentManager(newComponentManager),
+    m_componentsContainer(m_newComponentManager.getComponentsContainer()),
     m_verticesData(Shader_e::COLOR_S)
 {
     setUsedComponents();

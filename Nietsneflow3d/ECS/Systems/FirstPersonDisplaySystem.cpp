@@ -16,7 +16,6 @@
 #include <ECS/Components/ImpactShotComponent.hpp>
 #include <ECS/Components/ShotConfComponent.hpp>
 #include <ECS/Components/MapCoordComponent.hpp>
-#include <ECS/Components/MemFPSGLSizeComponent.hpp>
 #include <ECS/Components/EnemyConfComponent.hpp>
 #include <ECS/Systems/ColorDisplaySystem.hpp>
 #include <PictureData.hpp>
@@ -24,7 +23,9 @@
 #include <chrono>
 
 //===================================================================
-FirstPersonDisplaySystem::FirstPersonDisplaySystem(NewComponentManager &newComponentManager) : m_newComponentManager(newComponentManager),
+FirstPersonDisplaySystem::FirstPersonDisplaySystem(NewComponentManager &newComponentManager) :
+    m_newComponentManager(newComponentManager),
+    m_componentsContainer(m_newComponentManager.getComponentsContainer()),
     m_groundTiledTextVertice(Shader_e::COLORED_TEXTURE_S),
     m_ceilingTiledVertice(Shader_e::COLORED_TEXTURE_S)
 {
@@ -51,23 +52,19 @@ void FirstPersonDisplaySystem::drawPlayerColorEffects()
 {
     for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
     {
-        PlayerConfComponent *playerComp = stairwayToComponentManager().
-                searchComponentByType<PlayerConfComponent>(mVectNumEntity[i],
-                                                           Components_e::PLAYER_CONF_COMPONENT);
-        assert(playerComp);
-        if(playerComp->m_takeDamage)
+        if(m_componentsContainer.m_playerConfComp.m_takeDamage)
         {
             mptrSystemManager->searchSystemByType<ColorDisplaySystem>(
                         static_cast<uint32_t>(Systems_e::COLOR_DISPLAY_SYSTEM))->drawVisibleDamage();
-            playerComp->m_takeDamage = false;
+            m_componentsContainer.m_playerConfComp.m_takeDamage = false;
         }
-        if(playerComp->m_pickItem)
+        if(m_componentsContainer.m_playerConfComp.m_pickItem)
         {
             mptrSystemManager->searchSystemByType<ColorDisplaySystem>(
                         static_cast<uint32_t>(Systems_e::COLOR_DISPLAY_SYSTEM))->drawVisiblePickUpObject();
-            playerComp->m_pickItem = false;
+            m_componentsContainer.m_playerConfComp.m_pickItem = false;
         }
-        if(playerComp->m_insideWall)
+        if(m_componentsContainer.m_playerConfComp.m_insideWall)
         {
             mptrSystemManager->searchSystemByType<ColorDisplaySystem>(
                         static_cast<uint32_t>(Systems_e::COLOR_DISPLAY_SYSTEM))->drawScratchWall();
@@ -81,26 +78,22 @@ void FirstPersonDisplaySystem::confCompVertexMemEntities()
     m_numVertexToDraw.resize(mVectNumEntity.size());
     //treat one player
     uint32_t toRemove = 0;
-    VisionComponent *visionComp;
-    MoveableComponent *moveComp;
-    MapCoordComponent *mapCompA;
-    GeneralCollisionComponent *genCollComp;
-    MapCoordComponent *mapCompB;
     uint32_t numIteration;
+    OptUint_t numCom;
     for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
     {
         numIteration = 0;
-        visionComp = stairwayToComponentManager().
-                searchComponentByType<VisionComponent>(mVectNumEntity[i], Components_e::VISION_COMPONENT);
-        moveComp = stairwayToComponentManager().
-                searchComponentByType<MoveableComponent>(mVectNumEntity[i], Components_e::MOVEABLE_COMPONENT);
-        mapCompA = stairwayToComponentManager().
-                searchComponentByType<MapCoordComponent>(mVectNumEntity[i], Components_e::MAP_COORD_COMPONENT);
-        assert(visionComp);
-        assert(mapCompA);
-        assert(moveComp);
+        numCom = m_newComponentManager.getComponentEmplacement(mVectNumEntity[i], Components_e::VISION_COMPONENT);
+        assert(numCom);
+        VisionComponent &visionComp = m_componentsContainer.m_vectVisionComp[*numCom];
+        numCom = m_newComponentManager.getComponentEmplacement(mVectNumEntity[i], Components_e::MOVEABLE_COMPONENT);
+        assert(numCom);
+        MoveableComponent &moveComp = m_componentsContainer.m_vectMoveableComp[*numCom];
+        numCom = m_newComponentManager.getComponentEmplacement(mVectNumEntity[i], Components_e::MAP_COORD_COMPONENT);
+        assert(numCom);
+        MapCoordComponent &mapCompA = m_componentsContainer.m_vectMapCoordComp[*numCom];
         toRemove = 0;
-        m_numVertexToDraw[i] = visionComp->m_vectVisibleEntities.size();
+        m_numVertexToDraw[i] = visionComp.m_vectVisibleEntities.size();
         m_entitiesNumMem.clear();
         m_memDoorDistance.clear();
         //if scratch continue
@@ -110,7 +103,7 @@ void FirstPersonDisplaySystem::confCompVertexMemEntities()
         }
         if(m_groundCeilingSimpleTextureActive)
         {
-            confSimpleTextVertexGroundCeiling(moveComp->m_degreeOrientation);
+            confSimpleTextVertexGroundCeiling(moveComp.m_degreeOrientation);
             writeSimpleTextVertexGroundCeiling();
         }
         m_memWallEntityDistances.clear();
@@ -123,16 +116,15 @@ void FirstPersonDisplaySystem::confCompVertexMemEntities()
         //Draw simple element
         for(uint32_t j = 0; j < m_numVertexToDraw[i]; ++j, ++numIteration)
         {
-            genCollComp = stairwayToComponentManager().
-                    searchComponentByType<GeneralCollisionComponent>(visionComp->m_vectVisibleEntities[j].first,
-                                                                     Components_e::GENERAL_COLLISION_COMPONENT);
-            mapCompB = stairwayToComponentManager().
-                    searchComponentByType<MapCoordComponent>(visionComp->m_vectVisibleEntities[j].first, Components_e::MAP_COORD_COMPONENT);
-            assert(mapCompB);
-            assert(genCollComp);
-            if(genCollComp->m_active)
+            numCom = m_newComponentManager.getComponentEmplacement(visionComp.m_vectVisibleEntities[j].first, Components_e::GENERAL_COLLISION_COMPONENT);
+            assert(numCom);
+            GeneralCollisionComponent &genCollComp = m_componentsContainer.m_vectGeneralCollisionComp[*numCom];
+            numCom = m_newComponentManager.getComponentEmplacement(visionComp.m_vectVisibleEntities[j].first, Components_e::MAP_COORD_COMPONENT);
+            assert(numCom);
+            MapCoordComponent &mapCompB = m_componentsContainer.m_vectMapCoordComp[*numCom];
+            if(genCollComp.m_active)
             {
-                treatDisplayEntity(genCollComp, mapCompA, mapCompB, visionComp, toRemove, moveComp->m_degreeOrientation, numIteration, j);
+                treatDisplayEntity(genCollComp, mapCompA, mapCompB, visionComp, toRemove, moveComp.m_degreeOrientation, numIteration, j);
             }
         }
         //draw dynamic element
@@ -143,57 +135,59 @@ void FirstPersonDisplaySystem::confCompVertexMemEntities()
 //===================================================================
 void FirstPersonDisplaySystem::confSimpleTextVertexGroundCeiling(float observerAngle)
 {
+    OptUint_t numCom;
     float midPos = std::fmod(observerAngle, 90.0f) / 45.0f - 1.0f, leftPos = midPos - 2.0f, rightPos = midPos + 2.0f;
     if(m_groundSimpleTextBackground)
     {
-        PositionVertexComponent *posComp = stairwayToComponentManager().
-                searchComponentByType<PositionVertexComponent>(*m_groundSimpleTextBackground, Components_e::POSITION_VERTEX_COMPONENT);
-        assert(posComp);
-        posComp->m_vertex[0].first = leftPos;
-        posComp->m_vertex[3].first = leftPos;
-        posComp->m_vertex[1].first = midPos;
-        posComp->m_vertex[2].first = midPos;
-        posComp->m_vertex[4].first = rightPos;
-        posComp->m_vertex[5].first = rightPos;
+        numCom = m_newComponentManager.getComponentEmplacement(*m_groundSimpleTextBackground, Components_e::POSITION_VERTEX_COMPONENT);
+        assert(numCom);
+        PositionVertexComponent &posComp = m_componentsContainer.m_vectPositionVertexComp[*numCom];
+        posComp.m_vertex[0].first = leftPos;
+        posComp.m_vertex[3].first = leftPos;
+        posComp.m_vertex[1].first = midPos;
+        posComp.m_vertex[2].first = midPos;
+        posComp.m_vertex[4].first = rightPos;
+        posComp.m_vertex[5].first = rightPos;
     }
     if(m_ceilingSimpleTextBackground)
     {
-        PositionVertexComponent *posComp = stairwayToComponentManager().
-                searchComponentByType<PositionVertexComponent>(*m_ceilingSimpleTextBackground, Components_e::POSITION_VERTEX_COMPONENT);
-        assert(posComp);
-        posComp->m_vertex[0].first = leftPos;
-        posComp->m_vertex[3].first = leftPos;
-        posComp->m_vertex[1].first = midPos;
-        posComp->m_vertex[2].first = midPos;
-        posComp->m_vertex[4].first = rightPos;
-        posComp->m_vertex[5].first = rightPos;
+        numCom = m_newComponentManager.getComponentEmplacement(*m_ceilingSimpleTextBackground, Components_e::POSITION_VERTEX_COMPONENT);
+        assert(numCom);
+        PositionVertexComponent &posComp = m_componentsContainer.m_vectPositionVertexComp[*numCom];
+        posComp.m_vertex[0].first = leftPos;
+        posComp.m_vertex[3].first = leftPos;
+        posComp.m_vertex[1].first = midPos;
+        posComp.m_vertex[2].first = midPos;
+        posComp.m_vertex[4].first = rightPos;
+        posComp.m_vertex[5].first = rightPos;
     }
 }
 
 //===================================================================
 void FirstPersonDisplaySystem::writeSimpleTextVertexGroundCeiling()
 {
+    OptUint_t numCom;
     if(m_groundSimpleTextBackground)
     {
-        PositionVertexComponent *posComp = stairwayToComponentManager().
-                searchComponentByType<PositionVertexComponent>(*m_groundSimpleTextBackground, Components_e::POSITION_VERTEX_COMPONENT);
-        assert(posComp);
-        SpriteTextureComponent *spriteComp = stairwayToComponentManager().
-                searchComponentByType<SpriteTextureComponent>(*m_groundSimpleTextBackground, Components_e::SPRITE_TEXTURE_COMPONENT);
-        assert(spriteComp);
+        numCom = m_newComponentManager.getComponentEmplacement(*m_groundSimpleTextBackground, Components_e::POSITION_VERTEX_COMPONENT);
+        assert(numCom);
+        PositionVertexComponent &posComp = m_componentsContainer.m_vectPositionVertexComp[*numCom];
+        numCom = m_newComponentManager.getComponentEmplacement(*m_groundTiledTextBackground, Components_e::SPRITE_TEXTURE_COMPONENT);
+        assert(numCom);
+        SpriteTextureComponent &spriteComp = m_componentsContainer.m_vectSpriteTextureComp[*numCom];
         m_groundSimpleTextVertice.clear();
-        m_groundSimpleTextVertice.loadVertexStandartTextureComponent(*posComp, *spriteComp);
+        m_groundSimpleTextVertice.loadVertexStandartTextureComponent(posComp, spriteComp);
     }
     if(m_ceilingSimpleTextBackground)
     {
-        PositionVertexComponent *posComp = stairwayToComponentManager().
-                searchComponentByType<PositionVertexComponent>(*m_ceilingSimpleTextBackground, Components_e::POSITION_VERTEX_COMPONENT);
-        assert(posComp);
-        SpriteTextureComponent *spriteComp = stairwayToComponentManager().
-                searchComponentByType<SpriteTextureComponent>(*m_ceilingSimpleTextBackground, Components_e::SPRITE_TEXTURE_COMPONENT);
-        assert(spriteComp);
+        numCom = m_newComponentManager.getComponentEmplacement(*m_ceilingSimpleTextBackground, Components_e::POSITION_VERTEX_COMPONENT);
+        assert(numCom);
+        PositionVertexComponent &posComp = m_componentsContainer.m_vectPositionVertexComp[*numCom];
+        numCom = m_newComponentManager.getComponentEmplacement(*m_ceilingSimpleTextBackground, Components_e::SPRITE_TEXTURE_COMPONENT);
+        assert(numCom);
+        SpriteTextureComponent &spriteComp = m_componentsContainer.m_vectSpriteTextureComp[*numCom];
         m_ceilingSimpleVertice.clear();
-        m_ceilingSimpleVertice.loadVertexStandartTextureComponent(*posComp, *spriteComp);
+        m_ceilingSimpleVertice.loadVertexStandartTextureComponent(posComp, spriteComp);
     }
 }
 
@@ -201,50 +195,49 @@ void FirstPersonDisplaySystem::writeSimpleTextVertexGroundCeiling()
 void FirstPersonDisplaySystem::writeVertexWallDoorRaycasting(const pairRaycastingData_t &entityData, uint32_t numIteration)
 {
     VerticesData &vertex = getClearedVertice(numIteration);
-    SpriteTextureComponent *spriteComp = stairwayToComponentManager().
-            searchComponentByType<SpriteTextureComponent>(entityData.first,
-                                                          Components_e::SPRITE_TEXTURE_COMPONENT);
-    assert(spriteComp);
-    float distance = vertex.loadRaycastingEntity(*spriteComp, entityData.second);
+    OptUint_t numCom = m_newComponentManager.getComponentEmplacement(entityData.first, Components_e::SPRITE_TEXTURE_COMPONENT);
+    assert(numCom);
+    SpriteTextureComponent &spriteComp = m_componentsContainer.m_vectSpriteTextureComp[*numCom];
+    float distance = vertex.loadRaycastingEntity(spriteComp, entityData.second);
     m_memWallEntityDistances.insert({entityData.first, distance});
-    DoorComponent *doorComp = stairwayToComponentManager().searchComponentByType<DoorComponent>(entityData.first, Components_e::DOOR_COMPONENT);
-    if(doorComp)
+    numCom = m_newComponentManager.getComponentEmplacement(entityData.first, Components_e::DOOR_COMPONENT);
+    if(numCom)
     {
         m_memDoorDistance.insert({entityData.first, distance});
     }
-    m_entitiesNumMem.insert(EntityData(distance, spriteComp->m_spriteData->m_textureNum, numIteration));
+    m_entitiesNumMem.insert(EntityData(distance, spriteComp.m_spriteData->m_textureNum, numIteration));
 }
 
 
 //===================================================================
-void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *genCollComp, MapCoordComponent *mapCompA,
-                                                  MapCoordComponent *mapCompB, VisionComponent *visionComp,
+void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent &genCollComp, MapCoordComponent &mapCompA,
+                                                  MapCoordComponent &mapCompB, VisionComponent &visionComp,
                                                   uint32_t &toRemove, float degreeObserverAngle, uint32_t numIteration, uint32_t currentNormal)
 {
-    uint32_t numEntity = visionComp->m_vectVisibleEntities[currentNormal].first;
-    assert(visionComp->m_vectVisibleEntities.size() > currentNormal);
+    uint32_t numEntity = visionComp.m_vectVisibleEntities[currentNormal].first;
+    assert(visionComp.m_vectVisibleEntities.size() > currentNormal);
     PairFloat_t centerPosB = getCenterPosition(mapCompB, genCollComp, numEntity);
     float radiantObserverAngle = getRadiantAngle(degreeObserverAngle),
-            cameraDistance = getCameraDistance(mapCompA->m_absoluteMapPositionPX, mapCompB->m_absoluteMapPositionPX, radiantObserverAngle);
+            cameraDistance = getCameraDistance(mapCompA.m_absoluteMapPositionPX, mapCompB.m_absoluteMapPositionPX, radiantObserverAngle);
     float displayDistance = cameraDistance;
-    if(cameraDistance > visionComp->m_distanceVisibility)
+    if(cameraDistance > visionComp.m_distanceVisibility)
     {
         ++toRemove;
         return;
     }
-    float trigoAngle = getTrigoAngle(mapCompA->m_absoluteMapPositionPX, centerPosB);
+    float trigoAngle = getTrigoAngle(mapCompA.m_absoluteMapPositionPX, centerPosB);
     //get lateral pos from angle
     float lateralPos = getLateralAngle(degreeObserverAngle, trigoAngle);
     //quickfix
-    if(genCollComp->m_tagA != CollisionTag_e::ENEMY_CT &&
-            genCollComp->m_tagA != CollisionTag_e::BULLET_ENEMY_CT &&
-            genCollComp->m_tagA != CollisionTag_e::BULLET_PLAYER_CT &&
-            genCollComp->m_tagA != CollisionTag_e::IMPACT_CT &&
-            genCollComp->m_tagA != CollisionTag_e::STATIC_SET_CT && cameraDistance < 15.0f)
+    if(genCollComp.m_tagA != CollisionTag_e::ENEMY_CT &&
+            genCollComp.m_tagA != CollisionTag_e::BULLET_ENEMY_CT &&
+            genCollComp.m_tagA != CollisionTag_e::BULLET_PLAYER_CT &&
+            genCollComp.m_tagA != CollisionTag_e::IMPACT_CT &&
+            genCollComp.m_tagA != CollisionTag_e::STATIC_SET_CT && cameraDistance < 15.0f)
     {
         return;
     }
-    if(!confNormalEntityVertex(visionComp->m_vectVisibleEntities[currentNormal], visionComp, genCollComp->m_tagA, lateralPos, cameraDistance))
+    if(!confNormalEntityVertex(visionComp.m_vectVisibleEntities[currentNormal], genCollComp.m_tagA, lateralPos, cameraDistance))
     {
         return;
     }
@@ -252,15 +245,15 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent *gen
 }
 
 //===================================================================
-bool FirstPersonDisplaySystem::elementBehindDoor(const ElementRaycast &elementCase, float radiantObserverAngle, const MapCoordComponent *mapComp)
+bool FirstPersonDisplaySystem::elementBehindDoor(const ElementRaycast &elementCase, float radiantObserverAngle, const MapCoordComponent &mapComp)
 {
     if(m_memDoorDistance.find(elementCase.m_numEntity) != m_memDoorDistance.end())
     {
-        DoorComponent *doorComp = stairwayToComponentManager().
-                searchComponentByType<DoorComponent>(elementCase.m_numEntity, Components_e::DOOR_COMPONENT);
-        assert(doorComp);
-        float m_lateralMod = std::fmod(mapComp->m_absoluteMapPositionPX.second, LEVEL_TILE_SIZE_PX);
-        if(!doorComp->m_vertical)
+        OptUint_t numCom = m_newComponentManager.getComponentEmplacement(elementCase.m_numEntity, Components_e::DOOR_COMPONENT);
+        assert(numCom);
+        DoorComponent &doorComp = m_componentsContainer.m_vectDoorComp[*numCom];
+        float m_lateralMod = std::fmod(mapComp.m_absoluteMapPositionPX.second, LEVEL_TILE_SIZE_PX);
+        if(!doorComp.m_vertical)
         {
             if((std::sin(radiantObserverAngle) > EPSILON_FLOAT) == (m_lateralMod < LEVEL_HALF_TILE_SIZE_PX))
             {
@@ -269,7 +262,7 @@ bool FirstPersonDisplaySystem::elementBehindDoor(const ElementRaycast &elementCa
         }
         else
         {
-            float m_verticalMod = std::fmod(mapComp->m_absoluteMapPositionPX.first, LEVEL_TILE_SIZE_PX);
+            float m_verticalMod = std::fmod(mapComp.m_absoluteMapPositionPX.first, LEVEL_TILE_SIZE_PX);
             if((std::cos(radiantObserverAngle) > EPSILON_FLOAT) == (m_verticalMod > LEVEL_HALF_TILE_SIZE_PX))
             {
                 return true;
@@ -540,34 +533,35 @@ void FirstPersonDisplaySystem::fillVertexFromEntity(uint32_t numEntity, uint32_t
                                                     float distance)
 {
     VerticesData &vertex = getClearedVertice(numIteration);
-    PositionVertexComponent *posComp = stairwayToComponentManager().
-            searchComponentByType<PositionVertexComponent>(numEntity, Components_e::POSITION_VERTEX_COMPONENT);
-    SpriteTextureComponent *spriteComp = stairwayToComponentManager().
-            searchComponentByType<SpriteTextureComponent>(numEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
-    GeneralCollisionComponent *collComp = stairwayToComponentManager().
-            searchComponentByType<GeneralCollisionComponent>(numEntity, Components_e::GENERAL_COLLISION_COMPONENT);
-    assert(collComp);
-    assert(posComp);
-    assert(spriteComp);
+
+    OptUint_t numCom = m_newComponentManager.getComponentEmplacement(numEntity, Components_e::POSITION_VERTEX_COMPONENT);
+    assert(numCom);
+    PositionVertexComponent &posComp = m_componentsContainer.m_vectPositionVertexComp[*numCom];
+    numCom = m_newComponentManager.getComponentEmplacement(numEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
+    assert(numCom);
+    SpriteTextureComponent &spriteComp = m_componentsContainer.m_vectSpriteTextureComp[*numCom];
+    numCom = m_newComponentManager.getComponentEmplacement(numEntity, Components_e::GENERAL_COLLISION_COMPONENT);
+    assert(numCom);
+    GeneralCollisionComponent &collComp = m_componentsContainer.m_vectGeneralCollisionComp[*numCom];
     bool displayBehindWall = false;
-    if(collComp->m_tagA == CollisionTag_e::ENEMY_CT)
+    if(collComp.m_tagA == CollisionTag_e::ENEMY_CT)
     {
-        FPSVisibleStaticElementComponent *fpsComp = stairwayToComponentManager().
-                searchComponentByType<FPSVisibleStaticElementComponent>(numEntity, Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
-        assert(fpsComp);
+        numCom = m_newComponentManager.getComponentEmplacement(numEntity, Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
+        assert(numCom);
+        FPSVisibleStaticElementComponent &fpsComp = m_componentsContainer.m_vectFPSVisibleStaticElementComp[*numCom];
         //if height sprite > 2 display even if behind wall
-        if(fpsComp->m_inGameSpriteSize.second > 2.0f)
+        if(fpsComp.m_inGameSpriteSize.second > 2.0f)
         {
             displayBehindWall = true;
         }
     }
     //if behind wall
-    if(vertex.loadVertexStandardEntityByLine(*posComp, *spriteComp, distance,
+    if(vertex.loadVertexStandardEntityByLine(posComp, spriteComp, distance,
                                              m_memRaycastDist, displayBehindWall) && displayBehindWall)
     {
         distance += 20.0f;
     }
-    m_entitiesNumMem.insert(EntityData(distance, spriteComp->m_spriteData->m_textureNum, numIteration));
+    m_entitiesNumMem.insert(EntityData(distance, spriteComp.m_spriteData->m_textureNum, numIteration));
 }
 
 //===================================================================
@@ -599,74 +593,72 @@ void FirstPersonDisplaySystem::setVectTextures(std::vector<Texture> &vectTexture
 }
 
 //===================================================================
-bool FirstPersonDisplaySystem::confNormalEntityVertex(const std::pair<uint32_t, bool> &entityData, VisionComponent *visionComp,
+bool FirstPersonDisplaySystem::confNormalEntityVertex(const std::pair<uint32_t, bool> &entityData,
                                                       CollisionTag_e tag, float lateralPosGL, float distance)
 {
     uint32_t numEntity = entityData.first;
-    PositionVertexComponent *positionComp = stairwayToComponentManager().
-            searchComponentByType<PositionVertexComponent>(numEntity, Components_e::POSITION_VERTEX_COMPONENT);
-    FPSVisibleStaticElementComponent *fpsStaticComp = stairwayToComponentManager().
-            searchComponentByType<FPSVisibleStaticElementComponent>(
-                numEntity, Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
-    assert(fpsStaticComp);
-    assert(positionComp);
-    assert(visionComp);
+    OptUint_t numCom = m_newComponentManager.getComponentEmplacement(numEntity, Components_e::POSITION_VERTEX_COMPONENT);
+    assert(numCom);
+    PositionVertexComponent &positionComp = m_componentsContainer.m_vectPositionVertexComp[*numCom];
+    numCom = m_newComponentManager.getComponentEmplacement(numEntity, Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
+    assert(numCom);
+    FPSVisibleStaticElementComponent &fpsStaticComp = m_componentsContainer.m_vectFPSVisibleStaticElementComp[*numCom];
     //quickfix
     if(distance < 15.0f)
     {
         distance = 15.0f;
     }
-    SpriteTextureComponent *spriteComp = stairwayToComponentManager().
-            searchComponentByType<SpriteTextureComponent>(numEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
-    assert(spriteComp);
-    spriteComp->m_reverseVisibilityRate = getFogIntensity(distance);
-    positionComp->m_vertex.resize(4);
+    numCom = m_newComponentManager.getComponentEmplacement(numEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
+    assert(numCom);
+    SpriteTextureComponent &spriteComp = m_componentsContainer.m_vectSpriteTextureComp[*numCom];
+    spriteComp.m_reverseVisibilityRate = getFogIntensity(distance);
+    positionComp.m_vertex.resize(4);
     //convert to GL context
     float distanceFactor = distance / LEVEL_TILE_SIZE_PX;
-    float halfLateralSize = fpsStaticComp->m_inGameSpriteSize.first  / distanceFactor,
+    float halfLateralSize = fpsStaticComp.m_inGameSpriteSize.first  / distanceFactor,
             downPos, upPos;
     if(tag == CollisionTag_e::BULLET_ENEMY_CT || tag == CollisionTag_e::BULLET_PLAYER_CT)
     {
-        ShotConfComponent *shotComp = stairwayToComponentManager().
-                searchComponentByType<ShotConfComponent>(numEntity, Components_e::SHOT_CONF_COMPONENT);
-        assert(shotComp);
-        if(!shotComp->m_destructPhase)
+        numCom = m_newComponentManager.getComponentEmplacement(numEntity, Components_e::SHOT_CONF_COMPONENT);
+        assert(numCom);
+        ShotConfComponent &shotComp = m_componentsContainer.m_vectShotConfComp[*numCom];
+        if(!shotComp.m_destructPhase)
         {
             downPos = -0.3f / distanceFactor;
         }
         else
         {
-            downPos = -(fpsStaticComp->m_inGameSpriteSize.second / distanceFactor) / 1.6f;
+            downPos = -(fpsStaticComp.m_inGameSpriteSize.second / distanceFactor) / 1.6f;
         }
-        upPos = downPos + fpsStaticComp->m_inGameSpriteSize.second / distanceFactor;
+        upPos = downPos + fpsStaticComp.m_inGameSpriteSize.second / distanceFactor;
     }
     else if((tag == CollisionTag_e::IMPACT_CT || tag == CollisionTag_e::GHOST_CT) &&
-            fpsStaticComp->m_levelElementType == LevelStaticElementType_e::IMPACT)
+            fpsStaticComp.m_levelElementType == LevelStaticElementType_e::IMPACT)
     {
-        ImpactShotComponent *impactComp = stairwayToComponentManager().
-            searchComponentByType<ImpactShotComponent>(numEntity, Components_e::IMPACT_CONF_COMPONENT);
-        assert(impactComp);
-        downPos = (impactComp->m_currentVerticalPos + impactComp->m_moveUp) / distanceFactor;
-        upPos = downPos + fpsStaticComp->m_inGameSpriteSize.second / distanceFactor;
+        numCom = m_newComponentManager.getComponentEmplacement(numEntity, Components_e::IMPACT_CONF_COMPONENT);
+        assert(numCom);
+        ImpactShotComponent &impactComp = m_componentsContainer.m_vectImpactShotComp[*numCom];
+        downPos = (impactComp.m_currentVerticalPos + impactComp.m_moveUp) / distanceFactor;
+        upPos = downPos + fpsStaticComp.m_inGameSpriteSize.second / distanceFactor;
     }
-    else if(fpsStaticComp->m_levelElementType == LevelStaticElementType_e::CEILING)
+    else if(fpsStaticComp.m_levelElementType == LevelStaticElementType_e::CEILING)
     {
         upPos = RAYCAST_VERTICAL_SIZE / distanceFactor;
-        downPos = upPos - fpsStaticComp->m_inGameSpriteSize.second / distanceFactor;
+        downPos = upPos - fpsStaticComp.m_inGameSpriteSize.second / distanceFactor;
     }
     else
     {
         downPos = -RAYCAST_VERTICAL_SIZE / distanceFactor;
-        upPos = downPos + fpsStaticComp->m_inGameSpriteSize.second / distanceFactor;
+        upPos = downPos + fpsStaticComp.m_inGameSpriteSize.second / distanceFactor;
     }
-    positionComp->m_vertex[0].first = lateralPosGL - halfLateralSize;
-    positionComp->m_vertex[0].second = upPos;
-    positionComp->m_vertex[1].first = lateralPosGL + halfLateralSize;
-    positionComp->m_vertex[1].second = upPos;
-    positionComp->m_vertex[2].first = lateralPosGL + halfLateralSize;
-    positionComp->m_vertex[2].second = downPos;
-    positionComp->m_vertex[3].first = lateralPosGL - halfLateralSize;
-    positionComp->m_vertex[3].second = downPos;
+    positionComp.m_vertex[0].first = lateralPosGL - halfLateralSize;
+    positionComp.m_vertex[0].second = upPos;
+    positionComp.m_vertex[1].first = lateralPosGL + halfLateralSize;
+    positionComp.m_vertex[1].second = upPos;
+    positionComp.m_vertex[2].first = lateralPosGL + halfLateralSize;
+    positionComp.m_vertex[2].second = downPos;
+    positionComp.m_vertex[3].first = lateralPosGL - halfLateralSize;
+    positionComp.m_vertex[3].second = downPos;
     return true;
 }
 
@@ -697,42 +689,43 @@ void FirstPersonDisplaySystem::drawVertex()
 //===================================================================
 void FirstPersonDisplaySystem::drawTextureBackground()
 {
+    OptUint_t numCom;
     if(m_groundSimpleTextBackground)
     {
-        SpriteTextureComponent *spriteComp = stairwayToComponentManager().
-                searchComponentByType<SpriteTextureComponent>(*m_groundSimpleTextBackground, Components_e::SPRITE_TEXTURE_COMPONENT);
-        assert(spriteComp);
+        numCom = m_newComponentManager.getComponentEmplacement(*m_groundSimpleTextBackground, Components_e::SPRITE_TEXTURE_COMPONENT);
+        assert(numCom);
+        SpriteTextureComponent &spriteComp = m_componentsContainer.m_vectSpriteTextureComp[*numCom];
         setShader(*m_memShaders.second);
-        m_ptrVectTexture->operator[](static_cast<uint32_t>(spriteComp->m_spriteData->m_textureNum)).bind();
+        m_ptrVectTexture->operator[](static_cast<uint32_t>(spriteComp.m_spriteData->m_textureNum)).bind();
         m_groundSimpleTextVertice.confVertexBuffer();
         m_groundSimpleTextVertice.drawElement();
     }
     if(m_ceilingSimpleTextBackground)
     {
-        SpriteTextureComponent *spriteComp = stairwayToComponentManager().
-                searchComponentByType<SpriteTextureComponent>(*m_ceilingSimpleTextBackground, Components_e::SPRITE_TEXTURE_COMPONENT);
-        assert(spriteComp);
+        numCom = m_newComponentManager.getComponentEmplacement(*m_ceilingSimpleTextBackground, Components_e::SPRITE_TEXTURE_COMPONENT);
+        assert(numCom);
+        SpriteTextureComponent &spriteComp = m_componentsContainer.m_vectSpriteTextureComp[*numCom];
         setShader(*m_memShaders.second);
-        m_ptrVectTexture->operator[](static_cast<uint32_t>(spriteComp->m_spriteData->m_textureNum)).bind();
+        m_ptrVectTexture->operator[](static_cast<uint32_t>(spriteComp.m_spriteData->m_textureNum)).bind();
         m_ceilingSimpleVertice.confVertexBuffer();
         m_ceilingSimpleVertice.drawElement();
     }
     setShader(*m_memShaders.first);
     if(m_groundTiledTextBackground)
     {
-        SpriteTextureComponent *spriteComp = stairwayToComponentManager().
-                searchComponentByType<SpriteTextureComponent>(*m_groundTiledTextBackground, Components_e::SPRITE_TEXTURE_COMPONENT);
-        assert(spriteComp);
-        m_ptrVectTexture->operator[](static_cast<uint32_t>(spriteComp->m_spriteData->m_textureNum)).bind();
+        numCom = m_newComponentManager.getComponentEmplacement(*m_groundTiledTextBackground, Components_e::SPRITE_TEXTURE_COMPONENT);
+        assert(numCom);
+        SpriteTextureComponent &spriteComp = m_componentsContainer.m_vectSpriteTextureComp[*numCom];
+        m_ptrVectTexture->operator[](static_cast<uint32_t>(spriteComp.m_spriteData->m_textureNum)).bind();
         m_groundTiledTextVertice.confVertexBuffer();
         m_groundTiledTextVertice.drawElement();
     }
     if(m_ceilingTiledTextBackground)
     {
-        SpriteTextureComponent *spriteComp = stairwayToComponentManager().
-                searchComponentByType<SpriteTextureComponent>(*m_ceilingTiledTextBackground, Components_e::SPRITE_TEXTURE_COMPONENT);
-        assert(spriteComp);
-        m_ptrVectTexture->operator[](static_cast<uint32_t>(spriteComp->m_spriteData->m_textureNum)).bind();
+        numCom = m_newComponentManager.getComponentEmplacement(*m_ceilingSimpleTextBackground, Components_e::SPRITE_TEXTURE_COMPONENT);
+        assert(numCom);
+        SpriteTextureComponent &spriteComp = m_componentsContainer.m_vectSpriteTextureComp[*numCom];
+        m_ptrVectTexture->operator[](static_cast<uint32_t>(spriteComp.m_spriteData->m_textureNum)).bind();
         m_ceilingTiledVertice.confVertexBuffer();
         m_ceilingTiledVertice.drawElement();
     }
@@ -812,28 +805,25 @@ bool FirstPersonDisplaySystem::rayCasting(uint32_t observerEntity)
     {
         m_ceilingTiledVertice.clear();
     }
-    MapCoordComponent *mapCompCamera = stairwayToComponentManager().
-            searchComponentByType<MapCoordComponent>(observerEntity, Components_e::MAP_COORD_COMPONENT);
-    assert(mapCompCamera);
-    PlayerConfComponent *playerComp = stairwayToComponentManager().
-            searchComponentByType<PlayerConfComponent>(observerEntity, Components_e::PLAYER_CONF_COMPONENT);
-    assert(playerComp);
-    if(isInsideWall(mapCompCamera->m_absoluteMapPositionPX))
+    OptUint_t numCom = m_newComponentManager.getComponentEmplacement(observerEntity, Components_e::MAP_COORD_COMPONENT);
+    assert(numCom);
+    MapCoordComponent &mapCompCamera = m_componentsContainer.m_vectMapCoordComp[*numCom];
+    if(isInsideWall(mapCompCamera.m_absoluteMapPositionPX))
     {
-        playerComp->m_insideWall = true;
+        m_componentsContainer.m_playerConfComp.m_insideWall = true;
         return true;
     }
     else
     {
-        playerComp->m_insideWall = false;
+        m_componentsContainer.m_playerConfComp.m_insideWall = false;
     }
-    MoveableComponent *moveComp = stairwayToComponentManager().
-            searchComponentByType<MoveableComponent>(observerEntity, Components_e::MOVEABLE_COMPONENT);
-    assert(moveComp);
-    float leftAngle = moveComp->m_degreeOrientation + HALF_CONE_VISION;
-    float radiantObserverAngle = getRadiantAngle(moveComp->m_degreeOrientation);
+    numCom = m_newComponentManager.getComponentEmplacement(observerEntity, Components_e::MOVEABLE_COMPONENT);
+    assert(numCom);
+    MoveableComponent &moveComp = m_componentsContainer.m_vectMoveableComp[*numCom];
+    float leftAngle = moveComp.m_degreeOrientation + HALF_CONE_VISION;
+    float radiantObserverAngle = getRadiantAngle(moveComp.m_degreeOrientation);
     float currentRadiantAngle = getRadiantAngle(leftAngle), currentLateralScreen = -1.0f;
-    float cameraRadiantAngle = getRadiantAngle(moveComp->m_degreeOrientation);
+    float cameraRadiantAngle = getRadiantAngle(moveComp.m_degreeOrientation);
     if(m_groundTiledTextBackground)
     {
         m_groundTiledTextVertice.reserveVertex(RAYCAST_LINE_NUMBER *
@@ -849,10 +839,11 @@ bool FirstPersonDisplaySystem::rayCasting(uint32_t observerEntity)
     //mem entity num & distances
     for(uint32_t j = 0; j < RAYCAST_LINE_NUMBER; ++j)
     {
-        targetPoint = calcLineSegmentRaycast(currentRadiantAngle, mapCompCamera->m_absoluteMapPositionPX, true, playerComp->m_frozen);
+        targetPoint = calcLineSegmentRaycast(currentRadiantAngle, mapCompCamera.m_absoluteMapPositionPX, true,
+                                             m_componentsContainer.m_playerConfComp.m_frozen);
         if(targetPoint)
         {
-            m_memRaycastDist[j] = getCameraDistance(mapCompCamera->m_absoluteMapPositionPX, std::get<0>(*targetPoint), cameraRadiantAngle);
+            m_memRaycastDist[j] = getCameraDistance(mapCompCamera.m_absoluteMapPositionPX, std::get<0>(*targetPoint), cameraRadiantAngle);
             memRaycastDistance(*std::get<2>(*targetPoint), j, m_memRaycastDist[j], std::get<1>(*targetPoint));
         }
         else
@@ -861,7 +852,7 @@ bool FirstPersonDisplaySystem::rayCasting(uint32_t observerEntity)
         }
         if(m_backgroundRaycastActive)
         {
-            calcVerticalBackgroundLineRaycast(mapCompCamera->m_absoluteMapPositionPX, currentRadiantAngle, currentLateralScreen,
+            calcVerticalBackgroundLineRaycast(mapCompCamera.m_absoluteMapPositionPX, currentRadiantAngle, currentLateralScreen,
                                               radiantObserverAngle);
         }
         currentLateralScreen += SCREEN_HORIZ_BACKGROUND_GL_STEP;
@@ -881,17 +872,16 @@ bool FirstPersonDisplaySystem::isInsideWall(const PairFloat_t &pos)
                                                                    static_cast<uint32_t>(pos.second / LEVEL_TILE_SIZE_PX)});
     if(element)
     {
-        MapCoordComponent *mapComp;
-        RectangleCollisionComponent *rectComp;
+        OptUint_t numCom;
         if(element->m_typeStd == LevelCaseType_e::WALL_LC)
         {
-            mapComp = stairwayToComponentManager().
-                    searchComponentByType<MapCoordComponent>(element->m_numEntity, Components_e::MAP_COORD_COMPONENT);
-            assert(mapComp);
-            rectComp = stairwayToComponentManager().
-                    searchComponentByType<RectangleCollisionComponent>(element->m_numEntity, Components_e::RECTANGLE_COLLISION_COMPONENT);
-            assert(rectComp);
-            if(checkPointRectCollision(pos, mapComp->m_absoluteMapPositionPX, rectComp->m_size))
+            numCom = m_newComponentManager.getComponentEmplacement(element->m_numEntity, Components_e::MAP_COORD_COMPONENT);
+            assert(numCom);
+            MapCoordComponent &mapComp = m_componentsContainer.m_vectMapCoordComp[*numCom];
+            numCom = m_newComponentManager.getComponentEmplacement(element->m_numEntity, Components_e::RECTANGLE_COLLISION_COMPONENT);
+            assert(numCom);
+            RectangleCollisionComponent &rectComp = m_componentsContainer.m_vectRectangleCollisionComp[*numCom];
+            if(checkPointRectCollision(pos, mapComp.m_absoluteMapPositionPX, rectComp.m_size))
             {
                 return true;
             }
@@ -900,13 +890,14 @@ bool FirstPersonDisplaySystem::isInsideWall(const PairFloat_t &pos)
         {
             for(std::set<uint32_t>::const_iterator it = element->m_memMoveWall->begin(); it != element->m_memMoveWall->end(); ++it)
             {
-                mapComp = stairwayToComponentManager().
-                        searchComponentByType<MapCoordComponent>(*it, Components_e::MAP_COORD_COMPONENT);
-                assert(mapComp);
-                rectComp = stairwayToComponentManager().
-                        searchComponentByType<RectangleCollisionComponent>(*it, Components_e::RECTANGLE_COLLISION_COMPONENT);
-                assert(rectComp);
-                if(checkPointRectCollision(pos, mapComp->m_absoluteMapPositionPX, rectComp->m_size))
+                numCom = m_newComponentManager.getComponentEmplacement(*it, Components_e::MAP_COORD_COMPONENT);
+                assert(numCom);
+                MapCoordComponent &mapComp = m_componentsContainer.m_vectMapCoordComp[*numCom];
+
+                numCom = m_newComponentManager.getComponentEmplacement(*it, Components_e::RECTANGLE_COLLISION_COMPONENT);
+                assert(numCom);
+                RectangleCollisionComponent &rectComp = m_componentsContainer.m_vectRectangleCollisionComp[*numCom];
+                if(checkPointRectCollision(pos, mapComp.m_absoluteMapPositionPX, rectComp.m_size))
                 {
                     return true;
                 }
@@ -916,13 +907,13 @@ bool FirstPersonDisplaySystem::isInsideWall(const PairFloat_t &pos)
         {
             for(std::set<uint32_t>::const_iterator it = element->m_memStaticMoveableWall->begin(); it != element->m_memMoveWall->end(); ++it)
             {
-                mapComp = stairwayToComponentManager().
-                        searchComponentByType<MapCoordComponent>(*it, Components_e::MAP_COORD_COMPONENT);
-                assert(mapComp);
-                rectComp = stairwayToComponentManager().
-                        searchComponentByType<RectangleCollisionComponent>(*it, Components_e::RECTANGLE_COLLISION_COMPONENT);
-                assert(rectComp);
-                if(checkPointRectCollision(pos, mapComp->m_absoluteMapPositionPX, rectComp->m_size))
+                numCom = m_newComponentManager.getComponentEmplacement(*it, Components_e::MAP_COORD_COMPONENT);
+                assert(numCom);
+                MapCoordComponent &mapComp = m_componentsContainer.m_vectMapCoordComp[*numCom];
+                numCom = m_newComponentManager.getComponentEmplacement(*it, Components_e::RECTANGLE_COLLISION_COMPONENT);
+                assert(numCom);
+                RectangleCollisionComponent &rectComp = m_componentsContainer.m_vectRectangleCollisionComp[*numCom];
+                if(checkPointRectCollision(pos, mapComp.m_absoluteMapPositionPX, rectComp.m_size))
                 {
                     return true;
                 }
@@ -936,34 +927,38 @@ bool FirstPersonDisplaySystem::isInsideWall(const PairFloat_t &pos)
 void FirstPersonDisplaySystem::calcVerticalBackgroundLineRaycast(const PairFloat_t &observerPos, float currentRadiantAngle,
                                                                  float currentGLLatPos, float radiantObserverAngle)
 {
-    SpriteTextureComponent *spriteGroundComp = nullptr, *spriteCeilingComp = nullptr;
     PairFloat_t currentGroundGLA = {currentGLLatPos, -1.0f},
             currentGroundGLB = {currentGLLatPos + SCREEN_HORIZ_BACKGROUND_GL_STEP,
                                 -1.0f + SCREEN_VERT_BACKGROUND_GL_STEP},
             currentCeilingGLA = {currentGLLatPos, 1.0f},
             currentCeilingGLB = {currentGLLatPos + SCREEN_HORIZ_BACKGROUND_GL_STEP,
                                  1.0f - SCREEN_VERT_BACKGROUND_GL_STEP};
-    PairFloat_t currentPoint, pairMod;;
+    PairFloat_t currentPoint, pairMod;
+    OptUint_t numCom;
+    SpriteTextureComponent *spriteGroundComp, *spriteCeilingComp;
     float totalDistanceTarget;
+    bool ground = false, ceiling = false;
     float calcAngle = std::abs(radiantObserverAngle - currentRadiantAngle);
     if(m_groundTiledTextBackground)
     {
-        spriteGroundComp = stairwayToComponentManager().
-                searchComponentByType<SpriteTextureComponent>(*m_groundTiledTextBackground, Components_e::SPRITE_TEXTURE_COMPONENT);
-        assert(spriteGroundComp);
+        ground = true;
+        numCom = m_newComponentManager.getComponentEmplacement(*m_groundTiledTextBackground, Components_e::SPRITE_TEXTURE_COMPONENT);
+        assert(numCom);
+        spriteGroundComp = &m_componentsContainer.m_vectSpriteTextureComp[*numCom];
         if(!m_groundTextureSize)
         {
             m_groundTextureSize = {spriteGroundComp->m_spriteData->m_texturePosVertex[1].first -
-                                   spriteGroundComp->m_spriteData->m_texturePosVertex[0].first,
+                                       spriteGroundComp->m_spriteData->m_texturePosVertex[0].first,
                                    spriteGroundComp->m_spriteData->m_texturePosVertex[3].second -
-                                   spriteGroundComp->m_spriteData->m_texturePosVertex[0].second};
+                                       spriteGroundComp->m_spriteData->m_texturePosVertex[0].second};
         }
     }
     if(m_ceilingTiledTextBackground)
     {
-        spriteCeilingComp = stairwayToComponentManager().
-                searchComponentByType<SpriteTextureComponent>(*m_ceilingTiledTextBackground, Components_e::SPRITE_TEXTURE_COMPONENT);
-        assert(spriteCeilingComp);
+        ceiling = false;
+        numCom = m_newComponentManager.getComponentEmplacement(*m_ceilingTiledTextBackground, Components_e::SPRITE_TEXTURE_COMPONENT);
+        assert(numCom);
+        spriteCeilingComp = &m_componentsContainer.m_vectSpriteTextureComp[*numCom];
         if(!m_ceilingTextureSize)
         {
             m_ceilingTextureSize = {spriteCeilingComp->m_spriteData->m_texturePosVertex[1].first -
@@ -989,19 +984,19 @@ void FirstPersonDisplaySystem::calcVerticalBackgroundLineRaycast(const PairFloat
         totalDistanceTarget = (*m_memBackgroundDistance)[i] / std::cos(calcAngle);
         currentPoint = observerPos;
         moveElementFromAngle(totalDistanceTarget, currentRadiantAngle, currentPoint);
-        if(spriteGroundComp || spriteCeilingComp)
+        if(ground || ceiling)
         {
             pairMod = {std::abs(std::fmod(currentPoint.first, LEVEL_TILE_SIZE_PX)),
                        std::abs(std::fmod(currentPoint.second, LEVEL_TILE_SIZE_PX))};
         }
-        if(spriteGroundComp)
+        if(ground)
         {
             m_groundTiledTextVertice.loadPointBackgroundRaycasting(spriteGroundComp, currentGroundGLA, currentGroundGLB,
                                                                    *m_groundTextureSize, pairMod);
             currentGroundGLA.second += SCREEN_VERT_BACKGROUND_GL_STEP;
             currentGroundGLB.second += SCREEN_VERT_BACKGROUND_GL_STEP;
         }
-        if(spriteCeilingComp)
+        if(ceiling)
         {
             m_ceilingTiledVertice.loadPointBackgroundRaycasting(spriteCeilingComp, currentCeilingGLA, currentCeilingGLB,
                                                                 *m_ceilingTextureSize, pairMod);
@@ -1172,22 +1167,23 @@ optionalTargetRaycast_t FirstPersonDisplaySystem::calcMovingWallSegmentRaycast(f
     //first raycast result second distance
     std::optional<std::pair<tupleTargetRaycast_t, float>> resultMem;
     std::set<uint32_t>::const_iterator it = element.m_memMoveWall->begin();
+    OptUint_t numCom;
     for(; it != element.m_memMoveWall->end(); ++it)
     {
         bool lateralColl, textPosWall = false;
-        RectangleCollisionComponent *rectComp = stairwayToComponentManager().
-                searchComponentByType<RectangleCollisionComponent>(*it, Components_e::RECTANGLE_COLLISION_COMPONENT);
-        assert(rectComp);
-        MapCoordComponent *mapComp = stairwayToComponentManager().
-                searchComponentByType<MapCoordComponent>(*it, Components_e::MAP_COORD_COMPONENT);
-        assert(mapComp);
+        numCom = m_newComponentManager.getComponentEmplacement(*it, Components_e::RECTANGLE_COLLISION_COMPONENT);
+        assert(numCom);
+        RectangleCollisionComponent &rectComp = m_componentsContainer.m_vectRectangleCollisionComp[*numCom];
+        numCom = m_newComponentManager.getComponentEmplacement(*it, Components_e::MAP_COORD_COMPONENT);
+        assert(numCom);
+        MapCoordComponent &mapComp = m_componentsContainer.m_vectMapCoordComp[*numCom];
         //first case x pos limit second y pos limit
-        PairFloat_t wallPos[2] = {{mapComp->m_absoluteMapPositionPX.first,
-                                   mapComp->m_absoluteMapPositionPX.first +
-                                   rectComp->m_size.first},
-                                  {mapComp->m_absoluteMapPositionPX.second,
-                                   mapComp->m_absoluteMapPositionPX.second +
-                                   rectComp->m_size.second}};
+        PairFloat_t wallPos[2] = {{mapComp.m_absoluteMapPositionPX.first,
+                                   mapComp.m_absoluteMapPositionPX.first +
+                                   rectComp.m_size.first},
+                                  {mapComp.m_absoluteMapPositionPX.second,
+                                   mapComp.m_absoluteMapPositionPX.second +
+                                   rectComp.m_size.second}};
         //exclude case
         if((std::cos(radiantAngle) < 0.0f && currentPoint.first < wallPos[0].first) ||
                 (std::cos(radiantAngle) > 0.0f && currentPoint.first > wallPos[0].second))
@@ -1271,39 +1267,39 @@ std::optional<float> FirstPersonDisplaySystem::treatDoorRaycast(uint32_t numEnti
                                                                 bool &textLateral, bool &textFace)
 {
     bool ok;
-    DoorComponent *doorComp = stairwayToComponentManager().
-            searchComponentByType<DoorComponent>(numEntity, Components_e::DOOR_COMPONENT);
-    assert(doorComp);
-    RectangleCollisionComponent *rectComp = stairwayToComponentManager().
-            searchComponentByType<RectangleCollisionComponent>(numEntity, Components_e::RECTANGLE_COLLISION_COMPONENT);
-    assert(rectComp);
-    MapCoordComponent *mapComp = stairwayToComponentManager().
-            searchComponentByType<MapCoordComponent>(numEntity, Components_e::MAP_COORD_COMPONENT);
-    assert(mapComp);
+    OptUint_t numCom = m_newComponentManager.getComponentEmplacement(numEntity, Components_e::DOOR_COMPONENT);
+    assert(numCom);
+    DoorComponent &doorComp = m_componentsContainer.m_vectDoorComp[*numCom];
+    numCom = m_newComponentManager.getComponentEmplacement(numEntity, Components_e::RECTANGLE_COLLISION_COMPONENT);
+    assert(numCom);
+    RectangleCollisionComponent &rectComp = m_componentsContainer.m_vectRectangleCollisionComp[*numCom];
+    numCom = m_newComponentManager.getComponentEmplacement(numEntity, Components_e::MAP_COORD_COMPONENT);
+    assert(numCom);
+    MapCoordComponent &mapComp = m_componentsContainer.m_vectMapCoordComp[*numCom];
     //first case x pos limit second y pos limit
-    PairFloat_t doorPos[2] = {{mapComp->m_absoluteMapPositionPX.first,
-                               mapComp->m_absoluteMapPositionPX.first +
-                               rectComp->m_size.first},
-                              {mapComp->m_absoluteMapPositionPX.second,
-                               mapComp->m_absoluteMapPositionPX.second +
-                               rectComp->m_size.second}};
-    ok = treatDisplayDoor(currentRadiantAngle, doorComp->m_vertical,currentPoint,
+    PairFloat_t doorPos[2] = {{mapComp.m_absoluteMapPositionPX.first,
+                               mapComp.m_absoluteMapPositionPX.first +
+                               rectComp.m_size.first},
+                              {mapComp.m_absoluteMapPositionPX.second,
+                               mapComp.m_absoluteMapPositionPX.second +
+                               rectComp.m_size.second}};
+    ok = treatDisplayDoor(currentRadiantAngle, doorComp.m_vertical,currentPoint,
                           doorPos, verticalLeadCoef, lateralLeadCoef,
                           textLateral, textFace);
     if(ok)
     {
         //return diff display in case of door move
-        if(!textFace || doorComp->m_currentState == DoorState_e::STATIC_CLOSED)
+        if(!textFace || doorComp.m_currentState == DoorState_e::STATIC_CLOSED)
         {
             return 0.0f;
         }
         if(textLateral)
         {
-            return LEVEL_TILE_SIZE_PX - rectComp->m_size.first;
+            return LEVEL_TILE_SIZE_PX - rectComp.m_size.first;
         }
         else
         {
-            return LEVEL_TILE_SIZE_PX - rectComp->m_size.second;
+            return LEVEL_TILE_SIZE_PX - rectComp.m_size.second;
         }
     }
     return {};
@@ -1706,24 +1702,22 @@ std::optional<float> getLeadCoef(float radiantAngle, bool lateral)
 }
 
 //===================================================================
-PairFloat_t FirstPersonDisplaySystem::getCenterPosition(const MapCoordComponent *mapComp,
-                                                        GeneralCollisionComponent *genCollComp, float numEntity)
+PairFloat_t FirstPersonDisplaySystem::getCenterPosition(const MapCoordComponent &mapComp,
+                                                        GeneralCollisionComponent &genCollComp, float numEntity)
 {
-    assert(mapComp);
-    assert(genCollComp);
-    switch (genCollComp->m_shape)
+    switch (genCollComp.m_shape)
     {
     case CollisionShape_e::CIRCLE_C:
     case CollisionShape_e::SEGMENT_C://TMP
         break;
     case CollisionShape_e::RECTANGLE_C:
-        RectangleCollisionComponent *rectCollComp = stairwayToComponentManager().
-                searchComponentByType<RectangleCollisionComponent>(numEntity, Components_e::RECTANGLE_COLLISION_COMPONENT);
-        assert(rectCollComp);
-        return {mapComp->m_absoluteMapPositionPX.first + rectCollComp->m_size.first / 2,
-                    mapComp->m_absoluteMapPositionPX.second + rectCollComp->m_size.second / 2};
+        OptUint_t numCom = m_newComponentManager.getComponentEmplacement(numEntity, Components_e::RECTANGLE_COLLISION_COMPONENT);
+        assert(numCom);
+        RectangleCollisionComponent &rectCollComp = m_componentsContainer.m_vectRectangleCollisionComp[*numCom];
+        return {mapComp.m_absoluteMapPositionPX.first + rectCollComp.m_size.first / 2,
+                    mapComp.m_absoluteMapPositionPX.second + rectCollComp.m_size.second / 2};
     }
-    return mapComp->m_absoluteMapPositionPX;
+    return mapComp.m_absoluteMapPositionPX;
 }
 
 //===================================================================

@@ -24,7 +24,7 @@ public:
     FontData();
     void addCharSpriteData(const SpriteData &spriteData, const std::string &identifier, Font_e type);
     void clear();
-    VectSpriteDataRef_t getWriteData(const std::string &str, WriteComponent *writeComp, Font_e type)const;
+    VectSpriteDataRef_t getWriteData(const std::string &str, WriteComponent &writeComp, Font_e type)const;
 private:
     std::array<MapSpriteData_t, static_cast<uint32_t>(Font_e::TOTAL)> m_mapFontData;
 };

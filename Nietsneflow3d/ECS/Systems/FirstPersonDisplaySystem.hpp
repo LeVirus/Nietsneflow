@@ -91,20 +91,21 @@ private:
     void setUsedComponents();
     void confCompVertexMemEntities();
     void writeVertexWallDoorRaycasting(const pairRaycastingData_t &entityData, uint32_t numIteration);
-    void treatDisplayEntity(GeneralCollisionComponent *genCollComp, MapCoordComponent *mapCompA,
-                            MapCoordComponent *mapCompB, VisionComponent *visionComp,
+    void treatDisplayEntity(GeneralCollisionComponent &genCollComp, MapCoordComponent &mapCompA,
+                            MapCoordComponent &mapCompB, VisionComponent &visionComp,
                             uint32_t &toRemove, float degreeObserverAngle, uint32_t numIteration, uint32_t currentNormal);
-    bool elementBehindDoor(const ElementRaycast &elementCase, float radiantObserverAngle, const MapCoordComponent *mapComp);
-    bool confNormalEntityVertex(const std::pair<uint32_t, bool> &entityData, VisionComponent *visionComp, CollisionTag_e tag, float lateralPosGL, float distance);
+    bool elementBehindDoor(const ElementRaycast &elementCase, float radiantObserverAngle, const MapCoordComponent &mapComp);
+    bool confNormalEntityVertex(const std::pair<uint32_t, bool> &entityData, CollisionTag_e tag, float lateralPosGL, float distance);
     void drawVertex();
     void drawTextureBackground();
-    PairFloat_t getCenterPosition(MapCoordComponent const *mapComp, GeneralCollisionComponent *genCollComp, float numEntity);
+    PairFloat_t getCenterPosition(const MapCoordComponent &mapComp, GeneralCollisionComponent &genCollComp, float numEntity);
     void fillVertexFromEntity(uint32_t numEntity, uint32_t numIteration, float distance);
     VerticesData &getClearedVertice(uint32_t index);
     void confSimpleTextVertexGroundCeiling(float observerAngle);
     void writeSimpleTextVertexGroundCeiling();
 private:
     NewComponentManager &m_newComponentManager;
+    ComponentsGroup &m_componentsContainer;
     Shader *m_shader;
     std::map<uint32_t, uint32_t> m_memDoorDistance;
     std::map<uint32_t, float> m_memWallEntityDistances;

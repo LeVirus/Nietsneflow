@@ -41,15 +41,15 @@ public:
     void linkSystems(ColorDisplaySystem *colorSystem, MapDisplaySystem *mapSystem,
                      FirstPersonDisplaySystem *firstPersonSystem, VisionSystem *visionSystem,
                      StaticDisplaySystem *staticDisplaySystem);
-    void updateAmmoCount(WriteComponent *writeComp, WeaponComponent *weaponComp);
-    void updatePlayerLife(WriteComponent *writeComp, PlayerConfComponent *playerComp);
-    void fillTitleMenuWrite(WriteComponent *writeComp, MenuMode_e menuEntry, MenuMode_e previousMenuEntry);
+    void updateAmmoCount(WriteComponent &writeComp, WeaponComponent &weaponComp);
+    void updatePlayerLife(WriteComponent &writeComp, PlayerConfComponent &playerComp);
+    void fillTitleMenuWrite(WriteComponent &writeComp, MenuMode_e menuEntry, MenuMode_e previousMenuEntry);
     //tuple second == secrets, third == enemies killed
-    void fillMenuWrite(WriteComponent *writeComp, MenuMode_e menuEntry,
+    void fillMenuWrite(WriteComponent &writeComp, MenuMode_e menuEntry,
                        uint32_t cursorPos = 0, const std::tuple<PlayerConfComponent *, uint32_t, uint32_t> &endLevelData = {});
-    void confMenuSelectedLine(PlayerConfComponent *playerComp, WriteComponent *writeMenuSelectedComp,
-                              WriteComponent *writeMenuComp);
-    void confWriteComponent(WriteComponent *writeComp);
+    void confMenuSelectedLine(PlayerConfComponent &playerComp, WriteComponent &writeMenuSelectedComp,
+                              WriteComponent &writeMenuComp);
+    void confWriteComponent(WriteComponent &writeComp);
     void updateStringWriteEntitiesInputMenu(bool keyboardInputMenuMode, bool defaultInput = true);
     const std::vector<uint32_t> &getBarrelEntitiesToDelete()const;
     void clearBarrelEntitiesToDelete();
@@ -116,7 +116,7 @@ public:
     {
         return m_levelPrologue.empty();
     }
-    inline void updateMenuCursorPosition(PlayerConfComponent *playerComp)
+    inline void updateMenuCursorPosition(PlayerConfComponent &playerComp)
     {
         m_staticDisplaySystem->updateMenuCursorPosition(playerComp);
     }
@@ -186,5 +186,5 @@ private:
 //first lineNumber ==> 0
 //return string + position selected
 std::pair<std::string, PairUI_t> getLineFromList(const std::string &str, uint32_t lineNumber);
-std::string getEndLevelMenuStr(const std::tuple<const PlayerConfComponent *, uint32_t, uint32_t> &endLevelData);
+std::string getEndLevelMenuStr(const std::tuple<PlayerConfComponent *, uint32_t, uint32_t> &endLevelData);
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);

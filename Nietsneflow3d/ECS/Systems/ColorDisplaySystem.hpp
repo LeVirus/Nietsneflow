@@ -43,6 +43,7 @@ private:
     void setUsedComponents();
 private:
     NewComponentManager &m_newComponentManager;
+    ComponentsGroup &m_componentsContainer;
     Shader *m_shader;
     VerticesData m_verticesData;
     PairCompPosColor_t m_transitionMemComponents = {nullptr, nullptr},

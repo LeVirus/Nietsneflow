@@ -68,7 +68,7 @@ LevelState MainEngine::displayTitleMenu(const LevelManager &levelManager)
     m_memBackgroundRightLeftMenu = &vectSprite[rightLeftBackgroundMenuSpriteId];
     assert(m_playerConf);
     m_playerConf->m_menuMode = MenuMode_e::TITLE;
-    setMenuEntries(m_playerConf);
+    setMenuEntries(*m_playerConf);
     m_gamePaused = true;
     m_titleMenuMode = true;
     //prevent to exit
@@ -447,7 +447,7 @@ void MainEngine::displayTransitionMenu(MenuMode_e mode, bool redTransition)
 {
     float topEpiloguePosition;
     m_playerConf->m_menuMode = mode;
-    setMenuEntries(m_playerConf);
+    setMenuEntries(*m_playerConf);
     assert(m_writeConf);
     if(mode == MenuMode_e::LEVEL_EPILOGUE)
     {
@@ -477,7 +477,7 @@ void MainEngine::displayTransitionMenu(MenuMode_e mode, bool redTransition)
     m_graphicEngine.setTransition(true);
     if(m_playerConf->m_menuMode == MenuMode_e::TRANSITION_LEVEL)
     {
-        m_graphicEngine.fillMenuWrite(m_writeConf, MenuMode_e::BASE);
+        m_graphicEngine.fillMenuWrite(*m_writeConf, MenuMode_e::BASE);
     }
 }
 
@@ -510,7 +510,7 @@ void MainEngine::confPlayerVisibleShoot(std::vector<uint32_t> &playerVisibleShot
 }
 
 //===================================================================
-void MainEngine::playerAttack(uint32_t playerEntity, PlayerConfComponent *playerComp, const PairFloat_t &point, float degreeAngle)
+void MainEngine::playerAttack(uint32_t playerEntity, PlayerConfComponent &playerComp, const PairFloat_t &point, float degreeAngle)
 {
     assert(m_weaponComp->m_currentWeapon < m_weaponComp->m_weaponsData.size());
     WeaponData &currentWeapon = m_weaponComp->m_weaponsData[
@@ -519,23 +519,23 @@ void MainEngine::playerAttack(uint32_t playerEntity, PlayerConfComponent *player
     if(attackType == AttackType_e::MELEE)
     {
         GeneralCollisionComponent *actionGenColl = m_ecsManager.getComponentManager().getGeneralCollisionComponent(
-            playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::HIT_MELEE)]);
+            playerComp.m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::HIT_MELEE)]);
         MoveableComponent *playerMoveComp = m_ecsManager.getComponentManager().getMoveableComponent(playerEntity);
         MapCoordComponent *actionMapComp = m_ecsManager.getComponentManager().getMapCoordComponent(
-            playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::HIT_MELEE)]);
+            playerComp.m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::HIT_MELEE)]);
         MapCoordComponent *playerMapComp = m_ecsManager.getComponentManager().getMapCoordComponent(playerEntity);
         assert(actionMapComp);
         assert(playerMoveComp);
         assert(actionGenColl);
         assert(playerMapComp);
-        confActionShape(actionMapComp, actionGenColl, playerMapComp, playerMoveComp);
+        confActionShape(*actionMapComp, *actionGenColl, *playerMapComp, *playerMoveComp);
         return;
     }
     else if(attackType == AttackType_e::BULLETS)
     {
         if(currentWeapon.m_simultaneousShots == 1)
         {
-            confPlayerBullet(playerComp, point, degreeAngle, currentWeapon.m_currentBullet);
+            confPlayerBullet(&playerComp, point, degreeAngle, currentWeapon.m_currentBullet);
             if(currentWeapon.m_currentBullet < MAX_SHOTS - 1)
             {
                 ++currentWeapon.m_currentBullet;
@@ -549,7 +549,7 @@ void MainEngine::playerAttack(uint32_t playerEntity, PlayerConfComponent *player
         {
             for(uint32_t i = 0; i < currentWeapon.m_simultaneousShots; ++i)
             {
-                confPlayerBullet(playerComp, point, degreeAngle, i);
+                confPlayerBullet(&playerComp, point, degreeAngle, i);
             }
         }
     }
@@ -582,36 +582,37 @@ void MainEngine::confPlayerBullet(PlayerConfComponent *playerComp,
     ImpactShotComponent *impactComp = m_ecsManager.getComponentManager().getImpactShotComponent(shotComp->m_impactEntity);
     assert(impactComp);
     assert(segmentColl);
-    confBullet(impactComp, genColl, segmentColl, moveImpactComp, CollisionTag_e::BULLET_PLAYER_CT, point, degreeAngle);
+    confBullet(*impactComp, *genColl, *segmentColl, *moveImpactComp, CollisionTag_e::BULLET_PLAYER_CT, point, degreeAngle);
 }
 
 //===================================================================
-void confActionShape(MapCoordComponent *mapCompAction, GeneralCollisionComponent *genCompAction,
-                     const MapCoordComponent *attackerMapComp, const MoveableComponent *attackerMoveComp)
+void confActionShape(MapCoordComponent &mapCompAction, GeneralCollisionComponent &genCompAction,
+                     const MapCoordComponent &attackerMapComp, const MoveableComponent &attackerMoveComp)
 {
-    mapCompAction->m_absoluteMapPositionPX = attackerMapComp->m_absoluteMapPositionPX;
-    moveElementFromAngle(LEVEL_HALF_TILE_SIZE_PX, getRadiantAngle(attackerMoveComp->m_degreeOrientation),
-                         mapCompAction->m_absoluteMapPositionPX);
-    genCompAction->m_active = true;
+    mapCompAction.m_absoluteMapPositionPX = attackerMapComp.m_absoluteMapPositionPX;
+    moveElementFromAngle(LEVEL_HALF_TILE_SIZE_PX, getRadiantAngle(attackerMoveComp.m_degreeOrientation),
+                         mapCompAction.m_absoluteMapPositionPX);
+    genCompAction.m_active = true;
 }
 
 //===================================================================
-void confBullet(ImpactShotComponent *impactComp, GeneralCollisionComponent *genColl, SegmentCollisionComponent *segmentColl, MoveableComponent *moveImpactComp,
+void confBullet(ImpactShotComponent &impactComp, GeneralCollisionComponent &genColl,
+                SegmentCollisionComponent &segmentColl, MoveableComponent &moveImpactComp,
                 CollisionTag_e collTag, const PairFloat_t &point, float degreeAngle)
 {
     assert(collTag == CollisionTag_e::BULLET_ENEMY_CT || collTag == CollisionTag_e::BULLET_PLAYER_CT);
-    moveImpactComp->m_degreeOrientation = degreeAngle;
-    genColl->m_tagA = collTag;
-    genColl->m_shape = CollisionShape_e::SEGMENT_C;
-    genColl->m_active = true;
+    moveImpactComp.m_degreeOrientation = degreeAngle;
+    genColl.m_tagA = collTag;
+    genColl.m_shape = CollisionShape_e::SEGMENT_C;
+    genColl.m_active = true;
     float diff = std::rand() / ((RAND_MAX + 1u) / 9) - 4.0f;
-    impactComp->m_currentVerticalPos = randFloat(-0.4f, -0.2f);
-    segmentColl->m_degreeOrientation = degreeAngle + diff;
-    if(segmentColl->m_degreeOrientation < EPSILON_FLOAT)
+    impactComp.m_currentVerticalPos = randFloat(-0.4f, -0.2f);
+    segmentColl.m_degreeOrientation = degreeAngle + diff;
+    if(segmentColl.m_degreeOrientation < EPSILON_FLOAT)
     {
-        segmentColl->m_degreeOrientation += 360.0f;
+        segmentColl.m_degreeOrientation += 360.0f;
     }
-    segmentColl->m_points.first = point;
+    segmentColl.m_points.first = point;
 }
 
 //===================================================================
@@ -736,8 +737,6 @@ void MainEngine::loadColorEntities()
             musicVolume = createColorEntity(),
             turnSensitivity = createColorEntity(),
             effectVolume = createColorEntity();
-    std::cerr << damageEntity << " ssssssssssss " << getObjectEntity << "  " << scratchEntity << "  " << transitionEntity << "  " <<
-        musicVolume << "  " << turnSensitivity << "  " << effectVolume << "\n";
     confUnifiedColorEntity(transitionEntity, {0.0f, 0.0f, 0.0f}, true);
     confUnifiedColorEntity(damageEntity, {0.7f, 0.2f, 0.1f}, true);
     confUnifiedColorEntity(getObjectEntity, {0.1f, 0.7f, 0.5f}, true);
@@ -1317,7 +1316,7 @@ std::vector<uint32_t> MainEngine::loadWallEntitiesWallLoop(const std::vector<Spr
         if(currentShape.second.m_triggerBehaviourType == TriggerBehaviourType_e::REVERSABLE &&
                 m_memMoveableWallCheckpointData[shapeNum].first % 2 == 1)
         {
-            reverseDirection(moveWallConfComp);
+            reverseDirection(*moveWallConfComp);
         }
     }
     return vectMemEntities;
@@ -1881,59 +1880,59 @@ uint32_t MainEngine::createAmmoEntity(CollisionTag_e collTag, bool visibleShot)
 }
 
 //===================================================================
-void MainEngine::setMenuEntries(PlayerConfComponent *playerComp, std::optional<uint32_t> cursorPos)
+void MainEngine::setMenuEntries(PlayerConfComponent &playerComp, std::optional<uint32_t> cursorPos)
 {
-    if(playerComp->m_menuMode == MenuMode_e::CONFIRM_RESTART_FROM_LAST_CHECKPOINT && !m_memCheckpointLevelState)
+    if(playerComp.m_menuMode == MenuMode_e::CONFIRM_RESTART_FROM_LAST_CHECKPOINT && !m_memCheckpointLevelState)
     {
-        playerComp->m_menuMode = MenuMode_e::BASE;
+        playerComp.m_menuMode = MenuMode_e::BASE;
         return;
     }
     m_playerConf->m_currentCursorPos = cursorPos ? *cursorPos : 0;
     //TITLE MENU
     WriteComponent *writeComp = m_ecsManager.getComponentManager().getWriteComponent(
-        playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::TITLE_MENU)]);
+        playerComp.m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::TITLE_MENU)]);
     assert(writeComp);
-    m_graphicEngine.fillTitleMenuWrite(writeComp, playerComp->m_menuMode, playerComp->m_previousMenuMode);
+    m_graphicEngine.fillTitleMenuWrite(*writeComp, playerComp.m_menuMode, playerComp.m_previousMenuMode);
     //MENU ENTRIES
-    m_writeConf->m_upLeftPositionGL = MAP_MENU_DATA.at(playerComp->m_menuMode).first;
+    m_writeConf->m_upLeftPositionGL = MAP_MENU_DATA.at(playerComp.m_menuMode).first;
     if(m_writeConf->m_vectMessage.empty())
     {
         m_writeConf->addTextLine({{}, ""});
     }
     //SELECTED MENU ENTRY
     writeComp = m_ecsManager.getComponentManager().getWriteComponent(
-        playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_SELECTED_LINE)]);
+        playerComp.m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_SELECTED_LINE)]);
     assert(writeComp);
-    m_graphicEngine.fillMenuWrite(m_writeConf, playerComp->m_menuMode, playerComp->m_currentCursorPos,
-                                  {playerComp, m_currentLevelSecretsNumber, m_currentLevelEnemiesNumber});
-    if(playerComp->m_menuMode == MenuMode_e::LEVEL_PROLOGUE ||
-            playerComp->m_menuMode == MenuMode_e::LEVEL_EPILOGUE ||
-            playerComp->m_menuMode == MenuMode_e::TRANSITION_LEVEL)
+    m_graphicEngine.fillMenuWrite(*m_writeConf, playerComp.m_menuMode, playerComp.m_currentCursorPos,
+                                  {&playerComp, m_currentLevelSecretsNumber, m_currentLevelEnemiesNumber});
+    if(playerComp.m_menuMode == MenuMode_e::LEVEL_PROLOGUE ||
+            playerComp.m_menuMode == MenuMode_e::LEVEL_EPILOGUE ||
+            playerComp.m_menuMode == MenuMode_e::TRANSITION_LEVEL)
     {
         return;
     }
-    m_graphicEngine.confMenuSelectedLine(playerComp, writeComp, m_writeConf);
-    if(playerComp->m_menuMode == MenuMode_e::INPUT)
+    m_graphicEngine.confMenuSelectedLine(playerComp, *writeComp, *m_writeConf);
+    if(playerComp.m_menuMode == MenuMode_e::INPUT)
     {
         updateConfirmLoadingMenuInfo(playerComp);
     }
-    else if(playerComp->m_menuMode == MenuMode_e::CONFIRM_QUIT_INPUT_FORM ||
-            playerComp->m_menuMode == MenuMode_e::CONFIRM_LOADING_GAME_FORM ||
-            playerComp->m_menuMode == MenuMode_e::CONFIRM_RESTART_LEVEL ||
-            playerComp->m_menuMode == MenuMode_e::CONFIRM_RESTART_FROM_LAST_CHECKPOINT)
+    else if(playerComp.m_menuMode == MenuMode_e::CONFIRM_QUIT_INPUT_FORM ||
+            playerComp.m_menuMode == MenuMode_e::CONFIRM_LOADING_GAME_FORM ||
+            playerComp.m_menuMode == MenuMode_e::CONFIRM_RESTART_LEVEL ||
+            playerComp.m_menuMode == MenuMode_e::CONFIRM_RESTART_FROM_LAST_CHECKPOINT)
     {
         updateConfirmLoadingMenuInfo(playerComp);
-        playerComp->m_currentCursorPos = 0;
+        playerComp.m_currentCursorPos = 0;
     }
-    else if(playerComp->m_menuMode != MenuMode_e::NEW_KEY && playerComp->m_menuMode != MenuMode_e::TITLE
-            && playerComp->m_menuMode != MenuMode_e::BASE)
+    else if(playerComp.m_menuMode != MenuMode_e::NEW_KEY && playerComp.m_menuMode != MenuMode_e::TITLE
+            && playerComp.m_menuMode != MenuMode_e::BASE)
     {
-        playerComp->m_currentCursorPos = 0;
+        playerComp.m_currentCursorPos = 0;
     }
-    if(playerComp->m_menuMode == MenuMode_e::DISPLAY || playerComp->m_menuMode == MenuMode_e::SOUND ||
-            playerComp->m_menuMode == MenuMode_e::INPUT || playerComp->m_menuMode == MenuMode_e::LOAD_GAME ||
-            playerComp->m_menuMode == MenuMode_e::LOAD_CUSTOM_LEVEL || playerComp->m_menuMode == MenuMode_e::NEW_GAME ||
-            playerComp->m_menuMode == MenuMode_e::TITLE || playerComp->m_menuMode == MenuMode_e::BASE)
+    if(playerComp.m_menuMode == MenuMode_e::DISPLAY || playerComp.m_menuMode == MenuMode_e::SOUND ||
+            playerComp.m_menuMode == MenuMode_e::INPUT || playerComp.m_menuMode == MenuMode_e::LOAD_GAME ||
+            playerComp.m_menuMode == MenuMode_e::LOAD_CUSTOM_LEVEL || playerComp.m_menuMode == MenuMode_e::NEW_GAME ||
+            playerComp.m_menuMode == MenuMode_e::TITLE || playerComp.m_menuMode == MenuMode_e::BASE)
     {
         m_writeConf->m_vectMessage[0].first = m_writeConf->m_upLeftPositionGL.first;
     }
@@ -1945,32 +1944,32 @@ void MainEngine::setMenuEntries(PlayerConfComponent *playerComp, std::optional<u
 }
 
 //===================================================================
-void MainEngine::updateConfirmLoadingMenuInfo(PlayerConfComponent *playerComp)
+void MainEngine::updateConfirmLoadingMenuInfo(PlayerConfComponent &playerComp)
 {
     WriteComponent *writeComp = m_ecsManager.getComponentManager().getWriteComponent(
-        playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_INFO_WRITE)]);
+        playerComp.m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_INFO_WRITE)]);
     assert(writeComp);
     writeComp->clear();
     writeComp->m_fontSpriteData.reserve(4);
     writeComp->m_vectMessage.reserve(4);
-    if(playerComp->m_menuMode == MenuMode_e::INPUT)
+    if(playerComp.m_menuMode == MenuMode_e::INPUT)
     {
         writeComp->m_upLeftPositionGL = {-0.6f, -0.7f};
         writeComp->addTextLine({writeComp->m_upLeftPositionGL.first, ""});
-        writeComp->m_vectMessage.back().second = playerComp->m_keyboardInputMenuMode ? "Keyboard\\Switch Gamepad : G Or RL" :
+        writeComp->m_vectMessage.back().second = playerComp.m_keyboardInputMenuMode ? "Keyboard\\Switch Gamepad : G Or RL" :
                                                                  "Gamepad\\Switch Keyboard : G Or RL";
     }
-    else if(playerComp->m_menuMode == MenuMode_e::CONFIRM_QUIT_INPUT_FORM)
+    else if(playerComp.m_menuMode == MenuMode_e::CONFIRM_QUIT_INPUT_FORM)
     {
         writeComp->m_upLeftPositionGL = {-0.6f, 0.3f};
         writeComp->addTextLine({{}, "Do You Want To Save Changes?"});
     }
-    else if(playerComp->m_menuMode == MenuMode_e::CONFIRM_LOADING_GAME_FORM ||
-            playerComp->m_menuMode == MenuMode_e::CONFIRM_RESTART_LEVEL ||
-            playerComp->m_menuMode == MenuMode_e::CONFIRM_RESTART_FROM_LAST_CHECKPOINT ||
-            playerComp->m_menuMode == MenuMode_e::CONFIRM_QUIT_GAME)
+    else if(playerComp.m_menuMode == MenuMode_e::CONFIRM_LOADING_GAME_FORM ||
+            playerComp.m_menuMode == MenuMode_e::CONFIRM_RESTART_LEVEL ||
+            playerComp.m_menuMode == MenuMode_e::CONFIRM_RESTART_FROM_LAST_CHECKPOINT ||
+            playerComp.m_menuMode == MenuMode_e::CONFIRM_QUIT_GAME)
     {
-        if(!playerComp->m_firstMenu)
+        if(!playerComp.m_firstMenu)
         {
             writeComp->m_upLeftPositionGL = {-0.8f, 0.5f};
             writeComp->addTextLine({{}, "All Your Progress Until Last Save"});
@@ -1980,9 +1979,9 @@ void MainEngine::updateConfirmLoadingMenuInfo(PlayerConfComponent *playerComp)
         {
             writeComp->m_upLeftPositionGL = {-0.8f, 0.5f};
         }
-        if(playerComp->m_menuMode == MenuMode_e::CONFIRM_LOADING_GAME_FORM)
+        if(playerComp.m_menuMode == MenuMode_e::CONFIRM_LOADING_GAME_FORM)
         {
-            if(playerComp->m_previousMenuMode == MenuMode_e::NEW_GAME && checkSavedGameExists(playerComp->m_currentCursorPos + 1))
+            if(playerComp.m_previousMenuMode == MenuMode_e::NEW_GAME && checkSavedGameExists(playerComp.m_currentCursorPos + 1))
             {
                 writeComp->addTextLine({{}, "Previous File Will Be Erased"});
             }
@@ -1994,30 +1993,30 @@ void MainEngine::updateConfirmLoadingMenuInfo(PlayerConfComponent *playerComp)
             else
             {
                 writeComp->m_upLeftPositionGL = {-0.3f, 0.3f};
-                if(playerComp->m_previousMenuMode == MenuMode_e::NEW_GAME)
+                if(playerComp.m_previousMenuMode == MenuMode_e::NEW_GAME)
                 {
                     writeComp->addTextLine({{}, "Begin New Game?"});
                 }
-                else if(playerComp->m_previousMenuMode == MenuMode_e::LOAD_GAME)
+                else if(playerComp.m_previousMenuMode == MenuMode_e::LOAD_GAME)
                 {
                     writeComp->addTextLine({{}, "Load Game?"});
                 }
-                else if(playerComp->m_previousMenuMode == MenuMode_e::LOAD_CUSTOM_LEVEL)
+                else if(playerComp.m_previousMenuMode == MenuMode_e::LOAD_CUSTOM_LEVEL)
                 {
                     writeComp->addTextLine({{}, "Load Custom Game?"});
                 }
             }
         }
-        else if(playerComp->m_menuMode == MenuMode_e::CONFIRM_QUIT_GAME)
+        else if(playerComp.m_menuMode == MenuMode_e::CONFIRM_QUIT_GAME)
         {
             writeComp->addTextLine({{}, "Do You Really Want To Quit The Game?"});
         }
     }
-    m_graphicEngine.confWriteComponent(writeComp);
+    m_graphicEngine.confWriteComponent(*writeComp);
 }
 
 //===================================================================
-void MainEngine::updateWriteComp(WriteComponent *writeComp)
+void MainEngine::updateWriteComp(WriteComponent &writeComp)
 {
     m_graphicEngine.confWriteComponent(writeComp);
 }
@@ -2141,7 +2140,7 @@ void MainEngine::confMenuSelectedLine()
     WriteComponent *writeMenuSelectedComp = m_ecsManager.getComponentManager().getWriteComponent(
         m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_SELECTED_LINE)]);
     assert(writeMenuSelectedComp);
-    m_graphicEngine.confMenuSelectedLine(m_playerConf, writeMenuSelectedComp, writeMenuComp);
+    m_graphicEngine.confMenuSelectedLine(*m_playerConf, *writeMenuSelectedComp, *writeMenuComp);
 }
 
 //===================================================================
@@ -2985,14 +2984,14 @@ void MainEngine::confWriteEntities()
     writeConf->m_upLeftPositionGL = {-0.8f, -0.9f};
     writeConf->m_fontSize = STD_FONT_SIZE;
     writeConf->addTextLine({writeConf->m_upLeftPositionGL.first, ""});
-    m_graphicEngine.updateAmmoCount(writeConf, m_weaponComp);
+    m_graphicEngine.updateAmmoCount(*writeConf, *m_weaponComp);
     //LIFE
     writeConf = m_ecsManager.getComponentManager().getWriteComponent(numLifeWrite);
     assert(writeConf);
     writeConf->m_upLeftPositionGL = {-0.8f, -0.8f};
     writeConf->m_fontSize = STD_FONT_SIZE;
     writeConf->addTextLine({writeConf->m_upLeftPositionGL.first, ""});
-    m_graphicEngine.updatePlayerLife(writeConf, m_playerConf);
+    m_graphicEngine.updatePlayerLife(*writeConf, *m_playerConf);
     //MENU
     writeConf = m_ecsManager.getComponentManager().getWriteComponent(numMenuWrite);
     assert(writeConf);
@@ -3032,7 +3031,7 @@ void MainEngine::confWriteEntities()
     writeComp->m_fontSize = MENU_FONT_SIZE;
     writeComp->m_fontType = Font_e::SELECTED;
 
-    setMenuEntries(m_playerConf);
+    setMenuEntries(*m_playerConf);
     m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::AMMO_WRITE)] = numAmmoWrite;
     m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::LIFE_WRITE)] = numLifeWrite;
     m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::NUM_INFO_WRITE)] = numInfoWrite;
@@ -3054,7 +3053,7 @@ void MainEngine::confWriteEntitiesDisplayMenu()
     }
     //OOOOK default resolution
     writeConfA->m_vectMessage[0].second = m_graphicEngine.getResolutions()[0].second;
-    m_graphicEngine.confWriteComponent(writeConfA);
+    m_graphicEngine.confWriteComponent(*writeConfA);
     //Fullscreen
     WriteComponent *writeConfB = m_ecsManager.getComponentManager().getWriteComponent(numMenuFullscreenWrite);
     assert(writeConfB);
@@ -3065,7 +3064,7 @@ void MainEngine::confWriteEntitiesDisplayMenu()
         writeConfB->addTextLine({writeConfB->m_upLeftPositionGL.first, ""});
     }
     writeConfB->m_vectMessage[0].second = "";
-    m_graphicEngine.confWriteComponent(writeConfB);
+    m_graphicEngine.confWriteComponent(*writeConfB);
     m_ecsManager.getSystemManager().searchSystemByType<StaticDisplaySystem>(static_cast<uint32_t>(Systems_e::STATIC_DISPLAY_SYSTEM))->
             memDisplayMenuEntities(numMenuResolutionWrite, numMenuFullscreenWrite);
 }

@@ -19,7 +19,7 @@ struct PlayerComp
     MapCoordComponent const *m_mapCoordComp = nullptr;
     PositionVertexComponent *m_posComp = nullptr;
     ColorVertexComponent const *m_colorComp = nullptr;
-    VisionComponent const *m_visionComp = nullptr;
+    VisionComponent *m_visionComp = nullptr;
     MoveableComponent const *m_moveableComp = nullptr;
     PlayerConfComponent const *m_playerConfComp = nullptr;
 };
@@ -70,9 +70,10 @@ private:
     void setVertexStaticElementPosition(uint32_t entityNum);
     bool checkBoundEntityMap(const MapCoordComponent &mapCoordComp, const PairUI_t &minBound, const PairUI_t &maxBound);
     void getMapDisplayLimit(PairFloat_t &playerPos, PairUI_t &min, PairUI_t &max);
-    PairFloat_t getUpLeftCorner(const MapCoordComponent *mapCoordComp, uint32_t entityNum);
+    PairFloat_t getUpLeftCorner(const MapCoordComponent &mapCoordComp, uint32_t entityNum);
 private:
     NewComponentManager &m_newComponentManager;
+    ComponentsGroup &m_componentsContainer;
     std::map<uint32_t, PairUI_t> m_entitiesDetectedData;
     std::vector<uint32_t> m_entitiesToDisplay;
     PairFloat_t m_sizeLevelPX, m_fullMapTileSizePX, m_fullMapTileSizeGL;

@@ -31,6 +31,7 @@
 //===================================================================
 IASystem::IASystem(NewComponentManager &newComponentManager, ECSManager* memECSManager) :
     m_newComponentManager(newComponentManager),
+    m_componentsContainer(m_newComponentManager.getComponentsContainer()),
     m_memECSManager(memECSManager)
 {
     std::srand(std::time(nullptr));
@@ -43,33 +44,27 @@ void IASystem::treatEject()
     std::bitset<TOTAL_COMPONENTS> bitset;
     bitset[MOVEABLE_COMPONENT] = true;
     m_vectMoveableEntities = m_memECSManager->getEntitiesContainingComponents(bitset);
-    MoveableComponent *moveComp;
-    MapCoordComponent *mapComp;
-    TimerComponent *timerComp;
-    GeneralCollisionComponent *collComp;
+    OptUint_t numCom;
     for(uint32_t i = 0; i < m_vectMoveableEntities.size(); ++i)
     {
-        moveComp = stairwayToComponentManager().
-                searchComponentByType<MoveableComponent>(m_vectMoveableEntities[i], Components_e::MOVEABLE_COMPONENT);
-        assert(moveComp);
-        collComp = stairwayToComponentManager().
-                searchComponentByType<GeneralCollisionComponent>(m_vectMoveableEntities[i], Components_e::GENERAL_COLLISION_COMPONENT);
-        assert(collComp);
-        if(moveComp->m_ejectData)
+        numCom = m_newComponentManager.getComponentEmplacement(m_vectMoveableEntities[i], Components_e::MOVEABLE_COMPONENT);
+        assert(numCom);
+        MoveableComponent &moveComp = m_componentsContainer.m_vectMoveableComp[*numCom];
+        if(moveComp.m_ejectData)
         {
-            timerComp = stairwayToComponentManager().
-                    searchComponentByType<TimerComponent>(m_vectMoveableEntities[i], Components_e::TIMER_COMPONENT);
-            assert(timerComp);
-            if(++timerComp->m_cycleCountD >= moveComp->m_ejectData->second)
+            numCom = m_newComponentManager.getComponentEmplacement(m_vectMoveableEntities[i], Components_e::TIMER_COMPONENT);
+            assert(numCom);
+            TimerComponent &timerComp = m_componentsContainer.m_vectTimerComp[*numCom];
+            if(++timerComp.m_cycleCountD >= moveComp.m_ejectData->second)
             {
-                moveComp->m_ejectData = std::nullopt;
+                moveComp.m_ejectData = std::nullopt;
                 return;
             }
-            mapComp = stairwayToComponentManager().
-                    searchComponentByType<MapCoordComponent>(m_vectMoveableEntities[i], Components_e::MAP_COORD_COMPONENT);
-            assert(mapComp);
-            moveElementFromAngle(moveComp->m_ejectData->first, getRadiantAngle(moveComp->m_currentDegreeMoveDirection),
-                                 mapComp->m_absoluteMapPositionPX);
+            numCom = m_newComponentManager.getComponentEmplacement(m_vectMoveableEntities[i], Components_e::MAP_COORD_COMPONENT);
+            assert(numCom);
+            MapCoordComponent &mapComp = m_componentsContainer.m_vectMapCoordComp[*numCom];
+            moveElementFromAngle(moveComp.m_ejectData->first, getRadiantAngle(moveComp.m_currentDegreeMoveDirection),
+                                 mapComp.m_absoluteMapPositionPX);
         }
     }
 }
@@ -78,72 +73,71 @@ void IASystem::treatEject()
 void IASystem::execSystem()
 {
     assert(m_playerMapComp);
-    assert(m_playerComp);
     System::execSystem();
-    WeaponComponent *weaponComp = stairwayToComponentManager().
-            searchComponentByType<WeaponComponent>(m_playerComp->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::WEAPON)], Components_e::WEAPON_COMPONENT);
-    assert(weaponComp);
+    OptUint_t compNum = m_newComponentManager.getComponentEmplacement(
+        m_componentsContainer.m_playerConfComp.m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::WEAPON)],
+        Components_e::WEAPON_COMPONENT);
+    assert(compNum);
+    WeaponComponent &weaponComp = m_componentsContainer.m_vectWeaponComp[*compNum];
     treatEject();
-    for(uint32_t i = 0; i < weaponComp->m_weaponsData.size(); ++i)
+    for(uint32_t i = 0; i < weaponComp.m_weaponsData.size(); ++i)
     {
-        if(weaponComp->m_weaponsData[i].m_attackType == AttackType_e::VISIBLE_SHOTS)
+        if(weaponComp.m_weaponsData[i].m_attackType == AttackType_e::VISIBLE_SHOTS)
         {
-            assert(weaponComp->m_weaponsData[i].m_visibleShootEntities);
-            treatVisibleShots(*weaponComp->m_weaponsData[i].m_visibleShootEntities);
+            assert(weaponComp.m_weaponsData[i].m_visibleShootEntities);
+            treatVisibleShots(*weaponComp.m_weaponsData[i].m_visibleShootEntities);
         }
     }
-    MapCoordComponent *enemyMapComp;
-    EnemyConfComponent *enemyConfComp;
-    TimerComponent *timerComp;
     float distancePlayer;
+    OptUint_t numCom;
     for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
     {
-        enemyConfComp = stairwayToComponentManager().searchComponentByType<EnemyConfComponent>(
-                    mVectNumEntity[i], Components_e::ENEMY_CONF_COMPONENT);
-        assert(enemyConfComp);
-        if(enemyConfComp->m_visibleShot)
+        compNum = m_newComponentManager.getComponentEmplacement(mVectNumEntity[i], Components_e::ENEMY_CONF_COMPONENT);
+        assert(compNum);
+        EnemyConfComponent &enemyConfComp = m_componentsContainer.m_vectEnemyConfComp[*compNum];
+        if(enemyConfComp.m_visibleShot)
         {
-            treatVisibleShots(enemyConfComp->m_visibleAmmo);
+            treatVisibleShots(enemyConfComp.m_visibleAmmo);
         }
-        if(enemyConfComp->m_behaviourMode == EnemyBehaviourMode_e::DEAD ||
-                enemyConfComp->m_behaviourMode == EnemyBehaviourMode_e::DYING)
+        if(enemyConfComp.m_behaviourMode == EnemyBehaviourMode_e::DEAD ||
+                enemyConfComp.m_behaviourMode == EnemyBehaviourMode_e::DYING)
         {
-            if(enemyConfComp->m_playDeathSound)
+            if(enemyConfComp.m_playDeathSound)
             {
                 activeSound(mVectNumEntity[i], static_cast<uint32_t>(EnemySoundEffect_e::DEATH));
-                enemyConfComp->m_playDeathSound = false;
+                enemyConfComp.m_playDeathSound = false;
             }
             continue;
         }
-        enemyMapComp = stairwayToComponentManager().searchComponentByType<MapCoordComponent>(
-                    mVectNumEntity[i], Components_e::MAP_COORD_COMPONENT);
-        assert(enemyMapComp);
+        numCom = m_newComponentManager.getComponentEmplacement(mVectNumEntity[i], Components_e::MAP_COORD_COMPONENT);
+        assert(numCom);
+        MapCoordComponent &enemyMapComp = m_componentsContainer.m_vectMapCoordComp[*numCom];
         distancePlayer = getDistance(m_playerMapComp->m_absoluteMapPositionPX,
-                                     enemyMapComp->m_absoluteMapPositionPX);
-        float radiantAnglePlayerDirection = getTrigoAngle(enemyMapComp->m_absoluteMapPositionPX,
+                                     enemyMapComp.m_absoluteMapPositionPX);
+        float radiantAnglePlayerDirection = getTrigoAngle(enemyMapComp.m_absoluteMapPositionPX,
                                                           m_playerMapComp->m_absoluteMapPositionPX, false);
-        if(enemyConfComp->m_behaviourMode != EnemyBehaviourMode_e::ATTACK)
+        if(enemyConfComp.m_behaviourMode != EnemyBehaviourMode_e::ATTACK)
         {
-            timerComp = stairwayToComponentManager().searchComponentByType<TimerComponent>(
-                        mVectNumEntity[i], Components_e::TIMER_COMPONENT);
-            assert(timerComp);
-            if(enemyConfComp->m_behaviourMode == EnemyBehaviourMode_e::PASSIVE)
+            numCom = m_newComponentManager.getComponentEmplacement(mVectNumEntity[i], Components_e::TIMER_COMPONENT);
+            assert(numCom);
+            TimerComponent &timerComp = m_componentsContainer.m_vectTimerComp[*numCom];
+            if(enemyConfComp.m_behaviourMode == EnemyBehaviourMode_e::PASSIVE)
             {
-                if(++timerComp->m_cycleCountC > m_intervalEnemyPlayPassiveSound)
+                if(++timerComp.m_cycleCountC > m_intervalEnemyPlayPassiveSound)
                 {
                     activeSound(mVectNumEntity[i], static_cast<uint32_t>(EnemySoundEffect_e::NORMAL));
-                    timerComp->m_cycleCountC = 0;
+                    timerComp.m_cycleCountC = 0;
                 }
             }
             if(checkEnemyTriggerAttackMode(radiantAnglePlayerDirection, distancePlayer, enemyMapComp))
             {
-                timerComp->m_cycleCountB = 0;
-                enemyConfComp->m_behaviourMode = EnemyBehaviourMode_e::ATTACK;
+                timerComp.m_cycleCountB = 0;
+                enemyConfComp.m_behaviourMode = EnemyBehaviourMode_e::ATTACK;
                 activeSound(mVectNumEntity[i], static_cast<uint32_t>(EnemySoundEffect_e::DETECT));
-                enemyConfComp->m_countPlayerInvisibility = 0;
+                enemyConfComp.m_countPlayerInvisibility = 0;
             }
         }
-        if(enemyConfComp->m_behaviourMode == EnemyBehaviourMode_e::ATTACK)
+        if(enemyConfComp.m_behaviourMode == EnemyBehaviourMode_e::ATTACK)
         {
             treatEnemyBehaviourAttack(mVectNumEntity[i], enemyMapComp, radiantAnglePlayerDirection, enemyConfComp, distancePlayer);
         }
@@ -152,7 +146,7 @@ void IASystem::execSystem()
 
 //===================================================================
 bool IASystem::checkEnemyTriggerAttackMode(float radiantAngle, float distancePlayer,
-                                           MapCoordComponent *enemyMapComp)
+                                           MapCoordComponent &enemyMapComp)
 {
     if(distancePlayer > m_distanceEnemyBehaviour)
     {
@@ -160,8 +154,8 @@ bool IASystem::checkEnemyTriggerAttackMode(float radiantAngle, float distancePla
     }
     optionalTargetRaycast_t result = mptrSystemManager->searchSystemByType<FirstPersonDisplaySystem>(
                 static_cast<uint32_t>(Systems_e::FIRST_PERSON_DISPLAY_SYSTEM))->
-            calcLineSegmentRaycast(radiantAngle, enemyMapComp->m_absoluteMapPositionPX, false);
-    return (getDistance(enemyMapComp->m_absoluteMapPositionPX, std::get<0>(*result)) > distancePlayer);
+            calcLineSegmentRaycast(radiantAngle, enemyMapComp.m_absoluteMapPositionPX, false);
+    return (getDistance(enemyMapComp.m_absoluteMapPositionPX, std::get<0>(*result)) > distancePlayer);
 }
 
 //===================================================================
@@ -176,189 +170,190 @@ void IASystem::treatVisibleShots(const std::vector<uint32_t> &stdAmmo)
 //===================================================================
 void IASystem::treatVisibleShot(uint32_t numEntity)
 {
-    GeneralCollisionComponent *genColl = stairwayToComponentManager().
-            searchComponentByType<GeneralCollisionComponent>(numEntity,
-                                                             Components_e::GENERAL_COLLISION_COMPONENT);
-    assert(genColl);
-    if(!genColl->m_active)
+    OptUint_t numCom = m_newComponentManager.getComponentEmplacement(numEntity, Components_e::GENERAL_COLLISION_COMPONENT);
+    assert(numCom);
+    GeneralCollisionComponent &genColl = m_componentsContainer.m_vectGeneralCollisionComp[*numCom];
+    if(!genColl.m_active)
     {
         return;
     }
-    ShotConfComponent *shotComp = stairwayToComponentManager().
-            searchComponentByType<ShotConfComponent>(numEntity,
-                                                     Components_e::SHOT_CONF_COMPONENT);
-    assert(shotComp);
-    if(shotComp->m_destructPhase)
+    numCom = m_newComponentManager.getComponentEmplacement(numEntity, Components_e::SHOT_CONF_COMPONENT);
+    assert(numCom);
+    ShotConfComponent &shotComp = m_componentsContainer.m_vectShotConfComp[*numCom];
+    if(shotComp.m_destructPhase)
     {
         return;
     }
-    TimerComponent *timerComp = stairwayToComponentManager().
-            searchComponentByType<TimerComponent>(numEntity, Components_e::TIMER_COMPONENT);
-    assert(timerComp);
-    if(++timerComp->m_cycleCountA > m_intervalVisibleShotLifeTime)
+    numCom = m_newComponentManager.getComponentEmplacement(numEntity, Components_e::TIMER_COMPONENT);
+    assert(numCom);
+    TimerComponent &timerComp = m_componentsContainer.m_vectTimerComp[*numCom];
+    if(++timerComp.m_cycleCountA > m_intervalVisibleShotLifeTime)
     {
-        genColl->m_active = false;
-        timerComp->m_cycleCountA = 0;
+        genColl.m_active = false;
+        timerComp.m_cycleCountA = 0;
         return;
     }
-    MapCoordComponent *ammoMapComp = stairwayToComponentManager().
-            searchComponentByType<MapCoordComponent>(numEntity, Components_e::MAP_COORD_COMPONENT);
-    MoveableComponent *ammoMoveComp = stairwayToComponentManager().
-            searchComponentByType<MoveableComponent>(numEntity, Components_e::MOVEABLE_COMPONENT);
-    assert(ammoMapComp);
-    assert(ammoMoveComp);
-    assert(genColl->m_shape == CollisionShape_e::CIRCLE_C);
-    moveElementFromAngle((*ammoMoveComp).m_velocity, getRadiantAngle(ammoMoveComp->m_degreeOrientation), ammoMapComp->m_absoluteMapPositionPX);
+    numCom = m_newComponentManager.getComponentEmplacement(numEntity, Components_e::MAP_COORD_COMPONENT);
+    assert(numCom);
+    MapCoordComponent &ammoMapComp = m_componentsContainer.m_vectMapCoordComp[*numCom];
+    numCom = m_newComponentManager.getComponentEmplacement(numEntity, Components_e::MOVEABLE_COMPONENT);
+    assert(numCom);
+    MoveableComponent &ammoMoveComp = m_componentsContainer.m_vectMoveableComp[*numCom];
+    assert(genColl.m_shape == CollisionShape_e::CIRCLE_C);
+    moveElementFromAngle(ammoMoveComp.m_velocity, getRadiantAngle(ammoMoveComp.m_degreeOrientation),
+                         ammoMapComp.m_absoluteMapPositionPX);
 }
 
 //===================================================================
 void IASystem::activeSound(uint32_t entityNum, uint32_t soundNum)
 {
-    AudioComponent *audioComp = stairwayToComponentManager().
-            searchComponentByType<AudioComponent>(entityNum, Components_e::AUDIO_COMPONENT);
-    assert(audioComp);
-    audioComp->m_soundElements[soundNum]->m_toPlay = true;
+    OptUint_t numCom = m_newComponentManager.getComponentEmplacement(entityNum, Components_e::AUDIO_COMPONENT);
+    assert(numCom);
+    AudioComponent &audioComp = m_componentsContainer.m_vectAudioComp[*numCom];
+    audioComp.m_soundElements[soundNum]->m_toPlay = true;
 }
 
 //===================================================================
-void IASystem::updateEnemyDirection(EnemyConfComponent *enemyConfComp, MoveableComponent *moveComp,
-                                    MapCoordComponent *enemyMapComp)
+void IASystem::updateEnemyDirection(EnemyConfComponent &enemyConfComp, MoveableComponent &moveComp,
+                                    MapCoordComponent &enemyMapComp)
 {
-    moveComp->m_degreeOrientation = getTrigoAngle(enemyMapComp->m_absoluteMapPositionPX, m_playerMapComp->m_absoluteMapPositionPX);
-    if(enemyConfComp->m_attackPhase == EnemyAttackPhase_e::MOVE_TO_TARGET_DIAG_RIGHT)
+    moveComp.m_degreeOrientation = getTrigoAngle(enemyMapComp.m_absoluteMapPositionPX, m_playerMapComp->m_absoluteMapPositionPX);
+    if(enemyConfComp.m_attackPhase == EnemyAttackPhase_e::MOVE_TO_TARGET_DIAG_RIGHT)
     {
-        moveComp->m_degreeOrientation -= 30.0f;
+        moveComp.m_degreeOrientation -= 30.0f;
     }
-    else if(enemyConfComp->m_attackPhase == EnemyAttackPhase_e::MOVE_TO_TARGET_DIAG_LEFT)
+    else if(enemyConfComp.m_attackPhase == EnemyAttackPhase_e::MOVE_TO_TARGET_DIAG_LEFT)
     {
-        moveComp->m_degreeOrientation += 30.0f;
+        moveComp.m_degreeOrientation += 30.0f;
     }
-    else if(enemyConfComp->m_attackPhase == EnemyAttackPhase_e::MOVE_TO_TARGET_LEFT)
+    else if(enemyConfComp.m_attackPhase == EnemyAttackPhase_e::MOVE_TO_TARGET_LEFT)
     {
-        moveComp->m_degreeOrientation += 90.0f;
+        moveComp.m_degreeOrientation += 90.0f;
     }
-    else if(enemyConfComp->m_attackPhase == EnemyAttackPhase_e::MOVE_TO_TARGET_RIGHT)
+    else if(enemyConfComp.m_attackPhase == EnemyAttackPhase_e::MOVE_TO_TARGET_RIGHT)
     {
-        moveComp->m_degreeOrientation -= 90.0f;
+        moveComp.m_degreeOrientation -= 90.0f;
     }
-    moveComp->m_currentDegreeMoveDirection = moveComp->m_degreeOrientation;
+    moveComp.m_currentDegreeMoveDirection = moveComp.m_degreeOrientation;
 }
 
 //===================================================================
-void IASystem::enemyShoot(EnemyConfComponent *enemyConfComp, MoveableComponent *moveComp,
-                          MapCoordComponent *enemyMapComp, float distancePlayer)
+void IASystem::enemyShoot(EnemyConfComponent &enemyConfComp, MoveableComponent &moveComp,
+                          MapCoordComponent &enemyMapComp, float distancePlayer)
 {
-    GeneralCollisionComponent *genComp;
-    if(enemyConfComp->m_meleeAttackDamage && distancePlayer < 32.0f)
+    if(enemyConfComp.m_meleeAttackDamage && distancePlayer < 32.0f)
     {
-        m_playerComp->takeDamage(*enemyConfComp->m_meleeAttackDamage);
+        m_componentsContainer.m_playerConfComp.takeDamage(*enemyConfComp.m_meleeAttackDamage);
     }
-    else if(enemyConfComp->m_visibleShot)
+    else if(enemyConfComp.m_visibleShot)
     {
-        confVisibleShoot(enemyConfComp->m_visibleAmmo, enemyMapComp->m_absoluteMapPositionPX,
-                         moveComp->m_degreeOrientation, CollisionTag_e::BULLET_ENEMY_CT);
+        confVisibleShoot(enemyConfComp.m_visibleAmmo, enemyMapComp.m_absoluteMapPositionPX,
+                         moveComp.m_degreeOrientation, CollisionTag_e::BULLET_ENEMY_CT);
     }
     else
     {
-        assert(!enemyConfComp->m_stdAmmo.empty());
-        genComp = stairwayToComponentManager().
-                searchComponentByType<GeneralCollisionComponent>(enemyConfComp->m_stdAmmo[0], Components_e::GENERAL_COLLISION_COMPONENT);
-        SegmentCollisionComponent *segmentComp = stairwayToComponentManager().
-                searchComponentByType<SegmentCollisionComponent>(enemyConfComp->m_stdAmmo[0], Components_e::SEGMENT_COLLISION_COMPONENT);
-        ShotConfComponent *shotComp = stairwayToComponentManager().
-                searchComponentByType<ShotConfComponent>(enemyConfComp->m_stdAmmo[0], Components_e::SHOT_CONF_COMPONENT);
-        assert(shotComp);
-        ImpactShotComponent *impactComp = stairwayToComponentManager().
-                searchComponentByType<ImpactShotComponent>(shotComp->m_impactEntity, Components_e::IMPACT_CONF_COMPONENT);
-        assert(impactComp);
-        MoveableComponent *impactMoveComp = stairwayToComponentManager().
-                searchComponentByType<MoveableComponent>(shotComp->m_impactEntity, Components_e::MOVEABLE_COMPONENT);
-        assert(moveComp);
-        assert(genComp);
-        assert(segmentComp);
+        assert(!enemyConfComp.m_stdAmmo.empty());
+
+        OptUint_t numCom = m_newComponentManager.getComponentEmplacement(enemyConfComp.m_stdAmmo[0],
+                                                                         Components_e::GENERAL_COLLISION_COMPONENT);
+        assert(numCom);
+        GeneralCollisionComponent &genComp = m_componentsContainer.m_vectGeneralCollisionComp[*numCom];
+
+        numCom = m_newComponentManager.getComponentEmplacement(enemyConfComp.m_stdAmmo[0], Components_e::SEGMENT_COLLISION_COMPONENT);
+        assert(numCom);
+        SegmentCollisionComponent &segmentComp = m_componentsContainer.m_vectSegmentCollisionComp[*numCom];
+        numCom = m_newComponentManager.getComponentEmplacement(enemyConfComp.m_stdAmmo[0], Components_e::SHOT_CONF_COMPONENT);
+        assert(numCom);
+        ShotConfComponent &shotComp = m_componentsContainer.m_vectShotConfComp[*numCom];
+        numCom = m_newComponentManager.getComponentEmplacement(shotComp.m_impactEntity, Components_e::IMPACT_CONF_COMPONENT);
+        assert(numCom);
+        ImpactShotComponent &impactComp = m_componentsContainer.m_vectImpactShotComp[*numCom];
+        numCom = m_newComponentManager.getComponentEmplacement(shotComp.m_impactEntity, Components_e::MOVEABLE_COMPONENT);
+        assert(numCom);
+        MoveableComponent &impactMoveComp = m_componentsContainer.m_vectMoveableComp[*numCom];
         confBullet(impactComp, genComp, segmentComp, impactMoveComp, CollisionTag_e::BULLET_ENEMY_CT,
-                   enemyMapComp->m_absoluteMapPositionPX, moveComp->m_degreeOrientation);
+                   enemyMapComp.m_absoluteMapPositionPX, impactMoveComp.m_degreeOrientation);
     }
 }
 
 //===================================================================
-void IASystem::treatEnemyBehaviourAttack(uint32_t enemyEntity, MapCoordComponent *enemyMapComp,
-                                         float radiantAnglePlayerDirection, EnemyConfComponent *enemyConfComp, float distancePlayer)
+void IASystem::treatEnemyBehaviourAttack(uint32_t enemyEntity, MapCoordComponent &enemyMapComp,
+                                         float radiantAnglePlayerDirection, EnemyConfComponent &enemyConfComp, float distancePlayer)
 {
-    MoveableComponent *moveComp = stairwayToComponentManager().
-            searchComponentByType<MoveableComponent>(enemyEntity,
-                                                     Components_e::MOVEABLE_COMPONENT);
-    TimerComponent *timerComp = stairwayToComponentManager().searchComponentByType<TimerComponent>(
-                enemyEntity, Components_e::TIMER_COMPONENT);
-    assert(moveComp);
-    assert(timerComp);
-    if(!enemyConfComp->m_stuck)
+    OptUint_t numCom = m_newComponentManager.getComponentEmplacement(enemyEntity, Components_e::MOVEABLE_COMPONENT);
+    assert(numCom);
+    MoveableComponent &moveComp = m_componentsContainer.m_vectMoveableComp[*numCom];
+
+    numCom = m_newComponentManager.getComponentEmplacement(enemyEntity, Components_e::TIMER_COMPONENT);
+    assert(numCom);
+    TimerComponent &timerComp = m_componentsContainer.m_vectTimerComp[*numCom];
+    if(!enemyConfComp.m_stuck)
     {
-        enemyConfComp->m_previousMove = {EnemyAttackPhase_e::TOTAL, EnemyAttackPhase_e::TOTAL};
+        enemyConfComp.m_previousMove = {EnemyAttackPhase_e::TOTAL, EnemyAttackPhase_e::TOTAL};
     }
-    if(enemyConfComp->m_stuck || ++timerComp->m_cycleCountB >= m_intervalEnemyBehaviour)
+    if(enemyConfComp.m_stuck || ++timerComp.m_cycleCountB >= m_intervalEnemyBehaviour)
     {
-        if(enemyConfComp->m_countTillLastAttack > 3 && (!enemyConfComp->m_meleeOnly || distancePlayer < 32.0f))
+        if(enemyConfComp.m_countTillLastAttack > 3 && (!enemyConfComp.m_meleeOnly || distancePlayer < 32.0f))
         {
-            enemyConfComp->m_attackPhase = EnemyAttackPhase_e::SHOOT;
-            enemyConfComp->m_stuck = false;
+            enemyConfComp.m_attackPhase = EnemyAttackPhase_e::SHOOT;
+            enemyConfComp.m_stuck = false;
         }
         else
         {
-            uint32_t modulo = (enemyConfComp->m_meleeOnly || enemyConfComp->m_countTillLastAttack < 2) ? static_cast<uint32_t>(EnemyAttackPhase_e::SHOOT) :
+            uint32_t modulo = (enemyConfComp.m_meleeOnly || enemyConfComp.m_countTillLastAttack < 2) ? static_cast<uint32_t>(EnemyAttackPhase_e::SHOOT) :
                                                                            static_cast<uint32_t>(EnemyAttackPhase_e::SHOOT) + 1;
-            enemyConfComp->m_attackPhase = static_cast<EnemyAttackPhase_e>(std::rand() / ((RAND_MAX + 1u) / modulo));
+            enemyConfComp.m_attackPhase = static_cast<EnemyAttackPhase_e>(std::rand() / ((RAND_MAX + 1u) / modulo));
         }
-        enemyConfComp->m_countTillLastAttack =
-                (enemyConfComp->m_attackPhase == EnemyAttackPhase_e::SHOOT) ? 0 : ++enemyConfComp->m_countTillLastAttack;
+        enemyConfComp.m_countTillLastAttack =
+                (enemyConfComp.m_attackPhase == EnemyAttackPhase_e::SHOOT) ? 0 : ++enemyConfComp.m_countTillLastAttack;
 
-        while(enemyConfComp->m_stuck)
+        while(enemyConfComp.m_stuck)
         {
-            if((enemyConfComp->m_attackPhase != std::get<0>(enemyConfComp->m_previousMove) &&
-                enemyConfComp->m_attackPhase != std::get<1>(enemyConfComp->m_previousMove)))
+            if((enemyConfComp.m_attackPhase != std::get<0>(enemyConfComp.m_previousMove) &&
+                enemyConfComp.m_attackPhase != std::get<1>(enemyConfComp.m_previousMove)))
             {
-                enemyConfComp->m_stuck = false;
+                enemyConfComp.m_stuck = false;
             }
             else
             {
-                if(enemyConfComp->m_attackPhase == EnemyAttackPhase_e::MOVE_TO_TARGET_FRONT)
+                if(enemyConfComp.m_attackPhase == EnemyAttackPhase_e::MOVE_TO_TARGET_FRONT)
                 {
-                    enemyConfComp->m_attackPhase = EnemyAttackPhase_e::MOVE_TO_TARGET_DIAG_LEFT;
+                    enemyConfComp.m_attackPhase = EnemyAttackPhase_e::MOVE_TO_TARGET_DIAG_LEFT;
                 }
                 else
                 {
-                    enemyConfComp->m_attackPhase = static_cast<EnemyAttackPhase_e>(static_cast<uint32_t>(enemyConfComp->m_attackPhase) - 1);
+                    enemyConfComp.m_attackPhase = static_cast<EnemyAttackPhase_e>(static_cast<uint32_t>(enemyConfComp.m_attackPhase) - 1);
                 }
             }
         }
-        std::swap(std::get<0>(enemyConfComp->m_previousMove), std::get<1>(enemyConfComp->m_previousMove));
-        std::get<0>(enemyConfComp->m_previousMove) = enemyConfComp->m_attackPhase;
+        std::swap(std::get<0>(enemyConfComp.m_previousMove), std::get<1>(enemyConfComp.m_previousMove));
+        std::get<0>(enemyConfComp.m_previousMove) = enemyConfComp.m_attackPhase;
 
-        std::swap(enemyConfComp->m_previousMove[2], enemyConfComp->m_previousMove[1]);
-        std::swap(enemyConfComp->m_previousMove[1], enemyConfComp->m_previousMove[0]);
-        enemyConfComp->m_previousMove[0] = enemyConfComp->m_attackPhase;
-        timerComp->m_cycleCountB = 0;
+        std::swap(enemyConfComp.m_previousMove[2], enemyConfComp.m_previousMove[1]);
+        std::swap(enemyConfComp.m_previousMove[1], enemyConfComp.m_previousMove[0]);
+        enemyConfComp.m_previousMove[0] = enemyConfComp.m_attackPhase;
+        timerComp.m_cycleCountB = 0;
         updateEnemyDirection(enemyConfComp, moveComp, enemyMapComp);
-        if(enemyConfComp->m_attackPhase == EnemyAttackPhase_e::SHOOT)
+        if(enemyConfComp.m_attackPhase == EnemyAttackPhase_e::SHOOT)
         {
             enemyShoot(enemyConfComp, moveComp, enemyMapComp, distancePlayer);
             activeSound(enemyEntity, static_cast<uint32_t>(EnemySoundEffect_e::ATTACK));
         }
         if(!checkEnemyTriggerAttackMode(radiantAnglePlayerDirection, distancePlayer, enemyMapComp))
         {
-            if(++enemyConfComp->m_countPlayerInvisibility > 5)
+            if(++enemyConfComp.m_countPlayerInvisibility > 5)
             {
-                enemyConfComp->m_behaviourMode = EnemyBehaviourMode_e::PASSIVE;
-                timerComp->m_cycleCountC = 0;
+                enemyConfComp.m_behaviourMode = EnemyBehaviourMode_e::PASSIVE;
+                timerComp.m_cycleCountC = 0;
             }
         }
     }
-    else if(enemyConfComp->m_attackPhase != EnemyAttackPhase_e::SHOOT && distancePlayer > LEVEL_TILE_SIZE_PX)
+    else if(enemyConfComp.m_attackPhase != EnemyAttackPhase_e::SHOOT && distancePlayer > LEVEL_TILE_SIZE_PX)
     {
-        if(enemyConfComp->m_attackPhase != EnemyAttackPhase_e::SHOOTED)
+        if(enemyConfComp.m_attackPhase != EnemyAttackPhase_e::SHOOTED)
         {
-            moveElementFromAngle(moveComp->m_velocity, getRadiantAngle(moveComp->m_degreeOrientation),
-                                 enemyMapComp->m_absoluteMapPositionPX);
+            moveElementFromAngle(moveComp.m_velocity, getRadiantAngle(moveComp.m_degreeOrientation),
+                                 enemyMapComp.m_absoluteMapPositionPX);
         }
     }
 }
@@ -367,27 +362,25 @@ void IASystem::treatEnemyBehaviourAttack(uint32_t enemyEntity, MapCoordComponent
 void IASystem::memPlayerDatas(uint32_t playerEntity)
 {
     m_playerEntity = playerEntity;
-    m_playerMapComp = stairwayToComponentManager().searchComponentByType<MapCoordComponent>(
-                m_playerEntity, Components_e::MAP_COORD_COMPONENT);
-    m_playerComp = stairwayToComponentManager().
-            searchComponentByType<PlayerConfComponent>(m_playerEntity,
-                                                       Components_e::PLAYER_CONF_COMPONENT);
-    assert(m_playerMapComp);
-    assert(m_playerComp);
+    OptUint_t numCom = m_newComponentManager.getComponentEmplacement(m_playerEntity, Components_e::MAP_COORD_COMPONENT);
+    assert(numCom);
+    m_playerMapComp = &m_componentsContainer.m_vectMapCoordComp[*numCom];
 }
 
 //===================================================================
 void IASystem::confVisibleShoot(std::vector<uint32_t> &visibleShots, const PairFloat_t &point, float degreeAngle, CollisionTag_e tag)
 {
-    GeneralCollisionComponent *genComp = nullptr;
+    GeneralCollisionComponent *genCompB = nullptr;
     uint32_t currentShot = 0;
     assert(!visibleShots.empty());
+    OptUint_t numCom;
     for(; currentShot < visibleShots.size(); ++currentShot)
     {
-        genComp = stairwayToComponentManager().searchComponentByType<GeneralCollisionComponent>(
-                    visibleShots[currentShot], Components_e::GENERAL_COLLISION_COMPONENT);
-        assert(genComp);
-        if(!genComp->m_active)
+        numCom = m_newComponentManager.getComponentEmplacement(visibleShots[currentShot],
+                                                                         Components_e::GENERAL_COLLISION_COMPONENT);
+        assert(numCom);
+        GeneralCollisionComponent &genComp = m_componentsContainer.m_vectGeneralCollisionComp[*numCom];
+        if(!genComp.m_active)
         {
             break;
         }
@@ -397,39 +390,40 @@ void IASystem::confVisibleShoot(std::vector<uint32_t> &visibleShots, const PairF
             visibleShots.push_back(m_mainEngine->createAmmoEntity(tag, true));
             confNewVisibleShot(visibleShots);
             ++currentShot;
-            genComp = stairwayToComponentManager().searchComponentByType<GeneralCollisionComponent>(
-                                visibleShots[currentShot], Components_e::GENERAL_COLLISION_COMPONENT);
+            numCom = m_newComponentManager.getComponentEmplacement(visibleShots[currentShot],
+                                                                   Components_e::GENERAL_COLLISION_COMPONENT);
+            assert(numCom);
+            genCompB = &m_componentsContainer.m_vectGeneralCollisionComp[*numCom];
             break;
         }
     }
-    ShotConfComponent *targetShotConfComp = stairwayToComponentManager().
-            searchComponentByType<ShotConfComponent>(visibleShots[currentShot], Components_e::SHOT_CONF_COMPONENT);
-    assert(targetShotConfComp);
-    if(targetShotConfComp->m_ejectMode)
+    numCom = m_newComponentManager.getComponentEmplacement(visibleShots[currentShot], Components_e::SHOT_CONF_COMPONENT);
+    assert(numCom);
+    ShotConfComponent &targetShotConfComp = m_componentsContainer.m_vectShotConfComp[*numCom];
+    if(targetShotConfComp.m_ejectMode)
     {
-        targetShotConfComp->m_ejectMode = false;
-        CircleCollisionComponent *circleTargetComp = stairwayToComponentManager().
-                searchComponentByType<CircleCollisionComponent>(visibleShots[currentShot], Components_e::CIRCLE_COLLISION_COMPONENT);
-        assert(circleTargetComp);
-        std::swap(targetShotConfComp->m_ejectExplosionRay, circleTargetComp->m_ray);
+        targetShotConfComp.m_ejectMode = false;
+        numCom = m_newComponentManager.getComponentEmplacement(visibleShots[currentShot], Components_e::CIRCLE_COLLISION_COMPONENT);
+        assert(numCom);
+        CircleCollisionComponent &circleTargetComp = m_componentsContainer.m_vectCircleCollisionComp[*numCom];
+        std::swap(targetShotConfComp.m_ejectExplosionRay, circleTargetComp.m_ray);
     }
-    MapCoordComponent *mapComp = stairwayToComponentManager().
-            searchComponentByType<MapCoordComponent>(visibleShots[currentShot], Components_e::MAP_COORD_COMPONENT);
-    MoveableComponent *ammoMoveComp = stairwayToComponentManager().
-            searchComponentByType<MoveableComponent>(visibleShots[currentShot], Components_e::MOVEABLE_COMPONENT);
-    TimerComponent *ammoTimeComp = stairwayToComponentManager().
-            searchComponentByType<TimerComponent>(visibleShots[currentShot], Components_e::TIMER_COMPONENT);
-    assert(genComp);
-    assert(ammoTimeComp);
-    assert(mapComp);
-    assert(ammoMoveComp);
-    genComp->m_active = true;
-    ammoTimeComp->m_cycleCountA = 0;
-    mapComp->m_absoluteMapPositionPX = point;
+    numCom = m_newComponentManager.getComponentEmplacement(visibleShots[currentShot], Components_e::MAP_COORD_COMPONENT);
+    assert(numCom);
+    MapCoordComponent &mapComp = m_componentsContainer.m_vectMapCoordComp[*numCom];
+    numCom = m_newComponentManager.getComponentEmplacement(visibleShots[currentShot], Components_e::MOVEABLE_COMPONENT);
+    assert(numCom);
+    MoveableComponent &ammoMoveComp = m_componentsContainer.m_vectMoveableComp[*numCom];
+    numCom = m_newComponentManager.getComponentEmplacement(visibleShots[currentShot], Components_e::TIMER_COMPONENT);
+    assert(numCom);
+    TimerComponent &ammoTimeComp = m_componentsContainer.m_vectTimerComp[*numCom];
+    genCompB->m_active = true;
+    ammoTimeComp.m_cycleCountA = 0;
+    mapComp.m_absoluteMapPositionPX = point;
     moveElementFromAngle(LEVEL_HALF_TILE_SIZE_PX, getRadiantAngle(degreeAngle),
-                         mapComp->m_absoluteMapPositionPX);
-    ammoMoveComp->m_degreeOrientation = degreeAngle;
-    ammoMoveComp->m_currentDegreeMoveDirection = degreeAngle;
+                         mapComp.m_absoluteMapPositionPX);
+    ammoMoveComp.m_degreeOrientation = degreeAngle;
+    ammoMoveComp.m_currentDegreeMoveDirection = degreeAngle;
 }
 
 //===================================================================
@@ -437,67 +431,64 @@ void IASystem::confNewVisibleShot(const std::vector<uint32_t> &visibleShots)
 {
     assert(visibleShots.size() > 1);
     uint32_t targetIndex = visibleShots.size() - 1, baseIndex = targetIndex - 1;
-    SpriteTextureComponent *baseSpriteComp = stairwayToComponentManager().
-            searchComponentByType<SpriteTextureComponent>(visibleShots[baseIndex], Components_e::SPRITE_TEXTURE_COMPONENT);
-    MemSpriteDataComponent *baseMemSpriteComp = stairwayToComponentManager().
-            searchComponentByType<MemSpriteDataComponent>(visibleShots[baseIndex], Components_e::MEM_SPRITE_DATA_COMPONENT);
-    FPSVisibleStaticElementComponent *baseFpsStaticComp = stairwayToComponentManager().
-            searchComponentByType<FPSVisibleStaticElementComponent>(visibleShots[baseIndex], Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
-    SpriteTextureComponent *targetSpriteComp = stairwayToComponentManager().
-            searchComponentByType<SpriteTextureComponent>(visibleShots[targetIndex], Components_e::SPRITE_TEXTURE_COMPONENT);
-    MemSpriteDataComponent *targetMemSpriteComp = stairwayToComponentManager().
-            searchComponentByType<MemSpriteDataComponent>(visibleShots[targetIndex], Components_e::MEM_SPRITE_DATA_COMPONENT);
-    FPSVisibleStaticElementComponent *targetFpsStaticComp = stairwayToComponentManager().
-            searchComponentByType<FPSVisibleStaticElementComponent>(visibleShots[targetIndex], Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
-    ShotConfComponent *baseShotConfComp = stairwayToComponentManager().
-            searchComponentByType<ShotConfComponent>(visibleShots[baseIndex], Components_e::SHOT_CONF_COMPONENT);
-    ShotConfComponent *targetShotConfComp = stairwayToComponentManager().
-            searchComponentByType<ShotConfComponent>(visibleShots[targetIndex], Components_e::SHOT_CONF_COMPONENT);
-    MoveableComponent *baseMoveComp = stairwayToComponentManager().
-            searchComponentByType<MoveableComponent>(visibleShots[baseIndex], Components_e::MOVEABLE_COMPONENT);
-    MoveableComponent *targetMoveComp = stairwayToComponentManager().
-            searchComponentByType<MoveableComponent>(visibleShots[targetIndex], Components_e::MOVEABLE_COMPONENT);
-    MemFPSGLSizeComponent *memFPSGLSizeCompBase = stairwayToComponentManager().
-            searchComponentByType<MemFPSGLSizeComponent>(visibleShots[baseIndex], Components_e::MEM_FPS_GLSIZE_COMPONENT);
-    MemFPSGLSizeComponent *memFPSGLSizeCompTarget = stairwayToComponentManager().
-            searchComponentByType<MemFPSGLSizeComponent>(visibleShots[targetIndex], Components_e::MEM_FPS_GLSIZE_COMPONENT);
-    AudioComponent *audioCompTarget = stairwayToComponentManager().
-            searchComponentByType<AudioComponent>(visibleShots[targetIndex], Components_e::AUDIO_COMPONENT);
-    AudioComponent *audioCompBase = stairwayToComponentManager().
-            searchComponentByType<AudioComponent>(visibleShots[baseIndex], Components_e::AUDIO_COMPONENT);
-    assert(baseShotConfComp);
-    assert(audioCompBase);
-    assert(audioCompTarget);
-    assert(memFPSGLSizeCompBase);
-    assert(memFPSGLSizeCompTarget);
-    assert(baseMoveComp);
-    assert(targetShotConfComp);
-    assert(targetMoveComp);
-    assert(baseSpriteComp);
-    assert(baseMemSpriteComp);
-    assert(baseFpsStaticComp);
-    assert(targetSpriteComp);
-    assert(targetMemSpriteComp);
-    assert(targetFpsStaticComp);
-    audioCompTarget->m_soundElements.push_back(SoundElement());
-    audioCompTarget->m_soundElements[0]->m_toPlay = true;
-    audioCompTarget->m_soundElements[0]->m_bufferALID = audioCompBase->m_soundElements[0]->m_bufferALID;
-    audioCompTarget->m_soundElements[0]->m_sourceALID = mptrSystemManager->searchSystemByType<SoundSystem>(
-                static_cast<uint32_t>(Systems_e::SOUND_SYSTEM))->createSource(audioCompBase->m_soundElements[0]->m_bufferALID);
-    memFPSGLSizeCompTarget->m_memGLSizeData = memFPSGLSizeCompBase->m_memGLSizeData;
-    targetMemSpriteComp->m_vectSpriteData = baseMemSpriteComp->m_vectSpriteData;
-    targetSpriteComp->m_spriteData = targetMemSpriteComp->m_vectSpriteData[0];
-    targetFpsStaticComp->m_levelElementType = baseFpsStaticComp->m_levelElementType;
-    targetFpsStaticComp->m_inGameSpriteSize = memFPSGLSizeCompBase->m_memGLSizeData[0];
-    targetMoveComp->m_velocity = baseMoveComp->m_velocity;
-    targetShotConfComp->m_damage = baseShotConfComp->m_damage;
+    OptUint_t numCom = m_newComponentManager.getComponentEmplacement(visibleShots[baseIndex], Components_e::MEM_SPRITE_DATA_COMPONENT);
+    assert(numCom);
+    MemSpriteDataComponent &baseMemSpriteComp = m_componentsContainer.m_vectMemSpriteDataComp[*numCom];
+    numCom = m_newComponentManager.getComponentEmplacement(visibleShots[baseIndex], Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
+    assert(numCom);
+    FPSVisibleStaticElementComponent &baseFpsStaticComp = m_componentsContainer.m_vectFPSVisibleStaticElementComp[*numCom];
+    numCom = m_newComponentManager.getComponentEmplacement(visibleShots[targetIndex], Components_e::SPRITE_TEXTURE_COMPONENT);
+    assert(numCom);
+    SpriteTextureComponent &targetSpriteComp = m_componentsContainer.m_vectSpriteTextureComp[*numCom];
+    numCom = m_newComponentManager.getComponentEmplacement(visibleShots[targetIndex], Components_e::MEM_SPRITE_DATA_COMPONENT);
+    assert(numCom);
+    MemSpriteDataComponent &targetMemSpriteComp = m_componentsContainer.m_vectMemSpriteDataComp[*numCom];
+    numCom = m_newComponentManager.getComponentEmplacement(visibleShots[targetIndex], Components_e::FPS_VISIBLE_STATIC_ELEMENT_COMPONENT);
+    assert(numCom);
+    FPSVisibleStaticElementComponent &targetFpsStaticComp = m_componentsContainer.m_vectFPSVisibleStaticElementComp[*numCom];
+    numCom = m_newComponentManager.getComponentEmplacement(visibleShots[baseIndex], Components_e::SHOT_CONF_COMPONENT);
+    assert(numCom);
+    ShotConfComponent &baseShotConfComp = m_componentsContainer.m_vectShotConfComp[*numCom];
+    numCom = m_newComponentManager.getComponentEmplacement(visibleShots[targetIndex], Components_e::SHOT_CONF_COMPONENT);
+    assert(numCom);
+    ShotConfComponent &targetShotConfComp = m_componentsContainer.m_vectShotConfComp[*numCom];
+    numCom = m_newComponentManager.getComponentEmplacement(visibleShots[baseIndex], Components_e::MOVEABLE_COMPONENT);
+    assert(numCom);
+    MoveableComponent &baseMoveComp = m_componentsContainer.m_vectMoveableComp[*numCom];
+    numCom = m_newComponentManager.getComponentEmplacement(visibleShots[targetIndex], Components_e::MOVEABLE_COMPONENT);
+    assert(numCom);
+    MoveableComponent &targetMoveComp = m_componentsContainer.m_vectMoveableComp[*numCom];
+    numCom = m_newComponentManager.getComponentEmplacement(visibleShots[baseIndex], Components_e::MEM_FPS_GLSIZE_COMPONENT);
+    assert(numCom);
+    MemFPSGLSizeComponent &memFPSGLSizeCompBase = m_componentsContainer.m_vectMemFPSGLSizeComp[*numCom];
+    numCom = m_newComponentManager.getComponentEmplacement(visibleShots[targetIndex], Components_e::MEM_FPS_GLSIZE_COMPONENT);
+    assert(numCom);
+    MemFPSGLSizeComponent &memFPSGLSizeCompTarget = m_componentsContainer.m_vectMemFPSGLSizeComp[*numCom];
+    numCom = m_newComponentManager.getComponentEmplacement(visibleShots[targetIndex], Components_e::AUDIO_COMPONENT);
+    assert(numCom);
+    AudioComponent &audioCompTarget = m_componentsContainer.m_vectAudioComp[*numCom];
+    numCom = m_newComponentManager.getComponentEmplacement(visibleShots[baseIndex], Components_e::AUDIO_COMPONENT);
+    assert(numCom);
+    AudioComponent &audioCompBase = m_componentsContainer.m_vectAudioComp[*numCom];
+    audioCompTarget.m_soundElements.push_back(SoundElement());
+    audioCompTarget.m_soundElements[0]->m_toPlay = true;
+    audioCompTarget.m_soundElements[0]->m_bufferALID = audioCompBase.m_soundElements[0]->m_bufferALID;
+    audioCompTarget.m_soundElements[0]->m_sourceALID = mptrSystemManager->searchSystemByType<SoundSystem>(
+                static_cast<uint32_t>(Systems_e::SOUND_SYSTEM))->createSource(audioCompBase.m_soundElements[0]->m_bufferALID);
+    memFPSGLSizeCompTarget.m_memGLSizeData = memFPSGLSizeCompBase.m_memGLSizeData;
+    targetMemSpriteComp.m_vectSpriteData = baseMemSpriteComp.m_vectSpriteData;
+    targetSpriteComp.m_spriteData = targetMemSpriteComp.m_vectSpriteData[0];
+    targetFpsStaticComp.m_levelElementType = baseFpsStaticComp.m_levelElementType;
+    targetFpsStaticComp.m_inGameSpriteSize = memFPSGLSizeCompBase.m_memGLSizeData[0];
+    targetMoveComp.m_velocity = baseMoveComp.m_velocity;
+    targetShotConfComp.m_damage = baseShotConfComp.m_damage;
     float maxWidth = EPSILON_FLOAT;
-    for(uint32_t i = 1; i < memFPSGLSizeCompTarget->m_memGLSizeData.size(); ++i)
+    for(uint32_t i = 1; i < memFPSGLSizeCompTarget.m_memGLSizeData.size(); ++i)
     {
-        if(maxWidth < memFPSGLSizeCompTarget->m_memGLSizeData[i].first)
+        if(maxWidth < memFPSGLSizeCompTarget.m_memGLSizeData[i].first)
         {
-            maxWidth = memFPSGLSizeCompTarget->m_memGLSizeData[i].first;
+            maxWidth = memFPSGLSizeCompTarget.m_memGLSizeData[i].first;
         }
     }
-    targetShotConfComp->m_ejectExplosionRay = maxWidth * LEVEL_HALF_TILE_SIZE_PX;
+    targetShotConfComp.m_ejectExplosionRay = maxWidth * LEVEL_HALF_TILE_SIZE_PX;
 }
