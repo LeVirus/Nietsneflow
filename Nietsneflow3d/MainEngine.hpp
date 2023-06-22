@@ -404,9 +404,6 @@ private:
     *m_memPreviewPlasmaRifleIcon = nullptr, *m_memPreviewMachineGunIcon = nullptr,
     *m_memPreviewBazookaIcon = nullptr, *m_memBackgroundGenericMenu = nullptr, *m_memBackgroundTitleMenu = nullptr,
     *m_memBackgroundLeftMenu = nullptr, *m_memBackgroundRightLeftMenu = nullptr;
-    WriteComponent *m_writeConf = nullptr;
-    PlayerConfComponent *m_playerConf = nullptr;
-    WeaponComponent *m_weaponComp;
     MemPlayerConf m_memPlayerConfBeginLevel, m_memPlayerConfCheckpoint;
     uint32_t m_currentLevelSecretsNumber, m_currentLevelEnemiesNumber, m_currentLevelEnemiesKilled;
     std::set<PairUI_t> m_memWall, m_memStaticEntitiesDeletedFromCheckpoint, m_currentEntitiesDelete;

@@ -66,9 +66,9 @@ LevelState MainEngine::displayTitleMenu(const LevelManager &levelManager)
     m_memBackgroundTitleMenu = &vectSprite[titleBackgroundMenuSpriteId];
     m_memBackgroundLeftMenu = &vectSprite[leftBackgroundMenuSpriteId];
     m_memBackgroundRightLeftMenu = &vectSprite[rightLeftBackgroundMenuSpriteId];
-    assert(m_playerConf);
-    m_playerConf->m_menuMode = MenuMode_e::TITLE;
-    setMenuEntries(*m_playerConf);
+    PlayerConfComponent &playerConf = m_ecsManager.getComponentManager().getPlayerConfComp();
+    playerConf.m_menuMode = MenuMode_e::TITLE;
+    setMenuEntries(playerConf);
     m_gamePaused = true;
     m_titleMenuMode = true;
     //prevent to exit
@@ -92,7 +92,7 @@ LevelState MainEngine::displayTitleMenu(const LevelManager &levelManager)
     m_titleMenuMode = false;
     uint32_t levelToLoad = m_levelToLoad->first;
     m_levelToLoad = {};
-    return {m_currentLevelState, levelToLoad, m_playerConf->m_previousMenuMode == MenuMode_e::LOAD_CUSTOM_LEVEL};
+    return {m_currentLevelState, levelToLoad, playerConf.m_previousMenuMode == MenuMode_e::LOAD_CUSTOM_LEVEL};
 }
 
 //===================================================================
@@ -132,6 +132,7 @@ LevelState MainEngine::mainLoop(uint32_t levelNum, LevelState_e levelState, bool
     std::chrono::time_point<std::chrono::system_clock> clock/*, clockFrame*/;
     clock = std::chrono::system_clock::now();
     m_physicalEngine.updateMousePos();
+    PlayerConfComponent playerConf = m_ecsManager.getComponentManager().getPlayerConfComp();
     do
     {
         elapsed_seconds = std::chrono::system_clock::now() - clock;
@@ -175,13 +176,12 @@ LevelState MainEngine::mainLoop(uint32_t levelNum, LevelState_e levelState, bool
         m_graphicEngine.runIteration(m_gamePaused);
         //MUUUUUUUUUUUUSSSSS
         m_audioEngine.runIteration();
-        assert(m_playerConf);
-        if(m_playerConf->m_checkpointReached)
+        if(playerConf.m_checkpointReached)
         {
             //MEM ENTITIES TO DELETE WHEN CHECKPOINT IS REACHED
             m_currentEntitiesDelete = m_memStaticEntitiesDeletedFromCheckpoint;
-            saveGameProgressCheckpoint(levelNum, *m_playerConf->m_checkpointReached, *m_playerConf->m_currentCheckpoint);
-            m_playerConf->m_checkpointReached = {};
+            saveGameProgressCheckpoint(levelNum, *playerConf.m_checkpointReached, *playerConf.m_currentCheckpoint);
+            playerConf.m_checkpointReached = {};
         }
         //level end
         if(m_levelEnd)
@@ -189,8 +189,8 @@ LevelState MainEngine::mainLoop(uint32_t levelNum, LevelState_e levelState, bool
             m_currentLevelState = LevelState_e::LEVEL_END;
             clearCheckpointData();
             //end level
-            m_playerConf->m_inMovement = false;
-            m_playerConf->m_infoWriteData = {false, ""};
+            playerConf.m_inMovement = false;
+            playerConf.m_infoWriteData = {false, ""};
             savePlayerGear(true);
             m_graphicEngine.setTransition(m_gamePaused);
             displayTransitionMenu();
@@ -202,9 +202,9 @@ LevelState MainEngine::mainLoop(uint32_t levelNum, LevelState_e levelState, bool
             return {m_currentLevelState, {}, customLevel};
         }
         //Player dead
-        else if(!m_playerConf->m_life)
+        else if(!playerConf.m_life)
         {
-            m_playerConf->m_infoWriteData = {false, ""};
+            playerConf.m_infoWriteData = {false, ""};
             AudioComponent *audioComp = m_ecsManager.getComponentManager().getAudioComponent(m_playerEntity);
             assert(audioComp);
             //play death sound
@@ -230,7 +230,7 @@ void MainEngine::initLevel(uint32_t levelNum, LevelState_e levelState)
     if(beginLevel)
     {
         m_memCheckpointLevelState = std::nullopt;
-        m_playerConf->m_currentCheckpoint->first = 0;
+        m_ecsManager.getComponentManager().getPlayerConfComp().m_currentCheckpoint->first = 0;
         if(levelState == LevelState_e::NEW_GAME)
         {
             m_graphicEngine.updateSaveNum(levelNum, m_currentSave, 0, "", true);
@@ -280,8 +280,9 @@ void MainEngine::initLevel(uint32_t levelNum, LevelState_e levelState)
 void MainEngine::saveGameProgressCheckpoint(uint32_t levelNum, const PairUI_t &checkpointReached,
                                             const std::pair<uint32_t, Direction_e> &checkpointData)
 {
-    uint32_t enemiesKilled = (m_playerConf->m_enemiesKilled) ? *m_playerConf->m_enemiesKilled : 0;
-    uint32_t secretsFound = (m_playerConf->m_secretsFound) ? *m_playerConf->m_secretsFound : 0;
+    PlayerConfComponent playerConf = m_ecsManager.getComponentManager().getPlayerConfComp();
+    uint32_t enemiesKilled = (playerConf.m_enemiesKilled) ? *playerConf.m_enemiesKilled : 0;
+    uint32_t secretsFound = (playerConf.m_secretsFound) ? *playerConf.m_secretsFound : 0;
     m_memCheckpointLevelState = {levelNum, checkpointData.first, secretsFound, enemiesKilled, checkpointData.second,
                                  checkpointReached};
     //OOOK SAVE GEAR BEGIN LEVEL
@@ -297,7 +298,7 @@ void MainEngine::saveGameProgressCheckpoint(uint32_t levelNum, const PairUI_t &c
     m_memCheckpointData = {checkpointData.first, secretsFound, enemiesKilled, checkpointReached,
                            checkpointData.second, m_memEnemiesStateFromCheckpoint,
                            m_memMoveableWallCheckpointData, m_memTriggerWallMoveableWallCheckpointData,
-                           m_memStaticEntitiesDeletedFromCheckpoint, revealedMap, m_playerConf->m_card};
+                           m_memStaticEntitiesDeletedFromCheckpoint, revealedMap, playerConf.m_card};
     saveGameProgress(m_currentLevel, m_currentSave, &(*m_memCheckpointData));
 }
 
@@ -383,19 +384,22 @@ void MainEngine::savePlayerGear(bool beginLevel)
     {
         return;
     }
-    assert(m_playerConf);
+    PlayerConfComponent playerConfComp = m_ecsManager.getComponentManager().getPlayerConfComp();
+    WeaponComponent *weaponConf = m_ecsManager.getComponentManager().getWeaponComponent(
+        playerConfComp.m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::WEAPON)]);
+    assert(weaponConf);
     MemPlayerConf &playerConf = beginLevel ? m_memPlayerConfBeginLevel : m_memPlayerConfCheckpoint;
-    playerConf.m_ammunationsCount.resize(m_weaponComp->m_weaponsData.size());
-    playerConf.m_weapons.resize(m_weaponComp->m_weaponsData.size());
+    playerConf.m_ammunationsCount.resize(weaponConf->m_weaponsData.size());
+    playerConf.m_weapons.resize(weaponConf->m_weaponsData.size());
     for(uint32_t i = 0; i < playerConf.m_ammunationsCount.size(); ++i)
     {
         playerConf.m_ammunationsCount[i] =
-                m_weaponComp->m_weaponsData[i].m_ammunationsCount;
-        playerConf.m_weapons[i] = m_weaponComp->m_weaponsData[i].m_posses;
+                weaponConf->m_weaponsData[i].m_ammunationsCount;
+        playerConf.m_weapons[i] = weaponConf->m_weaponsData[i].m_posses;
     }
-    playerConf.m_currentWeapon = m_weaponComp->m_currentWeapon;
-    playerConf.m_previousWeapon = m_weaponComp->m_previousWeapon;
-    playerConf.m_life = m_playerConf->m_life;
+    playerConf.m_currentWeapon = weaponConf->m_currentWeapon;
+    playerConf.m_previousWeapon = weaponConf->m_previousWeapon;
+    playerConf.m_life = playerConf.m_life;
     m_playerMemGear = true;
     if(beginLevel)
     {
@@ -406,7 +410,7 @@ void MainEngine::savePlayerGear(bool beginLevel)
 //===================================================================
 void MainEngine::unsetFirstLaunch()
 {
-    m_playerConf->m_firstMenu = false;
+    m_ecsManager.getComponentManager().getPlayerConfComp().m_firstMenu = false;
 }
 
 //===================================================================
@@ -422,43 +426,49 @@ void MainEngine::clearMemSoundElements()
 //===================================================================
 void MainEngine::loadPlayerGear(bool beginLevel)
 {
-    assert(m_playerConf);
+    PlayerConfComponent playerConfComp = m_ecsManager.getComponentManager().getPlayerConfComp();
+    WeaponComponent *weaponConf = m_ecsManager.getComponentManager().getWeaponComponent(
+        playerConfComp.m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::WEAPON)]);
+    assert(weaponConf);
     MemPlayerConf &playerConf = beginLevel ? m_memPlayerConfBeginLevel : m_memPlayerConfCheckpoint;
-    assert(playerConf.m_ammunationsCount.size() == m_weaponComp->m_weaponsData.size());
+    assert(playerConf.m_ammunationsCount.size() == weaponConf->m_weaponsData.size());
     for(uint32_t i = 0; i < playerConf.m_ammunationsCount.size(); ++i)
     {
-        m_weaponComp->m_weaponsData[i].m_ammunationsCount = playerConf.m_ammunationsCount[i];
-        m_weaponComp->m_weaponsData[i].m_posses = playerConf.m_weapons[i];
+        weaponConf->m_weaponsData[i].m_ammunationsCount = playerConf.m_ammunationsCount[i];
+        weaponConf->m_weaponsData[i].m_posses = playerConf.m_weapons[i];
     }
-    m_weaponComp->m_currentWeapon = playerConf.m_currentWeapon;
-    m_weaponComp->m_previousWeapon = playerConf.m_previousWeapon;
-    m_playerConf->m_life = playerConf.m_life;
+    weaponConf->m_currentWeapon = playerConf.m_currentWeapon;
+    weaponConf->m_previousWeapon = playerConf.m_previousWeapon;
+    playerConfComp.m_life = playerConf.m_life;
     StaticDisplaySystem *staticDisplay = m_ecsManager.getSystemManager().
             searchSystemByType<StaticDisplaySystem>(static_cast<uint32_t>(Systems_e::STATIC_DISPLAY_SYSTEM));
     assert(staticDisplay);
     //update FPS weapon sprite
     //weapon type weapon sprite
-    staticDisplay->setWeaponSprite(m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::WEAPON)],
-            m_weaponComp->m_weaponsData[m_weaponComp->m_currentWeapon].m_memPosSprite.first);
+    staticDisplay->setWeaponSprite(playerConfComp.m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::WEAPON)],
+            weaponConf->m_weaponsData[weaponConf->m_currentWeapon].m_memPosSprite.first);
 }
 
 //===================================================================
 void MainEngine::displayTransitionMenu(MenuMode_e mode, bool redTransition)
 {
+    PlayerConfComponent playerConf = m_ecsManager.getComponentManager().getPlayerConfComp();
     float topEpiloguePosition;
-    m_playerConf->m_menuMode = mode;
-    setMenuEntries(*m_playerConf);
-    assert(m_writeConf);
+    playerConf.m_menuMode = mode;
+    setMenuEntries(playerConf);
+    WriteComponent *writeConf = m_ecsManager.getComponentManager().getWriteComponent(
+        playerConf.m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::TITLE_MENU)]);
+    assert(writeConf);
     if(mode == MenuMode_e::LEVEL_EPILOGUE)
     {
-        topEpiloguePosition = getTopEpilogueVerticalPosition(m_writeConf);
-        m_writeConf->m_upLeftPositionGL.second = -1.0f;
+        topEpiloguePosition = getTopEpilogueVerticalPosition(writeConf);
+        writeConf->m_upLeftPositionGL.second = -1.0f;
         m_audioEngine.playEpilogueMusic();
     }
     m_gamePaused = true;
     m_physicalEngine.setModeTransitionMenu(true);
     m_graphicEngine.mainDisplay(m_gamePaused);
-    m_playerConf->m_currentCursorPos = 0;
+    playerConf.m_currentCursorPos = 0;
     m_graphicEngine.unsetTransition(m_gamePaused, redTransition);
     do
     {
@@ -466,8 +476,8 @@ void MainEngine::displayTransitionMenu(MenuMode_e mode, bool redTransition)
         m_physicalEngine.runIteration(m_gamePaused);
         if(mode == MenuMode_e::LEVEL_EPILOGUE)
         {
-            m_writeConf->m_upLeftPositionGL.second += 0.005f;
-            if(m_writeConf->m_upLeftPositionGL.second > topEpiloguePosition)
+            writeConf->m_upLeftPositionGL.second += 0.005f;
+            if(writeConf->m_upLeftPositionGL.second > topEpiloguePosition)
             {
                 m_gamePaused = false;
             }
@@ -475,9 +485,9 @@ void MainEngine::displayTransitionMenu(MenuMode_e mode, bool redTransition)
     }while(m_gamePaused);
     m_physicalEngine.setModeTransitionMenu(false);
     m_graphicEngine.setTransition(true);
-    if(m_playerConf->m_menuMode == MenuMode_e::TRANSITION_LEVEL)
+    if(playerConf.m_menuMode == MenuMode_e::TRANSITION_LEVEL)
     {
-        m_graphicEngine.fillMenuWrite(*m_writeConf, MenuMode_e::BASE);
+        m_graphicEngine.fillMenuWrite(*writeConf, MenuMode_e::BASE);
     }
 }
 
@@ -512,9 +522,13 @@ void MainEngine::confPlayerVisibleShoot(std::vector<uint32_t> &playerVisibleShot
 //===================================================================
 void MainEngine::playerAttack(uint32_t playerEntity, PlayerConfComponent &playerComp, const PairFloat_t &point, float degreeAngle)
 {
-    assert(m_weaponComp->m_currentWeapon < m_weaponComp->m_weaponsData.size());
-    WeaponData &currentWeapon = m_weaponComp->m_weaponsData[
-            m_weaponComp->m_currentWeapon];
+    PlayerConfComponent playerConfComp = m_ecsManager.getComponentManager().getPlayerConfComp();
+    WeaponComponent *weaponConf = m_ecsManager.getComponentManager().getWeaponComponent(
+        playerConfComp.m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::WEAPON)]);
+    assert(weaponConf);
+    assert(weaponConf->m_currentWeapon < weaponConf->m_weaponsData.size());
+    WeaponData &currentWeapon = weaponConf->m_weaponsData[
+            weaponConf->m_currentWeapon];
     AttackType_e attackType = currentWeapon.m_attackType;
     if(attackType == AttackType_e::MELEE)
     {
@@ -558,8 +572,8 @@ void MainEngine::playerAttack(uint32_t playerEntity, PlayerConfComponent &player
         assert(currentWeapon.m_visibleShootEntities);
         confPlayerVisibleShoot((*currentWeapon.m_visibleShootEntities), point, degreeAngle);
     }
-    assert(m_weaponComp->m_weaponsData[m_weaponComp->m_currentWeapon].m_ammunationsCount > 0);
-    --m_weaponComp->m_weaponsData[m_weaponComp->m_currentWeapon].m_ammunationsCount;
+    assert(weaponConf->m_weaponsData[weaponConf->m_currentWeapon].m_ammunationsCount > 0);
+    --weaponConf->m_weaponsData[weaponConf->m_currentWeapon].m_ammunationsCount;
 }
 
 //===================================================================
@@ -621,7 +635,7 @@ void MainEngine::setUnsetPaused()
     m_gamePaused = !m_gamePaused;
     if(m_gamePaused)
     {
-        m_playerConf->m_currentCursorPos = 0;
+        m_ecsManager.getComponentManager().getPlayerConfComp().m_currentCursorPos = 0;
         memTimerPausedValue();
     }
     else
@@ -642,7 +656,6 @@ void MainEngine::updateTriggerWallMoveableWallDataCheckpoint(const std::pair<uin
 //===================================================================
 void MainEngine::clearLevel()
 {
-    m_playerConf = nullptr;
     m_audioEngine.clearSourceAndBuffer();
     m_physicalEngine.clearSystems();
     m_graphicEngine.clearSystems();
@@ -1079,13 +1092,14 @@ void MainEngine::loadGameProgressCheckpoint()
     assert(moveComp);
     PositionVertexComponent *pos = m_ecsManager.getComponentManager().getPosVertexComponent(m_playerEntity);
     assert(pos);
+    PlayerConfComponent playerConf = m_ecsManager.getComponentManager().getPlayerConfComp();
     mapComp->m_absoluteMapPositionPX = getCenteredAbsolutePosition(m_memCheckpointLevelState->m_playerPos);
     moveComp->m_degreeOrientation = getDegreeAngleFromDirection(m_memCheckpointLevelState->m_direction);
     m_memStaticEntitiesDeletedFromCheckpoint = m_currentEntitiesDelete;
     updatePlayerArrow(*moveComp, *pos);
-    m_playerConf->m_currentCheckpoint = {m_memCheckpointLevelState->m_checkpointNum, m_memCheckpointLevelState->m_direction};
-    m_playerConf->m_enemiesKilled = m_memCheckpointLevelState->m_ennemiesKilled;
-    m_playerConf->m_secretsFound = m_memCheckpointLevelState->m_secretsFound;
+    playerConf.m_currentCheckpoint = {m_memCheckpointLevelState->m_checkpointNum, m_memCheckpointLevelState->m_direction};
+    playerConf.m_enemiesKilled = m_memCheckpointLevelState->m_ennemiesKilled;
+    playerConf.m_secretsFound = m_memCheckpointLevelState->m_secretsFound;
 }
 
 //===================================================================
@@ -1887,23 +1901,26 @@ void MainEngine::setMenuEntries(PlayerConfComponent &playerComp, std::optional<u
         playerComp.m_menuMode = MenuMode_e::BASE;
         return;
     }
-    m_playerConf->m_currentCursorPos = cursorPos ? *cursorPos : 0;
+    m_ecsManager.getComponentManager().getPlayerConfComp().m_currentCursorPos = cursorPos ? *cursorPos : 0;
     //TITLE MENU
     WriteComponent *writeComp = m_ecsManager.getComponentManager().getWriteComponent(
         playerComp.m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::TITLE_MENU)]);
     assert(writeComp);
     m_graphicEngine.fillTitleMenuWrite(*writeComp, playerComp.m_menuMode, playerComp.m_previousMenuMode);
     //MENU ENTRIES
-    m_writeConf->m_upLeftPositionGL = MAP_MENU_DATA.at(playerComp.m_menuMode).first;
-    if(m_writeConf->m_vectMessage.empty())
+    WriteComponent *writeConf = m_ecsManager.getComponentManager().getWriteComponent(
+            playerComp.m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::TITLE_MENU)]);
+    assert(writeConf);
+    writeConf->m_upLeftPositionGL = MAP_MENU_DATA.at(playerComp.m_menuMode).first;
+    if(writeConf->m_vectMessage.empty())
     {
-        m_writeConf->addTextLine({{}, ""});
+        writeConf->addTextLine({{}, ""});
     }
     //SELECTED MENU ENTRY
     writeComp = m_ecsManager.getComponentManager().getWriteComponent(
         playerComp.m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_SELECTED_LINE)]);
     assert(writeComp);
-    m_graphicEngine.fillMenuWrite(*m_writeConf, playerComp.m_menuMode, playerComp.m_currentCursorPos,
+    m_graphicEngine.fillMenuWrite(*writeConf, playerComp.m_menuMode, playerComp.m_currentCursorPos,
                                   {&playerComp, m_currentLevelSecretsNumber, m_currentLevelEnemiesNumber});
     if(playerComp.m_menuMode == MenuMode_e::LEVEL_PROLOGUE ||
             playerComp.m_menuMode == MenuMode_e::LEVEL_EPILOGUE ||
@@ -1911,7 +1928,7 @@ void MainEngine::setMenuEntries(PlayerConfComponent &playerComp, std::optional<u
     {
         return;
     }
-    m_graphicEngine.confMenuSelectedLine(playerComp, *writeComp, *m_writeConf);
+    m_graphicEngine.confMenuSelectedLine(playerComp, *writeComp, *writeConf);
     if(playerComp.m_menuMode == MenuMode_e::INPUT)
     {
         updateConfirmLoadingMenuInfo(playerComp);
@@ -1934,11 +1951,11 @@ void MainEngine::setMenuEntries(PlayerConfComponent &playerComp, std::optional<u
             playerComp.m_menuMode == MenuMode_e::LOAD_CUSTOM_LEVEL || playerComp.m_menuMode == MenuMode_e::NEW_GAME ||
             playerComp.m_menuMode == MenuMode_e::TITLE || playerComp.m_menuMode == MenuMode_e::BASE)
     {
-        m_writeConf->m_vectMessage[0].first = m_writeConf->m_upLeftPositionGL.first;
+        writeConf->m_vectMessage[0].first = writeConf->m_upLeftPositionGL.first;
     }
     else
     {
-        m_writeConf->m_vectMessage[0].first = {};
+        writeConf->m_vectMessage[0].first = {};
     }
     m_graphicEngine.updateMenuCursorPosition(playerComp);
 }
@@ -2094,20 +2111,20 @@ void MainEngine::validDisplayMenu()
 //===================================================================
 void MainEngine::reinitPlayerGear()
 {
+    PlayerConfComponent playerConf = m_ecsManager.getComponentManager().getPlayerConfComp();
     WeaponComponent *weaponComp = m_ecsManager.getComponentManager().getWeaponComponent(
-        m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_ENTRIES)]);
+        playerConf.m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_ENTRIES)]);
     //if first launch return
     if(!weaponComp)
     {
         return;
     }
-    assert(m_playerConf);
-    m_playerConf->m_card.clear();
-    m_playerConf->m_checkpointReached = {};
-    m_playerConf->m_currentCheckpoint = {};
-    m_playerConf->m_enemiesKilled = {};
-    m_playerConf->m_life = 100;
-    m_playerConf->m_secretsFound = {};
+    playerConf.m_card.clear();
+    playerConf.m_checkpointReached = {};
+    playerConf.m_currentCheckpoint = {};
+    playerConf.m_enemiesKilled = {};
+    playerConf.m_life = 100;
+    playerConf.m_secretsFound = {};
     for(uint32_t i = 0; i < weaponComp->m_weaponsData.size(); ++i)
     {
         weaponComp->m_weaponsData[i].m_posses = m_vectMemWeaponsDefault[i].first;
@@ -2118,8 +2135,7 @@ void MainEngine::reinitPlayerGear()
 //===================================================================
 void MainEngine::setInfoDataWrite(std::string_view message)
 {
-    assert(m_playerConf);
-    m_playerConf->m_infoWriteData = {true, message.data()};
+    m_ecsManager.getComponentManager().getPlayerConfComp().m_infoWriteData = {true, message.data()};
 }
 
 //===================================================================
@@ -2134,13 +2150,14 @@ void MainEngine::playTriggerSound()
 //===================================================================
 void MainEngine::confMenuSelectedLine()
 {
+    PlayerConfComponent playerConf = m_ecsManager.getComponentManager().getPlayerConfComp();
     WriteComponent *writeMenuComp = m_ecsManager.getComponentManager().getWriteComponent(
-        m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_ENTRIES)]);
+        playerConf.m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_ENTRIES)]);
     assert(writeMenuComp);
     WriteComponent *writeMenuSelectedComp = m_ecsManager.getComponentManager().getWriteComponent(
-        m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_SELECTED_LINE)]);
+        playerConf.m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_SELECTED_LINE)]);
     assert(writeMenuSelectedComp);
-    m_graphicEngine.confMenuSelectedLine(*m_playerConf, *writeMenuSelectedComp, *writeMenuComp);
+    m_graphicEngine.confMenuSelectedLine(playerConf, *writeMenuSelectedComp, *writeMenuComp);
 }
 
 //===================================================================
@@ -2192,7 +2209,7 @@ bool MainEngine::loadSavedGame(uint32_t saveNum, LevelState_e levelMode)
     m_memPlayerConfBeginLevel = *savedData->m_playerConfBeginLevel;
     if(savedData->m_checkpointLevelData)
     {
-        m_playerConf->m_currentCheckpoint = {savedData->m_checkpointLevelData->m_checkpointNum, savedData->m_checkpointLevelData->m_direction};
+        m_ecsManager.getComponentManager().getPlayerConfComp().m_currentCheckpoint = {savedData->m_checkpointLevelData->m_checkpointNum, savedData->m_checkpointLevelData->m_direction};
     }
     assert(!m_memPlayerConfBeginLevel.m_ammunationsCount.empty());
     if(savedData->m_playerConfCheckpoint)
@@ -2222,9 +2239,10 @@ bool MainEngine::loadSavedGame(uint32_t saveNum, LevelState_e levelMode)
 //===================================================================
 bool MainEngine::loadCustomLevelGame(LevelState_e levelMode)
 {
+    PlayerConfComponent playerConf = m_ecsManager.getComponentManager().getPlayerConfComp();
     m_currentLevelState = levelMode;
-    m_levelToLoad = {m_playerConf->m_levelToLoad, true};
-    m_currentLevel = m_playerConf->m_levelToLoad;
+    m_levelToLoad = {playerConf.m_levelToLoad, true};
+    m_currentLevel = playerConf.m_levelToLoad;
     if(!m_memCustomLevelLoadedData)
     {
         m_memCustomLevelLoadedData = std::make_unique<MemCustomLevelLoadedData>();
@@ -2251,7 +2269,7 @@ void MainEngine::loadCheckpointSavedGame(const MemCheckpointElementsState &check
                            checkpointData.m_direction, m_memEnemiesStateFromCheckpoint,
                            m_memMoveableWallCheckpointData, m_memTriggerWallMoveableWallCheckpointData,
                            m_memStaticEntitiesDeletedFromCheckpoint, checkpointData.m_revealedMapData, checkpointData.m_card};
-    m_playerConf->m_card = m_memCheckpointData->m_card;
+    m_ecsManager.getComponentManager().getPlayerConfComp().m_card = m_memCheckpointData->m_card;
 }
 
 //===================================================================
@@ -2739,10 +2757,6 @@ void MainEngine::confStaticComponent(uint32_t entityNum, const PairFloat_t& elem
 //===================================================================
 void MainEngine::loadPlayerEntity(const LevelManager &levelManager)
 {
-    if(m_playerConf)
-    {
-        return;
-    }
     std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComponents;
     bitsetComponents[Components_e::POSITION_VERTEX_COMPONENT] = true;
     bitsetComponents[Components_e::MAP_COORD_COMPONENT] = true;
@@ -2783,8 +2797,6 @@ void MainEngine::confPlayerEntity(const LevelManager &levelManager,
     playerConf->m_levelToLoad = m_currentLevel;
     playerConf->setIDEntityAssociated(entityNum);
     playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::DISPLAY_TELEPORT)] = numDisplayTeleportEntity;
-    WeaponComponent *weaponConf = m_ecsManager.getComponentManager().getWeaponComponent(
-        playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::WEAPON)]);
     AudioComponent *audioComp = m_ecsManager.getComponentManager().getAudioComponent(entityNum);
     assert(audioComp);
     audioComp->m_soundElements.reserve(3);
@@ -2798,10 +2810,10 @@ void MainEngine::confPlayerEntity(const LevelManager &levelManager,
     assert(circleColl);
     assert(tagColl);
     assert(playerConf);
+    WeaponComponent *weaponConf = m_ecsManager.getComponentManager().getWeaponComponent(
+        playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::WEAPON)]);
     assert(weaponConf);
-    m_playerConf = playerConf;
-    m_weaponComp = weaponConf;
-    createPlayerAmmoEntities(m_playerConf, CollisionTag_e::BULLET_PLAYER_CT);
+    createPlayerAmmoEntities(playerConf, CollisionTag_e::BULLET_PLAYER_CT);
     createPlayerVisibleShotEntity(weaponConf);
     confPlayerVisibleShotsSprite(vectSpriteData, levelManager.getVisibleShootDisplayData(), weaponConf);
     createPlayerImpactEntities(vectSpriteData, weaponConf, levelManager.getImpactDisplayData());
@@ -2822,7 +2834,7 @@ void MainEngine::confPlayerEntity(const LevelManager &levelManager,
     StaticDisplaySystem *staticDisplay = m_ecsManager.getSystemManager().
             searchSystemByType<StaticDisplaySystem>(static_cast<uint32_t>(Systems_e::STATIC_DISPLAY_SYSTEM));
     assert(staticDisplay);
-    staticDisplay->setWeaponSprite(numWeaponEntity, m_weaponComp->m_weaponsData[m_weaponComp->m_currentWeapon].m_memPosSprite.first);
+    staticDisplay->setWeaponSprite(numWeaponEntity, weaponConf->m_weaponsData[weaponConf->m_currentWeapon].m_memPosSprite.first);
     confWriteEntities();
     confMenuEntities();
     confLifeAmmoPannelEntities();
@@ -2833,7 +2845,7 @@ void MainEngine::confPlayerEntity(const LevelManager &levelManager,
     {
         if(weaponConf->m_weaponsData[i].m_attackType == AttackType_e::MELEE)
         {
-            m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::HIT_MELEE)] = createDamageZoneEntity(weaponConf->m_weaponsData[i].m_weaponPower,
+            playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::HIT_MELEE)] = createDamageZoneEntity(weaponConf->m_weaponsData[i].m_weaponPower,
                                                                    CollisionTag_e::HIT_PLAYER_CT, 10.0f, levelManager.getHitSoundFile());
             break;
         }
@@ -2857,24 +2869,25 @@ void MainEngine::confActionEntity()
     genCollComp->m_active = false;
     genCollComp->m_shape = CollisionShape_e::CIRCLE_C;
     genCollComp->m_tagA = CollisionTag_e::PLAYER_ACTION_CT;
-    circleColl->m_ray = 15.0f;
-    m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::ACTION)] = entityNum;
+    circleColl->m_ray = 15.0f;    
+    m_ecsManager.getComponentManager().getPlayerConfComp().m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::ACTION)] = entityNum;
 }
 
 //===================================================================
 void MainEngine::confMapDetectShapeEntity(const PairFloat_t &playerPos)
 {
+    PlayerConfComponent playerConf = m_ecsManager.getComponentManager().getPlayerConfComp();
     std::bitset<Components_e::TOTAL_COMPONENTS> bitsetComponents;
     bitsetComponents[Components_e::GENERAL_COLLISION_COMPONENT] = true;
     bitsetComponents[Components_e::RECTANGLE_COLLISION_COMPONENT] = true;
     bitsetComponents[Components_e::MAP_COORD_COMPONENT] = true;
-    m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MAP_DETECT_SHAPE)] = m_ecsManager.addEntity(bitsetComponents);
+    playerConf.m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MAP_DETECT_SHAPE)] = m_ecsManager.addEntity(bitsetComponents);
     RectangleCollisionComponent *rectColl = m_ecsManager.getComponentManager().getRectangleCollisionComponent(
-        m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MAP_DETECT_SHAPE)]);
+        playerConf.m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MAP_DETECT_SHAPE)]);
     MapCoordComponent *mapComp= m_ecsManager.getComponentManager().getMapCoordComponent(
-        m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MAP_DETECT_SHAPE)]);
+        playerConf.m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MAP_DETECT_SHAPE)]);
     GeneralCollisionComponent *genComp = m_ecsManager.getComponentManager().getGeneralCollisionComponent(
-        m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MAP_DETECT_SHAPE)]);
+        playerConf.m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MAP_DETECT_SHAPE)]);
     assert(rectColl);
     assert(mapComp);
     assert(genComp);
@@ -2972,6 +2985,10 @@ void MainEngine::confWriteEntities()
     uint32_t numAmmoWrite = createWriteEntity(), numInfoWrite = createWriteEntity(), numLifeWrite = createWriteEntity(),
             numMenuWrite = createWriteEntity(), numTitleMenuWrite = createWriteEntity(),
             numInputModeMenuWrite = createWriteEntity(), numMenuSelectedLineWrite = createWriteEntity();
+    PlayerConfComponent &playerConf = m_ecsManager.getComponentManager().getPlayerConfComp();
+    WeaponComponent *weaponConf = m_ecsManager.getComponentManager().getWeaponComponent(
+        playerConf.m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::WEAPON)]);
+    assert(weaponConf);
     //INFO
     WriteComponent *writeConf = m_ecsManager.getComponentManager().getWriteComponent(numInfoWrite);
     assert(writeConf);
@@ -2984,18 +3001,17 @@ void MainEngine::confWriteEntities()
     writeConf->m_upLeftPositionGL = {-0.8f, -0.9f};
     writeConf->m_fontSize = STD_FONT_SIZE;
     writeConf->addTextLine({writeConf->m_upLeftPositionGL.first, ""});
-    m_graphicEngine.updateAmmoCount(*writeConf, *m_weaponComp);
+    m_graphicEngine.updateAmmoCount(*writeConf, *weaponConf);
     //LIFE
     writeConf = m_ecsManager.getComponentManager().getWriteComponent(numLifeWrite);
     assert(writeConf);
     writeConf->m_upLeftPositionGL = {-0.8f, -0.8f};
     writeConf->m_fontSize = STD_FONT_SIZE;
     writeConf->addTextLine({writeConf->m_upLeftPositionGL.first, ""});
-    m_graphicEngine.updatePlayerLife(*writeConf, *m_playerConf);
+    m_graphicEngine.updatePlayerLife(*writeConf, playerConf);
     //MENU
     writeConf = m_ecsManager.getComponentManager().getWriteComponent(numMenuWrite);
     assert(writeConf);
-    m_writeConf = writeConf;
     writeConf->m_fontSize = MENU_FONT_SIZE;
     //TITLE MENU
     writeConf = m_ecsManager.getComponentManager().getWriteComponent(numTitleMenuWrite);
@@ -3010,17 +3026,17 @@ void MainEngine::confWriteEntities()
     writeConf->m_fontSize = MENU_FONT_SIZE;
     confWriteEntitiesDisplayMenu();
     confWriteEntitiesInputMenu();
-    m_playerConf->m_menuMode = MenuMode_e::BASE;
-    m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_ENTRIES)] = numMenuWrite;
-    m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::TITLE_MENU)] = numTitleMenuWrite;
-    m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_INFO_WRITE)] = numInputModeMenuWrite;
-    m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_SELECTED_LINE)] = numMenuSelectedLineWrite;
+    playerConf.m_menuMode = MenuMode_e::BASE;
+    playerConf.m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_ENTRIES)] = numMenuWrite;
+    playerConf.m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::TITLE_MENU)] = numTitleMenuWrite;
+    playerConf.m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_INFO_WRITE)] = numInputModeMenuWrite;
+    playerConf.m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_SELECTED_LINE)] = numMenuSelectedLineWrite;
     WriteComponent *writeComp = m_ecsManager.getComponentManager().getWriteComponent(
-        m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::TITLE_MENU)]);
+        playerConf.m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::TITLE_MENU)]);
     assert(writeComp);
     writeConf->addTextLine({-0.3f, ""});
     WriteComponent *writeCompTitle = m_ecsManager.getComponentManager().getWriteComponent(
-        m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::TITLE_MENU)]);
+        playerConf.m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::TITLE_MENU)]);
     assert(writeCompTitle);
     writeCompTitle->m_fontSpriteData.emplace_back(VectSpriteDataRef_t{});
 
@@ -3031,10 +3047,10 @@ void MainEngine::confWriteEntities()
     writeComp->m_fontSize = MENU_FONT_SIZE;
     writeComp->m_fontType = Font_e::SELECTED;
 
-    setMenuEntries(*m_playerConf);
-    m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::AMMO_WRITE)] = numAmmoWrite;
-    m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::LIFE_WRITE)] = numLifeWrite;
-    m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::NUM_INFO_WRITE)] = numInfoWrite;
+    setMenuEntries(playerConf);
+    playerConf.m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::AMMO_WRITE)] = numAmmoWrite;
+    playerConf.m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::LIFE_WRITE)] = numLifeWrite;
+    playerConf.m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::NUM_INFO_WRITE)] = numInfoWrite;
 }
 
 //===================================================================
@@ -3100,7 +3116,7 @@ void MainEngine::confWriteEntitiesInputMenu()
 void MainEngine::confMenuEntities()
 {
     assert(m_memBackgroundGenericMenu);
-    m_playerConf->m_menuMode = MenuMode_e::BASE;
+    m_ecsManager.getComponentManager().getPlayerConfComp().m_menuMode = MenuMode_e::BASE;
     confMenuEntity(PlayerEntities_e::MENU_TITLE_BACKGROUND);
     confMenuEntity(PlayerEntities_e::MENU_GENERIC_BACKGROUND);
     confMenuEntity(PlayerEntities_e::MENU_LEFT_BACKGROUND);
@@ -3115,7 +3131,7 @@ void MainEngine::confMenuEntity(PlayerEntities_e entityType)
     SpriteTextureComponent *spriteComp = m_ecsManager.getComponentManager().getSpriteTextureComponent(backgroundEntity);
     assert(posVertex);
     assert(spriteComp);
-    m_playerConf->m_vectEntities[static_cast<uint32_t>(entityType)] = backgroundEntity;
+    m_ecsManager.getComponentManager().getPlayerConfComp().m_vectEntities[static_cast<uint32_t>(entityType)] = backgroundEntity;
     if(entityType == PlayerEntities_e::MENU_GENERIC_BACKGROUND)
     {
         spriteComp->m_spriteData = m_memBackgroundGenericMenu;
@@ -3146,13 +3162,14 @@ void MainEngine::confMenuEntity(PlayerEntities_e entityType)
 //===================================================================
 void MainEngine::confLifeAmmoPannelEntities()
 {
+    PlayerConfComponent playerConf = m_ecsManager.getComponentManager().getPlayerConfComp();
     //PANNEL
     uint32_t lifeAmmoPannelEntity = createSimpleSpriteEntity();
     PositionVertexComponent *posCursor = m_ecsManager.getComponentManager().getPosVertexComponent(lifeAmmoPannelEntity);
     SpriteTextureComponent *spriteCursor = m_ecsManager.getComponentManager().getSpriteTextureComponent(lifeAmmoPannelEntity);
     assert(posCursor);
     assert(spriteCursor);
-    m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::LIFE_AMMO_PANNEL)] = lifeAmmoPannelEntity;
+    playerConf.m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::LIFE_AMMO_PANNEL)] = lifeAmmoPannelEntity;
     spriteCursor->m_spriteData = m_memPannel;
     posCursor->m_vertex.reserve(4);
     float up = -0.78f, down = -0.97f, left = -0.97f, right = -0.625f;
@@ -3163,7 +3180,7 @@ void MainEngine::confLifeAmmoPannelEntities()
     spriteCursor = m_ecsManager.getComponentManager().getSpriteTextureComponent(lifeIconEntity);
     assert(posCursor);
     assert(spriteCursor);
-    m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::LIFE_ICON)] = lifeIconEntity;
+    playerConf.m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::LIFE_ICON)] = lifeIconEntity;
     spriteCursor->m_spriteData = m_memLifeIcon;
     posCursor->m_vertex.reserve(4);
     up = -0.8f, down = -0.87f, left = -0.95f, right = -0.9f;
@@ -3174,7 +3191,7 @@ void MainEngine::confLifeAmmoPannelEntities()
     spriteCursor = m_ecsManager.getComponentManager().getSpriteTextureComponent(ammoIconEntity);
     assert(posCursor);
     assert(spriteCursor);
-    m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::AMMO_ICON)] = ammoIconEntity;
+    playerConf.m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::AMMO_ICON)] = ammoIconEntity;
     spriteCursor->m_spriteData = m_memAmmoIcon;
     posCursor->m_vertex.reserve(4);
     up = -0.9f, down = -0.95f, left = -0.95f, right = -0.9f;
@@ -3185,15 +3202,16 @@ void MainEngine::confLifeAmmoPannelEntities()
 //===================================================================
 void MainEngine::confWeaponsPreviewEntities()
 {
-    m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::CURSOR_WEAPON_PREVIEW)] = createSimpleSpriteEntity();
+    PlayerConfComponent playerConf = m_ecsManager.getComponentManager().getPlayerConfComp();
+    playerConf.m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::CURSOR_WEAPON_PREVIEW)] = createSimpleSpriteEntity();
     SpriteTextureComponent *spriteCursor = m_ecsManager.getComponentManager().getSpriteTextureComponent(
-        m_playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::CURSOR_WEAPON_PREVIEW)]);
+        playerConf.m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::CURSOR_WEAPON_PREVIEW)]);
     assert(spriteCursor);
     spriteCursor->m_spriteData = m_memPannel;
-    for(uint32_t i = 0; i < m_playerConf->m_vectPossessedWeaponsPreviewEntities.size(); ++i)
+    for(uint32_t i = 0; i < playerConf.m_vectPossessedWeaponsPreviewEntities.size(); ++i)
     {
-        m_playerConf->m_vectPossessedWeaponsPreviewEntities[i] = createSimpleSpriteEntity();
-        spriteCursor = m_ecsManager.getComponentManager().getSpriteTextureComponent(m_playerConf->m_vectPossessedWeaponsPreviewEntities[i]);
+        playerConf.m_vectPossessedWeaponsPreviewEntities[i] = createSimpleSpriteEntity();
+        spriteCursor = m_ecsManager.getComponentManager().getSpriteTextureComponent(playerConf.m_vectPossessedWeaponsPreviewEntities[i]);
         assert(spriteCursor);
         switch(i)
         {

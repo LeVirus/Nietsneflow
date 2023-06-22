@@ -722,7 +722,7 @@ void FirstPersonDisplaySystem::drawTextureBackground()
     }
     if(m_ceilingTiledTextBackground)
     {
-        numCom = m_newComponentManager.getComponentEmplacement(*m_ceilingSimpleTextBackground, Components_e::SPRITE_TEXTURE_COMPONENT);
+        numCom = m_newComponentManager.getComponentEmplacement(*m_ceilingTiledTextBackground, Components_e::SPRITE_TEXTURE_COMPONENT);
         assert(numCom);
         SpriteTextureComponent &spriteComp = m_componentsContainer.m_vectSpriteTextureComp[*numCom];
         m_ptrVectTexture->operator[](static_cast<uint32_t>(spriteComp.m_spriteData->m_textureNum)).bind();

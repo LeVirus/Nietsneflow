@@ -66,45 +66,20 @@ void ColorDisplaySystem::addColorSystemEntity(uint32_t entity)
 //===================================================================
 void ColorDisplaySystem::addFogColorEntity(uint32_t entity)
 {
-    PositionVertexComponent *posComp = m_newComponentManager.getPosVertexComponent(entity);
-    ColorVertexComponent *colorComp = m_newComponentManager.getColorVertexComponent(entity);
-    assert(posComp);
-    assert(colorComp);
-    m_fogComponent = {posComp, colorComp};
+    m_fogNum = entity;
 }
 
 //===================================================================
 void ColorDisplaySystem::loadColorEntities(uint32_t damage, uint32_t getObject, uint32_t transition, uint32_t scratchEntity,
                                            uint32_t musicVolume, uint32_t effectVolume, uint32_t turnSensitivity)
 {
-    m_damageMemComponents.first = m_newComponentManager.getPosVertexComponent(damage);
-    m_damageMemComponents.second = m_newComponentManager.getColorVertexComponent(damage);
-    assert(m_damageMemComponents.first);
-    assert(m_damageMemComponents.second);
-    m_getObjectMemComponents.first = m_newComponentManager.getPosVertexComponent(getObject);
-    m_getObjectMemComponents.second = m_newComponentManager.getColorVertexComponent(getObject);
-    assert(m_getObjectMemComponents.first);
-    assert(m_getObjectMemComponents.second);
-    m_transitionMemComponents.first = m_newComponentManager.getPosVertexComponent(transition);
-    m_transitionMemComponents.second = m_newComponentManager.getColorVertexComponent(transition);
-    assert(m_transitionMemComponents.first);
-    assert(m_transitionMemComponents.second);
-    m_insideWallScratchMemComponents.first = m_newComponentManager.getPosVertexComponent(scratchEntity);
-    m_insideWallScratchMemComponents.second = m_newComponentManager.getColorVertexComponent(scratchEntity);
-    assert(m_insideWallScratchMemComponents.first);
-    assert(m_insideWallScratchMemComponents.second);
-    m_menuMusicVolumeComponents.first = m_newComponentManager.getPosVertexComponent(musicVolume);
-    m_menuMusicVolumeComponents.second = m_newComponentManager.getColorVertexComponent(musicVolume);
-    assert(m_menuMusicVolumeComponents.first);
-    assert(m_menuMusicVolumeComponents.second);
-    m_menuEffectsVolumeComponents.first = m_newComponentManager.getPosVertexComponent(effectVolume);
-    m_menuEffectsVolumeComponents.second = m_newComponentManager.getColorVertexComponent(effectVolume);
-    assert(m_menuEffectsVolumeComponents.first);
-    assert(m_menuEffectsVolumeComponents.second);
-    m_menuTurnSensitivityComponents.first = m_newComponentManager.getPosVertexComponent(turnSensitivity);
-    m_menuTurnSensitivityComponents.second = m_newComponentManager.getColorVertexComponent(turnSensitivity);
-    assert(m_menuTurnSensitivityComponents.first);
-    assert(m_menuTurnSensitivityComponents.second);
+    m_damageNum = damage;
+    m_getObjectNum = getObject;
+    m_transitionNum = transition;
+    m_insideWallScratchMemNum = scratchEntity;
+    m_menuMusicVolumeNum = musicVolume;
+    m_menuEffectsVolumeNum = effectVolume;
+    m_menuTurnSensitivityNum = turnSensitivity;
 }
 
 //===================================================================
@@ -118,69 +93,104 @@ void ColorDisplaySystem::drawEntity(const PositionVertexComponent *posComp, cons
 //===================================================================
 void ColorDisplaySystem::drawBackgroundFog()
 {
-    drawEntity(m_fogComponent.first, m_fogComponent.second);
+    PositionVertexComponent *posComp = m_newComponentManager.getPosVertexComponent(*m_fogNum);
+    ColorVertexComponent *colorComp = m_newComponentManager.getColorVertexComponent(*m_fogNum);
+    assert(posComp);
+    assert(colorComp);
+    drawEntity(posComp, colorComp);
 }
 
 //===================================================================
 void ColorDisplaySystem::drawVisibleDamage()
 {
-    drawEntity(m_damageMemComponents.first, m_damageMemComponents.second);
+    PositionVertexComponent *posComp = m_newComponentManager.getPosVertexComponent(*m_damageNum);
+    ColorVertexComponent *colorComp = m_newComponentManager.getColorVertexComponent(*m_damageNum);
+    assert(posComp);
+    assert(colorComp);
+    drawEntity(posComp, colorComp);
 }
 
 //===================================================================
 void ColorDisplaySystem::drawSoundMenuBars()
 {
-    drawEntity(m_menuMusicVolumeComponents.first, m_menuMusicVolumeComponents.second);
-    drawEntity(m_menuEffectsVolumeComponents.first, m_menuEffectsVolumeComponents.second);
+    PositionVertexComponent *posComp = m_newComponentManager.getPosVertexComponent(*m_menuMusicVolumeNum);
+    ColorVertexComponent *colorComp = m_newComponentManager.getColorVertexComponent(*m_menuMusicVolumeNum);
+    assert(posComp);
+    assert(colorComp);
+    drawEntity(posComp, colorComp);
+    posComp = m_newComponentManager.getPosVertexComponent(*m_menuEffectsVolumeNum);
+    colorComp = m_newComponentManager.getColorVertexComponent(*m_menuEffectsVolumeNum);
+    assert(posComp);
+    assert(colorComp);
+    drawEntity(posComp, colorComp);
 }
 
 //===================================================================
 void ColorDisplaySystem::drawInputMenuBar()
 {
-    drawEntity(m_menuTurnSensitivityComponents.first, m_menuTurnSensitivityComponents.second);
+    PositionVertexComponent *posComp = m_newComponentManager.getPosVertexComponent(*m_menuTurnSensitivityNum);
+    ColorVertexComponent *colorComp = m_newComponentManager.getColorVertexComponent(*m_menuTurnSensitivityNum);
+    assert(posComp);
+    assert(colorComp);
+    drawEntity(posComp, colorComp);
 }
 
 //===================================================================
 void ColorDisplaySystem::drawScratchWall()
 {
-    drawEntity(m_insideWallScratchMemComponents.first, m_insideWallScratchMemComponents.second);
+    PositionVertexComponent *posComp = m_newComponentManager.getPosVertexComponent(*m_insideWallScratchMemNum);
+    ColorVertexComponent *colorComp = m_newComponentManager.getColorVertexComponent(*m_insideWallScratchMemNum);
+    assert(posComp);
+    assert(colorComp);
+    drawEntity(posComp, colorComp);
 }
 
 //===================================================================
 void ColorDisplaySystem::drawVisiblePickUpObject()
 {
-    drawEntity(m_getObjectMemComponents.first, m_getObjectMemComponents.second);
+    PositionVertexComponent *posComp = m_newComponentManager.getPosVertexComponent(*m_getObjectNum);
+    ColorVertexComponent *colorComp = m_newComponentManager.getColorVertexComponent(*m_getObjectNum);
+    assert(posComp);
+    assert(colorComp);
+    drawEntity(posComp, colorComp);
 }
 
 //===================================================================
 void ColorDisplaySystem::setTransition(uint32_t current, uint32_t total)
 {
-    assert(m_transitionMemComponents.first);
-    assert(m_transitionMemComponents.second);
+    PositionVertexComponent *posComp = m_newComponentManager.getPosVertexComponent(*m_transitionNum);
+    ColorVertexComponent *colorComp = m_newComponentManager.getColorVertexComponent(*m_transitionNum);
+    assert(posComp);
+    assert(colorComp);
+    drawEntity(posComp, colorComp);
     float currentTransparency = static_cast<float>(current) / static_cast<float>(total);
-    std::get<3>(m_transitionMemComponents.second->m_vertex[0]) = currentTransparency;
-    std::get<3>(m_transitionMemComponents.second->m_vertex[1]) = currentTransparency;
-    std::get<3>(m_transitionMemComponents.second->m_vertex[2]) = currentTransparency;
-    std::get<3>(m_transitionMemComponents.second->m_vertex[3]) = currentTransparency;
-    drawEntity(m_transitionMemComponents.first, m_transitionMemComponents.second);
+    std::get<3>(colorComp->m_vertex[0]) = currentTransparency;
+    std::get<3>(colorComp->m_vertex[1]) = currentTransparency;
+    std::get<3>(colorComp->m_vertex[2]) = currentTransparency;
+    std::get<3>(colorComp->m_vertex[3]) = currentTransparency;
+    drawEntity(posComp, colorComp);
 }
 
 //===================================================================
 void ColorDisplaySystem::setRedTransition()
 {
-    std::get<0>(m_transitionMemComponents.second->m_vertex[0]) = 0.8f;
-    std::get<0>(m_transitionMemComponents.second->m_vertex[1]) = 0.8f;
-    std::get<0>(m_transitionMemComponents.second->m_vertex[2]) = 0.8f;
-    std::get<0>(m_transitionMemComponents.second->m_vertex[3]) = 0.8f;
+    ColorVertexComponent *colorComp = m_newComponentManager.getColorVertexComponent(*m_transitionNum);
+    assert(colorComp);
+    std::get<0>(colorComp->m_vertex[0]) = 0.8f;
+    std::get<0>(colorComp->m_vertex[1]) = 0.8f;
+    std::get<0>(colorComp->m_vertex[2]) = 0.8f;
+    std::get<0>(colorComp->m_vertex[3]) = 0.8f;
 }
 
 //===================================================================
 void ColorDisplaySystem::unsetRedTransition()
 {
-    std::get<0>(m_transitionMemComponents.second->m_vertex[0]) = 0.0f;
-    std::get<0>(m_transitionMemComponents.second->m_vertex[1]) = 0.0f;
-    std::get<0>(m_transitionMemComponents.second->m_vertex[2]) = 0.0f;
-    std::get<0>(m_transitionMemComponents.second->m_vertex[3]) = 0.0f;
+    ColorVertexComponent *colorComp = m_newComponentManager.getColorVertexComponent(*m_transitionNum);
+    assert(colorComp);
+    std::get<0>(colorComp->m_vertex[0]) = 0.0f;
+    std::get<0>(colorComp->m_vertex[1]) = 0.0f;
+    std::get<0>(colorComp->m_vertex[2]) = 0.0f;
+    std::get<0>(colorComp->m_vertex[3]) = 0.0f;
 }
 
 //===================================================================
@@ -198,23 +208,29 @@ void ColorDisplaySystem::clearEntities()
 //===================================================================
 void ColorDisplaySystem::updateMusicVolumeBar(uint32_t volume)
 {
+    PositionVertexComponent *posComp = m_newComponentManager.getPosVertexComponent(*m_menuMusicVolumeNum);
+    assert(posComp);
     float newVal = LEFT_POS_STD_MENU_BAR + 0.01f + (volume * MAX_BAR_MENU_SIZE) / 100.0f;
-    m_menuMusicVolumeComponents.first->m_vertex[1].first = newVal;
-    m_menuMusicVolumeComponents.first->m_vertex[2].first = newVal;
+    posComp->m_vertex[1].first = newVal;
+    posComp->m_vertex[2].first = newVal;
 }
 
 //===================================================================
 void ColorDisplaySystem::updateEffectsVolumeBar(uint32_t volume)
 {
+    PositionVertexComponent *posComp = m_newComponentManager.getPosVertexComponent(*m_menuEffectsVolumeNum);
+    assert(posComp);
     float newVal = LEFT_POS_STD_MENU_BAR + 0.01f + (volume * MAX_BAR_MENU_SIZE) / 100.0f;
-    m_menuEffectsVolumeComponents.first->m_vertex[1].first = newVal;
-    m_menuEffectsVolumeComponents.first->m_vertex[2].first = newVal;
+    posComp->m_vertex[1].first = newVal;
+    posComp->m_vertex[2].first = newVal;
 }
 
 //===================================================================
 void ColorDisplaySystem::updateTurnSensitivityBar(uint32_t turnSensitivity)
 {
+    PositionVertexComponent *posComp = m_newComponentManager.getPosVertexComponent(*m_menuTurnSensitivityNum);
+    assert(posComp);
     float newVal = LEFT_POS_STD_MENU_BAR + 0.01f + ((turnSensitivity - MIN_TURN_SENSITIVITY) * MAX_BAR_MENU_SIZE) / DIFF_TOTAL_SENSITIVITY;
-    m_menuTurnSensitivityComponents.first->m_vertex[1].first = newVal;
-    m_menuTurnSensitivityComponents.first->m_vertex[2].first = newVal;
+    posComp->m_vertex[1].first = newVal;
+    posComp->m_vertex[2].first = newVal;
 }

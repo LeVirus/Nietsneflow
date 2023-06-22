@@ -6,7 +6,7 @@
 #include <OpenGLUtils/VerticesData.hpp>
 #include <ECS/NewComponentManager.hpp>
 
-using PairCompPosColor_t = std::pair<PositionVertexComponent*, ColorVertexComponent*>;
+using OptUint_t = std::optional<uint32_t>;
 
 class ColorDisplaySystem : public ecs::System
 {
@@ -46,12 +46,12 @@ private:
     ComponentsGroup &m_componentsContainer;
     Shader *m_shader;
     VerticesData m_verticesData;
-    PairCompPosColor_t m_transitionMemComponents = {nullptr, nullptr},
-    m_damageMemComponents = {nullptr, nullptr},
-    m_getObjectMemComponents = {nullptr, nullptr},
-    m_menuMusicVolumeComponents = {nullptr, nullptr},
-    m_menuEffectsVolumeComponents = {nullptr, nullptr},
-    m_menuTurnSensitivityComponents = {nullptr, nullptr},
-    m_insideWallScratchMemComponents = {nullptr, nullptr},
-    m_fogComponent = {nullptr, nullptr};
+    OptUint_t m_transitionNum = std::nullopt,
+    m_damageNum = std::nullopt,
+    m_getObjectNum = std::nullopt,
+    m_menuMusicVolumeNum = std::nullopt,
+    m_menuEffectsVolumeNum = std::nullopt,
+    m_menuTurnSensitivityNum = std::nullopt,
+    m_insideWallScratchMemNum = std::nullopt,
+    m_fogNum = std::nullopt;
 };

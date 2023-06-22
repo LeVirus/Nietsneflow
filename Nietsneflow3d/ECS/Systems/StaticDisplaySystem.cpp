@@ -271,7 +271,6 @@ void StaticDisplaySystem::displayMenu()
             drawWriteVertex(playerComp.m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::TITLE_MENU)], VertexID_e::LIFE_WRITE);
             drawWriteVertex(playerComp.m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_SELECTED_LINE)], VertexID_e::AMMO_WRITE, Font_e::SELECTED);
         }
-
         drawWriteInfoPlayer(mVectNumEntity[i], playerComp);
         if(playerComp.m_menuMode != MenuMode_e::NEW_KEY &&
                 playerComp.m_menuMode != MenuMode_e::LEVEL_EPILOGUE &&
@@ -544,6 +543,7 @@ void StaticDisplaySystem::drawWriteVertex(uint32_t numEntity, VertexID_e type, F
     OptUint_t compNum = m_newComponentManager.getComponentEmplacement(numEntity, Components_e::WRITE_COMPONENT);
     assert(compNum);
     WriteComponent &writeComp = m_componentsContainer.m_vectWriteComp[*compNum];
+    assert(!writeComp.m_vectMessage.empty());
     compNum = m_newComponentManager.getComponentEmplacement(numEntity, Components_e::POSITION_VERTEX_COMPONENT);
     assert(compNum);
     PositionVertexComponent &posComp = m_componentsContainer.m_vectPositionVertexComp[*compNum];
@@ -558,6 +558,7 @@ void StaticDisplaySystem::drawWriteVertex(uint32_t numEntity, VertexID_e type, F
     else
     {
         writeComp.m_fontSpriteData[0] = m_fontDataPtr->getWriteData(writeComp.m_vectMessage[0].second, writeComp, font);
+        std::cerr << writeComp.m_vectMessage[0].second <<  " FFF\n";
     }
     if(type == VertexID_e::INFO)
     {

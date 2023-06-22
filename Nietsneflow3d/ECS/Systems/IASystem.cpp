@@ -72,7 +72,6 @@ void IASystem::treatEject()
 //===================================================================
 void IASystem::execSystem()
 {
-    assert(m_playerMapComp);
     System::execSystem();
     OptUint_t compNum = m_newComponentManager.getComponentEmplacement(
         m_componentsContainer.m_playerConfComp.m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::WEAPON)],
@@ -109,13 +108,16 @@ void IASystem::execSystem()
             }
             continue;
         }
+        numCom = m_newComponentManager.getComponentEmplacement(m_playerEntity, Components_e::MAP_COORD_COMPONENT);
+        assert(numCom);
+        MapCoordComponent &playerMapComp = m_componentsContainer.m_vectMapCoordComp[*numCom];
         numCom = m_newComponentManager.getComponentEmplacement(mVectNumEntity[i], Components_e::MAP_COORD_COMPONENT);
         assert(numCom);
         MapCoordComponent &enemyMapComp = m_componentsContainer.m_vectMapCoordComp[*numCom];
-        distancePlayer = getDistance(m_playerMapComp->m_absoluteMapPositionPX,
+        distancePlayer = getDistance(playerMapComp.m_absoluteMapPositionPX,
                                      enemyMapComp.m_absoluteMapPositionPX);
         float radiantAnglePlayerDirection = getTrigoAngle(enemyMapComp.m_absoluteMapPositionPX,
-                                                          m_playerMapComp->m_absoluteMapPositionPX, false);
+                                                          playerMapComp.m_absoluteMapPositionPX, false);
         if(enemyConfComp.m_behaviourMode != EnemyBehaviourMode_e::ATTACK)
         {
             numCom = m_newComponentManager.getComponentEmplacement(mVectNumEntity[i], Components_e::TIMER_COMPONENT);
@@ -217,7 +219,10 @@ void IASystem::activeSound(uint32_t entityNum, uint32_t soundNum)
 void IASystem::updateEnemyDirection(EnemyConfComponent &enemyConfComp, MoveableComponent &moveComp,
                                     MapCoordComponent &enemyMapComp)
 {
-    moveComp.m_degreeOrientation = getTrigoAngle(enemyMapComp.m_absoluteMapPositionPX, m_playerMapComp->m_absoluteMapPositionPX);
+    OptUint_t numCom = m_newComponentManager.getComponentEmplacement(m_playerEntity, Components_e::MAP_COORD_COMPONENT);
+    assert(numCom);
+    MapCoordComponent &playerMapComp = m_componentsContainer.m_vectMapCoordComp[*numCom];
+    moveComp.m_degreeOrientation = getTrigoAngle(enemyMapComp.m_absoluteMapPositionPX, playerMapComp.m_absoluteMapPositionPX);
     if(enemyConfComp.m_attackPhase == EnemyAttackPhase_e::MOVE_TO_TARGET_DIAG_RIGHT)
     {
         moveComp.m_degreeOrientation -= 30.0f;
@@ -362,9 +367,6 @@ void IASystem::treatEnemyBehaviourAttack(uint32_t enemyEntity, MapCoordComponent
 void IASystem::memPlayerDatas(uint32_t playerEntity)
 {
     m_playerEntity = playerEntity;
-    OptUint_t numCom = m_newComponentManager.getComponentEmplacement(m_playerEntity, Components_e::MAP_COORD_COMPONENT);
-    assert(numCom);
-    m_playerMapComp = &m_componentsContainer.m_vectMapCoordComp[*numCom];
 }
 
 //===================================================================
