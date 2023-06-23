@@ -48,7 +48,6 @@ std::optional<float> SoundSystem::getVolumeFromDistance(uint32_t distantEntity, 
     assert(compNum);
     MapCoordComponent &playerMapComp = m_componentsContainer.m_vectMapCoordComp[*compNum];
     compNum = m_newComponentManager.getComponentEmplacement(distantEntity, Components_e::MAP_COORD_COMPONENT);
-    assert(compNum);
     if(!compNum)
     {
         return 1.0f;

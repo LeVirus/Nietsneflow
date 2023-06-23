@@ -37,7 +37,7 @@ private:
     void activeSound(uint32_t entityNum, uint32_t soundNum);
 private:
     NewComponentManager &m_newComponentManager;
-    ComponentsGroup m_componentsContainer;
+    ComponentsGroup &m_componentsContainer;
     uint32_t m_playerEntity, m_intervalEnemyBehaviour = 0.4 / FPS_VALUE, m_intervalVisibleShotLifeTime = 5.0 / FPS_VALUE,
     m_intervalEnemyPlayPassiveSound = 5.0 / FPS_VALUE;
     float m_distanceEnemyBehaviour = LEVEL_TILE_SIZE_PX * 15.0f;
