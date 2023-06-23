@@ -661,6 +661,7 @@ void MainEngine::clearLevel()
     m_graphicEngine.clearSystems();
     m_memTriggerCreated.clear();
     m_ecsManager.getEngine().RmAllEntity();
+    m_ecsManager.getComponentManager().clear();
     m_memWall.clear();
     clearMemSoundElements();
 }

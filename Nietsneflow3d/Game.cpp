@@ -82,7 +82,7 @@ LevelLoadState_e Game::loadLevelData(uint32_t levelNum, bool customLevel, LevelS
     clearLevel({levelState, levelNum, customLevel});
     loadStandardEntities();
     //PLAYER DEPARTURE NOT SET
-    loadPlayerEntity();
+//    loadPlayerEntity();
     m_mainEngine.loadLevel(m_levelManager);
     return levelLoadState;
 }

@@ -372,17 +372,16 @@ void IASystem::memPlayerDatas(uint32_t playerEntity)
 //===================================================================
 void IASystem::confVisibleShoot(std::vector<uint32_t> &visibleShots, const PairFloat_t &point, float degreeAngle, CollisionTag_e tag)
 {
-    GeneralCollisionComponent *genCompB = nullptr;
     uint32_t currentShot = 0;
     assert(!visibleShots.empty());
     OptUint_t numCom;
+    numCom = m_newComponentManager.getComponentEmplacement(visibleShots[currentShot],
+                                                           Components_e::GENERAL_COLLISION_COMPONENT);
+    assert(numCom);
+    GeneralCollisionComponent *genComp = &m_componentsContainer.m_vectGeneralCollisionComp[*numCom];
     for(; currentShot < visibleShots.size(); ++currentShot)
     {
-        numCom = m_newComponentManager.getComponentEmplacement(visibleShots[currentShot],
-                                                                         Components_e::GENERAL_COLLISION_COMPONENT);
-        assert(numCom);
-        GeneralCollisionComponent &genComp = m_componentsContainer.m_vectGeneralCollisionComp[*numCom];
-        if(!genComp.m_active)
+        if(!genComp->m_active)
         {
             break;
         }
@@ -395,7 +394,7 @@ void IASystem::confVisibleShoot(std::vector<uint32_t> &visibleShots, const PairF
             numCom = m_newComponentManager.getComponentEmplacement(visibleShots[currentShot],
                                                                    Components_e::GENERAL_COLLISION_COMPONENT);
             assert(numCom);
-            genCompB = &m_componentsContainer.m_vectGeneralCollisionComp[*numCom];
+            genComp = &m_componentsContainer.m_vectGeneralCollisionComp[*numCom];
             break;
         }
     }
@@ -419,7 +418,7 @@ void IASystem::confVisibleShoot(std::vector<uint32_t> &visibleShots, const PairF
     numCom = m_newComponentManager.getComponentEmplacement(visibleShots[currentShot], Components_e::TIMER_COMPONENT);
     assert(numCom);
     TimerComponent &ammoTimeComp = m_componentsContainer.m_vectTimerComp[*numCom];
-    genCompB->m_active = true;
+    genComp->m_active = true;
     ammoTimeComp.m_cycleCountA = 0;
     mapComp.m_absoluteMapPositionPX = point;
     moveElementFromAngle(LEVEL_HALF_TILE_SIZE_PX, getRadiantAngle(degreeAngle),
