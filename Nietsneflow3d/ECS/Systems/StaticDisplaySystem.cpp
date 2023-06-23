@@ -558,7 +558,6 @@ void StaticDisplaySystem::drawWriteVertex(uint32_t numEntity, VertexID_e type, F
     else
     {
         writeComp.m_fontSpriteData[0] = m_fontDataPtr->getWriteData(writeComp.m_vectMessage[0].second, writeComp, font);
-        std::cerr << writeComp.m_vectMessage[0].second <<  " FFF\n";
     }
     if(type == VertexID_e::INFO)
     {
