@@ -172,7 +172,7 @@ void FirstPersonDisplaySystem::writeSimpleTextVertexGroundCeiling()
         numCom = m_newComponentManager.getComponentEmplacement(*m_groundSimpleTextBackground, Components_e::POSITION_VERTEX_COMPONENT);
         assert(numCom);
         PositionVertexComponent &posComp = m_componentsContainer.m_vectPositionVertexComp[*numCom];
-        numCom = m_newComponentManager.getComponentEmplacement(*m_groundTiledTextBackground, Components_e::SPRITE_TEXTURE_COMPONENT);
+        numCom = m_newComponentManager.getComponentEmplacement(*m_groundSimpleTextBackground, Components_e::SPRITE_TEXTURE_COMPONENT);
         assert(numCom);
         SpriteTextureComponent &spriteComp = m_componentsContainer.m_vectSpriteTextureComp[*numCom];
         m_groundSimpleTextVertice.clear();

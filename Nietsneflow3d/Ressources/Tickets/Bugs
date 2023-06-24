@@ -1,9 +1,6 @@
 BUGS======================================================================
 
 ))
-Crash if ceiling color 
-
-))
 Enemy bullet always same direction
 
 ))
@@ -14,6 +11,9 @@ Visible shot dissapear if run over wall===============~
 
 ))
 diag rect remove extreme wall=====================NR?
+
+))
+Crash if ceiling color============================OK
 
 ))
 Ceiling does not display=======================OK
