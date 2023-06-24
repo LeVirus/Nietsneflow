@@ -1,10 +1,22 @@
 BUGS======================================================================
 
 ))
+Crash if ceiling color 
+
+))
+Enemy bullet always same direction
+
+))
+Map display crash
+
+))
 Visible shot dissapear if run over wall===============~
 
 ))
 diag rect remove extreme wall=====================NR?
+
+))
+Ceiling does not display=======================OK
 
 ))
 Big enemies appear if behind angle wall================OK

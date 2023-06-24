@@ -955,7 +955,7 @@ void FirstPersonDisplaySystem::calcVerticalBackgroundLineRaycast(const PairFloat
     }
     if(m_ceilingTiledTextBackground)
     {
-        ceiling = false;
+        ceiling = true;
         numCom = m_newComponentManager.getComponentEmplacement(*m_ceilingTiledTextBackground, Components_e::SPRITE_TEXTURE_COMPONENT);
         assert(numCom);
         spriteCeilingComp = &m_componentsContainer.m_vectSpriteTextureComp[*numCom];
