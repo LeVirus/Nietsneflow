@@ -399,7 +399,7 @@ void MainEngine::savePlayerGear(bool beginLevel)
     }
     playerConf.m_currentWeapon = weaponConf->m_currentWeapon;
     playerConf.m_previousWeapon = weaponConf->m_previousWeapon;
-    playerConf.m_life = playerConf.m_life;
+    playerConf.m_life = playerConfComp.m_life;
     m_playerMemGear = true;
     if(beginLevel)
     {
@@ -2795,6 +2795,7 @@ void MainEngine::confPlayerEntity(const LevelManager &levelManager,
     GeneralCollisionComponent *tagColl = m_ecsManager.getComponentManager().getGeneralCollisionComponent(entityNum);
     PlayerConfComponent *playerConf = m_ecsManager.getComponentManager().getPlayerConfComponent(entityNum);
     assert(playerConf);
+    playerConf->m_life = 100;
     playerConf->m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::WEAPON)] = numWeaponEntity;
     playerConf->m_levelToLoad = m_currentLevel;
     playerConf->setIDEntityAssociated(entityNum);
