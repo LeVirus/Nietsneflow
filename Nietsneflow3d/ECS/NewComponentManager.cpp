@@ -117,7 +117,7 @@ void NewComponentManager::addEntity(uint32_t numEntity, const std::bitset<TOTAL_
                 m_componentsGroup.m_vectDoorComp.emplace_back(DoorComponent());
                 break;
             case Components_e::PLAYER_CONF_COMPONENT:
-//                m_componentsGroup.m_playerConfComp = PositionVertexComponent();
+                m_refComponents[numEntity][Components_e::PLAYER_CONF_COMPONENT] = m_componentsGroup.m_vectDoorComp.size();
                 break;
             case Components_e::ENEMY_CONF_COMPONENT:
                 m_refComponents[numEntity][Components_e::ENEMY_CONF_COMPONENT] = m_componentsGroup.m_vectEnemyConfComp.size();
