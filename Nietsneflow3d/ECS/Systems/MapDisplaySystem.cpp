@@ -176,7 +176,6 @@ void MapDisplaySystem::confMiniMapPositionVertexEntities()
          it != m_entitiesDetectedData.end(); ++it)
     {
         compNum = m_newComponentManager.getComponentEmplacement(it->first, Components_e::MAP_COORD_COMPONENT);
-        assert(compNum);
         if(!compNum)
         {
             it = m_entitiesDetectedData.erase(it);
@@ -211,7 +210,6 @@ void MapDisplaySystem::fillMiniMapVertexFromEntities()
         assert(numCom);
         PositionVertexComponent &posComp = m_componentsContainer.m_vectPositionVertexComp[*numCom];
         numCom = m_newComponentManager.getComponentEmplacement(m_entitiesToDisplay[i], Components_e::SPRITE_TEXTURE_COMPONENT);
-        assert(numCom);
         if(!numCom)
         {
             numCom = m_newComponentManager.getComponentEmplacement(m_entitiesToDisplay[i], Components_e::GENERAL_COLLISION_COMPONENT);
