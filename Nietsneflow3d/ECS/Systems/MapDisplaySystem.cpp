@@ -165,8 +165,8 @@ void MapDisplaySystem::confMiniMapPositionVertexEntities()
 {
     OptUint_t compNum = m_newComponentManager.getComponentEmplacement(m_playerNum, Components_e::MAP_COORD_COMPONENT);
     assert(compNum);
-    MapCoordComponent &mapComp = m_componentsContainer.m_vectMapCoordComp[*compNum];
-    PairFloat_t playerPos = mapComp.m_absoluteMapPositionPX;
+    MapCoordComponent &mapCompPlayer = m_componentsContainer.m_vectMapCoordComp[*compNum];
+    PairFloat_t playerPos = mapCompPlayer.m_absoluteMapPositionPX;
     PairFloat_t corner, diffPosPX, relativePosMapGL;
     PairUI_t max, min;
     getMapDisplayLimit(playerPos, min, max);
@@ -188,7 +188,7 @@ void MapDisplaySystem::confMiniMapPositionVertexEntities()
             //get absolute position corner
             corner = getUpLeftCorner(mapComp, it->first);
             m_entitiesToDisplay.emplace_back(it->first);
-            diffPosPX = corner - mapComp.m_absoluteMapPositionPX;
+            diffPosPX = corner - mapCompPlayer.m_absoluteMapPositionPX;
             //convert absolute position to relative
             relativePosMapGL = {diffPosPX.first * MAP_LOCAL_SIZE_GL / m_localLevelSizePX,
                                 diffPosPX.second * MAP_LOCAL_SIZE_GL / m_localLevelSizePX};
