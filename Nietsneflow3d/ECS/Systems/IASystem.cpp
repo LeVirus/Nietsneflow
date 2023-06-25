@@ -277,7 +277,7 @@ void IASystem::enemyShoot(EnemyConfComponent &enemyConfComp, MoveableComponent &
         assert(numCom);
         MoveableComponent &impactMoveComp = m_componentsContainer.m_vectMoveableComp[*numCom];
         confBullet(impactComp, genComp, segmentComp, impactMoveComp, CollisionTag_e::BULLET_ENEMY_CT,
-                   enemyMapComp.m_absoluteMapPositionPX, impactMoveComp.m_degreeOrientation);
+                   enemyMapComp.m_absoluteMapPositionPX, moveComp.m_degreeOrientation);
     }
 }
 
