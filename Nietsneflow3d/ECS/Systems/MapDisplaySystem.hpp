@@ -14,16 +14,6 @@ struct VisionComponent;
 struct MoveableComponent;
 struct PlayerConfComponent;
 
-struct PlayerComp
-{
-    MapCoordComponent const *m_mapCoordComp = nullptr;
-    PositionVertexComponent *m_posComp = nullptr;
-    ColorVertexComponent const *m_colorComp = nullptr;
-    VisionComponent *m_visionComp = nullptr;
-    MoveableComponent const *m_moveableComp = nullptr;
-    PlayerConfComponent const *m_playerConfComp = nullptr;
-};
-
 class MapDisplaySystem : public ecs::System
 {
 public:
@@ -72,6 +62,7 @@ private:
     void getMapDisplayLimit(PairFloat_t &playerPos, PairUI_t &min, PairUI_t &max);
     PairFloat_t getUpLeftCorner(const MapCoordComponent &mapCoordComp, uint32_t entityNum);
 private:
+    uint32_t m_playerNum;
     NewComponentManager &m_newComponentManager;
     ComponentsGroup &m_componentsContainer;
     std::map<uint32_t, PairUI_t> m_entitiesDetectedData;
@@ -82,7 +73,6 @@ private:
     float m_localLevelSizePX;
     float m_miniMapTileSizeGL;
     std::vector<Texture> *m_ptrVectTexture = nullptr;
-    PlayerComp m_playerComp;
 };
 
 //Adapt to GL context

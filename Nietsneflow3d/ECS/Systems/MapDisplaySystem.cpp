@@ -55,7 +55,8 @@ void MapDisplaySystem::setShader(Shader &shader)
 //===================================================================
 void MapDisplaySystem::execSystem()
 {
-    switch(m_playerComp.m_playerConfComp->m_mapMode)
+    PlayerConfComponent &playerConfComp = m_componentsContainer.m_playerConfComp;
+    switch(playerConfComp.m_mapMode)
     {
     case MapMode_e::NONE:
         return;
@@ -66,7 +67,14 @@ void MapDisplaySystem::execSystem()
         drawFullMap();
         break;
     }
-    updatePlayerArrow(*m_playerComp.m_moveableComp, *m_playerComp.m_posComp);
+    OptUint_t compNum = m_newComponentManager.getComponentEmplacement(m_playerNum, Components_e::POSITION_VERTEX_COMPONENT);
+    assert(compNum);
+    PositionVertexComponent &posComp = m_componentsContainer.m_vectPositionVertexComp[*compNum];
+
+    compNum = m_newComponentManager.getComponentEmplacement(m_playerNum, Components_e::MOVEABLE_COMPONENT);
+    assert(compNum);
+    MoveableComponent &moveComp = m_componentsContainer.m_vectMoveableComp[*compNum];
+    updatePlayerArrow(moveComp, posComp);
 }
 
 //===================================================================
@@ -114,41 +122,51 @@ void MapDisplaySystem::confFullMapPositionVertexEntities()
 //===================================================================
 void MapDisplaySystem::confVertexPlayerOnFullMap()
 {
-    if(m_playerComp.m_posComp->m_vertex.empty())
+    OptUint_t compNum = m_newComponentManager.getComponentEmplacement(m_playerNum, Components_e::POSITION_VERTEX_COMPONENT);
+    assert(compNum);
+    PositionVertexComponent &posComp = m_componentsContainer.m_vectPositionVertexComp[*compNum];
+    compNum = m_newComponentManager.getComponentEmplacement(m_playerNum, Components_e::MAP_COORD_COMPONENT);
+    assert(compNum);
+    MapCoordComponent &mapComp = m_componentsContainer.m_vectMapCoordComp[*compNum];
+    compNum = m_newComponentManager.getComponentEmplacement(m_playerNum, Components_e::MOVEABLE_COMPONENT);
+    assert(compNum);
+    MoveableComponent &moveComp = m_componentsContainer.m_vectMoveableComp[*compNum];
+    if(posComp.m_vertex.empty())
     {
-        m_playerComp.m_posComp->m_vertex.resize(3);
+        posComp.m_vertex.resize(3);
     }
-    float angle = m_playerComp.m_moveableComp->m_degreeOrientation;
+    float angle = moveComp.m_degreeOrientation;
     float radiantAngle = getRadiantAngle(angle);
-    PairFloat_t GLPos = {m_playerComp.m_mapCoordComp->m_absoluteMapPositionPX.first / m_sizeLevelPX.first * FULL_MAP_SIZE_GL,
-                        m_playerComp.m_mapCoordComp->m_absoluteMapPositionPX.second / m_sizeLevelPX.second * FULL_MAP_SIZE_GL};
+    PairFloat_t GLPos = {mapComp.m_absoluteMapPositionPX.first / m_sizeLevelPX.first * FULL_MAP_SIZE_GL,
+                        mapComp.m_absoluteMapPositionPX.second / m_sizeLevelPX.second * FULL_MAP_SIZE_GL};
     // ((absolutePositionPX.first / m_sizeLevelPX.first) * FULL_MAP_SIZE_GL)
-    m_playerComp.m_posComp->m_vertex[0].first = MAP_FULL_TOP_LEFT_X_GL + GLPos.first +
+    posComp.m_vertex[0].first = MAP_FULL_TOP_LEFT_X_GL + GLPos.first +
             cos(radiantAngle) * m_fullMapTileSizeGL.first;
-    m_playerComp.m_posComp->m_vertex[0].second = MAP_FULL_TOP_LEFT_Y_GL - GLPos.second +
+    posComp.m_vertex[0].second = MAP_FULL_TOP_LEFT_Y_GL - GLPos.second +
             sin(radiantAngle) * m_fullMapTileSizeGL.second;
     angle += 150.0f;
     radiantAngle = getRadiantAngle(angle);
 
-    m_playerComp.m_posComp->m_vertex[1].first = MAP_FULL_TOP_LEFT_X_GL + GLPos.first +
+    posComp.m_vertex[1].first = MAP_FULL_TOP_LEFT_X_GL + GLPos.first +
             cos(radiantAngle) * m_fullMapTileSizeGL.first;
-    m_playerComp.m_posComp->m_vertex[1].second = MAP_FULL_TOP_LEFT_Y_GL - GLPos.second +
+    posComp.m_vertex[1].second = MAP_FULL_TOP_LEFT_Y_GL - GLPos.second +
             sin(radiantAngle) * m_fullMapTileSizeGL.second;
     angle += 60.0f;
     radiantAngle = getRadiantAngle(angle);
 
-    m_playerComp.m_posComp->m_vertex[2].first = MAP_FULL_TOP_LEFT_X_GL + GLPos.first +
+    posComp.m_vertex[2].first = MAP_FULL_TOP_LEFT_X_GL + GLPos.first +
             cos(radiantAngle) * m_fullMapTileSizeGL.first;
-    m_playerComp.m_posComp->m_vertex[2].second = MAP_FULL_TOP_LEFT_Y_GL - GLPos.second +
+    posComp.m_vertex[2].second = MAP_FULL_TOP_LEFT_Y_GL - GLPos.second +
             sin(radiantAngle) * m_fullMapTileSizeGL.second;
 }
 
 //===================================================================
 void MapDisplaySystem::confMiniMapPositionVertexEntities()
 {
-    OptUint_t compNum;
-    assert(m_playerComp.m_mapCoordComp);
-    PairFloat_t playerPos = m_playerComp.m_mapCoordComp->m_absoluteMapPositionPX;
+    OptUint_t compNum = m_newComponentManager.getComponentEmplacement(m_playerNum, Components_e::MAP_COORD_COMPONENT);
+    assert(compNum);
+    MapCoordComponent &mapComp = m_componentsContainer.m_vectMapCoordComp[*compNum];
+    PairFloat_t playerPos = mapComp.m_absoluteMapPositionPX;
     PairFloat_t corner, diffPosPX, relativePosMapGL;
     PairUI_t max, min;
     getMapDisplayLimit(playerPos, min, max);
@@ -170,7 +188,7 @@ void MapDisplaySystem::confMiniMapPositionVertexEntities()
             //get absolute position corner
             corner = getUpLeftCorner(mapComp, it->first);
             m_entitiesToDisplay.emplace_back(it->first);
-            diffPosPX = corner - m_playerComp.m_mapCoordComp->m_absoluteMapPositionPX;
+            diffPosPX = corner - mapComp.m_absoluteMapPositionPX;
             //convert absolute position to relative
             relativePosMapGL = {diffPosPX.first * MAP_LOCAL_SIZE_GL / m_localLevelSizePX,
                                 diffPosPX.second * MAP_LOCAL_SIZE_GL / m_localLevelSizePX};
@@ -300,7 +318,6 @@ void MapDisplaySystem::getMapDisplayLimit(PairFloat_t &playerPos,
     }
 }
 
-
 //===================================================================
 void MapDisplaySystem::confMiniMapVertexElement(const PairFloat_t &glPosition,
                                          uint32_t entityNum)
@@ -381,50 +398,38 @@ void MapDisplaySystem::drawMapVertex()
 //===================================================================
 void MapDisplaySystem::drawPlayerVision()
 {
-    assert(m_playerComp.m_visionComp);
+    OptUint_t compNum = m_newComponentManager.getComponentEmplacement(m_playerNum, Components_e::VISION_COMPONENT);
+    assert(compNum);
+    VisionComponent &visionComp = m_componentsContainer.m_vectVisionComp[*compNum];
     mptrSystemManager->searchSystemByType<ColorDisplaySystem>(
-                static_cast<uint32_t>(Systems_e::COLOR_DISPLAY_SYSTEM))->drawEntity(&m_playerComp.m_visionComp->m_positionVertexComp,
-                                                             &m_playerComp.m_visionComp->m_colorVertexComp);
+                static_cast<uint32_t>(Systems_e::COLOR_DISPLAY_SYSTEM))->drawEntity(&visionComp.m_positionVertexComp,
+                                                             &visionComp.m_colorVertexComp);
 }
 
 //===================================================================
 void MapDisplaySystem::drawPlayerOnMap()
 {
-    assert(m_playerComp.m_posComp);
-    assert(m_playerComp.m_colorComp);
+    OptUint_t compNum = m_newComponentManager.getComponentEmplacement(m_playerNum, Components_e::POSITION_VERTEX_COMPONENT);
+    assert(compNum);
+    PositionVertexComponent &posComp = m_componentsContainer.m_vectPositionVertexComp[*compNum];
+    compNum = m_newComponentManager.getComponentEmplacement(m_playerNum, Components_e::COLOR_VERTEX_COMPONENT);
+    assert(compNum);
+    ColorVertexComponent &colorComp = m_componentsContainer.m_vectColorVertexComp[*compNum];
     mptrSystemManager->searchSystemByType<ColorDisplaySystem>(
-                static_cast<uint32_t>(Systems_e::COLOR_DISPLAY_SYSTEM))->drawEntity(m_playerComp.m_posComp,
-                                                             m_playerComp.m_colorComp);
+                static_cast<uint32_t>(Systems_e::COLOR_DISPLAY_SYSTEM))->drawEntity(&posComp, &colorComp);
 }
 
 //===================================================================
 void MapDisplaySystem::confPlayerComp(uint32_t playerNum)
 {
-    OptUint_t compNum = m_newComponentManager.getComponentEmplacement(playerNum, Components_e::MAP_COORD_COMPONENT);
+    m_playerNum = playerNum;
+    OptUint_t compNum = m_newComponentManager.getComponentEmplacement(m_playerNum, Components_e::VISION_COMPONENT);
     assert(compNum);
-    m_playerComp.m_mapCoordComp = &m_componentsContainer.m_vectMapCoordComp[*compNum];
-    compNum = m_newComponentManager.getComponentEmplacement(playerNum, Components_e::POSITION_VERTEX_COMPONENT);
-    assert(compNum);
-    m_playerComp.m_posComp = &m_componentsContainer.m_vectPositionVertexComp[*compNum];
-    compNum = m_newComponentManager.getComponentEmplacement(playerNum, Components_e::COLOR_VERTEX_COMPONENT);
-    assert(compNum);
-    m_playerComp.m_colorComp = &m_componentsContainer.m_vectColorVertexComp[*compNum];
-    compNum = m_newComponentManager.getComponentEmplacement(playerNum, Components_e::MOVEABLE_COMPONENT);
-    assert(compNum);
-    m_playerComp.m_moveableComp = &m_componentsContainer.m_vectMoveableComp[*compNum];
-    m_playerComp.m_playerConfComp = &m_componentsContainer.m_playerConfComp;
-    compNum = m_newComponentManager.getComponentEmplacement(playerNum, Components_e::VISION_COMPONENT);
-    assert(compNum);
-    m_playerComp.m_visionComp = &m_componentsContainer.m_vectVisionComp[*compNum];
-    assert(m_playerComp.m_posComp);
-    assert(m_playerComp.m_colorComp);
-    assert(m_playerComp.m_mapCoordComp);
-    assert(m_playerComp.m_moveableComp);
-    assert(m_playerComp.m_playerConfComp);
-    m_playerComp.m_visionComp->m_colorVertexComp.m_vertex.reserve(3);
-    m_playerComp.m_visionComp->m_colorVertexComp.m_vertex.emplace_back(0.00f, 100.00f, 0.00f, 1.0f);
-    m_playerComp.m_visionComp->m_colorVertexComp.m_vertex.emplace_back(0.00f, 10.00f, 0.00f, 1.0f);
-    m_playerComp.m_visionComp->m_colorVertexComp.m_vertex.emplace_back(0.00f, 10.00f, 0.00f, 1.0f);
+    VisionComponent &visionComp = m_componentsContainer.m_vectVisionComp[*compNum];
+    visionComp.m_colorVertexComp.m_vertex.reserve(3);
+    visionComp.m_colorVertexComp.m_vertex.emplace_back(0.00f, 100.00f, 0.00f, 1.0f);
+    visionComp.m_colorVertexComp.m_vertex.emplace_back(0.00f, 10.00f, 0.00f, 1.0f);
+    visionComp.m_colorVertexComp.m_vertex.emplace_back(0.00f, 10.00f, 0.00f, 1.0f);
 }
 
 //===================================================================
