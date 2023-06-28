@@ -1,6 +1,21 @@
 BUGS======================================================================
 
 ))
+Player wall collision
+
+))
+Prologue write issue on level 3
+
+))
+Bazooka and machine gun preview issue
+
+))
+% finish level does not reinit on restart level
+
+))
+Map display crash=======================
+
+))
 Crush does not damage===================OK
 
 ))
@@ -11,9 +26,6 @@ Enemy bullet always same direction=================OK
 
 ))
 Mini map display issue================OK
-
-))
-Map display crash=======================OK
 
 ))
 Visible shot dissapear if run over wall===============~
