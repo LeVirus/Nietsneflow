@@ -50,21 +50,24 @@ void FirstPersonDisplaySystem::execSystem()
 //===================================================================
 void FirstPersonDisplaySystem::drawPlayerColorEffects()
 {
+    OptUint_t compNum = m_newComponentManager.getComponentEmplacement(m_playerEntity, Components_e::PLAYER_CONF_COMPONENT);
+    assert(compNum);
+    PlayerConfComponent &playerConfComp = m_componentsContainer.m_vectPlayerConfComp[*compNum];
     for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
     {
-        if(m_componentsContainer.m_playerConfComp.m_takeDamage)
+        if(playerConfComp.m_takeDamage)
         {
             mptrSystemManager->searchSystemByType<ColorDisplaySystem>(
                         static_cast<uint32_t>(Systems_e::COLOR_DISPLAY_SYSTEM))->drawVisibleDamage();
-            m_componentsContainer.m_playerConfComp.m_takeDamage = false;
+            playerConfComp.m_takeDamage = false;
         }
-        if(m_componentsContainer.m_playerConfComp.m_pickItem)
+        if(playerConfComp.m_pickItem)
         {
             mptrSystemManager->searchSystemByType<ColorDisplaySystem>(
                         static_cast<uint32_t>(Systems_e::COLOR_DISPLAY_SYSTEM))->drawVisiblePickUpObject();
-            m_componentsContainer.m_playerConfComp.m_pickItem = false;
+            playerConfComp.m_pickItem = false;
         }
-        if(m_componentsContainer.m_playerConfComp.m_insideWall)
+        if(playerConfComp.m_insideWall)
         {
             mptrSystemManager->searchSystemByType<ColorDisplaySystem>(
                         static_cast<uint32_t>(Systems_e::COLOR_DISPLAY_SYSTEM))->drawScratchWall();
@@ -808,14 +811,17 @@ bool FirstPersonDisplaySystem::rayCasting(uint32_t observerEntity)
     OptUint_t numCom = m_newComponentManager.getComponentEmplacement(observerEntity, Components_e::MAP_COORD_COMPONENT);
     assert(numCom);
     MapCoordComponent &mapCompCamera = m_componentsContainer.m_vectMapCoordComp[*numCom];
+    OptUint_t compNum = m_newComponentManager.getComponentEmplacement(m_playerEntity, Components_e::PLAYER_CONF_COMPONENT);
+    assert(compNum);
+    PlayerConfComponent &playerConfComp = m_componentsContainer.m_vectPlayerConfComp[*compNum];
     if(isInsideWall(mapCompCamera.m_absoluteMapPositionPX))
     {
-        m_componentsContainer.m_playerConfComp.m_insideWall = true;
+        playerConfComp.m_insideWall = true;
         return true;
     }
     else
     {
-        m_componentsContainer.m_playerConfComp.m_insideWall = false;
+        playerConfComp.m_insideWall = false;
     }
     numCom = m_newComponentManager.getComponentEmplacement(observerEntity, Components_e::MOVEABLE_COMPONENT);
     assert(numCom);
@@ -840,7 +846,7 @@ bool FirstPersonDisplaySystem::rayCasting(uint32_t observerEntity)
     for(uint32_t j = 0; j < RAYCAST_LINE_NUMBER; ++j)
     {
         targetPoint = calcLineSegmentRaycast(currentRadiantAngle, mapCompCamera.m_absoluteMapPositionPX, true,
-                                             m_componentsContainer.m_playerConfComp.m_frozen);
+                                             playerConfComp.m_frozen);
         if(targetPoint)
         {
             m_memRaycastDist[j] = getCameraDistance(mapCompCamera.m_absoluteMapPositionPX, std::get<0>(*targetPoint), cameraRadiantAngle);

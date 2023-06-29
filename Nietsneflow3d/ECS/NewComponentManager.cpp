@@ -40,6 +40,7 @@ void NewComponentManager::init()
     m_componentsGroup.m_vectWeaponComp.reserve(100);
     m_componentsGroup.m_vectWriteComp.reserve(100);
     m_componentsGroup.m_vectInputComp.reserve(100);
+    m_componentsGroup.m_vectPlayerConfComp.reserve(100);
     m_refComponents.reserve(100);
 }
 
@@ -117,7 +118,8 @@ void NewComponentManager::addEntity(uint32_t numEntity, const std::bitset<TOTAL_
                 m_componentsGroup.m_vectDoorComp.emplace_back(DoorComponent());
                 break;
             case Components_e::PLAYER_CONF_COMPONENT:
-                m_refComponents[numEntity][Components_e::PLAYER_CONF_COMPONENT] = m_componentsGroup.m_vectDoorComp.size();
+                m_refComponents[numEntity][Components_e::PLAYER_CONF_COMPONENT] = m_componentsGroup.m_vectPlayerConfComp.size();
+                m_componentsGroup.m_vectPlayerConfComp.emplace_back(PlayerConfComponent());
                 break;
             case Components_e::ENEMY_CONF_COMPONENT:
                 m_refComponents[numEntity][Components_e::ENEMY_CONF_COMPONENT] = m_componentsGroup.m_vectEnemyConfComp.size();
@@ -222,6 +224,7 @@ void NewComponentManager::clear()
     m_componentsGroup.m_vectWeaponComp.clear();
     m_componentsGroup.m_vectWriteComp.clear();
     m_componentsGroup.m_vectInputComp.clear();
+    m_componentsGroup.m_vectPlayerConfComp.clear();
     m_refComponents.clear();
 }
 
@@ -388,11 +391,11 @@ DoorComponent *NewComponentManager::getDoorComponent(uint32_t numEntity)
 //===================================================================
 PlayerConfComponent *NewComponentManager::getPlayerConfComponent(uint32_t numEntity)
 {
-    if(numEntity >= m_refComponents.size())
+    if(!getComponentEmplacement(numEntity, Components_e::PLAYER_CONF_COMPONENT))
     {
         return nullptr;
     }
-    return &m_componentsGroup.m_playerConfComp;
+    return &m_componentsGroup.m_vectPlayerConfComp[*m_refComponents[numEntity][Components_e::PLAYER_CONF_COMPONENT]];
 }
 
 //===================================================================

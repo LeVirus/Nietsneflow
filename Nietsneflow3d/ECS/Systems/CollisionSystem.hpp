@@ -46,6 +46,10 @@ public:
     {
         m_refMainEngine = mainEngine;
     }
+    inline void memPlayerDatas(uint32_t playerEntity)
+    {
+        m_playerEntity = playerEntity;
+    }
     void writePlayerInfo(const std::string &info);
 private:
     void checkCollisionFirstRect(CollisionArgs &args);
@@ -104,6 +108,7 @@ private:
     void treatGeneralCrushing(uint32_t entityNum);
     void secondEntitiesLoop(uint32_t entityA, uint32_t currentIteration, GeneralCollisionComponent &tagCompA, bool shotExplosionEject = false);
 private:
+    uint32_t m_playerEntity;
     NewComponentManager &m_newComponentManager;
     ComponentsGroup &m_componentsContainer;
     std::multimap<CollisionTag_e, CollisionTag_e> m_tagArray;

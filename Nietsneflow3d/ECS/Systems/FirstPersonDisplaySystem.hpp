@@ -65,6 +65,10 @@ public:
     void memGroundBackgroundEntity(uint32_t entity, bool simpleTexture);
     void memCeilingBackgroundEntity(uint32_t entity, bool simpleTexture);
     void clearBackgroundData();
+    inline void memPlayerEntity(uint32_t playerEntity)
+    {
+        m_playerEntity = playerEntity;
+    }
     //return target point, texture position and entity num if collision
     optionalTargetRaycast_t calcLineSegmentRaycast(float radiantAngle, const PairFloat_t &originPoint, bool visual, bool scratchMode = false);
 private:
@@ -104,6 +108,7 @@ private:
     void confSimpleTextVertexGroundCeiling(float observerAngle);
     void writeSimpleTextVertexGroundCeiling();
 private:
+    uint32_t m_playerEntity;
     NewComponentManager &m_newComponentManager;
     ComponentsGroup &m_componentsContainer;
     Shader *m_shader;

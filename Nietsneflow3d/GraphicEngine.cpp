@@ -479,6 +479,13 @@ void GraphicEngine::updatePrologueAndEpilogue(const std::string &prologue, const
 }
 
 //===================================================================
+void GraphicEngine::memPlayerDatas(uint32_t playerEntity)
+{
+    m_firstPersonSystem->memPlayerEntity(playerEntity);
+    m_staticDisplaySystem->memPlayerEntity(playerEntity);
+}
+
+//===================================================================
 std::optional<uint32_t> GraphicEngine::getCustomLevelsMenuSize(uint32_t index)const
 {
     if(index >= m_existingCustomLevelsMenuWrite.size())

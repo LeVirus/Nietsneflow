@@ -1,16 +1,14 @@
 BUGS======================================================================
 
 ))
-Player wall collision
-
-))
 Prologue write issue on level 3
 
 ))
-% finish level does not reinit on restart level
+Player wall collision on level 3 on first load
+Map display crash=======================
 
 ))
-Map display crash=======================
+% finish level does not reinit on restart level==============================OK
 
 ))
 Bazooka and machine gun preview issue========================OK

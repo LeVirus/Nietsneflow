@@ -141,10 +141,6 @@ public:
     {
         return m_componentsGroup.m_vectInputComp;
     }
-    inline PlayerConfComponent &getPlayerConfComp()
-    {
-        return m_componentsGroup.m_playerConfComp;
-    }
     inline const std::vector<ArrayComp> &getPlayerConfComp()const
     {
         return m_refComponents;

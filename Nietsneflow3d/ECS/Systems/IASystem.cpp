@@ -73,9 +73,11 @@ void IASystem::treatEject()
 void IASystem::execSystem()
 {
     System::execSystem();
-    OptUint_t compNum = m_newComponentManager.getComponentEmplacement(
-        m_componentsContainer.m_playerConfComp.m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::WEAPON)],
-        Components_e::WEAPON_COMPONENT);
+    OptUint_t compNum = m_newComponentManager.getComponentEmplacement(m_playerEntity, Components_e::PLAYER_CONF_COMPONENT);
+    assert(compNum);
+    PlayerConfComponent &playerConfComp = m_componentsContainer.m_vectPlayerConfComp[*compNum];
+    compNum = m_newComponentManager.getComponentEmplacement(
+        playerConfComp.m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::WEAPON)], Components_e::WEAPON_COMPONENT);
     assert(compNum);
     WeaponComponent &weaponComp = m_componentsContainer.m_vectWeaponComp[*compNum];
     treatEject();
@@ -248,7 +250,10 @@ void IASystem::enemyShoot(EnemyConfComponent &enemyConfComp, MoveableComponent &
 {
     if(enemyConfComp.m_meleeAttackDamage && distancePlayer < 32.0f)
     {
-        m_componentsContainer.m_playerConfComp.takeDamage(*enemyConfComp.m_meleeAttackDamage);
+        OptUint_t compNum = m_newComponentManager.getComponentEmplacement(m_playerEntity, Components_e::PLAYER_CONF_COMPONENT);
+        assert(compNum);
+        PlayerConfComponent &playerConfComp = m_componentsContainer.m_vectPlayerConfComp[*compNum];
+        playerConfComp.takeDamage(*enemyConfComp.m_meleeAttackDamage);
     }
     else if(enemyConfComp.m_visibleShot)
     {

@@ -64,7 +64,9 @@ void StaticDisplaySystem::execSystem()
     m_shader->use();
     for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
     {
-        PlayerConfComponent &playerComp = m_componentsContainer.m_playerConfComp;
+        compNum = m_newComponentManager.getComponentEmplacement(m_playerEntity, Components_e::PLAYER_CONF_COMPONENT);
+        assert(compNum);
+        PlayerConfComponent &playerComp = m_componentsContainer.m_vectPlayerConfComp[*compNum];
         compNum = m_newComponentManager.getComponentEmplacement(
             playerComp.m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::WEAPON)], Components_e::WEAPON_COMPONENT);
         assert(compNum);
@@ -218,7 +220,9 @@ void StaticDisplaySystem::displayMenu()
     m_shader->use();
     for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
     {
-        PlayerConfComponent &playerComp = m_componentsContainer.m_playerConfComp;
+        compNum = m_newComponentManager.getComponentEmplacement(m_playerEntity, Components_e::PLAYER_CONF_COMPONENT);
+        assert(compNum);
+        PlayerConfComponent &playerComp = m_componentsContainer.m_vectPlayerConfComp[*compNum];
         uint32_t backgroundEntity = playerComp.m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_GENERIC_BACKGROUND)];
         compNum = m_newComponentManager.getComponentEmplacement(backgroundEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
         assert(compNum);

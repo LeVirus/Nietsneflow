@@ -115,6 +115,10 @@ public:
     {
         m_rotationSensibility = turnSensitivity;
     }
+    inline void memPlayerEntity(uint32_t playerEntity)
+    {
+        m_playerEntity = playerEntity;
+    }
     uint32_t getTurnSensitivity()const
     {
         return m_rotationSensibility;
@@ -164,7 +168,7 @@ private:
 private:
     NewComponentManager &m_newComponentManager;
     ComponentsGroup &m_componentsContainer;
-    uint32_t m_rotationSensibility = 40;
+    uint32_t m_rotationSensibility = 40, m_playerEntity;
     std::optional<uint32_t> m_memInputMenuCursor, m_memMainMenuCursor;
     std::pair<double, double> m_previousMousePosition;
     GLFWwindow *m_window = nullptr;

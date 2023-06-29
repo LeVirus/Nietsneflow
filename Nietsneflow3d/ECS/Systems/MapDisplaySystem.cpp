@@ -55,7 +55,9 @@ void MapDisplaySystem::setShader(Shader &shader)
 //===================================================================
 void MapDisplaySystem::execSystem()
 {
-    PlayerConfComponent &playerConfComp = m_componentsContainer.m_playerConfComp;
+    OptUint_t compNum = m_newComponentManager.getComponentEmplacement(m_playerNum, Components_e::PLAYER_CONF_COMPONENT);
+    assert(compNum);
+    PlayerConfComponent &playerConfComp = m_componentsContainer.m_vectPlayerConfComp[*compNum];
     switch(playerConfComp.m_mapMode)
     {
     case MapMode_e::NONE:
@@ -67,7 +69,7 @@ void MapDisplaySystem::execSystem()
         drawFullMap();
         break;
     }
-    OptUint_t compNum = m_newComponentManager.getComponentEmplacement(m_playerNum, Components_e::POSITION_VERTEX_COMPONENT);
+    compNum = m_newComponentManager.getComponentEmplacement(m_playerNum, Components_e::POSITION_VERTEX_COMPONENT);
     assert(compNum);
     PositionVertexComponent &posComp = m_componentsContainer.m_vectPositionVertexComp[*compNum];
 

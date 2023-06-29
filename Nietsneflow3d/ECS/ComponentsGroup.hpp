@@ -67,5 +67,5 @@ struct ComponentsGroup
     std::vector<WeaponComponent> m_vectWeaponComp;
     std::vector<WriteComponent> m_vectWriteComp;
     std::vector<InputComponent> m_vectInputComp;
-    PlayerConfComponent m_playerConfComp;
+    std::vector<PlayerConfComponent> m_vectPlayerConfComp;
 };

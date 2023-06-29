@@ -143,7 +143,9 @@ void InputSystem::treatPlayerInput()
         {
             m_keyEspapePressed = false;
         }
-        PlayerConfComponent &playerComp = m_componentsContainer.m_playerConfComp;
+        OptUint_t compNumPlayer = m_newComponentManager.getComponentEmplacement(m_playerEntity, Components_e::PLAYER_CONF_COMPONENT);
+        assert(compNumPlayer);
+        PlayerConfComponent &playerComp = m_componentsContainer.m_vectPlayerConfComp[*compNumPlayer];
         if(!m_changeMapMode && (glfwGetKey(m_window, GLFW_KEY_TAB) == GLFW_PRESS ||
                 checkStandardButtonGamepadKeyStatus(GLFW_GAMEPAD_BUTTON_BACK, GLFW_PRESS)))
         {
@@ -522,7 +524,9 @@ void InputSystem::window_focus_callback(GLFWwindow *window, int focused)
 //===================================================================
 void InputSystem::treatMenu()
 {
-    PlayerConfComponent &playerComp = m_componentsContainer.m_playerConfComp;
+    OptUint_t compNumPlayer = m_newComponentManager.getComponentEmplacement(m_playerEntity, Components_e::PLAYER_CONF_COMPONENT);
+    assert(compNumPlayer);
+    PlayerConfComponent &playerComp = m_componentsContainer.m_vectPlayerConfComp[*compNumPlayer];
     if(glfwGetKey(m_window, GLFW_KEY_ENTER) == GLFW_RELEASE)
     {
         m_enterPressed = false;

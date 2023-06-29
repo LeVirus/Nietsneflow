@@ -76,6 +76,10 @@ public:
     void updateNewInputKeyKeyboard(ControlKey_e currentSelectedKey, const MouseKeyboardInputState &state);
     void updateStringWriteEntitiesInputMenu(bool keyboardInputMenuMode, bool defaultInput = true);
     void updateMenuCursorPosition(PlayerConfComponent &playerComp);
+    inline void memPlayerEntity(uint32_t playerEntity)
+    {
+        m_playerEntity = playerEntity;
+    }
     inline void linkMainEngine(MainEngine *mainEngine)
     {
         m_mainEngine = mainEngine;
@@ -111,6 +115,7 @@ private:
     void setWeaponMovement(PlayerConfComponent &playerComp, PositionVertexComponent &posComp,
                            MemPositionsVertexComponents &memPosComp);
 private:
+    uint32_t m_playerEntity;
     NewComponentManager &m_newComponentManager;
     ComponentsGroup &m_componentsContainer;
     MainEngine *m_mainEngine;

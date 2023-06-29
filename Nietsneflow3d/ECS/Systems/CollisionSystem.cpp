@@ -116,7 +116,10 @@ void CollisionSystem::execSystem()
     }
     if(!m_memPlayerTeleport)
     {
-        m_componentsContainer.m_playerConfComp.m_teleported = false;
+        numCompNum = m_newComponentManager.getComponentEmplacement(m_playerEntity, Components_e::PLAYER_CONF_COMPONENT);
+        assert(numCompNum);
+        PlayerConfComponent &playerComp = m_componentsContainer.m_vectPlayerConfComp[*numCompNum];
+        playerComp.m_teleported = false;
     }
 }
 
@@ -242,7 +245,10 @@ void CollisionSystem::treatEnemyTakeDamage(uint32_t enemyEntityNum, uint32_t dam
         timerComp.m_cycleCountB = 0;
         enemyConfCompB.m_attackPhase = EnemyAttackPhase_e::SHOOTED;
     }
-    PlayerConfComponent &playerComp = m_componentsContainer.m_playerConfComp;
+
+    compNum = m_newComponentManager.getComponentEmplacement(m_playerEntity, Components_e::PLAYER_CONF_COMPONENT);
+    assert(compNum);
+    PlayerConfComponent &playerComp = m_componentsContainer.m_vectPlayerConfComp[*compNum];
     //if enemy dead
     if(!enemyConfCompB.takeDamage(damage))
     {
@@ -321,8 +327,11 @@ void CollisionSystem::treatSegmentShots()
             ShotConfComponent &shotConfComp = m_componentsContainer.m_vectShotConfComp[*compNum];
 
             if(tagCompTarget.m_tagA == CollisionTag_e::PLAYER_CT)
-            {   
-                m_componentsContainer.m_playerConfComp.takeDamage(shotConfComp.m_damage);
+            {
+                compNum = m_newComponentManager.getComponentEmplacement(m_playerEntity, Components_e::PLAYER_CONF_COMPONENT);
+                assert(compNum);
+                PlayerConfComponent &playerComp = m_componentsContainer.m_vectPlayerConfComp[*compNum];
+                playerComp.takeDamage(shotConfComp.m_damage);
             }
             else if(tagCompTarget.m_tagA == CollisionTag_e::BARREL_CT)
             {
@@ -596,12 +605,15 @@ void CollisionSystem::checkCollisionFirstRect(CollisionArgs &args)
 //===================================================================
 void CollisionSystem::writePlayerInfo(const std::string &info)
 {
-    OptUint_t compNum = m_newComponentManager.getComponentEmplacement(m_componentsContainer.m_playerConfComp.muiGetIdEntityAssociated(),
+    OptUint_t compNumPlayer = m_newComponentManager.getComponentEmplacement(m_playerEntity, Components_e::PLAYER_CONF_COMPONENT);
+    assert(compNumPlayer);
+    PlayerConfComponent &playerComp = m_componentsContainer.m_vectPlayerConfComp[*compNumPlayer];
+    OptUint_t compNum = m_newComponentManager.getComponentEmplacement(playerComp.muiGetIdEntityAssociated(),
                                                                       Components_e::TIMER_COMPONENT);
     assert(compNum);
     TimerComponent &timerComp = m_componentsContainer.m_vectTimerComp[*compNum];
     timerComp.m_cycleCountA = 0;
-    m_componentsContainer.m_playerConfComp.m_infoWriteData = {true, info};
+    playerComp.m_infoWriteData = {true, info};
 }
 
 //===================================================================
@@ -881,7 +893,10 @@ bool CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args, bool shotEx
             }
             else if(args.tagCompA.m_tagA == CollisionTag_e::BULLET_ENEMY_CT && args.tagCompB.m_tagA == CollisionTag_e::PLAYER_CT)
             {
-                m_componentsContainer.m_playerConfComp.takeDamage(shotConfComp.m_damage);
+                OptUint_t compNumPlayer = m_newComponentManager.getComponentEmplacement(m_playerEntity, Components_e::PLAYER_CONF_COMPONENT);
+                assert(compNumPlayer);
+                PlayerConfComponent &playerComp = m_componentsContainer.m_vectPlayerConfComp[*compNumPlayer];
+                playerComp.takeDamage(shotConfComp.m_damage);
             }
             else if(args.tagCompB.m_tagA == CollisionTag_e::BARREL_CT)
             {
@@ -914,17 +929,20 @@ bool CollisionSystem::treatCollisionPlayer(CollisionArgs &args, CircleCollisionC
     }
     else if(args.tagCompB.m_tagA == CollisionTag_e::CHECKPOINT_CT)
     {
+        OptUint_t compNumPlayer = m_newComponentManager.getComponentEmplacement(m_playerEntity, Components_e::PLAYER_CONF_COMPONENT);
+        assert(compNumPlayer);
+        PlayerConfComponent &playerComp = m_componentsContainer.m_vectPlayerConfComp[*compNumPlayer];
         OptUint_t compNum = m_newComponentManager.getComponentEmplacement(args.entityNumB, Components_e::CHECKPOINT_COMPONENT);
         assert(compNum);
         CheckpointComponent &checkpointComp = m_componentsContainer.m_vectCheckpointComp[*compNum];
-        if(!m_componentsContainer.m_playerConfComp.m_currentCheckpoint || checkpointComp.m_checkpointNumber > m_componentsContainer.m_playerConfComp.m_currentCheckpoint->first)
+        if(!playerComp.m_currentCheckpoint || checkpointComp.m_checkpointNumber > playerComp.m_currentCheckpoint->first)
         {
             OptUint_t compNum = m_newComponentManager.getComponentEmplacement(args.entityNumB, Components_e::MAP_COORD_COMPONENT);
             assert(compNum);
             MapCoordComponent &mapComp = m_componentsContainer.m_vectMapCoordComp[*compNum];
 
-            m_componentsContainer.m_playerConfComp.m_checkpointReached = mapComp.m_coord;
-            m_componentsContainer.m_playerConfComp.m_currentCheckpoint = {checkpointComp.m_checkpointNumber, checkpointComp.m_direction};
+            playerComp.m_checkpointReached = mapComp.m_coord;
+            playerComp.m_currentCheckpoint = {checkpointComp.m_checkpointNumber, checkpointComp.m_direction};
             writePlayerInfo("Checkpoint Reached");
         }
         m_vectEntitiesToDelete.push_back(args.entityNumB);
@@ -932,14 +950,17 @@ bool CollisionSystem::treatCollisionPlayer(CollisionArgs &args, CircleCollisionC
     }
     else if(args.tagCompB.m_tagA == CollisionTag_e::SECRET_CT)
     {
+        OptUint_t compNumPlayer = m_newComponentManager.getComponentEmplacement(m_playerEntity, Components_e::PLAYER_CONF_COMPONENT);
+        assert(compNumPlayer);
+        PlayerConfComponent &playerComp = m_componentsContainer.m_vectPlayerConfComp[*compNumPlayer];
         writePlayerInfo("Secret Found");
-        if(!m_componentsContainer.m_playerConfComp.m_secretsFound)
+        if(!playerComp.m_secretsFound)
         {
-            m_componentsContainer.m_playerConfComp.m_secretsFound = 1;
+            playerComp.m_secretsFound = 1;
         }
         else
         {
-            ++(*m_componentsContainer.m_playerConfComp.m_secretsFound);
+            ++(*playerComp.m_secretsFound);
         }
         m_vectEntitiesToDelete.push_back(args.entityNumB);
         return true;
@@ -977,7 +998,10 @@ void CollisionSystem::treatExplosionColl(CollisionArgs &args)
     }
     if(args.tagCompB.m_tagA == CollisionTag_e::PLAYER_CT)
     {
-        m_componentsContainer.m_playerConfComp.takeDamage(shotConfComp.m_damage);
+        OptUint_t compNumPlayer = m_newComponentManager.getComponentEmplacement(m_playerEntity, Components_e::PLAYER_CONF_COMPONENT);
+        assert(compNumPlayer);
+        PlayerConfComponent &playerComp = m_componentsContainer.m_vectPlayerConfComp[*compNumPlayer];
+        playerComp.takeDamage(shotConfComp.m_damage);
     }
     else if(args.tagCompB.m_tagA == CollisionTag_e::ENEMY_CT)
     {
@@ -1035,8 +1059,11 @@ void CollisionSystem::treatActionPlayerRect(CollisionArgs &args)
         //if card door
         if(doorComp.m_cardID)
         {
-            if((m_componentsContainer.m_playerConfComp.m_card.find((*doorComp.m_cardID).first) ==
-                 m_componentsContainer.m_playerConfComp.m_card.end()))
+            OptUint_t compNumPlayer = m_newComponentManager.getComponentEmplacement(m_playerEntity, Components_e::PLAYER_CONF_COMPONENT);
+            assert(compNumPlayer);
+            PlayerConfComponent &playerComp = m_componentsContainer.m_vectPlayerConfComp[*compNumPlayer];
+            if((playerComp.m_card.find((*doorComp.m_cardID).first) ==
+                 playerComp.m_card.end()))
             {
                 writePlayerInfo((*doorComp.m_cardID).second + " NEEDED");
                 return;
@@ -1089,11 +1116,14 @@ void CollisionSystem::treatActionPlayerCircle(CollisionArgs &args)
     }
     else if(args.tagCompB.m_tagA == CollisionTag_e::LOG_CT)
     {
+        OptUint_t compNumPlayer = m_newComponentManager.getComponentEmplacement(m_playerEntity, Components_e::PLAYER_CONF_COMPONENT);
+        assert(compNumPlayer);
+        PlayerConfComponent &playerComp = m_componentsContainer.m_vectPlayerConfComp[*compNumPlayer];
         OptUint_t compNum = m_newComponentManager.getComponentEmplacement(args.entityNumB, Components_e::LOG_COMPONENT);
         assert(compNum);
         LogComponent &logComp = m_componentsContainer.m_vectLogComp[*compNum];
-        m_componentsContainer.m_playerConfComp.m_infoWriteData = {true, logComp.m_message};
-        compNum = m_newComponentManager.getComponentEmplacement(m_componentsContainer.m_playerConfComp.muiGetIdEntityAssociated(), Components_e::TIMER_COMPONENT);
+        playerComp.m_infoWriteData = {true, logComp.m_message};
+        compNum = m_newComponentManager.getComponentEmplacement(playerComp.muiGetIdEntityAssociated(), Components_e::TIMER_COMPONENT);
         assert(compNum);
         TimerComponent &timerComp = m_componentsContainer.m_vectTimerComp[*compNum];
         timerComp.m_cycleCountA = 0;
@@ -1114,9 +1144,11 @@ void CollisionSystem::treatPlayerPickObject(CollisionArgs &args)
     OptUint_t compNum = m_newComponentManager.getComponentEmplacement(args.entityNumB, Components_e::OBJECT_CONF_COMPONENT);
     assert(compNum);
     ObjectConfComponent &objectComp = m_componentsContainer.m_vectObjectConfComp[*compNum];
-
+    OptUint_t compNumPlayer = m_newComponentManager.getComponentEmplacement(m_playerEntity, Components_e::PLAYER_CONF_COMPONENT);
+    assert(compNumPlayer);
+    PlayerConfComponent &playerComp = m_componentsContainer.m_vectPlayerConfComp[*compNumPlayer];
     compNum = m_newComponentManager.getComponentEmplacement(
-        m_componentsContainer.m_playerConfComp.m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::WEAPON)],
+        playerComp.m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::WEAPON)],
         Components_e::WEAPON_COMPONENT);
     assert(compNum);
     WeaponComponent &weaponComp = m_componentsContainer.m_vectWeaponComp[*compNum];
@@ -1143,21 +1175,21 @@ void CollisionSystem::treatPlayerPickObject(CollisionArgs &args)
         break;
     case ObjectType_e::HEAL:
     {
-        if(m_componentsContainer.m_playerConfComp.m_life == 100)
+        if(playerComp.m_life == 100)
         {
             return;
         }
-        m_componentsContainer.m_playerConfComp.m_life += objectComp.m_containing;
-        if(m_componentsContainer.m_playerConfComp.m_life > 100)
+        playerComp.m_life += objectComp.m_containing;
+        if(playerComp.m_life > 100)
         {
-            m_componentsContainer.m_playerConfComp.m_life = 100;
+            playerComp.m_life = 100;
         }
         info = "Heal";
         break;
     }
     case ObjectType_e::CARD:
     {
-        m_componentsContainer.m_playerConfComp.m_card.insert(*objectComp.m_cardID);
+        playerComp.m_card.insert(*objectComp.m_cardID);
         info = objectComp.m_cardName;
         break;
     }
@@ -1165,12 +1197,12 @@ void CollisionSystem::treatPlayerPickObject(CollisionArgs &args)
         assert(false);
         break;
     }
-    m_componentsContainer.m_playerConfComp.m_infoWriteData = {true, info};
-    compNum = m_newComponentManager.getComponentEmplacement(m_componentsContainer.m_playerConfComp.muiGetIdEntityAssociated(), Components_e::TIMER_COMPONENT);
+    playerComp.m_infoWriteData = {true, info};
+    compNum = m_newComponentManager.getComponentEmplacement(playerComp.muiGetIdEntityAssociated(), Components_e::TIMER_COMPONENT);
     assert(compNum);
     TimerComponent &timerComp = m_componentsContainer.m_vectTimerComp[*compNum];
     timerComp.m_cycleCountA = 0;
-    m_componentsContainer.m_playerConfComp.m_pickItem = true;
+    playerComp.m_pickItem = true;
     activeSound(args.entityNumA);
     m_vectEntitiesToDelete.push_back(args.entityNumB);
 }
@@ -1178,7 +1210,10 @@ void CollisionSystem::treatPlayerPickObject(CollisionArgs &args)
 //===================================================================
 void CollisionSystem::treatPlayerTeleport(CollisionArgs &args)
 {
-    if(m_componentsContainer.m_playerConfComp.m_teleported)
+    OptUint_t compNumPlayer = m_newComponentManager.getComponentEmplacement(m_playerEntity, Components_e::PLAYER_CONF_COMPONENT);
+    assert(compNumPlayer);
+    PlayerConfComponent &playerComp = m_componentsContainer.m_vectPlayerConfComp[*compNumPlayer];
+    if(playerComp.m_teleported)
     {
         return;
     }
@@ -1189,19 +1224,19 @@ void CollisionSystem::treatPlayerTeleport(CollisionArgs &args)
     assert(compNum);
     TeleportComponent &teleportComp = m_componentsContainer.m_vectTeleportComp[*compNum];
     compNum = m_newComponentManager.getComponentEmplacement(
-        m_componentsContainer.m_playerConfComp.m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::DISPLAY_TELEPORT)],
+        playerComp.m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::DISPLAY_TELEPORT)],
         Components_e::GENERAL_COLLISION_COMPONENT);
     assert(compNum);
     GeneralCollisionComponent &genTeleportComp = m_componentsContainer.m_vectGeneralCollisionComp[*compNum];
 
     compNum = m_newComponentManager.getComponentEmplacement(
-        m_componentsContainer.m_playerConfComp.m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::DISPLAY_TELEPORT)], Components_e::TIMER_COMPONENT);
+        playerComp.m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::DISPLAY_TELEPORT)], Components_e::TIMER_COMPONENT);
     assert(compNum);
     TimerComponent &timerComp = m_componentsContainer.m_vectTimerComp[*compNum];
     activeSound(args.entityNumB);
     mapPlayerComp.m_coord = teleportComp.m_targetPos;
     mapPlayerComp.m_absoluteMapPositionPX = getCenteredAbsolutePosition(mapPlayerComp.m_coord);
-    m_componentsContainer.m_playerConfComp.m_teleported = true;
+    playerComp.m_teleported = true;
     genTeleportComp.m_active = true;
     timerComp.m_cycleCountA = 0;
     timerComp.m_cycleCountB = 0;
@@ -1213,8 +1248,11 @@ void CollisionSystem::treatCrushing(uint32_t entityNum)
     OptUint_t compNum = m_newComponentManager.getComponentEmplacement(entityNum, Components_e::PLAYER_CONF_COMPONENT);
     if(compNum)
     {
-        m_componentsContainer.m_playerConfComp.m_crush = true;
-        m_componentsContainer.m_playerConfComp.m_frozen = true;
+        OptUint_t compNumPlayer = m_newComponentManager.getComponentEmplacement(m_playerEntity, Components_e::PLAYER_CONF_COMPONENT);
+        assert(compNumPlayer);
+        PlayerConfComponent &playerComp = m_componentsContainer.m_vectPlayerConfComp[*compNumPlayer];
+        playerComp.m_crush = true;
+        playerComp.m_frozen = true;
     }
     else
     {

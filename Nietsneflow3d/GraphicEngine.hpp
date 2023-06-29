@@ -74,6 +74,7 @@ public:
     {
         return *m_window;
     }
+    void memPlayerDatas(uint32_t playerEntity);
     std::optional<uint32_t> getCustomLevelsMenuSize(uint32_t index)const;
     inline const std::vector<std::pair<pairI_t, std::string>> &getResolutions()const
     {
