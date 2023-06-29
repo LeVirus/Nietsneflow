@@ -1575,14 +1575,14 @@ void LevelManager::loadUtilsData()
     assert(val);
     m_weaponsPreviewData.emplace_back(loadPreviewWeaponData(*val));
     m_spritePlasmaRifleName = m_weaponsPreviewData.back().first;
-    val = m_ini.getValue("GraphicUtils", "MachineGunID");
-    assert(val);
-    m_weaponsPreviewData.emplace_back(loadPreviewWeaponData(*val));
-    m_spriteMachineGunName = m_weaponsPreviewData.back().first;
     val = m_ini.getValue("GraphicUtils", "BazookaID");
     assert(val);
     m_weaponsPreviewData.emplace_back(loadPreviewWeaponData(*val));
     m_spriteBazookaName = m_weaponsPreviewData.back().first;
+    val = m_ini.getValue("GraphicUtils", "MachineGunID");
+    assert(val);
+    m_weaponsPreviewData.emplace_back(loadPreviewWeaponData(*val));
+    m_spriteMachineGunName = m_weaponsPreviewData.back().first;
 }
 
 //===================================================================

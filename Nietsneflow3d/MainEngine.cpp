@@ -3230,10 +3230,10 @@ void MainEngine::confWeaponsPreviewEntities()
             spriteCursor->m_spriteData = m_memPreviewPlasmaRifleIcon;
             break;
         case 4:
-            spriteCursor->m_spriteData = m_memPreviewBazookaIcon;
+            spriteCursor->m_spriteData = m_memPreviewMachineGunIcon;
             break;
         case 5:
-            spriteCursor->m_spriteData = m_memPreviewMachineGunIcon;
+            spriteCursor->m_spriteData = m_memPreviewBazookaIcon;
             break;
         default:
             assert(false);
