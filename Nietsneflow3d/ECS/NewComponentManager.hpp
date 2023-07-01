@@ -13,6 +13,7 @@ public:
     void init();
     void addEntity(uint32_t numEntity, const std::bitset<Components_e::TOTAL_COMPONENTS> &bitsetComponents);
     void clear();
+    void rmEntityComponents(uint32_t entityNum, const std::vector<bool> &componentVect);
     inline ComponentsGroup &getComponentsContainer()
     {
         return m_componentsGroup;

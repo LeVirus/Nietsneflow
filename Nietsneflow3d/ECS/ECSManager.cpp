@@ -99,6 +99,14 @@ uint32_t ECSManager::addEntity(const std::bitset<Components_e::TOTAL_COMPONENTS>
 }
 
 //===================================================================
+bool ECSManager::bRmEntity(uint32_t numEntity)
+{
+    const ecs::Entity &entity = m_ecsEngine.getVectEntity()[numEntity];
+    m_newComponentManager.rmEntityComponents(numEntity, entity.getEntityBitSet());
+    return m_ecsEngine.bRmEntity(numEntity);
+}
+
+//===================================================================
 std::vector<uint32_t> ECSManager::getEntitiesContainingComponents(const std::bitset<TOTAL_COMPONENTS> &bitsetComponents) const
 {
     std::vector<uint32_t> vectReturn;

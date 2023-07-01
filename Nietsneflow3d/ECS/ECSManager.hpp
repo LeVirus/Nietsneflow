@@ -12,10 +12,7 @@ public:
     ECSManager();
     void init();
     uint32_t addEntity(const std::bitset<Components_e::TOTAL_COMPONENTS> &bitsetComponents);
-    inline bool bRmEntity(uint32_t numEntity)
-    {
-        return m_ecsEngine.bRmEntity(numEntity);
-    }
+    bool bRmEntity(uint32_t numEntity);
     std::vector<uint32_t> getEntitiesContainingComponents(const std::bitset<Components_e::TOTAL_COMPONENTS> &bitsetComponents)const;
     inline ecs::Engine &getEngine(){return m_ecsEngine;}
     inline NewComponentManager &getComponentManager()
