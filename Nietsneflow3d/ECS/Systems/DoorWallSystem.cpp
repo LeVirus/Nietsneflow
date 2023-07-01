@@ -22,6 +22,7 @@ DoorWallSystem::DoorWallSystem(NewComponentManager &newComponentManager, const E
     m_ECSManager(memECSManager)
 {
     bAddComponentToSystem(Components_e::DOOR_COMPONENT);
+    m_doorCyclesForClose = 2.5 / FPS_VALUE;
 }
 
 //===================================================================
@@ -441,7 +442,6 @@ void DoorWallSystem::clearSystem()
 void DoorWallSystem::memRefMainEngine(MainEngine *mainEngine)
 {
     m_refMainEngine = mainEngine;
-    m_doorCyclesForClose = 0.6 / FPS_VALUE;
 }
 
 //===================================================================

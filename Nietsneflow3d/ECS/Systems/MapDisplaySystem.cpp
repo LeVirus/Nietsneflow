@@ -81,9 +81,6 @@ void MapDisplaySystem::execSystem()
 //===================================================================
 void MapDisplaySystem::drawMiniMap()
 {
-    OptUint_t compNum = m_newComponentManager.getComponentEmplacement(m_playerNum, Components_e::POSITION_VERTEX_COMPONENT);
-    assert(compNum);
-    PositionVertexComponent &posComp = m_componentsContainer.m_vectPositionVertexComp[*compNum];
     confMiniMapPositionVertexEntities();
     fillMiniMapVertexFromEntities();
     drawMapVertex();
