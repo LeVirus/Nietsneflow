@@ -1,11 +1,11 @@
 BUGS======================================================================
 
 ))
-Prologue write issue on level 3
+Player wall collision on level 3 on first load================================OK
+	Map display crash=======================OK
 
 ))
-Player wall collision on level 3 on first load
-Map display crash=======================
+Prologue write issue on level 3============================~~OK
 
 ))
 % finish level does not reinit on restart level==============================OK

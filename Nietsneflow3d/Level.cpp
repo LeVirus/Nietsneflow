@@ -43,7 +43,7 @@ void Level::clearLevelElement(const PairUI_t &tilePosition)
     m_levelCaseType[index].m_typeStd = LevelCaseType_e::EMPTY_LC;
 }
 //===================================================================
-void Level::addElementCase(SpriteTextureComponent *spriteComp, const PairUI_t &tilePosition,
+void Level::addElementCase(SpriteTextureComponent &spriteComp, const PairUI_t &tilePosition,
                            LevelCaseType_e type, uint32_t numEntity)
 {
     uint32_t index = getLevelCaseIndex(tilePosition);
@@ -66,7 +66,7 @@ void Level::addElementCase(SpriteTextureComponent *spriteComp, const PairUI_t &t
         m_levelCaseType[index].m_typeStd = LevelCaseType_e::EMPTY_LC;
     }
     m_levelCaseType[index].m_tileGamePosition = tilePosition;
-    m_levelCaseType[index].m_spriteComp = spriteComp;
+    m_levelCaseType[index].m_spriteComp = &spriteComp;
 }
 
 //===================================================================

@@ -146,38 +146,6 @@ public:
         return m_refComponents;
     }
     std::optional<uint32_t> getComponentEmplacement(uint32_t numEntity, Components_e compNum);
-    PositionVertexComponent *getPosVertexComponent(uint32_t numEntity);
-    SpriteTextureComponent *getSpriteTextureComponent(uint32_t numEntity);
-    MemSpriteDataComponent *getMemSpriteDataComponent(uint32_t numEntity);
-    ColorVertexComponent *getColorVertexComponent(uint32_t numEntity);
-    MapCoordComponent *getMapCoordComponent(uint32_t numEntity);
-    InputComponent *getInputComponent(uint32_t numEntity);
-    CircleCollisionComponent *getCircleCollComponent(uint32_t numEntity);
-    SegmentCollisionComponent *getSegmentCollisionComponent(uint32_t numEntity);
-    RectangleCollisionComponent *getRectangleCollisionComponent(uint32_t numEntity);
-    FPSVisibleStaticElementComponent *getFPSVisibleStaticElementComponent(uint32_t numEntity);
-    GeneralCollisionComponent *getGeneralCollisionComponent(uint32_t numEntity);
-    MoveableComponent *getMoveableComponent(uint32_t numEntity);
-    VisionComponent *getVisionComponent(uint32_t numEntity);
-    TimerComponent *getTimerComponent(uint32_t numEntity);
-    DoorComponent *getDoorComponent(uint32_t numEntity);
-    PlayerConfComponent *getPlayerConfComponent(uint32_t numEntity);
-    EnemyConfComponent *getEnemyConfComponent(uint32_t numEntity);
-    MemPositionsVertexComponents *getMemPositionsVertexComponent(uint32_t numEntity);
-    WriteComponent *getWriteComponent(uint32_t numEntity);
-    ShotConfComponent *getShotConfComponent(uint32_t numEntity);
-    ObjectConfComponent *getObjectConfComponent(uint32_t numEntity);
-    ImpactShotComponent *getImpactShotComponent(uint32_t numEntity);
-    WeaponComponent *getWeaponComponent(uint32_t numEntity);
-    MoveableWallConfComponent *getMoveableWallConfComponent(uint32_t numEntity);
-    TriggerComponent *getTriggerComponent(uint32_t numEntity);
-    TeleportComponent *getTeleportComponent(uint32_t numEntity);
-    MemFPSGLSizeComponent *getMemFPSGLSizeComponent(uint32_t numEntity);
-    BarrelComponent *getBarrelComponent(uint32_t numEntity);
-    AudioComponent *getAudioComponent(uint32_t numEntity);
-    CheckpointComponent *getCheckpointComponent(uint32_t numEntity);
-    WallMultiSpriteConf *getWallMultiSpriteConfComponent(uint32_t numEntity);
-    LogComponent *getLogComponent(uint32_t numEntity);
 private:
     ComponentsGroup m_componentsGroup;
     //indicate which vector emplacement the component is

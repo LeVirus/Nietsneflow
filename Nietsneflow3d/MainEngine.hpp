@@ -286,7 +286,7 @@ private:
     void linkSystemsToSoundEngine();
     void loadShotImpactSprite(const std::vector<SpriteData> &vectSpriteData, const PairImpactData_t &shootDisplayData, uint32_t impactEntity);
     void confPlayerVisibleShotsSprite(const std::vector<SpriteData> &vectSpriteData, const MapVisibleShotData_t &shootDisplayData,
-                                      WeaponComponent *weaponComp);
+                                      WeaponComponent &weaponComp);
     void confPlayerEntity(const LevelManager &levelManager, uint32_t entityNum, const Level &level, uint32_t numWeaponEntity,
                           uint32_t numDisplayTeleportEntity);
     void confActionEntity();
@@ -305,7 +305,7 @@ private:
                          float collisionRay, bool loadFromCheckpoint, uint32_t index, const std::array<SoundElement, 4> &soundElements);
     void loadNonVisibleEnemyAmmoStuff(bool loadFromCheckpoint, uint32_t currentEnemy,
                                       const EnemyData &enemyData, const LevelManager &levelManager,
-                                      EnemyConfComponent *enemyComp);
+                                      EnemyConfComponent &enemyComp);
     void memCheckpointEnemiesData(bool loadFromCheckpoint, uint32_t enemyEntity, uint32_t cmpt);
     void loadCheckpointsEntities(const LevelManager &levelManager);
     void initStdCollisionCase(uint32_t entityNum, const PairUI_t &mapPos, CollisionTag_e tag);
@@ -321,12 +321,12 @@ private:
     void loadStaticElementGroup(const std::vector<SpriteData> &vectSpriteData, const std::map<std::string, StaticLevelElementData> &staticData,
                                 LevelStaticElementType_e elementType, const std::string &soundFile = "");
     bool loadExitElement(const LevelManager &levelManager, const StaticLevelElementData &exit);
-    void createPlayerAmmoEntities(PlayerConfComponent *playerConf, CollisionTag_e collTag);
+    void createPlayerAmmoEntities(PlayerConfComponent &playerConf, CollisionTag_e collTag);
     void confAmmoEntities(std::vector<uint32_t> &ammoEntities, CollisionTag_e collTag,
                           bool visibleShot, uint32_t damage, float shotVelocity = 0,
                           std::optional<float> damageRay = std::nullopt);
-    void createPlayerVisibleShotEntity(WeaponComponent *weaponConf);
-    void createPlayerImpactEntities(const std::vector<SpriteData> &vectSpriteData, WeaponComponent *weaponConf,
+    void createPlayerVisibleShotEntity(WeaponComponent &weaponConf);
+    void createPlayerImpactEntities(const std::vector<SpriteData> &vectSpriteData, WeaponComponent &weaponConf,
                                     const MapImpactData_t &mapImpactData);
     uint32_t confShotImpactEntity(const std::vector<SpriteData> &vectSpriteData, const PairImpactData_t &shootDisplayData);
     uint32_t createTriggerEntity(bool visible);
@@ -363,7 +363,7 @@ private:
                            CollisionShape_e collisionShape, CollisionTag_e tag);
     void confStaticComponent(uint32_t entityNum, const PairFloat_t &elementSize, LevelStaticElementType_e elementType);
     void loadEnemySprites(const std::vector<SpriteData> &vectSprite, const EnemyData &enemiesData,
-                          uint32_t numEntity, EnemyConfComponent *enemyComp, const MapVisibleShotData_t &visibleShot);
+                          uint32_t numEntity, EnemyConfComponent &enemyComp, const MapVisibleShotData_t &visibleShot);
     void loadVisibleShotData(const std::vector<SpriteData> &vectSprite, const std::vector<uint32_t> &visibleAmmo,
                              const std::string &visibleShootID, const MapVisibleShotData_t &visibleShot);
     void memTimerPausedValue();
@@ -425,7 +425,7 @@ private:
     MemSoundElement m_memSoundElements;
 };
 
-float getTopEpilogueVerticalPosition(WriteComponent const *writeComp);
+float getTopEpilogueVerticalPosition(const WriteComponent &writeComp);
 float getDegreeAngleFromDirection(Direction_e direction);
 pairI_t getModifMoveableWallDataCheckpoint(const std::vector<std::pair<Direction_e, uint32_t>> &vectDir, uint32_t timesActionned, TriggerBehaviourType_e triggerBehaviour);
 void insertEnemySpriteFromType(const std::vector<SpriteData> &vectSprite, mapEnemySprite_t &mapSpriteAssociate,

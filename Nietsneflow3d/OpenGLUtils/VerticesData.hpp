@@ -34,8 +34,8 @@ public:
         return m_indices.size();
     }
     inline const std::vector<uint32_t> &getVectIndices()const{return m_indices;}
-    bool loadVertexColorComponent(const PositionVertexComponent *posComp,
-                                  const ColorVertexComponent *colorComp);
+    bool loadVertexColorComponent(const PositionVertexComponent &posComp,
+                                  const ColorVertexComponent &colorComp);
     void loadVertexStandartTextureComponent(const PositionVertexComponent &posComp,
                                             SpriteTextureComponent &spriteComp);
     bool loadVertexStandardEntityByLine(const PositionVertexComponent &posComp,

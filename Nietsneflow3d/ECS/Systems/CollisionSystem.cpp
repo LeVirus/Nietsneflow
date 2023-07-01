@@ -211,7 +211,9 @@ void CollisionSystem::treatGeneralCrushing(uint32_t entityNum)
     {
         return;
     }
-    PlayerConfComponent &playerComp = *m_newComponentManager.getPlayerConfComponent(entityNum);
+    compNum = m_newComponentManager.getComponentEmplacement(entityNum, Components_e::PLAYER_CONF_COMPONENT);
+    assert(compNum);
+    PlayerConfComponent &playerComp = m_componentsContainer.m_vectPlayerConfComp[*compNum];
     if(!crush && !playerComp.m_insideWall)
     {
         playerComp.m_crush = false;

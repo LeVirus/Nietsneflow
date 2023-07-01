@@ -72,7 +72,6 @@ void MapDisplaySystem::execSystem()
     compNum = m_newComponentManager.getComponentEmplacement(m_playerNum, Components_e::POSITION_VERTEX_COMPONENT);
     assert(compNum);
     PositionVertexComponent &posComp = m_componentsContainer.m_vectPositionVertexComp[*compNum];
-
     compNum = m_newComponentManager.getComponentEmplacement(m_playerNum, Components_e::MOVEABLE_COMPONENT);
     assert(compNum);
     MoveableComponent &moveComp = m_componentsContainer.m_vectMoveableComp[*compNum];
@@ -82,6 +81,9 @@ void MapDisplaySystem::execSystem()
 //===================================================================
 void MapDisplaySystem::drawMiniMap()
 {
+    OptUint_t compNum = m_newComponentManager.getComponentEmplacement(m_playerNum, Components_e::POSITION_VERTEX_COMPONENT);
+    assert(compNum);
+    PositionVertexComponent &posComp = m_componentsContainer.m_vectPositionVertexComp[*compNum];
     confMiniMapPositionVertexEntities();
     fillMiniMapVertexFromEntities();
     drawMapVertex();
@@ -402,8 +404,8 @@ void MapDisplaySystem::drawPlayerVision()
     assert(compNum);
     VisionComponent &visionComp = m_componentsContainer.m_vectVisionComp[*compNum];
     mptrSystemManager->searchSystemByType<ColorDisplaySystem>(
-                static_cast<uint32_t>(Systems_e::COLOR_DISPLAY_SYSTEM))->drawEntity(&visionComp.m_positionVertexComp,
-                                                             &visionComp.m_colorVertexComp);
+                static_cast<uint32_t>(Systems_e::COLOR_DISPLAY_SYSTEM))->drawEntity(visionComp.m_positionVertexComp,
+                                                             visionComp.m_colorVertexComp);
 }
 
 //===================================================================
@@ -416,7 +418,7 @@ void MapDisplaySystem::drawPlayerOnMap()
     assert(compNum);
     ColorVertexComponent &colorComp = m_componentsContainer.m_vectColorVertexComp[*compNum];
     mptrSystemManager->searchSystemByType<ColorDisplaySystem>(
-                static_cast<uint32_t>(Systems_e::COLOR_DISPLAY_SYSTEM))->drawEntity(&posComp, &colorComp);
+                static_cast<uint32_t>(Systems_e::COLOR_DISPLAY_SYSTEM))->drawEntity(posComp, colorComp);
 }
 
 //===================================================================

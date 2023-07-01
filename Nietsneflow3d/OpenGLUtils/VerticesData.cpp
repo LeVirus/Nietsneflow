@@ -56,25 +56,23 @@ void VerticesData::setVectGLPointer()
 }
 
 //===================================================================
-bool VerticesData::loadVertexColorComponent(const PositionVertexComponent *posComp,
-                                            const ColorVertexComponent *colorComp)
+bool VerticesData::loadVertexColorComponent(const PositionVertexComponent &posComp,
+                                            const ColorVertexComponent &colorComp)
 {
     if(m_shaderNum != Shader_e::COLOR_S)
     {
         return false;
     }
-    assert(posComp && "Position component is Null.");
-    assert(colorComp && "Color component is Null.");
-    assert(posComp->m_vertex.size() == colorComp->m_vertex.size() && "Color and Pos Component does not match.");
-    size_t sizeVertex = posComp->m_vertex.size();
+    assert(posComp.m_vertex.size() == colorComp.m_vertex.size() && "Color and Pos Component does not match.");
+    size_t sizeVertex = posComp.m_vertex.size();
     for(uint32_t j = 0; j < sizeVertex; ++j)
     {
-        m_vertexBuffer.emplace_back(posComp->m_vertex[j].first);
-        m_vertexBuffer.emplace_back(posComp->m_vertex[j].second);
-        m_vertexBuffer.emplace_back(std::get<0>(colorComp->m_vertex[j]));
-        m_vertexBuffer.emplace_back(std::get<1>(colorComp->m_vertex[j]));
-        m_vertexBuffer.emplace_back(std::get<2>(colorComp->m_vertex[j]));
-        m_vertexBuffer.emplace_back(std::get<3>(colorComp->m_vertex[j]));
+        m_vertexBuffer.emplace_back(posComp.m_vertex[j].first);
+        m_vertexBuffer.emplace_back(posComp.m_vertex[j].second);
+        m_vertexBuffer.emplace_back(std::get<0>(colorComp.m_vertex[j]));
+        m_vertexBuffer.emplace_back(std::get<1>(colorComp.m_vertex[j]));
+        m_vertexBuffer.emplace_back(std::get<2>(colorComp.m_vertex[j]));
+        m_vertexBuffer.emplace_back(std::get<3>(colorComp.m_vertex[j]));
     }
     if(sizeVertex > 4)
     {

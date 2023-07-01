@@ -18,7 +18,7 @@ public:
     void addFogColorEntity(uint32_t entity);
     void drawBackgroundFog();
     void loadColorEntities(uint32_t damage, uint32_t getObject, uint32_t transition, uint32_t scratchEntity, uint32_t musicVolume, uint32_t effectVolume, uint32_t turnSensitivity);
-    void drawEntity(const PositionVertexComponent *posComp, const ColorVertexComponent *colorComp);
+    void drawEntity(const PositionVertexComponent &posComp, const ColorVertexComponent &colorComp);
     void drawVisibleDamage();
     void drawSoundMenuBars();
     void drawInputMenuBar();

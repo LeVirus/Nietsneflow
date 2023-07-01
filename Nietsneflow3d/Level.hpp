@@ -106,7 +106,7 @@ public:
     {
         return m_levelCaseType;
     }
-    static void addElementCase(SpriteTextureComponent *spriteComp, const PairUI_t &tilePosition,
+    static void addElementCase(SpriteTextureComponent &spriteComp, const PairUI_t &tilePosition,
                                LevelCaseType_e type, uint32_t numEntity);
     static void memStaticMoveWallEntity(const PairUI_t &tilePosition, uint32_t entity);
     static std::optional<ElementRaycast> getElementCase(const PairUI_t &tilePosition);
