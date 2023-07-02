@@ -186,8 +186,8 @@ void GraphicEngine::displayGameIteration()
     m_colorSystem->execSystem();
     m_visionSystem->execSystem();
     m_firstPersonSystem->execSystem();
-    m_mapSystem->execSystem();
     m_staticDisplaySystem->execSystem();
+    m_mapSystem->execSystem();
 }
 
 //===================================================================

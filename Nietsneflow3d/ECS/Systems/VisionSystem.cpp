@@ -360,6 +360,10 @@ void VisionSystem::updateEnemySprites(uint32_t enemyEntity, uint32_t observerEnt
                                       SpriteTextureComponent &spriteComp,
                                       TimerComponent &timerComp, EnemyConfComponent &enemyConfComp)
 {
+    if(enemyConfComp.m_behaviourMode == EnemyBehaviourMode_e::PASSIVE)
+    {
+        return;
+    }
     if(enemyConfComp.m_touched)
     {
         if(enemyConfComp.m_frozenOnAttack)
