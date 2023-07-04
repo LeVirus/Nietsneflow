@@ -1,7 +1,7 @@
 [SoundUtils]
-PickUpObjectSound = PickObject.wav
+PickUpObjectSound = ItemPick.wav
 DoorOpeningSound = DoorOpening.wav
-HitSound = Hit.wav
+HitSound = FistAttack.wav
 TeleportSound = Teleport.wav
 PlayerDeathSound = Death.wav
 TriggerSound = Trigger.flac
@@ -445,7 +445,7 @@ ShotVelocity = 6
 DamageZoneRay = 530.0
 AnimationType = 0
 LastAnimNum = 1
-SoundEffect = Explosion.wav
+SoundEffect = ShootBazooka.wav
 
 [WeaponMachineGun]
 WeaponName = Machine Gun
@@ -462,7 +462,7 @@ MaxAmmo = 100
 LastAnimNum = 2
 Damage = 2
 AnimationType = 2
-SoundEffect = MachineGunShot.wav
+SoundEffect = MachineGunShoot.wav
 
 [ImpactShotgun]
 SpritesStd = SpriteShotImpactA SpriteShotImpactB
@@ -492,13 +492,13 @@ ImpactSound = ImpactExpl.wav
 Sprites = SpritePlayerShot SpriteShotDestructA SpriteShotDestructB SpriteShotDestructC
 SpriteWeightGame = 0.2 0.5 0.6 0.7
 SpriteHeightGame = 0.3 0.5 0.7 0.9
-ImpactSound = ShortExpl.wav
+ImpactSound = ImpactLaser.wav
 
 [VisibleShootRocket]
 Sprites = SpriteBazookaShot SpriteBazookaShotDA  SpriteBazookaShotDB  SpriteBazookaShotDC  
 SpriteWeightGame = 0.1 0.6 0.7 0.8
 SpriteHeightGame = 0.15 0.7 1.0 1.1
-ImpactSound = BigImpact.wav
+ImpactSound = BazookaExplosion.wav
 
 [ObjectGunAmmo]
 Sprite = SpriteItemGunAmmo
