@@ -148,8 +148,8 @@ StaticSpriteRight = SpriteARA SpriteARB
 AttackSprite = SpriteAAA SpriteAAB 
 DyingSprite = SpriteADA SpriteADB SpriteADC SpriteADD SpriteADE SpriteADF
 Touched = SpriteADA
-ShootSpritesID = VisibleShootDemonB
-ShotVelocity = 5
+ShootSpritesID = VisibleShootDemonD
+ShotVelocity = 3
 Life = 200
 Velocity = 0.6
 MeleeDamage = 33
@@ -177,7 +177,7 @@ DyingSprite = SpriteCDDA SpriteCDDB SpriteCDDC SpriteCDDD SpriteCDDE SpriteCDDF 
 Touched = SpriteCDDA
 ShootSpritesID = VisibleShootRocket
 DamageZoneRay = 530.0
-ShotVelocity = 5.0
+ShotVelocity = 3.0
 Life = 300
 Velocity = 0.7
 MeleeDamage = 25
@@ -187,7 +187,7 @@ SpriteHeightGame = 2.4
 traversable = false
 NormalBehaviourSound = Roar.wav
 DetectBehaviourSound = BigRoar2.wav
-AttackSound = DemonAttack.wav
+AttackSound = LazerShot2.wav
 DeathSound = Death3.wav
 FrozenOnAttack = false
 
@@ -213,8 +213,8 @@ SpriteWeightGame = 0.9 ; value in %
 SpriteHeightGame = 2.4
 traversable = false
 NormalBehaviourSound = Roar.wav
-DetectBehaviourSound = BigRoar2.wav
-AttackSound = LazerShot2.wav
+DetectBehaviourSound = BigRoar3.wav
+AttackSound = AttackBaron.wav
 DeathSound = Death3.wav
 FrozenOnAttack = false
 
@@ -243,7 +243,7 @@ SpriteHeightGame = 1.5
 traversable = false
 NormalBehaviourSound = Roar.wav
 DetectBehaviourSound = Roar5.wav
-AttackSound = DemonAttack.wav
+AttackSound = FireFlyingDemon.wav
 DeathSound = Death4.wav
 FrozenOnAttack = false
 
@@ -299,7 +299,7 @@ SpriteHeightGame = 1.5
 traversable = false
 NormalBehaviourSound = Roar.wav
 DetectBehaviourSound = Roar4.wav
-AttackSound = Hit.wav
+AttackSound = HitDemon.wav
 DeathSound = Death4.wav
 MeleeOnly = true
 FrozenOnAttack = false
@@ -316,7 +316,7 @@ StaticSpriteRight = SpriteDRA SpriteDRB
 AttackSprite = SpriteEAA SpriteEAB SpriteEAC
 DyingSprite = SpriteDDAA SpriteDDAB SpriteDDAC SpriteDDAD SpriteDDAE
 Touched = SpriteDTF
-ShootSpritesID = VisibleShootDemonA
+ShootSpritesID = VisibleShootDemonC
 MeleeDamage = 3
 ShotVelocity = 2
 Life = 2
@@ -327,7 +327,7 @@ SpriteHeightGame = 1.5
 traversable = false
 NormalBehaviourSound = Roar.wav
 DetectBehaviourSound = DemonDetect.wav
-AttackSound = DemonAttack.wav
+AttackSound = FireBall.wav
 DeathSound = Death1.wav
 FrozenOnAttack = true
 
@@ -480,13 +480,25 @@ SpriteHeightGame = 0.15
 Sprites = SpriteShotA SpriteShotDestructA SpriteShotDestructB SpriteShotDestructC
 SpriteWeightGame = 0.2 0.5 0.8 0.6
 SpriteHeightGame = 0.5 1.0 1.0 1.0
-ImpactSound = ImpactExpl.wav
+ImpactSound = DemonAttackImpactB.wav
 
 [VisibleShootDemonB]
 Sprites = SpriteShotB SpriteShotDestructA SpriteShotDestructB SpriteShotDestructC
 SpriteWeightGame = 0.2 0.5 0.8 0.6
 SpriteHeightGame = 0.5 1.0 1.0 1.0
-ImpactSound = ImpactExpl.wav
+ImpactSound = ImpactLaser.wav
+
+[VisibleShootDemonC]
+Sprites = SpriteShotC SpriteShotDestructA SpriteShotDestructB SpriteShotDestructC
+SpriteWeightGame = 0.2 0.5 0.8 0.6
+SpriteHeightGame = 0.5 1.0 1.0 1.0
+ImpactSound = DemonAttackImpact.wav
+
+[VisibleShootDemonD]
+Sprites = SpriteShotD SpriteShotDestructA SpriteShotDestructB SpriteShotDestructC
+SpriteWeightGame = 0.2 0.5 0.8 0.6
+SpriteHeightGame = 0.5 1.0 1.0 1.0
+ImpactSound = DemonAttackImpact.wav
 
 [VisibleShootPlasma]
 Sprites = SpritePlayerShot SpriteShotDestructA SpriteShotDestructB SpriteShotDestructC

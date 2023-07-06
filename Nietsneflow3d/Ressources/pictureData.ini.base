@@ -221,6 +221,21 @@ texturePosY = 0.832
 textureWeight = 0.010
 textureHeight = 0.013
 
+#2289 2498  2335 2544
+[SpriteShotC]
+texture = 4
+texturePosX = 0.513
+texturePosY = 0.829
+textureWeight = 0.0115
+textureHeight = 0.018
+
+#1737 2508  1761 2532
+[SpriteShotD]
+texture = 4
+texturePosX = 0.389
+texturePosY = 0.833
+textureWeight = 0.007
+textureHeight = 0.008
 
 [SpriteWallBackroom]
 texture = 20
