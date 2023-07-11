@@ -149,6 +149,13 @@ texturePosY = 0.751
 textureWeight = 0.141
 textureHeight = 0.028
 
+[SpriteInvisibleTeleport]
+texture = 21
+texturePosX = 0.0
+texturePosY = 0.0
+textureWeight = 0.0
+textureHeight = 0.0
+
 #31 533  238 758
 [SpriteTreeA]
 texture = 21

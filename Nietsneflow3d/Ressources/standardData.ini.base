@@ -755,6 +755,12 @@ SpriteWeightGame = 0.7
 SpriteHeightGame = 2.2
 traversable = false
 
+[TeleportInvisible]
+Sprite = SpriteInvisibleTeleport
+SpriteWeightGame = 0.0
+SpriteHeightGame = 0.0
+traversable = true
+
 [Teleport]
 Sprite = SpriteGigerTeleport
 SpriteWeightGame = 1.0

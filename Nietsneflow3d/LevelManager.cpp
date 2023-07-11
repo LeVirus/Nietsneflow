@@ -1788,8 +1788,7 @@ void LevelManager::loadPositionStaticElements()
             ++it;
         }
     }
-    it = m_teleportElement.begin();
-    if(it != m_teleportElement.end())
+    for(it = m_teleportElement.begin(); it != m_teleportElement.end(); ++it)
     {
         fillTeleportPositions(it->first);
     }
