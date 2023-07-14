@@ -763,6 +763,7 @@ void MainEngine::clearObjectToDelete()
     for(uint32_t i = 0; i < vectBarrels.size(); ++i)
     {
         m_ecsManager.bRmEntity(vectBarrels[i]);
+        removeEntityToZone(vectBarrels[i]);
     }
     m_physicalEngine.clearVectObjectToDelete();
     m_physicalEngine.clearVectBarrelsDestruct();
@@ -3634,7 +3635,7 @@ void MainEngine::loadBarrelElementEntities(const LevelManager &levelManager)
             continue;
         }
         uint32_t barrelEntity = createBarrelEntity();
-        OptUint_t compNum= m_ecsManager.getComponentManager().getComponentEmplacement(barrelEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
+        OptUint_t compNum = m_ecsManager.getComponentManager().getComponentEmplacement(barrelEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
         assert(compNum);
         SpriteTextureComponent &spriteComp = m_ecsManager.getComponentManager().getComponentsContainer().m_vectSpriteTextureComp[*compNum];
         compNum = m_ecsManager.getComponentManager().getComponentEmplacement(barrelEntity, Components_e::MEM_SPRITE_DATA_COMPONENT);
@@ -3706,6 +3707,12 @@ void MainEngine::loadBarrelElementEntities(const LevelManager &levelManager)
         barrelComp.m_life = 3;
         barrelComp.m_memPosExplosionSprite = barrelData.m_staticSprite.size() - 1;
         barrelComp.m_damageZoneEntity = createDamageZoneEntity(15, CollisionTag_e::EXPLOSION_CT, 30.0f, levelManager.getHitSoundFile());
+        compNum = m_ecsManager.getComponentManager().getComponentEmplacement(
+                    barrelComp.m_damageZoneEntity, Components_e::MAP_COORD_COMPONENT);
+        assert(compNum);
+        MapCoordComponent &explMapComp = m_ecsManager.getComponentManager().getComponentsContainer().m_vectMapCoordComp[*compNum];
+        std::optional<PairUI_t> coord = getLevelCoord(explMapComp.m_absoluteMapPositionPX);
+        addEntityToZone(barrelComp.m_damageZoneEntity, *coord);
         timerComp.m_cycleCountA = 0;
     }
 }
