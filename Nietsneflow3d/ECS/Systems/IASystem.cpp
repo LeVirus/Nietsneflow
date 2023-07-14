@@ -425,7 +425,11 @@ void IASystem::confVisibleShoot(std::vector<uint32_t> &visibleShots, const PairF
     TimerComponent &ammoTimeComp = m_componentsContainer.m_vectTimerComp[*numCom];
     genComp->m_active = true;
     ammoTimeComp.m_cycleCountA = 0;
+    std::optional<PairUI_t> coord = getLevelCoord(point);
+    assert(coord);
+    mapComp.m_coord = *coord;
     mapComp.m_absoluteMapPositionPX = point;
+    m_mainEngine->addEntityToZone(visibleShots[currentShot], mapComp.m_coord);
     moveElementFromAngle(LEVEL_HALF_TILE_SIZE_PX, getRadiantAngle(degreeAngle),
                          mapComp.m_absoluteMapPositionPX);
     ammoMoveComp.m_degreeOrientation = degreeAngle;

@@ -1117,12 +1117,18 @@ void MainEngine::loadLevel(const LevelManager &levelManager)
     m_memWallPos.clear();
     m_physicalEngine.clearVectObjectToDelete();
     m_physicalEngine.clearVectBarrelsDestruct();
+    m_physicalEngine.updateZonesColl();
     m_graphicEngine.clearBarrelEntitiesToDelete();
     loadBackgroundEntities(levelManager.getPictureData().getGroundData(),
                            levelManager.getPictureData().getCeilingData(),
                            levelManager);
     Level::initLevelElementArray();
     loadPlayerEntity(levelManager);
+    OptUint_t compNum = m_ecsManager.getComponentManager().getComponentEmplacement(
+                m_playerEntity, Components_e::MAP_COORD_COMPONENT);
+    assert(compNum);
+    MapCoordComponent &map = m_ecsManager.getComponentManager().getComponentsContainer().m_vectMapCoordComp[*compNum];
+    m_physicalEngine.addEntityToZone(m_playerEntity, map.m_coord);
     if(m_memCheckpointLevelState)
     {
         if(m_memCustomLevelLoadedData)
@@ -1851,6 +1857,7 @@ void MainEngine::initStdCollisionCase(uint32_t entityNum, const PairUI_t &mapPos
     assert(compNum);
     MapCoordComponent &mapComponent = m_ecsManager.getComponentManager().getComponentsContainer().m_vectMapCoordComp[*compNum];
     mapComponent.m_coord = mapPos;
+    m_physicalEngine.addEntityToZone(entityNum, mapComponent.m_coord);
     mapComponent.m_absoluteMapPositionPX = {mapPos.first * LEVEL_TILE_SIZE_PX, mapPos.second * LEVEL_TILE_SIZE_PX};
     compNum = m_ecsManager.getComponentManager().getComponentEmplacement(entityNum, Components_e::GENERAL_COLLISION_COMPONENT);
     assert(compNum);
@@ -2964,6 +2971,7 @@ void MainEngine::confBaseComponent(uint32_t entityNum, const SpriteData &memSpri
         {
             mapComp.m_absoluteMapPositionPX = getCenteredAbsolutePosition(*coordLevel);
         }
+        m_physicalEngine.addEntityToZone(entityNum, mapComp.m_coord);
     }
     compNum = m_ecsManager.getComponentManager().getComponentEmplacement(entityNum, Components_e::GENERAL_COLLISION_COMPONENT);
     assert(compNum);
@@ -3670,6 +3678,7 @@ void MainEngine::loadBarrelElementEntities(const LevelManager &levelManager)
         }
         audioComp.m_soundElements.push_back(*m_memSoundElements.m_barrels);
         mapComp.m_coord = barrelData.m_TileGamePosition[i];
+        m_physicalEngine.addEntityToZone(barrelEntity, mapComp.m_coord);
         Level::addElementCase(spriteComp, barrelData.m_TileGamePosition[i], LevelCaseType_e::EMPTY_LC, barrelEntity);
         mapComp.m_absoluteMapPositionPX = getCenteredAbsolutePosition(mapComp.m_coord);
         circleComp.m_ray = 10.0f;
@@ -3841,7 +3850,10 @@ std::optional<uint32_t> MainEngine::createStaticElementEntity(LevelStaticElement
                                                       m_vectFPSVisibleStaticElementComp[*compNum];
     fpsStaticComp.m_inGameSpriteSize = staticElementData.m_inGameSpriteSize;
     fpsStaticComp.m_levelElementType = elementType;
-    //Enemy dropable object case
+    compNum = m_ecsManager.getComponentManager().getComponentEmplacement(entityNum, Components_e::MAP_COORD_COMPONENT);
+    assert(compNum);
+    MapCoordComponent &mapComp = m_ecsManager.getComponentManager().getComponentsContainer().m_vectMapCoordComp[*compNum];
+    //Enemy dropable object case (will be activated and positionned at enemy death)
     if(iterationNum >= staticElementData.m_TileGamePosition.size())
     {
         confBaseComponent(entityNum, memSpriteData, {}, CollisionShape_e::CIRCLE_C, tag);
@@ -3859,10 +3871,8 @@ std::optional<uint32_t> MainEngine::createStaticElementEntity(LevelStaticElement
     compNum= m_ecsManager.getComponentManager().getComponentEmplacement(entityNum, Components_e::SPRITE_TEXTURE_COMPONENT);
     assert(compNum);
     SpriteTextureComponent &spriteComp = m_ecsManager.getComponentManager().getComponentsContainer().m_vectSpriteTextureComp[*compNum];
-    compNum = m_ecsManager.getComponentManager().getComponentEmplacement(entityNum, Components_e::MAP_COORD_COMPONENT);
-    assert(compNum);
-    MapCoordComponent &mapComp = m_ecsManager.getComponentManager().getComponentsContainer().m_vectMapCoordComp[*compNum];
     Level::addElementCase(spriteComp, mapComp.m_coord, LevelCaseType_e::EMPTY_LC, entityNum);
+    m_physicalEngine.addEntityToZone(entityNum, mapComp.m_coord);
     return entityNum;
 }
 

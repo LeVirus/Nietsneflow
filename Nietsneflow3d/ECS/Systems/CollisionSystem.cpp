@@ -124,16 +124,24 @@ void CollisionSystem::execSystem()
 }
 
 //===================================================================
+void CollisionSystem::updateZonesColl()
+{
+    m_zoneLevel = std::make_unique<ZoneLevelColl>(Level::getSize());
+}
+
+//===================================================================
 void CollisionSystem::secondEntitiesLoop(uint32_t entityA, uint32_t currentIteration, GeneralCollisionComponent &tagCompA, bool shotExplosionEject)
 {
     OptUint_t compNum;
-    for(uint32_t j = 0; j < mVectNumEntity.size(); ++j)
+    SetUi_t set = m_zoneLevel->getEntitiesFromZones(entityA);
+    SetUi_t::iterator it = set.begin();
+    for(; it != set.end(); ++it)
     {
-        if(currentIteration == j)
+        if(currentIteration == *it)
         {
             continue;
         }
-        compNum = m_newComponentManager.getComponentEmplacement(mVectNumEntity[j], Components_e::GENERAL_COLLISION_COMPONENT);
+        compNum = m_newComponentManager.getComponentEmplacement(*it, Components_e::GENERAL_COLLISION_COMPONENT);
         assert(compNum);
         GeneralCollisionComponent &tagCompB = m_componentsContainer.m_vectGeneralCollisionComp[*compNum];
         if(!tagCompB.m_active)
@@ -144,7 +152,7 @@ void CollisionSystem::secondEntitiesLoop(uint32_t entityA, uint32_t currentItera
         {
             continue;
         }
-        if(!treatCollision(entityA, mVectNumEntity[j], tagCompA, tagCompB, shotExplosionEject))
+        if(!treatCollision(entityA, *it, tagCompA, tagCompB, shotExplosionEject))
         {
             if(tagCompA.m_tagA == CollisionTag_e::BULLET_PLAYER_CT || tagCompA.m_tagA == CollisionTag_e::BULLET_ENEMY_CT)
             {
@@ -265,6 +273,7 @@ void CollisionSystem::treatEnemyTakeDamage(uint32_t enemyEntityNum, uint32_t dam
         enemyConfCompB.m_behaviourMode = EnemyBehaviourMode_e::DYING;
         enemyConfCompB.m_touched = false;
         enemyConfCompB.m_playDeathSound = true;
+        removeEntityToZone(enemyEntityNum);
         if(enemyConfCompB.m_dropedObjectEntity)
         {
             confDropedObject(*enemyConfCompB.m_dropedObjectEntity, enemyEntityNum);
@@ -286,6 +295,7 @@ void CollisionSystem::confDropedObject(uint32_t objectEntity, uint32_t enemyEnti
     MapCoordComponent &enemyMapComp = m_componentsContainer.m_vectMapCoordComp[*compNum];
     genComp.m_active = true;
     objectMapComp.m_coord = enemyMapComp.m_coord;
+    addEntityToZone(objectEntity, objectMapComp.m_coord);
     objectMapComp.m_absoluteMapPositionPX = enemyMapComp.m_absoluteMapPositionPX;
 }
 
@@ -538,7 +548,7 @@ bool CollisionSystem::treatCollision(uint32_t entityNumA, uint32_t entityNumB, G
         CollisionArgs args = {entityNumA, entityNumB, tagCompA, tagCompB, mapCompA, mapCompB};
         checkCollisionFirstRect(args);
     }
-    if(tagCompA.m_shape == CollisionShape_e::CIRCLE_C)
+    else if(tagCompA.m_shape == CollisionShape_e::CIRCLE_C)
     {
         OptUint_t compNum = m_newComponentManager.getComponentEmplacement(entityNumA, Components_e::MAP_COORD_COMPONENT);
         assert(compNum);
@@ -1199,6 +1209,7 @@ void CollisionSystem::treatPlayerPickObject(CollisionArgs &args)
         assert(false);
         break;
     }
+    removeEntityToZone(args.entityNumB);
     playerComp.m_infoWriteData = {true, info};
     compNum = m_newComponentManager.getComponentEmplacement(playerComp.muiGetIdEntityAssociated(), Components_e::TIMER_COMPONENT);
     assert(compNum);

@@ -2,6 +2,7 @@
 
 #include <includesLib/BaseECS/system.hpp>
 #include "constants.hpp"
+#include "ZoneLevelColl.hpp"
 #include <map>
 #include <ECS/NewComponentManager.hpp>
 
@@ -50,6 +51,15 @@ public:
     {
         m_playerEntity = playerEntity;
     }
+    inline void addEntityToZone(uint32_t entity, const PairUI_t &coord)
+    {
+        m_zoneLevel->updateEntityToZones(entity, coord);
+    }
+    inline void removeEntityToZone(uint32_t entity)
+    {
+        m_zoneLevel->removeEntityToZones(entity);
+    }
+    void updateZonesColl();
     void writePlayerInfo(const std::string &info);
 private:
     void checkCollisionFirstRect(CollisionArgs &args);
@@ -108,6 +118,7 @@ private:
     void treatGeneralCrushing(uint32_t entityNum);
     void secondEntitiesLoop(uint32_t entityA, uint32_t currentIteration, GeneralCollisionComponent &tagCompA, bool shotExplosionEject = false);
 private:
+    std::unique_ptr<ZoneLevelColl> m_zoneLevel;
     uint32_t m_playerEntity;
     NewComponentManager &m_newComponentManager;
     ComponentsGroup &m_componentsContainer;

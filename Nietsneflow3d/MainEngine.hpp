@@ -240,6 +240,14 @@ public:
     {
         return m_titleMenuMode;
     }
+    inline void addEntityToZone(uint32_t entity, const PairUI_t &coord)
+    {
+        m_physicalEngine.addEntityToZone(entity, coord);
+    }
+    inline void removeEntityToZone(uint32_t entity)
+    {
+        m_physicalEngine.removeEntityToZone(entity);
+    }
     void confMenuSelectedLine();
     void setPlayerDeparture(const PairUI_t &pos, Direction_e dir);
     void saveAudioSettings();

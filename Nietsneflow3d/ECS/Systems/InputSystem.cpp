@@ -233,15 +233,20 @@ void InputSystem::treatPlayerInput()
         }
         if(checkPlayerKeyTriggered(ControlKey_e::ACTION))
         {
+            uint32_t actionEntity = playerComp.m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::ACTION)];
             OptUint_t compNum = m_newComponentManager.getComponentEmplacement(
-                playerComp.m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::ACTION)], Components_e::MAP_COORD_COMPONENT);
+                actionEntity, Components_e::MAP_COORD_COMPONENT);
             assert(compNum);
             MapCoordComponent &mapCompAction = m_componentsContainer.m_vectMapCoordComp[*compNum];
             compNum = m_newComponentManager.getComponentEmplacement(
-                playerComp.m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::ACTION)], Components_e::GENERAL_COLLISION_COMPONENT);
+                actionEntity, Components_e::GENERAL_COLLISION_COMPONENT);
             assert(compNum);
             GeneralCollisionComponent &genCompAction = m_componentsContainer.m_vectGeneralCollisionComp[*compNum];
             confActionShape(mapCompAction, genCompAction, mapComp, moveComp);
+            std::optional<PairUI_t> coord = getLevelCoord(mapCompAction.m_absoluteMapPositionPX);
+            assert(coord);
+            std::cerr << "ADD  " << coord->first << "  " << coord->second << "\n";
+            m_mainEngine->addEntityToZone(actionEntity, *coord);
         }
         if((!m_keyEspapePressed && glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_PRESS) ||
                 checkStandardButtonGamepadKeyStatus(GLFW_GAMEPAD_BUTTON_START, GLFW_PRESS))

@@ -33,7 +33,8 @@ SOURCES += main.cpp \
     ECS/Systems/CollisionSystem.cpp \
     CollisionUtils.cpp \
     ECS/Systems/FirstPersonDisplaySystem.cpp \
-    ECS/Systems/StaticDisplaySystem.cpp
+    ECS/Systems/StaticDisplaySystem.cpp \
+    ZoneLevelColl.cpp
 
 HEADERS += \
     AudioEngine.hpp \
@@ -73,6 +74,7 @@ HEADERS += \
     ECS/includesLib/entity.hpp \
     ECS/includesLib/system.hpp \
     ECS/includesLib/systemmanager.hpp \
+    ZoneLevelColl.hpp \
     includesLib/BaseECS/component.hpp \
     includesLib/BaseECS/componentmanager.hpp \
     includesLib/BaseECS/engine.hpp \

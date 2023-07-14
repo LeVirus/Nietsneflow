@@ -26,6 +26,10 @@ public:
     void clearSystems();
     void setKeyboardKey(const std::array<MouseKeyboardInputState, static_cast<uint32_t>(ControlKey_e::TOTAL)> &keyboardArray);
     void setGamepadKey(const std::array<GamepadInputState, static_cast<uint32_t>(ControlKey_e::TOTAL)> &gamepadArray);
+    inline void updateZonesColl()
+    {
+        m_collisionSystem->updateZonesColl();
+    }
     inline const std::vector<uint32_t> &getStaticEntitiesToDelete()const
     {
         return m_collisionSystem->getStaticEntitiesToDelete();
@@ -61,6 +65,14 @@ public:
     inline void updateTurnSensitivity(uint32_t turnSensitivity)
     {
         return m_inputSystem->setTurnSensitivity(turnSensitivity);
+    }
+    inline void addEntityToZone(uint32_t entity, const PairUI_t &coord)
+    {
+        m_collisionSystem->addEntityToZone(entity, coord);
+    }
+    inline void removeEntityToZone(uint32_t entity)
+    {
+        m_collisionSystem->removeEntityToZone(entity);
     }
 private:
     InputSystem *m_inputSystem = nullptr;

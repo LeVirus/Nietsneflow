@@ -4,6 +4,7 @@
 #include <constants.hpp>
 #include <functional>
 #include <optional>
+#include <set>
 
 using PairFloat_t = std::pair<float, float>;
 
@@ -20,6 +21,7 @@ struct MoveableComponent : public ecs::Component
     float m_rotationAngle = 3.000f;
     //first eject velocity, SECOND Time
     std::optional<std::pair<float, double>> m_ejectData = std::nullopt;
+    std::set<uint32_t> m_entitiesCollTreat;
     //first direction, second entity, third vertical == true or lateral == false
     virtual ~MoveableComponent() = default;
 };
