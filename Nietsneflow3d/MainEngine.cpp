@@ -652,6 +652,13 @@ void MainEngine::confPlayerBullet(PlayerConfComponent *playerComp,
     assert(compNum);
     ImpactShotComponent &impactComp = m_ecsManager.getComponentManager().getComponentsContainer().m_vectImpactShotComp[*compNum];
     confBullet(impactComp, genColl, segmentColl, moveImpactComp, CollisionTag_e::BULLET_PLAYER_CT, point, degreeAngle);
+    compNum = m_ecsManager.getComponentManager().getComponentEmplacement(shotComp.m_impactEntity,
+                                                                         Components_e::MAP_COORD_COMPONENT);
+    assert(compNum);
+    MapCoordComponent &mapComp = m_ecsManager.getComponentManager().getComponentsContainer().m_vectMapCoordComp[*compNum];
+    std::optional<PairUI_t> coord = getLevelCoord(mapComp.m_absoluteMapPositionPX);
+    assert(coord);
+    addEntityToZone(shotComp.m_impactEntity, *coord);
 }
 
 //===================================================================
@@ -3712,6 +3719,7 @@ void MainEngine::loadBarrelElementEntities(const LevelManager &levelManager)
         assert(compNum);
         MapCoordComponent &explMapComp = m_ecsManager.getComponentManager().getComponentsContainer().m_vectMapCoordComp[*compNum];
         std::optional<PairUI_t> coord = getLevelCoord(explMapComp.m_absoluteMapPositionPX);
+        assert(coord);
         addEntityToZone(barrelComp.m_damageZoneEntity, *coord);
         timerComp.m_cycleCountA = 0;
     }

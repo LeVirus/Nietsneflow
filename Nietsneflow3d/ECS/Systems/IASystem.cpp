@@ -283,6 +283,13 @@ void IASystem::enemyShoot(EnemyConfComponent &enemyConfComp, MoveableComponent &
         MoveableComponent &impactMoveComp = m_componentsContainer.m_vectMoveableComp[*numCom];
         confBullet(impactComp, genComp, segmentComp, impactMoveComp, CollisionTag_e::BULLET_ENEMY_CT,
                    enemyMapComp.m_absoluteMapPositionPX, moveComp.m_degreeOrientation);
+        numCom = m_newComponentManager.getComponentEmplacement(shotComp.m_impactEntity,
+                                                                             Components_e::MAP_COORD_COMPONENT);
+        assert(numCom);
+        MapCoordComponent &mapComp = m_componentsContainer.m_vectMapCoordComp[*numCom];
+        std::optional<PairUI_t> coord = getLevelCoord(mapComp.m_absoluteMapPositionPX);
+        assert(coord);
+        m_mainEngine->addEntityToZone(shotComp.m_impactEntity, *coord);
     }
 }
 
