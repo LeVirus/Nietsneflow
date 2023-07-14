@@ -1,6 +1,5 @@
 #include "ZoneLevelColl.hpp"
 #include <cassert>
-#include <iostream>
 
 //===============================================================
 ZoneLevelColl::ZoneLevelColl(const PairUI_t &size):m_size(size)
@@ -69,8 +68,6 @@ void ZoneLevelColl::addEntityToZone(uint32_t entityNum, const PairUI_t &zoneCoor
         m_cacheEntitiesZone.insert({entityNum, {}});
     }
     m_cacheEntitiesZone[entityNum].push_back(zoneCoord);
-    std::cerr << "ADDddsd " << zoneCoord.first << "  " << zoneCoord.second << "  "
-              << m_cacheEntitiesZone[entityNum].size() << "\n";
     m_zones[zoneCoord.first][zoneCoord.second].insert(entityNum);
 }
 
@@ -89,10 +86,6 @@ void ZoneLevelColl::removeEntityToZones(uint32_t entityNum, bool updateMode)
         currentX = m_cacheEntitiesZone[entityNum][i].first;
         currentY = m_cacheEntitiesZone[entityNum][i].second;
         itt = m_zones[currentX][currentY].find(entityNum);
-        std::cerr << i << "  " << currentX << "  " << currentY << " REM " <<
-                     m_cacheEntitiesZone[entityNum][i].first << "  " <<
-                  m_cacheEntitiesZone[entityNum][i].second <<
-                     it->second.size() << "\n";
         assert(itt != m_zones[currentX][currentY].end());
         m_zones[currentX][currentY].erase(itt);
     }

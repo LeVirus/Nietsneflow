@@ -5,6 +5,7 @@
 #include <map>
 #include <cstdint>
 #include <constants.hpp>
+#include <iostream>
 
 using SetUi_t = std::set<uint32_t>;
 using VectSetUi_t = std::vector<SetUi_t>;
@@ -22,7 +23,7 @@ private:
 private:
     PairUI_t m_size;
     uint32_t m_zoneSize = 20;
-    //first lateral, second vertical
     std::vector<VectSetUi_t> m_zones;
+    //first lateral, second vertical
     std::map<uint32_t, VectPairUi_t> m_cacheEntitiesZone;
 };

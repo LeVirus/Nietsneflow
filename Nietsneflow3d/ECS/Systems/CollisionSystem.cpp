@@ -73,7 +73,6 @@ void CollisionSystem::execSystem()
                 (tagCompA.m_tagA == CollisionTag_e::BULLET_PLAYER_CT || tagCompA.m_tagA == CollisionTag_e::BULLET_ENEMY_CT))
         {
             m_memDistCurrentBulletColl.second = EPSILON_FLOAT;
-
             segmentCompNum = m_newComponentManager.getComponentEmplacement(mVectNumEntity[i], Components_e::SEGMENT_COLLISION_COMPONENT);
             assert(segmentCompNum);
             SegmentCollisionComponent &segmentCompA = m_componentsContainer.m_vectSegmentCollisionComp[*segmentCompNum];
@@ -132,35 +131,56 @@ void CollisionSystem::updateZonesColl()
 //===================================================================
 void CollisionSystem::secondEntitiesLoop(uint32_t entityA, uint32_t currentIteration, GeneralCollisionComponent &tagCompA, bool shotExplosionEject)
 {
-    OptUint_t compNum;
+    if(tagCompA.m_tagA == CollisionTag_e::BULLET_PLAYER_CT || tagCompA.m_tagA == CollisionTag_e::BULLET_ENEMY_CT)
+    {
+        for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
+        {
+            if(!iterationLoop(currentIteration, entityA, mVectNumEntity[i], tagCompA, shotExplosionEject))
+            {
+                return;
+            }
+        }
+        return;
+    }
     SetUi_t set = m_zoneLevel->getEntitiesFromZones(entityA);
     SetUi_t::iterator it = set.begin();
     for(; it != set.end(); ++it)
     {
-        if(currentIteration == *it)
+        if(!iterationLoop(currentIteration, entityA, *it, tagCompA, shotExplosionEject))
         {
-            continue;
-        }
-        compNum = m_newComponentManager.getComponentEmplacement(*it, Components_e::GENERAL_COLLISION_COMPONENT);
-        assert(compNum);
-        GeneralCollisionComponent &tagCompB = m_componentsContainer.m_vectGeneralCollisionComp[*compNum];
-        if(!tagCompB.m_active)
-        {
-            continue;
-        }
-        if(!checkTag(tagCompA.m_tagA, tagCompB.m_tagA) && !checkTag(tagCompA.m_tagA, tagCompB.m_tagB))
-        {
-            continue;
-        }
-        if(!treatCollision(entityA, *it, tagCompA, tagCompB, shotExplosionEject))
-        {
-            if(tagCompA.m_tagA == CollisionTag_e::BULLET_PLAYER_CT || tagCompA.m_tagA == CollisionTag_e::BULLET_ENEMY_CT)
-            {
-                secondEntitiesLoop(entityA, currentIteration, tagCompA, true);
-            }
             return;
         }
     }
+}
+
+//===================================================================
+bool CollisionSystem::iterationLoop(uint32_t currentIteration, uint32_t entityA, uint32_t entityB,
+                                    GeneralCollisionComponent &tagCompA, bool shotExplosionEject)
+{
+    if(currentIteration == entityB)
+    {
+        return true;
+    }
+    OptUint_t compNum = m_newComponentManager.getComponentEmplacement(entityB, Components_e::GENERAL_COLLISION_COMPONENT);
+    assert(compNum);
+    GeneralCollisionComponent &tagCompB = m_componentsContainer.m_vectGeneralCollisionComp[*compNum];
+    if(!tagCompB.m_active)
+    {
+        return true;
+    }
+    if(!checkTag(tagCompA.m_tagA, tagCompB.m_tagA) && !checkTag(tagCompA.m_tagA, tagCompB.m_tagB))
+    {
+        return true;
+    }
+    if(!treatCollision(entityA, entityB, tagCompA, tagCompB, shotExplosionEject))
+    {
+        if(tagCompA.m_tagA == CollisionTag_e::BULLET_PLAYER_CT || tagCompA.m_tagA == CollisionTag_e::BULLET_ENEMY_CT)
+        {
+            secondEntitiesLoop(entityA, currentIteration, tagCompA, true);
+        }
+        return false;
+    }
+    return true;
 }
 
 //===================================================================
@@ -273,7 +293,6 @@ void CollisionSystem::treatEnemyTakeDamage(uint32_t enemyEntityNum, uint32_t dam
         enemyConfCompB.m_behaviourMode = EnemyBehaviourMode_e::DYING;
         enemyConfCompB.m_touched = false;
         enemyConfCompB.m_playDeathSound = true;
-        removeEntityToZone(enemyEntityNum);
         if(enemyConfCompB.m_dropedObjectEntity)
         {
             confDropedObject(*enemyConfCompB.m_dropedObjectEntity, enemyEntityNum);
@@ -501,14 +520,10 @@ void CollisionSystem::initArrayTag()
 
     //bullets collision with walls and doors are treated by raycasting
     m_tagArray.insert({CollisionTag_e::BULLET_ENEMY_CT, CollisionTag_e::PLAYER_CT});
-    m_tagArray.insert({CollisionTag_e::BULLET_ENEMY_CT, CollisionTag_e::WALL_CT});
-    m_tagArray.insert({CollisionTag_e::BULLET_ENEMY_CT, CollisionTag_e::DOOR_CT});
     m_tagArray.insert({CollisionTag_e::BULLET_ENEMY_CT, CollisionTag_e::BARREL_CT});
 //    m_tagArray.insert({CollisionTag_e::BULLET_ENEMY_CT, CollisionTag_e::ENEMY_CT});
 
     m_tagArray.insert({CollisionTag_e::BULLET_PLAYER_CT, CollisionTag_e::ENEMY_CT});
-    m_tagArray.insert({CollisionTag_e::BULLET_PLAYER_CT, CollisionTag_e::WALL_CT});
-    m_tagArray.insert({CollisionTag_e::BULLET_PLAYER_CT, CollisionTag_e::DOOR_CT});
     m_tagArray.insert({CollisionTag_e::BULLET_PLAYER_CT, CollisionTag_e::BARREL_CT});
 
     m_tagArray.insert({CollisionTag_e::IMPACT_CT, CollisionTag_e::WALL_CT});
@@ -1057,6 +1072,13 @@ void CollisionSystem::setDamageCircle(uint32_t damageEntity, bool active, uint32
         assert(compNum);
         MapCoordComponent &mapComp = m_componentsContainer.m_vectMapCoordComp[*compNum];
         mapCompDam.m_absoluteMapPositionPX = mapComp.m_absoluteMapPositionPX;
+        std::optional<PairUI_t> coord = getLevelCoord(mapCompDam.m_absoluteMapPositionPX);
+        assert(coord);
+        addEntityToZone(damageEntity,  mapCompDam.m_coord);
+    }
+    else
+    {
+        removeEntityToZone(damageEntity);
     }
 }
 

@@ -117,6 +117,7 @@ private:
     bool checkEnemyRemoveCollisionMask(uint32_t entityNum);
     void treatGeneralCrushing(uint32_t entityNum);
     void secondEntitiesLoop(uint32_t entityA, uint32_t currentIteration, GeneralCollisionComponent &tagCompA, bool shotExplosionEject = false);
+    bool iterationLoop(uint32_t currentIteration, uint32_t entityA, uint32_t entityB, GeneralCollisionComponent &tagCompA, bool shotExplosionEject);
 private:
     std::unique_ptr<ZoneLevelColl> m_zoneLevel;
     uint32_t m_playerEntity;

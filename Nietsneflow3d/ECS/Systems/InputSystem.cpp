@@ -245,7 +245,6 @@ void InputSystem::treatPlayerInput()
             confActionShape(mapCompAction, genCompAction, mapComp, moveComp);
             std::optional<PairUI_t> coord = getLevelCoord(mapCompAction.m_absoluteMapPositionPX);
             assert(coord);
-            std::cerr << "ADD  " << coord->first << "  " << coord->second << "\n";
             m_mainEngine->addEntityToZone(actionEntity, *coord);
         }
         if((!m_keyEspapePressed && glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_PRESS) ||
@@ -438,7 +437,7 @@ void InputSystem::treatPlayerMove(PlayerConfComponent &playerComp, MoveableCompo
             currentVelocity /= playerComp.m_velocityInertie;
             --playerComp.m_velocityInertie;
         }
-        moveElementFromAngle(/*moveComp.m_velocity*/currentVelocity,
+        moveElementFromAngle(currentVelocity,
                              getRadiantAngle(moveComp.m_currentDegreeMoveDirection),
                              mapComp.m_absoluteMapPositionPX, true);
         updateDetectRect(playerComp, mapComp);
