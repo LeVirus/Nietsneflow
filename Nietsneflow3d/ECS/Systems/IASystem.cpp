@@ -248,9 +248,10 @@ void IASystem::updateEnemyDirection(EnemyConfComponent &enemyConfComp, MoveableC
 void IASystem::enemyShoot(EnemyConfComponent &enemyConfComp, MoveableComponent &moveComp,
                           MapCoordComponent &enemyMapComp, float distancePlayer)
 {
+    OptUint_t compNum;
     if(enemyConfComp.m_meleeAttackDamage && distancePlayer < 32.0f)
     {
-        OptUint_t compNum = m_newComponentManager.getComponentEmplacement(m_playerEntity, Components_e::PLAYER_CONF_COMPONENT);
+        compNum = m_newComponentManager.getComponentEmplacement(m_playerEntity, Components_e::PLAYER_CONF_COMPONENT);
         assert(compNum);
         PlayerConfComponent &playerConfComp = m_componentsContainer.m_vectPlayerConfComp[*compNum];
         playerConfComp.takeDamage(*enemyConfComp.m_meleeAttackDamage);
@@ -263,33 +264,35 @@ void IASystem::enemyShoot(EnemyConfComponent &enemyConfComp, MoveableComponent &
     else
     {
         assert(!enemyConfComp.m_stdAmmo.empty());
+        for(uint32_t i = 0; i < enemyConfComp.m_simultaneousShot; ++i)
+        {
+            compNum = m_newComponentManager.getComponentEmplacement(enemyConfComp.m_stdAmmo[i],
+                    Components_e::GENERAL_COLLISION_COMPONENT);
+            assert(compNum);
+            GeneralCollisionComponent &genComp = m_componentsContainer.m_vectGeneralCollisionComp[*compNum];
 
-        OptUint_t numCom = m_newComponentManager.getComponentEmplacement(enemyConfComp.m_stdAmmo[0],
-                                                                         Components_e::GENERAL_COLLISION_COMPONENT);
-        assert(numCom);
-        GeneralCollisionComponent &genComp = m_componentsContainer.m_vectGeneralCollisionComp[*numCom];
-
-        numCom = m_newComponentManager.getComponentEmplacement(enemyConfComp.m_stdAmmo[0], Components_e::SEGMENT_COLLISION_COMPONENT);
-        assert(numCom);
-        SegmentCollisionComponent &segmentComp = m_componentsContainer.m_vectSegmentCollisionComp[*numCom];
-        numCom = m_newComponentManager.getComponentEmplacement(enemyConfComp.m_stdAmmo[0], Components_e::SHOT_CONF_COMPONENT);
-        assert(numCom);
-        ShotConfComponent &shotComp = m_componentsContainer.m_vectShotConfComp[*numCom];
-        numCom = m_newComponentManager.getComponentEmplacement(shotComp.m_impactEntity, Components_e::IMPACT_CONF_COMPONENT);
-        assert(numCom);
-        ImpactShotComponent &impactComp = m_componentsContainer.m_vectImpactShotComp[*numCom];
-        numCom = m_newComponentManager.getComponentEmplacement(shotComp.m_impactEntity, Components_e::MOVEABLE_COMPONENT);
-        assert(numCom);
-        MoveableComponent &impactMoveComp = m_componentsContainer.m_vectMoveableComp[*numCom];
-        confBullet(impactComp, genComp, segmentComp, impactMoveComp, CollisionTag_e::BULLET_ENEMY_CT,
-                   enemyMapComp.m_absoluteMapPositionPX, moveComp.m_degreeOrientation);
-        numCom = m_newComponentManager.getComponentEmplacement(shotComp.m_impactEntity,
-                                                                             Components_e::MAP_COORD_COMPONENT);
-        assert(numCom);
-        MapCoordComponent &mapComp = m_componentsContainer.m_vectMapCoordComp[*numCom];
-        std::optional<PairUI_t> coord = getLevelCoord(mapComp.m_absoluteMapPositionPX);
-        assert(coord);
-        m_mainEngine->addEntityToZone(shotComp.m_impactEntity, *coord);
+            compNum = m_newComponentManager.getComponentEmplacement(enemyConfComp.m_stdAmmo[i], Components_e::SEGMENT_COLLISION_COMPONENT);
+            assert(compNum);
+            SegmentCollisionComponent &segmentComp = m_componentsContainer.m_vectSegmentCollisionComp[*compNum];
+            compNum = m_newComponentManager.getComponentEmplacement(enemyConfComp.m_stdAmmo[i], Components_e::SHOT_CONF_COMPONENT);
+            assert(compNum);
+            ShotConfComponent &shotComp = m_componentsContainer.m_vectShotConfComp[*compNum];
+            compNum = m_newComponentManager.getComponentEmplacement(shotComp.m_impactEntity, Components_e::IMPACT_CONF_COMPONENT);
+            assert(compNum);
+            ImpactShotComponent &impactComp = m_componentsContainer.m_vectImpactShotComp[*compNum];
+            compNum = m_newComponentManager.getComponentEmplacement(shotComp.m_impactEntity, Components_e::MOVEABLE_COMPONENT);
+            assert(compNum);
+            MoveableComponent &impactMoveComp = m_componentsContainer.m_vectMoveableComp[*compNum];
+            confBullet(impactComp, genComp, segmentComp, impactMoveComp, CollisionTag_e::BULLET_ENEMY_CT,
+                       enemyMapComp.m_absoluteMapPositionPX, moveComp.m_degreeOrientation);
+            compNum = m_newComponentManager.getComponentEmplacement(shotComp.m_impactEntity,
+                                                                   Components_e::MAP_COORD_COMPONENT);
+            assert(compNum);
+            MapCoordComponent &mapComp = m_componentsContainer.m_vectMapCoordComp[*compNum];
+            std::optional<PairUI_t> coord = getLevelCoord(mapComp.m_absoluteMapPositionPX);
+            assert(coord);
+            m_mainEngine->addEntityToZone(shotComp.m_impactEntity, *coord);
+        }
     }
 }
 

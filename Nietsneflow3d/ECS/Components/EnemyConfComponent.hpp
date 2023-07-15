@@ -66,9 +66,9 @@ struct EnemyConfComponent : public ecs::Component
         }
     }
     bool m_stuck = false, m_touched = false, m_visibleShot, m_endLevel = false, m_meleeOnly, m_frozenOnAttack, m_playDeathSound = false;
-    uint32_t m_weaponEntity, m_life, m_countPlayerInvisibility = 0, m_currentSprite, m_cycleNumberSpriteUpdate = 0.2 / FPS_VALUE,
+    uint32_t m_life, m_countPlayerInvisibility = 0, m_currentSprite, m_cycleNumberSpriteUpdate = 0.2 / FPS_VALUE,
     m_cycleNumberDyingInterval = 0.11 / FPS_VALUE, m_cycleNumberAttackInterval = 0.15f / FPS_VALUE, m_standardSpriteInterval = 0.5 / FPS_VALUE,
-    m_countTillLastAttack = 0;
+    m_countTillLastAttack = 0, m_simultaneousShot;
     std::vector<uint32_t> m_stdAmmo, m_visibleAmmo;
     EnemyDisplayMode_e m_displayMode = EnemyDisplayMode_e::NORMAL;
     //give first and last emplacement of sprite from type

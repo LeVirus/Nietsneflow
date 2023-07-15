@@ -1626,6 +1626,7 @@ bool MainEngine::createEnemy(const LevelManager &levelManager, const SpriteData 
     enemyComp.m_countTillLastAttack = 0;
     enemyComp.m_meleeOnly = enemyData.m_meleeOnly;
     enemyComp.m_frozenOnAttack = enemyData.m_frozenOnAttack;
+    enemyComp.m_simultaneousShot = enemyData.m_simultaneousShot ? *enemyData.m_simultaneousShot : 1;
     if(enemyData.m_meleeDamage)
     {
         enemyComp.m_meleeAttackDamage = *enemyData.m_meleeDamage;

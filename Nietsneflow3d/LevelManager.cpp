@@ -1330,6 +1330,11 @@ void LevelManager::loadEnemyData()
         {
             m_enemyData[vectINISections[i]].m_shotVelocity = std::stof(*val);
         }
+        val = m_ini.getValue(vectINISections[i], "SimultaneousShots");
+        if(val)
+        {
+            m_enemyData[vectINISections[i]].m_simultaneousShot = std::stof(*val);
+        }
         val = m_ini.getValue(vectINISections[i], "DropedObjectID");
         if(val)
         {
