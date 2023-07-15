@@ -131,7 +131,8 @@ void CollisionSystem::updateZonesColl()
 //===================================================================
 void CollisionSystem::secondEntitiesLoop(uint32_t entityA, uint32_t currentIteration, GeneralCollisionComponent &tagCompA, bool shotExplosionEject)
 {
-    if(tagCompA.m_tagA == CollisionTag_e::BULLET_PLAYER_CT || tagCompA.m_tagA == CollisionTag_e::BULLET_ENEMY_CT)
+    if(tagCompA.m_tagA == CollisionTag_e::DETECT_MAP_CT ||
+            tagCompA.m_tagA == CollisionTag_e::BULLET_PLAYER_CT || tagCompA.m_tagA == CollisionTag_e::BULLET_ENEMY_CT)
     {
         for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
         {
