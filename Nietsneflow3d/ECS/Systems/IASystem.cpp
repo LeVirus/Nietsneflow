@@ -374,6 +374,10 @@ void IASystem::treatEnemyBehaviourAttack(uint32_t enemyEntity, MapCoordComponent
         {
             moveElementFromAngle(moveComp.m_velocity, getRadiantAngle(moveComp.m_degreeOrientation),
                                  enemyMapComp.m_absoluteMapPositionPX);
+            numCom = m_newComponentManager.getComponentEmplacement(enemyEntity, Components_e::MAP_COORD_COMPONENT);
+            assert(numCom);
+            MapCoordComponent &mapComp = m_componentsContainer.m_vectMapCoordComp[*numCom];
+            m_mainEngine->addEntityToZone(enemyEntity, *getLevelCoord(mapComp.m_absoluteMapPositionPX));
         }
     }
 }

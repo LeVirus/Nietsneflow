@@ -747,7 +747,6 @@ bool CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args, bool shotEx
                     previousPos = args.mapCompA.m_absoluteMapPositionPX;
                 }
                 collisionCircleRectEject(args, circleCompA.m_ray, rectCompB);
-
                 if(checkStuck && std::abs(previousPos.first - args.mapCompA.m_absoluteMapPositionPX.first) < 3.0f &&
                         std::abs(previousPos.second - args.mapCompA.m_absoluteMapPositionPX.second) < 3.0f)
                 {
@@ -1443,6 +1442,7 @@ void CollisionSystem::collisionCircleRectEject(CollisionArgs &args, float circle
         crushMode = args.tagCompB.m_tagA == CollisionTag_e::WALL_CT;
     }
     collisionEject(mapComp, diffX, diffY, limitEjectY, limitEjectX, crushMode);
+    addEntityToZone(args.entityNumA, *getLevelCoord(mapComp.m_absoluteMapPositionPX));
     if(crushMode)
     {
         std::get<1>(m_memCrush.back()) = angleBehavior;

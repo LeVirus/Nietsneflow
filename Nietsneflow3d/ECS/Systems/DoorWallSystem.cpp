@@ -374,6 +374,7 @@ void DoorWallSystem::switchToNextPhaseMoveWall(uint32_t wallEntity, MapCoordComp
             moveWallComp.m_cycleInMovement = (moveWallComp.m_triggerBehaviour == TriggerBehaviourType_e::AUTO);
         }
     }
+    m_refMainEngine->addEntityToZone(wallEntity, *getLevelCoord(mapComp.m_absoluteMapPositionPX));
 }
 
 //===================================================================

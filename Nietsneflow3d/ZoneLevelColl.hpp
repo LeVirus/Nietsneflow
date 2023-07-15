@@ -24,6 +24,5 @@ private:
     PairUI_t m_size;
     uint32_t m_zoneSize = 20;
     std::vector<VectSetUi_t> m_zones;
-    //first lateral, second vertical
     std::map<uint32_t, VectPairUi_t> m_cacheEntitiesZone;
 };
