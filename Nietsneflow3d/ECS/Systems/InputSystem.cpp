@@ -440,6 +440,8 @@ void InputSystem::treatPlayerMove(PlayerConfComponent &playerComp, MoveableCompo
         moveElementFromAngle(currentVelocity,
                              getRadiantAngle(moveComp.m_currentDegreeMoveDirection),
                              mapComp.m_absoluteMapPositionPX, true);
+        m_mainEngine->addEntityToZone(m_playerEntity,
+                                      *getLevelCoord(mapComp.m_absoluteMapPositionPX));
         updateDetectRect(playerComp, mapComp);
     }
     playerComp.m_previousMove = currentMoveDirection;
