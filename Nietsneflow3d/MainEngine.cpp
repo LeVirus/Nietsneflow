@@ -1953,6 +1953,7 @@ void MainEngine::loadTriggerEntityData(const MoveableWallData &moveWallData,
         circleComp.m_ray = 10.0f;
         mapComp.m_coord = pos;
         mapComp.m_absoluteMapPositionPX = getCenteredAbsolutePosition(mapComp.m_coord);
+        addEntityToZone(numEntity, mapComp.m_coord);
     }
     //if shape wall already actionned and once behaviour
     if(moveWallData.m_triggerBehaviourType == TriggerBehaviourType_e::ONCE && m_memMoveableWallCheckpointData[shapeNum].first > 0)
