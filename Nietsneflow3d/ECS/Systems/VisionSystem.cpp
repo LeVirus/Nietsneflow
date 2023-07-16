@@ -342,6 +342,8 @@ void VisionSystem::updateBarrelSprite(uint32_t barrelEntity, MemSpriteDataCompon
                     collComp.m_tagB = CollisionTag_e::GHOST_CT;
                     mapCompB.m_absoluteMapPositionPX = mapCompA.m_absoluteMapPositionPX;
                     genComp.m_active = true;
+                    m_refMainEngine->addEntityToZone(barrelComp.m_damageZoneEntity,
+                                                     *getLevelCoord(mapCompB.m_absoluteMapPositionPX));
                 }
             }
             //end animation remove entity
