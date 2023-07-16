@@ -1078,7 +1078,7 @@ void CollisionSystem::setDamageCircle(uint32_t damageEntity, bool active, uint32
         mapCompDam.m_absoluteMapPositionPX = mapComp.m_absoluteMapPositionPX;
         std::optional<PairUI_t> coord = getLevelCoord(mapCompDam.m_absoluteMapPositionPX);
         assert(coord);
-        addEntityToZone(damageEntity,  mapCompDam.m_coord);
+        addEntityToZone(damageEntity, *getLevelCoord(mapCompDam.m_absoluteMapPositionPX));
     }
     else
     {
