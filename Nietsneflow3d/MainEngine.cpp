@@ -130,9 +130,9 @@ LevelState MainEngine::mainLoop(uint32_t levelNum, LevelState_e levelState, bool
             }
         }
     }
-    std::chrono::duration<double> elapsed_seconds, fps;
+    std::chrono::duration<double> elapsed_seconds/*, fps*/;
     m_graphicEngine.unsetTransition(m_gamePaused);
-    std::chrono::time_point<std::chrono::system_clock> clock, clockFrame;
+    std::chrono::time_point<std::chrono::system_clock> clock/*, clockFrame*/;
     clock = std::chrono::system_clock::now();
     m_physicalEngine.updateMousePos();
     OptUint_t compNumPlayer = m_ecsManager.getComponentManager().getComponentEmplacement(m_playerEntity,
@@ -147,9 +147,9 @@ LevelState MainEngine::mainLoop(uint32_t levelNum, LevelState_e levelState, bool
             continue;
         }
         //display FPS
-        fps = std::chrono::system_clock::now() - clockFrame;
-        std::cout << 1.0f / fps.count() << "  " << fps.count() << " FPS\n";
-        clockFrame = std::chrono::system_clock::now();
+//        fps = std::chrono::system_clock::now() - clockFrame;
+//        std::cout << 1.0f / fps.count() << "  " << fps.count() << " FPS\n";
+//        clockFrame = std::chrono::system_clock::now();
         clock = std::chrono::system_clock::now();
         m_physicalEngine.runIteration(m_gamePaused);
         //LOAD if level to load break the loop
@@ -647,18 +647,12 @@ void MainEngine::confPlayerBullet(PlayerConfComponent *playerComp,
     ShotConfComponent &shotComp = m_ecsManager.getComponentManager().getComponentsContainer().m_vectShotConfComp[*compNum];
     compNum = m_ecsManager.getComponentManager().getComponentEmplacement(shotComp.m_impactEntity, Components_e::MOVEABLE_COMPONENT);
     assert(compNum);
+    segmentColl.m_impactEntity = shotComp.m_impactEntity;
     MoveableComponent &moveImpactComp = m_ecsManager.getComponentManager().getComponentsContainer().m_vectMoveableComp[*compNum];
     compNum = m_ecsManager.getComponentManager().getComponentEmplacement(shotComp.m_impactEntity, Components_e::IMPACT_CONF_COMPONENT);
     assert(compNum);
     ImpactShotComponent &impactComp = m_ecsManager.getComponentManager().getComponentsContainer().m_vectImpactShotComp[*compNum];
     confBullet(impactComp, genColl, segmentColl, moveImpactComp, CollisionTag_e::BULLET_PLAYER_CT, point, degreeAngle);
-    compNum = m_ecsManager.getComponentManager().getComponentEmplacement(shotComp.m_impactEntity,
-                                                                         Components_e::MAP_COORD_COMPONENT);
-    assert(compNum);
-    MapCoordComponent &mapComp = m_ecsManager.getComponentManager().getComponentsContainer().m_vectMapCoordComp[*compNum];
-    std::optional<PairUI_t> coord = getLevelCoord(mapComp.m_absoluteMapPositionPX);
-    assert(coord);
-    addEntityToZone(shotComp.m_impactEntity, *coord);
 }
 
 //===================================================================

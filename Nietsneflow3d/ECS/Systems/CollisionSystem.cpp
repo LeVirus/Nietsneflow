@@ -77,6 +77,7 @@ void CollisionSystem::execSystem()
             assert(segmentCompNum);
             SegmentCollisionComponent &segmentCompA = m_componentsContainer.m_vectSegmentCollisionComp[*segmentCompNum];
             calcBulletSegment(segmentCompA);
+            addEntityToZone(segmentCompA.m_impactEntity, *getLevelCoord(segmentCompA.m_points.second));
             tagCompA.m_active = false;
         }
         else
@@ -771,7 +772,6 @@ bool CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args, bool shotEx
             if(args.tagCompA.m_tagA == CollisionTag_e::DEAD_CORPSE_CT)
             {
                 //if the wall is static or door
-
                 if(!m_newComponentManager.getComponentEmplacement(args.entityNumB, Components_e::MOVEABLE_WALL_CONF_COMPONENT))
                 {
                     collisionCircleRectEject(args, circleCompA.m_ray, rectCompB);
