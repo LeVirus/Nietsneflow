@@ -757,11 +757,7 @@ SpriteHeightGame = 2.2
 traversable = false
 
 [TeleportInvisible]
-<<<<<<< Updated upstream
 Sprite = SpriteInvisibleTeleport
-=======
-Sprite = SpriteGigerTeleport
->>>>>>> Stashed changes
 SpriteWeightGame = 0.0
 SpriteHeightGame = 0.0
 traversable = true
