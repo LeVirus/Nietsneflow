@@ -861,13 +861,22 @@ bool CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args, bool shotEx
     if((args.tagCompA.m_tagA == CollisionTag_e::BULLET_ENEMY_CT) ||
             (args.tagCompA.m_tagA == CollisionTag_e::BULLET_PLAYER_CT))
     {
-        //limit level case
         OptUint_t compNum = m_newComponentManager.getComponentEmplacement(args.entityNumA, Components_e::SHOT_CONF_COMPONENT);
         assert(compNum);
         ShotConfComponent &shotConfComp = m_componentsContainer.m_vectShotConfComp[*compNum];
-        if(!shotConfComp.m_destructPhase && (args.mapCompA.m_absoluteMapPositionPX.first < -LEVEL_THIRD_TILE_SIZE_PX ||
-                args.mapCompA.m_absoluteMapPositionPX.second < -LEVEL_THIRD_TILE_SIZE_PX))
+        bool limitX = (args.mapCompA.m_absoluteMapPositionPX.first < LEVEL_THIRD_TILE_SIZE_PX),
+            limitY = (args.mapCompA.m_absoluteMapPositionPX.second < LEVEL_THIRD_TILE_SIZE_PX);
+        //limit level case
+        if(!shotConfComp.m_destructPhase && (limitX || limitY))
         {
+            if(limitX)
+            {
+                args.mapCompA.m_absoluteMapPositionPX.first = LEVEL_THIRD_TILE_SIZE_PX;
+            }
+            if(limitY)
+            {
+                args.mapCompA.m_absoluteMapPositionPX.second = LEVEL_THIRD_TILE_SIZE_PX;
+            }
             shotConfComp.m_destructPhase = true;
             if(shotConfComp.m_damageCircleRayData)
             {
