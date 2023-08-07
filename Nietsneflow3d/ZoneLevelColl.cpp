@@ -75,6 +75,10 @@ std::set<uint32_t> ZoneLevelColl::getEntitiesFromZones(uint32_t entityNum)const
 //===============================================================
 void ZoneLevelColl::addEntityToZone(uint32_t entityNum, const PairUI_t &zoneCoord)
 {
+    if(zoneCoord.first >= m_zones.size() || zoneCoord.second >= m_zones[zoneCoord.first].size())
+    {
+        return;
+    }
     std::map<uint32_t, VectPairUi_t>::iterator it = m_cacheEntitiesZone.find(entityNum);
     if(it != m_cacheEntitiesZone.end())
     {
