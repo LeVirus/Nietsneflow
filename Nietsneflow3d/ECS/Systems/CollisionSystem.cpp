@@ -152,6 +152,10 @@ void CollisionSystem::secondEntitiesLoop(uint32_t entityA, uint32_t currentItera
         {
             return;
         }
+//        if(tagCompA.m_tagA == CollisionTag_e::PLAYER_CT && args.mapCompA.m_absoluteMapPositionPX.second < 2)
+//        {
+//            std::cerr << args.mapCompA.m_absoluteMapPositionPX.first << "  " << args.mapCompA.m_absoluteMapPositionPX.second << "\n";
+//        }
     }
 }
 
@@ -579,6 +583,10 @@ bool CollisionSystem::treatCollision(uint32_t entityNumA, uint32_t entityNumB, G
         assert(compNum);
         MapCoordComponent &mapCompB = m_componentsContainer.m_vectMapCoordComp[*compNum];
         CollisionArgs args = {entityNumA, entityNumB, tagCompA, tagCompB, mapCompA, mapCompB};
+        if(args.tagCompA.m_tagA == CollisionTag_e::PLAYER_CT && args.mapCompA.m_absoluteMapPositionPX.second < 2)
+        {
+            std::cerr << args.mapCompA.m_absoluteMapPositionPX.first << "  " << args.mapCompA.m_absoluteMapPositionPX.second << "\n";
+        }
         return treatCollisionFirstCircle(args, shotExplosionEject);
     }
     else if(tagCompA.m_shape == CollisionShape_e::SEGMENT_C)
@@ -778,6 +786,10 @@ bool CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args, bool shotEx
                 }
             }
         }
+        if(args.tagCompA.m_tagA == CollisionTag_e::PLAYER_CT)
+        {
+            std::cerr << args.mapCompA.m_absoluteMapPositionPX.first << " COLLA " << args.mapCompA.m_absoluteMapPositionPX.second << "\n";
+        }
     }
         break;
     case CollisionShape_e::CIRCLE_C:
@@ -849,6 +861,10 @@ bool CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args, bool shotEx
                     collisionCircleCircleEject(args, circleCompA, circleCompB);
                 }
             }
+        }
+        if(args.tagCompA.m_tagA == CollisionTag_e::PLAYER_CT && args.mapCompA.m_absoluteMapPositionPX.second < 2)
+        {
+            std::cerr << args.mapCompA.m_absoluteMapPositionPX.first << " COLLB " << args.mapCompA.m_absoluteMapPositionPX.second << "\n";
         }
     }
         break;
@@ -944,6 +960,10 @@ bool CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args, bool shotEx
                 treatBarrelShots(args.entityNumB, shotConfComp.m_damage);
             }
         }
+    }
+    if(args.tagCompA.m_tagA == CollisionTag_e::PLAYER_CT && args.mapCompA.m_absoluteMapPositionPX.second < 2)
+    {
+        std::cerr << args.mapCompA.m_absoluteMapPositionPX.first << " AAAAA " << args.mapCompA.m_absoluteMapPositionPX.second << "\n";
     }
     return true;
 }

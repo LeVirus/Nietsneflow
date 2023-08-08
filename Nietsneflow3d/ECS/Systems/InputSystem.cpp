@@ -241,11 +241,13 @@ void InputSystem::treatPlayerInput()
             compNum = m_newComponentManager.getComponentEmplacement(
                 actionEntity, Components_e::GENERAL_COLLISION_COMPONENT);
             assert(compNum);
+            std::optional<PairUI_t> coord = getLevelCoord(mapCompAction.m_absoluteMapPositionPX);
+            if(coord)
+            {
+                m_mainEngine->addEntityToZone(actionEntity, *coord);
+            }
             GeneralCollisionComponent &genCompAction = m_componentsContainer.m_vectGeneralCollisionComp[*compNum];
             confActionShape(mapCompAction, genCompAction, mapComp, moveComp);
-            std::optional<PairUI_t> coord = getLevelCoord(mapCompAction.m_absoluteMapPositionPX);
-            assert(coord);
-            m_mainEngine->addEntityToZone(actionEntity, *coord);
         }
         if((!m_keyEspapePressed && glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_PRESS) ||
                 checkStandardButtonGamepadKeyStatus(GLFW_GAMEPAD_BUTTON_START, GLFW_PRESS))
