@@ -1033,8 +1033,21 @@ void CollisionSystem::treatExplosionColl(CollisionArgs &args)
         if(!moveComp.m_ejectData && (std::abs(args.mapCompA.m_absoluteMapPositionPX.first - args.mapCompB.m_absoluteMapPositionPX.first) > 0.01f ||
                 std::abs(args.mapCompA.m_absoluteMapPositionPX.second - args.mapCompB.m_absoluteMapPositionPX.second) > 0.01f))
         {
-            moveComp.m_currentDegreeMoveDirection = getTrigoAngle(args.mapCompA.m_absoluteMapPositionPX, args.mapCompB.m_absoluteMapPositionPX);
-            moveComp.m_ejectData = {1.5f, EJECT_CYCLE_TIME};
+            bool eject = true;
+            compNum = m_newComponentManager.getComponentEmplacement(args.entityNumB, Components_e::ENEMY_CONF_COMPONENT);
+            if(compNum)
+            {
+                EnemyConfComponent &enemyComp = m_componentsContainer.m_vectEnemyConfComp[*compNum];
+                if(!enemyComp.m_frozenOnAttack)
+                {
+                    eject = false;
+                }
+            }
+            if(eject)
+            {
+                moveComp.m_currentDegreeMoveDirection = getTrigoAngle(args.mapCompA.m_absoluteMapPositionPX, args.mapCompB.m_absoluteMapPositionPX);
+                moveComp.m_ejectData = {1.5f, EJECT_CYCLE_TIME};
+            }
         }
     }
     if(args.tagCompB.m_tagA == CollisionTag_e::PLAYER_CT)
