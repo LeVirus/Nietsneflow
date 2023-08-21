@@ -47,6 +47,11 @@ void GraphicEngine::loadExistingLevelNumSaves(const std::array<std::optional<Dat
 //===================================================================
 void GraphicEngine::loadExistingCustomLevel(const std::vector<std::string> &customLevels)
 {
+    if(customLevels.empty())
+    {
+        m_existingCustomLevelsMenuWrite.emplace_back(std::pair<std::string, uint32_t>{"Return", 0});
+        return;
+    }
     uint32_t currentSectionCursor = 0, size = customLevels.size() / CUSTOM_MENU_SECTION_SIZE +
             ((customLevels.size() % CUSTOM_MENU_SECTION_SIZE == 0) ? 0 : 1),
             currentSection = 0;
@@ -313,6 +318,7 @@ void GraphicEngine::fillTitleMenuWrite(WriteComponent &writeComp, MenuMode_e men
 void GraphicEngine::fillMenuWrite(WriteComponent &writeComp, MenuMode_e menuEntry, uint32_t cursorPos,
                                   const std::tuple<PlayerConfComponent *, uint32_t, uint32_t> &endLevelData)
 {
+    assert(!writeComp.m_vectMessage.empty());
     if(menuEntry == MenuMode_e::LOAD_GAME || menuEntry == MenuMode_e::NEW_GAME)
     {
         writeComp.m_vectMessage[0].second = m_saveStandardLevelMenuWrite;
