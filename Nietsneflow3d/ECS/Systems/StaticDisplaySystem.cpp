@@ -372,7 +372,7 @@ void StaticDisplaySystem::updateStringWriteEntitiesInputMenu(bool keyboardInputM
                         static_cast<uint32_t>(Systems_e::INPUT_SYSTEM))->getMapTmpGamepadAssociatedKey();
         for(uint32_t i = 0; i < m_inputMenuGamepadWriteKeysEntities.size(); ++i)
         {
-            compNum = m_newComponentManager.getComponentEmplacement(m_inputMenuKeyboardWriteKeysEntities[i],
+            compNum = m_newComponentManager.getComponentEmplacement(m_inputMenuGamepadWriteKeysEntities[i],
                                                                     Components_e::WRITE_COMPONENT);
             assert(compNum);
             WriteComponent &writeConf = m_componentsContainer.m_vectWriteComp[*compNum];
@@ -389,6 +389,7 @@ void StaticDisplaySystem::updateStringWriteEntitiesInputMenu(bool keyboardInputM
                 writeConf.m_vectMessage[0] = {0.1, getGamepadStringKeyAxisAssociated(map.at(static_cast<ControlKey_e>(i)).m_keyID,
                                                (*map.at(static_cast<ControlKey_e>(i)).m_axisPos))};
             }
+            assert(!writeConf.m_vectMessage.empty());
             m_mainEngine->updateWriteComp(writeConf);
         }
     }
@@ -509,7 +510,7 @@ void StaticDisplaySystem::updateNewInputKeyGamepad(ControlKey_e currentSelectedK
 void StaticDisplaySystem::updateNewInputKeyKeyboard(ControlKey_e currentSelectedKey, const MouseKeyboardInputState &state)
 {
     uint32_t entityWrite = m_inputMenuKeyboardWriteKeysEntities[static_cast<uint32_t>(currentSelectedKey)];
-    OptUint_t compNum = m_newComponentManager.getComponentEmplacement(entityWrite, Components_e::GENERAL_COLLISION_COMPONENT);
+    OptUint_t compNum = m_newComponentManager.getComponentEmplacement(entityWrite, Components_e::WRITE_COMPONENT);
     assert(compNum);
     WriteComponent &writeComp = m_componentsContainer.m_vectWriteComp[*compNum];
     assert(!writeComp.m_vectMessage.empty());
