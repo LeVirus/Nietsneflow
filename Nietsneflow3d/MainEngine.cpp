@@ -1661,7 +1661,7 @@ bool MainEngine::createEnemy(const LevelManager &levelManager, const SpriteData 
     audiocomponent.m_soundElements.emplace_back(soundElements[1]);
     audiocomponent.m_soundElements.emplace_back(soundElements[2]);
     audiocomponent.m_soundElements.emplace_back(soundElements[3]);
-    audiocomponent.m_maxDistance /= 5.0f;
+    audiocomponent.m_maxDistance = 500.0f;
     compNum = m_ecsManager.getComponentManager().getComponentEmplacement(numEntity, Components_e::TIMER_COMPONENT);
     assert(compNum);
     TimerComponent &timerComponent = m_ecsManager.getComponentManager().getComponentsContainer().m_vectTimerComp[*compNum];

@@ -40,7 +40,7 @@ private:
     ComponentsGroup &m_componentsContainer;
     uint32_t m_playerEntity, m_intervalEnemyBehaviour = 0.4 / FPS_VALUE, m_intervalVisibleShotLifeTime = 5.0 / FPS_VALUE,
     m_intervalEnemyPlayPassiveSound = 5.0 / FPS_VALUE;
-    float m_distanceEnemyBehaviour = LEVEL_TILE_SIZE_PX * 15.0f;
+    float m_distanceEnemyBehaviour = LEVEL_TILE_SIZE_PX * 8.0f;
     MainEngine *m_mainEngine;
     std::vector<uint32_t> m_vectMoveableEntities;
     ECSManager *m_memECSManager;
