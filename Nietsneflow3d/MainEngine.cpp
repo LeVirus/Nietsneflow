@@ -210,6 +210,7 @@ LevelState MainEngine::mainLoop(uint32_t levelNum, LevelState_e levelState, bool
         //Player dead
         else if(!playerConf.m_life)
         {
+            playerConf.m_playerShoot = false;
             playerConf.m_infoWriteData = {false, ""};
             OptUint_t compNum = m_ecsManager.getComponentManager().getComponentEmplacement(m_playerEntity, Components_e::AUDIO_COMPONENT);
             assert(compNum);
