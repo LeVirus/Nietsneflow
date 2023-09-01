@@ -27,7 +27,7 @@ MachineGunID = ObjectMachineGun
 
 [TelepAnim]
 Sprite = SpriteAnimTeleportA SpriteAnimTeleportB
-SpriteWeightGame = 1.4
+SpriteWeightGame = 1.1
 SpriteHeightGame = 1.8
 
 [MessageLogA]
