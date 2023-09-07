@@ -98,28 +98,28 @@ void PhysicalEngine::setGamepadKey(const std::array<GamepadInputState, static_ca
 }
 
 //===================================================================
-void moveElementFromAngle(float distanceMove, float radiantAngle, PairFloat_t &point)
+void moveElementFromAngle(float distanceMove, float radiantAngle, PairFloat_t &point, bool backgroundRaycastMode)
 {
     PairUI_t size = Level::getSize();
     float maxLimitX = size.first * LEVEL_TILE_SIZE_PX - distanceMove,
             maxLimitY = size.second * LEVEL_TILE_SIZE_PX - distanceMove;
     point.first += std::cos(radiantAngle) * distanceMove;
     //limit case
-    if(point.first < distanceMove)
+    if(!backgroundRaycastMode && point.first < distanceMove)
     {
         point.first = distanceMove;
     }
-    else if(point.first > maxLimitX)
+    else if(!backgroundRaycastMode && point.first > maxLimitX)
     {
         point.first = maxLimitX;
     }
     point.second -= std::sin(radiantAngle) * distanceMove;
     //limit case
-    if(point.second < distanceMove)
+    if(!backgroundRaycastMode && point.second < distanceMove)
     {
         point.second = distanceMove;
     }
-    else if(point.second > maxLimitY)
+    else if(!backgroundRaycastMode && point.second > maxLimitY)
     {
         point.second = maxLimitY;
     }

@@ -980,7 +980,7 @@ void FirstPersonDisplaySystem::calcVerticalBackgroundLineRaycast(const PairFloat
         {
             totalDistanceTarget = 30.0f / currentGroundGLA.second;
             currentPoint = observerPos;
-            moveElementFromAngle(totalDistanceTarget, currentRadiantAngle, currentPoint);
+            moveElementFromAngle(totalDistanceTarget, currentRadiantAngle, currentPoint, true);
             (*m_memBackgroundDistance)[i] = getCameraDistance(observerPos, currentPoint, currentRadiantAngle);
         }
         currentGroundGLA = {currentGLLatPos, -1.0f};
@@ -989,7 +989,7 @@ void FirstPersonDisplaySystem::calcVerticalBackgroundLineRaycast(const PairFloat
     {
         totalDistanceTarget = (*m_memBackgroundDistance)[i] / std::cos(calcAngle);
         currentPoint = observerPos;
-        moveElementFromAngle(totalDistanceTarget, currentRadiantAngle, currentPoint);
+        moveElementFromAngle(totalDistanceTarget, currentRadiantAngle, currentPoint, true);
         if(ground || ceiling)
         {
             pairMod = {std::abs(std::fmod(currentPoint.first, LEVEL_TILE_SIZE_PX)),
