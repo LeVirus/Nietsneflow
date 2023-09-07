@@ -1199,7 +1199,7 @@ textureHeight = 0.092
 texture = 11
 texturePosX = 0.378
 texturePosY = 0.8846
-textureWeight = 0.108
+textureWeight = 0.118
 textureHeight = 0.092
 
 #327
@@ -1207,7 +1207,7 @@ textureHeight = 0.092
 texture = 11
 texturePosX = 0.5046
 texturePosY = 0.8846
-textureWeight = 0.1503
+textureWeight = 0.1203
 textureHeight = 0.092
 
 #================================Zombie Shotgun
