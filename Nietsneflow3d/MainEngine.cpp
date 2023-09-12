@@ -591,6 +591,11 @@ void MainEngine::playerAttack(uint32_t playerEntity, PlayerConfComponent &player
         compNum = m_ecsManager.getComponentManager().getComponentEmplacement(playerEntity, Components_e::MAP_COORD_COMPONENT);
         assert(compNum);
         MapCoordComponent &playerMapComp = m_ecsManager.getComponentManager().getComponentsContainer().m_vectMapCoordComp[*compNum];
+        std::optional<PairUI_t> coord = getLevelCoord(actionMapComp.m_absoluteMapPositionPX);
+        if(coord)
+        {
+            addEntityToZone(playerComp.m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::HIT_MELEE)], *coord);
+        }
         confActionShape(actionMapComp, actionGenColl, playerMapComp, playerMoveComp);
         return;
     }
