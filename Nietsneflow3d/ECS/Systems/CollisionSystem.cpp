@@ -1279,23 +1279,21 @@ void CollisionSystem::treatPlayerTeleport(CollisionArgs &args)
     {
         return;
     }
+    uint32_t teleportAnimEntity = playerComp.m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::DISPLAY_TELEPORT)];
     OptUint_t compNum = m_newComponentManager.getComponentEmplacement(args.entityNumA, Components_e::MAP_COORD_COMPONENT);
     assert(compNum);
     MapCoordComponent &mapPlayerComp = m_componentsContainer.m_vectMapCoordComp[*compNum];
     compNum = m_newComponentManager.getComponentEmplacement(args.entityNumB, Components_e::TELEPORT_COMPONENT);
     assert(compNum);
     TeleportComponent &teleportComp = m_componentsContainer.m_vectTeleportComp[*compNum];
-    compNum = m_newComponentManager.getComponentEmplacement(
-        playerComp.m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::DISPLAY_TELEPORT)],
-        Components_e::GENERAL_COLLISION_COMPONENT);
+    compNum = m_newComponentManager.getComponentEmplacement(teleportAnimEntity, Components_e::GENERAL_COLLISION_COMPONENT);
     assert(compNum);
     GeneralCollisionComponent &genTeleportComp = m_componentsContainer.m_vectGeneralCollisionComp[*compNum];
 
-    compNum = m_newComponentManager.getComponentEmplacement(
-        playerComp.m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::DISPLAY_TELEPORT)], Components_e::TIMER_COMPONENT);
+    compNum = m_newComponentManager.getComponentEmplacement(teleportAnimEntity, Components_e::TIMER_COMPONENT);
     assert(compNum);
     TimerComponent &timerComp = m_componentsContainer.m_vectTimerComp[*compNum];
-    activeSound(args.entityNumB);
+    activeSound(teleportAnimEntity);
     mapPlayerComp.m_coord = teleportComp.m_targetPos;
     mapPlayerComp.m_absoluteMapPositionPX = getCenteredAbsolutePosition(mapPlayerComp.m_coord);
     playerComp.m_teleported = true;

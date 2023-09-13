@@ -2744,6 +2744,7 @@ uint32_t MainEngine::createDisplayTeleportEntity()
     bitsetComponents[Components_e::MEM_SPRITE_DATA_COMPONENT] = true;
     bitsetComponents[Components_e::TIMER_COMPONENT] = true;
     bitsetComponents[Components_e::GENERAL_COLLISION_COMPONENT] = true;
+    bitsetComponents[Components_e::AUDIO_COMPONENT] = true;
     return m_ecsManager.addEntity(bitsetComponents);
 }
 
@@ -3773,6 +3774,14 @@ uint32_t MainEngine::loadDisplayTeleportEntity(const LevelManager &levelManager)
     }
     spriteComp.m_spriteData = memSpriteComp.m_vectSpriteData[0];
     m_graphicEngine.getVisionSystem().memTeleportAnimEntity(numEntity);
+    compNum = m_ecsManager.getComponentManager().getComponentEmplacement(numEntity, Components_e::AUDIO_COMPONENT);
+    assert(compNum);
+    AudioComponent &audioComp = m_ecsManager.getComponentManager().getComponentsContainer().m_vectAudioComp[*compNum];
+    if(!m_memSoundElements.m_teleports)
+    {
+        m_memSoundElements.m_teleports = loadSound(levelManager.getTeleportSoundFile());
+    }
+    audioComp.m_soundElements.push_back(*m_memSoundElements.m_teleports);
     return numEntity;
 }
 
@@ -3905,15 +3914,6 @@ uint32_t MainEngine::confTeleportEntity(const StaticLevelElementData &teleportDa
     assert(compNum);
     TeleportComponent &teleportComp = m_ecsManager.getComponentManager().getComponentsContainer().
                                    m_vectTeleportComp[*compNum];
-
-    compNum = m_ecsManager.getComponentManager().getComponentEmplacement(entityNum, Components_e::AUDIO_COMPONENT);
-    assert(compNum);
-    AudioComponent &audioComp = m_ecsManager.getComponentManager().getComponentsContainer().m_vectAudioComp[*compNum];
-    if(!m_memSoundElements.m_teleports)
-    {
-        m_memSoundElements.m_teleports = loadSound(soundFile);
-    }
-    audioComp.m_soundElements.push_back(*m_memSoundElements.m_teleports);
     teleportComp.m_targetPos = teleportData.m_teleportData->m_targetTeleport[iterationNum];
     return entityNum;
 }
