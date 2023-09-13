@@ -39,7 +39,6 @@ enum class EnemyAttackPhase_e
 
 enum class EnemySoundEffect_e
 {
-    NORMAL,
     DETECT,
     ATTACK,
     DEATH

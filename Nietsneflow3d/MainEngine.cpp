@@ -1573,16 +1573,15 @@ bool MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
     const std::map<std::string, EnemyData> &enemiesData = levelManager.getEnemiesData();
     float collisionRay;
     bool exit = false;
-    std::array<SoundElement, 4> currentSoundElements;
+    std::array<SoundElement, 3> currentSoundElements;
     bool loadFromCheckpoint = (!m_memEnemiesStateFromCheckpoint.empty());
     m_currentLevelEnemiesNumber = 0;
     m_currentLevelEnemiesKilled = 0;
     for(std::map<std::string, EnemyData>::const_iterator it = enemiesData.begin(); it != enemiesData.end(); ++it)
     {
-        currentSoundElements[0] = loadSound(it->second.m_normalBehaviourSoundFile);
-        currentSoundElements[1] = loadSound(it->second.m_detectBehaviourSoundFile);
-        currentSoundElements[2] = loadSound(it->second.m_attackSoundFile);
-        currentSoundElements[3] = loadSound(it->second.m_deathSoundFile);
+        currentSoundElements[0] = loadSound(it->second.m_detectBehaviourSoundFile);
+        currentSoundElements[1] = loadSound(it->second.m_attackSoundFile);
+        currentSoundElements[2] = loadSound(it->second.m_deathSoundFile);
         collisionRay = it->second.m_inGameSpriteSize.first * LEVEL_TWO_THIRD_TILE_SIZE_PX;
         const SpriteData &memSpriteData = levelManager.getPictureData().
                 getSpriteData()[it->second.m_staticFrontSprites[0]];
@@ -1596,7 +1595,7 @@ bool MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
 
 //===================================================================
 bool MainEngine::createEnemy(const LevelManager &levelManager, const SpriteData &memSpriteData, const EnemyData &enemyData,
-                             float collisionRay, bool loadFromCheckpoint, uint32_t index, const std::array<SoundElement, 4> &soundElements)
+                             float collisionRay, bool loadFromCheckpoint, uint32_t index, const std::array<SoundElement, 3> &soundElements)
 {
     bool exit = false;
     uint32_t numEntity = createEnemyEntity();
@@ -1661,11 +1660,10 @@ bool MainEngine::createEnemy(const LevelManager &levelManager, const SpriteData 
     compNum = m_ecsManager.getComponentManager().getComponentEmplacement(numEntity, Components_e::AUDIO_COMPONENT);
     assert(compNum);
     AudioComponent &audiocomponent = m_ecsManager.getComponentManager().getComponentsContainer().m_vectAudioComp[*compNum];
-    audiocomponent.m_soundElements.reserve(4);
+    audiocomponent.m_soundElements.reserve(3);
     audiocomponent.m_soundElements.emplace_back(soundElements[0]);
     audiocomponent.m_soundElements.emplace_back(soundElements[1]);
     audiocomponent.m_soundElements.emplace_back(soundElements[2]);
-    audiocomponent.m_soundElements.emplace_back(soundElements[3]);
     audiocomponent.m_maxDistance = 500.0f;
     compNum = m_ecsManager.getComponentManager().getComponentEmplacement(numEntity, Components_e::TIMER_COMPONENT);
     assert(compNum);

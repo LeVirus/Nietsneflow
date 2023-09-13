@@ -310,7 +310,7 @@ private:
     void loadDoorEntities(const LevelManager &levelManager);
     bool loadEnemiesEntities(const LevelManager &levelManager);
     bool createEnemy(const LevelManager &levelManager, const SpriteData &memSpriteData, const EnemyData &enemyData,
-                         float collisionRay, bool loadFromCheckpoint, uint32_t index, const std::array<SoundElement, 4> &soundElements);
+                         float collisionRay, bool loadFromCheckpoint, uint32_t index, const std::array<SoundElement, 3> &soundElements);
     void loadNonVisibleEnemyAmmoStuff(bool loadFromCheckpoint, uint32_t currentEnemy,
                                       const EnemyData &enemyData, const LevelManager &levelManager,
                                       EnemyConfComponent &enemyComp);

@@ -1345,9 +1345,6 @@ void LevelManager::loadEnemyData()
         {
             m_enemyData[vectINISections[i]].m_meleeDamage = std::stoi(*val);
         }
-        val = m_ini.getValue(vectINISections[i], "NormalBehaviourSound");
-        assert(val);
-        m_enemyData[vectINISections[i]].m_normalBehaviourSoundFile = *val;
         val = m_ini.getValue(vectINISections[i], "DetectBehaviourSound");
         assert(val);
         m_enemyData[vectINISections[i]].m_detectBehaviourSoundFile = *val;

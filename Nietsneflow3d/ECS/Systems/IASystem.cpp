@@ -125,14 +125,6 @@ void IASystem::execSystem()
             numCom = m_newComponentManager.getComponentEmplacement(mVectNumEntity[i], Components_e::TIMER_COMPONENT);
             assert(numCom);
             TimerComponent &timerComp = m_componentsContainer.m_vectTimerComp[*numCom];
-            if(enemyConfComp.m_behaviourMode == EnemyBehaviourMode_e::PASSIVE)
-            {
-                if(++timerComp.m_cycleCountC > m_intervalEnemyPlayPassiveSound)
-                {
-                    activeSound(mVectNumEntity[i], static_cast<uint32_t>(EnemySoundEffect_e::NORMAL));
-                    timerComp.m_cycleCountC = 0;
-                }
-            }
             if(checkEnemyTriggerAttackMode(radiantAnglePlayerDirection, distancePlayer, enemyMapComp))
             {
                 timerComp.m_cycleCountB = 0;
