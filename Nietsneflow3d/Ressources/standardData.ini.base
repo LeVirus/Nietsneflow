@@ -31,9 +31,9 @@ SpriteWeightGame = 1.1
 SpriteHeightGame = 1.8
 
 [MessageLogA]
-Sprite = SpriteTriggerA
+Sprite = SpriteLog
 SpriteWeightGame = 0.4
-SpriteHeightGame = 0.6
+SpriteHeightGame = 1.2
 
 [MessageLogB]
 Sprite = SpriteBackStars
@@ -784,6 +784,6 @@ SpriteHeightGame = 0.2
 traversable = false
 
 [Exit]
-Sprite = SpriteGroundStorage 
+Sprite = SpriteExitSwitch 
 SpriteWeightGame = 0.4
 SpriteHeightGame = 0.8

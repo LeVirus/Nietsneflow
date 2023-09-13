@@ -4,6 +4,22 @@
 [PathToTexture]
 textures = walltest.jpg	Global.png FontTexture.png EnemyDemon.png GeneralSprites.png EnemyMarine.png Stars.jpg Simetra_green.png BossArachnotron.png BossCyberDemon.png EnemyBaronOfHell.png EnemyCacodemon.png EnemyDemonClaw.png EnemyZombieSergeant.png MenuFilled.png Font.png TitleMenu.png MenuLeft.png MenuRightLeft.png NouvText.png BackroomText.png TreesFree.png
 
+ #4335 405  4522 599
+[SpriteLog]
+texture = 7
+texturePosX = 0.928
+texturePosY = 0.193
+textureWeight = 0.04
+textureHeight = 0.0928
+
+
+ #229 2812  265 2853
+[SpriteExitSwitch]
+texture = 4
+texturePosX = 0.051
+texturePosY = 0.934
+textureWeight = 0.008
+textureHeight = 0.0136
 
 #262
 [SpriteWallD]
