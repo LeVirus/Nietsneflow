@@ -177,7 +177,7 @@ DyingSprite = SpriteCDDA SpriteCDDB SpriteCDDC SpriteCDDD SpriteCDDE SpriteCDDF 
 Touched = SpriteCDDA
 ShootSpritesID = VisibleShootRocket
 DamageZoneRay = 530.0
-ShotVelocity = 3.0
+ShotVelocity = 5.0
 Life = 300
 Velocity = 0.7
 MeleeDamage = 25
@@ -293,7 +293,7 @@ ShootSpritesID = VisibleShootDemonA
 MeleeDamage = 12
 ShotVelocity = 2
 Life = 15
-Velocity = 0.8
+Velocity = 1.3
 Damage = 15
 SpriteWeightGame = 0.5 ; value in %
 SpriteHeightGame = 1.5
@@ -424,7 +424,7 @@ AttackType = 2
 ShootSpritesID = VisibleShootPlasma
 MaxAmmo = 100
 Damage = 3
-ShotVelocity = 5
+ShotVelocity = 7
 AnimationType = 0
 LastAnimNum = 1
 SoundEffect = LazerShot.wav
@@ -764,7 +764,7 @@ traversable = true
 
 [Teleport]
 Sprite = SpriteGigerTeleport
-SpriteWeightGame = 1.0
+SpriteWeightGame = 0.7
 SpriteHeightGame = 0.46
 traversable = true
 
