@@ -56,18 +56,18 @@ textureHeight = 0.256
 #0 263  260 521
 [SpriteGrassA]
 texture = 21
-texturePosX = 0.0
-texturePosY = 0.259
-textureWeight = 0.256
-textureHeight = 0.252
+texturePosX = 0.001
+texturePosY = 0.260
+textureWeight = 0.254
+textureHeight = 0.250
 
 #261 263  514 521
 [SpriteGrassB]
 texture = 21
-texturePosX = 0.257
-texturePosY = 0.259
-textureWeight = 0.25
-textureHeight = 0.252
+texturePosX = 0.258
+texturePosY = 0.260
+textureWeight = 0.248
+textureHeight = 0.250
 
 #580 416  645 520
 [SpriteDeadTreeA]

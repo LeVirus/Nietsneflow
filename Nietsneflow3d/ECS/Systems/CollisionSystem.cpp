@@ -1126,12 +1126,12 @@ void CollisionSystem::treatActionPlayerRect(CollisionArgs &args)
             if((playerComp.m_card.find((*doorComp.m_cardID).first) ==
                  playerComp.m_card.end()))
             {
-                writePlayerInfo((*doorComp.m_cardID).second + " NEEDED");
+                writePlayerInfo((*doorComp.m_cardID).second + " Needed");
                 return;
             }
             else
             {
-                writePlayerInfo((*doorComp.m_cardID).second + " USED");
+                writePlayerInfo((*doorComp.m_cardID).second + " Used");
             }
         }
         if(doorComp.m_currentState == DoorState_e::STATIC_CLOSED || doorComp.m_currentState == DoorState_e::MOVE_CLOSE)

@@ -1546,7 +1546,6 @@ void MainEngine::loadDoorEntities(const LevelManager &levelManager)
                         str.insert(k, " ");
                         ++k;
                     }
-                    str[k] = std::toupper(str[k]);
                 }
                 doorComp.m_cardID = {(*it->second.m_cardID).first, str};
             }
