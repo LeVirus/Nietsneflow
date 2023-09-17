@@ -1163,7 +1163,7 @@ void MainEngine::loadLevel(const LevelManager &levelManager)
     loadLogsEntities(levelManager, levelManager.getPictureData().getSpriteData());
     loadRevealedMap();
     std::string prologue = treatInfoMessageEndLine(levelManager.getLevelPrologue()),
-            epilogue = treatInfoMessageEndLine(levelManager.getLevelEpilogue());
+            epilogue = treatInfoMessageEndLine(levelManager.getLevelEpilogue(), 27);
     m_graphicEngine.updatePrologueAndEpilogue(prologue, epilogue);
     //MUUUUUUUUUUUUSSSSS
     m_audioEngine.memoriseEpilogueMusicFilename(levelManager.getLevelEpilogueMusic());

@@ -1009,11 +1009,7 @@ std::string treatInfoMessageEndLine(const std::string &str, uint32_t lineSize)
         {
             currentLine = ret.substr(currentPosLine, lineSize);
             foundLastSpace = currentLine.find_last_of(' ');
-            if(foundLastSpace != std::string::npos)
-            {
-                ret.insert(ret.begin() + static_cast<size_t>(currentPosLine) + foundLastSpace, '\\');
-            }
-            else
+            if(foundLastSpace == std::string::npos)
             {
                 ret.insert(ret.begin() + i, '\\');
             }

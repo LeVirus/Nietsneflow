@@ -347,7 +347,7 @@ void GraphicEngine::fillMenuWrite(WriteComponent &writeComp, MenuMode_e menuEntr
     }
     else if(menuEntry == MenuMode_e::LEVEL_PROLOGUE)
     {
-        writeComp.m_vectMessage[0].second = m_levelPrologue + "\\\\Press Enter To Continue";
+        writeComp.m_vectMessage[0].second = m_levelPrologue;
     }
     else if(menuEntry == MenuMode_e::LEVEL_EPILOGUE)
     {
