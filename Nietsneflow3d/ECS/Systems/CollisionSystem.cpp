@@ -720,8 +720,15 @@ bool CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args, bool shotEx
             {
                 bool checkStuck = (args.tagCompB.m_tagA == CollisionTag_e::BARREL_CT || args.tagCompB.m_tagA == CollisionTag_e::CHECKPOINT_CT ||
                                    args.tagCompB.m_tagA == CollisionTag_e::LOG_CT || args.tagCompB.m_tagA == CollisionTag_e::STATIC_SET_CT ||
-                                   args.tagCompB.m_tagA == CollisionTag_e::TRIGGER_CT || args.tagCompB.m_tagA == CollisionTag_e::TELEPORT_CT ||
-                                   args.tagCompB.m_tagA == CollisionTag_e::WALL_CT);
+                                   args.tagCompB.m_tagA == CollisionTag_e::TRIGGER_CT || args.tagCompB.m_tagA == CollisionTag_e::TELEPORT_CT);
+                if(!checkStuck && args.tagCompB.m_tagA == CollisionTag_e::WALL_CT)
+                {
+                    OptUint_t compNum = m_newComponentManager.getComponentEmplacement(args.entityNumB, Components_e::MOVEABLE_WALL_CONF_COMPONENT);
+                    if(!compNum)
+                    {
+                        checkStuck = true;
+                    }
+                }
                 PairFloat_t previousPos;
                 if(args.tagCompB.m_tagA == CollisionTag_e::DOOR_CT)
                 {
