@@ -496,7 +496,7 @@ void MainEngine::displayTransitionMenu(MenuMode_e mode, bool redTransition)
     playerConf.m_menuMode = mode;
     setMenuEntries(playerConf);
     compNum = m_ecsManager.getComponentManager().getComponentEmplacement(
-        playerConf.m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::TITLE_MENU)], Components_e::WRITE_COMPONENT);
+        playerConf.m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::MENU_ENTRIES)], Components_e::WRITE_COMPONENT);
     assert(compNum);
     WriteComponent &writeConf = m_ecsManager.getComponentManager().getComponentsContainer().m_vectWriteComp[*compNum];
     if(mode == MenuMode_e::LEVEL_EPILOGUE)
