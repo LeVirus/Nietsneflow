@@ -640,30 +640,6 @@ SpriteWeightGame = 0.4
 SpriteHeightGame = 1.2
 traversable = false
 
-[GroundDeadTreeA]
-Sprite = SpriteDeadTreeA
-SpriteWeightGame = 0.4
-SpriteHeightGame = 2.1
-traversable = false
-
-[GroundDeadTreeB]
-Sprite = SpriteDeadTreeB
-SpriteWeightGame = 0.3
-SpriteHeightGame = 1.9
-traversable = false
-
-[GroundDeadTreeC]
-Sprite = SpriteDeadTreeC
-SpriteWeightGame = 0.3
-SpriteHeightGame = 2.1
-traversable = false
-
-[GroundDeadTreeD]
-Sprite = SpriteDeadTreeD
-SpriteWeightGame = 0.4
-SpriteHeightGame = 2.5
-traversable = false
-
 [GroundGigerA]
 Sprite = SpriteGigerGroundA
 SpriteWeightGame = 0.8
@@ -747,6 +723,13 @@ Sprite = SpriteTreeG
 SpriteWeightGame = 0.7
 SpriteHeightGame = 2.2
 traversable = false
+
+[GroundTreeH]
+Sprite = SpriteTreeB
+SpriteWeightGame = 1.2
+SpriteHeightGame = 2.0
+traversable = true
+
 
 [TeleportInvisible]
 Sprite = SpriteInvisibleTeleport
