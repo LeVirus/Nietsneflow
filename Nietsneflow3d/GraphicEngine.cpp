@@ -30,13 +30,24 @@ void GraphicEngine::loadExistingLevelNumSaves(const std::array<std::optional<Dat
     std::string checkpoint;
     for(uint32_t i = 0; i < 3; ++i)
     {
-        m_saveStandardLevelMenuWrite += std::to_string(i + 1);
         if(existingLevelNum[i])
         {
+            m_saveStandardLevelMenuWrite += std::to_string(i + 1);
             checkpoint = (existingLevelNum[i]->m_checkpointNum == 0 || m_restartLevelMode) ? "" :
                 " Chckpt " + std::to_string(existingLevelNum[i]->m_checkpointNum);
             m_saveStandardLevelMenuWrite += "  Lvl " + std::to_string(existingLevelNum[i]->m_levelNum) +
                     checkpoint + " " + existingLevelNum[i]->m_date;
+        }
+        else
+        {
+            if(i == 0)
+            {
+                m_saveStandardLevelMenuWrite += std::to_string(i + 1) + "  Empty";
+            }
+            else
+            {
+                m_saveStandardLevelMenuWrite += std::to_string(i + 1) + " Empty";
+            }
         }
         m_saveStandardLevelMenuWrite += "\\";
     }

@@ -465,10 +465,10 @@ inline const std::map<MenuMode_e, PairPairFloatStr_t> MAP_MENU_DATA =
          "Strafe Right\\Turn Left\\Turn Right\\Action\\Shoot\\Previous Weapon\\Next Weapon\\Turn Sensitivity\\Default\\Return\\Valid"}
     },
     {MenuMode_e::NEW_GAME,
-     PairPairFloatStr_t{{-0.6f, 0.5f}, "1\\2\\3\\Return"}
+     PairPairFloatStr_t{{-0.6f, 0.5f}, "Empty\\Empty\\Empty\\Return"}
     },
     {MenuMode_e::LOAD_GAME,
-     PairPairFloatStr_t{{-0.6f, 0.5f}, "1\\2\\3\\Return"}
+     PairPairFloatStr_t{{-0.6f, 0.5f}, "Empty\\Empty\\Empty\\Return"}
     },
     {MenuMode_e::CONFIRM_QUIT_INPUT_FORM,
      PairPairFloatStr_t{{-0.1f, 0.0f}, "Yes\\No"}
