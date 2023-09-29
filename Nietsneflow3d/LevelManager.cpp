@@ -13,7 +13,7 @@ namespace fs = std::filesystem;
 //===================================================================
 LevelManager::LevelManager()
 {
-    std::ifstream inStream(LEVEL_RESSOURCES_DIR_STR + "Saves/CustomSettings.ini");
+    std::ifstream inStream(RESSOURCES_DIR_STR + "Saves/CustomSettings.ini");
     m_ini.parse(inStream);
     inStream.close();
 }
@@ -1704,7 +1704,7 @@ std::vector<std::string> convertStrToVectStr(const std::string &str)
 //===================================================================
 void LevelManager::loadTextureData(const std::string &INIFileName)
 {
-    if(!loadIniFile(LEVEL_RESSOURCES_DIR_STR + INIFileName, ENCRYPT_KEY_CONF_FILE))
+    if(!loadIniFile(RESSOURCES_DIR_STR + INIFileName, ENCRYPT_KEY_CONF_FILE))
     {
         assert("Error while reading INI file.");
     }
@@ -1716,7 +1716,7 @@ void LevelManager::loadTextureData(const std::string &INIFileName)
 //===================================================================
 void LevelManager::loadStandardData(const std::string &INIFileName)
 {
-    if(!loadIniFile(LEVEL_RESSOURCES_DIR_STR + INIFileName, ENCRYPT_KEY_CONF_FILE))
+    if(!loadIniFile(RESSOURCES_DIR_STR + INIFileName, ENCRYPT_KEY_CONF_FILE))
     {
         assert("Error while reading INI file.");
     }
@@ -1744,7 +1744,7 @@ void LevelManager::loadStandardData(const std::string &INIFileName)
 //===================================================================
 void LevelManager::loadFontData(const std::string &INIFileName, Font_e type)
 {
-    if(!loadIniFile(LEVEL_RESSOURCES_DIR_STR + INIFileName, ENCRYPT_KEY_CONF_FILE))
+    if(!loadIniFile(RESSOURCES_DIR_STR + INIFileName, ENCRYPT_KEY_CONF_FILE))
     {
         assert("Error while reading INI file.");
     }
@@ -1806,9 +1806,9 @@ void LevelManager::loadBarrelElements()
 //===================================================================
 LevelLoadState_e LevelManager::loadLevel(uint32_t levelNum, bool customLevel)
 {
-    std::string path = customLevel ? LEVEL_RESSOURCES_DIR_STR + "CustomLevels/" +
+    std::string path = customLevel ? RESSOURCES_DIR_STR + "CustomLevels/" +
                                      m_existingCustomLevelsFilename[levelNum] :
-                                     LEVEL_RESSOURCES_DIR_STR + std::string("Level") +
+                                     RESSOURCES_DIR_STR + std::string("Level") +
                                      std::to_string(levelNum) + std::string ("/level.ini");
     if(!fs::exists(path))
     {
@@ -1900,7 +1900,7 @@ void LevelManager::clearExistingPositionsElement()
 //===================================================================
 bool LevelManager::loadSettingsData()
 {
-    if(!loadIniFile(LEVEL_RESSOURCES_DIR_STR + "Saves/CustomSettings.ini", {}))
+    if(!loadIniFile(RESSOURCES_DIR_STR + "Saves/CustomSettings.ini", {}))
     {
         assert("Error while reading INI file.");
     }
@@ -2060,7 +2060,7 @@ void LevelManager::fillSettingsFileFromMemory()
 //===================================================================
 void LevelManager::saveAudioSettings(uint32_t musicVolume, uint32_t effectVolume)
 {
-    m_outputStream.open(LEVEL_RESSOURCES_DIR_STR + "Saves/CustomSettings.ini");
+    m_outputStream.open(RESSOURCES_DIR_STR + "Saves/CustomSettings.ini");
     fillSettingsFileFromMemory();
     m_ini.setValue("Audio", "musicVolume", std::to_string(musicVolume));
     m_ini.setValue("Audio", "effectsVolume", std::to_string(effectVolume));
@@ -2073,7 +2073,7 @@ void LevelManager::saveAudioSettings(uint32_t musicVolume, uint32_t effectVolume
 //===================================================================
 void LevelManager::saveDisplaySettings(const pairI_t &resolution, bool fullscreen)
 {
-    m_outputStream.open(LEVEL_RESSOURCES_DIR_STR + "Saves/CustomSettings.ini");
+    m_outputStream.open(RESSOURCES_DIR_STR + "Saves/CustomSettings.ini");
     fillSettingsFileFromMemory();
     m_ini.setValue("Display", "resolutionWidth", std::to_string(resolution.first));
     m_ini.setValue("Display", "resolutionHeight", std::to_string(resolution.second));
@@ -2089,7 +2089,7 @@ void LevelManager::saveDisplaySettings(const pairI_t &resolution, bool fullscree
 void LevelManager::saveInputSettings(const std::map<ControlKey_e, GamepadInputState> &gamepadArray,
                                      const std::map<ControlKey_e, MouseKeyboardInputState> &keyboardArray)
 {
-    m_outputStream.open(LEVEL_RESSOURCES_DIR_STR + "Saves/CustomSettings.ini");
+    m_outputStream.open(RESSOURCES_DIR_STR + "Saves/CustomSettings.ini");
     fillSettingsFileFromMemory();
     uint32_t currentIndex;
     std::string valStr;
@@ -2119,7 +2119,7 @@ void LevelManager::saveInputSettings(const std::map<ControlKey_e, GamepadInputSt
 //===================================================================
 void LevelManager::saveTurnSensitivitySettings(uint32_t sensitivity)
 {
-    m_outputStream.open(LEVEL_RESSOURCES_DIR_STR + "Saves/CustomSettings.ini");
+    m_outputStream.open(RESSOURCES_DIR_STR + "Saves/CustomSettings.ini");
     fillSettingsFileFromMemory();
     m_ini.setValue("Input", "TurnSensitivity", std::to_string(sensitivity));
     m_ini.generate(m_outputStream);
@@ -2300,7 +2300,7 @@ void LevelManager::generateSavedFile(uint32_t numSaveFile)
     std::string str;
     std::stringstream stringStream;
     m_ini.generate(stringStream);
-    m_outputStream.open(LEVEL_RESSOURCES_DIR_STR + "Saves/save" + std::to_string(numSaveFile) + ".ini");
+    m_outputStream.open(RESSOURCES_DIR_STR + "Saves/save" + std::to_string(numSaveFile) + ".ini");
     str = encrypt(stringStream.str(), ENCRYPT_KEY_CONF_FILE);
     m_outputStream << str;
     m_outputStream.close();
@@ -2342,7 +2342,7 @@ std::string LevelManager::saveGameProgress(const MemPlayerConf &playerConfBeginL
 //===================================================================
 std::optional<MemLevelLoadedData> LevelManager::loadSavedGame(uint32_t saveNum)
 {
-    std::string path = LEVEL_RESSOURCES_DIR_STR + "Saves/save" + std::to_string(saveNum) + ".ini";
+    std::string path = RESSOURCES_DIR_STR + "Saves/save" + std::to_string(saveNum) + ".ini";
     if(saveNum == 0 || !fs::exists(path))
     {
         return {};
@@ -2584,7 +2584,7 @@ std::array<std::optional<DataLevelWriteMenu>, 3> LevelManager::getExistingLevelN
     std::array<std::optional<DataLevelWriteMenu>, 3> ret;
     for(uint32_t i = 1; i < 4; ++i)
     {
-        path = LEVEL_RESSOURCES_DIR_STR + "Saves/save" + std::to_string(i) + ".ini";
+        path = RESSOURCES_DIR_STR + "Saves/save" + std::to_string(i) + ".ini";
         if(fs::exists(path))
         {
             ret[i - 1] = DataLevelWriteMenu();
@@ -2612,12 +2612,12 @@ std::array<std::optional<DataLevelWriteMenu>, 3> LevelManager::getExistingLevelN
 //===================================================================
 void LevelManager::loadExistingCustomLevelFilename()
 {
-    if(!fs::exists(fs::path(LEVEL_RESSOURCES_DIR_STR + "CustomLevels/")))
+    if(!fs::exists(fs::path(RESSOURCES_DIR_STR + "CustomLevels/")))
     {
         return;
     }
     for(fs::directory_iterator it =
-        fs::directory_iterator(LEVEL_RESSOURCES_DIR_STR + "CustomLevels/");
+        fs::directory_iterator(RESSOURCES_DIR_STR + "CustomLevels/");
         it != fs::directory_iterator(); ++it)
     {
         if(it->path().extension().string() == ".clvl")
@@ -2630,7 +2630,7 @@ void LevelManager::loadExistingCustomLevelFilename()
 //===================================================================
 bool LevelManager::checkSavedGameExists(uint32_t saveNum)const
 {
-    return fs::exists(LEVEL_RESSOURCES_DIR_STR + "Saves/save" + std::to_string(saveNum) + ".ini");
+    return fs::exists(RESSOURCES_DIR_STR + "Saves/save" + std::to_string(saveNum) + ".ini");
 }
 
 //===================================================================

@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Name=Arnihs
+Comment=First release of Arnihs
+Exec=/usr/local/bin/Launch.sh
+Icon=$HOME/.local/share/Arnihs/Icon.png
+Terminal=false
+Type=Application
+Categories=Utility;Application;
