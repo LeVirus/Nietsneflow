@@ -2,7 +2,7 @@
 Version=1.0
 Name=Arnihs
 Comment=First release of Arnihs
-Exec=/usr/local/bin/Launch.sh
+Exec=LD_LIBRARY_PATH=./lib &&Arnihs
 Icon=$HOME/.local/share/Arnihs/Icon.png
 Terminal=false
 Type=Application
