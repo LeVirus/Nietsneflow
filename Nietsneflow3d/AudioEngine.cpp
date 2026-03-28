@@ -22,20 +22,39 @@ AudioEngine::~AudioEngine()
 //===================================================================
 void AudioEngine::initOpenAL()
 {
-    m_device = alcOpenDevice(nullptr);
-    if(m_device)
-    {
-        std::cerr << "ERROR INITIALIZING OPENAL\n Error creating device\n";
-        return;
+    ALCdevice* device = alcOpenDevice(nullptr);
+    if (!device) {
+        std::cout << "alcOpenDevice a complètement échoué (nullptr retourné)\n";
+
+        ALCenum err = alcGetError(nullptr);
+        std::cout << "Erreur ALC globale : " << err << " (";
+
+        switch (err) {
+        case ALC_INVALID_DEVICE:    std::cout << "ALC_INVALID_DEVICE"; break;
+        case ALC_INVALID_CONTEXT:   std::cout << "ALC_INVALID_CONTEXT"; break;
+        case ALC_INVALID_VALUE:     std::cout << "ALC_INVALID_VALUE"; break;
+        case ALC_INVALID_ENUM: std::cout << "ALC_INVALID_ENUM"; break;
+        case ALC_OUT_OF_MEMORY:     std::cout << "ALC_OUT_OF_MEMORY"; break;
+        default:                    std::cout << "code inconnu";
+        }
+        std::cout << ")\n";
+        return;  // ou exit
     }
-    m_context = alcCreateContext(m_device, nullptr);
-    if(m_context)
-    {
-        std::cerr << "ERROR INITIALIZING OPENAL\n Error creating context\n";
-        return;
+
+    // Si on arrive ici → device OK
+    std::cout << "Device ouvert avec succès ! Nom réel : "
+              << alcGetString(device, ALC_DEVICE_SPECIFIER) << "\n";
+
+    ALCcontext* context = alcCreateContext(device, nullptr);
+    if (!context || !alcMakeContextCurrent(context)) {
+        std::cout << "Échec création ou activation contexte\n";
+        ALCenum err = alcGetError(device);
+        std::cout << "Erreur détaillée : " << err << "\n";
     }
-    /*ALCboolean res =*/ alcMakeContextCurrent(m_context);
-    // assert(res);
+    //ISSUE ON WINDOWS
+    m_device = device;
+    m_context = context;
+    alcMakeContextCurrent(m_context);
     updateDevices();
 }
 
