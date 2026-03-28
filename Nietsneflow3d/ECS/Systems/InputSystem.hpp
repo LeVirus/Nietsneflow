@@ -33,14 +33,14 @@ struct GamepadInputState
 };
 
 inline const std::map<ControlKey_e, MouseKeyboardInputState> MAP_KEYBOARD_DEFAULT_KEY = {
-    {ControlKey_e::MOVE_FORWARD, {true, GLFW_KEY_UP}},
-    {ControlKey_e::MOVE_BACKWARD, {true, GLFW_KEY_DOWN}},
-    {ControlKey_e::STRAFE_LEFT, {true, GLFW_KEY_Q}},
-    {ControlKey_e::STRAFE_RIGHT, {true, GLFW_KEY_W}},
+    {ControlKey_e::MOVE_FORWARD, {true, GLFW_KEY_W}},
+    {ControlKey_e::MOVE_BACKWARD, {true, GLFW_KEY_S}},
+    {ControlKey_e::STRAFE_LEFT, {true, GLFW_KEY_A}},
+    {ControlKey_e::STRAFE_RIGHT, {true, GLFW_KEY_D}},
     {ControlKey_e::TURN_LEFT, {true, GLFW_KEY_LEFT}},
     {ControlKey_e::TURN_RIGHT, {true, GLFW_KEY_RIGHT}},
     {ControlKey_e::ACTION, {true, GLFW_KEY_SPACE}},
-    {ControlKey_e::SHOOT, {true, GLFW_KEY_LEFT_SHIFT}},
+    {ControlKey_e::SHOOT, {true, GLFW_MOUSE_BUTTON_1}},
     {ControlKey_e::PREVIOUS_WEAPON, {true, GLFW_KEY_E}},
     {ControlKey_e::NEXT_WEAPON, {true, GLFW_KEY_R}}
 };
