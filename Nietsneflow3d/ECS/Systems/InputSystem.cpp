@@ -35,6 +35,7 @@ void InputSystem::init(GLFWwindow &window)
     m_window = &window;
     glfwSetWindowFocusCallback(m_window, InputSystem::window_focus_callback);
     glfwSetScrollCallback(m_window, InputSystem::scroll_callback);
+    glfwSetInputMode(&window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }
 
 //===================================================================
