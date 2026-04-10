@@ -2360,178 +2360,150 @@ textureWeight = 0.02378
 textureHeight = 0.03710
 
 
-[SpriteMFA]
-texture = 5
-texturePosX = 0.19911
-texturePosY = 0.00831
-textureWeight = 0.06489
-textureHeight = 0.11434
-
-[SpriteMFB]
-texture = 5
-texturePosX = 0.38643
-texturePosY = 0.00831
-textureWeight = 0.05899
-textureHeight = 0.11434
-
-[SpriteMAA]
-texture = 5
-texturePosX = 0.44985
-texturePosY = 0.00831
-textureWeight = 0.03834
-textureHeight = 0.11434
-
-[SpriteMAB]
-texture = 5
-texturePosX = 0.49262
-texturePosY = 0.00831
-textureWeight = 0.03834
-textureHeight = 0.11434
-
-[SpriteMFLA]
-texture = 5
-texturePosX = 0.02507
-texturePosY = 0.12889
-textureWeight = 0.05309
-textureHeight = 0.11434
-
-[SpriteMFLB]
-texture = 5
-texturePosX = 0.19616
-texturePosY = 0.12889
-textureWeight = 0.05162
-textureHeight = 0.11434
-
-[SpriteMFRA]
-texture = 5
-texturePosX = 0.54277
-texturePosY = 0.12889
-textureWeight = 0.05309
-textureHeight = 0.11434
-
-[SpriteMFRB]
-texture = 5
-texturePosX = 0.71386
-texturePosY = 0.12889
-textureWeight = 0.05162
-textureHeight = 0.11434
-
-[SpriteMLA]
-texture = 5
-texturePosX = 0.00737
-texturePosY = 0.24948
-textureWeight = 0.06194
-textureHeight = 0.11018
-
-[SpriteMLB]
-texture = 5
-texturePosX = 0.19026
-texturePosY = 0.24948
-textureWeight = 0.05662
-textureHeight = 0.11018
-
-[SpriteMRA]
-texture = 5
-texturePosX = 0.58407
-texturePosY = 0.24948
-textureWeight = 0.05014
-textureHeight = 0.11018
-
-[SpriteMRB]
-texture = 5
-texturePosX = 0.75663
-texturePosY = 0.24948
-textureWeight = 0.06489
-textureHeight = 0.11018
-
-[SpriteMBLA]
-texture = 5
-texturePosX = 0.01179
-texturePosY = 0.36798
-textureWeight = 0.06637
-textureHeight = 0.11434
-
-[SpriteMBLB]
-texture = 5
-texturePosX = 0.21238
-texturePosY = 0.36798
-textureWeight = 0.05899
-textureHeight = 0.11434
-
-[SpriteMBRA]
-texture = 5
-texturePosX = 0.53982
-texturePosY = 0.36798
-textureWeight = 0.05899
-textureHeight = 0.11434
-
-[SpriteMBRB]
-texture = 5
-texturePosX = 0.73303
-texturePosY = 0.36798
-textureWeight = 0.06637
-textureHeight = 0.11434
-
-[SpriteMBA]
-texture = 5
-texturePosX = 0.21681
-texturePosY = 0.48856
-textureWeight = 0.05309
-textureHeight = 0.11226
-
-[SpriteMBB]
-texture = 5
-texturePosX = 0.27286
-texturePosY = 0.48856
-textureWeight = 0.05162
-textureHeight = 0.11226
-
-[SpriteMT]
-texture = 5
-texturePosX = 0.20501
-texturePosY = 0.60914
-textureWeight = 0.05899
-textureHeight = 0.11642
 
 [SpriteMDAA]
 texture = 5
-texturePosX = 0.10029
-texturePosY = 0.72972
-textureWeight = 0.07522
-textureHeight = 0.10395
+texturePosX = 0
+texturePosY = 0.00711111
+textureWeight = 0.240323
+textureHeight = 0.135111
 
 [SpriteMDAB]
 texture = 5
-texturePosX = 0.17551
-texturePosY = 0.72972
-textureWeight = 0.05309
-textureHeight = 0.10395
+texturePosX = 0.233871
+texturePosY = 0.00711111
+textureWeight = 0.240323
+textureHeight = 0.135111
 
 [SpriteMDAC]
 texture = 5
-texturePosX = 0.23156
-texturePosY = 0.72972
-textureWeight = 0.05457
-textureHeight = 0.10395
+texturePosX = 0.467742
+texturePosY = 0.00711111
+textureWeight = 0.240323
+textureHeight = 0.135111
 
-[SpriteMDAD]
+[SpriteMFRA]
 texture = 5
-texturePosX = 0.2890
-texturePosY = 0.72972
-textureWeight = 0.06342
-textureHeight = 0.10395
+texturePosX = 0
+texturePosY = 0.172444
+textureWeight = 0.209677
+textureHeight = 0.144
 
-[SpriteMDAE]
+[SpriteMFRB]
 texture = 5
-texturePosX = 0.35545
-texturePosY = 0.72972
-textureWeight = 0.07522
-textureHeight = 0.10395
+texturePosX = 0.233871
+texturePosY = 0.172444
+textureWeight = 0.209677
+textureHeight = 0.144
 
-[SpriteMDAF]
+[SpriteMFRC]
 texture = 5
-texturePosX = 0.51474
-texturePosY = 0.72972
-textureWeight = 0.07522
-textureHeight = 0.10395
+texturePosX = 0.467742
+texturePosY = 0.172444
+textureWeight = 0.209677
+textureHeight = 0.144
 
+[SpriteMFRD]
+texture = 5
+texturePosX = 0.701613
+texturePosY = 0.172444
+textureWeight = 0.209677
+textureHeight = 0.144
+
+[SpriteMFA]
+texture = 5
+texturePosX = 0
+texturePosY = 0.331556
+textureWeight = 0.209677
+textureHeight = 0.153778
+
+[SpriteMFB]
+texture = 5
+texturePosX = 0.233871
+texturePosY = 0.331556
+textureWeight = 0.209677
+textureHeight = 0.153778
+
+[SpriteMFC]
+texture = 5
+texturePosX = 0.467742
+texturePosY = 0.331556
+textureWeight = 0.209677
+textureHeight = 0.153778
+
+[SpriteMFD]
+texture = 5
+texturePosX = 0.701613
+texturePosY = 0.331556
+textureWeight = 0.209677
+textureHeight = 0.153778
+
+[SpriteMBRA]
+texture = 5
+texturePosX = 0
+texturePosY = 0.506667
+textureWeight = 0.209677
+textureHeight = 0.156444
+
+[SpriteMBRB]
+texture = 5
+texturePosX = 0.233871
+texturePosY = 0.506667
+textureWeight = 0.209677
+textureHeight = 0.156444
+
+[SpriteMBRC]
+texture = 5
+texturePosX = 0.467742
+texturePosY = 0.506667
+textureWeight = 0.209677
+textureHeight = 0.156444
+
+[SpriteMBRD]
+texture = 5
+texturePosX = 0.701613
+texturePosY = 0.506667
+textureWeight = 0.209677
+textureHeight = 0.156444
+
+[SpriteMRA]
+texture = 5
+texturePosX = 0
+texturePosY = 0.678222
+textureWeight = 0.209677
+textureHeight = 0.151111
+
+[SpriteMRB]
+texture = 5
+texturePosX = 0.233871
+texturePosY = 0.678222
+textureWeight = 0.209677
+textureHeight = 0.151111
+
+[SpriteMRC]
+texture = 5
+texturePosX = 0.467742
+texturePosY = 0.678222
+textureWeight = 0.209677
+textureHeight = 0.151111
+
+[SpriteMRD]
+texture = 5
+texturePosX = 0.701613
+texturePosY = 0.678222
+textureWeight = 0.209677
+textureHeight = 0.151111
+
+[SpriteMAA]
+texture = 5
+texturePosX = 0
+texturePosY = 0.845333
+textureWeight = 0.209677
+textureHeight = 0.144889
+
+[SpriteMAB]
+texture = 5
+texturePosX = 0.233871
+texturePosY = 0.845333
+textureWeight = 0.209677
+textureHeight = 0.144889
