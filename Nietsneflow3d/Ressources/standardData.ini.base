@@ -327,16 +327,16 @@ FrozenOnAttack = true
 
 
 [EnemyMarine]
-StaticSpriteFront = SpriteMFA SpriteMFB
+StaticSpriteFront = SpriteMFC SpriteMFD
 StaticSpriteFrontLeft = SpriteMFRC SpriteMFRD
 StaticSpriteFrontRight = SpriteMFRA SpriteMFRB 
-StaticSpriteBack = SpriteMFC SpriteMFD
+StaticSpriteBack = SpriteMFA SpriteMFB
 StaticSpriteBackLeft = SpriteMBRC SpriteMBRD
 StaticSpriteBackRight = SpriteMBRA SpriteMBRB
 StaticSpriteLeft = SpriteMRC SpriteMRD
 StaticSpriteRight = SpriteMRA SpriteMRB
 AttackSprite = SpriteMAA SpriteMAB 
-DyingSprite = SpriteMDAA SpriteMDAB SpriteMDAC
+DyingSprite = SpriteMDAA SpriteMDAA SpriteMDAB SpriteMDAB SpriteMDAC SpriteMDAC
 Touched = SpriteMDAA
 ShotImpactID = ImpactStd
 DropedObjectID = ObjectGunAmmo
