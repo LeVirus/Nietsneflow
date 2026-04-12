@@ -246,15 +246,15 @@ FrozenOnAttack = false
 
 [EnemyZombieShotgun]
 StaticSpriteFront = SpriteZSFA SpriteZSFB
-StaticSpriteFrontLeft = SpriteZSMFLA SpriteZSMFLB
+StaticSpriteFrontLeft = SpriteZSMFRC SpriteZSMFRD
 StaticSpriteFrontRight = SpriteZSMFRA SpriteZSMFRB 
-StaticSpriteBack = SpriteZSBA SpriteZSBB
-StaticSpriteBackLeft = SpriteZSMBLA SpriteZSMBLB
+StaticSpriteBack = SpriteZSFC SpriteZSFD
+StaticSpriteBackLeft = SpriteZSMBRC SpriteZSMBRD
 StaticSpriteBackRight = SpriteZSMBRA SpriteZSMBRB
-StaticSpriteLeft = SpriteZSLA SpriteZSLB
+StaticSpriteLeft = SpriteZSRC SpriteZSRD
 StaticSpriteRight = SpriteZSRA SpriteZSRB
-AttackSprite = SpriteZSAA SpriteZSAB 
-DyingSprite = SpriteZSDA SpriteZSDB SpriteZSDC SpriteZSDD SpriteZSDE SpriteZSDead
+AttackSprite = SpriteZSAA SpriteZSAB
+DyingSprite = SpriteZSDA SpriteZSDA SpriteZSDB SpriteZSDB SpriteZSDC SpriteZSDC
 Touched = SpriteZSDA
 ShotImpactID = ImpactStd
 DropedObjectID = ObjectShotgunAmmo

@@ -1226,211 +1226,6 @@ texturePosY = 0.8846
 textureWeight = 0.1203
 textureHeight = 0.092
 
-#================================Zombie Shotgun
-
-#FRONT
-#1 2  39 58
-[SpriteZSFA]
-texture = 13
-texturePosX = 0.002
-texturePosY = 0.0041
-textureWeight = 0.077
-textureHeight = 0.1161
-
-#114 2  149 58
-[SpriteZSFB]
-texture = 13
-texturePosX = 0.2312
-texturePosY = 0.0041
-textureWeight = 0.077
-textureHeight = 0.1161
-
-#MIDDLE FRONT LEFT
-#2 59  32 115
-[SpriteZSMFLA]
-texture = 13
-texturePosX = 0.004
-texturePosY = 0.1224
-textureWeight = 0.0618
-textureHeight = 0.1161
-
-#99 59  129 115
-[SpriteZSMFLB]
-texture = 13
-texturePosX = 0.2008
-texturePosY = 0.1224
-textureWeight = 0.0640
-textureHeight = 0.1161
-
-#MIDDLE FRONT RIGHT
-#258 59  288 115
-[SpriteZSMFRA]
-texture = 13
-texturePosX = 0.5233
-texturePosY = 0.1224
-textureWeight = 0.0608
-textureHeight = 0.1161
-
-#320 59  354 115
-[SpriteZSMFRB]
-texture = 13
-texturePosX = 0.649
-texturePosY = 0.1224
-textureWeight = 0.0689
-textureHeight = 0.1161
-
-#LEFT
-#2 117  43 174
-[SpriteZSLA]
-texture = 13
-texturePosX = 0.004
-texturePosY = 0.2427
-textureWeight = 0.0831
-textureHeight = 0.1182
-
-#121 117  152 174
-[SpriteZSLB]
-texture = 13
-texturePosX = 0.2454
-texturePosY = 0.2427
-textureWeight = 0.0831
-textureHeight = 0.1182
-
-#RIGHT
-#229 117  293 174
-[SpriteZSRA]
-texture = 13
-texturePosX = 0.4624
-texturePosY = 0.2427
-textureWeight = 0.0791
-textureHeight = 0.1182
-
-#295 117  334 174
-[SpriteZSRB]
-texture = 13
-texturePosX = 0.5983
-texturePosY = 0.2427
-textureWeight = 0.0791
-textureHeight = 0.1182
-
-#MIDDLE BACK LEFT
-#3 177  49 233
-[SpriteZSMBLA]
-texture = 13
-texturePosX = 0.006
-texturePosY = 0.3672
-textureWeight = 0.0933
-textureHeight = 0.1161
-
-#94 177  134 233
-[SpriteZSMBLB]
-texture = 13
-texturePosX = 0.1906
-texturePosY = 0.3672
-textureWeight = 0.0933
-textureHeight = 0.1161
-
-#MIDDLE BACK RIGHT
-#264 177  303 233
-[SpriteZSMBRA]
-texture = 13
-texturePosX = 0.5354
-texturePosY = 0.3672
-textureWeight = 0.0791
-textureHeight = 0.1161
-
-#347 177 388 233
-[SpriteZSMBRB]
-texture = 13
-texturePosX = 0.7038
-texturePosY = 0.3672
-textureWeight = 0.0831
-textureHeight = 0.1161
-
-#BACK
-#3 237  39 293
-[SpriteZSBA]
-texture = 13
-texturePosX = 0.006
-texturePosY = 0.4917
-textureWeight = 0.073
-textureHeight = 0.1161
-
-#78 237  113 293
-[SpriteZSBB]
-texture = 13
-texturePosX = 0.1582
-texturePosY = 0.4917
-#textureWeight = 0.0709
-textureWeight = 0.073
-textureHeight = 0.1161
-
-#ATTACK
-#247 2  276 58  29
-[SpriteZSAA]
-texture = 13
-texturePosX = 0.501
-texturePosY = 0.0041
-textureWeight = 0.0588
-textureHeight = 0.1161
-
-#276 2  305 58
-[SpriteZSAB]
-texture = 13
-texturePosX = 0.5598
-texturePosY = 0.0041
-textureWeight = 0.0588
-textureHeight = 0.1161
-
-#DYING
-#2 295  34 351
-[SpriteZSDA]
-texture = 13
-texturePosX = 0.004
-texturePosY = 0.612
-textureWeight = 0.0649
-textureHeight = 0.1161
-
-#2 353  36 414
-[SpriteZSDB]
-texture = 13
-texturePosX = 0.004
-texturePosY = 0.7323
-textureWeight = 0.0689
-textureHeight = 0.1265
-
-#38 353  74 414 
-[SpriteZSDC]
-texture = 13
-texturePosX = 0.077
-texturePosY = 0.7323
-textureWeight = 0.073
-textureHeight = 0.1265
-
-#76 353  119 414 
-[SpriteZSDD]
-texture = 13
-texturePosX = 0.1541
-texturePosY = 0.7323
-textureWeight = 0.0872
-textureHeight = 0.1265
-
-#121 353  170 414 
-[SpriteZSDE]
-texture = 13
-texturePosX = 0.2454
-texturePosY = 0.7323
-textureWeight = 0.0993
-textureHeight = 0.1265
-
-#172 353  225 414 
-[SpriteZSDead]
-texture = 13
-texturePosX = 0.3488
-texturePosY = 0.7323
-textureWeight = 0.1075
-textureHeight = 0.1265
-
 #================================DC Demon Claw 
 #FRONT
 #45 2  89 61
@@ -2507,3 +2302,150 @@ texturePosX = 0.233871
 texturePosY = 0.845333
 textureWeight = 0.209677
 textureHeight = 0.144889
+
+[SpriteZSMBRA]
+texture = 13
+texturePosX = 0
+texturePosY = 0.00322581
+textureWeight = 0.248047
+textureHeight = 0.15
+
+[SpriteZSMBRB]
+texture = 13
+texturePosX = 0.25
+texturePosY = 0.00322581
+textureWeight = 0.248047
+textureHeight = 0.15
+
+[SpriteZSMBRC]
+texture = 13
+texturePosX = 0.5
+texturePosY = 0.00322581
+textureWeight = 0.248047
+textureHeight = 0.15
+
+[SpriteZSMBRD]
+texture = 13
+texturePosX = 0.75
+texturePosY = 0.00322581
+textureWeight = 0.248047
+textureHeight = 0.15
+
+[SpriteZSDA]
+texture = 13
+texturePosX = 0
+texturePosY = 0.169355
+textureWeight = 0.248047
+textureHeight = 0.154839
+
+[SpriteZSDB]
+texture = 13
+texturePosX = 0.25
+texturePosY = 0.169355
+textureWeight = 0.248047
+textureHeight = 0.154839
+
+[SpriteZSDC]
+texture = 13
+texturePosX = 0.5
+texturePosY = 0.169355
+textureWeight = 0.248047
+textureHeight = 0.154839
+
+[SpriteZSFA]
+texture = 13
+texturePosX = 0
+texturePosY = 0.328226
+textureWeight = 0.248047
+textureHeight = 0.156452
+
+[SpriteZSFB]
+texture = 13
+texturePosX = 0.25
+texturePosY = 0.328226
+textureWeight = 0.248047
+textureHeight = 0.156452
+
+[SpriteZSFC]
+texture = 13
+texturePosX = 0.5
+texturePosY = 0.328226
+textureWeight = 0.248047
+textureHeight = 0.156452
+
+[SpriteZSFD]
+texture = 13
+texturePosX = 0.75
+texturePosY = 0.328226
+textureWeight = 0.248047
+textureHeight = 0.156452
+
+[SpriteZSAA]
+texture = 13
+texturePosX = 0
+texturePosY = 0.833871
+textureWeight = 0.248047
+textureHeight = 0.154032
+
+[SpriteZSAB]
+texture = 13
+texturePosX = 0.25
+texturePosY = 0.833871
+textureWeight = 0.248047
+textureHeight = 0.154032
+
+[SpriteZSRA]
+texture = 13
+texturePosX = 0
+texturePosY = 0.658065
+textureWeight = 0.248047
+textureHeight = 0.156452
+
+[SpriteZSRB]
+texture = 13
+texturePosX = 0.25
+texturePosY = 0.658065
+textureWeight = 0.248047
+textureHeight = 0.156452
+
+[SpriteZSRC]
+texture = 13
+texturePosX = 0.5
+texturePosY = 0.658065
+textureWeight = 0.248047
+textureHeight = 0.156452
+
+[SpriteZSRD]
+texture = 13
+texturePosX = 0.75
+texturePosY = 0.658065
+textureWeight = 0.248047
+textureHeight = 0.156452
+
+[SpriteZSMFRA]
+texture = 13
+texturePosX = 0
+texturePosY = 0.491129
+textureWeight = 0.248047
+textureHeight = 0.154839
+
+[SpriteZSMFRB]
+texture = 13
+texturePosX = 0.25
+texturePosY = 0.491129
+textureWeight = 0.248047
+textureHeight = 0.154839
+
+[SpriteZSMFRC]
+texture = 13
+texturePosX = 0.5
+texturePosY = 0.491129
+textureWeight = 0.248047
+textureHeight = 0.154839
+
+[SpriteZSMFRD]
+texture = 13
+texturePosX = 0.75
+texturePosY = 0.491129
+textureWeight = 0.248047
+textureHeight = 0.154839
