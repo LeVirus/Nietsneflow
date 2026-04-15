@@ -1226,203 +1226,6 @@ texturePosY = 0.8846
 textureWeight = 0.1203
 textureHeight = 0.092
 
-#================================DC Demon Claw 
-#FRONT
-#45 2  89 61
-[SpriteDCMFA]
-texture = 12
-texturePosX = 0.0937
-texturePosY = 0.0031
-textureWeight = 0.0937
-textureHeight = 0.0917
-
-#91 2 132 61
-[SpriteDCMFB]
-texture = 12
-texturePosX = 0.1895
-texturePosY = 0.0031
-textureWeight = 0.0854
-textureHeight = 0.0917
-
-#MIDDLE FRONT LEFT
-#64 64  115 123
-[SpriteDCMMFLA]
-texture = 12
-texturePosX = 0.1333
-texturePosY = 0.0995
-textureWeight = 0.1062
-textureHeight = 0.0917
-
-#177 64 234 123
-[SpriteDCMMFLB]
-texture = 12
-texturePosX = 0.3687
-texturePosY = 0.0995
-textureWeight = 0.1187
-textureHeight = 0.0917
-
-#LEFT
-#2 125  63 183
-[SpriteDCMLA]
-texture = 12
-texturePosX = 0.0041
-texturePosY = 0.1944
-textureWeight = 0.127
-textureHeight = 0.0902
-
-#189 125  249 183
-[SpriteDCMLB]
-texture = 12
-texturePosX = 0.3937
-texturePosY = 0.1944
-textureWeight = 0.125
-textureHeight = 0.0902
-
-#MIDDLE BACK LEFT
-#117 185  168 239
-[SpriteDCMMBLA]
-texture = 12
-texturePosX = 0.2437
-texturePosY = 0.2877
-textureWeight = 0.1062
-textureHeight = 0.0824
-
-#61 185  115 239
-[SpriteDCMMBLB]
-texture = 12
-texturePosX = 0.127
-texturePosY = 0.2877
-textureWeight = 0.1125
-textureHeight = 0.0824
-
-#BACK
-#2 241  38 296
-[SpriteDCMBA]
-texture = 12
-texturePosX = 0.0041
-texturePosY = 0.3748
-textureWeight = 0.075
-textureHeight = 0.0855
-
-#82 241  118 296
-[SpriteDCMBB]
-texture = 12
-texturePosX = 0.1708
-texturePosY = 0.3748
-textureWeight = 0.075
-textureHeight = 0.0855
-
-#MIDDLE BACK  RIGHT
-#51 299  102 353
-[SpriteDCMMBRA]
-texture = 12
-texturePosX = 0.1062
-texturePosY = 0.465
-textureWeight = 0.1062
-textureHeight = 0.0839
-
-#104 299  158 353
-[SpriteDCMMBRB]
-texture = 12
-texturePosX = 0.2166
-texturePosY = 0.465
-textureWeight = 0.1125
-textureHeight = 0.0839
-
-#RIGHT
-#63 354  125 412
-[SpriteDCMRA]
-texture = 12
-texturePosX = 0.1312
-texturePosY = 0.5505
-textureWeight = 0.1291
-textureHeight = 0.0902
-
-#127 354  186 412
-[SpriteDCMRB]
-texture = 12
-texturePosX = 0.2645
-texturePosY = 0.5505
-textureWeight = 0.1229
-textureHeight = 0.0902
-
-#MIDDLE FRONT RIGHT
-#60 413  119 474
-[SpriteDCMMFRA]
-texture = 12
-texturePosX = 0.125
-texturePosY = 0.6423
-textureWeight = 0.1229
-textureHeight = 0.0948
-
-#121 413  172 474
-[SpriteDCMMFRB]
-texture = 12
-texturePosX = 0.252
-texturePosY = 0.6423
-textureWeight = 0.1062
-textureHeight = 0.0948
-
-#ATTACK
-#227 2  272 61
-[SpriteDCAA]
-texture = 12
-texturePosX = 0.4729
-texturePosY = 0.0031
-textureWeight = 0.0937
-textureHeight = 0.0917
-
-#2 510  41 566
-[SpriteDCAB]
-texture = 12
-texturePosX = 0.0041
-texturePosY = 0.7931
-textureWeight = 0.0812
-textureHeight = 0.087
-
-#DYING
-#2 567  57 625
-[SpriteDCDA]
-texture = 12
-texturePosX = 0.0041
-texturePosY = 0.8818
-textureWeight = 0.1145
-textureHeight = 0.0902
-
-#59 567  120 625
-[SpriteDCDB]
-texture = 12
-texturePosX = 0.1229
-texturePosY = 0.8818
-textureWeight = 0.127
-textureHeight = 0.0902
-
-#122 567  175 625
-[SpriteDCDC]
-texture = 12
-texturePosX = 0.2541
-texturePosY = 0.8818
-textureWeight = 0.1104
-textureHeight = 0.0902
-
-#177 567  240 625
-[SpriteDCDD]
-texture = 12
-texturePosX = 0.3687
-texturePosY = 0.8818
-textureWeight = 0.1312
-textureHeight = 0.0902
-
-#309 567  374 625
-[SpriteDCDead]
-texture = 12
-texturePosX = 0.6437
-texturePosY = 0.8818
-textureWeight = 0.1354
-textureHeight = 0.0902
-
-
-
 # 0 0 1966 1
 [SpriteSimetraLogo]
 texture = 7
@@ -2449,3 +2252,157 @@ texturePosX = 0.75
 texturePosY = 0.491129
 textureWeight = 0.248047
 textureHeight = 0.154839
+
+[SpriteDCAA]
+texture = 12
+texturePosX = 0
+texturePosY = 0.00332594
+textureWeight = 0.239306
+textureHeight = 0.158537
+
+[SpriteDCAB]
+texture = 12
+texturePosX = 0.240462
+texturePosY = 0.00332594
+textureWeight = 0.239306
+textureHeight = 0.158537
+
+[SpriteDCAC]
+texture = 12
+texturePosX = 0.480924
+texturePosY = 0.00332594
+textureWeight = 0.239306
+textureHeight = 0.158537
+
+[SpriteDCMBA]
+texture = 12
+texturePosX = 0
+texturePosY = 0.167406
+textureWeight = 0.239306
+textureHeight = 0.156874
+
+[SpriteDCMBB]
+texture = 12
+texturePosX = 0.240462
+texturePosY = 0.167406
+textureWeight = 0.239306
+textureHeight = 0.156874
+
+[SpriteDCMBC]
+texture = 12
+texturePosX = 0.480924
+texturePosY = 0.167406
+textureWeight = 0.239306
+textureHeight = 0.156874
+
+[SpriteDCMBD]
+texture = 12
+texturePosX = 0.721386
+texturePosY = 0.167406
+textureWeight = 0.239306
+textureHeight = 0.156874
+
+[SpriteDCMMFLA]
+texture = 12
+texturePosX = 0
+texturePosY = 0.330931
+textureWeight = 0.239306
+textureHeight = 0.161308
+
+[SpriteDCMMFLB]
+texture = 12
+texturePosX = 0.240462
+texturePosY = 0.330931
+textureWeight = 0.239306
+textureHeight = 0.161308
+
+[SpriteDCMMFLC]
+texture = 12
+texturePosX = 0.480924
+texturePosY = 0.330931
+textureWeight = 0.239306
+textureHeight = 0.161308
+
+[SpriteDCMMFLD]
+texture = 12
+texturePosX = 0.721386
+texturePosY = 0.330931
+textureWeight = 0.239306
+textureHeight = 0.161308
+
+[SpriteDCMRA]
+texture = 12
+texturePosX = 0
+texturePosY = 0.501109
+textureWeight = 0.239306
+textureHeight = 0.1602
+
+[SpriteDCMRB]
+texture = 12
+texturePosX = 0.240462
+texturePosY = 0.501109
+textureWeight = 0.239306
+textureHeight = 0.1602
+
+[SpriteDCMRC]
+texture = 12
+texturePosX = 0.480924
+texturePosY = 0.501109
+textureWeight = 0.239306
+textureHeight = 0.1602
+
+[SpriteDCMRD]
+texture = 12
+texturePosX = 0.721386
+texturePosY = 0.501109
+textureWeight = 0.239306
+textureHeight = 0.1602
+
+[SpriteDCMMBLA]
+texture = 12
+texturePosX = 0
+texturePosY = 0.665188
+textureWeight = 0.239306
+textureHeight = 0.155765
+
+[SpriteDCMMBLB]
+texture = 12
+texturePosX = 0.240462
+texturePosY = 0.665188
+textureWeight = 0.239306
+textureHeight = 0.155765
+
+[SpriteDCMMBLC]
+texture = 12
+texturePosX = 0.480924
+texturePosY = 0.665188
+textureWeight = 0.239306
+textureHeight = 0.155765
+
+[SpriteDCMMBLD]
+texture = 12
+texturePosX = 0.721386
+texturePosY = 0.665188
+textureWeight = 0.239306
+textureHeight = 0.155765
+
+[SpriteDCDA]
+texture = 12
+texturePosX = 0
+texturePosY = 0.825942
+textureWeight = 0.239306
+textureHeight = 0.161308
+
+[SpriteDCDB]
+texture = 12
+texturePosX = 0.240462
+texturePosY = 0.825942
+textureWeight = 0.239306
+textureHeight = 0.161308
+
+[SpriteDCDC]
+texture = 12
+texturePosX = 0.480924
+texturePosY = 0.825942
+textureWeight = 0.239306
+textureHeight = 0.161308

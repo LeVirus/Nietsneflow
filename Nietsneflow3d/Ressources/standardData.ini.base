@@ -273,16 +273,16 @@ FrozenOnAttack = true
 
 
 [EnemyDemonClaw]
-StaticSpriteFront = SpriteDCMFA SpriteDCMFB
+StaticSpriteFront = SpriteDCMBC SpriteDCMBD
 StaticSpriteFrontLeft = SpriteDCMMFLA SpriteDCMMFLB
-StaticSpriteFrontRight = SpriteDCMMFRA SpriteDCMMFRB 
+StaticSpriteFrontRight = SpriteDCMMFLC SpriteDCMMFLD
 StaticSpriteBack = SpriteDCMBA SpriteDCMBB
 StaticSpriteBackLeft = SpriteDCMMBLA SpriteDCMMBLB
-StaticSpriteBackRight = SpriteDCMMBRA SpriteDCMMBRB
-StaticSpriteLeft = SpriteDCMLA SpriteDCMLB
+StaticSpriteBackRight = SpriteDCMMBLC SpriteDCMMBLD
+StaticSpriteLeft = SpriteDCMRC SpriteDCMRD
 StaticSpriteRight = SpriteDCMRA SpriteDCMRB
-AttackSprite = SpriteDCAA SpriteDCAB
-DyingSprite = SpriteDCDA SpriteDCDB SpriteDCDC SpriteDCDD SpriteDCDead
+AttackSprite = SpriteDCAB SpriteDCAC
+DyingSprite = SpriteDCDA SpriteDCDA SpriteDCDB SpriteDCDB SpriteDCDC SpriteDCDC 
 Touched = SpriteDCDA
 ShootSpritesID = VisibleShootDemonA
 MeleeDamage = 12
