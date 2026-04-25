@@ -300,17 +300,17 @@ MeleeOnly = true
 FrozenOnAttack = false
 
 [EnemyDemon]
-StaticSpriteFront = SpriteDFA SpriteDFB
+StaticSpriteFront = SpriteDBC SpriteDBD
 StaticSpriteFrontLeft = SpriteDMFLA SpriteDMFLB
-StaticSpriteFrontRight = SpriteDMFRA SpriteDMFRB 
+StaticSpriteFrontRight = SpriteDMFLC SpriteDMFLD
 StaticSpriteBack = SpriteDBA SpriteDBB
 StaticSpriteBackLeft = SpriteDMBLA SpriteDMBLB
-StaticSpriteBackRight = SpriteDMBRA SpriteDMBRB
-StaticSpriteLeft = SpriteDLA SpriteDLB
+StaticSpriteBackRight = SpriteDMBLC SpriteDMBLD
+StaticSpriteLeft = SpriteDRC SpriteDRD
 StaticSpriteRight = SpriteDRA SpriteDRB
 AttackSprite = SpriteEAA SpriteEAB SpriteEAC
-DyingSprite = SpriteDDAA SpriteDDAB SpriteDDAC SpriteDDAD SpriteDDAE
-Touched = SpriteDTF
+DyingSprite = SpriteDDAA SpriteDDAB SpriteDDAB SpriteDDAC SpriteDDAD
+Touched = SpriteDDAA
 ShootSpritesID = VisibleShootDemonC
 MeleeDamage = 3
 ShotVelocity = 2
