@@ -163,21 +163,21 @@ DeathSound = DeathRobot.wav
 FrozenOnAttack = false
 
 [EnemyCyberDemon]
-StaticSpriteFront = SpriteCDFA SpriteCDFB
+StaticSpriteFront = SpriteCDBC SpriteCDBD
 StaticSpriteFrontLeft = SpriteCDFLA SpriteCDFLB
-StaticSpriteFrontRight = SpriteCDFRA SpriteCDFRB 
+StaticSpriteFrontRight = SpriteCDFLC SpriteCDFLD
 StaticSpriteBack = SpriteCDBA SpriteCDBB
 StaticSpriteBackLeft = SpriteCDBLA SpriteCDBLB
-StaticSpriteBackRight = SpriteCDBRA SpriteCDBRB
-StaticSpriteLeft = SpriteCDLA SpriteCDLB
+StaticSpriteBackRight = SpriteCDBLC SpriteCDBLD
+StaticSpriteLeft = SpriteCDRC SpriteCDRD
 StaticSpriteRight = SpriteCDRA SpriteCDRB
 AttackSprite = SpriteCDAA SpriteCDAB 
-DyingSprite = SpriteCDDA SpriteCDDB SpriteCDDC SpriteCDDD SpriteCDDE SpriteCDDF SpriteCDDG SpriteCDDH SpriteCDDI SpriteCDDead
+DyingSprite = SpriteCDDA SpriteCDDA SpriteCDDB SpriteCDDB SpriteCDDC
 Touched = SpriteCDDA
 ShootSpritesID = VisibleShootRocket
 DamageZoneRay = 530.0
 ShotVelocity = 5.0
-Life = 300
+Life = 250
 Velocity = 0.7
 MeleeDamage = 25
 Damage = 30
