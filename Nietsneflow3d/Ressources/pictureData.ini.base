@@ -1,8 +1,8 @@
 #walltest.jpg ==> 0 Global.png ==> 1  FontTexture.png ==> 2 EnemyDemon.png ==> 3 GeneralSprites.png ==> 4 EnemyMarine.png ==> 5 Stars.jpg ==> 6 Simetra_green.png ==> 7 BossArachnotron.png ==> 8 BossCyberDemon.png ==> 9
 #EnemyBaronOfHell.png ==> 10 EnemyCacodemon.png ==> 11 EnemyDemonClaw.png ==> 12 EnemyZombieSergeant.png ==> 13  MenuFilled.png ==> 14 Font.png ==> 15  TitleMenu.png ==> 16 MenuLeft.png ==> 17  MenuRightLeft.png ==> 18 
-#NouvText.png ==> 19 BackroomText.png ==> 20   TreesFree.png ==> 21 Demon.png ==> 22
+#NouvText.png ==> 19 BackroomText.png ==> 20   TreesFree.png ==> 21 Demon.png ==> 22 Weapons.png ==> 23
 [PathToTexture]
-textures = walltest.jpg	Global.png FontTexture.png EnemyDemon.png GeneralSprites.png EnemyMarine.png Stars.jpg Simetra_green.png BossArachnotron.png BossCyberDemon.png EnemyBaronOfHell.png EnemyCacodemon.png EnemyDemonClaw.png EnemyZombieSergeant.png MenuFilled.png Font.png TitleMenu.png MenuLeft.png MenuRightLeft.png NouvText.png BackroomText.png TreesFree.png Demon.png
+textures = walltest.jpg	Global.png FontTexture.png EnemyDemon.png GeneralSprites.png EnemyMarine.png Stars.jpg Simetra_green.png BossArachnotron.png BossCyberDemon.png EnemyBaronOfHell.png EnemyCacodemon.png EnemyDemonClaw.png EnemyZombieSergeant.png MenuFilled.png Font.png TitleMenu.png MenuLeft.png MenuRightLeft.png NouvText.png BackroomText.png TreesFree.png Demon.png Weapons.png
 
  #4335 405  4522 599
 [SpriteLog]
@@ -2146,3 +2146,217 @@ texturePosX = 0.48
 texturePosY = 0.831705
 textureWeight = 0.23871
 textureHeight = 0.150923
+
+
+
+
+
+[SpriteFistAttackA]
+texture = 23
+texturePosX = 0
+texturePosY = 0
+textureWeight = 0.153
+textureHeight = 0.0847039
+
+[SpriteFistAttackB]
+texture = 23
+texturePosX = 0.154
+texturePosY = 0
+textureWeight = 0.153
+textureHeight = 0.0847039
+
+[SpriteFistAttackC]
+texture = 23
+texturePosX = 0.308
+texturePosY = 0
+textureWeight = 0.153
+textureHeight = 0.0847039
+
+[SpriteFistAttackD]
+texture = 23
+texturePosX = 0.462
+texturePosY = 0
+textureWeight = 0.153
+textureHeight = 0.0847039
+
+[SpriteShotgunAttackA]
+texture = 23
+texturePosX = 0
+texturePosY = 0.228618
+textureWeight = 0.136
+textureHeight = 0.129112
+
+[SpriteShotgunAttackB]
+texture = 23
+texturePosX = 0.137
+texturePosY = 0.228618
+textureWeight = 0.136
+textureHeight = 0.129112
+
+[SpriteShotgunAttackC]
+texture = 23
+texturePosX = 0.274
+texturePosY = 0.228618
+textureWeight = 0.136
+textureHeight = 0.129112
+
+[SpriteShotgunAttackD]
+texture = 23
+texturePosX = 0.411
+texturePosY = 0.228618
+textureWeight = 0.136
+textureHeight = 0.129112
+
+[SpriteShotgunAttackE]
+texture = 23
+texturePosX = 0.548
+texturePosY = 0.228618
+textureWeight = 0.136
+textureHeight = 0.129112
+
+[SpritePlasmaAttackA]
+texture = 23
+texturePosX = 0
+texturePosY = 0.407895
+textureWeight = 0.204
+textureHeight = 0.127467
+
+[SpritePlasmaAttackB]
+texture = 23
+texturePosX = 0.205
+texturePosY = 0.407895
+textureWeight = 0.204
+textureHeight = 0.127467
+
+[SpritePlasmaAttackC]
+texture = 23
+texturePosX = 0.41
+texturePosY = 0.407895
+textureWeight = 0.204
+textureHeight = 0.127467
+
+[SpritePlasmaAttackD]
+texture = 23
+texturePosX = 0.615
+texturePosY = 0.407895
+textureWeight = 0.204
+textureHeight = 0.127467
+
+[SpriteMGunAttackA]
+texture = 23
+texturePosX = 0
+texturePosY = 0.580592
+textureWeight = 0.189
+textureHeight = 0.116776
+
+[SpriteMGunAttackB]
+texture = 23
+texturePosX = 0.19
+texturePosY = 0.580592
+textureWeight = 0.189
+textureHeight = 0.116776
+
+[SpriteMGunAttackC]
+texture = 23
+texturePosX = 0.38
+texturePosY = 0.580592
+textureWeight = 0.189
+textureHeight = 0.116776
+
+[SpriteBFGAttackA]
+texture = 23
+texturePosX = 0
+texturePosY = 0.708882
+textureWeight = 0.209
+textureHeight = 0.167763
+
+[SpriteBFGAttackB]
+texture = 23
+texturePosX = 0.21
+texturePosY = 0.708882
+textureWeight = 0.209
+textureHeight = 0.167763
+
+[SpriteBFGAttackC]
+texture = 23
+texturePosX = 0.42
+texturePosY = 0.708882
+textureWeight = 0.209
+textureHeight = 0.167763
+
+[SpriteBFGAttackD]
+texture = 23
+texturePosX = 0.63
+texturePosY = 0.708882
+textureWeight = 0.209
+textureHeight = 0.167763
+
+[SpriteWeaponFist]
+texture = 23
+texturePosX = 0
+texturePosY = 0.916118
+textureWeight = 0.163
+textureHeight = 0.0600329
+
+[SpriteWeaponGun]
+texture = 23
+texturePosX = 0.164
+texturePosY = 0.916118
+textureWeight = 0.163
+textureHeight = 0.0600329
+
+[SpriteWeaponShotgun]
+texture = 23
+texturePosX = 0.328
+texturePosY = 0.916118
+textureWeight = 0.163
+textureHeight = 0.0600329
+
+[SpriteWeaponMachineGun]
+texture = 23
+texturePosX = 0.492
+texturePosY = 0.916118
+textureWeight = 0.163
+textureHeight = 0.0600329
+
+[SpriteWeaponPlasma]
+texture = 23
+texturePosX = 0.656
+texturePosY = 0.916118
+textureWeight = 0.163
+textureHeight = 0.0600329
+
+[SpriteWeaponBazooka]
+texture = 23
+texturePosX = 0.82
+texturePosY = 0.916118
+textureWeight = 0.163
+textureHeight = 0.0600329
+
+[SpritePistolAttackA]
+texture = 23
+texturePosX = 0
+texturePosY = 0.123355
+textureWeight = 0.118
+textureHeight = 0.101974
+
+[SpritePistolAttackB]
+texture = 23
+texturePosX = 0.119
+texturePosY = 0.123355
+textureWeight = 0.118
+textureHeight = 0.101974
+
+[SpritePistolAttackC]
+texture = 23
+texturePosX = 0.238
+texturePosY = 0.123355
+textureWeight = 0.118
+textureHeight = 0.101974
+
+[SpritePistolAttackD]
+texture = 23
+texturePosX = 0.357
+texturePosY = 0.123355
+textureWeight = 0.118
+textureHeight = 0.101974
