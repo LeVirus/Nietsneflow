@@ -15,7 +15,7 @@ struct WeaponData
     std::optional<std::vector<uint32_t>> m_visibleShootEntities, m_segmentShootEntities;
     std::string m_visibleShotID, m_impactID, m_weaponName;
     std::optional<float> m_damageRay;
-    float m_shotVelocity;
+    float m_shotVelocity, m_offsetDisplayX = EPSILON_FLOAT;
 };
 
 struct WeaponComponent : public ecs::Component

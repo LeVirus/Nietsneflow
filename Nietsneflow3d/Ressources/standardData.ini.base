@@ -385,6 +385,7 @@ Damage = 1
 AnimationType = 0
 LastAnimNum = 1
 SoundEffect = GunShot.wav
+Offset = 0.1
 
 [WeaponShotgun]
 WeaponName = Shotgun

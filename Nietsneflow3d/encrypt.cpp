@@ -46,8 +46,8 @@ int main(int argc, char *argv[])
 		//std::ifstream inStream("./Ressources/fontStandard.ini.base");
 		//std::cout << "./Ressources/" + path + "/level.ini.dd \n";
 		//std::ifstream inStream("./Ressources/" + path + "/level.ini.dec");
-		std::ifstream inStream("./Ressources/standardData.ini.base");
-//		std::ifstream inStream("./Ressources/pictureData.ini.base");
+		//std::ifstream inStream("./Ressources/standardData.ini.base");
+		std::ifstream inStream("./Ressources/pictureData.ini.base");
 		if(inStream.fail())
 		{
 				std::cout << "Fail\n";
@@ -62,8 +62,8 @@ int main(int argc, char *argv[])
 		//std::ofstream outStream("./Ressources/fontData.ini");
 		//std::ofstream outStream("./Ressources/CustomLevels/FabbDec");
 		//std::ofstream outStream("./Ressources/" + path + "/level.ini");
-		std::ofstream outStream("./Ressources/standardData.ini");
-		//std::ofstream outStream("./Ressources/pictureData.ini");
+		//std::ofstream outStream("./Ressources/standardData.ini");
+		std::ofstream outStream("./Ressources/pictureData.ini");
 		outStream << dataString;
 		outStream.close();
 		std::cout << "OK\n";
