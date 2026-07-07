@@ -128,8 +128,6 @@ private:
     float m_speedMoveWeaponChange = 0.05f;
     //6 weapons
     std::array<PairFloat_t, NUMBER_WEAPONS> m_vectForkWeaponMovementX;
-    PairFloat_t m_forkWeaponMovementX = {-0.66f, -0.4f},
-        m_forkWeaponMovementY = {-0.99f, -0.4f};
     std::array<float, 6> m_middleWeaponMovementX;
     //FORCE UPDATE AT LAUNCH
     uint32_t m_resolutionDisplayMenuEntity,

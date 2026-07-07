@@ -1104,6 +1104,11 @@ void LevelManager::loadWeaponData(std::string_view sectionName, uint32_t numIt)
     {
         m_vectWeaponsINIData[numIt].m_damageCircleRay = std::nullopt;
     }
+    val = m_ini.getValue(sectionName.data(), "Offset");
+    if(val)
+    {
+        m_vectWeaponsINIData[numIt].m_offset = std::stof(*val);
+    }
     for(uint32_t i = 0; i < vectSprites.size(); ++i)
     {
         m_vectWeaponsINIData[numIt].m_spritesData.emplace_back(

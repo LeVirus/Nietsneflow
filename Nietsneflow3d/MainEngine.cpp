@@ -1262,6 +1262,10 @@ uint32_t MainEngine::loadWeaponsEntity(const LevelManager &levelManager)
         weaponComp.m_weaponsData[weaponToTreat].m_lastAnimNum = memSprite.m_vectSpriteData.size() + vectWeapons[i].m_lastAnimNum;
         weaponComp.m_weaponsData[weaponToTreat].m_attackType = vectWeapons[i].m_attackType;
         weaponComp.m_weaponsData[weaponToTreat].m_simultaneousShots = vectWeapons[i].m_simultaneousShots;
+        if(vectWeapons[i].m_offset)
+        {
+            weaponComp.m_weaponsData[weaponToTreat].m_offsetDisplayX = (*vectWeapons[i].m_offset);
+        }
         if(!vectWeapons[i].m_shotSound.empty())
         {
             audioComp.m_soundElements[weaponToTreat] = loadSound(vectWeapons[i].m_shotSound);
@@ -1279,8 +1283,8 @@ uint32_t MainEngine::loadWeaponsEntity(const LevelManager &levelManager)
             memSprite.m_vectSpriteData.emplace_back(&vectSprite[vectWeapons[i].m_spritesData[j].m_numSprite]);
             posUp = DOWN_WEAPON_POS_Y + vectWeapons[i].m_spritesData[j].m_GLSize.second;
             diffLateral = vectWeapons[i].m_spritesData[j].m_GLSize.first / 2.0f;
-            posLeft = -diffLateral;
-            posRight = diffLateral;
+            posLeft = -diffLateral + weaponComp.m_weaponsData[weaponToTreat].m_offsetDisplayX;
+            posRight = diffLateral + weaponComp.m_weaponsData[weaponToTreat].m_offsetDisplayX;
             memPosVertex.m_vectSpriteData.emplace_back(std::array<PairFloat_t, 4>{
                                                             {
                                                                 {posLeft, posUp},
