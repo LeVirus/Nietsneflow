@@ -124,13 +124,13 @@ private:
     Shader *m_shader;
     std::array<VerticesData, static_cast<uint32_t>(VertexID_e::TOTAL)> m_vertices;
     std::vector<Texture> *m_ptrVectTexture = nullptr;
+    static const uint32_t NUMBER_WEAPONS = 6;
     float m_speedMoveWeaponChange = 0.05f;
-    PairFloat_t m_forkWeaponMovementX = {-0.33f, -0.1f}, m_forkWeaponMovementY = {-0.99f, -0.4f};
-    float m_diffTotalDistanceMoveWeaponX = std::abs(m_forkWeaponMovementX.first -
-                                                    m_forkWeaponMovementX.second),
-    m_halfDiffTotalDistanceMoveWeaponX = m_diffTotalDistanceMoveWeaponX / 2.0f;
-    float m_middleWeaponMovementX = m_forkWeaponMovementX.first + (m_forkWeaponMovementX.second -
-                                                                   m_forkWeaponMovementX.first) / 2.0f;
+    //6 weapons
+    std::array<PairFloat_t, NUMBER_WEAPONS> m_vectForkWeaponMovementX;
+    PairFloat_t m_forkWeaponMovementX = {-0.66f, -0.4f},
+        m_forkWeaponMovementY = {-0.99f, -0.4f};
+    std::array<float, 6> m_middleWeaponMovementX;
     //FORCE UPDATE AT LAUNCH
     uint32_t m_resolutionDisplayMenuEntity,
     m_fullscreenMenuEntity, m_infoWriteStandardInterval = 1.5 / FPS_VALUE;
