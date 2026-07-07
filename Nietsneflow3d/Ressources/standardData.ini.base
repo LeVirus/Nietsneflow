@@ -392,8 +392,8 @@ WeaponName = Shotgun
 Order = 2
 StaticSprite = SpriteShotgunAttackA
 AttackSprite = SpriteShotgunAttackB SpriteShotgunAttackC SpriteShotgunAttackD SpriteShotgunAttackE
-SpriteWeightGame = 0.5 0.5 0.8 0.6 0.8
-SpriteHeightGame = 1.2 1.0 1.0 1.0 1.0
+SpriteWeightGame = 0.8 0.8 0.8 0.8 0.8
+SpriteHeightGame = 1.0 1.0 1.5 1.7 1.7
 AnimationLatency = 0.13
 MaxAmmo = 50
 Damage = 1
@@ -404,14 +404,15 @@ AnimationType = 1
 LastAnimNum = 2
 SoundEffect = ShotgunShot.wav
 ReloadSound = ShotgunReloadB.wav
+Offset = 0.2
 
 [WeaponPlasmaRifle]
 WeaponName = Pasma Rifle
 Order = 3
 StaticSprite = SpritePlasmaAttackA 
-AttackSprite = SpritePlasmaAttackB SpritePlasmaAttackC SpritePlasmaAttackD
-SpriteWeightGame = 0.5 0.5 0.5 0.5 
-SpriteHeightGame = 1.0 1.0 1.0 1.0 
+AttackSprite = SpritePlasmaAttackB SpritePlasmaAttackD SpritePlasmaAttackD
+SpriteWeightGame = 1.0 1.0 1.0 1.0 
+SpriteHeightGame = 0.8 0.8 0.8 0.8 
 AnimationLatency = 0.1
 AttackType = 2
 ShootSpritesID = VisibleShootPlasma
@@ -421,6 +422,7 @@ ShotVelocity = 7
 AnimationType = 0
 LastAnimNum = 1
 SoundEffect = LazerShot.wav
+Offset = 0.3
 
 [WeaponBazooka]
 WeaponName = Bazooka
@@ -428,9 +430,9 @@ Order = 5
 BaseAmmo = 1
 StaticSprite = SpriteBFGAttackA
 AttackSprite = SpriteBFGAttackB SpriteBFGAttackC SpriteBFGAttackD
-SpriteWeightGame = 0.5 0.5 0.5 0.5 
-SpriteHeightGame = 0.5 0.65 0.7 0.75
-AnimationLatency = 0.12
+SpriteWeightGame = 1.0 1.0 1.0 1.0 
+SpriteHeightGame = 1.0 1.0 1.0 1.0
+AnimationLatency = 0.18
 AttackType = 2
 ShootSpritesID = VisibleShootRocket
 MaxAmmo = 20
@@ -440,6 +442,7 @@ DamageZoneRay = 530.0
 AnimationType = 0
 LastAnimNum = 1
 SoundEffect = ShootBazooka.wav
+Offset = 0.3
 
 [WeaponMachineGun]
 WeaponName = Machine Gun
@@ -447,9 +450,9 @@ Order = 4
 BaseAmmo = 0
 StaticSprite = SpriteMGunAttackA 
 AttackSprite = SpriteMGunAttackB SpriteMGunAttackC
-SpriteWeightGame = 0.5 0.5 0.5
-SpriteHeightGame = 0.5 0.65 0.65
-AnimationLatency = 0.08
+SpriteWeightGame = 0.8 0.8 0.8
+SpriteHeightGame = 0.8 0.8 0.8
+AnimationLatency = 0.04
 ShotImpactID = ImpactStd
 AttackType = 1
 MaxAmmo = 100
@@ -457,6 +460,7 @@ LastAnimNum = 2
 Damage = 2
 AnimationType = 2
 SoundEffect = MachineGunShoot.wav
+Offset = 0.3
 
 [ImpactShotgun]
 SpritesStd = SpriteShotImpactA SpriteShotImpactB
@@ -539,7 +543,7 @@ WeaponID = WeaponMachineGun
 Containing = 20
 
 [ObjectMachineGun]
-Sprite = SpriteItemMachineGun
+Sprite = SpriteWeaponMachineGun
 SpriteWeightGame = 0.4 ; value in %
 SpriteHeightGame = 0.4
 Type = 0
