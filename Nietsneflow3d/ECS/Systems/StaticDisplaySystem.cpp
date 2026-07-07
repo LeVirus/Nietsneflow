@@ -732,12 +732,13 @@ void StaticDisplaySystem::setWeaponMovement(PlayerConfComponent &playerComp,
     assert(compNum);
     WeaponComponent &weaponComp = m_componentsContainer.m_vectWeaponComp[*compNum];
     uint32_t index = weaponComp.getStdCurrentWeaponSprite();
+    uint32_t currentWeapon = weaponComp.m_currentWeapon;
     if(playerComp.m_inMovement)
     {
         modVertexPos(posComp, weaponComp.m_currentWeaponMove);
         //check X var
         if(weaponComp.m_currentWeaponMove.first < EPSILON_FLOAT &&
-                posComp.m_vertex[0].first <= m_forkWeaponMovementX.first)
+                posComp.m_vertex[0].first <= m_vectForkWeaponMovementX[currentWeapon].first)
         {
             weaponComp.m_currentWeaponMove.first *= -1.0f;
             //fix go down issue
@@ -746,7 +747,7 @@ void StaticDisplaySystem::setWeaponMovement(PlayerConfComponent &playerComp,
                                    posComp.m_vertex[0].second)});
         }
         else if(weaponComp.m_currentWeaponMove.first > EPSILON_FLOAT &&
-                posComp.m_vertex[0].first >= m_forkWeaponMovementX.second)
+                posComp.m_vertex[0].first >= m_vectForkWeaponMovementX[currentWeapon].second)
         {
             weaponComp.m_currentWeaponMove.first *= -1.0f;
             //fix go down issue
@@ -755,23 +756,27 @@ void StaticDisplaySystem::setWeaponMovement(PlayerConfComponent &playerComp,
                                    posComp.m_vertex[0].second)});
         }
         //check Y var
-        if(posComp.m_vertex[2].second >= (-1.0f -
-                                           std::abs(weaponComp.m_currentWeaponMove.second)))
+        if(posComp.m_vertex[2].second >= (-1.0f - std::abs(weaponComp.m_currentWeaponMove.second)))
         {
-            modVertexPos(posComp, {EPSILON_FLOAT,
-                                   std::abs(weaponComp.m_currentWeaponMove.second) * -1.0f});
+            //Mod Y
+            modVertexPos(posComp, {EPSILON_FLOAT, std::abs(weaponComp.m_currentWeaponMove.second) * -1.0f});
         }
+
+        //If left from default pos && ((plus à gauche que la moitié && DIRECTION GAUCHE) ||
+//                                      (plus à droite que la moitié && DIRECTION DROITE))
         if((posComp.m_vertex[0].second < memPosComp.m_vectSpriteData[index][0].second -
             std::abs(weaponComp.m_currentWeaponMove.second)) &&
-                ((posComp.m_vertex[0].first < m_middleWeaponMovementX &&
+                ((posComp.m_vertex[0].first < m_middleWeaponMovementX[currentWeapon] &&
             weaponComp.m_currentWeaponMove.first < EPSILON_FLOAT) ||
-                (posComp.m_vertex[0].first > m_middleWeaponMovementX &&
+                (posComp.m_vertex[0].first > m_middleWeaponMovementX[currentWeapon] &&
                  weaponComp.m_currentWeaponMove.first > EPSILON_FLOAT)))
         {
+            //GO UP
             weaponComp.m_currentWeaponMove.second = std::abs(weaponComp.m_currentWeaponMove.second);
         }
         else
         {
+            //GO DOWN
             weaponComp.m_currentWeaponMove.second =
                     std::abs(weaponComp.m_currentWeaponMove.second) * (-1.0f);
         }
@@ -965,6 +970,19 @@ void StaticDisplaySystem::setWeaponSprite(uint32_t weaponEntity, uint32_t weapon
     if(memPosVertex.m_vectSpriteData.empty())
     {
         return;
+    }
+
+    compNum = m_newComponentManager.getComponentEmplacement(weaponEntity, Components_e::WEAPON_COMPONENT);
+    assert(compNum);
+    WeaponComponent &weaponComp = m_newComponentManager.getComponentsContainer().m_vectWeaponComp[*compNum];
+    uint32_t currentPosSprite;
+    for(uint32_t i = 0; i <  weaponComp.m_weaponsData.size(); ++i)
+    {
+        currentPosSprite = weaponComp.m_weaponsData[i].m_memPosSprite.first;
+        m_vectForkWeaponMovementX[i].first = memPosVertex.m_vectSpriteData[currentPosSprite][0].first - 0.06f;
+        m_vectForkWeaponMovementX[i].second = m_vectForkWeaponMovementX[i].first + 0.22f;
+        m_middleWeaponMovementX[i] = m_vectForkWeaponMovementX[i].first + (m_vectForkWeaponMovementX[i].second -
+                                                                           m_vectForkWeaponMovementX[i].first) / 2.0f;;
     }
     //set sprite
     spriteText.m_spriteData = memSprite.m_vectSpriteData[weaponNumSprite];

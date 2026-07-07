@@ -1211,7 +1211,7 @@ uint32_t MainEngine::loadWeaponsEntity(const LevelManager &levelManager)
     assert(compNum);
     MemPositionsVertexComponents &memPosVertex = m_ecsManager.getComponentManager().
                                         getComponentsContainer().m_vectMemPositionsVertexComp[*compNum];
-    compNum= m_ecsManager.getComponentManager().getComponentEmplacement(weaponEntity, Components_e::WEAPON_COMPONENT);
+    compNum = m_ecsManager.getComponentManager().getComponentEmplacement(weaponEntity, Components_e::WEAPON_COMPONENT);
     assert(compNum);
     WeaponComponent &weaponComp = m_ecsManager.getComponentManager().getComponentsContainer().m_vectWeaponComp[*compNum];
     compNum = m_ecsManager.getComponentManager().getComponentEmplacement(weaponEntity, Components_e::AUDIO_COMPONENT);
