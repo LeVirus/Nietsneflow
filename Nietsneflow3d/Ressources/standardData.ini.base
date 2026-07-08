@@ -14,8 +14,8 @@ RightLeftMenuSprite = SpriteBackgroundRightLeftMenu
 PannelSprite = SpritePannel
 LifeIconSprite = SpriteLifeIcon
 AmmoIconSprite = SpriteAmmoIcon
-FistIcon = SpriteFAA
-GunIcon = SpriteGSt
+FistIcon = SpriteWeaponFist
+GunIcon = SpriteWeaponGun
 SpriteWeightFist = 0.4
 SpriteHeightFist = 0.4
 SpriteWeightGun = 0.4
@@ -367,6 +367,7 @@ Damage = 1
 AttackType = 0
 AnimationType = 1
 LastAnimNum = 1
+Offset = 0.1
 
 [WeaponGun]
 WeaponName = Gun
@@ -404,15 +405,15 @@ AnimationType = 1
 LastAnimNum = 2
 SoundEffect = ShotgunShot.wav
 ReloadSound = ShotgunReloadB.wav
-Offset = 0.2
+Offset = 0.3
 
 [WeaponPlasmaRifle]
 WeaponName = Pasma Rifle
 Order = 3
 StaticSprite = SpritePlasmaAttackA 
 AttackSprite = SpritePlasmaAttackB SpritePlasmaAttackD SpritePlasmaAttackD
-SpriteWeightGame = 0.8 0.8 0.8 0.8 
-SpriteHeightGame = 0.8 0.8 0.8 0.8 
+SpriteWeightGame = 0.9 0.9 0.9 0.9 
+SpriteHeightGame = 0.9 0.9 0.9 0.9 
 AnimationLatency = 0.1
 AttackType = 2
 ShootSpritesID = VisibleShootPlasma
@@ -429,9 +430,9 @@ WeaponName = Bazooka
 Order = 5
 BaseAmmo = 1
 StaticSprite = SpriteBFGAttackA
-AttackSprite = SpriteBFGAttackB SpriteBFGAttackC SpriteBFGAttackD
-SpriteWeightGame = 1.0 1.0 1.0 1.0 
-SpriteHeightGame = 1.0 1.0 1.0 1.0
+AttackSprite = SpriteBFGAttackB SpriteBFGAttackD SpriteBFGAttackD
+SpriteWeightGame = 0.9 0.9 0.9 0.9 
+SpriteHeightGame = 1.2 1.2 1.2 1.2
 AnimationLatency = 0.18
 AttackType = 2
 ShootSpritesID = VisibleShootRocket
@@ -460,7 +461,7 @@ LastAnimNum = 2
 Damage = 2
 AnimationType = 2
 SoundEffect = MachineGunShoot.wav
-Offset = 0.3
+Offset = 0.35
 
 [ImpactShotgun]
 SpritesStd = SpriteShotImpactA SpriteShotImpactB
