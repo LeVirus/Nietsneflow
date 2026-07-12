@@ -1,8 +1,8 @@
 #walltest.jpg ==> 0 Global.png ==> 1  FontTexture.png ==> 2 EnemyDemon.png ==> 3 GeneralSprites.png ==> 4 EnemyMarine.png ==> 5 Stars.jpg ==> 6 Simetra_green.png ==> 7 BossArachnotron.png ==> 8 BossCyberDemon.png ==> 9
 #EnemyBaronOfHell.png ==> 10 EnemyCacodemon.png ==> 11 EnemyDemonClaw.png ==> 12 EnemyZombieSergeant.png ==> 13  MenuFilled.png ==> 14 Font.png ==> 15  TitleMenu.png ==> 16 MenuLeft.png ==> 17  MenuRightLeft.png ==> 18 
-#NouvText.png ==> 19 BackroomText.png ==> 20   TreesFree.png ==> 21 Demon.png ==> 22 Weapons.png ==> 23
+#NouvText.png ==> 19 BackroomText.png ==> 20   TreesFree.png ==> 21 Demon.png ==> 22 Weapons.png ==> 23 NGeneralSprites.png ==> 24
 [PathToTexture]
-textures = walltest.jpg	Global.png FontTexture.png EnemyDemon.png GeneralSprites.png EnemyMarine.png Stars.jpg Simetra_green.png BossArachnotron.png BossCyberDemon.png EnemyBaronOfHell.png EnemyCacodemon.png EnemyDemonClaw.png EnemyZombieSergeant.png MenuFilled.png Font.png TitleMenu.png MenuLeft.png MenuRightLeft.png NouvText.png BackroomText.png TreesFree.png Demon.png Weapons.png
+textures = walltest.jpg	Global.png FontTexture.png EnemyDemon.png GeneralSprites.png EnemyMarine.png Stars.jpg Simetra_green.png BossArachnotron.png BossCyberDemon.png EnemyBaronOfHell.png EnemyCacodemon.png EnemyDemonClaw.png EnemyZombieSergeant.png MenuFilled.png Font.png TitleMenu.png MenuLeft.png MenuRightLeft.png NouvText.png BackroomText.png TreesFree.png Demon.png Weapons.png NGeneralSprites.png
 
  #4335 405  4522 599
 [SpriteLog]
@@ -171,62 +171,6 @@ texturePosX = 0.0
 texturePosY = 0.0
 textureWeight = 0.0
 textureHeight = 0.0
-
-#31 533  238 758
-[SpriteTreeA]
-texture = 21
-texturePosX = 0.03
-texturePosY = 0.521
-textureWeight = 0.206
-textureHeight = 0.222
-
-#307 586  492 770
-[SpriteTreeB]
-texture = 21
-texturePosX = 0.303
-texturePosY = 0.573
-textureWeight = 0.184
-textureHeight = 0.182
-
-#501 555  638 762
-[SpriteTreeC]
-texture = 21
-texturePosX = 0.495
-texturePosY = 0.543
-textureWeight = 0.137
-textureHeight = 0.204
-
-#27 762  137 943
-[SpriteTreeD]
-texture = 21
-texturePosX = 0.026
-texturePosY = 0.745
-textureWeight = 0.110
-textureHeight = 0.179
-
-#333 796  500 928
-[SpriteTreeE]
-texture = 21
-texturePosX = 0.329
-texturePosY = 0.778
-textureWeight = 0.167
-textureHeight = 0.131
-
-#514 795  641 933 
-[SpriteTreeF]
-texture = 21
-texturePosX = 0.507
-texturePosY = 0.777
-textureWeight = 0.127
-textureHeight = 0.137
-
-#673 690  781 932
-[SpriteTreeG]
-texture = 21
-texturePosX = 0.665
-texturePosY = 0.675
-textureWeight = 0.108
-textureHeight = 0.238
 
 #2390 2510  2423 2543
 [SpriteShotA]
@@ -697,13 +641,6 @@ texturePosX = 0.6875
 texturePosY = 0.3560
 textureWeight = 0.0239
 textureHeight = 0.0167
-
-[SpriteChair]
-texture = 1
-texturePosX = 0.68437
-texturePosY = 0.23995
-textureWeight = 0.030208
-textureHeight = 0.04241
 
 [SpriteLittleStorage]
 texture = 1
@@ -2360,3 +2297,385 @@ texturePosX = 0.357
 texturePosY = 0.123355
 textureWeight = 0.118
 textureHeight = 0.101974
+
+
+
+
+
+[SpriteChair]
+texture = 24
+texturePosX = 0
+texturePosY = 0
+textureWeight = 0.0777512
+textureHeight = 0.092803
+
+[SpriteDesktop]
+texture = 24
+texturePosX = 0.0956938
+texturePosY = 0
+textureWeight = 0.208134
+textureHeight = 0.129735
+
+[SpriteAmmoA]
+texture = 24
+texturePosX = 0.339713
+texturePosY = 0.0142045
+textureWeight = 0.0992823
+textureHeight = 0.094697
+
+[SpriteAmmoB]
+texture = 24
+texturePosX = 0.440191
+texturePosY = 0.0142045
+textureWeight = 0.0992823
+textureHeight = 0.094697
+
+[SpriteAmmoC]
+texture = 24
+texturePosX = 0.540669
+texturePosY = 0.0142045
+textureWeight = 0.0992823
+textureHeight = 0.094697
+
+[SpriteAmmoD]
+texture = 24
+texturePosX = 0.641147
+texturePosY = 0.0142045
+textureWeight = 0.0992823
+textureHeight = 0.094697
+
+[SpriteAmmoE]
+texture = 24
+texturePosX = 0.741625
+texturePosY = 0.0142045
+textureWeight = 0.0992823
+textureHeight = 0.094697
+
+[SpriteExplosionA]
+texture = 24
+texturePosX = 0
+texturePosY = 0.144886
+textureWeight = 0.144737
+textureHeight = 0.0994318
+
+[SpriteExplosionB]
+texture = 24
+texturePosX = 0.145933
+texturePosY = 0.144886
+textureWeight = 0.144737
+textureHeight = 0.0994318
+
+[SpriteExplosionC]
+texture = 24
+texturePosX = 0.291866
+texturePosY = 0.144886
+textureWeight = 0.144737
+textureHeight = 0.0994318
+
+[SpriteExplosionD]
+texture = 24
+texturePosX = 0.437799
+texturePosY = 0.144886
+textureWeight = 0.144737
+textureHeight = 0.0994318
+
+[SpriteTeleportA]
+texture = 24
+texturePosX = 0.662679
+texturePosY = 0.173295
+textureWeight = 0.062201
+textureHeight = 0.0520833
+
+[SpriteTeleportB]
+texture = 24
+texturePosX = 0.726076
+texturePosY = 0.173295
+textureWeight = 0.062201
+textureHeight = 0.0520833
+
+[SpriteStorageA]
+texture = 24
+texturePosX = 0
+texturePosY = 0.285038
+textureWeight = 0.138756
+textureHeight = 0.16572
+
+[SpriteStorageB]
+texture = 24
+texturePosX = 0.139952
+texturePosY = 0.285038
+textureWeight = 0.138756
+textureHeight = 0.16572
+
+[SpritePiedestelA]
+texture = 24
+texturePosX = 0.367225
+texturePosY = 0.278409
+textureWeight = 0.0944976
+textureHeight = 0.0890152
+
+[SpritePiedestelB]
+texture = 24
+texturePosX = 0.462919
+texturePosY = 0.278409
+textureWeight = 0.0944976
+textureHeight = 0.0890152
+
+[SpriteTelep]
+texture = 24
+texturePosX = 0.574163
+texturePosY = 0.29072
+textureWeight = 0.166268
+textureHeight = 0.0956439
+
+[SpriteBullImpactA]
+texture = 24
+texturePosX = 0
+texturePosY = 0.474432
+textureWeight = 0.0562201
+textureHeight = 0.0520833
+
+[SpriteBullImpactB]
+texture = 24
+texturePosX = 0.0574163
+texturePosY = 0.474432
+textureWeight = 0.0562201
+textureHeight = 0.0520833
+
+[SpriteBullImpactC]
+texture = 24
+texturePosX = 0.114833
+texturePosY = 0.474432
+textureWeight = 0.0562201
+textureHeight = 0.0520833
+
+[SpriteBullImpactD]
+texture = 24
+texturePosX = 0.172249
+texturePosY = 0.474432
+textureWeight = 0.0562201
+textureHeight = 0.0520833
+
+[SpriteBloodImpact]
+texture = 24
+texturePosX = 0.229665
+texturePosY = 0.474432
+textureWeight = 0.0562201
+textureHeight = 0.0520833
+
+[SpriteEnergyBallA]
+texture = 24
+texturePosX = 0.30622
+texturePosY = 0.416667
+textureWeight = 0.076555
+textureHeight = 0.0672348
+
+[SpriteEnergyBallB]
+texture = 24
+texturePosX = 0.383971
+texturePosY = 0.416667
+textureWeight = 0.076555
+textureHeight = 0.0672348
+
+[SpriteEnergyBallC]
+texture = 24
+texturePosX = 0.461722
+texturePosY = 0.416667
+textureWeight = 0.076555
+textureHeight = 0.0672348
+
+[SpriteEnergyBallD]
+texture = 24
+texturePosX = 0.539473
+texturePosY = 0.416667
+textureWeight = 0.076555
+textureHeight = 0.0672348
+
+[SpriteHealth]
+texture = 24
+texturePosX = 0.617224
+texturePosY = 0.416667
+textureWeight = 0.076555
+textureHeight = 0.0672348
+
+[SpriteAmmo]
+texture = 24
+texturePosX = 0.694975
+texturePosY = 0.416667
+textureWeight = 0.076555
+textureHeight = 0.0672348
+
+[SpriteBarrelA]
+texture = 24
+texturePosX = 0
+texturePosY = 0.53125
+textureWeight = 0.19378
+textureHeight = 0.180871
+
+[SpriteBarrelB]
+texture = 24
+texturePosX = 0.194976
+texturePosY = 0.53125
+textureWeight = 0.19378
+textureHeight = 0.180871
+
+[SpriteBarrelC]
+texture = 24
+texturePosX = 0.389952
+texturePosY = 0.53125
+textureWeight = 0.19378
+textureHeight = 0.180871
+
+[SpriteBarrelD]
+texture = 24
+texturePosX = 0.584928
+texturePosY = 0.53125
+textureWeight = 0.19378
+textureHeight = 0.180871
+
+[SpriteBarrelE]
+texture = 24
+texturePosX = 0.779904
+texturePosY = 0.53125
+textureWeight = 0.19378
+textureHeight = 0.180871
+
+[SpriteGigerA]
+texture = 24
+texturePosX = 0
+texturePosY = 0.751894
+textureWeight = 0.0873206
+textureHeight = 0.100379
+
+[SpriteGigerB]
+texture = 24
+texturePosX = 0.0885167
+texturePosY = 0.751894
+textureWeight = 0.0873206
+textureHeight = 0.100379
+
+[SpriteGigerC]
+texture = 24
+texturePosX = 0.177033
+texturePosY = 0.751894
+textureWeight = 0.0873206
+textureHeight = 0.100379
+
+[SpriteGigerD]
+texture = 24
+texturePosX = 0.26555
+texturePosY = 0.751894
+textureWeight = 0.0873206
+textureHeight = 0.100379
+
+[SpriteGigerE]
+texture = 24
+texturePosX = 0.354067
+texturePosY = 0.751894
+textureWeight = 0.0873206
+textureHeight = 0.100379
+
+[SpriteGigerF]
+texture = 24
+texturePosX = 0.442584
+texturePosY = 0.751894
+textureWeight = 0.0873206
+textureHeight = 0.100379
+
+[SpriteGigerG]
+texture = 24
+texturePosX = 0.531101
+texturePosY = 0.751894
+textureWeight = 0.0873206
+textureHeight = 0.100379
+
+[SpriteGigerH]
+texture = 24
+texturePosX = 0.619618
+texturePosY = 0.751894
+textureWeight = 0.0873206
+textureHeight = 0.100379
+
+[SpriteGigerI]
+texture = 24
+texturePosX = 0.708135
+texturePosY = 0.751894
+textureWeight = 0.0873206
+textureHeight = 0.100379
+
+[SpriteTreeA]
+texture = 24
+texturePosX = 0
+texturePosY = 0.888258
+textureWeight = 0.120813
+textureHeight = 0.0956439
+
+[SpriteTreeB]
+texture = 24
+texturePosX = 0.12201
+texturePosY = 0.888258
+textureWeight = 0.120813
+textureHeight = 0.0956439
+
+[SpriteTreeC]
+texture = 24
+texturePosX = 0.24402
+texturePosY = 0.888258
+textureWeight = 0.120813
+textureHeight = 0.0956439
+
+[SpriteTreeD]
+texture = 24
+texturePosX = 0.36603
+texturePosY = 0.888258
+textureWeight = 0.120813
+textureHeight = 0.0956439
+
+[SpriteTreeE]
+texture = 24
+texturePosX = 0.48804
+texturePosY = 0.888258
+textureWeight = 0.120813
+textureHeight = 0.0956439
+
+[SpriteTreeF]
+texture = 24
+texturePosX = 0.61005
+texturePosY = 0.888258
+textureWeight = 0.120813
+textureHeight = 0.0956439
+
+[SpriteTreeG]
+texture = 24
+texturePosX = 0.73206
+texturePosY = 0.888258
+textureWeight = 0.120813
+textureHeight = 0.0956439
+
+[SpriteEnergyBallZA]
+texture = 24
+texturePosX = 0.754785
+texturePosY = 0.266351
+textureWeight = 0.0789474
+textureHeight = 0.0540284
+
+[SpriteEnergyBallZB]
+texture = 24
+texturePosX = 0.834929
+texturePosY = 0.266351
+textureWeight = 0.0789474
+textureHeight = 0.0540284
+
+[SpriteEnergyBallZC]
+texture = 24
+texturePosX = 0.915073
+texturePosY = 0.266351
+textureWeight = 0.0789474
+textureHeight = 0.0540284
+
+[SpriteHeal]
+texture = 24
+texturePosX = 0.809581
+texturePosY = 0.419905
+textureWeight = 0.0766467
+textureHeight = 0.0540284
