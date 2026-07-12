@@ -440,7 +440,8 @@ inline const float TOTAL_DISTANCE_FOG = MAX_DISTANCE_VIEW - MIN_DISTANCE_FOG - L
 inline const float SCREEN_VERT_BACKGROUND_GL_STEP = 1.0f / RAYCAST_GROUND_CEILING_NUMBER;
 inline const float SCREEN_HORIZ_BACKGROUND_GL_STEP = 2.0f / RAYCAST_LINE_NUMBER;
 inline const double WRITE_LETTER_GL_OFFSET = 0.01;
-inline const std::string RESSOURCES_DIR_STR = "Ressources/";
+// inline const std::string RESSOURCES_DIR_STR = std::string(getenv("HOME")) + "/.local/share/Arnihs/";
+inline const std::string RESSOURCES_DIR_STR = "../../Nietsneflow3d/Ressources/";
 inline const std::string SHADER_DIR_STR = RESSOURCES_DIR_STR + "Shader/";
 inline const std::string TEXTURES_DIR_STR = RESSOURCES_DIR_STR + "Textures/";
 inline const std::map<MenuMode_e, PairPairFloatStr_t> MAP_MENU_DATA =
@@ -607,11 +608,11 @@ inline const std::map<uint32_t, std::string> INPUT_GAMEPAD_SIMPLE_BUTTONS_STRING
     {GLFW_GAMEPAD_BUTTON_START, "Start"},
     {GLFW_GAMEPAD_BUTTON_GUIDE, "Guide"},
     {GLFW_GAMEPAD_BUTTON_LEFT_THUMB, "Left Thumb"},
-    {GLFW_GAMEPAD_BUTTON_DPAD_LEFT, "Right Thumb"},
-    {GLFW_GAMEPAD_BUTTON_RIGHT_THUMB, "Dpad Up"},
-    {GLFW_GAMEPAD_BUTTON_DPAD_UP, "Dpad Right"},
-    {GLFW_GAMEPAD_BUTTON_DPAD_RIGHT, "Dpad Down"},
-    {GLFW_GAMEPAD_BUTTON_DPAD_DOWN, "Dpad Left"}
+    {GLFW_GAMEPAD_BUTTON_RIGHT_THUMB, "Right Thumb"},
+    {GLFW_GAMEPAD_BUTTON_DPAD_UP, "Dpad Up"},
+    {GLFW_GAMEPAD_BUTTON_DPAD_RIGHT, "Dpad Right"},
+    {GLFW_GAMEPAD_BUTTON_DPAD_DOWN, "Dpad Down"},
+    {GLFW_GAMEPAD_BUTTON_DPAD_LEFT, "Dpad Left"}
 };
 
 inline const std::map<uint32_t, std::string> INPUT_GAMEPAD_AXIS_STRING = {

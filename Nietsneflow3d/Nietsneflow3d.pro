@@ -1,4 +1,3 @@
-DEFINES *= NOMINMAX WIN32_LEAN_AND_MEAN _WIN32
 TEMPLATE = app
 CONFIG += console c++17
 CONFIG -= app_bundle
@@ -6,8 +5,8 @@ CONFIG -= qt
 QMAKE_CXXFLAGS += -std=c++17
 QMAKE_CXXFLAGS_DEBUG += -Wall -Wextra -Wpedantic -Og
 INCLUDEPATH += includesLib
-
-LIBS += -L"../lib" ../lib/glad.dll ../lib/glfw3.dll ../lib/opengl32.dll  ../lib/libsndfile-1.dll ../lib/OpenAL32.dll  ../lib/libECS.a -static
+LIBS += -L../../Nietsneflow3d/lib/  -lECS -lglad -ldl -lglfw -lX11 -lXxf86vm -lXrandr \
+-pthread -lXi -lopenal -lsndfile
 
 SOURCES += main.cpp \
     AudioEngine.cpp \
