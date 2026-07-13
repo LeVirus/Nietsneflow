@@ -411,7 +411,7 @@ Offset = 0.3
 WeaponName = Pasma Rifle
 Order = 3
 StaticSprite = SpritePlasmaAttackA 
-AttackSprite = SpritePlasmaAttackB SpritePlasmaAttackD SpritePlasmaAttackD
+AttackSprite = SpritePlasmaAttackB SpritePlasmaAttackC SpritePlasmaAttackC
 SpriteWeightGame = 0.9 0.9 0.9 0.9 
 SpriteHeightGame = 0.9 0.9 0.9 0.9 
 AnimationLatency = 0.1
@@ -703,49 +703,49 @@ traversable = false
 [GroundTreeA]
 Sprite = SpriteTreeA
 SpriteWeightGame = 1.0
-SpriteHeightGame = 2.02
+SpriteHeightGame = 2.5
 traversable = false
 
 [GroundTreeB]
 Sprite = SpriteTreeB
 SpriteWeightGame = 1.02
-SpriteHeightGame = 2.0
+SpriteHeightGame = 2.5
 traversable = false
 
 [GroundTreeC]
 Sprite = SpriteTreeC
 SpriteWeightGame = 0.9
-SpriteHeightGame = 2.2
+SpriteHeightGame = 2.5
 traversable = false
 
 [GroundTreeD]
 Sprite = SpriteTreeD
 SpriteWeightGame = 0.7
-SpriteHeightGame = 2.1
+SpriteHeightGame = 2.5
 traversable = false
 
 [GroundTreeE]
 Sprite = SpriteTreeE
 SpriteWeightGame = 1.2
-SpriteHeightGame = 2.0
+SpriteHeightGame = 2.5
 traversable = false
 
 [GroundTreeF]
 Sprite = SpriteTreeF
 SpriteWeightGame = 0.8
-SpriteHeightGame = 2.2
+SpriteHeightGame = 2.5
 traversable = false
 
 [GroundTreeG]
 Sprite = SpriteTreeG
 SpriteWeightGame = 0.7
-SpriteHeightGame = 2.2
+SpriteHeightGame = 2.5
 traversable = false
 
 [GroundTreeH]
 Sprite = SpriteTreeB
 SpriteWeightGame = 1.2
-SpriteHeightGame = 2.0
+SpriteHeightGame = 2.5
 traversable = true
 
 
