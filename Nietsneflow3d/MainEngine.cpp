@@ -3538,6 +3538,19 @@ void MainEngine::confLifeAmmoPannelEntities()
     posCursorB.m_vertex.reserve(4);
     up = -0.9f, down = -0.95f, left = -0.95f, right = -0.9f;
     posCursorB.m_vertex.insert(posCursorB.m_vertex.end(), {{left, up}, {right, up}, {right, down},{left, down}});
+    //AIM
+    uint32_t aimEntity = createSimpleSpriteEntity();
+    compNum = m_ecsManager.getComponentManager().getComponentEmplacement(aimEntity, Components_e::POSITION_VERTEX_COMPONENT);
+    assert(compNum);
+    PositionVertexComponent &posCursorC = m_ecsManager.getComponentManager().getComponentsContainer().m_vectPositionVertexComp[*compNum];
+    compNum= m_ecsManager.getComponentManager().getComponentEmplacement(aimEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
+    assert(compNum);
+    SpriteTextureComponent &spriteCursorC = m_ecsManager.getComponentManager().getComponentsContainer().m_vectSpriteTextureComp[*compNum];
+    playerConf.m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::AIM)] = aimEntity;
+    spriteCursorC.m_spriteData = m_memAimIcon;
+    posCursorC.m_vertex.reserve(4);
+    up = 0.05f, down = -0.05f, left = -0.05f, right = 0.05f;
+    posCursorC.m_vertex.insert(posCursorC.m_vertex.end(), {{left, up}, {right, up}, {right, down},{left, down}});
 
 }
 
@@ -3608,6 +3621,7 @@ void MainEngine::loadStaticSpriteEntities(const LevelManager &levelManager)
     uint16_t pannelSpriteId = *levelManager.getPictureData().getIdentifier(levelManager.getPannelSpriteName()),
             lifeIconSpriteId = *levelManager.getPictureData().getIdentifier(levelManager.getLifeIconSpriteName()),
             ammoIconSpriteId = *levelManager.getPictureData().getIdentifier(levelManager.getAmmoIconSpriteName()),
+            aimSpriteName = *levelManager.getPictureData().getIdentifier(levelManager.getAimSpriteName()),
             fistIconSpriteId = *levelManager.getPictureData().getIdentifier(levelManager.getFistIconSpriteName()),
             gunIconSpriteId = *levelManager.getPictureData().getIdentifier(levelManager.getGunIconSpriteName()),
             shotgunIconSpriteId = *levelManager.getPictureData().getIdentifier(levelManager.getShotgunIconSpriteName()),
@@ -3626,7 +3640,7 @@ void MainEngine::loadStaticSpriteEntities(const LevelManager &levelManager)
     m_memPannel = &levelManager.getPictureData().getSpriteData()[pannelSpriteId];
     m_memLifeIcon = &levelManager.getPictureData().getSpriteData()[lifeIconSpriteId];
     m_memAmmoIcon = &levelManager.getPictureData().getSpriteData()[ammoIconSpriteId];
-
+    m_memAimIcon = &levelManager.getPictureData().getSpriteData()[aimSpriteName];
     m_memPreviewFistIcon = &levelManager.getPictureData().getSpriteData()[fistIconSpriteId];
     m_memPreviewGunIcon = &levelManager.getPictureData().getSpriteData()[gunIconSpriteId];
     m_memPreviewShotgunIcon = &levelManager.getPictureData().getSpriteData()[shotgunIconSpriteId];

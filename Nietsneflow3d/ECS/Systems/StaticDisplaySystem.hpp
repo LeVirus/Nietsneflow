@@ -39,6 +39,7 @@ enum class VertexID_e
     FULLSCREEN,
     INPUT,
     PANNEL,
+    AIM,
     LIFE_ICON,
     AMMO_ICON,
     POSSESSED_WEAPONS,

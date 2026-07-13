@@ -34,6 +34,7 @@ enum class PlayerEntities_e
     MENU_LEFT_BACKGROUND,
     MENU_RIGHT_LEFT_BACKGROUND,
     MENU_SELECTED_LINE,
+    AIM,
     TOTAL
 };
 
