@@ -2679,3 +2679,10 @@ texturePosX = 0.809581
 texturePosY = 0.419905
 textureWeight = 0.0766467
 textureHeight = 0.0540284
+
+[SpriteAim]
+texture = 24
+texturePosX = 0.848086
+texturePosY = 0.148008
+textureWeight = 0.076555
+textureHeight = 0.0616698

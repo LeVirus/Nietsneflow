@@ -83,6 +83,7 @@ void StaticDisplaySystem::execSystem()
         drawStandardStaticSprite(VertexID_e::PANNEL, playerComp);
         drawStandardStaticSprite(VertexID_e::AMMO_ICON, playerComp);
         drawStandardStaticSprite(VertexID_e::LIFE_ICON, playerComp);
+        drawStandardStaticSprite(VertexID_e::AIM, playerComp);
         drawTeleportAnimation(playerComp);
         drawWriteInfoPlayer(mVectNumEntity[i], playerComp);
         std::string strAmmoDisplay = std::to_string(weaponComp.m_weaponsData[weaponComp.m_currentWeapon].m_ammunationsCount);
@@ -1077,6 +1078,10 @@ uint32_t getSpriteAssociateEntity(VertexID_e spriteId, PlayerConfComponent& play
     else if(spriteId == VertexID_e::LIFE_ICON)
     {
         return playerComp.m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::AMMO_ICON)];
+    }
+    else if(spriteId == VertexID_e::AIM)
+    {
+        return playerComp.m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::AIM)];
     }
     else if(spriteId == VertexID_e::TELEPORT_ANIM)
     {

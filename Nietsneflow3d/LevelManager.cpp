@@ -1534,6 +1534,9 @@ void LevelManager::loadUtilsData()
     val = m_ini.getValue("GraphicUtils", "AmmoIconSprite");
     assert(val);
     m_spriteAmmoName = *val;
+    val = m_ini.getValue("GraphicUtils", "AimSprite");
+    assert(val);
+    m_spriteAim = *val;
     val = m_ini.getValue("GraphicUtils", "GenericMenuSprite");
     assert(val);
     m_spriteGenericMenuName = *val;
