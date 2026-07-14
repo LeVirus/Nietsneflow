@@ -1040,6 +1040,7 @@ optionalTargetRaycast_t FirstPersonDisplaySystem::calcLineSegmentRaycast(float r
     }
     else if(element && element->m_type == LevelCaseType_e::WALL_MOVE_LC)
     {
+        assert(element->m_memMoveWall);
         result = calcMovingWallSegmentRaycast(radiantAngle, lateralLeadCoef,
                                               verticalLeadCoef, currentPoint, *element);
         if(result)
@@ -1076,6 +1077,7 @@ optionalTargetRaycast_t FirstPersonDisplaySystem::calcLineSegmentRaycast(float r
             }
             else if(element->m_type == LevelCaseType_e::WALL_MOVE_LC)
             {
+                assert(element->m_memMoveWall);
                 result = calcMovingWallSegmentRaycast(radiantAngle, lateralLeadCoef,
                                                       verticalLeadCoef, currentPoint, *element);
                 if(result)
