@@ -2,16 +2,19 @@ IMPROVE=========================================================================
 ==========================================================================================================
 
 ))
-Ajouter un viseur
-
-))
-Certains objets rammasables doivent etre plus visible plus coloré
+L'impact sur les baril et enemis? s'affiche trop en décallage
 
 ))
 Plantage dans mur mouvant
 
 
 
+
+))
+Certains objets rammasables doivent etre plus visible plus coloré==================OK
+
+))
+Ajouter un viseur=============OK
 
 ))
 Faire paquets .deb et .rpm et peut être arch linux   Voir pour Flatpak
