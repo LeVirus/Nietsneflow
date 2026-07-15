@@ -548,7 +548,7 @@ SpriteWeightGame = 0.2 ; value in %
 SpriteHeightGame = 0.5
 Type = 1
 WeaponID = WeaponMachineGun
-Containing = 20
+Containing = 15
 
 [ObjectMachineGun]
 Sprite = SpriteWeaponMachineGun
@@ -556,7 +556,7 @@ SpriteWeightGame = 0.4 ; value in %
 SpriteHeightGame = 0.4
 Type = 0
 WeaponID = WeaponMachineGun
-Containing = 1
+Containing = 10
 
 [ObjectShotgunAmmo]
 Sprite = SpriteAmmoB
@@ -564,7 +564,7 @@ SpriteWeightGame = 0.2 ; value in %
 SpriteHeightGame = 0.5
 Type = 1
 WeaponID = WeaponShotgun
-Containing = 10
+Containing = 5
 
 [ObjectShotgun]
 Sprite = SpriteWeaponShotgun
@@ -588,7 +588,7 @@ SpriteWeightGame = 0.2 ; value in %
 SpriteHeightGame = 0.4
 Type = 1
 WeaponID = WeaponPlasmaRifle
-Containing = 20
+Containing = 5
 
 [ObjectLittleHeal]
 Sprite = SpriteHeal
