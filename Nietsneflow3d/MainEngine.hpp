@@ -440,7 +440,7 @@ void insertEnemySpriteFromType(const std::vector<SpriteData> &vectSprite, mapEne
                                std::vector<SpriteData const *> &vectSpriteData, const std::vector<uint16_t> &enemyMemArray,
                                EnemySpriteType_e type);
 void confBullet(ImpactShotComponent &impactComp, GeneralCollisionComponent &genColl, SegmentCollisionComponent &segmentColl, MoveableComponent &moveImpactComp,
-                CollisionTag_e collTag, const PairFloat_t &point, float degreeAngle);
+                CollisionTag_e collTag, const PairFloat_t &point, float degreeAngle, bool pistol);
 void setWeaponPlayer();
 void confActionShape(MapCoordComponent &mapCompAction, GeneralCollisionComponent &genCompAction, const MapCoordComponent &attackerMapComp,
                      const MoveableComponent &attackerMoveComp);
