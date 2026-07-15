@@ -658,7 +658,7 @@ void MainEngine::confPlayerBullet(PlayerConfComponent *playerComp,
     compNum = m_ecsManager.getComponentManager().getComponentEmplacement(shotComp.m_impactEntity, Components_e::IMPACT_CONF_COMPONENT);
     assert(compNum);
     ImpactShotComponent &impactComp = m_ecsManager.getComponentManager().getComponentsContainer().m_vectImpactShotComp[*compNum];
-    confBullet(impactComp, genColl, segmentColl, moveImpactComp, CollisionTag_e::BULLET_PLAYER_CT, point, degreeAngle);
+    confBullet(impactComp, genColl, segmentColl, moveImpactComp, CollisionTag_e::BULLET_PLAYER_CT, point, degreeAngle, (numBullet == 1));
 }
 
 //===================================================================
@@ -674,14 +674,14 @@ void confActionShape(MapCoordComponent &mapCompAction, GeneralCollisionComponent
 //===================================================================
 void confBullet(ImpactShotComponent &impactComp, GeneralCollisionComponent &genColl,
                 SegmentCollisionComponent &segmentColl, MoveableComponent &moveImpactComp,
-                CollisionTag_e collTag, const PairFloat_t &point, float degreeAngle)
+                CollisionTag_e collTag, const PairFloat_t &point, float degreeAngle, bool pistol)
 {
     assert(collTag == CollisionTag_e::BULLET_ENEMY_CT || collTag == CollisionTag_e::BULLET_PLAYER_CT);
     moveImpactComp.m_degreeOrientation = degreeAngle;
     genColl.m_tagA = collTag;
     genColl.m_shape = CollisionShape_e::SEGMENT_C;
     genColl.m_active = true;
-    float diff = std::rand() / ((RAND_MAX + 1u) / 9) - 4.0f;
+    float diff = pistol ? std::rand() / ((RAND_MAX + 1u) / 9) - 4.0f : std::rand() / ((RAND_MAX + 1u) / 18) - 9.0f;
     impactComp.m_currentVerticalPos = randFloat(-0.4f, -0.2f);
     segmentColl.m_degreeOrientation = degreeAngle + diff;
     if(segmentColl.m_degreeOrientation < EPSILON_FLOAT)

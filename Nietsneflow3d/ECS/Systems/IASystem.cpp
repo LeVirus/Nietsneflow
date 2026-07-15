@@ -277,7 +277,7 @@ void IASystem::enemyShoot(EnemyConfComponent &enemyConfComp, MoveableComponent &
             segmentComp.m_impactEntity = shotComp.m_impactEntity;
             MoveableComponent &impactMoveComp = m_componentsContainer.m_vectMoveableComp[*compNum];
             confBullet(impactComp, genComp, segmentComp, impactMoveComp, CollisionTag_e::BULLET_ENEMY_CT,
-                       enemyMapComp.m_absoluteMapPositionPX, moveComp.m_degreeOrientation);
+                       enemyMapComp.m_absoluteMapPositionPX, moveComp.m_degreeOrientation, (enemyConfComp.m_simultaneousShot == 1));
             compNum = m_newComponentManager.getComponentEmplacement(shotComp.m_impactEntity,
                                                                    Components_e::MAP_COORD_COMPONENT);
             assert(compNum);
