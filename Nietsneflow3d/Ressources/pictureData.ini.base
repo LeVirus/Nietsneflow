@@ -1,8 +1,8 @@
 #walltest.jpg ==> 0 Global.png ==> 1  FontTexture.png ==> 2 EnemyDemon.png ==> 3 GeneralSprites.png ==> 4 EnemyMarine.png ==> 5 Stars.jpg ==> 6 Simetra_green.png ==> 7 BossArachnotron.png ==> 8 BossCyberDemon.png ==> 9
 #EnemyBaronOfHell.png ==> 10 EnemyCacodemon.png ==> 11 EnemyDemonClaw.png ==> 12 EnemyZombieSergeant.png ==> 13  MenuFilled.png ==> 14 Font.png ==> 15  TitleMenu.png ==> 16 MenuLeft.png ==> 17  MenuRightLeft.png ==> 18 
-#NouvText.png ==> 19 BackroomText.png ==> 20   TreesFree.png ==> 21 Demon.png ==> 22 Weapons.png ==> 23 NGeneralSprites.png ==> 24
+#NouvText.png ==> 19 BackroomText.png ==> 20   TreesFree.png ==> 21 Demon.png ==> 22 Weapons.png ==> 23 NGeneralSprites.png ==> 24 EnemyBackrooms.png ==> 25
 [PathToTexture]
-textures = walltest.jpg	Global.png FontTexture.png EnemyDemon.png GeneralSprites.png EnemyMarine.png Stars.jpg Simetra_green.png BossArachnotron.png BossCyberDemon.png EnemyBaronOfHell.png EnemyCacodemon.png EnemyDemonClaw.png EnemyZombieSergeant.png MenuFilled.png Font.png TitleMenu.png MenuLeft.png MenuRightLeft.png NouvText.png BackroomText.png TreesFree.png Demon.png Weapons.png NGeneralSprites.png
+textures = walltest.jpg	Global.png FontTexture.png EnemyDemon.png GeneralSprites.png EnemyMarine.png Stars.jpg Simetra_green.png BossArachnotron.png BossCyberDemon.png EnemyBaronOfHell.png EnemyCacodemon.png EnemyDemonClaw.png EnemyZombieSergeant.png MenuFilled.png Font.png TitleMenu.png MenuLeft.png MenuRightLeft.png NouvText.png BackroomText.png TreesFree.png Demon.png Weapons.png NGeneralSprites.png EnemyBackrooms.png
 
  #4335 405  4522 599
 [SpriteLog]
@@ -2686,3 +2686,130 @@ texturePosX = 0.848086
 texturePosY = 0.148008
 textureWeight = 0.076555
 textureHeight = 0.0616698
+
+
+[SpriteEnemyBRFrontA]
+texture = 25
+texturePosX = 0
+texturePosY = 0.0055607
+textureWeight = 0.232813
+textureHeight = 0.178869
+
+[SpriteEnemyBRFrontB]
+texture = 25
+texturePosX = 0.234375
+texturePosY = 0.0055607
+textureWeight = 0.232813
+textureHeight = 0.178869
+
+[SpriteEnemyBRBackA]
+texture = 25
+texturePosX = 0.46875
+texturePosY = 0.0055607
+textureWeight = 0.232813
+textureHeight = 0.178869
+
+[SpriteEnemyBRBackB]
+texture = 25
+texturePosX = 0.703125
+texturePosY = 0.0055607
+textureWeight = 0.232813
+textureHeight = 0.178869
+
+[SpriteEnemyBRFrontLeftA]
+texture = 25
+texturePosX = 0
+texturePosY = 0.200185
+textureWeight = 0.232813
+textureHeight = 0.178869
+
+[SpriteEnemyBRFrontLeftB]
+texture = 25
+texturePosX = 0.234375
+texturePosY = 0.200185
+textureWeight = 0.232813
+textureHeight = 0.178869
+
+[SpriteEnemyBRFrontLeftC]
+texture = 25
+texturePosX = 0.46875
+texturePosY = 0.200185
+textureWeight = 0.232813
+textureHeight = 0.178869
+
+[SpriteEnemyBRFrontLeftD]
+texture = 25
+texturePosX = 0.703125
+texturePosY = 0.200185
+textureWeight = 0.232813
+textureHeight = 0.178869
+
+[SpriteEnemyBRAttackA]
+texture = 25
+texturePosX = 0
+texturePosY = 0.382762
+textureWeight = 0.232813
+textureHeight = 0.178869
+
+[SpriteEnemyBRAttackB]
+texture = 25
+texturePosX = 0.234375
+texturePosY = 0.382762
+textureWeight = 0.232813
+textureHeight = 0.178869
+
+[SpriteEnemyBRBackRightA]
+texture = 25
+texturePosX = 0
+texturePosY = 0.57924
+textureWeight = 0.232813
+textureHeight = 0.178869
+
+[SpriteEnemyBRBackRightB]
+texture = 25
+texturePosX = 0.234375
+texturePosY = 0.57924
+textureWeight = 0.232813
+textureHeight = 0.178869
+
+[SpriteEnemyBRBackRightC]
+texture = 25
+texturePosX = 0.46875
+texturePosY = 0.57924
+textureWeight = 0.232813
+textureHeight = 0.178869
+
+[SpriteEnemyBRBackRightD]
+texture = 25
+texturePosX = 0.703125
+texturePosY = 0.57924
+textureWeight = 0.232813
+textureHeight = 0.178869
+
+[SpriteEnemyBRRightA]
+texture = 25
+texturePosX = 0
+texturePosY = 0.781279
+textureWeight = 0.232813
+textureHeight = 0.177943
+
+[SpriteEnemyBRRightB]
+texture = 25
+texturePosX = 0.234375
+texturePosY = 0.781279
+textureWeight = 0.232813
+textureHeight = 0.177943
+
+[SpriteEnemyBRRightC]
+texture = 25
+texturePosX = 0.46875
+texturePosY = 0.781279
+textureWeight = 0.232813
+textureHeight = 0.177943
+
+[SpriteEnemyBRRightD]
+texture = 25
+texturePosX = 0.703125
+texturePosY = 0.781279
+textureWeight = 0.232813
+textureHeight = 0.177943
