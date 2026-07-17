@@ -273,6 +273,35 @@ DeathSound = Death1.wav
 FrozenOnAttack = true
 
 
+[EnemyBackRoom]
+StaticSpriteFront = SpriteEnemyBRFrontA SpriteEnemyBRFrontB
+StaticSpriteFrontLeft = SpriteEnemyBRFrontLeftC SpriteEnemyBRFrontLeftD
+StaticSpriteFrontRight = SpriteEnemyBRFrontLeftA SpriteEnemyBRFrontLeftB
+StaticSpriteBack = SpriteEnemyBRBackA SpriteEnemyBRBackB
+StaticSpriteBackLeft = SpriteEnemyBRBackRightC SpriteEnemyBRBackRightD
+StaticSpriteBackRight = SpriteEnemyBRBackRightA SpriteEnemyBRBackRightB
+StaticSpriteLeft = SpriteEnemyBRRightC SpriteEnemyBRRightD
+StaticSpriteRight = SpriteEnemyBRRightA SpriteEnemyBRRightB
+AttackSprite = SpriteEnemyBRAttackA SpriteEnemyBRAttackB
+DyingSprite = SpriteDCDA SpriteDCDA SpriteDCDB SpriteDCDB SpriteDCDC SpriteDCDC 
+Touched = SpriteDCDA
+ShootSpritesID = VisibleShootDemonA
+MeleeDamage = 120
+ShotVelocity = 2
+Life = 3500
+Velocity = 1.5
+Damage = 15
+SpriteWeightGame = 0.5 ; value in %
+SpriteHeightGame = 1.5
+traversable = false
+DetectBehaviourSound = Roar4.wav
+AttackSound = HitDemon.wav
+DeathSound = Death4.wav
+MeleeOnly = true
+FrozenOnAttack = false
+
+
+
 [EnemyDemonClaw]
 StaticSpriteFront = SpriteDCBC SpriteDCBD
 StaticSpriteFrontLeft = SpriteDCFLA SpriteDCFLB
