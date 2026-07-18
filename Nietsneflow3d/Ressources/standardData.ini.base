@@ -491,7 +491,7 @@ LastAnimNum = 2
 Damage = 2
 AnimationType = 2
 SoundEffect = MachineGunShoot.wav
-Offset = 0.35
+Offset = 0.45
 
 [ImpactShotgun]
 SpritesStd = SpriteBullImpactC SpriteBullImpactD
