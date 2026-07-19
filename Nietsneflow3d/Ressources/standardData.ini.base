@@ -456,7 +456,7 @@ SoundEffect = LazerShot.wav
 Offset = 0.3
 
 [WeaponBazooka]
-WeaponName = Bazooka
+WeaponName = Fusion Rifle
 Order = 5
 BaseAmmo = 1
 StaticSprite = SpriteBFGAttackA
