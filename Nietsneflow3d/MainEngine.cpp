@@ -509,22 +509,26 @@ void MainEngine::displayTransitionMenu(MenuMode_e mode, bool redTransition)
     m_physicalEngine.setModeTransitionMenu(true);
     m_graphicEngine.mainDisplay(m_gamePaused);
     playerConf.m_currentCursorPos = 0;
-    m_graphicEngine.unsetTransition(m_gamePaused, redTransition);
-    do
+    if(!redTransition)
     {
-        m_graphicEngine.runIteration(m_gamePaused);
-        m_physicalEngine.runIteration(m_gamePaused);
-        if(mode == MenuMode_e::LEVEL_EPILOGUE)
+        m_graphicEngine.unsetTransition(m_gamePaused, redTransition);
+        do
         {
-            writeConf.m_upLeftPositionGL.second += 0.005f;
-            if(writeConf.m_upLeftPositionGL.second > topEpiloguePosition)
+            m_graphicEngine.runIteration(m_gamePaused);
+            m_physicalEngine.runIteration(m_gamePaused);
+            if(mode == MenuMode_e::LEVEL_EPILOGUE)
             {
-                m_gamePaused = false;
+                writeConf.m_upLeftPositionGL.second += 0.005f;
+                if(writeConf.m_upLeftPositionGL.second > topEpiloguePosition)
+                {
+                    m_gamePaused = false;
+                }
             }
-        }
-    }while(m_gamePaused);
-    m_physicalEngine.setModeTransitionMenu(false);
+        }while(m_gamePaused);
     m_graphicEngine.setTransition(true);
+    }
+    m_physicalEngine.setModeTransitionMenu(false);
+    m_gamePaused = false;
     if(playerConf.m_menuMode == MenuMode_e::TRANSITION_LEVEL)
     {
         m_graphicEngine.fillMenuWrite(writeConf, MenuMode_e::BASE);
