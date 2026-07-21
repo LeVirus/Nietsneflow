@@ -1991,6 +1991,7 @@ bool LevelManager::loadSettingsData()
     }
     for(uint32_t i = 0; i < m_settingsData.m_arrayGamepad->size(); ++i)
     {
+        currentKey = static_cast<ControlKey_e>(i);
         //GAMEPAD
         val = m_ini.getValue("Gamepad", m_inputIDString[i]);
         if(val)
