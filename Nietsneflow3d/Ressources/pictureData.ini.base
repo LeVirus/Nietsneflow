@@ -1615,6 +1615,7 @@ texturePosX = 0.498388
 texturePosY = 0.839008
 textureWeight = 0.248387
 textureHeight = 0.133268
+
 [SpriteAFA]
 texture = 8
 texturePosX = 0
