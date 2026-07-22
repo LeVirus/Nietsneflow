@@ -40,7 +40,7 @@ public:
                        const std::string &date = "", bool beginLevel = false);
     void linkSystems(ColorDisplaySystem *colorSystem, MapDisplaySystem *mapSystem,
                      FirstPersonDisplaySystem *firstPersonSystem, VisionSystem *visionSystem,
-                     StaticDisplaySystem *staticDisplaySystem);
+                     StaticDisplaySystem *staticDisplaySystem, InputSystem *input);
     void updateAmmoCount(WriteComponent &writeComp, WeaponComponent &weaponComp);
     void updatePlayerLife(WriteComponent &writeComp, PlayerConfComponent &playerComp);
     void fillTitleMenuWrite(WriteComponent &writeComp, MenuMode_e menuEntry, MenuMode_e previousMenuEntry);
@@ -164,6 +164,7 @@ private:
     FirstPersonDisplaySystem *m_firstPersonSystem = nullptr;
     VisionSystem *m_visionSystem = nullptr;
     StaticDisplaySystem *m_staticDisplaySystem = nullptr;
+    InputSystem *m_inputSystem = nullptr;
     uint32_t m_transitionFrameNumber = 30, m_redTransitionFrameNumber = 70;
     std::array<std::optional<DataLevelWriteMenu>, 3> m_memExistingLevelSave;
     std::string m_saveStandardLevelMenuWrite, m_levelPrologue, m_levelEpilogue;

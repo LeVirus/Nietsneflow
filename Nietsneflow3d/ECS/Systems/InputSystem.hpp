@@ -126,6 +126,7 @@ public:
     void updateMousePos();
     void updateNewInputKeyGamepad(ControlKey_e currentSelectedKey, uint32_t glKey, InputType_e inputType, bool axisSense = false);
     void updateNewInputKeyKeyboard(ControlKey_e currentSelectedKey, const MouseKeyboardInputState &state);
+    void getGamepadInputs();
     static void removeGamepad(int gamepadID);
     static void addGamepad(int gamepadID);
     static void scroll_callback(GLFWwindow* window, double xOffset, double yOffset);
@@ -135,7 +136,6 @@ private:
     bool checkStandardButtonGamepadKeyStatus(uint32_t key, uint32_t status);
     bool checkAxisGamepadKeyStatus(uint32_t key, bool positive);
     void setUsedComponents();
-    void getGamepadInputs();
     void treatPlayerInput();
     std::optional<double> getXMouseMotion();
     bool checkPlayerKeyTriggered(ControlKey_e key);
