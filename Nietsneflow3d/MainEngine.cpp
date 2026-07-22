@@ -4061,9 +4061,11 @@ void MainEngine::linkSystemsToGraphicEngine()
             searchSystemByType<VisionSystem>(static_cast<uint32_t>(Systems_e::VISION_SYSTEM));
     StaticDisplaySystem *staticDisplay = m_ecsManager.getSystemManager().
             searchSystemByType<StaticDisplaySystem>(static_cast<uint32_t>(Systems_e::STATIC_DISPLAY_SYSTEM));
+    InputSystem *input = m_ecsManager.getSystemManager().
+            searchSystemByType<InputSystem>(static_cast<uint32_t>(Systems_e::INPUT_SYSTEM));
     staticDisplay->linkMainEngine(this);
     vision->memRefMainEngine(this);
-    m_graphicEngine.linkSystems(color, map, first, vision, staticDisplay);
+    m_graphicEngine.linkSystems(color, map, first, vision, staticDisplay, input);
 }
 
 //===================================================================

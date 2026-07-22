@@ -135,6 +135,8 @@ void GraphicEngine::setTransition(bool gamePaused, bool redTransition)
     }
     for(uint32_t i = 0; i < transitionTotal; ++i)
     {
+
+        m_inputSystem->getGamepadInputs();
         preDisplay();
         mainDisplay(gamePaused);
         m_colorSystem->setTransition(i, transitionTotal);
@@ -147,6 +149,7 @@ void GraphicEngine::unsetTransition(bool gamePaused, bool unsetRedTransition)
 {
     for(uint32_t i = m_transitionFrameNumber; i > 0; --i)
     {
+        m_inputSystem->getGamepadInputs();
         preDisplay();
         mainDisplay(gamePaused);
         m_colorSystem->setTransition(i, m_transitionFrameNumber);
@@ -235,13 +238,14 @@ void GraphicEngine::updateSaveNum(uint32_t levelNum, uint32_t saveNum, std::opti
 //===================================================================
 void GraphicEngine::linkSystems(ColorDisplaySystem *colorSystem, MapDisplaySystem *mapSystem,
                                 FirstPersonDisplaySystem *firstPersonSystem, VisionSystem *visionSystem,
-                                StaticDisplaySystem *staticDisplaySystem)
+                                StaticDisplaySystem *staticDisplaySystem, InputSystem *input)
 {
     m_colorSystem = colorSystem;
     m_mapSystem = mapSystem;
     m_firstPersonSystem = firstPersonSystem;
     m_visionSystem = visionSystem;
     m_staticDisplaySystem = staticDisplaySystem;
+    m_inputSystem = input;
 }
 
 
