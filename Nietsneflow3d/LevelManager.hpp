@@ -82,9 +82,9 @@ struct SettingsData
     std::optional<bool> m_fullscreen;
     std::optional<int> m_resolutionWidth, m_resolutionHeight;
     //INPUT
-    std::optional<std::array<MouseKeyboardInputState, static_cast<uint32_t>(ControlKey_e::TOTAL)>> m_arrayKeyboard;
-    std::optional<std::array<GamepadInputState, static_cast<uint32_t>(ControlKey_e::TOTAL)>> m_arrayGamepad;
-    std::optional<uint32_t> m_turnSensitivity;
+    std::optional<std::array<MouseKeyboardInputState, static_cast<uint32_t>(ControlKey_e::TOTAL)>> m_arrayKeyboard = std::nullopt;
+    std::optional<std::array<GamepadInputState, static_cast<uint32_t>(ControlKey_e::TOTAL)>> m_arrayGamepad = std::nullopt;
+    std::optional<uint32_t> m_turnSensitivity = std::nullopt;
 };
 
 struct DataLevelWriteMenu
