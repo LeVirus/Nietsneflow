@@ -40,7 +40,7 @@ inline const std::map<ControlKey_e, MouseKeyboardInputState> MAP_KEYBOARD_DEFAUL
     {ControlKey_e::TURN_LEFT, {true, GLFW_KEY_LEFT}},
     {ControlKey_e::TURN_RIGHT, {true, GLFW_KEY_RIGHT}},
     {ControlKey_e::ACTION, {true, GLFW_KEY_SPACE}},
-    {ControlKey_e::SHOOT, {true, GLFW_MOUSE_BUTTON_1}},
+    {ControlKey_e::SHOOT, {false, GLFW_MOUSE_BUTTON_1}},
     {ControlKey_e::PREVIOUS_WEAPON, {true, GLFW_KEY_E}},
     {ControlKey_e::NEXT_WEAPON, {true, GLFW_KEY_R}}
 };
@@ -168,7 +168,7 @@ private:
 private:
     NewComponentManager &m_newComponentManager;
     ComponentsGroup &m_componentsContainer;
-    uint32_t m_rotationSensibility = 40, m_playerEntity;
+    uint32_t m_rotationSensibility = 30, m_playerEntity;
     std::optional<uint32_t> m_memInputMenuCursor, m_memMainMenuCursor;
     std::pair<double, double> m_previousMousePosition;
     GLFWwindow *m_window = nullptr;
