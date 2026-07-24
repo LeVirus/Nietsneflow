@@ -1434,27 +1434,6 @@ texturePosY = 0.699084
 textureWeight = 0.200195
 textureHeight = 0.143075
 
-[SpriteBHDA]
-texture = 10
-texturePosX = 0
-texturePosY = 0.851833
-textureWeight = 0.200195
-textureHeight = 0.130855
-
-[SpriteBHDB]
-texture = 10
-texturePosX = 0.201172
-texturePosY = 0.851833
-textureWeight = 0.200195
-textureHeight = 0.130855
-
-[SpriteBHDC]
-texture = 10
-texturePosX = 0.402344
-texturePosY = 0.851833
-textureWeight = 0.200195
-textureHeight = 0.130855
-
 [SpriteDBA]
 texture = 22
 texturePosX = 0
@@ -2814,3 +2793,38 @@ texturePosX = 0.703125
 texturePosY = 0.781279
 textureWeight = 0.232813
 textureHeight = 0.177943
+
+[SpriteBHDA]
+texture = 10
+texturePosX = 0
+texturePosY = 0.851833
+textureWeight = 0.200195
+textureHeight = 0.130855
+
+[SpriteBHDB]
+texture = 10
+texturePosX = 0.201172
+texturePosY = 0.851833
+textureWeight = 0.200195
+textureHeight = 0.130855
+
+[SpriteBHDC]
+texture = 10
+texturePosX = 0.402344
+texturePosY = 0.851833
+textureWeight = 0.200195
+textureHeight = 0.130855
+
+[SpriteBHDD]
+texture = 10
+texturePosX = 0.603516
+texturePosY = 0.851833
+textureWeight = 0.200195
+textureHeight = 0.130855
+
+[SpriteBHDE]
+texture = 10
+texturePosX = 0.804688
+texturePosY = 0.851833
+textureWeight = 0.200195
+textureHeight = 0.130855
