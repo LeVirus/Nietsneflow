@@ -1796,7 +1796,9 @@ float getDoorRaycastTexturePos(float textDoor, float radiantObserverAngle, bool 
 //===================================================================
 float randFloat(float min, float max)
 {
-    return std::fmod(static_cast<float>(std::rand()), max) + min;
+    float mmin = std::min(min, max), mmax = std::max(min, max);
+    float diff = mmax - mmin;
+    return mmin + std::fmod(std::rand(), diff);
 }
 
 //===================================================================

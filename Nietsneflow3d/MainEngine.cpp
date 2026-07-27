@@ -662,7 +662,8 @@ void MainEngine::confPlayerBullet(PlayerConfComponent *playerComp,
     compNum = m_ecsManager.getComponentManager().getComponentEmplacement(shotComp.m_impactEntity, Components_e::IMPACT_CONF_COMPONENT);
     assert(compNum);
     ImpactShotComponent &impactComp = m_ecsManager.getComponentManager().getComponentsContainer().m_vectImpactShotComp[*compNum];
-    confBullet(impactComp, genColl, segmentColl, moveImpactComp, CollisionTag_e::BULLET_PLAYER_CT, point, degreeAngle, (numBullet == 1));
+    uint32_t simultanaousShot = weaponComp.m_weaponsData[weaponComp.m_currentWeapon].m_simultaneousShots;
+    confBullet(impactComp, genColl, segmentColl, moveImpactComp, CollisionTag_e::BULLET_PLAYER_CT, point, degreeAngle, (simultanaousShot == 1));
 }
 
 //===================================================================
@@ -685,7 +686,7 @@ void confBullet(ImpactShotComponent &impactComp, GeneralCollisionComponent &genC
     genColl.m_tagA = collTag;
     genColl.m_shape = CollisionShape_e::SEGMENT_C;
     genColl.m_active = true;
-    float diff = pistol ? std::rand() / ((RAND_MAX + 1u) / 9) - 4.0f : std::rand() / ((RAND_MAX + 1u) / 18) - 9.0f;
+    float diff = pistol ? randFloat(-3.0f, 3.0f) : randFloat(-8.0f, 8.0f);
     impactComp.m_currentVerticalPos = randFloat(-0.4f, -0.2f);
     segmentColl.m_degreeOrientation = degreeAngle + diff;
     if(segmentColl.m_degreeOrientation < EPSILON_FLOAT)
