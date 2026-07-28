@@ -6,19 +6,10 @@ IMPROVE=========================================================================
 Ralentir générique de fin
 
 ))
-Improve bazooka anim
-
-))
-Change red demon shot
-
-))
 Change end Music AND change generic
 
 ))
-Change Music
-
-))
-L'impact sur les baril et enemis? s'affiche trop en décallage
+L'impact sur les baril et enemis? s'affiche trop en décallage--------------~
 
 
 ----------------------------------CHECK
@@ -30,6 +21,15 @@ Verif all walls secrets
 Check coherence vegetal / desk
 
 ==========================================================================================================
+
+))
+Improve bazooka anim===================OK
+
+))
+Change Music============================OK
+
+))
+Change red demon shot=======================OK
 
 ))
 Improve Plasma and shotgun sprites======================OK
