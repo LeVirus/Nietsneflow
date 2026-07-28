@@ -38,7 +38,7 @@ private:
 private:
     NewComponentManager &m_newComponentManager;
     ComponentsGroup &m_componentsContainer;
-    uint32_t m_playerEntity, m_intervalEnemyBehaviour = 0.2 / FPS_VALUE, m_intervalVisibleShotLifeTime = 5.0 / FPS_VALUE,
+    uint32_t m_playerEntity, m_intervalEnemyBehaviour = 0.4 / FPS_VALUE, m_intervalVisibleShotLifeTime = 5.0 / FPS_VALUE,
     m_intervalEnemyPlayPassiveSound = 5.0 / FPS_VALUE;
     float m_distanceEnemyBehaviour = LEVEL_TILE_SIZE_PX * 9.0f;
     MainEngine *m_mainEngine;
