@@ -518,7 +518,7 @@ void MainEngine::displayTransitionMenu(MenuMode_e mode, bool redTransition)
             m_physicalEngine.runIteration(m_gamePaused);
             if(mode == MenuMode_e::LEVEL_EPILOGUE)
             {
-                writeConf.m_upLeftPositionGL.second += 0.005f;
+                writeConf.m_upLeftPositionGL.second += 0.003f;
                 if(writeConf.m_upLeftPositionGL.second > topEpiloguePosition)
                 {
                     m_gamePaused = false;
