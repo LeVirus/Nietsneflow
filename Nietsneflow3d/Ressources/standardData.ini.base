@@ -664,8 +664,8 @@ traversable = false
 
 [GroundLittleStorage]
 Sprite = SpriteStorageA
-SpriteWeightGame = 0.6
-SpriteHeightGame = 1.2
+SpriteWeightGame = 0.4
+SpriteHeightGame = 1.5
 traversable = false
 
 [GroundStorage]
