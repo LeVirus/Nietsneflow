@@ -68,15 +68,6 @@ Sprite = SpriteWallF
 [WallH]
 Sprite = SpriteWallG
 
-[WallOldA]
-Sprite = SpriteWallA SpriteWallB 
-
-[WallOldB]
-Sprite = SpriteWallB
-
-[WallOldC]
-Sprite = SpriteWallC
-
 [WallScreen]
 Sprite = SpriteSimetraLogo SpriteSimetraWrite
 Time = 0.5 1.5
