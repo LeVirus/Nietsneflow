@@ -1154,6 +1154,7 @@ void MainEngine::loadLevel(const LevelManager &levelManager)
         {
             std::optional<MemLevelLoadedData> savedData = m_refGame->loadSavedGame(m_currentSave);
             assert(savedData);
+            assert(savedData->m_checkpointLevelData);
             loadCheckpointSavedGame(*savedData->m_checkpointLevelData, true);
         }
     }
@@ -2443,6 +2444,10 @@ bool MainEngine::loadSavedGame(uint32_t saveNum, LevelState_e levelMode)
     if(savedData->m_checkpointLevelData)
     {
         loadCheckpointSavedGame(*savedData->m_checkpointLevelData);
+    }
+    else
+    {
+        m_memCheckpointLevelState = std::nullopt;
     }
     if(m_memCustomLevelLoadedData)
     {
