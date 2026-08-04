@@ -1,10 +1,14 @@
 #pragma once
 
+#include "PhysicalEngine.hpp"
+#include "constants.hpp"
 #include <functional>
 
 using PairFloat_t = std::pair<float, float>;
 using array3PairFloat_t = std::array<PairFloat_t, 3>;
 using pairPairFloat_t = std::pair<PairFloat_t, PairFloat_t>;
+
+const float RAD_HALF_CONE_VISION = getRadiantAngle(HALF_CONE_VISION);
 
 bool checkCircleRectCollision(const PairFloat_t &cicleCenter,
                               const float circleRay,

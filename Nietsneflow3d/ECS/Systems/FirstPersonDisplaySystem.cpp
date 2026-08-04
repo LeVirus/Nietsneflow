@@ -221,7 +221,7 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent &gen
     assert(visionComp.m_vectVisibleEntities.size() > currentNormal);
     PairFloat_t centerPosB = getCenterPosition(mapCompB, genCollComp, numEntity);
     float radiantObserverAngle = getRadiantAngle(degreeObserverAngle),
-            cameraDistance = getCameraDistance(mapCompA.m_absoluteMapPositionPX, mapCompB.m_absoluteMapPositionPX, radiantObserverAngle);
+            cameraDistance = getCameraDistance(mapCompA.m_absoluteMapPositionPX, mapCompB.m_absoluteMapPositionPX, radiantObserverAngle, true);
     float displayDistance = cameraDistance;
     if(cameraDistance > visionComp.m_distanceVisibility)
     {
