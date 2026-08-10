@@ -281,6 +281,19 @@ float getCameraDistance(const PairFloat_t &observerPoint, const PairFloat_t &tar
 }
 
 //===================================================================
+float getCameraDistanceOptimized(const PairFloat_t &observerPoint, const PairFloat_t &targetPoint, float dirX, float dirY)
+{
+    float dx = targetPoint.first  - observerPoint.first;
+    float dy = targetPoint.second - observerPoint.second;
+
+    float dist = dx * dirX + dy * dirY;
+
+    // Sécurité (évite les distances négatives ou quasi-nulles)
+    return (dist < 1.0f) ? 1.0f : dist;
+}
+
+
+//===================================================================
 float getTrigoAngle(const PairFloat_t &pointA, const PairFloat_t &pointB, bool degree)
 {
     float X = std::abs(pointB.first - pointA.first);
