@@ -398,9 +398,7 @@ float getLateralAngle(float centerAngleVision, float trigoAngle)
     {
         result += 360.0f;
     }
-    float deltaRad = getRadiantAngle(result);
-    return std::tan(deltaRad) / std::tan(getRadiantAngle(HALF_CONE_VISION));
-    // return result / HALF_CONE_VISION;
+    return std::tan(getRadiantAngle(result)) / std::tan(getRadiantAngle(HALF_CONE_VISION));
 }
 
 //===================================================================
@@ -834,8 +832,6 @@ bool FirstPersonDisplaySystem::rayCasting(uint32_t observerEntity)
     float cameraRadiantAngle = getRadiantAngle(moveComp.m_degreeOrientation);
     float dirX =  std::cos(cameraRadiantAngle);
     float dirY = -std::sin(cameraRadiantAngle);
-    float halfFovRad = getRadiantAngle(HALF_CONE_VISION);
-    float tanHalfFov = std::tan(halfFovRad);
     float rayOffset, cameraX;
     if(m_groundTiledTextBackground)
     {
@@ -852,20 +848,17 @@ bool FirstPersonDisplaySystem::rayCasting(uint32_t observerEntity)
     //mem entity num & distances
     for(uint32_t j = 0; j < RAYCAST_LINE_NUMBER; ++j)
     {
-
+        ////////////////////Correction Grok
         cameraX = 2.0f * j / (RAYCAST_LINE_NUMBER - 1.0f) - 1.0f;
-
         // === LA LIGNE QUI CORRIGE TOUT ===
-        rayOffset = std::atan(cameraX * tanHalfFov);
-
+        rayOffset = std::atan(cameraX * m_tanHalfFov);
         // Attention au signe (teste les deux si besoin)
         currentRadiantAngle = radiantObserverAngle - rayOffset;
         if(currentRadiantAngle < EPSILON_FLOAT)
         {
             currentRadiantAngle += PI_DOUBLE;
         }
-
-
+        ////////////////////Correction Grok
         targetPoint = calcLineSegmentRaycast(currentRadiantAngle, mapCompCamera.m_absoluteMapPositionPX, true,
                                              playerConfComp.m_frozen);
         if(targetPoint)
