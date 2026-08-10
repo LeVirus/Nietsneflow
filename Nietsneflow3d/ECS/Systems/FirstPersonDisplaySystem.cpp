@@ -398,7 +398,9 @@ float getLateralAngle(float centerAngleVision, float trigoAngle)
     {
         result += 360.0f;
     }
-    return result / HALF_CONE_VISION;
+    float deltaRad = getRadiantAngle(result);
+    return std::tan(deltaRad) / std::tan(getRadiantAngle(HALF_CONE_VISION));
+    // return result / HALF_CONE_VISION;
 }
 
 //===================================================================
@@ -826,12 +828,15 @@ bool FirstPersonDisplaySystem::rayCasting(uint32_t observerEntity)
     numCom = m_newComponentManager.getComponentEmplacement(observerEntity, Components_e::MOVEABLE_COMPONENT);
     assert(numCom);
     MoveableComponent &moveComp = m_componentsContainer.m_vectMoveableComp[*numCom];
-    float leftAngle = moveComp.m_degreeOrientation + HALF_CONE_VISION;
+    // float leftAngle = moveComp.m_degreeOrientation + HALF_CONE_VISION;
     float radiantObserverAngle = getRadiantAngle(moveComp.m_degreeOrientation);
-    float currentRadiantAngle = getRadiantAngle(leftAngle), currentLateralScreen = -1.0f;
+    float currentRadiantAngle /*= getRadiantAngle(leftAngle)*/, currentLateralScreen = -1.0f;
     float cameraRadiantAngle = getRadiantAngle(moveComp.m_degreeOrientation);
     float dirX =  std::cos(cameraRadiantAngle);
     float dirY = -std::sin(cameraRadiantAngle);
+    float halfFovRad = getRadiantAngle(HALF_CONE_VISION);
+    float tanHalfFov = std::tan(halfFovRad);
+    float rayOffset, cameraX;
     if(m_groundTiledTextBackground)
     {
         m_groundTiledTextVertice.reserveVertex(RAYCAST_LINE_NUMBER *
@@ -847,6 +852,20 @@ bool FirstPersonDisplaySystem::rayCasting(uint32_t observerEntity)
     //mem entity num & distances
     for(uint32_t j = 0; j < RAYCAST_LINE_NUMBER; ++j)
     {
+
+        cameraX = 2.0f * j / (RAYCAST_LINE_NUMBER - 1.0f) - 1.0f;
+
+        // === LA LIGNE QUI CORRIGE TOUT ===
+        rayOffset = std::atan(cameraX * tanHalfFov);
+
+        // Attention au signe (teste les deux si besoin)
+        currentRadiantAngle = radiantObserverAngle - rayOffset;
+        if(currentRadiantAngle < EPSILON_FLOAT)
+        {
+            currentRadiantAngle += PI_DOUBLE;
+        }
+
+
         targetPoint = calcLineSegmentRaycast(currentRadiantAngle, mapCompCamera.m_absoluteMapPositionPX, true,
                                              playerConfComp.m_frozen);
         if(targetPoint)
