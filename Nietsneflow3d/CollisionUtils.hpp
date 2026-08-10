@@ -75,6 +75,9 @@ float getTrigoAngle(const PairFloat_t &pointA, const PairFloat_t &pointB, bool d
 float getDistance(const PairFloat_t &pointA, const PairFloat_t &pointB);
 float getCameraDistance(const PairFloat_t &observerPoint, const PairFloat_t &targetPoint,
                         float observerAngleRadiant, bool limit = false);
+float getCameraDistanceOptimized(const PairFloat_t& observerPoint,
+                                 const PairFloat_t& targetPoint,
+                                 float dirX, float dirY);
 float getRectTriangleSide(float adj, float hyp);
 
 PairFloat_t getCircleUpLeftCorner(const PairFloat_t &point, float ray);

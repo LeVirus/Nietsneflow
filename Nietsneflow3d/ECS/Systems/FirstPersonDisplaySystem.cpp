@@ -830,6 +830,8 @@ bool FirstPersonDisplaySystem::rayCasting(uint32_t observerEntity)
     float radiantObserverAngle = getRadiantAngle(moveComp.m_degreeOrientation);
     float currentRadiantAngle = getRadiantAngle(leftAngle), currentLateralScreen = -1.0f;
     float cameraRadiantAngle = getRadiantAngle(moveComp.m_degreeOrientation);
+    float dirX =  std::cos(cameraRadiantAngle);
+    float dirY = -std::sin(cameraRadiantAngle);
     if(m_groundTiledTextBackground)
     {
         m_groundTiledTextVertice.reserveVertex(RAYCAST_LINE_NUMBER *
@@ -849,7 +851,7 @@ bool FirstPersonDisplaySystem::rayCasting(uint32_t observerEntity)
                                              playerConfComp.m_frozen);
         if(targetPoint)
         {
-            m_memRaycastDist[j] = getCameraDistance(mapCompCamera.m_absoluteMapPositionPX, std::get<0>(*targetPoint), cameraRadiantAngle);
+            m_memRaycastDist[j] = getCameraDistanceOptimized(mapCompCamera.m_absoluteMapPositionPX, std::get<0>(*targetPoint), dirX, dirY);
             memRaycastDistance(*std::get<2>(*targetPoint), j, m_memRaycastDist[j], std::get<1>(*targetPoint));
         }
         else
