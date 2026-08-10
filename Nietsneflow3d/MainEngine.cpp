@@ -1997,6 +1997,10 @@ uint32_t MainEngine::createEnemyDropObject(const LevelManager &levelManager, con
         assert(compNum);
         MapCoordComponent &mapComp = m_ecsManager.getComponentManager().getComponentsContainer().m_vectMapCoordComp[*compNum];
         mapComp.m_absoluteMapPositionPX = m_memEnemiesStateFromCheckpoint[cmpt].m_enemyPos;
+        std::optional<PairUI_t> coord = getLevelCoord(mapComp.m_absoluteMapPositionPX);
+        assert(coord);
+        mapComp.m_coord = *coord;
+        addEntityToZone(*objectEntity, mapComp.m_coord);
     }
     return *objectEntity;
 }
