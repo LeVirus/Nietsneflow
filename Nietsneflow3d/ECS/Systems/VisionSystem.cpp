@@ -558,10 +558,15 @@ void VisionSystem::treatVisible(VisionComponent &visionComp, MoveableComponent &
     MapCoordComponent &mapCompB = m_componentsContainer.m_vectMapCoordComp[*numCom];
     float angleElement = getTrigoAngle(std::get<0>(visionComp.m_triangleVision),
                                        mapCompB.m_absoluteMapPositionPX),
-            diffAngle = std::abs(angleElement - moveCompA.m_degreeOrientation);
-    if(diffAngle < HALF_CONE_VISION + 30.0f || diffAngle > 270.0f)
+        delta = std::abs(angleElement - moveCompA.m_degreeOrientation);
+    delta = std::fmod(delta, 360.0f);
+    if (delta > 180.0f)
+	{
+        delta = 360.0f - delta;
+	}
+    if (delta < HALF_CONE_VISION + 30.0f)
     {
-        visionComp.m_vectVisibleEntities.push_back({numEntity, (diffAngle > 30.0f)});
+        visionComp.m_vectVisibleEntities.push_back({numEntity, (delta > 30.0f)});
     }
 }
 

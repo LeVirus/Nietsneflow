@@ -131,9 +131,9 @@ private:
     std::optional<std::array<float, RAYCAST_GROUND_CEILING_NUMBER>> m_memBackgroundDistance;
     //first coloredTexture, second texture
     std::pair<Shader*, Shader*> m_memShaders;
-    const float m_tanHalfFov = std::tan(getRadiantAngle(HALF_CONE_VISION));
 };
 
+const float m_tanHalfFov = std::tan(getRadiantAngle(HALF_CONE_VISION));
 float getFogIntensity(float distance);
 float getRaycastTexturePos(float radiantObserverAngle, bool lateral, const PairFloat_t &pos);
 float getDoorRaycastTexturePos(float textDoor, float radiantObserverAngle, bool lateral, const PairFloat_t &pos);
