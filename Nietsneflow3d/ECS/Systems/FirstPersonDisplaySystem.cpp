@@ -231,6 +231,8 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent &gen
     float trigoAngle = getTrigoAngle(mapCompA.m_absoluteMapPositionPX, centerPosB);
     //get lateral pos from angle
     float lateralPos = getLateralAngle(degreeObserverAngle, trigoAngle);
+
+    // assert(std::abs(lateralPos) < 1000);
     //quickfix
     if(genCollComp.m_tagA != CollisionTag_e::ENEMY_CT &&
             genCollComp.m_tagA != CollisionTag_e::BULLET_ENEMY_CT &&

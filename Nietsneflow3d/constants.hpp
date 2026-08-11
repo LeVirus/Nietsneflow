@@ -426,13 +426,13 @@ inline const float EMPTY_VALUE = -10000.0f;
 inline const float EPSILON_FLOAT = std::numeric_limits<float>::epsilon();
 inline const float EPSILON_DOUBLE = std::numeric_limits<double>::epsilon();
 inline const float TAN_PI_QUARTER = std::tan(45.0f);
-inline const float CONE_VISION = 90.0f;
+inline const float CONE_VISION = 110.0f;
 inline const float LEFT_POS_STD_MENU_BAR = 0.10f;
 inline const float MAX_BAR_MENU_SIZE = 0.5f;
 inline const float HALF_CONE_VISION = CONE_VISION / 2.0f;
 inline const float DOUBLE_CONE_VISION = CONE_VISION * 2.0f;
 inline const float WEAPONS_PREVIEW_GL_POS_LEFT = -0.95f;
-inline const uint32_t RAYCAST_LINE_NUMBER = 300, RAYCAST_DEPTH = 12, MAX_SHOTS = 5,
+inline const uint32_t RAYCAST_LINE_NUMBER = 500, RAYCAST_DEPTH = 12, MAX_SHOTS = 5,
 RAYCAST_GROUND_CEILING_NUMBER = RAYCAST_LINE_NUMBER / 2.95;
 inline const float MAX_DISTANCE_VIEW = RAYCAST_DEPTH * LEVEL_TILE_SIZE_PX;
 inline const float MIN_DISTANCE_FOG = MAX_DISTANCE_VIEW / 2.0f;

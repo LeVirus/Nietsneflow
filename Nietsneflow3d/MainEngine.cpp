@@ -3106,7 +3106,7 @@ void MainEngine::confPlayerEntity(const LevelManager &levelManager, uint32_t ent
     map.m_coord = level.getPlayerDeparture();
     Direction_e playerDir = level.getPlayerDepartureDirection();
     move.m_degreeOrientation = getDegreeAngleFromDirection(playerDir);
-    move.m_velocity = 2.5f;
+    move.m_velocity = 3.0f;
     map.m_absoluteMapPositionPX = getCenteredAbsolutePosition(map.m_coord);
     color.m_vertex.reserve(3);
     color.m_vertex.emplace_back(TupleTetraFloat_t{0.9f, 0.00f, 0.00f, 1.0f});
