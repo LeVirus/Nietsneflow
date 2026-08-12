@@ -33,8 +33,8 @@ SpriteHeightGame = 1.8
 
 [MessageLogA]
 Sprite = SpriteLog
-SpriteWeightGame = 0.3
-SpriteHeightGame = 1.2
+SpriteWeightGame = 0.23
+SpriteHeightGame = 0.7
 
 [MessageLogB]
 Sprite = SpriteBackStars
@@ -147,8 +147,8 @@ Life = 300
 Velocity = 1.6
 MeleeDamage = 33
 Damage = 25
-SpriteWeightGame = 1.1 ; value in %
-SpriteHeightGame = 2.8
+SpriteWeightGame = 0.9 ; value in %
+SpriteHeightGame = 1.9
 traversable = false
 DetectBehaviourSound = BigRoar.wav
 AttackSound = AttackBaron.wav
@@ -174,8 +174,8 @@ Life = 200
 Velocity = 0.7
 MeleeDamage = 25
 Damage = 30
-SpriteWeightGame = 0.9 ; value in %
-SpriteHeightGame = 2.4
+SpriteWeightGame = 0.8 ; value in %
+SpriteHeightGame = 1.7
 traversable = false
 DetectBehaviourSound = BigRoar2.wav
 AttackSound = AttackBaron.wav
@@ -200,8 +200,8 @@ ShotVelocity = 4
 Life = 45
 Velocity = 0.7
 Damage = 15
-SpriteWeightGame = 0.9 ; value in %
-SpriteHeightGame = 2.4
+SpriteWeightGame = 0.8 ; value in %
+SpriteHeightGame = 1.7
 traversable = false
 DetectBehaviourSound = BigRoar3.wav
 AttackSound = LazerShot2.wav
@@ -228,8 +228,8 @@ ShotVelocity = 3
 Life = 10
 Velocity = 0.6
 Damage = 15
-SpriteWeightGame = 0.5 ; value in %
-SpriteHeightGame = 1.5
+SpriteWeightGame = 0.4 ; value in %
+SpriteHeightGame = 1.0
 traversable = false
 DetectBehaviourSound = D6.wav
 AttackSound = FireFlyingDemon.wav
@@ -256,8 +256,8 @@ Velocity = 0.6
 SimultaneousShots = 3
 MeleeDamage = 8
 Damage = 4
-SpriteWeightGame = 0.5 ; value in %
-SpriteHeightGame = 1.4
+SpriteWeightGame = 0.4 ; value in %
+SpriteHeightGame = 0.9
 traversable = false
 DetectBehaviourSound = CYB2.wav
 AttackSound = ShotgunShot.wav
@@ -283,8 +283,8 @@ ShotVelocity = 2
 Life = 3500
 Velocity = 1.5
 Damage = 15
-SpriteWeightGame = 0.5 ; value in %
-SpriteHeightGame = 1.5
+SpriteWeightGame = 0.4 ; value in %
+SpriteHeightGame = 1.0
 traversable = false
 DetectBehaviourSound = fff.wav
 AttackSound = HitDemon.wav
@@ -312,8 +312,8 @@ ShotVelocity = 2
 Life = 11
 Velocity = 1.3
 Damage = 15
-SpriteWeightGame = 0.5 ; value in %
-SpriteHeightGame = 1.5
+SpriteWeightGame = 0.4 ; value in %
+SpriteHeightGame = 1.0
 traversable = false
 DetectBehaviourSound = D3.wav
 AttackSound = HitDemon.wav
@@ -339,8 +339,8 @@ ShotVelocity = 2
 Life = 2
 Velocity = 0.5
 Damage = 8
-SpriteWeightGame = 0.5 ; value in %
-SpriteHeightGame = 1.5
+SpriteWeightGame = 0.35 ; value in %
+SpriteHeightGame = 1.0
 traversable = false
 DetectBehaviourSound = D2.wav
 AttackSound = FireBall.wav
@@ -366,8 +366,8 @@ Life = 3
 Velocity = 0.5
 MeleeDamage = 5
 Damage = 3
-SpriteWeightGame = 0.5 ; value in %
-SpriteHeightGame = 1.4
+SpriteWeightGame = 0.35 ; value in %
+SpriteHeightGame = 1.0
 traversable = false
 DetectBehaviourSound = CYB1.wav
 AttackSound = GunShot.wav
@@ -494,8 +494,8 @@ SpriteHeightGame = 0.2
 [ImpactStd]
 SpritesStd = SpriteBullImpactC SpriteBullImpactD
 SpriteTouched = SpriteBloodImpact
-SpriteWeightGame = 0.1
-SpriteHeightGame = 0.15
+SpriteWeightGame = 0.07
+SpriteHeightGame = 0.10
 
 [VisibleShootDemonA]
 Sprites = SpriteEnergyBallC SpriteExplosionA SpriteExplosionB SpriteExplosionC SpriteExplosionD
@@ -542,7 +542,7 @@ ImpactSound = BazookaExplosion.wav
 [ObjectGunAmmo]
 Sprite = SpriteAmmoA
 SpriteWeightGame = 0.2 ; value in %
-SpriteHeightGame = 0.5
+SpriteHeightGame = 0.3
 Type = 1
 WeaponID = WeaponGun
 Containing = 5
@@ -550,7 +550,7 @@ Containing = 5
 [ObjectBazookaAmmo]
 Sprite = SpriteAmmoE
 SpriteWeightGame = 0.2 ; value in %
-SpriteHeightGame = 0.5
+SpriteHeightGame = 0.3
 Type = 1
 WeaponID = WeaponBazooka
 Containing = 1
@@ -558,15 +558,15 @@ Containing = 1
 [ObjectBazooka]
 Sprite = SpriteWeaponBazooka
 SpriteWeightGame = 0.4 ; value in %
-SpriteHeightGame = 0.4
+SpriteHeightGame = 0.35
 Type = 0
 WeaponID = WeaponBazooka
 Containing = 1
 
 [ObjectMachineGunAmmo]
 Sprite = SpriteAmmoC
-SpriteWeightGame = 0.15
-SpriteHeightGame = 0.4
+SpriteWeightGame = 0.1
+SpriteHeightGame = 0.3
 Type = 1
 WeaponID = WeaponMachineGun
 Containing = 15
@@ -574,7 +574,7 @@ Containing = 15
 [ObjectMachineGun]
 Sprite = SpriteWeaponMachineGun
 SpriteWeightGame = 0.4 ; value in %
-SpriteHeightGame = 0.4
+SpriteHeightGame = 0.3
 Type = 0
 WeaponID = WeaponMachineGun
 Containing = 10
@@ -582,7 +582,7 @@ Containing = 10
 [ObjectShotgunAmmo]
 Sprite = SpriteAmmoB
 SpriteWeightGame = 0.2 ; value in %
-SpriteHeightGame = 0.5
+SpriteHeightGame = 0.35
 Type = 1
 WeaponID = WeaponShotgun
 Containing = 5
@@ -590,7 +590,7 @@ Containing = 5
 [ObjectShotgun]
 Sprite = SpriteWeaponShotgun
 SpriteWeightGame = 0.4 ; value in %
-SpriteHeightGame = 0.5
+SpriteHeightGame = 0.35
 Type = 0
 WeaponID = WeaponShotgun
 Containing = 5
@@ -598,7 +598,7 @@ Containing = 5
 [ObjectPlasmaRifle]
 Sprite = SpriteWeaponPlasma
 SpriteWeightGame = 0.4 ; value in %
-SpriteHeightGame = 0.5
+SpriteHeightGame = 0.35
 Type = 0
 WeaponID = WeaponPlasmaRifle
 Containing = 5
@@ -606,7 +606,7 @@ Containing = 5
 [ObjectPlasmaRifleAmmo]
 Sprite = SpriteAmmoD
 SpriteWeightGame = 0.25 ; value in %
-SpriteHeightGame = 0.5
+SpriteHeightGame = 0.35
 Type = 1
 WeaponID = WeaponPlasmaRifle
 Containing = 5
@@ -614,88 +614,88 @@ Containing = 5
 [ObjectLittleHeal]
 Sprite = SpriteHeal
 SpriteWeightGame = 0.2 ; value in %
-SpriteHeightGame = 0.5
+SpriteHeightGame = 0.35
 Type = 2
 Containing = 10
 
 [ObjectPurpleCard]
 CardName = Purple Card
 Sprite = SpriteSimetraCardPurple
-SpriteWeightGame = 0.1365
-SpriteHeightGame = 0.4665
+SpriteWeightGame = 0.1
+SpriteHeightGame = 0.28
 Type = 3
 CardID = 0
 
 [ObjectBlueCard]
 CardName = Blue Card
 Sprite = SpriteSimetraCardBlue
-SpriteWeightGame = 0.1365
-SpriteHeightGame = 0.4665
+SpriteWeightGame = 0.1
+SpriteHeightGame = 0.28
 Type = 3
 CardID = 1
 
 [ObjectGreenCard]
 CardName = Green Card
 Sprite = SpriteSimetraCardGreen
-SpriteWeightGame = 0.1365
-SpriteHeightGame = 0.4665
+SpriteWeightGame = 0.1
+SpriteHeightGame = 0.28
 Type = 3
 CardID = 2
 
 [ObjectGoldCard]
 CardName = Gold Card
 Sprite = SpriteSimetraCardGold
-SpriteWeightGame = 0.1365
-SpriteHeightGame = 0.4665
+SpriteWeightGame = 0.1
+SpriteHeightGame = 0.28
 Type = 3
 CardID = 3
 
 [GroundTable]
 Sprite = SpriteDesktop
 SpriteWeightGame = 0.35
-SpriteHeightGame = 0.9
+SpriteHeightGame = 0.6
 traversable = false
 
 [GroundChair]
 Sprite = SpriteChair
 SpriteWeightGame = 0.15
-SpriteHeightGame = 0.7
+SpriteHeightGame = 0.5
 traversable = false
 
 [GroundLittleStorage]
 Sprite = SpriteStorageA
 SpriteWeightGame = 0.3
-SpriteHeightGame = 1.3
+SpriteHeightGame = 0.8
 traversable = false
 
 [GroundStorage]
 Sprite = SpriteStorageB
 SpriteWeightGame = 0.4
-SpriteHeightGame = 1.5
+SpriteHeightGame = 1.0
 traversable = false
 
 [GroundGigerA]
 Sprite = SpriteGigerA
 SpriteWeightGame = 0.35
-SpriteHeightGame = 1.4
+SpriteHeightGame = 1.0
 traversable = false
 
 [GroundGigerB]
 Sprite = SpriteGigerB
 SpriteWeightGame = 0.4
-SpriteHeightGame = 1.2
+SpriteHeightGame = 0.8
 traversable = false
 
 [GroundGigerC]
 Sprite = SpriteGigerD
 SpriteWeightGame = 0.5
-SpriteHeightGame = 1.3
+SpriteHeightGame = 0.8
 traversable = false
 
 [CeilingGigerA]
 Sprite = SpriteGigerC
 SpriteWeightGame = 0.4
-SpriteHeightGame = 1.0
+SpriteHeightGame = 0.65
 traversable = false
 
 [CeilingGigerB]
@@ -707,67 +707,67 @@ traversable = false
 [CeilingGigerC]
 Sprite = SpriteGigerF
 SpriteWeightGame = 0.4
-SpriteHeightGame = 1.0
+SpriteHeightGame = 0.7
 traversable = false
 
 [CeilingGigerD]
 Sprite = SpriteGigerG
 SpriteWeightGame = 0.38
-SpriteHeightGame = 1.32
+SpriteHeightGame = 0.92
 traversable = false
 
 [CeilingGigerE]
 Sprite = SpriteGigerH
 SpriteWeightGame = 0.38
-SpriteHeightGame = 1.32
+SpriteHeightGame = 0.92
 traversable = false
 
 [GroundTreeA]
 Sprite = SpriteTreeA
 SpriteWeightGame = 0.6
-SpriteHeightGame = 2.5
+SpriteHeightGame = 1.7
 traversable = false
 
 [GroundTreeB]
 Sprite = SpriteTreeB
 SpriteWeightGame = 0.52
-SpriteHeightGame = 2.5
+SpriteHeightGame = 1.7
 traversable = false
 
 [GroundTreeC]
 Sprite = SpriteTreeC
 SpriteWeightGame = 0.6
-SpriteHeightGame = 2.5
+SpriteHeightGame = 1.7
 traversable = false
 
 [GroundTreeD]
 Sprite = SpriteTreeD
 SpriteWeightGame = 0.35
-SpriteHeightGame = 2.5
+SpriteHeightGame = 1.7
 traversable = false
 
 [GroundTreeE]
 Sprite = SpriteTreeE
 SpriteWeightGame = 0.6
-SpriteHeightGame = 2.5
+SpriteHeightGame = 1.7
 traversable = false
 
 [GroundTreeF]
 Sprite = SpriteTreeF
 SpriteWeightGame = 0.6
-SpriteHeightGame = 2.5
+SpriteHeightGame = 1.7
 traversable = false
 
 [GroundTreeG]
 Sprite = SpriteTreeG
 SpriteWeightGame = 0.5
-SpriteHeightGame = 2.5
+SpriteHeightGame = 1.7
 traversable = false
 
 [GroundTreeH]
 Sprite = SpriteTreeB
 SpriteWeightGame = 0.6
-SpriteHeightGame = 2.5
+SpriteHeightGame = 1.7
 traversable = true
 
 
@@ -780,25 +780,25 @@ traversable = true
 [Teleport]
 Sprite = SpriteTelep
 SpriteWeightGame = 0.35
-SpriteHeightGame = 0.8
+SpriteHeightGame = 0.6
 traversable = true
 
 [Barrel]
 ExplosionSound = ExplosionBarrel.wav
 StaticSprite = SpriteBarrelA
 StaticSpriteWeightGame = 0.4
-StaticSpriteHeightGame = 1.5
+StaticSpriteHeightGame = 1.0
 ExplosionSprite = SpriteBarrelB SpriteBarrelC SpriteBarrelD SpriteBarrelE
 ExplosionSpriteWeightGame = 0.4 0.4 0.4 0.4
-ExplosionSpriteHeightGame = 1.6 1.7 1.8 1.8
+ExplosionSpriteHeightGame = 1.1 1.15 1.2 1.2
 
 [CeilingPanel]
 Sprite = SpriteGigerI
-SpriteWeightGame = 0.4
-SpriteHeightGame = 0.6
+SpriteWeightGame = 0.3
+SpriteHeightGame = 0.4
 traversable = false
 
 [Exit]
 Sprite = SpritePiedestelA 
-SpriteWeightGame = 0.3
-SpriteHeightGame = 1.1
+SpriteWeightGame = 0.25
+SpriteHeightGame = 0.8
