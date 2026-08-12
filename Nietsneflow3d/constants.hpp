@@ -396,7 +396,7 @@ inline const float FPS_VALUE = 1.0f / 60.0f;
 inline const float MAX_SOUND_DISTANCE = 1000.0f;
 inline const float DOWN_WEAPON_POS_Y = -1.02f;
 inline const uint32_t EJECT_CYCLE_TIME = 0.5f / FPS_VALUE;
-inline const float RAYCAST_VERTICAL_SIZE = 0.7f;
+inline const float RAYCAST_VERTICAL_SIZE = 0.6f;
 inline const float STD_FONT_SIZE = 0.06f;
 inline const float MENU_FONT_SIZE = 0.075f;
 inline const float PI = 3.14159265359f;
@@ -432,9 +432,9 @@ inline const float MAX_BAR_MENU_SIZE = 0.5f;
 inline const float HALF_CONE_VISION = CONE_VISION / 2.0f;
 inline const float DOUBLE_CONE_VISION = CONE_VISION * 2.0f;
 inline const float WEAPONS_PREVIEW_GL_POS_LEFT = -0.95f;
-inline const uint32_t RAYCAST_LINE_NUMBER = 500, RAYCAST_DEPTH = 12, MAX_SHOTS = 5,
+inline const uint32_t RAYCAST_LINE_NUMBER = 500, RAYCAST_DEPTH = 15, MAX_SHOTS = 5,
 RAYCAST_GROUND_CEILING_NUMBER = RAYCAST_LINE_NUMBER / 2.95;
-inline const float MAX_DISTANCE_VIEW = RAYCAST_DEPTH * LEVEL_TILE_SIZE_PX;
+inline const float MAX_DISTANCE_VIEW = (RAYCAST_DEPTH - 4) * LEVEL_TILE_SIZE_PX;
 inline const float MIN_DISTANCE_FOG = MAX_DISTANCE_VIEW / 2.0f;
 inline const float TOTAL_DISTANCE_FOG = MAX_DISTANCE_VIEW - MIN_DISTANCE_FOG - LEVEL_TILE_SIZE_PX * 3;
 inline const float SCREEN_VERT_BACKGROUND_GL_STEP = 1.0f / RAYCAST_GROUND_CEILING_NUMBER;
