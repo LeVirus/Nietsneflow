@@ -242,7 +242,8 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent &gen
     {
         return;
     }
-    if(!confNormalEntityVertex(visionComp.m_vectVisibleEntities[currentNormal], genCollComp.m_tagA, lateralPos, cameraDistance))
+    float distanceBrut = getDistance(mapCompA.m_absoluteMapPositionPX, mapCompB.m_absoluteMapPositionPX);
+    if(!confNormalEntityVertex(visionComp.m_vectVisibleEntities[currentNormal], genCollComp.m_tagA, lateralPos, cameraDistance, distanceBrut))
     {
         return;
     }
@@ -599,7 +600,7 @@ void FirstPersonDisplaySystem::setVectTextures(std::vector<Texture> &vectTexture
 
 //===================================================================
 bool FirstPersonDisplaySystem::confNormalEntityVertex(const std::pair<uint32_t, bool> &entityData,
-                                                      CollisionTag_e tag, float lateralPosGL, float distance)
+                                                      CollisionTag_e tag, float lateralPosGL, float distance, float distanceBrut)
 {
     uint32_t numEntity = entityData.first;
     OptUint_t numCom = m_newComponentManager.getComponentEmplacement(numEntity, Components_e::POSITION_VERTEX_COMPONENT);
@@ -616,7 +617,7 @@ bool FirstPersonDisplaySystem::confNormalEntityVertex(const std::pair<uint32_t, 
     numCom = m_newComponentManager.getComponentEmplacement(numEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
     assert(numCom);
     SpriteTextureComponent &spriteComp = m_componentsContainer.m_vectSpriteTextureComp[*numCom];
-    spriteComp.m_reverseVisibilityRate = getFogIntensity(distance);
+    spriteComp.m_reverseVisibilityRate = getFogIntensity(distanceBrut/*distance*/);
     positionComp.m_vertex.resize(4);
     //convert to GL context
     float distanceFactor = distance / LEVEL_TILE_SIZE_PX;
@@ -835,6 +836,7 @@ bool FirstPersonDisplaySystem::rayCasting(uint32_t observerEntity)
     float dirX =  std::cos(cameraRadiantAngle);
     float dirY = -std::sin(cameraRadiantAngle);
     float rayOffset, cameraX;
+    float distanceBrut;
     if(m_groundTiledTextBackground)
     {
         m_groundTiledTextVertice.reserveVertex(RAYCAST_LINE_NUMBER *
@@ -866,7 +868,8 @@ bool FirstPersonDisplaySystem::rayCasting(uint32_t observerEntity)
         if(targetPoint)
         {
             m_memRaycastDist[j] = getCameraDistanceOptimized(mapCompCamera.m_absoluteMapPositionPX, std::get<0>(*targetPoint), dirX, dirY);
-            memRaycastDistance(*std::get<2>(*targetPoint), j, m_memRaycastDist[j], std::get<1>(*targetPoint));
+            distanceBrut = getDistance(mapCompCamera.m_absoluteMapPositionPX, std::get<0>(*targetPoint));
+            memRaycastDistance(*std::get<2>(*targetPoint), j, m_memRaycastDist[j], std::get<1>(*targetPoint), distanceBrut);
         }
         else
         {
@@ -1540,16 +1543,16 @@ std::optional<PairUI_t> getCorrectedCoord(const PairFloat_t &currentPoint,
 
 //===================================================================
 void FirstPersonDisplaySystem::memRaycastDistance(uint32_t numEntity, uint32_t lateralScreenPos,
-                                                  float distance, float texturePos)
+                                                  float distance, float texturePos, float distanceBrut)
 {
     MapRayCastingData_t::iterator it = m_raycastingData.find(numEntity);
     if(it == m_raycastingData.end())
     {
-        m_raycastingData.insert({numEntity, {{distance, texturePos, lateralScreenPos}}});
+        m_raycastingData.insert({numEntity, {{distance, texturePos, lateralScreenPos, distanceBrut}}});
     }
     else
     {
-        it->second.push_back({distance, texturePos, lateralScreenPos});
+        it->second.push_back({distance, texturePos, lateralScreenPos, distanceBrut});
     }
 }
 

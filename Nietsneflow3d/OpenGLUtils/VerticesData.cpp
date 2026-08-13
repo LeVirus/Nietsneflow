@@ -211,7 +211,7 @@ float VerticesData::loadRaycastingEntity(const SpriteTextureComponent &spriteCom
         verticalPos = RAYCAST_VERTICAL_SIZE / (raycastingData[i].m_distance / LEVEL_TILE_SIZE_PX);
         lateralText = spriteComp.m_spriteData->m_texturePosVertex[0].first +
                 (raycastingData[i].m_texturePos / LEVEL_TILE_SIZE_PX) * diffTotalTexturePos;
-        fogIntensity = getFogIntensity(raycastingData[i].m_distance + LEVEL_TILE_SIZE_PX);
+        fogIntensity = getFogIntensity(raycastingData[i].m_distanceBrut + LEVEL_TILE_SIZE_PX);
         addColoredTexturePoint({lateralGLPosA, verticalPos},
         {lateralText, spriteComp.m_spriteData->m_texturePosVertex[0].second},
         {fogIntensity, fogIntensity, fogIntensity, 1.0f});

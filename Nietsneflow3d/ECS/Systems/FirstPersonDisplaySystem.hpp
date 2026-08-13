@@ -36,6 +36,7 @@ struct RayCastingIntersect
 {
     float m_distance, m_texturePos;
     uint32_t m_lateral;
+    float m_distanceBrut;
 };
 
 struct EntityData
@@ -91,7 +92,7 @@ private:
     std::optional<float> treatDoorRaycast(uint32_t numEntity, float currentRadiantAngle,
                                           PairFloat_t &currentPoint, std::optional<float> lateralLeadCoef,
                                           std::optional<float> verticalLeadCoef, bool &textLateral, bool &textFace);
-    void memRaycastDistance(uint32_t numEntity, uint32_t lateralScreenPos, float distance, float texturePos);
+    void memRaycastDistance(uint32_t numEntity, uint32_t lateralScreenPos, float distance, float texturePos, float distanceBrut);
     void setUsedComponents();
     void confCompVertexMemEntities();
     void writeVertexWallDoorRaycasting(const pairRaycastingData_t &entityData, uint32_t numIteration);
@@ -99,7 +100,7 @@ private:
                             MapCoordComponent &mapCompB, VisionComponent &visionComp,
                             uint32_t &toRemove, float degreeObserverAngle, uint32_t numIteration, uint32_t currentNormal);
     bool elementBehindDoor(const ElementRaycast &elementCase, float radiantObserverAngle, const MapCoordComponent &mapComp);
-    bool confNormalEntityVertex(const std::pair<uint32_t, bool> &entityData, CollisionTag_e tag, float lateralPosGL, float distance);
+    bool confNormalEntityVertex(const std::pair<uint32_t, bool> &entityData, CollisionTag_e tag, float lateralPosGL, float distance, float distanceBrut);
     void drawVertex();
     void drawTextureBackground();
     PairFloat_t getCenterPosition(const MapCoordComponent &mapComp, GeneralCollisionComponent &genCollComp, float numEntity);
