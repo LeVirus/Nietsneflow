@@ -3746,7 +3746,7 @@ void MainEngine::loadBarrelElementEntities(const LevelManager &levelManager)
         fpsComp.m_levelElementType = LevelStaticElementType_e::GROUND;
         barrelComp.m_life = 3;
         barrelComp.m_memPosExplosionSprite = barrelData.m_staticSprite.size() - 1;
-        barrelComp.m_damageZoneEntity = createDamageZoneEntity(15, CollisionTag_e::EXPLOSION_CT, 30.0f, levelManager.getHitSoundFile());
+        barrelComp.m_damageZoneEntity = createDamageZoneEntity(15, CollisionTag_e::EXPLOSION_CT, 35.0f, levelManager.getHitSoundFile());
         compNum = m_ecsManager.getComponentManager().getComponentEmplacement(
                     barrelComp.m_damageZoneEntity, Components_e::MAP_COORD_COMPONENT);
         assert(compNum);
