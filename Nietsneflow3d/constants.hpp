@@ -407,6 +407,7 @@ inline const float PI_SIXTH_LIMIT = PI_DOUBLE - PI_SIXTH;
 inline const float PI_HALF = PI / 2.0f;
 inline const float PLAYER_RAY_DISPLAY = 0.03f;
 inline const float LEVEL_TILE_SIZE_PX = 30.0f;
+inline const float RAYCAST_GROUND_CEILING_FACTOR = RAYCAST_VERTICAL_SIZE * LEVEL_TILE_SIZE_PX;
 inline const float WIDTH_DOOR_SIZE_PX = LEVEL_TILE_SIZE_PX / 9.0f;
 inline const float DOOR_CASE_POS_PX = WIDTH_DOOR_SIZE_PX * 4.0f;
 inline const float LEVEL_HALF_TILE_SIZE_PX = LEVEL_TILE_SIZE_PX / 2.0f;

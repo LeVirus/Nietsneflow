@@ -994,7 +994,7 @@ void FirstPersonDisplaySystem::calcVerticalBackgroundLineRaycast(const PairFloat
         m_memBackgroundDistance = std::array<float, RAYCAST_GROUND_CEILING_NUMBER>();
         for(uint32_t i = 0; i < RAYCAST_GROUND_CEILING_NUMBER; ++i, currentGroundGLA.second += SCREEN_VERT_BACKGROUND_GL_STEP)
         {
-            totalDistanceTarget = 30.0f / currentGroundGLA.second;
+            totalDistanceTarget = RAYCAST_GROUND_CEILING_FACTOR / std::abs(currentGroundGLA.second);////GROK
             currentPoint = observerPos;
             moveElementFromAngle(totalDistanceTarget, currentRadiantAngle, currentPoint, true);
             (*m_memBackgroundDistance)[i] = getCameraDistance(observerPos, currentPoint, currentRadiantAngle);
