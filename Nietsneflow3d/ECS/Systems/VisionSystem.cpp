@@ -481,11 +481,11 @@ void VisionSystem::updateImpactSprites(uint32_t entityImpact, MemSpriteDataCompo
     ImpactShotComponent &impactComp = m_componentsContainer.m_vectImpactShotComp[*compNum];
     if(!impactComp.m_touched)
     {
-        impactComp.m_moveUp += 0.02f;
+        impactComp.m_moveUp += 0.01f;
     }
     else
     {
-        impactComp.m_moveUp -= 0.02f;
+        impactComp.m_moveUp -= 0.01f;
     }
     if(++timerComp.m_cycleCountA >= impactComp.m_intervalTime)
     {
