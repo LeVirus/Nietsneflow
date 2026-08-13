@@ -399,6 +399,7 @@ inline const uint32_t EJECT_CYCLE_TIME = 0.5f / FPS_VALUE;
 inline const float RAYCAST_VERTICAL_SIZE = 0.5f;
 inline const float STD_FONT_SIZE = 0.06f;
 inline const float MENU_FONT_SIZE = 0.075f;
+inline const float MIN_DISTANCE_RAYCAST = 5.0f;
 inline const float PI = 3.14159265359f;
 inline const float PI_DOUBLE = PI * 2.0f;
 inline const float PI_QUARTER = PI / 4.0f;

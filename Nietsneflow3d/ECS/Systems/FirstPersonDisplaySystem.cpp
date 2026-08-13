@@ -238,7 +238,7 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent &gen
             genCollComp.m_tagA != CollisionTag_e::BULLET_ENEMY_CT &&
             genCollComp.m_tagA != CollisionTag_e::BULLET_PLAYER_CT &&
             genCollComp.m_tagA != CollisionTag_e::IMPACT_CT &&
-            genCollComp.m_tagA != CollisionTag_e::STATIC_SET_CT && cameraDistance < 15.0f)
+            genCollComp.m_tagA != CollisionTag_e::STATIC_SET_CT && cameraDistance < MIN_DISTANCE_RAYCAST)
     {
         return;
     }
@@ -609,9 +609,9 @@ bool FirstPersonDisplaySystem::confNormalEntityVertex(const std::pair<uint32_t, 
     assert(numCom);
     FPSVisibleStaticElementComponent &fpsStaticComp = m_componentsContainer.m_vectFPSVisibleStaticElementComp[*numCom];
     //quickfix
-    if(distance < 15.0f)
+    if(distance < MIN_DISTANCE_RAYCAST)
     {
-        distance = 15.0f;
+        distance = MIN_DISTANCE_RAYCAST;
     }
     numCom = m_newComponentManager.getComponentEmplacement(numEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
     assert(numCom);
