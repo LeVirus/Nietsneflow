@@ -1341,7 +1341,7 @@ bool pickUpAmmo(uint32_t numWeapon, WeaponComponent &weaponComp, uint32_t object
     }
     if(objectWeapon.m_posses && objectWeapon.m_ammunationsCount == 0)
     {
-        if(weaponComp.m_currentWeapon < numWeapon)
+        if(weaponComp.m_currentWeapon < numWeapon && !weaponComp.m_weaponChange)
         {
             setPlayerWeapon(weaponComp, numWeapon);
         }
@@ -1366,7 +1366,7 @@ bool pickUpWeapon(uint32_t numWeapon, WeaponComponent &weaponComp, uint32_t obje
     if(!objectWeapon.m_posses)
     {
         objectWeapon.m_posses = true;
-        if(weaponComp.m_currentWeapon < numWeapon)
+        if(weaponComp.m_currentWeapon < numWeapon && !weaponComp.m_weaponChange)
         {
             setPlayerWeapon(weaponComp, numWeapon);
         }
