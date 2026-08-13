@@ -5,9 +5,6 @@ IMPROVE=========================================================================
 Barrels don't eject other side barrel
 
 ))
-Change Ammo impact vertical position 
-
-))
 If get new ammo when anim change ammo when no more issue
 
 ))
@@ -66,6 +63,9 @@ Increase display distance========================OK
 
 ))
 Item loaded after enemies death on checkpoint are not pickable====================OK
+
+))
+Change Ammo impact vertical position==================================OK 
 
 ))
 Ralentir générique de fin========================OK

@@ -687,7 +687,7 @@ void confBullet(ImpactShotComponent &impactComp, GeneralCollisionComponent &genC
     genColl.m_shape = CollisionShape_e::SEGMENT_C;
     genColl.m_active = true;
     float diff = pistol ? randFloat(-3.0f, 3.0f) : randFloat(-8.0f, 8.0f);
-    impactComp.m_currentVerticalPos = randFloat(-0.4f, -0.2f);
+    impactComp.m_currentVerticalPos = randFloat(-0.2f, -0.1f);
     segmentColl.m_degreeOrientation = degreeAngle + diff;
     if(segmentColl.m_degreeOrientation < EPSILON_FLOAT)
     {
