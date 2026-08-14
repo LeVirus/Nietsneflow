@@ -450,7 +450,7 @@ void CollisionSystem::confImpactShots(uint32_t numBullet, CollisionTag_e targetT
         mapImpact.m_absoluteMapPositionPX = segmentBullet.m_points.first;
         float radiantAngle = getTrigoAngle(segmentBullet.m_points.first,
                                            segmentBullet.m_points.second, false);
-        moveElementFromAngle(m_memDistCurrentBulletColl.second, radiantAngle, mapImpact.m_absoluteMapPositionPX);
+        moveElementFromAngle(m_memDistCurrentBulletColl.second, radiantAngle, mapImpact.m_absoluteMapPositionPX, true);
     }
     genImpact.m_active = true;
     timerImpact.m_cycleCountA = 0;
