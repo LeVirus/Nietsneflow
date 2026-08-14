@@ -20,7 +20,6 @@
 #include <ECS/Systems/ColorDisplaySystem.hpp>
 #include <PictureData.hpp>
 #include <cmath>
-#include <chrono>
 
 //===================================================================
 FirstPersonDisplaySystem::FirstPersonDisplaySystem(NewComponentManager &newComponentManager) :
