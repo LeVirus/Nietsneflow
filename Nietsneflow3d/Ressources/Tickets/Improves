@@ -3,17 +3,13 @@ IMPROVE=========================================================================
 
 
 ))
-Improve anim plasma
+L'impact sur les baril et enemis? s'affiche trop en décallage LVL 2
 
 ))
 Portage Windows
 
 ))
 Change end Music AND change generic
-
-))
-L'impact sur les baril et enemis? s'affiche trop en décallage--------------~
-
 
 Beta test===========================================================================
 
@@ -28,18 +24,6 @@ Change passage
 !!!
 SICKNES
 
-))
-On prologue screen add PRESS ENTER
-
-))
-At level 1 action green object PRECISE
-
-))
-At level 1 Enemy stuck and shoot constantly
-
-))
-At puzzle level 1 remove speed comp
-
 ----------------------------------Level Design
 
 ))
@@ -50,6 +34,12 @@ Verif all walls secrets
 
 ))
 Check coherence vegetal / desk
+
+==========================================================================================================
+==========================================================================================================
+
+))
+Improve anim plasma------------------------~
 
 ==========================================================================================================
 
