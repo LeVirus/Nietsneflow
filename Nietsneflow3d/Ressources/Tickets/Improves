@@ -4,9 +4,6 @@ IMPROVE=========================================================================
 ))
 Issue object display behind wall on side screen
 
-))
-Impact on barrels too left
-
 
 
 ))
@@ -21,6 +18,9 @@ Change end Music AND change generic
 ))
 L'impact sur les baril et enemis? s'affiche trop en décallage--------------~
 
+))
+Impact on barrels too left======================??
+
 
 Beta test===========================================================================
 
@@ -34,6 +34,18 @@ Change passage
 ))
 !!!
 SICKNES
+
+))
+On prologue screen add PRESS ENTER
+
+))
+At level 1 action green object PRECISE
+
+))
+At level 1 Enemy stuck and shoot constantly
+
+))
+At puzzle level 1 remove speed comp
 
 ----------------------------------Level Design
 
