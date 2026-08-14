@@ -161,8 +161,7 @@ bool VerticesData::loadVertexStandardEntityByLine(const PositionVertexComponent 
             break;
         }
         wallBeforeElement = (memRaycastDist[currentLine] > -0.5f) && (entityDistance > memRaycastDist[currentLine]);
-        if(currentLine < 0 || (!displayBehindWall && memRaycastDist[currentLine] > 15.0f &&
-                               wallBeforeElement))
+        if(currentLine < 0 || (!displayBehindWall && wallBeforeElement))
         {
             continue;
         }

@@ -1,10 +1,6 @@
 IMPROVE===================================================================================================
 ==========================================================================================================
 
-))
-Issue object display behind wall on side screen
-
-
 
 ))
 Improve anim plasma
@@ -17,9 +13,6 @@ Change end Music AND change generic
 
 ))
 L'impact sur les baril et enemis? s'affiche trop en décallage--------------~
-
-))
-Impact on barrels too left======================??
 
 
 Beta test===========================================================================
@@ -68,6 +61,9 @@ Increase display distance========================OK
 
 ))
 Item loaded after enemies death on checkpoint are not pickable====================OK
+
+))
+Issue object display behind wall on side screen========================OK
 
 ))
 Change Ammo impact vertical position==================================OK 
