@@ -1591,7 +1591,7 @@ bool MainEngine::loadEnemiesEntities(const LevelManager &levelManager)
         currentSoundElements[0] = loadSound(it->second.m_detectBehaviourSoundFile);
         currentSoundElements[1] = loadSound(it->second.m_attackSoundFile);
         currentSoundElements[2] = loadSound(it->second.m_deathSoundFile);
-        collisionRay = it->second.m_inGameSpriteSize.first * LEVEL_TWO_THIRD_TILE_SIZE_PX;
+        collisionRay = it->second.m_inGameSpriteSize.first * /*LEVEL_TWO_THIRD_TILE_SIZE_PX*/LEVEL_TILE_SIZE_PX;
         const SpriteData &memSpriteData = levelManager.getPictureData().
                 getSpriteData()[it->second.m_staticFrontSprites[0]];
         for(uint32_t j = 0; j < it->second.m_TileGamePosition.size(); ++j)
