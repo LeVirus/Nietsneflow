@@ -1623,7 +1623,7 @@ bool MainEngine::createEnemy(const LevelManager &levelManager, const SpriteData 
         enemyComp.m_endLevel = true;
         exit = true;
     }
-    fpsStaticComp.m_inGameSpriteSize = enemyData.m_inGameSpriteSize;
+    fpsStaticComp.m_inGameSpriteSize = {enemyData.m_inGameSpriteSize.first * 0.6f, enemyData.m_inGameSpriteSize.second};
     fpsStaticComp.m_levelElementType = LevelStaticElementType_e::GROUND;
     compNum = m_ecsManager.getComponentManager().getComponentEmplacement(numEntity, Components_e::CIRCLE_COLLISION_COMPONENT);
     assert(compNum);
