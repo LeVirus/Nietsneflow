@@ -163,6 +163,7 @@ private:
     void treatEnterPressedConfirmQuitGame(PlayerConfComponent &playerComp);
     void validInputMenu(PlayerConfComponent &playerComp);
     void treatPlayerMove(PlayerConfComponent &playerComp, MoveableComponent &moveComp, MapCoordComponent &mapComp);
+    void treatPlayerMove(float currentVelocity, MoveableComponent &moveComp, MapCoordComponent &mapComp, PlayerConfComponent &playerComp);
     static void window_focus_callback(GLFWwindow* window, int focused);
 
 private:

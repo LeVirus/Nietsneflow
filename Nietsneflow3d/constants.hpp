@@ -392,6 +392,7 @@ inline const uint32_t ENCRYPT_KEY_STANDARD_LEVEL = 17;
 inline const uint32_t ENCRYPT_KEY_CUSTOM_LEVEL = 52;
 inline const uint32_t ENCRYPT_KEY_CONF_FILE = 42;
 inline const uint32_t CUSTOM_MENU_SECTION_SIZE = 9;
+inline const float INIERTIE_FACTOR = 2.0f; ////WARNING WORKS ONLY FOR 2.0 player velocity
 inline const float FPS_VALUE = 1.0f / 60.0f;
 inline const float MAX_SOUND_DISTANCE = 1000.0f;
 inline const float DOWN_WEAPON_POS_Y = -1.02f;
