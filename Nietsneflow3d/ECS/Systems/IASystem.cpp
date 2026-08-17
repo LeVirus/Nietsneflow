@@ -300,20 +300,21 @@ void IASystem::treatEnemyBehaviourAttack(uint32_t enemyEntity, MapCoordComponent
     numCom = m_newComponentManager.getComponentEmplacement(enemyEntity, Components_e::TIMER_COMPONENT);
     assert(numCom);
     TimerComponent &timerComp = m_componentsContainer.m_vectTimerComp[*numCom];
+    ++timerComp.m_cycleCountD;
     if(!enemyConfComp.m_stuck)
     {
         enemyConfComp.m_previousMove = {EnemyAttackPhase_e::TOTAL, EnemyAttackPhase_e::TOTAL};
     }
     if(enemyConfComp.m_stuck || ++timerComp.m_cycleCountB >= m_intervalEnemyBehaviour)
     {
-        if((enemyConfComp.m_countTillLastAttack > 3 && ++timerComp.m_cycleCountD > 40) && (!enemyConfComp.m_meleeOnly || distancePlayer < 32.0f))
+        if((enemyConfComp.m_countTillLastAttack > 3 && timerComp.m_cycleCountD > 40) && (!enemyConfComp.m_meleeOnly || distancePlayer < 32.0f))
         {
             enemyConfComp.m_attackPhase = EnemyAttackPhase_e::SHOOT;
             enemyConfComp.m_stuck = false;
         }
         else
         {
-            uint32_t modulo = (enemyConfComp.m_meleeOnly || (enemyConfComp.m_countTillLastAttack < 4 || timerComp.m_cycleCountD < 40)) ?
+            uint32_t modulo = (enemyConfComp.m_meleeOnly || (enemyConfComp.m_countTillLastAttack < 3 || timerComp.m_cycleCountD < 40)) ?
                                   static_cast<uint32_t>(EnemyAttackPhase_e::SHOOT) :
                                                                            static_cast<uint32_t>(EnemyAttackPhase_e::SHOOT) + 1;
             enemyConfComp.m_attackPhase = static_cast<EnemyAttackPhase_e>(std::rand() / ((RAND_MAX + 1u) / modulo));
