@@ -356,7 +356,7 @@ void InputSystem::treatPlayerMove(PlayerConfComponent &playerComp, MoveableCompo
         return;
     }
     //init value
-    MoveOrientation_e currentMoveDirection = MoveOrientation_e::FORWARD;
+    MoveOrientation_e currentMoveDirection = playerComp.m_previousMove;
     //STRAFE
     if(checkPlayerKeyTriggered(ControlKey_e::STRAFE_RIGHT))
     {
@@ -400,9 +400,9 @@ void InputSystem::treatPlayerMove(PlayerConfComponent &playerComp, MoveableCompo
         }
         playerComp.m_inMovement = true;
     }
-    if(!playerComp.m_inMovement || checkOppositeDir(playerComp.m_previousMove, currentMoveDirection))
+    if(checkOppositeDir(playerComp.m_previousMove, currentMoveDirection))
     {
-        playerComp.m_velocityInertie = 10;
+        playerComp.m_velocityInertie = INIERTIE_FACTOR;
     }
     if(playerComp.m_inMovement && !playerComp.m_frozen)
     {
@@ -434,19 +434,33 @@ void InputSystem::treatPlayerMove(PlayerConfComponent &playerComp, MoveableCompo
             break;
         }
         float currentVelocity = moveComp.m_velocity;
-        if(playerComp.m_velocityInertie > 1)
+        if(playerComp.m_velocityInertie > 0.0f)
         {
-            currentVelocity /= playerComp.m_velocityInertie;
-            --playerComp.m_velocityInertie;
+            currentVelocity -= playerComp.m_velocityInertie;
+            playerComp.m_velocityInertie -= 0.1f;
         }
-        moveElementFromAngle(currentVelocity,
-                             getRadiantAngle(moveComp.m_currentDegreeMoveDirection),
-                             mapComp.m_absoluteMapPositionPX);
-        m_mainEngine->addEntityToZone(m_playerEntity,
-                                      *getLevelCoord(mapComp.m_absoluteMapPositionPX));
-        updateDetectRect(playerComp, mapComp);
+        treatPlayerMove(currentVelocity, moveComp, mapComp, playerComp);
+    }
+    //INERTIE
+    else if(!playerComp.m_inMovement && playerComp.m_velocityInertie < INIERTIE_FACTOR)
+    {
+        float currentVelocity = moveComp.m_velocity;
+        currentVelocity -= playerComp.m_velocityInertie;
+        playerComp.m_velocityInertie += 0.1f;
+        treatPlayerMove(currentVelocity, moveComp, mapComp, playerComp);
     }
     playerComp.m_previousMove = currentMoveDirection;
+}
+
+//===================================================================
+void InputSystem::treatPlayerMove(float currentVelocity, MoveableComponent &moveComp, MapCoordComponent &mapComp, PlayerConfComponent &playerComp)
+{
+    moveElementFromAngle(currentVelocity,
+                         getRadiantAngle(moveComp.m_currentDegreeMoveDirection),
+                         mapComp.m_absoluteMapPositionPX);
+    m_mainEngine->addEntityToZone(m_playerEntity,
+                                  *getLevelCoord(mapComp.m_absoluteMapPositionPX));
+    updateDetectRect(playerComp, mapComp);
 }
 
 //===================================================================
