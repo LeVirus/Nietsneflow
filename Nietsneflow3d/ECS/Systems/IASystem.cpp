@@ -313,7 +313,8 @@ void IASystem::treatEnemyBehaviourAttack(uint32_t enemyEntity, MapCoordComponent
         }
         else
         {
-            uint32_t modulo = (enemyConfComp.m_meleeOnly || enemyConfComp.m_countTillLastAttack < 2) ? static_cast<uint32_t>(EnemyAttackPhase_e::SHOOT) :
+            uint32_t modulo = (enemyConfComp.m_meleeOnly || (enemyConfComp.m_countTillLastAttack < 4 || timerComp.m_cycleCountD < 40)) ?
+                                  static_cast<uint32_t>(EnemyAttackPhase_e::SHOOT) :
                                                                            static_cast<uint32_t>(EnemyAttackPhase_e::SHOOT) + 1;
             enemyConfComp.m_attackPhase = static_cast<EnemyAttackPhase_e>(std::rand() / ((RAND_MAX + 1u) / modulo));
         }
