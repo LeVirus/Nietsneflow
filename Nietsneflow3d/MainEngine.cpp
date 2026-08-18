@@ -1644,19 +1644,22 @@ bool MainEngine::createEnemy(const LevelManager &levelManager, const SpriteData 
     {
         enemyComp.m_dropedObjectEntity = createEnemyDropObject(levelManager, enemyData, index, loadFromCheckpoint, m_currentLevelEnemiesNumber);
     }
-    if(enemyComp.m_visibleShot)
+    if(!enemyComp.m_meleeOnly)
     {
-        if(!loadFromCheckpoint || !m_memEnemiesStateFromCheckpoint[m_currentLevelEnemiesNumber].m_dead)
+        if(enemyComp.m_visibleShot)
         {
-            enemyComp.m_visibleAmmo.resize(4);
-            confAmmoEntities(enemyComp.m_visibleAmmo, CollisionTag_e::BULLET_ENEMY_CT,
-                             enemyComp.m_visibleShot, enemyData.m_attackPower,
-                             enemyData.m_shotVelocity, enemyData.m_damageZone);
+            if(!loadFromCheckpoint || !m_memEnemiesStateFromCheckpoint[m_currentLevelEnemiesNumber].m_dead)
+            {
+                enemyComp.m_visibleAmmo.resize(4);
+                confAmmoEntities(enemyComp.m_visibleAmmo, CollisionTag_e::BULLET_ENEMY_CT,
+                                 enemyComp.m_visibleShot, enemyData.m_attackPower,
+                                 enemyData.m_shotVelocity, enemyData.m_damageZone);
+            }
         }
-    }
-    else
-    {
-        loadNonVisibleEnemyAmmoStuff(loadFromCheckpoint, m_currentLevelEnemiesNumber, enemyData, levelManager, enemyComp);
+        else
+        {
+            loadNonVisibleEnemyAmmoStuff(loadFromCheckpoint, m_currentLevelEnemiesNumber, enemyData, levelManager, enemyComp);
+        }
     }
     loadEnemySprites(levelManager.getPictureData().getSpriteData(),
                      enemyData, numEntity, enemyComp, levelManager.getVisibleShootDisplayData());
