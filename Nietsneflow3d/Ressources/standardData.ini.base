@@ -671,7 +671,7 @@ traversable = false
 [GroundStorage]
 Sprite = SpriteStorageB
 SpriteWeightGame = 0.34
-SpriteHeightGame = 0.80
+SpriteHeightGame = 0.90
 traversable = false
 
 [GroundGigerA]
@@ -787,7 +787,7 @@ traversable = true
 ExplosionSound = ExplosionBarrel.wav
 StaticSprite = SpriteBarrelA
 StaticSpriteWeightGame = 0.35
-StaticSpriteHeightGame = 0.79
+StaticSpriteHeightGame = 0.89
 ExplosionSprite = SpriteBarrelB SpriteBarrelC SpriteBarrelD SpriteBarrelE
 ExplosionSpriteWeightGame = 0.3 0.3 0.3 0.3
 ExplosionSpriteHeightGame = 0.9 0.95 1.0 1.0
