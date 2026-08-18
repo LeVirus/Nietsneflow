@@ -3113,6 +3113,7 @@ void MainEngine::confPlayerEntity(const LevelManager &levelManager, uint32_t ent
     color.m_vertex.emplace_back(TupleTetraFloat_t{0.9f, 0.00f, 0.00f, 1.0f});
     color.m_vertex.emplace_back(TupleTetraFloat_t{0.9f, 0.00f, 0.00f, 1.0f});
     circleColl.m_ray = PLAYER_RAY;
+    playerConf.m_circleEnemyCase.m_ray = PLAYER_RAY - 10.0f;
     updatePlayerArrow(move, pos);
     tagColl.m_tagA = CollisionTag_e::PLAYER_CT;
     tagColl.m_shape = CollisionShape_e::CIRCLE_C;

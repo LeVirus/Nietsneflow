@@ -364,7 +364,7 @@ void IASystem::treatEnemyBehaviourAttack(uint32_t enemyEntity, MapCoordComponent
             }
         }
     }
-    else if(enemyConfComp.m_attackPhase != EnemyAttackPhase_e::SHOOT && distancePlayer > LEVEL_TILE_SIZE_PX)
+    else if(enemyConfComp.m_attackPhase != EnemyAttackPhase_e::SHOOT && distancePlayer > LEVEL_HALF_TILE_SIZE_PX)
     {
         if(enemyConfComp.m_attackPhase != EnemyAttackPhase_e::SHOOTED)
         {
@@ -440,7 +440,7 @@ void IASystem::confVisibleShoot(std::vector<uint32_t> &visibleShots, const PairF
     mapComp.m_coord = *coord;
     mapComp.m_absoluteMapPositionPX = point;
     m_mainEngine->addEntityToZone(visibleShots[currentShot], mapComp.m_coord);
-    moveElementFromAngle(LEVEL_HALF_TILE_SIZE_PX, getRadiantAngle(degreeAngle),
+    moveElementFromAngle(LEVEL_THIRD_TILE_SIZE_PX , getRadiantAngle(degreeAngle),
                          mapComp.m_absoluteMapPositionPX);
     ammoMoveComp.m_degreeOrientation = degreeAngle;
     ammoMoveComp.m_currentDegreeMoveDirection = degreeAngle;
