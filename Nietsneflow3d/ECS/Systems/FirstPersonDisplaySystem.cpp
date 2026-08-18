@@ -624,7 +624,7 @@ bool FirstPersonDisplaySystem::confNormalEntityVertex(const std::pair<uint32_t, 
     numCom = m_newComponentManager.getComponentEmplacement(numEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
     assert(numCom);
     SpriteTextureComponent &spriteComp = m_componentsContainer.m_vectSpriteTextureComp[*numCom];
-    spriteComp.m_reverseVisibilityRate = getFogIntensity(distanceBrut/*distance*/);
+    spriteComp.m_reverseVisibilityRate = getFogIntensity(distanceBrut);
     positionComp.m_vertex.resize(4);
     //convert to GL context
     float distanceFactor = distance / LEVEL_TILE_SIZE_PX;

@@ -438,14 +438,14 @@ inline const float WEAPONS_PREVIEW_GL_POS_LEFT = -0.95f;
 inline const uint32_t RAYCAST_LINE_NUMBER = 500, RAYCAST_DEPTH = 15, MAX_SHOTS = 5,
 RAYCAST_GROUND_CEILING_NUMBER = RAYCAST_LINE_NUMBER / 2.95;
 inline const float MAX_DISTANCE_VIEW = (RAYCAST_DEPTH - 4) * LEVEL_TILE_SIZE_PX;
-inline const float MIN_DISTANCE_FOG = MAX_DISTANCE_VIEW / 2.0f;
-inline const float TOTAL_DISTANCE_FOG = MAX_DISTANCE_VIEW - MIN_DISTANCE_FOG - LEVEL_TILE_SIZE_PX * 3;
+inline const float MIN_DISTANCE_FOG = MAX_DISTANCE_VIEW / 1.5f;
+inline const float TOTAL_DISTANCE_FOG = MAX_DISTANCE_VIEW - MIN_DISTANCE_FOG;
 inline const float SCREEN_VERT_BACKGROUND_GL_STEP = 1.0f / RAYCAST_GROUND_CEILING_NUMBER;
 inline const float SCREEN_HORIZ_BACKGROUND_GL_STEP = 2.0f / RAYCAST_LINE_NUMBER;
 inline const double WRITE_LETTER_GL_OFFSET = 0.01;
 // inline const std::string RESSOURCES_DIR_STR = std::string(getenv("HOME")) + "/.local/share/Arnihs/";
 //OOOOOOOK
-inline const std::string RESSOURCES_DIR_STR = "../../Nietsneflow3d/Ressources/";
+inline const std::string RESSOURCES_DIR_STR = "../../Ressources/";
 inline const std::string SHADER_DIR_STR = RESSOURCES_DIR_STR + "Shader/";
 inline const std::string TEXTURES_DIR_STR = RESSOURCES_DIR_STR + "Textures/";
 inline const std::map<MenuMode_e, PairPairFloatStr_t> MAP_MENU_DATA =
