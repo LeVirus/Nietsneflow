@@ -240,6 +240,16 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent &gen
         return;
     }
     float distanceBrut = getDistance(mapCompA.m_absoluteMapPositionPX, mapCompB.m_absoluteMapPositionPX);
+    if(genCollComp.m_tagA == CollisionTag_e::BULLET_PLAYER_CT && distanceBrut < 15.0f)
+    {
+        OptUint_t numCom = m_newComponentManager.getComponentEmplacement(visionComp.m_vectVisibleEntities[currentNormal].first, Components_e::SHOT_CONF_COMPONENT);
+        assert(numCom);
+        ShotConfComponent &shotComp = m_componentsContainer.m_vectShotConfComp[*numCom];
+        if(!shotComp.m_destructPhase)
+        {
+            return;
+        }
+    }
     if(!confNormalEntityVertex(visionComp.m_vectVisibleEntities[currentNormal], genCollComp.m_tagA, lateralPos, cameraDistance, distanceBrut))
     {
         return;
