@@ -443,7 +443,7 @@ void IASystem::confVisibleShoot(std::vector<uint32_t> &visibleShots, const PairF
     mapComp.m_coord = *coord;
     mapComp.m_absoluteMapPositionPX = point;
     m_mainEngine->addEntityToZone(visibleShots[currentShot], mapComp.m_coord);
-    moveElementFromAngle(LEVEL_THIRD_TILE_SIZE_PX , getRadiantAngle(degreeAngle - 20.0f),
+    moveElementFromAngle(LEVEL_THIRD_TILE_SIZE_PX , getRadiantAngle(degreeAngle),
                          mapComp.m_absoluteMapPositionPX);
     ammoMoveComp.m_degreeOrientation = degreeAngle;
     ammoMoveComp.m_currentDegreeMoveDirection = degreeAngle;
