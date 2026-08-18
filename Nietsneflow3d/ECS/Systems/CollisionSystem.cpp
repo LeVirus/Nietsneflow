@@ -683,9 +683,23 @@ bool CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args, bool shotEx
     {
         args.tagCompA.m_active = false;
     }
-    OptUint_t compNum = m_newComponentManager.getComponentEmplacement(args.entityNumA, Components_e::CIRCLE_COLLISION_COMPONENT);
-    assert(compNum);
-    CircleCollisionComponent &circleCompA = m_componentsContainer.m_vectCircleCollisionComp[*compNum];
+
+    bool fPlayerSEnemy = (args.tagCompA.m_tagA == CollisionTag_e::PLAYER_CT && args.tagCompB.m_tagA == CollisionTag_e::ENEMY_CT);
+    bool fEnemySPlayer = (args.tagCompA.m_tagA == CollisionTag_e::ENEMY_CT && args.tagCompB.m_tagA == CollisionTag_e::PLAYER_CT);
+    CircleCollisionComponent *circleCompA;
+    if(fPlayerSEnemy)
+    {
+        OptUint_t compNuml = m_newComponentManager.getComponentEmplacement(args.entityNumA, Components_e::PLAYER_CONF_COMPONENT);
+        assert(compNuml);
+        PlayerConfComponent &playerComp = m_componentsContainer.m_vectPlayerConfComp[*compNuml];
+        circleCompA = &playerComp.m_circleEnemyCase;
+    }
+    else
+    {
+        OptUint_t compNum = m_newComponentManager.getComponentEmplacement(args.entityNumA, Components_e::CIRCLE_COLLISION_COMPONENT);
+        assert(compNum);
+        circleCompA = &m_componentsContainer.m_vectCircleCollisionComp[*compNum];
+    }
     bool collision = false;
     switch(args.tagCompB.m_shape)
     {
@@ -696,11 +710,11 @@ bool CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args, bool shotEx
         RectangleCollisionComponent &rectCompB = m_componentsContainer.m_vectRectangleCollisionComp[*compNum];
         if(args.tagCompB.m_tagA == CollisionTag_e::DOOR_CT)
         {
-            collision = treatDoorCollisionFirstCircle(args, circleCompA, rectCompB);
+            collision = treatDoorCollisionFirstCircle(args, *circleCompA, rectCompB);
         }
         else
         {
-            collision = checkCircleRectCollision(args.mapCompA.m_absoluteMapPositionPX, circleCompA.m_ray,
+            collision = checkCircleRectCollision(args.mapCompA.m_absoluteMapPositionPX, circleCompA->m_ray,
                                                  args.mapCompB.m_absoluteMapPositionPX, rectCompB.m_size);
         }
         if(collision)
@@ -711,7 +725,7 @@ bool CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args, bool shotEx
             }
             else if(args.tagCompA.m_tagA == CollisionTag_e::PLAYER_CT)
             {
-                if(treatCollisionPlayer(args, circleCompA, rectCompB))
+                if(treatCollisionPlayer(args, *circleCompA, rectCompB))
                 {
                     return true;
                 }
@@ -755,7 +769,7 @@ bool CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args, bool shotEx
                 {
                     previousPos = args.mapCompA.m_absoluteMapPositionPX;
                 }
-                collisionCircleRectEject(args, circleCompA.m_ray, rectCompB);
+                collisionCircleRectEject(args, circleCompA->m_ray, rectCompB);
                 if(checkStuck && std::abs(previousPos.first - args.mapCompA.m_absoluteMapPositionPX.first) < 3.0f &&
                         std::abs(previousPos.second - args.mapCompA.m_absoluteMapPositionPX.second) < 3.0f)
                 {
@@ -774,14 +788,14 @@ bool CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args, bool shotEx
             else if(args.tagCompA.m_tagA == CollisionTag_e::IMPACT_CT ||
                     args.tagCompA.m_tagA == CollisionTag_e::BARREL_CT)
             {
-                collisionCircleRectEject(args, circleCompA.m_ray, rectCompB);
+                collisionCircleRectEject(args, circleCompA->m_ray, rectCompB);
             }
             if(args.tagCompA.m_tagA == CollisionTag_e::DEAD_CORPSE_CT)
             {
                 //if the wall is static or door
                 if(!m_newComponentManager.getComponentEmplacement(args.entityNumB, Components_e::MOVEABLE_WALL_CONF_COMPONENT))
                 {
-                    collisionCircleRectEject(args, circleCompA.m_ray, rectCompB);
+                    collisionCircleRectEject(args, circleCompA->m_ray, rectCompB);
                 }
             }
         }
@@ -789,11 +803,22 @@ bool CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args, bool shotEx
         break;
     case CollisionShape_e::CIRCLE_C:
     {
-        OptUint_t compNum = m_newComponentManager.getComponentEmplacement(args.entityNumB, Components_e::CIRCLE_COLLISION_COMPONENT);
-        assert(compNum);
-        CircleCollisionComponent &circleCompB = m_componentsContainer.m_vectCircleCollisionComp[*compNum];
-        collision = checkCircleCircleCollision(args.mapCompA.m_absoluteMapPositionPX, circleCompA.m_ray,
-                                               args.mapCompB.m_absoluteMapPositionPX, circleCompB.m_ray);
+        CircleCollisionComponent *circleCompB;
+        if(fEnemySPlayer)
+        {
+            OptUint_t compNuml = m_newComponentManager.getComponentEmplacement(args.entityNumB, Components_e::PLAYER_CONF_COMPONENT);
+            assert(compNuml);
+            PlayerConfComponent &playerComp = m_componentsContainer.m_vectPlayerConfComp[*compNuml];
+            circleCompB = &playerComp.m_circleEnemyCase;
+        }
+        else
+        {
+            OptUint_t compNum = m_newComponentManager.getComponentEmplacement(args.entityNumB, Components_e::CIRCLE_COLLISION_COMPONENT);
+            assert(compNum);
+            circleCompB = &m_componentsContainer.m_vectCircleCollisionComp[*compNum];
+        }
+        collision = checkCircleCircleCollision(args.mapCompA.m_absoluteMapPositionPX, circleCompA->m_ray,
+                                               args.mapCompB.m_absoluteMapPositionPX, circleCompB->m_ray);
         if(collision)
         {
             if(args.tagCompA.m_tagA == CollisionTag_e::PLAYER_ACTION_CT)
@@ -844,16 +869,16 @@ bool CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args, bool shotEx
             {
                 if(args.tagCompA.m_tagA == CollisionTag_e::PLAYER_CT &&
                         args.tagCompB.m_tagA == CollisionTag_e::ENEMY_CT &&
-                        circleCompB.m_ray > 10.0f)
+                        circleCompB->m_ray > 10.0f)
                 {
                     if(m_memCrush.empty())
                     {
-                        collisionCircleCircleEject(args, circleCompA, circleCompB);
+                        collisionCircleCircleEject(args, *circleCompA, *circleCompB);
                     }
                 }
                 else
                 {
-                    collisionCircleCircleEject(args, circleCompA, circleCompB);
+                    collisionCircleCircleEject(args, *circleCompA, *circleCompB);
                 }
             }
         }
@@ -900,12 +925,12 @@ bool CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args, bool shotEx
                     OptUint_t compNum = m_newComponentManager.getComponentEmplacement(args.entityNumB, Components_e::RECTANGLE_COLLISION_COMPONENT);
                     assert(compNum);
                     RectangleCollisionComponent &rectCompB = m_componentsContainer.m_vectRectangleCollisionComp[*compNum];
-                    collisionCircleRectEject(args, circleCompA.m_ray, rectCompB, shotExplosionEject);
+                    collisionCircleRectEject(args, circleCompA->m_ray, rectCompB, shotExplosionEject);
                 }
                 else if(!shotConfComp.m_ejectMode)
                 {
                     shotConfComp.m_ejectMode = true;
-                    std::swap(circleCompA.m_ray, shotConfComp.m_ejectExplosionRay);
+                    std::swap(circleCompA->m_ray, shotConfComp.m_ejectExplosionRay);
                     return false;
                 }
                 else if(args.tagCompB.m_tagA == CollisionTag_e::WALL_CT)
@@ -916,7 +941,7 @@ bool CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args, bool shotEx
                         OptUint_t compNum = m_newComponentManager.getComponentEmplacement(args.entityNumB, Components_e::RECTANGLE_COLLISION_COMPONENT);
                         assert(compNum);
                         RectangleCollisionComponent &rectCompB = m_componentsContainer.m_vectRectangleCollisionComp[*compNum];
-                        collisionCircleRectEject(args, circleCompA.m_ray, rectCompB, shotExplosionEject);
+                        collisionCircleRectEject(args, circleCompA->m_ray, rectCompB, shotExplosionEject);
                     }
                 }
             }

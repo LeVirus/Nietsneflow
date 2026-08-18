@@ -4,6 +4,7 @@
 #include <constants.hpp>
 #include <array>
 #include <set>
+#include <ECS/Components/CircleCollisionComponent.hpp>
 
 enum class MapMode_e
 {
@@ -72,5 +73,6 @@ struct PlayerConfComponent : public ecs::Component
     MenuMode_e m_menuMode, m_previousMenuMode;
     MapMode_e m_mapMode = MapMode_e::NONE;
     MoveOrientation_e m_previousMove = MoveOrientation_e::FORWARD;
+    CircleCollisionComponent m_circleEnemyCase;
     virtual ~PlayerConfComponent() = default;
 };
