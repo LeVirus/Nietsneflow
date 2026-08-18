@@ -241,12 +241,15 @@ void IASystem::enemyShoot(EnemyConfComponent &enemyConfComp, MoveableComponent &
                           MapCoordComponent &enemyMapComp, float distancePlayer)
 {
     OptUint_t compNum;
-    if(enemyConfComp.m_meleeAttackDamage && distancePlayer < 32.0f)
+    if(enemyConfComp.m_meleeOnly)
     {
-        compNum = m_newComponentManager.getComponentEmplacement(m_playerEntity, Components_e::PLAYER_CONF_COMPONENT);
-        assert(compNum);
-        PlayerConfComponent &playerConfComp = m_componentsContainer.m_vectPlayerConfComp[*compNum];
-        playerConfComp.takeDamage(*enemyConfComp.m_meleeAttackDamage);
+        if(enemyConfComp.m_meleeAttackDamage && distancePlayer < LEVEL_HALF_TILE_SIZE_PX)
+        {
+            compNum = m_newComponentManager.getComponentEmplacement(m_playerEntity, Components_e::PLAYER_CONF_COMPONENT);
+            assert(compNum);
+            PlayerConfComponent &playerConfComp = m_componentsContainer.m_vectPlayerConfComp[*compNum];
+            playerConfComp.takeDamage(*enemyConfComp.m_meleeAttackDamage);
+        }
     }
     else if(enemyConfComp.m_visibleShot)
     {
@@ -307,7 +310,7 @@ void IASystem::treatEnemyBehaviourAttack(uint32_t enemyEntity, MapCoordComponent
     }
     if(enemyConfComp.m_stuck || ++timerComp.m_cycleCountB >= m_intervalEnemyBehaviour)
     {
-        if((enemyConfComp.m_countTillLastAttack > 3 && timerComp.m_cycleCountD > 40) && (!enemyConfComp.m_meleeOnly || distancePlayer < 32.0f))
+        if((enemyConfComp.m_countTillLastAttack > 3 && timerComp.m_cycleCountD > 40) && (!enemyConfComp.m_meleeOnly || distancePlayer < LEVEL_HALF_TILE_SIZE_PX))
         {
             enemyConfComp.m_attackPhase = EnemyAttackPhase_e::SHOOT;
             enemyConfComp.m_stuck = false;
