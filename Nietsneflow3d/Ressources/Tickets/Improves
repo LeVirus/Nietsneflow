@@ -2,12 +2,6 @@ IMPROVE=========================================================================
 ==========================================================================================================
 
 ))
-Diminer la taille des explosions 
-
-))
-with bigger collision mask enemies can stay stuck in wall
-
-))
 Portage Windows
 
 ))
@@ -46,6 +40,9 @@ Improve anim plasma------------------------~
 ==========================================================================================================
 
 ))
+with bigger collision mask enemies can stay stuck in wall============================OK
+
+))
 Fog not equal to center and screen limit=========================OK
 
 ))
@@ -65,6 +62,9 @@ If get new ammo when anim change ammo when no more issue========================
 
 ))
 Object and enemies disapear too fast when walk accross them=============================OK
+
+))
+Diminer la taille des explosions ===============================OK
 
 ))
 Ground display offset issue==============================OK
