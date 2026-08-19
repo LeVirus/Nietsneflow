@@ -509,8 +509,8 @@ ImpactSound = ImpactLaser.wav
 
 [VisibleShootDemonC]
 Sprites = SpriteEnergyBallZA SpriteExplosionA SpriteExplosionB SpriteExplosionC SpriteExplosionD
-SpriteWeightGame = 0.2 0.5 0.8 0.6 0.8
-SpriteHeightGame = 0.5 1.0 1.0 1.0 1.0
+SpriteWeightGame = 0.15 0.5 0.8 0.6 0.8
+SpriteHeightGame = 0.25 1.0 1.0 1.0 1.0
 ImpactSound = DemonAttackImpact.wav
 
 [VisibleShootDemonD]
@@ -533,8 +533,8 @@ ImpactSound = ImpactLaser.wav
 
 [VisibleShootRocket]
 Sprites = SpriteEnergyBallB SpriteExplosionA SpriteExplosionB SpriteExplosionC SpriteExplosionD
-SpriteWeightGame = 0.1 0.6 0.7 0.8 0.8
-SpriteHeightGame = 0.15 0.7 1.0 1.1 1.1
+SpriteWeightGame = 0.1 0.5 0.5 0.5 0.5
+SpriteHeightGame = 0.15 0.5 0.7 0.8 0.8
 ImpactSound = BazookaExplosion.wav
 
 [ObjectGunAmmo]
