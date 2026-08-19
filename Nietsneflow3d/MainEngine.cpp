@@ -1057,10 +1057,10 @@ void MainEngine::loadFogEntities()
     posComp.m_vertex.reserve(12);
     colorComp.m_vertex.reserve(12);
     //ceiling
-    posComp.m_vertex.emplace_back(-1.0f, 0.3f);
-    posComp.m_vertex.emplace_back(1.0f, 0.3f);
-    posComp.m_vertex.emplace_back(1.0f, 0.12f);
-    posComp.m_vertex.emplace_back(-1.0f, 0.12f);
+    posComp.m_vertex.emplace_back(-1.0f, 0.1f);
+    posComp.m_vertex.emplace_back(1.0f, 0.1f);
+    posComp.m_vertex.emplace_back(1.0f, 0.05f);
+    posComp.m_vertex.emplace_back(-1.0f, 0.05f);
 
     colorComp.m_vertex.emplace_back(0.0f, 0.0f, 0.0f, 0.0f);
     colorComp.m_vertex.emplace_back(0.0f, 0.0f, 0.0f, 0.0f);
@@ -1068,10 +1068,10 @@ void MainEngine::loadFogEntities()
     colorComp.m_vertex.emplace_back(0.0f, 0.0f, 0.0f, 1.0f);
 
     //fog
-    posComp.m_vertex.emplace_back(-1.0f, 0.12f);
-    posComp.m_vertex.emplace_back(1.0f, 0.12f);
-    posComp.m_vertex.emplace_back(1.0f, -0.12f);
-    posComp.m_vertex.emplace_back(-1.0f, -0.12f);
+    posComp.m_vertex.emplace_back(-1.0f, 0.05f);
+    posComp.m_vertex.emplace_back(1.0f, 0.05f);
+    posComp.m_vertex.emplace_back(1.0f, -0.05f);
+    posComp.m_vertex.emplace_back(-1.0f, -0.05f);
 
     colorComp.m_vertex.emplace_back(0.0f, 0.0f, 0.0f, 1.0f);
     colorComp.m_vertex.emplace_back(0.0f, 0.0f, 0.0f, 1.0f);
@@ -1079,10 +1079,10 @@ void MainEngine::loadFogEntities()
     colorComp.m_vertex.emplace_back(0.0f, 0.0f, 0.0f, 1.0f);
 
     //ground
-    posComp.m_vertex.emplace_back(-1.0f, -0.12f);
-    posComp.m_vertex.emplace_back(1.0f, -0.12f);
-    posComp.m_vertex.emplace_back(1.0f, -0.3f);
-    posComp.m_vertex.emplace_back(-1.0f, -0.3f);
+    posComp.m_vertex.emplace_back(-1.0f, -0.05f);
+    posComp.m_vertex.emplace_back(1.0f, -0.05f);
+    posComp.m_vertex.emplace_back(1.0f, -0.1f);
+    posComp.m_vertex.emplace_back(-1.0f, -0.1f);
 
     colorComp.m_vertex.emplace_back(0.0f, 0.0f, 0.0f, 1.0f);
     colorComp.m_vertex.emplace_back(0.0f, 0.0f, 0.0f, 1.0f);
