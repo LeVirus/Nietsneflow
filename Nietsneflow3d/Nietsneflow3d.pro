@@ -5,8 +5,8 @@ CONFIG -= qt
 QMAKE_CXXFLAGS += -std=c++17
 QMAKE_CXXFLAGS_DEBUG += -Wall -Wextra -Wpedantic -Og
 INCLUDEPATH += includesLib
-# LIBS += -L../../lib/  -lECS -lglad -ldl -lglfw -lX11 -lXxf86vm -lXrandr \
-LIBS += -L../../Nietsneflow3d/lib/  -lECS -lglad -ldl -lglfw -lX11 -lXxf86vm -lXrandr \
+LIBS += -L../../lib/  -lECS -lglad -ldl -lglfw -lX11 -lXxf86vm -lXrandr \
+# LIBS += -L../../Nietsneflow3d/lib/  -lECS -lglad -ldl -lglfw -lX11 -lXxf86vm -lXrandr \
 -pthread -lXi -lopenal -lsndfile
 
 SOURCES += main.cpp \
