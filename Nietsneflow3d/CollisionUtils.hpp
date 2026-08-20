@@ -73,8 +73,6 @@ bool checkPointPosition(const PairFloat_t &firstPoint,
 //get angle from 2 points from trigo sense
 float getTrigoAngle(const PairFloat_t &pointA, const PairFloat_t &pointB, bool degree = true);
 float getDistance(const PairFloat_t &pointA, const PairFloat_t &pointB);
-float getCameraDistance(const PairFloat_t &observerPoint, const PairFloat_t &targetPoint,
-                        float observerAngleRadiant, bool limit = false);
 float getCameraDistanceOptimized(const PairFloat_t& observerPoint,
                                  const PairFloat_t& targetPoint,
                                  float dirX, float dirY);
