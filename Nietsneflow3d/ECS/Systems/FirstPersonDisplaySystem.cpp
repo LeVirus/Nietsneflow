@@ -1003,13 +1003,15 @@ void FirstPersonDisplaySystem::calcVerticalBackgroundLineRaycast(const PairFloat
     }
     if(!m_memBackgroundDistance)
     {
+        float currentDirX = std::cos(currentRadiantAngle),
+            currentDirY = -std::sin(currentRadiantAngle);
         m_memBackgroundDistance = std::array<float, RAYCAST_GROUND_CEILING_NUMBER>();
         for(uint32_t i = 0; i < RAYCAST_GROUND_CEILING_NUMBER; ++i, currentGroundGLA.second += SCREEN_VERT_BACKGROUND_GL_STEP)
         {
             totalDistanceTarget = RAYCAST_GROUND_CEILING_FACTOR / std::abs(currentGroundGLA.second);////GROK
             currentPoint = observerPos;
             moveElementFromAngle(totalDistanceTarget, currentRadiantAngle, currentPoint, true);
-            (*m_memBackgroundDistance)[i] = getCameraDistance(observerPos, currentPoint, currentRadiantAngle);
+            (*m_memBackgroundDistance)[i] = getCameraDistanceOptimized(observerPos, currentPoint, currentDirX, currentDirY);
         }
         currentGroundGLA = {currentGLLatPos, -1.0f};
     }

@@ -263,24 +263,6 @@ float getDistance(const PairFloat_t &pointA, const PairFloat_t &pointB)
 }
 
 //===================================================================
-float getCameraDistance(const PairFloat_t &observerPoint, const PairFloat_t &targetPoint,
-                        float observerAngleRadiant, bool limit)
-{
-    float radAngleCalc;
-    float hyp = getDistance(observerPoint, targetPoint);
-    if(hyp < 1.0f)
-    {
-        return 1.0f;
-    }
-    radAngleCalc = std::abs(getTrigoAngle(observerPoint, targetPoint, false) - observerAngleRadiant);
-    if(limit && radAngleCalc > RAD_HALF_CONE_VISION && radAngleCalc < PI_DOUBLE - RAD_HALF_CONE_VISION)
-    {
-        radAngleCalc = RAD_HALF_CONE_VISION;
-    }
-    return std::abs(hyp * std::cos(radAngleCalc));
-}
-
-//===================================================================
 float getCameraDistanceOptimized(const PairFloat_t &observerPoint, const PairFloat_t &targetPoint, float dirX, float dirY)
 {
     float dx = targetPoint.first  - observerPoint.first;
