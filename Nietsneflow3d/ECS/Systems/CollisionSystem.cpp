@@ -480,6 +480,7 @@ void CollisionSystem::initArrayTag()
     m_tagArray.insert({CollisionTag_e::PLAYER_CT, CollisionTag_e::LOG_CT});
     m_tagArray.insert({CollisionTag_e::PLAYER_CT, CollisionTag_e::CHECKPOINT_CT});
     m_tagArray.insert({CollisionTag_e::PLAYER_CT, CollisionTag_e::SECRET_CT});
+    m_tagArray.insert({CollisionTag_e::PLAYER_CT, CollisionTag_e::EXIT_CT});
 
     m_tagArray.insert({CollisionTag_e::DETECT_MAP_CT, CollisionTag_e::WALL_CT});
     m_tagArray.insert({CollisionTag_e::DETECT_MAP_CT, CollisionTag_e::DOOR_CT});
@@ -865,7 +866,7 @@ bool CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args, bool shotEx
                     (args.tagCompB.m_tagA == CollisionTag_e::LOG_CT || args.tagCompB.m_tagA == CollisionTag_e::WALL_CT ||
                      args.tagCompB.m_tagA == CollisionTag_e::PLAYER_CT ||
                      args.tagCompB.m_tagA == CollisionTag_e::ENEMY_CT || args.tagCompB.m_tagA == CollisionTag_e::STATIC_SET_CT ||
-                     args.tagCompB.m_tagB == CollisionTag_e::BARREL_CT))
+                     args.tagCompB.m_tagB == CollisionTag_e::BARREL_CT || args.tagCompB.m_tagA == CollisionTag_e::EXIT_CT))
             {
                 if(args.tagCompA.m_tagA == CollisionTag_e::PLAYER_CT &&
                         args.tagCompB.m_tagA == CollisionTag_e::ENEMY_CT &&
