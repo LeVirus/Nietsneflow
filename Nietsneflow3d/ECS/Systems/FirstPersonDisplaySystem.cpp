@@ -568,7 +568,7 @@ void FirstPersonDisplaySystem::fillVertexFromEntity(uint32_t numEntity, uint32_t
         assert(numCom);
         FPSVisibleStaticElementComponent &fpsComp = m_componentsContainer.m_vectFPSVisibleStaticElementComp[*numCom];
         //if height sprite > 2 display even if behind wall
-        if(fpsComp.m_inGameSpriteSize.second > 2.0f)
+        if(fpsComp.m_inGameSpriteSize.second > 1.3f)
         {
             displayBehindWall = true;
         }
