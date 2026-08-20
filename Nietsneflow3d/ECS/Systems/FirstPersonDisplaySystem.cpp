@@ -82,6 +82,7 @@ void FirstPersonDisplaySystem::confCompVertexMemEntities()
     uint32_t toRemove = 0;
     uint32_t numIteration;
     OptUint_t numCom;
+    float playerRadiantAngle;
     for(uint32_t i = 0; i < mVectNumEntity.size(); ++i)
     {
         numIteration = 0;
@@ -98,6 +99,8 @@ void FirstPersonDisplaySystem::confCompVertexMemEntities()
         m_numVertexToDraw[i] = visionComp.m_vectVisibleEntities.size();
         m_entitiesNumMem.clear();
         m_memDoorDistance.clear();
+        playerRadiantAngle = getRadiantAngle(moveComp.m_degreeOrientation);
+        m_currentPlayerDir = {std::cos(playerRadiantAngle), -std::sin(playerRadiantAngle)};
         //if scratch continue
         if(rayCasting(mVectNumEntity[i]))
         {
@@ -220,7 +223,9 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent &gen
     assert(visionComp.m_vectVisibleEntities.size() > currentNormal);
     PairFloat_t centerPosB = getCenterPosition(mapCompB, genCollComp, numEntity);
     float radiantObserverAngle = getRadiantAngle(degreeObserverAngle),
-            cameraDistance = getCameraDistance(mapCompA.m_absoluteMapPositionPX, mapCompB.m_absoluteMapPositionPX, radiantObserverAngle, true);
+        cameraDistance = getCameraDistanceOptimized(mapCompA.m_absoluteMapPositionPX, mapCompB.m_absoluteMapPositionPX, m_currentPlayerDir.first, m_currentPlayerDir.second);
+    std::cos(radiantObserverAngle);
+    std::sin(radiantObserverAngle);
     float displayDistance = cameraDistance;
     if(cameraDistance > visionComp.m_distanceVisibility)
     {
@@ -617,10 +622,10 @@ bool FirstPersonDisplaySystem::confNormalEntityVertex(const std::pair<uint32_t, 
     assert(numCom);
     FPSVisibleStaticElementComponent &fpsStaticComp = m_componentsContainer.m_vectFPSVisibleStaticElementComp[*numCom];
     //quickfix
-    if(distance < MIN_DISTANCE_RAYCAST)
-    {
-        distance = MIN_DISTANCE_RAYCAST;
-    }
+    // if(distance < MIN_DISTANCE_RAYCAST)
+    // {
+    //     distance = MIN_DISTANCE_RAYCAST;
+    // }
     numCom = m_newComponentManager.getComponentEmplacement(numEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
     assert(numCom);
     SpriteTextureComponent &spriteComp = m_componentsContainer.m_vectSpriteTextureComp[*numCom];
@@ -839,9 +844,6 @@ bool FirstPersonDisplaySystem::rayCasting(uint32_t observerEntity)
     // float leftAngle = moveComp.m_degreeOrientation + HALF_CONE_VISION;
     float radiantObserverAngle = getRadiantAngle(moveComp.m_degreeOrientation);
     float currentRadiantAngle /*= getRadiantAngle(leftAngle)*/, currentLateralScreen = -1.0f;
-    float cameraRadiantAngle = getRadiantAngle(moveComp.m_degreeOrientation);
-    float dirX =  std::cos(cameraRadiantAngle);
-    float dirY = -std::sin(cameraRadiantAngle);
     float rayOffset, cameraX;
     float distanceBrut;
     if(m_groundTiledTextBackground)
@@ -874,7 +876,7 @@ bool FirstPersonDisplaySystem::rayCasting(uint32_t observerEntity)
                                              playerConfComp.m_frozen);
         if(targetPoint)
         {
-            m_memRaycastDist[j] = getCameraDistanceOptimized(mapCompCamera.m_absoluteMapPositionPX, std::get<0>(*targetPoint), dirX, dirY);
+            m_memRaycastDist[j] = getCameraDistanceOptimized(mapCompCamera.m_absoluteMapPositionPX, std::get<0>(*targetPoint), m_currentPlayerDir.first, m_currentPlayerDir.second);
             distanceBrut = getDistance(mapCompCamera.m_absoluteMapPositionPX, std::get<0>(*targetPoint));
             memRaycastDistance(*std::get<2>(*targetPoint), j, m_memRaycastDist[j], std::get<1>(*targetPoint), distanceBrut);
         }
