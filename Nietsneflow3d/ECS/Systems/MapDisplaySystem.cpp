@@ -112,8 +112,7 @@ void MapDisplaySystem::confFullMapPositionVertexEntities()
             continue;
         }
         MapCoordComponent &mapComp = m_componentsContainer.m_vectMapCoordComp[*compNum];
-        //get absolute position corner
-        corner = getUpLeftCorner(mapComp, it->first);
+        corner = getAbsolutePosition(mapComp.m_coord);
         //convert absolute position to relative
         confFullMapVertexElement(corner, it->first);
         ++it;
@@ -185,8 +184,7 @@ void MapDisplaySystem::confMiniMapPositionVertexEntities()
         MapCoordComponent &mapComp = m_componentsContainer.m_vectMapCoordComp[*compNum];
         if(checkBoundEntityMap(mapComp, min, max))
         {
-            //get absolute position corner
-            corner = getUpLeftCorner(mapComp, it->first);
+            corner = getAbsolutePosition(mapComp.m_coord);
             m_entitiesToDisplay.emplace_back(it->first);
             diffPosPX = corner - mapCompPlayer.m_absoluteMapPositionPX;
             //convert absolute position to relative
