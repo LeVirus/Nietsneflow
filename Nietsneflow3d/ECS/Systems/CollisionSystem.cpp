@@ -92,7 +92,7 @@ void CollisionSystem::execSystem()
             }
         }
         secondEntitiesLoop(mVectNumEntity[i], i, tagCompA);
-        if(tagCompA.m_tagA == CollisionTag_e::EXPLOSION_CT)
+        if(tagCompA.m_tagA == CollisionTag_e::EXPLOSION_CT || tagCompA.m_tagA == CollisionTag_e::EXPLOSION_ENEMY_CT)
         {
             setDamageCircle(mVectNumEntity[i], false);
         }
@@ -258,6 +258,7 @@ void CollisionSystem::treatGeneralCrushing(uint32_t entityNum)
 //===================================================================
 void CollisionSystem::treatEnemyTakeDamage(uint32_t enemyEntityNum, uint32_t damage)
 {
+    std::cerr << "FAA ";
     OptUint_t compNum = m_newComponentManager.getComponentEmplacement(enemyEntityNum, Components_e::ENEMY_CONF_COMPONENT);
     assert(compNum);
     EnemyConfComponent &enemyConfCompB = m_componentsContainer.m_vectEnemyConfComp[*compNum];
@@ -860,7 +861,7 @@ bool CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args, bool shotEx
                     m_memPlayerTeleport = true;
                 }
             }
-            else if(args.tagCompA.m_tagA == CollisionTag_e::EXPLOSION_CT)
+            else if(args.tagCompA.m_tagA == CollisionTag_e::EXPLOSION_CT || args.tagCompA.m_tagA == CollisionTag_e::EXPLOSION_ENEMY_CT)
             {
                 treatExplosionColl(args);
             }
