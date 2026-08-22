@@ -258,7 +258,6 @@ void CollisionSystem::treatGeneralCrushing(uint32_t entityNum)
 //===================================================================
 void CollisionSystem::treatEnemyTakeDamage(uint32_t enemyEntityNum, uint32_t damage)
 {
-    std::cerr << "FAA ";
     OptUint_t compNum = m_newComponentManager.getComponentEmplacement(enemyEntityNum, Components_e::ENEMY_CONF_COMPONENT);
     assert(compNum);
     EnemyConfComponent &enemyConfCompB = m_componentsContainer.m_vectEnemyConfComp[*compNum];
