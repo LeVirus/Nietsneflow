@@ -141,7 +141,7 @@ void FirstPersonDisplaySystem::confCompVertexMemEntities()
 void FirstPersonDisplaySystem::confSimpleTextVertexGroundCeiling(float observerAngle)
 {
     OptUint_t numCom;
-    float midPos = std::fmod(observerAngle, 90.0f) / 45.0f - 1.0f, leftPos = midPos - 2.0f, rightPos = midPos + 2.0f;
+    float midPos = std::fmod(observerAngle, 120.0f) / 60.0f - 1.0f, leftPos = midPos - 2.0f, rightPos = midPos + 2.0f;
     if(m_groundSimpleTextBackground)
     {
         numCom = m_newComponentManager.getComponentEmplacement(*m_groundSimpleTextBackground, Components_e::POSITION_VERTEX_COMPONENT);
