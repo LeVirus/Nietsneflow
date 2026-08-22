@@ -507,6 +507,9 @@ void CollisionSystem::initArrayTag()
     m_tagArray.insert({CollisionTag_e::EXPLOSION_CT, CollisionTag_e::ENEMY_CT});
     m_tagArray.insert({CollisionTag_e::EXPLOSION_CT, CollisionTag_e::BARREL_CT});
 
+    m_tagArray.insert({CollisionTag_e::EXPLOSION_ENEMY_CT, CollisionTag_e::PLAYER_CT});
+    m_tagArray.insert({CollisionTag_e::EXPLOSION_ENEMY_CT, CollisionTag_e::BARREL_CT});
+
     m_tagArray.insert({CollisionTag_e::ENEMY_CT, CollisionTag_e::PLAYER_CT});
     m_tagArray.insert({CollisionTag_e::ENEMY_CT, CollisionTag_e::WALL_CT});
     m_tagArray.insert({CollisionTag_e::ENEMY_CT, CollisionTag_e::DOOR_CT});
