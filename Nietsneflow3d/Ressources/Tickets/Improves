@@ -2,9 +2,6 @@ IMPROVE=========================================================================
 ==========================================================================================================
 
 ))
-Prevent big enemies to kill themselves with their own explosion
-
-))
 Change stars background
 Background move too fast
 
@@ -13,17 +10,6 @@ Portage Windows
 
 ))
 Change end Music AND change generic
-
--------------------------------------------------------------Level Design
-
-))
-Verif coherence murs
-
-))
-Verif all walls secrets
-
-))
-Check coherence vegetal / desk
 
 Beta test===========================================================================
 
@@ -34,6 +20,10 @@ Musique 9 LOOP ISSUE
 Voire TOutes les les boucles
 Lvl 12 voir gros enemies bloqués dans les endroits exigu 
 
+
+==========================================================================================================
+==========================================================================================================
+
 ))
 !!!
 SICKNES=========================================A VERIF EN BETA TEST
@@ -41,10 +31,20 @@ SICKNES=========================================A VERIF EN BETA TEST
 A VOIR ajouter un peu d'inertie lors des déplacements=====================OK
 
 
-==========================================================================================================
-
 ))
 Improve anim plasma------------------------~
+
+-------------------------------------------------------------Level Design
+
+))
+Verif coherence murs=========================OK
+
+))
+Verif all walls secrets======================OK
+
+))
+Check coherence vegetal / desk===================OK
+
 
 ==========================================================================================================
 ==========================================================================================================
@@ -67,6 +67,9 @@ Item loaded after enemies death on checkpoint are not pickable==================
 
 ))
 Issue object display behind wall on side screen========================OK
+
+))
+Prevent big enemies to kill themselves with their own explosion======================OK
 
 ))
 Change Ammo impact vertical position==================================OK 

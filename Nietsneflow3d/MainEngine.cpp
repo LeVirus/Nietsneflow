@@ -2042,7 +2042,8 @@ void MainEngine::confAmmoEntities(std::vector<uint32_t> &ammoEntities, Collision
         shotConfComp.m_damage = damage;
         if(damageRay)
         {
-            shotConfComp.m_damageCircleRayData = createDamageZoneEntity(damage, CollisionTag_e::EXPLOSION_CT, LEVEL_TILE_SIZE_PX);
+            CollisionTag_e tag = (collTag == CollisionTag_e::BULLET_ENEMY_CT) ? CollisionTag_e::EXPLOSION_ENEMY_CT : CollisionTag_e::EXPLOSION_CT;
+            shotConfComp.m_damageCircleRayData = createDamageZoneEntity(damage, tag, LEVEL_TILE_SIZE_PX);
         }
         if(visibleShot)
         {
