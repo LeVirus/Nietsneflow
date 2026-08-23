@@ -2,9 +2,6 @@ IMPROVE=========================================================================
 ==========================================================================================================
 
 ))
-Change bazooka weapon sprite from green to blue
-
-))
 Portage Windows
 
 ))
@@ -67,6 +64,9 @@ Increase display distance========================OK
 
 ))
 Item loaded after enemies death on checkpoint are not pickable====================OK
+
+))
+Change bazooka weapon sprite from green to blue==================OK
 
 ))
 Check 3 big enemies appear behind wall==========================OK
