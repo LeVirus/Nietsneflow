@@ -5,7 +5,6 @@
 #include <map>
 #include <cstdint>
 #include <constants.hpp>
-#include <iostream>
 
 using SetUi_t = std::set<uint32_t>;
 using VectSetUi_t = std::vector<SetUi_t>;
