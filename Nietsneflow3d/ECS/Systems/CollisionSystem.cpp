@@ -315,9 +315,11 @@ void CollisionSystem::confDropedObject(uint32_t objectEntity, uint32_t enemyEnti
     assert(compNum);
     MapCoordComponent &enemyMapComp = m_componentsContainer.m_vectMapCoordComp[*compNum];
     genComp.m_active = true;
-    objectMapComp.m_coord = enemyMapComp.m_coord;
-    addEntityToZone(objectEntity, objectMapComp.m_coord);
+    std::optional<PairUI_t> coord = getLevelCoord(enemyMapComp.m_absoluteMapPositionPX);
+    assert(coord);
+    objectMapComp.m_coord = *coord;
     objectMapComp.m_absoluteMapPositionPX = enemyMapComp.m_absoluteMapPositionPX;
+    addEntityToZone(objectEntity, objectMapComp.m_coord);
 }
 
 //===================================================================
