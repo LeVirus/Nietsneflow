@@ -1888,7 +1888,7 @@ void MainEngine::initStdCollisionCase(uint32_t entityNum, const PairUI_t &mapPos
     assert(compNum);
     RectangleCollisionComponent &rectComponent = m_ecsManager.getComponentManager().
                                             getComponentsContainer().m_vectRectangleCollisionComp[*compNum];
-    rectComponent.m_size = {LEVEL_TILE_SIZE_PX, LEVEL_TILE_SIZE_PX};
+    rectComponent.m_size = {LEVEL_TILE_SIZE_PX + LEVEL_THIRD_TILE_SIZE_PX, LEVEL_TILE_SIZE_PX + LEVEL_THIRD_TILE_SIZE_PX};
 }
 
 //===================================================================
