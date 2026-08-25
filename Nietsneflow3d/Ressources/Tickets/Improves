@@ -10,6 +10,7 @@ Change end Music AND change generic
 Beta test===========================================================================
 
 ))
+Musique lvl 5 Voir pour changer
 Musique 1 && 2 redondantes? Voir les musiques trop courtes===========OK
 Musique 8 ???=====~
 Musique 9 LOOP ISSUE=======================OK 
@@ -61,6 +62,9 @@ Fog not equal to center and screen limit=========================OK
 
 ))
 Increase display distance========================OK
+
+))
+Pour les monstres backrooms faire qu'ils tue au moindre contact==============OK
 
 ))
 Item loaded after enemies death on checkpoint are not pickable====================OK
