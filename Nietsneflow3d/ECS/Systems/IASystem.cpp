@@ -308,6 +308,12 @@ void IASystem::treatEnemyBehaviourAttack(uint32_t enemyEntity, MapCoordComponent
     {
         enemyConfComp.m_previousMove = {EnemyAttackPhase_e::TOTAL, EnemyAttackPhase_e::TOTAL};
     }
+    if(enemyConfComp.m_meleeOnly && distancePlayer < LEVEL_HALF_TILE_SIZE_PX && enemyConfComp.m_life > 1000)
+    {
+        enemyConfComp.m_attackPhase = EnemyAttackPhase_e::SHOOT;
+        enemyShoot(enemyConfComp, moveComp, enemyMapComp, distancePlayer);
+        activeSound(enemyEntity, static_cast<uint32_t>(EnemySoundEffect_e::ATTACK));
+    }
     if(enemyConfComp.m_stuck || ++timerComp.m_cycleCountB >= m_intervalEnemyBehaviour)
     {
         if((enemyConfComp.m_countTillLastAttack > 3 && timerComp.m_cycleCountD > 40) && (!enemyConfComp.m_meleeOnly || distancePlayer < LEVEL_HALF_TILE_SIZE_PX))
