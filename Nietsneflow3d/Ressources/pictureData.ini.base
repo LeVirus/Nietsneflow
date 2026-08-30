@@ -1,8 +1,8 @@
 #walltest.jpg ==> 0 Global.png ==> 1  FontTexture.png ==> 2 EnemyDemon.png ==> 3 GeneralSprites.png ==> 4 EnemyMarine.png ==> 5 Stars.png ==> 6 Simetra_green.png ==> 7 BossArachnotron.png ==> 8 BossCyberDemon.png ==> 9
 #EnemyBaronOfHell.png ==> 10 EnemyCacodemon.png ==> 11 EnemyDemonClaw.png ==> 12 EnemyZombieSergeant.png ==> 13  MenuFilled.png ==> 14 Font.png ==> 15  TitleMenu.png ==> 16 MenuLeft.png ==> 17  MenuRightLeft.png ==> 18 
-#NouvText.png ==> 19 BackroomText.png ==> 20   TreesFree.png ==> 21 Demon.png ==> 22 Weapons.png ==> 23 NGeneralSprites.png ==> 24 EnemyBackrooms.png ==> 25
+#NouvText.png ==> 19 BackroomText.png ==> 20   TreesFree.png ==> 21 Demon.png ==> 22 Weapons.png ==> 23 NGeneralSprites.png ==> 24 EnemyBackrooms.png ==> 25 EXPL.png ==> 26
 [PathToTexture]
-textures = walltest.jpg	Global.png FontTexture.png EnemyDemon.png GeneralSprites.png EnemyMarine.png Stars.png Simetra_green.png BossArachnotron.png BossCyberDemon.png EnemyBaronOfHell.png EnemyCacodemon.png EnemyDemonClaw.png EnemyZombieSergeant.png MenuFilled.png Font.png TitleMenu.png MenuLeft.png MenuRightLeft.png NouvText.png BackroomText.png TreesFree.png Demon.png Weapons.png NGeneralSprites.png EnemyBackrooms.png
+textures = walltest.jpg	Global.png FontTexture.png EnemyDemon.png GeneralSprites.png EnemyMarine.png Stars.png Simetra_green.png BossArachnotron.png BossCyberDemon.png EnemyBaronOfHell.png EnemyCacodemon.png EnemyDemonClaw.png EnemyZombieSergeant.png MenuFilled.png Font.png TitleMenu.png MenuLeft.png MenuRightLeft.png NouvText.png BackroomText.png TreesFree.png Demon.png Weapons.png NGeneralSprites.png EnemyBackrooms.png EXPL.png
 
  #4335 405  4522 599
 [SpriteLog]
@@ -2271,3 +2271,150 @@ texturePosX = 0.804688
 texturePosY = 0.851833
 textureWeight = 0.200195
 textureHeight = 0.130855
+
+[SpriteExplWhiteA]
+texture = 26
+texturePosX = 0
+texturePosY = 0.0260664
+textureWeight = 0.15047
+textureHeight = 0.220379
+
+[SpriteExplWhiteB]
+texture = 26
+texturePosX = 0.152038
+texturePosY = 0.0260664
+textureWeight = 0.15047
+textureHeight = 0.220379
+
+[SpriteExplWhiteC]
+texture = 26
+texturePosX = 0.304076
+texturePosY = 0.0260664
+textureWeight = 0.15047
+textureHeight = 0.220379
+
+[SpriteExplPlasmaA]
+texture = 26
+texturePosX = 0
+texturePosY = 0.267773
+textureWeight = 0.15047
+textureHeight = 0.2109
+
+[SpriteExplPlasmaB]
+texture = 26
+texturePosX = 0.152038
+texturePosY = 0.267773
+textureWeight = 0.15047
+textureHeight = 0.2109
+
+[SpriteExplPlasmaC]
+texture = 26
+texturePosX = 0.304076
+texturePosY = 0.267773
+textureWeight = 0.15047
+textureHeight = 0.2109
+
+[SpriteExplGreenA]
+texture = 26
+texturePosX = 0
+texturePosY = 0.518957
+textureWeight = 0.15047
+textureHeight = 0.201422
+
+[SpriteExplGreenB]
+texture = 26
+texturePosX = 0.152038
+texturePosY = 0.518957
+textureWeight = 0.15047
+textureHeight = 0.201422
+
+[SpriteExplGreenC]
+texture = 26
+texturePosX = 0.304076
+texturePosY = 0.518957
+textureWeight = 0.15047
+textureHeight = 0.201422
+
+[SpriteExplBigA]
+texture = 26
+texturePosX = 0
+texturePosY = 0.739336
+textureWeight = 0.15047
+textureHeight = 0.229858
+
+[SpriteExplBigB]
+texture = 26
+texturePosX = 0.152038
+texturePosY = 0.739336
+textureWeight = 0.15047
+textureHeight = 0.229858
+
+[SpriteExplBigC]
+texture = 26
+texturePosX = 0.304076
+texturePosY = 0.739336
+textureWeight = 0.15047
+textureHeight = 0.229858
+
+[SpriteExplRocketA]
+texture = 26
+texturePosX = 0.521944
+texturePosY = 0
+textureWeight = 0.15047
+textureHeight = 0.21564
+
+[SpriteExplRocketB]
+texture = 26
+texturePosX = 0.673982
+texturePosY = 0
+textureWeight = 0.15047
+textureHeight = 0.21564
+
+[SpriteExplRocketC]
+texture = 26
+texturePosX = 0.82602
+texturePosY = 0
+textureWeight = 0.15047
+textureHeight = 0.21564
+
+[SpriteExplGreenBA]
+texture = 26
+texturePosX = 0.521944
+texturePosY = 0.244076
+textureWeight = 0.15047
+textureHeight = 0.232227
+
+[SpriteExplGreenBB]
+texture = 26
+texturePosX = 0.673982
+texturePosY = 0.244076
+textureWeight = 0.15047
+textureHeight = 0.232227
+
+[SpriteExplGreenBC]
+texture = 26
+texturePosX = 0.82602
+texturePosY = 0.244076
+textureWeight = 0.15047
+textureHeight = 0.232227
+
+[SpriteExplPurpleA]
+texture = 26
+texturePosX = 0.521944
+texturePosY = 0.50237
+textureWeight = 0.15047
+textureHeight = 0.236967
+
+[SpriteExplPurpleB]
+texture = 26
+texturePosX = 0.673982
+texturePosY = 0.50237
+textureWeight = 0.15047
+textureHeight = 0.236967
+
+[SpriteExplPurpleC]
+texture = 26
+texturePosX = 0.82602
+texturePosY = 0.50237
+textureWeight = 0.15047
+textureHeight = 0.236967

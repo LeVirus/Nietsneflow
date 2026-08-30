@@ -2,10 +2,13 @@ IMPROVE=========================================================================
 ==========================================================================================================
 
 ))
-Merge gun pistol and machine gun ammo
+If load level with empty weapons (end level after shoot last bullet?) make the game crash
 
 ))
-Change explosion for all projectiles
+Augmenter le rayon d'ejection des explosion
+
+))
+Merge gun pistol and machine gun ammo
 
 ))
 Portage Windows
@@ -62,6 +65,9 @@ Gros enemi doit etre visible derriere un mur======================OK
 
 ))
 with bigger collision mask enemies can stay stuck in wall============================OK
+
+))
+Change explosion for all projectiles================OK
 
 ))
 Fog not equal to center and screen limit=========================OK
