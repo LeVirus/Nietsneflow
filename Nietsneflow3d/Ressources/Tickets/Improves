@@ -2,7 +2,7 @@ IMPROVE=========================================================================
 ==========================================================================================================
 
 ))
-Augmenter le rayon d'ejection des explosion
+Plasma shot dissapear if door perpend, and angle wall travers
 
 ))
 Merge gun pistol and machine gun ammo
@@ -65,6 +65,9 @@ Gros enemi doit etre visible derriere un mur======================OK
 
 ))
 If load level with empty weapons (end level after shoot last bullet?) make the game crash==================OK
+
+))
+Augmenter le rayon d'ejection des explosion==================OK
 
 ))
 with bigger collision mask enemies can stay stuck in wall============================OK

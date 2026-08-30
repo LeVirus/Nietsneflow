@@ -2731,7 +2731,7 @@ void MainEngine::loadVisibleShotData(const std::vector<SpriteData> &vectSprite, 
                 maxWidth = memFPSGLSizeComp.m_memGLSizeData[i].first;
             }
         }
-        shotComp.m_ejectExplosionRay = maxWidth * LEVEL_HALF_TILE_SIZE_PX;
+        shotComp.m_ejectExplosionRay = maxWidth * LEVEL_TILE_SIZE_PX;
     }
 }
 

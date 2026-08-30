@@ -519,5 +519,5 @@ void IASystem::confNewVisibleShot(const std::vector<uint32_t> &visibleShots)
             maxWidth = memFPSGLSizeCompTarget.m_memGLSizeData[i].first;
         }
     }
-    targetShotConfComp.m_ejectExplosionRay = maxWidth * LEVEL_HALF_TILE_SIZE_PX;
+    targetShotConfComp.m_ejectExplosionRay = maxWidth * LEVEL_TILE_SIZE_PX;
 }
