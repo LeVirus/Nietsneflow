@@ -2,13 +2,13 @@ IMPROVE=========================================================================
 ==========================================================================================================
 
 ))
-If load level with empty weapons (end level after shoot last bullet?) make the game crash
-
-))
 Augmenter le rayon d'ejection des explosion
 
 ))
 Merge gun pistol and machine gun ammo
+
+))
+Boss final rentre dans les murs visuellement
 
 ))
 Portage Windows
@@ -62,6 +62,9 @@ Check coherence vegetal / desk===================OK
 
 ))
 Gros enemi doit etre visible derriere un mur======================OK
+
+))
+If load level with empty weapons (end level after shoot last bullet?) make the game crash==================OK
 
 ))
 with bigger collision mask enemies can stay stuck in wall============================OK

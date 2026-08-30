@@ -474,6 +474,10 @@ void MainEngine::loadPlayerGear(bool beginLevel)
     }
     weaponConf.m_currentWeapon = playerConf.m_currentWeapon;
     weaponConf.m_previousWeapon = playerConf.m_previousWeapon;
+    if(weaponConf.m_weaponsData[weaponConf.m_currentWeapon].m_ammunationsCount == 0)
+    {
+        changePlayerWeapon(weaponConf, true);
+    }
     playerConfComp.m_life = playerConf.m_life;
     StaticDisplaySystem *staticDisplay = m_ecsManager.getSystemManager().
             searchSystemByType<StaticDisplaySystem>(static_cast<uint32_t>(Systems_e::STATIC_DISPLAY_SYSTEM));
