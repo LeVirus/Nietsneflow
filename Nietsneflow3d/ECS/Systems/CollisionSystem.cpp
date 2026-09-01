@@ -714,14 +714,29 @@ bool CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args, bool shotEx
         OptUint_t compNum = m_newComponentManager.getComponentEmplacement(args.entityNumB, Components_e::RECTANGLE_COLLISION_COMPONENT);
         assert(compNum);
         RectangleCollisionComponent &rectCompB = m_componentsContainer.m_vectRectangleCollisionComp[*compNum];
-        if(args.tagCompB.m_tagA == CollisionTag_e::DOOR_CT)
+        if(args.tagCompA.m_tagA == CollisionTag_e::BULLET_PLAYER_CT)
         {
-            collision = treatDoorCollisionFirstCircle(args, *circleCompA, rectCompB);
+            OptUint_t compNum = m_newComponentManager.getComponentEmplacement(args.entityNumA, Components_e::SHOT_CONF_COMPONENT);
+            assert(compNum);
+            ShotConfComponent &shotConfComp = m_componentsContainer.m_vectShotConfComp[*compNum];
+            if(!shotConfComp.m_destructPhase && !shotConfComp.m_ejectMode)
+            {
+                //plasma case velocity too high
+                collision = treatCollisionPlayerVisibleShot(args, rectCompB, *circleCompA);
+            }
+
         }
-        else
+        if(!collision)
         {
-            collision = checkCircleRectCollision(args.mapCompA.m_absoluteMapPositionPX, circleCompA->m_ray,
-                                                 args.mapCompB.m_absoluteMapPositionPX, rectCompB.m_size);
+            if(args.tagCompB.m_tagA == CollisionTag_e::DOOR_CT)
+            {
+                collision = treatDoorCollisionFirstCircle(args, *circleCompA, rectCompB);
+            }
+            else
+            {
+                collision = checkCircleRectCollision(args.mapCompA.m_absoluteMapPositionPX, circleCompA->m_ray,
+                                                     args.mapCompB.m_absoluteMapPositionPX, rectCompB.m_size);
+            }
         }
         if(collision)
         {
@@ -984,6 +999,42 @@ bool CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args, bool shotEx
         }
     }
     return true;
+}
+
+//===================================================================
+bool CollisionSystem::treatCollisionPlayerVisibleShot(CollisionArgs &args, RectangleCollisionComponent &rectCompB, CircleCollisionComponent &circleCompA)
+{
+    OptUint_t compNumA = m_newComponentManager.getComponentEmplacement(args.entityNumA, Components_e::MOVEABLE_COMPONENT);
+    assert(compNumA);
+    MoveableComponent &moveComp = m_componentsContainer.m_vectMoveableComp[*compNumA];
+    if(moveComp.m_velocity > 6.0f)
+    {
+        PairFloat_t memPos = args.mapCompA.m_absoluteMapPositionPX;
+        bool collision;
+        float orientation = moveComp.m_degreeOrientation + 180.0f;
+        if(orientation > 360.0f)
+        {
+            orientation -= 360.0f;
+        }
+        //Back position
+        moveElementFromAngle(6.0f, getRadiantAngle(moveComp.m_degreeOrientation), args.mapCompA.m_absoluteMapPositionPX);
+        if(args.tagCompB.m_tagA == CollisionTag_e::DOOR_CT)
+        {
+            collision = treatDoorCollisionFirstCircle(args, circleCompA, rectCompB);
+        }
+        else
+        {
+            collision = checkCircleRectCollision(args.mapCompA.m_absoluteMapPositionPX, circleCompA.m_ray,
+                                                 args.mapCompB.m_absoluteMapPositionPX, rectCompB.m_size);
+        }
+        if(!collision)
+        {
+            //Reinit position
+            args.mapCompA.m_absoluteMapPositionPX = memPos;
+        }
+        return collision;
+    }
+    return false;
 }
 
 //===================================================================
