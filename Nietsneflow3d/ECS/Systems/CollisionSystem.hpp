@@ -78,6 +78,7 @@ private:
     bool treatDoorCollisionFirstCircle(CollisionArgs &args, const CircleCollisionComponent &circleCompA,
                                        const RectangleCollisionComponent &rectCompB);
     bool treatCollisionFirstCircle(CollisionArgs &args, bool shotExplosionEject = false);
+    bool treatCollisionPlayerVisibleShot(CollisionArgs &args, RectangleCollisionComponent &rectCompB, CircleCollisionComponent &circleCompA);
     bool treatCollisionPlayer(CollisionArgs &args, CircleCollisionComponent &circleCompA, RectangleCollisionComponent &rectCompB);
     void treatActionPlayerRect(CollisionArgs &args);
     void treatExplosionColl(CollisionArgs &args);
