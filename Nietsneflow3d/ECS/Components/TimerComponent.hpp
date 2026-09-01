@@ -13,7 +13,7 @@ struct TimerComponent : public ecs::Component
     }
     std::chrono::time_point<std::chrono::system_clock> m_clock;
     std::optional<uint32_t> m_timeIntervalOptional;
-    uint32_t m_cycleCountA = 0, m_cycleCountB = 0, m_cycleCountC = 0, m_cycleCountD = 0;
+    uint32_t m_cycleCountA = 0, m_cycleCountB = 0, m_cycleCountC = 0, m_cycleCountD = 0, m_cycleCountE = 0;
     virtual ~TimerComponent() = default;
 };
 

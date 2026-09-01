@@ -2,6 +2,9 @@ IMPROVE=========================================================================
 ==========================================================================================================
 
 ))
+Enemies appear behind wall??
+
+))
 Merge gun pistol and machine gun ammo
 
 ))
@@ -62,6 +65,9 @@ Gros enemi doit etre visible derriere un mur======================OK
 
 ))
 If load level with empty weapons (end level after shoot last bullet?) make the game crash==================OK
+
+))
+Augmenter le délai de changement de phase pour les ennemies bloqués==================OK
 
 ))
 Plasma shot dissapear if door perpend, and angle wall travers====================OK
