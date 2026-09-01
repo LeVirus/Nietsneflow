@@ -314,12 +314,13 @@ void IASystem::treatEnemyBehaviourAttack(uint32_t enemyEntity, MapCoordComponent
         enemyShoot(enemyConfComp, moveComp, enemyMapComp, distancePlayer);
         activeSound(enemyEntity, static_cast<uint32_t>(EnemySoundEffect_e::ATTACK));
     }
-    if(enemyConfComp.m_stuck || ++timerComp.m_cycleCountB >= m_intervalEnemyBehaviour)
+    if((enemyConfComp.m_stuck && m_intervalEnemyStuck > ++timerComp.m_cycleCountE) || ++timerComp.m_cycleCountB >= m_intervalEnemyBehaviour)
     {
         if((enemyConfComp.m_countTillLastAttack > 3 && timerComp.m_cycleCountD > 40) && (!enemyConfComp.m_meleeOnly || distancePlayer < LEVEL_HALF_TILE_SIZE_PX))
         {
             enemyConfComp.m_attackPhase = EnemyAttackPhase_e::SHOOT;
             enemyConfComp.m_stuck = false;
+            timerComp.m_cycleCountE = 0;
         }
         else
         {
@@ -337,6 +338,7 @@ void IASystem::treatEnemyBehaviourAttack(uint32_t enemyEntity, MapCoordComponent
                 enemyConfComp.m_attackPhase != std::get<1>(enemyConfComp.m_previousMove)))
             {
                 enemyConfComp.m_stuck = false;
+                timerComp.m_cycleCountE = 0;
             }
             else
             {
