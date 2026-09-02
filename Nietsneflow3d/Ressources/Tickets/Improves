@@ -2,7 +2,7 @@ IMPROVE=========================================================================
 ==========================================================================================================
 
 ))
-Enemies appear behind wall??
+Improve barels anim
 
 ))
 Merge gun pistol and machine gun ammo
@@ -65,6 +65,9 @@ Gros enemi doit etre visible derriere un mur======================OK
 
 ))
 If load level with empty weapons (end level after shoot last bullet?) make the game crash==================OK
+
+))
+Enemies appear behind wall??====================~~~~
 
 ))
 Augmenter le délai de changement de phase pour les ennemies bloqués==================OK
