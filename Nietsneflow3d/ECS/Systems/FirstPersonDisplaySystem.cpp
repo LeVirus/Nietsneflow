@@ -577,7 +577,7 @@ void FirstPersonDisplaySystem::fillVertexFromEntity(uint32_t numEntity, uint32_t
     if(vertex.loadVertexStandardEntityByLine(posComp, spriteComp, distance,
                                              m_memRaycastDist, displayBehindWall) && displayBehindWall)
     {
-        distance += 20.0f;
+        distance += 5.0f;
     }
     m_entitiesNumMem.insert(EntityData(distance, spriteComp.m_spriteData->m_textureNum, numIteration));
 }
