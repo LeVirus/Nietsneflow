@@ -2,19 +2,10 @@ IMPROVE=========================================================================
 ==========================================================================================================
 
 ))
-Improve barels anim
-
-))
-Merge gun pistol and machine gun ammo
-
-))
-Boss final rentre dans les murs visuellement
+Change end Music AND change generic
 
 ))
 Portage Windows
-
-))
-Change end Music AND change generic
 
 Beta test===========================================================================
 
@@ -40,6 +31,9 @@ SICKNES=========================================A VERIF EN BETA TEST
 ))
 A VOIR ajouter un peu d'inertie lors des déplacements=====================OK
 
+
+))
+Boss final rentre dans les murs visuellement=========================~~
 
 ))
 Improve anim plasma------------------------~
@@ -68,6 +62,12 @@ If load level with empty weapons (end level after shoot last bullet?) make the g
 
 ))
 Enemies appear behind wall??====================~~~~
+
+))
+Improve barels anim======================OK
+
+))
+Merge gun pistol and machine gun ammo====================~~
 
 ))
 Augmenter le délai de changement de phase pour les ennemies bloqués==================OK
