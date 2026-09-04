@@ -622,10 +622,10 @@ bool FirstPersonDisplaySystem::confNormalEntityVertex(const std::pair<uint32_t, 
     assert(numCom);
     FPSVisibleStaticElementComponent &fpsStaticComp = m_componentsContainer.m_vectFPSVisibleStaticElementComp[*numCom];
     //quickfix
-    // if(distance < MIN_DISTANCE_RAYCAST)
-    // {
-    //     distance = MIN_DISTANCE_RAYCAST;
-    // }
+    if(tag != CollisionTag_e::ENEMY_CT && distance < MIN_DISTANCE_RAYCAST)
+    {
+        distance = MIN_DISTANCE_RAYCAST;
+    }
     numCom = m_newComponentManager.getComponentEmplacement(numEntity, Components_e::SPRITE_TEXTURE_COMPONENT);
     assert(numCom);
     SpriteTextureComponent &spriteComp = m_componentsContainer.m_vectSpriteTextureComp[*numCom];
