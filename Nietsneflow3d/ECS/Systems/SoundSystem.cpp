@@ -24,16 +24,21 @@ void SoundSystem::execSystem()
         compNum = m_newComponentManager.getComponentEmplacement(mVectNumEntity[i], Components_e::AUDIO_COMPONENT);
         assert(compNum);
         AudioComponent &audioComp = m_componentsContainer.m_vectAudioComp[*compNum];
+        ALenum state;
         for(uint32_t j = 0; j < audioComp.m_soundElements.size(); ++j)
         {
             if(audioComp.m_soundElements[j] && audioComp.m_soundElements[j]->m_toPlay)
             {
-                std::optional<float> volume = getVolumeFromDistance(mVectNumEntity[i], audioComp.m_maxDistance);
-                if(volume)
+                alGetSourcei(audioComp.m_soundElements[j]->m_sourceALID, AL_SOURCE_STATE, &state);
+                if(state != AL_PLAYING)
                 {
-                    alSourcef(audioComp.m_soundElements[j]->m_sourceALID, AL_GAIN,
-                              *volume * static_cast<float>(m_effectsVolume) / 100.0f);
-                    play(audioComp.m_soundElements[j]->m_sourceALID);
+                    std::optional<float> volume = getVolumeFromDistance(mVectNumEntity[i], audioComp.m_maxDistance);
+                    if(volume)
+                    {
+                        alSourcef(audioComp.m_soundElements[j]->m_sourceALID, AL_GAIN,
+                                  *volume * static_cast<float>(m_effectsVolume) / 100.0f);
+                        play(audioComp.m_soundElements[j]->m_sourceALID);
+                    }
                 }
                 audioComp.m_soundElements[j]->m_toPlay = false;
             }
