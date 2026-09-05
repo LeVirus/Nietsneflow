@@ -5,6 +5,9 @@ IMPROVE=========================================================================
 Portage Windows
 
 ))
+Wall move scratch to fix wall make player lock in fix wall
+
+))
 Pour les bruitages des monstres backroom ne pas couper les bruitages précédents
 
 ))
@@ -60,6 +63,9 @@ Check coherence vegetal / desk===================OK
 
 ))
 Gros enemi doit etre visible derriere un mur======================OK
+
+))
+Remove collision mask when enemies dies==================OK
 
 ))
 If load level with empty weapons (end level after shoot last bullet?) make the game crash==================OK

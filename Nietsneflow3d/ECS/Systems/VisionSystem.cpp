@@ -389,6 +389,10 @@ void VisionSystem::updateEnemySprites(uint32_t enemyEntity, uint32_t observerEnt
         if(enemyConfComp.m_currentSprite == it->second.second)
         {
             enemyConfComp.m_displayMode = EnemyDisplayMode_e::DEAD;
+            OptUint_t compNum = m_newComponentManager.getComponentEmplacement(enemyEntity, Components_e::GENERAL_COLLISION_COMPONENT);
+            assert(compNum);
+            GeneralCollisionComponent &collComp = m_componentsContainer.m_vectGeneralCollisionComp[*compNum];
+            collComp.m_tagA = CollisionTag_e::DEAD_CORPSE_CT;
             if(enemyConfComp.m_endLevel)
             {
                 m_refMainEngine->activeEndLevel();
