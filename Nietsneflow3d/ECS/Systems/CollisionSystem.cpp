@@ -191,7 +191,7 @@ bool CollisionSystem::checkEnemyRemoveCollisionMask(uint32_t entityNum)
     OptUint_t numCom = m_newComponentManager.getComponentEmplacement(entityNum, Components_e::ENEMY_CONF_COMPONENT);
     assert(numCom);
     EnemyConfComponent &enemyConfComp = m_componentsContainer.m_vectEnemyConfComp[*numCom];
-    if(enemyConfComp.m_displayMode == EnemyDisplayMode_e::DEAD)
+    if(enemyConfComp.m_displayMode == EnemyDisplayMode_e::DYING)
     {
         numCom = m_newComponentManager.getComponentEmplacement(entityNum, Components_e::MOVEABLE_COMPONENT);
         assert(numCom);
@@ -464,8 +464,7 @@ void CollisionSystem::rmEnemyCollisionMaskEntity(uint32_t numEntity)
     OptUint_t compNum = m_newComponentManager.getComponentEmplacement(numEntity, Components_e::GENERAL_COLLISION_COMPONENT);
     assert(compNum);
     GeneralCollisionComponent &tagComp = m_componentsContainer.m_vectGeneralCollisionComp[*compNum];
-
-    tagComp.m_tagA = CollisionTag_e::DEAD_CORPSE_CT;
+    tagComp.m_tagA = CollisionTag_e::GHOST_CT;
 }
 
 //===================================================================
