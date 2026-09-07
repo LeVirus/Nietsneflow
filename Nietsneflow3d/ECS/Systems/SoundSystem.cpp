@@ -29,7 +29,19 @@ void SoundSystem::execSystem()
         {
             if(audioComp.m_soundElements[j] && audioComp.m_soundElements[j]->m_toPlay)
             {
-                alGetSourcei(audioComp.m_soundElements[j]->m_sourceALID, AL_SOURCE_STATE, &state);
+                compNum = m_newComponentManager.getComponentEmplacement(mVectNumEntity[i], Components_e::GENERAL_COLLISION_COMPONENT);
+                if(compNum)
+                {
+                    GeneralCollisionComponent &genComp = m_componentsContainer.m_vectGeneralCollisionComp[*compNum];
+                    if(genComp.m_tagA == CollisionTag_e::ENEMY_CT)
+                    {
+                        alGetSourcei(audioComp.m_soundElements[j]->m_sourceALID, AL_SOURCE_STATE, &state);
+                    }
+                    else
+                    {
+                        state = AL_INITIAL;
+                    }
+                }
                 if(state != AL_PLAYING)
                 {
                     std::optional<float> volume = getVolumeFromDistance(mVectNumEntity[i], audioComp.m_maxDistance);
