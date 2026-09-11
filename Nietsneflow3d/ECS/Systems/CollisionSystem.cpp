@@ -53,7 +53,6 @@ void CollisionSystem::setUsedComponents()
 //===================================================================
 void CollisionSystem::execSystem()
 {
-    std::cerr << "\n";
     std::optional<uint32_t> numCompNum, moveCompNum, segmentCompNum;
     System::execSystem();
     m_memPlayerTeleport = false;
@@ -247,7 +246,6 @@ void CollisionSystem::treatGeneralCrushing(uint32_t entityNum)
     PlayerConfComponent &playerComp = m_componentsContainer.m_vectPlayerConfComp[*compNum];
     if(!crush && !playerComp.m_insideWall)
     {
-        std::cerr << "  -------CRUSHFFFFF---------   ";
         playerComp.m_crush = false;
         playerComp.m_frozen = false;
     }
@@ -1402,7 +1400,6 @@ void CollisionSystem::treatCrushing(uint32_t entityNum)
         assert(compNumPlayer);
         PlayerConfComponent &playerComp = m_componentsContainer.m_vectPlayerConfComp[*compNumPlayer];
         playerComp.m_crush = true;
-        std::cerr << "  --------------CRUSHTTTTT------------   ";
         playerComp.m_frozen = true;
     }
     else
@@ -1717,7 +1714,6 @@ void CollisionSystem::collisionEject(MapCoordComponent &mapComp, float diffX, fl
             std::get<0>(m_memCrush.back()).second = diffY;
         }
         mapComp.m_absoluteMapPositionPX.second += diffY;
-        std::cerr << diffY << " EJJYY  ";
     }
     if(!limitEjectY && (limitEjectX || std::abs(diffY) > std::abs(diffX)))
     {
@@ -1726,7 +1722,6 @@ void CollisionSystem::collisionEject(MapCoordComponent &mapComp, float diffX, fl
             std::get<0>(m_memCrush.back()).first = diffX;
         }
         mapComp.m_absoluteMapPositionPX.first += diffX;
-        std::cerr << diffY << " EJJXX  ";
     }
 }
 
