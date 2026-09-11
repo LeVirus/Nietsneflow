@@ -831,11 +831,13 @@ bool FirstPersonDisplaySystem::rayCasting(uint32_t observerEntity)
     PlayerConfComponent &playerConfComp = m_componentsContainer.m_vectPlayerConfComp[*compNum];
     if(isInsideWall(mapCompCamera.m_absoluteMapPositionPX))
     {
+        std::cerr << "  INSIDEWALLTTT=============  ";
         playerConfComp.m_insideWall = true;
         return true;
     }
     else
     {
+        std::cerr << "  ========INSIDEWALL=============FFF  ";
         playerConfComp.m_insideWall = false;
     }
     numCom = m_newComponentManager.getComponentEmplacement(observerEntity, Components_e::MOVEABLE_COMPONENT);
