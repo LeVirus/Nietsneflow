@@ -976,7 +976,7 @@ bool CollisionSystem::treatCollisionFirstCircle(CollisionArgs &args, bool shotEx
             activeSound(args.entityNumA);
             shotConfComp.m_destructPhase = true;
             shotConfComp.m_spriteShotNum = 0;
-            if(shotConfComp.m_damageCircleRayData || circleDamageObstructed(args))
+            if(shotConfComp.m_damageCircleRayData && circleDamageObstructed(args))
             {
                 return true;
             }

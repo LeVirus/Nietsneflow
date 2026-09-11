@@ -89,7 +89,7 @@ struct EnemyData
     std::optional<uint32_t> m_meleeDamage, m_simultaneousShot;
     bool m_frozenOnAttack;
     std::optional<PairUI_t> m_endLevelPos;
-    std::optional<float> m_damageZone;
+    std::optional<float> m_damageZone = std::nullopt;
     float m_velocity, m_shotVelocity;
     bool m_traversable, m_meleeOnly;
 };

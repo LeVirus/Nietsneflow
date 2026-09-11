@@ -4,9 +4,6 @@ IMPROVE=========================================================================
 ))
 Portage Windows
 
-
-Demon enemies shoot and don"t touch player in level 3
-
 ))
 Wall move scratch to fix wall make player lock in fix wall==================??
 Player travers wall==================??
@@ -66,6 +63,9 @@ Check coherence vegetal / desk===================OK
 
 ))
 Gros enemi doit etre visible derriere un mur======================OK
+
+))
+Demon enemies shoot and don"t touch player in level 3========================OK
 
 ))
 Remove collision mask when enemies dies==================OK
