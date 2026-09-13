@@ -3931,7 +3931,14 @@ std::optional<uint32_t> MainEngine::createStaticElementEntity(LevelStaticElement
     assert(compNum);
     CircleCollisionComponent &circleComp = m_ecsManager.getComponentManager().
                                            getComponentsContainer().m_vectCircleCollisionComp[*compNum];
-    circleComp.m_ray = staticElementData.m_inGameSpriteSize.first * LEVEL_THIRD_TILE_SIZE_PX;
+    if(staticElementData.m_inGameSpriteSize.first <= EPSILON_DOUBLE)
+    {
+        circleComp.m_ray = LEVEL_HALF_TILE_SIZE_PX;
+    }
+    else
+    {
+        circleComp.m_ray = staticElementData.m_inGameSpriteSize.first * LEVEL_THIRD_TILE_SIZE_PX;
+    }
     confStaticComponent(entityNum, staticElementData.m_inGameSpriteSize, elementType);
     compNum= m_ecsManager.getComponentManager().getComponentEmplacement(entityNum, Components_e::SPRITE_TEXTURE_COMPONENT);
     assert(compNum);
