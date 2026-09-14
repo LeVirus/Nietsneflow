@@ -404,7 +404,7 @@ void InputSystem::treatPlayerMove(PlayerConfComponent &playerComp, MoveableCompo
     {
         playerComp.m_velocityInertie = INIERTIE_FACTOR;
     }
-    if(playerComp.m_inMovement && !playerComp.m_frozen)
+    if(playerComp.m_inMovement && !playerComp.m_crush)
     {
         moveComp.m_currentDegreeMoveDirection = moveComp.m_degreeOrientation;
         switch(currentMoveDirection)

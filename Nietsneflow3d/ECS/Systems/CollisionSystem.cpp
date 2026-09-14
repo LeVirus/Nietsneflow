@@ -247,7 +247,6 @@ void CollisionSystem::treatGeneralCrushing(uint32_t entityNum)
     if(!crush && !playerComp.m_insideWall)
     {
         playerComp.m_crush = false;
-        playerComp.m_frozen = false;
     }
     if(playerComp.m_crush)
     {
@@ -1400,7 +1399,7 @@ void CollisionSystem::treatCrushing(uint32_t entityNum)
         assert(compNumPlayer);
         PlayerConfComponent &playerComp = m_componentsContainer.m_vectPlayerConfComp[*compNumPlayer];
         playerComp.m_crush = true;
-        playerComp.m_frozen = true;
+        playerComp.m_crush = true;
     }
     else
     {
@@ -1513,6 +1512,7 @@ void CollisionSystem::calcBulletSegment(SegmentCollisionComponent &segmentCompA)
 void CollisionSystem::collisionCircleRectEject(CollisionArgs &args, float circleRay,
                                                const RectangleCollisionComponent &rectCollB, bool visibleShotFirstEject)
 {
+    bool playerCase = (args.tagCompA.m_tagA == CollisionTag_e::PLAYER_CT);
     OptUint_t compNum = m_newComponentManager.getComponentEmplacement(args.entityNumA, Components_e::MAP_COORD_COMPONENT);
     assert(compNum);
     MapCoordComponent &mapComp = m_componentsContainer.m_vectMapCoordComp[*compNum];
@@ -1546,11 +1546,12 @@ void CollisionSystem::collisionCircleRectEject(CollisionArgs &args, float circle
     {
         return;
     }
-    if(args.tagCompA.m_tagA == CollisionTag_e::PLAYER_CT || args.tagCompA.m_tagA == CollisionTag_e::ENEMY_CT)
+    if(playerCase || args.tagCompA.m_tagA == CollisionTag_e::ENEMY_CT)
     {
         crushMode = args.tagCompB.m_tagA == CollisionTag_e::WALL_CT;
     }
-    collisionEject(mapComp, diffX, diffY, limitEjectY, limitEjectX, crushMode);
+    collisionEject(mapComp, diffX, diffY, limitEjectY, limitEjectX, crushMode, playerCase);
+    treatPlayerCrushDie(args, crushMode, diffX, diffY);
     addEntityToZone(args.entityNumA, *getLevelCoord(mapComp.m_absoluteMapPositionPX));
     if(crushMode)
     {
@@ -1564,6 +1565,48 @@ void CollisionSystem::collisionCircleRectEject(CollisionArgs &args, float circle
             {
                 std::get<3>(m_memCrush.back()) = moveWallComp.m_directionMove[moveWallComp.m_currentMove].first;
             }
+        }
+    }
+}
+
+//===================================================================
+void CollisionSystem::treatPlayerCrushDie(CollisionArgs &args, bool crushMode, float diffX, float diffY)
+{
+    if(args.tagCompA.m_tagA == CollisionTag_e::PLAYER_CT)
+    {
+        OptUint_t compNum = m_newComponentManager.getComponentEmplacement(args.entityNumA, Components_e::PLAYER_CONF_COMPONENT);
+        assert(compNum);
+        PlayerConfComponent &playerComp = m_componentsContainer.m_vectPlayerConfComp[*compNum];
+        if(!crushMode)
+        {
+            playerComp.m_previousEject = std::nullopt;
+            playerComp.m_secondToLastEject = std::nullopt;
+        }
+        else
+        {
+            if(playerComp.m_previousEject && playerComp.m_secondToLastEject && std::abs(diffX) == 26.0f &&
+                std::abs(playerComp.m_previousEject->first) == 26.0f && std::abs(playerComp.m_secondToLastEject->first) == 26.0f)
+            {
+                if(diffX == playerComp.m_secondToLastEject->first && ((diffX == -26.0f && playerComp.m_previousEject->first == 26.0f) ||
+                                                                       (diffX == 26.0f && playerComp.m_previousEject->first == -26.0f)))
+                {
+                    playerComp.m_life = 0;
+                }
+            }
+            if(playerComp.m_previousEject && playerComp.m_secondToLastEject && std::abs(diffY) == 26.0f &&
+                std::abs(playerComp.m_previousEject->second) == 26.0f && std::abs(playerComp.m_secondToLastEject->second) == 26.0f)
+            {
+                if(diffY == playerComp.m_secondToLastEject->second && ((diffY == -26.0f && playerComp.m_previousEject->second == 26.0f) ||
+                                                                       (diffY == 26.0f && playerComp.m_previousEject->second == -26.0f)))
+                {
+                    playerComp.m_life = 0;
+                }
+            }
+            if(playerComp.m_previousEject)
+            {
+                playerComp.m_secondToLastEject = playerComp.m_previousEject;
+            }
+            playerComp.m_previousEject = {diffX, diffY};
         }
     }
 }
@@ -1696,7 +1739,7 @@ float CollisionSystem::getHorizontalCircleRectEject(const EjectXArgs &args, bool
 }
 
 //===================================================================
-void CollisionSystem::collisionEject(MapCoordComponent &mapComp, float diffX, float diffY, bool limitEjectY, bool limitEjectX, bool crushCase)
+void CollisionSystem::collisionEject(MapCoordComponent &mapComp, float diffX, float diffY, bool limitEjectY, bool limitEjectX, bool crushCase, bool playerCase)
 {
     float minEject = std::min(std::abs(diffY), std::abs(diffX));
     if(minEject >= LEVEL_TILE_SIZE_PX)
@@ -1706,6 +1749,19 @@ void CollisionSystem::collisionEject(MapCoordComponent &mapComp, float diffX, fl
     if(crushCase)
     {
         m_memCrush.push_back({{EPSILON_FLOAT, EPSILON_FLOAT}, false, {}, {}});
+        if(playerCase && std::abs(diffY) == std::abs(diffX))
+        {
+            //previousX
+            if(m_previousPlayerEject)
+            {
+                diffY = 10000.0f;
+            }
+            //previousY
+            else
+            {
+                diffX = 10000.0f;
+            }
+        }
     }
     if(!limitEjectX && (limitEjectY || std::abs(diffY) < std::abs(diffX)))
     {
@@ -1714,14 +1770,22 @@ void CollisionSystem::collisionEject(MapCoordComponent &mapComp, float diffX, fl
             std::get<0>(m_memCrush.back()).second = diffY;
         }
         mapComp.m_absoluteMapPositionPX.second += diffY;
+        if(playerCase)
+        {
+            m_previousPlayerEject = false;
+        }
     }
-    if(!limitEjectY && (limitEjectX || std::abs(diffY) > std::abs(diffX)))
+    else if(!limitEjectY && (limitEjectX || std::abs(diffY) > std::abs(diffX)))
     {
         if(crushCase)
         {
             std::get<0>(m_memCrush.back()).first = diffX;
         }
         mapComp.m_absoluteMapPositionPX.first += diffX;
+        if(playerCase)
+        {
+            m_previousPlayerEject = true;
+        }
     }
 }
 

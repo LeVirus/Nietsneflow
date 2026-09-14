@@ -59,8 +59,11 @@ struct PlayerConfComponent : public ecs::Component
         }
     }
     bool m_playerShoot = false, m_takeDamage = false, m_inMovement = false, m_inputModified, m_firstMenu = true,
-    m_pickItem = false, m_crush = false, m_frozen = false, m_teleported, m_insideWall = false, m_keyboardInputMenuMode = true;
+    m_pickItem = false, m_crush = false, m_teleported, m_insideWall = false, m_keyboardInputMenuMode = true;
     std::pair<bool, std::string> m_infoWriteData = {false, ""};
+    //Mem previous wall eject if player is locked in wall, he die
+    std::optional<PairFloat_t> m_previousEject = std::nullopt;
+    std::optional<PairFloat_t> m_secondToLastEject = std::nullopt;
     std::set<uint32_t> m_card;
     uint32_t m_currentCursorPos = 0, m_currentSelectedSaveFile, m_life = 100, m_currentCustomLevelCusorMenu, m_levelToLoad;
     float m_velocityInertie = INIERTIE_FACTOR;
