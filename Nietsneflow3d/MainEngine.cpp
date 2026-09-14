@@ -3933,7 +3933,7 @@ std::optional<uint32_t> MainEngine::createStaticElementEntity(LevelStaticElement
                                            getComponentsContainer().m_vectCircleCollisionComp[*compNum];
     if(staticElementData.m_inGameSpriteSize.first <= EPSILON_DOUBLE)
     {
-        circleComp.m_ray = LEVEL_HALF_TILE_SIZE_PX;
+        circleComp.m_ray = LEVEL_THIRD_TILE_SIZE_PX;
     }
     else
     {
