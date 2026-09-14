@@ -93,6 +93,7 @@ private:
     //Collisions treatment
     void collisionCircleRectEject(CollisionArgs &args,
                                   float circleRay, const RectangleCollisionComponent &rectCollB, bool visibleShotFirstEject = false);
+    void treatPlayerCrushDie(CollisionArgs &args, bool crushMode, float diffX, float diffY);
     float getVerticalCircleRectEject(const EjectYArgs &args, bool &limitEject, bool visibleShot);
     float getHorizontalCircleRectEject(const EjectXArgs &args, bool &limitEject, bool visibleShot);
     void collisionCircleCircleEject(CollisionArgs &args,
@@ -102,7 +103,7 @@ private:
 //                                     const CircleCollisionComponent &circleCollA,
 //                                     const SegmentCollisionComponent &segmCollB);
     void collisionEject(MapCoordComponent &mapComp, float diffX, float diffY,
-                        bool limitEjectY = false, bool limitEjectX = false, bool crushCase = false);
+                        bool limitEjectY = false, bool limitEjectX = false, bool crushCase = false, bool playerCase = false);
     //Components accessors
     CircleCollisionComponent &getCircleComponent(uint32_t entityNum);
     RectangleCollisionComponent &getRectangleComponent(uint32_t entityNum);
@@ -120,6 +121,7 @@ private:
     void secondEntitiesLoop(uint32_t entityA, uint32_t currentIteration, GeneralCollisionComponent &tagCompA, bool shotExplosionEject = false);
     bool iterationLoop(uint32_t currentIteration, uint32_t entityA, uint32_t entityB, GeneralCollisionComponent &tagCompA, bool shotExplosionEject);
 private:
+    bool m_previousPlayerEject;
     std::unique_ptr<ZoneLevelColl> m_zoneLevel;
     uint32_t m_playerEntity;
     NewComponentManager &m_newComponentManager;

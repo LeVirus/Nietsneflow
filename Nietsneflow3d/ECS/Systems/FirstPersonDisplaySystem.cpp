@@ -873,7 +873,7 @@ bool FirstPersonDisplaySystem::rayCasting(uint32_t observerEntity)
         }
         ////////////////////Correction Grok
         targetPoint = calcLineSegmentRaycast(currentRadiantAngle, mapCompCamera.m_absoluteMapPositionPX, true,
-                                             playerConfComp.m_frozen);
+                                             playerConfComp.m_crush);
         if(targetPoint)
         {
             m_memRaycastDist[j] = getCameraDistanceOptimized(mapCompCamera.m_absoluteMapPositionPX, std::get<0>(*targetPoint), m_currentPlayerDir.first, m_currentPlayerDir.second);
