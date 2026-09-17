@@ -26,6 +26,13 @@ class FontData;
 class ColorDisplaySystem;
 struct WeaponComponent;
 
+struct EndLevelData
+{
+    PlayerConfComponent *m_playerComp;
+    uint32_t m_percentSecretFound, m_percentEnemiesKilled;
+};
+
+
 class GraphicEngine
 {
 public:
@@ -46,7 +53,7 @@ public:
     void fillTitleMenuWrite(WriteComponent &writeComp, MenuMode_e menuEntry, MenuMode_e previousMenuEntry);
     //tuple second == secrets, third == enemies killed
     void fillMenuWrite(WriteComponent &writeComp, MenuMode_e menuEntry,
-                       uint32_t cursorPos = 0, const std::tuple<PlayerConfComponent *, uint32_t, uint32_t> &endLevelData = {});
+                       uint32_t cursorPos = 0, const EndLevelData &endLevelData = {nullptr, 0, 0});
     void confMenuSelectedLine(PlayerConfComponent &playerComp, WriteComponent &writeMenuSelectedComp,
                               WriteComponent &writeMenuComp);
     void confWriteComponent(WriteComponent &writeComp);
@@ -188,5 +195,5 @@ private:
 //first lineNumber ==> 0
 //return string + position selected
 std::pair<std::string, PairUI_t> getLineFromList(const std::string &str, uint32_t lineNumber);
-std::string getEndLevelMenuStr(const std::tuple<PlayerConfComponent *, uint32_t, uint32_t> &endLevelData);
+std::string getEndLevelMenuStr(const EndLevelData &endLevelData);
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
