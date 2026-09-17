@@ -967,7 +967,7 @@ void FirstPersonDisplaySystem::calcVerticalBackgroundLineRaycast(const PairFloat
     SpriteTextureComponent *spriteGroundComp, *spriteCeilingComp;
     float totalDistanceTarget;
     bool ground = false, ceiling = false;
-    float calcAngle = std::abs(radiantObserverAngle - currentRadiantAngle);
+    float calcAngle = std::cos(std::abs(radiantObserverAngle - currentRadiantAngle));
     if(m_groundTiledTextBackground)
     {
         ground = true;
@@ -1012,7 +1012,7 @@ void FirstPersonDisplaySystem::calcVerticalBackgroundLineRaycast(const PairFloat
     }
     for(uint32_t i = 0; i < RAYCAST_GROUND_CEILING_NUMBER; ++i)
     {
-        totalDistanceTarget = (*m_memBackgroundDistance)[i] / std::cos(calcAngle);
+        totalDistanceTarget = (*m_memBackgroundDistance)[i] / calcAngle;
         currentPoint = observerPos;
         moveElementFromAngle(totalDistanceTarget, currentRadiantAngle, currentPoint, true);
         if(ground || ceiling)
