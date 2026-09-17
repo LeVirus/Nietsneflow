@@ -331,7 +331,7 @@ void GraphicEngine::fillTitleMenuWrite(WriteComponent &writeComp, MenuMode_e men
 
 //===================================================================
 void GraphicEngine::fillMenuWrite(WriteComponent &writeComp, MenuMode_e menuEntry, uint32_t cursorPos,
-                                  const std::tuple<PlayerConfComponent *, uint32_t, uint32_t> &endLevelData)
+                                  const EndLevelData &endLevelData)
 {
     assert(!writeComp.m_vectMessage.empty());
     if(menuEntry == MenuMode_e::LOAD_GAME || menuEntry == MenuMode_e::NEW_GAME)
@@ -340,7 +340,7 @@ void GraphicEngine::fillMenuWrite(WriteComponent &writeComp, MenuMode_e menuEntr
     }
     else if(menuEntry == MenuMode_e::LOAD_CUSTOM_LEVEL)
     {
-        writeComp.m_vectMessage[0].second = m_existingCustomLevelsMenuWrite[std::get<0>(endLevelData)->m_currentCustomLevelCusorMenu].first;
+        writeComp.m_vectMessage[0].second = m_existingCustomLevelsMenuWrite[endLevelData.m_playerComp->m_currentCustomLevelCusorMenu].first;
     }
     else if(menuEntry == MenuMode_e::TRANSITION_LEVEL)
     {
@@ -739,20 +739,20 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 }
 
 //===================================================================
-std::string getEndLevelMenuStr(const std::tuple<PlayerConfComponent*, uint32_t, uint32_t> &endLevelData)
+std::string getEndLevelMenuStr(const EndLevelData &endLevelData)
 {
-  if(std::get<0>(endLevelData)->m_life == 0)
+  if(endLevelData.m_playerComp->m_life == 0)
     {
         return "You are dead\\Press Enter to Restart";
     }
     float enemiesKilledPercent =
-            (!std::get<0>(endLevelData)->m_enemiesKilled || std::get<2>(endLevelData) == 0) ? EPSILON_FLOAT :
-                static_cast<float>(*std::get<0>(endLevelData)->m_enemiesKilled) /
-                static_cast<float>(std::get<2>(endLevelData)) * 100.0f,
+            (!endLevelData.m_playerComp->m_enemiesKilled || endLevelData.m_percentEnemiesKilled == 0) ? EPSILON_FLOAT :
+                static_cast<float>(*endLevelData.m_playerComp->m_enemiesKilled) /
+                static_cast<float>(endLevelData.m_percentEnemiesKilled) * 100.0f,
             secretsFoundPercent =
-            (!std::get<0>(endLevelData)->m_secretsFound || std::get<1>(endLevelData) == 0) ? EPSILON_FLOAT :
-                static_cast<float>(*std::get<0>(endLevelData)->m_secretsFound) /
-                static_cast<float>(std::get<1>(endLevelData)) * 100.0f;
+            (!endLevelData.m_playerComp->m_secretsFound || endLevelData.m_percentSecretFound == 0) ? EPSILON_FLOAT :
+                static_cast<float>(*endLevelData.m_playerComp->m_secretsFound) /
+                static_cast<float>(endLevelData.m_percentSecretFound) * 100.0f;
     return "Enemies Killed:         " + std::to_string(static_cast<uint32_t>(enemiesKilledPercent)) +
        "%\\\\Secrets Found:         " + std::to_string(static_cast<uint32_t>(secretsFoundPercent)) +
                     "%\\\\Press Enter to Continue";

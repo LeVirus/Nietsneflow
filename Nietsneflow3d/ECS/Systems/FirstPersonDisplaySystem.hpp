@@ -16,11 +16,17 @@ struct RectangleCollisionComponent;
 struct RayCastingIntersect;
 struct ElementRaycast;
 
+struct TargetRaycast
+{
+    PairFloat_t m_position;
+    float m_textPos;
+    std::optional<uint32_t> m_numEntity;
+};
+
 using vectUI_t = std::vector<uint32_t>;
 using MapRayCastingData_t = std::map<uint32_t, std::vector<RayCastingIntersect>>;
 using pairRaycastingData_t = std::pair<uint32_t, std::vector<RayCastingIntersect>>;
-using tupleTargetRaycast_t = std::tuple<PairFloat_t, float, std::optional<uint32_t>>;
-using optionalTargetRaycast_t = std::optional<tupleTargetRaycast_t>;
+using optionalTargetRaycast_t = std::optional<TargetRaycast>;
 using vectPairFloatPairFloat_t = std::vector<std::pair<float, PairFloat_t>>;
 
 float randFloat(float min, float max);

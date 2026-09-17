@@ -876,9 +876,9 @@ bool FirstPersonDisplaySystem::rayCasting(uint32_t observerEntity)
                                              playerConfComp.m_crush);
         if(targetPoint)
         {
-            m_memRaycastDist[j] = getCameraDistanceOptimized(mapCompCamera.m_absoluteMapPositionPX, std::get<0>(*targetPoint), m_currentPlayerDir.first, m_currentPlayerDir.second);
-            distanceBrut = getDistance(mapCompCamera.m_absoluteMapPositionPX, std::get<0>(*targetPoint));
-            memRaycastDistance(*std::get<2>(*targetPoint), j, m_memRaycastDist[j], std::get<1>(*targetPoint), distanceBrut);
+            m_memRaycastDist[j] = getCameraDistanceOptimized(mapCompCamera.m_absoluteMapPositionPX, targetPoint->m_position, m_currentPlayerDir.first, m_currentPlayerDir.second);
+            distanceBrut = getDistance(mapCompCamera.m_absoluteMapPositionPX, (targetPoint->m_position));
+            memRaycastDistance((*targetPoint->m_numEntity), j, m_memRaycastDist[j], targetPoint->m_textPos, distanceBrut);
         }
         else
         {
@@ -890,11 +890,6 @@ bool FirstPersonDisplaySystem::rayCasting(uint32_t observerEntity)
                                               radiantObserverAngle);
         }
         currentLateralScreen += SCREEN_HORIZ_BACKGROUND_GL_STEP;
-        currentRadiantAngle -= m_stepAngle;
-        if(currentRadiantAngle < EPSILON_FLOAT)
-        {
-            currentRadiantAngle += PI_DOUBLE;
-        }
     }
     return false;
 }
@@ -939,7 +934,7 @@ bool FirstPersonDisplaySystem::isInsideWall(const PairFloat_t &pos)
         }
         if(element->m_memStaticMoveableWall)
         {
-            for(std::set<uint32_t>::const_iterator it = element->m_memStaticMoveableWall->begin(); it != element->m_memMoveWall->end(); ++it)
+            for(std::set<uint32_t>::const_iterator it = element->m_memStaticMoveableWall->begin(); it != element->m_memStaticMoveableWall->end(); ++it)
             {
                 numCom = m_newComponentManager.getComponentEmplacement(*it, Components_e::MAP_COORD_COMPONENT);
                 assert(numCom);
@@ -1094,7 +1089,7 @@ optionalTargetRaycast_t FirstPersonDisplaySystem::calcLineSegmentRaycast(float r
             if(element->m_type == LevelCaseType_e::WALL_LC)
             {
                 textPos = getRaycastTexturePos(radiantAngle, lateral, currentPoint);
-                return tupleTargetRaycast_t{currentPoint, textPos, element->m_numEntity};
+                return TargetRaycast{currentPoint, textPos, element->m_numEntity};
             }
             else if(element->m_type == LevelCaseType_e::DOOR_LC)
             {
@@ -1136,7 +1131,7 @@ optionalTargetRaycast_t FirstPersonDisplaySystem::calcLineSegmentRaycast(float r
     }
     else
     {
-        return tupleTargetRaycast_t{currentPoint, EPSILON_FLOAT, {}};
+        return TargetRaycast{currentPoint, EPSILON_FLOAT, {}};
     }
 }
 
@@ -1187,7 +1182,7 @@ optionalTargetRaycast_t FirstPersonDisplaySystem::getTextureLimitCase(float radi
                           (elementB->m_type == LevelCaseType_e::WALL_MOVE_LC && elementB->m_moveableWallStopped))))
     {
         textPos = getRaycastTexturePos(radiantAngle, lateral, {currentPoint.first + 1.0f, currentPoint.second + 1.0f});
-        return tupleTargetRaycast_t{currentPoint, textPos, elementA->m_numEntity};
+        return TargetRaycast{currentPoint, textPos, elementA->m_numEntity};
     }
     return {};
 }
@@ -1203,7 +1198,7 @@ optionalTargetRaycast_t FirstPersonDisplaySystem::calcMovingWallSegmentRaycast(f
     PairFloat_t memBase = currentPoint;
     float memDistance;
     //first raycast result second distance
-    std::optional<std::pair<tupleTargetRaycast_t, float>> resultMem;
+    std::optional<std::pair<TargetRaycast, float>> resultMem;
     std::set<uint32_t>::const_iterator it = element.m_memMoveWall->begin();
     OptUint_t numCom;
     for(; it != element.m_memMoveWall->end(); ++it)
@@ -1258,7 +1253,7 @@ optionalTargetRaycast_t FirstPersonDisplaySystem::calcMovingWallSegmentRaycast(f
             }
             else
             {
-                return tupleTargetRaycast_t{currentPoint, textPosWall, *it};
+                return TargetRaycast{currentPoint, textPosWall, *it};
             }
         }
         currentPoint = memBase;
@@ -1292,7 +1287,7 @@ optionalTargetRaycast_t FirstPersonDisplaySystem::calcDoorSegmentRaycast(float r
         {
             textPosDoor = getDoorRaycastTexturePos(*textPosDoor, radiantAngle, textLateral, currentPoint);
         }
-        return tupleTargetRaycast_t{currentPoint, *textPosDoor, element.m_numEntity};
+        return TargetRaycast{currentPoint, *textPosDoor, element.m_numEntity};
     }
     return {};
 }
