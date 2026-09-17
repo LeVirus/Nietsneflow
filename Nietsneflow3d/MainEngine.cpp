@@ -867,10 +867,10 @@ void MainEngine::confMenuBarMenuEntity(uint32_t musicEntity, uint32_t effectEnti
         colorComp.m_vertex.clear();
     }
     colorComp.m_vertex.reserve(4);
-    colorComp.m_vertex.emplace_back(TupleTetraFloat_t{0.5f, 0.0f, 0.0f, 1.0f});
-    colorComp.m_vertex.emplace_back(TupleTetraFloat_t{0.5f, 0.0f, 0.0f, 1.0f});
-    colorComp.m_vertex.emplace_back(TupleTetraFloat_t{0.5f, 0.0f, 0.0f, 1.0f});
-    colorComp.m_vertex.emplace_back(TupleTetraFloat_t{0.5f, 0.0f, 0.0f, 1.0f});
+    colorComp.m_vertex.emplace_back(ArrayTetraFloat{0.5f, 0.0f, 0.0f, 1.0f});
+    colorComp.m_vertex.emplace_back(ArrayTetraFloat{0.5f, 0.0f, 0.0f, 1.0f});
+    colorComp.m_vertex.emplace_back(ArrayTetraFloat{0.5f, 0.0f, 0.0f, 1.0f});
+    colorComp.m_vertex.emplace_back(ArrayTetraFloat{0.5f, 0.0f, 0.0f, 1.0f});
     //EFFECT VOLUME
     compNum = m_ecsManager.getComponentManager().getComponentEmplacement(effectEntity, Components_e::POSITION_VERTEX_COMPONENT);
     assert(compNum);
@@ -887,10 +887,10 @@ void MainEngine::confMenuBarMenuEntity(uint32_t musicEntity, uint32_t effectEnti
     posCompA.m_vertex.emplace_back(PairFloat_t{rightPos, downPos});
     posCompA.m_vertex.emplace_back(PairFloat_t{leftPos, downPos});
     colorCompA.m_vertex.reserve(4);
-    colorCompA.m_vertex.emplace_back(TupleTetraFloat_t{0.5f, 0.0f, 0.0f, 1.0f});
-    colorCompA.m_vertex.emplace_back(TupleTetraFloat_t{0.5f, 0.0f, 0.0f, 1.0f});
-    colorCompA.m_vertex.emplace_back(TupleTetraFloat_t{0.5f, 0.0f, 0.0f, 1.0f});
-    colorCompA.m_vertex.emplace_back(TupleTetraFloat_t{0.5f, 0.0f, 0.0f, 1.0f});
+    colorCompA.m_vertex.emplace_back(ArrayTetraFloat{0.5f, 0.0f, 0.0f, 1.0f});
+    colorCompA.m_vertex.emplace_back(ArrayTetraFloat{0.5f, 0.0f, 0.0f, 1.0f});
+    colorCompA.m_vertex.emplace_back(ArrayTetraFloat{0.5f, 0.0f, 0.0f, 1.0f});
+    colorCompA.m_vertex.emplace_back(ArrayTetraFloat{0.5f, 0.0f, 0.0f, 1.0f});
     //TURN SENSITIVITY
     compNum = m_ecsManager.getComponentManager().getComponentEmplacement(turnSensitivity, Components_e::POSITION_VERTEX_COMPONENT);
     assert(compNum);
@@ -908,15 +908,15 @@ void MainEngine::confMenuBarMenuEntity(uint32_t musicEntity, uint32_t effectEnti
     posCompB.m_vertex.emplace_back(PairFloat_t{rightPos, downPos});
     posCompB.m_vertex.emplace_back(PairFloat_t{leftPos, downPos});
     colorCompB.m_vertex.reserve(4);
-    colorCompB.m_vertex.emplace_back(TupleTetraFloat_t{0.5f, 0.0f, 0.0f, 1.0f});
-    colorCompB.m_vertex.emplace_back(TupleTetraFloat_t{0.5f, 0.0f, 0.0f, 1.0f});
-    colorCompB.m_vertex.emplace_back(TupleTetraFloat_t{0.5f, 0.0f, 0.0f, 1.0f});
-    colorCompB.m_vertex.emplace_back(TupleTetraFloat_t{0.5f, 0.0f, 0.0f, 1.0f});
+    colorCompB.m_vertex.emplace_back(ArrayTetraFloat{0.5f, 0.0f, 0.0f, 1.0f});
+    colorCompB.m_vertex.emplace_back(ArrayTetraFloat{0.5f, 0.0f, 0.0f, 1.0f});
+    colorCompB.m_vertex.emplace_back(ArrayTetraFloat{0.5f, 0.0f, 0.0f, 1.0f});
+    colorCompB.m_vertex.emplace_back(ArrayTetraFloat{0.5f, 0.0f, 0.0f, 1.0f});
 }
 
 
 //===================================================================
-void MainEngine::confUnifiedColorEntity(uint32_t entityNum, const tupleFloat_t &color, bool transparent)
+void MainEngine::confUnifiedColorEntity(uint32_t entityNum, const ArrayTriFloat &color, bool transparent)
 {
     OptUint_t compNum = m_ecsManager.getComponentManager().getComponentEmplacement(entityNum, Components_e::POSITION_VERTEX_COMPONENT);
     assert(compNum);
@@ -939,10 +939,10 @@ void MainEngine::confUnifiedColorEntity(uint32_t entityNum, const tupleFloat_t &
     }
     colorComp.m_vertex.reserve(4);
     float alpha = transparent ? 0.4f : 1.0f;
-    colorComp.m_vertex.emplace_back(TupleTetraFloat_t{std::get<0>(color), std::get<1>(color), std::get<2>(color), alpha});
-    colorComp.m_vertex.emplace_back(TupleTetraFloat_t{std::get<0>(color), std::get<1>(color), std::get<2>(color), alpha});
-    colorComp.m_vertex.emplace_back(TupleTetraFloat_t{std::get<0>(color), std::get<1>(color), std::get<2>(color), alpha});
-    colorComp.m_vertex.emplace_back(TupleTetraFloat_t{std::get<0>(color), std::get<1>(color), std::get<2>(color), alpha});
+    colorComp.m_vertex.emplace_back(ArrayTetraFloat{color[0], color[1], color[2], alpha});
+    colorComp.m_vertex.emplace_back(ArrayTetraFloat{color[0], color[1], color[2], alpha});
+    colorComp.m_vertex.emplace_back(ArrayTetraFloat{color[0], color[1], color[2], alpha});
+    colorComp.m_vertex.emplace_back(ArrayTetraFloat{color[0], color[1], color[2], alpha});
 }
 
 //===================================================================
@@ -1066,10 +1066,10 @@ void MainEngine::loadFogEntities()
     posComp.m_vertex.emplace_back(1.0f, 0.05f);
     posComp.m_vertex.emplace_back(-1.0f, 0.05f);
 
-    colorComp.m_vertex.emplace_back(0.0f, 0.0f, 0.0f, 0.0f);
-    colorComp.m_vertex.emplace_back(0.0f, 0.0f, 0.0f, 0.0f);
-    colorComp.m_vertex.emplace_back(0.0f, 0.0f, 0.0f, 1.0f);
-    colorComp.m_vertex.emplace_back(0.0f, 0.0f, 0.0f, 1.0f);
+    colorComp.m_vertex.emplace_back(ArrayTetraFloat{0.0f, 0.0f, 0.0f, 0.0f});
+    colorComp.m_vertex.emplace_back(ArrayTetraFloat{0.0f, 0.0f, 0.0f, 0.0f});
+    colorComp.m_vertex.emplace_back(ArrayTetraFloat{0.0f, 0.0f, 0.0f, 1.0f});
+    colorComp.m_vertex.emplace_back(ArrayTetraFloat{0.0f, 0.0f, 0.0f, 1.0f});
 
     //fog
     posComp.m_vertex.emplace_back(-1.0f, 0.05f);
@@ -1077,10 +1077,10 @@ void MainEngine::loadFogEntities()
     posComp.m_vertex.emplace_back(1.0f, -0.05f);
     posComp.m_vertex.emplace_back(-1.0f, -0.05f);
 
-    colorComp.m_vertex.emplace_back(0.0f, 0.0f, 0.0f, 1.0f);
-    colorComp.m_vertex.emplace_back(0.0f, 0.0f, 0.0f, 1.0f);
-    colorComp.m_vertex.emplace_back(0.0f, 0.0f, 0.0f, 1.0f);
-    colorComp.m_vertex.emplace_back(0.0f, 0.0f, 0.0f, 1.0f);
+    colorComp.m_vertex.emplace_back(ArrayTetraFloat{0.0f, 0.0f, 0.0f, 1.0f});
+    colorComp.m_vertex.emplace_back(ArrayTetraFloat{0.0f, 0.0f, 0.0f, 1.0f});
+    colorComp.m_vertex.emplace_back(ArrayTetraFloat{0.0f, 0.0f, 0.0f, 1.0f});
+    colorComp.m_vertex.emplace_back(ArrayTetraFloat{0.0f, 0.0f, 0.0f, 1.0f});
 
     //ground
     posComp.m_vertex.emplace_back(-1.0f, -0.05f);
@@ -1088,10 +1088,10 @@ void MainEngine::loadFogEntities()
     posComp.m_vertex.emplace_back(1.0f, -0.1f);
     posComp.m_vertex.emplace_back(-1.0f, -0.1f);
 
-    colorComp.m_vertex.emplace_back(0.0f, 0.0f, 0.0f, 1.0f);
-    colorComp.m_vertex.emplace_back(0.0f, 0.0f, 0.0f, 1.0f);
-    colorComp.m_vertex.emplace_back(0.0f, 0.0f, 0.0f, 0.0f);
-    colorComp.m_vertex.emplace_back(0.0f, 0.0f, 0.0f, 0.0f);
+    colorComp.m_vertex.emplace_back(ArrayTetraFloat{0.0f, 0.0f, 0.0f, 1.0f});
+    colorComp.m_vertex.emplace_back(ArrayTetraFloat{0.0f, 0.0f, 0.0f, 1.0f});
+    colorComp.m_vertex.emplace_back(ArrayTetraFloat{0.0f, 0.0f, 0.0f, 0.0f});
+    colorComp.m_vertex.emplace_back(ArrayTetraFloat{0.0f, 0.0f, 0.0f, 0.0f});
     memFogColorEntity(entity);
 }
 
@@ -3117,9 +3117,9 @@ void MainEngine::confPlayerEntity(const LevelManager &levelManager, uint32_t ent
     move.m_velocity = 2.0f;
     map.m_absoluteMapPositionPX = getCenteredAbsolutePosition(map.m_coord);
     color.m_vertex.reserve(3);
-    color.m_vertex.emplace_back(TupleTetraFloat_t{0.9f, 0.00f, 0.00f, 1.0f});
-    color.m_vertex.emplace_back(TupleTetraFloat_t{0.9f, 0.00f, 0.00f, 1.0f});
-    color.m_vertex.emplace_back(TupleTetraFloat_t{0.9f, 0.00f, 0.00f, 1.0f});
+    color.m_vertex.emplace_back(ArrayTetraFloat{0.9f, 0.00f, 0.00f, 1.0f});
+    color.m_vertex.emplace_back(ArrayTetraFloat{0.9f, 0.00f, 0.00f, 1.0f});
+    color.m_vertex.emplace_back(ArrayTetraFloat{0.9f, 0.00f, 0.00f, 1.0f});
     circleColl.m_ray = PLAYER_RAY;
     playerConf.m_circleEnemyCase.m_ray = PLAYER_RAY - 10.0f;
     updatePlayerArrow(move, pos);
@@ -4011,14 +4011,22 @@ void MainEngine::confColorBackgroundComponents(uint32_t entity, const GroundCeil
     assert(compNum);
     ColorVertexComponent &colorComp = m_ecsManager.getComponentManager().getComponentsContainer().m_vectColorVertexComp[*compNum];
     colorComp.m_vertex.reserve(4);
-    colorComp.m_vertex.emplace_back(std::get<0>(groundData.m_color[0]), std::get<1>(groundData.m_color[0]),
-            std::get<2>(groundData.m_color[0]), 1.0);
-    colorComp.m_vertex.emplace_back(std::get<0>(groundData.m_color[1]), std::get<1>(groundData.m_color[1]),
-            std::get<2>(groundData.m_color[1]), 1.0);
-    colorComp.m_vertex.emplace_back(std::get<0>(groundData.m_color[2]), std::get<1>(groundData.m_color[2]),
-            std::get<2>(groundData.m_color[2]), 1.0);
-    colorComp.m_vertex.emplace_back(std::get<0>(groundData.m_color[3]), std::get<1>(groundData.m_color[3]),
-            std::get<2>(groundData.m_color[3]), 1.0);
+    colorComp.m_vertex.emplace_back(ArrayTetraFloat{
+                                        groundData.m_color[0][0], groundData.m_color[0][1],
+                                        groundData.m_color[0][2], 1.0
+                                    });
+    colorComp.m_vertex.emplace_back(ArrayTetraFloat{
+                                        groundData.m_color[1][0], groundData.m_color[1][1],
+                                        groundData.m_color[1][2], 1.0
+                                    });
+    colorComp.m_vertex.emplace_back(ArrayTetraFloat{
+                                        groundData.m_color[2][0], groundData.m_color[2][1],
+                                        groundData.m_color[2][2], 1.0
+                                    });
+    colorComp.m_vertex.emplace_back(ArrayTetraFloat{
+                                        groundData.m_color[3][0], groundData.m_color[3][1],
+                                        groundData.m_color[3][2], 1.0
+                                    });
 }
 
 //===================================================================

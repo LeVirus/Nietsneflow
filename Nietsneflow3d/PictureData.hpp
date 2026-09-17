@@ -9,8 +9,7 @@
 #include <constants.hpp>
 #include <stdint.h>
 
-using tupleFloat_t = std::tuple<float, float, float>;
-using tupleDouble_t = std::tuple<double, double, double>;
+using ArrayTriFloat = std::array<float, 3>;
 using vectStr_t = std::vector<std::string>;
 
 /**
@@ -21,7 +20,7 @@ struct GroundCeilingData
 {
     std::bitset<static_cast<uint32_t>(DisplayType_e::TOTAL)> m_apparence;
     uint16_t m_spriteSimpleTextNum, m_spriteTiledTextNum;
-    std::array<tupleFloat_t, 4> m_color;
+    std::array<ArrayTriFloat, 4> m_color;
 };
 
 /**
