@@ -22,6 +22,14 @@ class MainEngine;
 
 using OptUint_t = std::optional<uint32_t>;
 
+struct MemCrushData
+{
+    PairFloat_t m_moveEject;
+    bool m_angleBehaviour;
+    Direction_e m_direction;
+    std::optional<Direction_e> m_moveableWallDirection;
+};
+
 class CollisionSystem : public ecs::System
 {
 public:
@@ -134,7 +142,7 @@ private:
     bool m_memPlayerTeleport;
     //0 movement eject, 1 angle behaviour, 2 Direction,
     //3 if moveable wall current direction
-    std::vector<std::tuple<PairFloat_t, bool, Direction_e, std::optional<Direction_e>>> m_memCrush;
+    std::vector<MemCrushData> m_memCrush;
     MainEngine *m_refMainEngine;
 };
 

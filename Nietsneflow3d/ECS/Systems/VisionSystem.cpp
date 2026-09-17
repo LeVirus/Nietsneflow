@@ -560,7 +560,7 @@ void VisionSystem::treatVisible(VisionComponent &visionComp, MoveableComponent &
     OptUint_t numCom = m_newComponentManager.getComponentEmplacement(numEntity, Components_e::MAP_COORD_COMPONENT);
     assert(numCom);
     MapCoordComponent &mapCompB = m_componentsContainer.m_vectMapCoordComp[*numCom];
-    float angleElement = getTrigoAngle(std::get<0>(visionComp.m_triangleVision),
+    float angleElement = getTrigoAngle(visionComp.m_triangleVision[0],
                                        mapCompB.m_absoluteMapPositionPX),
         delta = std::abs(angleElement - moveCompA.m_degreeOrientation);
     delta = std::fmod(delta, 360.0f);

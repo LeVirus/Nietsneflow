@@ -20,6 +20,7 @@ using mapUiVectUI_t = std::map<uint32_t, std::vector<uint32_t>>;
 using PairImpactData_t = std::pair<std::vector<MemSpriteData>, MemSpriteData>;
 using MapImpactData_t = std::map<std::string, PairImpactData_t>;
 using MapVisibleShotData_t = std::map<std::string, std::pair<std::string ,std::vector<MemSpriteData>>>;
+using ArrayTriFloat = std::array<float, 3>;
 
 class LevelManager;
 class Level;
@@ -275,7 +276,7 @@ private:
     void loadPlayerGear(bool beginLevel);
     void displayTransitionMenu(MenuMode_e mode = MenuMode_e::TRANSITION_LEVEL, bool redTransition = false);
     void confMenuBarMenuEntity(uint32_t musicEntity, uint32_t effectEntity, uint32_t turnSensitivity);
-    void confUnifiedColorEntity(uint32_t entityNum, const tupleFloat_t &color, bool transparent);
+    void confUnifiedColorEntity(uint32_t entityNum, const ArrayTriFloat &color, bool transparent);
     void loadBackgroundEntities(const GroundCeilingData &groundData, const GroundCeilingData &backgroundData, const LevelManager &levelManager);
     void loadFogEntities();
     void confColorBackgroundComponents(uint32_t entity, const GroundCeilingData &groundData, bool ground);

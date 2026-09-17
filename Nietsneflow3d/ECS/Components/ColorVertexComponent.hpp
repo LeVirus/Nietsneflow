@@ -4,7 +4,7 @@
 #include <constants.hpp>
 #include <vector>
 
-using TupleTetraFloat_t = std::tuple<float, float, float, float>;
+using ArrayTetraFloat = std::array<float, 4>;
 
 struct ColorVertexComponent : public ecs::Component
 {
@@ -12,6 +12,6 @@ struct ColorVertexComponent : public ecs::Component
     {
         muiTypeComponent = Components_e::COLOR_VERTEX_COMPONENT;
     }
-    std::vector<TupleTetraFloat_t> m_vertex;
+    std::vector<ArrayTetraFloat> m_vertex;
     virtual ~ColorVertexComponent() = default;
 };

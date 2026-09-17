@@ -107,7 +107,7 @@ bool LevelManager::loadBackgroundData()
             colorB = convertStrToVectFloat(*valC);
             for(uint32_t j = 0; j < 4 ; ++j)
             {
-                groundData.m_color[j] = tupleFloat_t{colorR[j], colorG[j], colorB[j]};
+                groundData.m_color[j] = ArrayTriFloat{colorR[j], colorG[j], colorB[j]};
             }
             groundData.m_apparence[colorIndex] = true;
         }
@@ -165,7 +165,7 @@ bool LevelManager::loadBackgroundData()
             colorB = convertStrToVectFloat(*valC);
             for(uint32_t j = 0; j < 4 ; ++j)
             {
-                ceilingData.m_color[j] = tupleFloat_t{colorR[j], colorG[j], colorB[j]};
+                ceilingData.m_color[j] = ArrayTriFloat{colorR[j], colorG[j], colorB[j]};
             }
             ceilingData.m_apparence[colorIndex] = true;
         }

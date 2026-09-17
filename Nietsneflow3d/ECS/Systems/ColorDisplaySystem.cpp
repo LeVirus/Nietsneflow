@@ -183,10 +183,10 @@ void ColorDisplaySystem::setTransition(uint32_t current, uint32_t total)
     ColorVertexComponent &colorComp = m_componentsContainer.m_vectColorVertexComp[*compNum];
     drawEntity(posComp, colorComp);
     float currentTransparency = static_cast<float>(current) / static_cast<float>(total);
-    std::get<3>(colorComp.m_vertex[0]) = currentTransparency;
-    std::get<3>(colorComp.m_vertex[1]) = currentTransparency;
-    std::get<3>(colorComp.m_vertex[2]) = currentTransparency;
-    std::get<3>(colorComp.m_vertex[3]) = currentTransparency;
+    colorComp.m_vertex[0][3] = currentTransparency;
+    colorComp.m_vertex[1][3] = currentTransparency;
+    colorComp.m_vertex[2][3] = currentTransparency;
+    colorComp.m_vertex[3][3] = currentTransparency;
     drawEntity(posComp, colorComp);
 }
 
@@ -196,10 +196,10 @@ void ColorDisplaySystem::setRedTransition()
     OptUint_t compNum = m_newComponentManager.getComponentEmplacement(*m_transitionNum, Components_e::COLOR_VERTEX_COMPONENT);
     assert(compNum);
     ColorVertexComponent &colorComp = m_componentsContainer.m_vectColorVertexComp[*compNum];
-    std::get<0>(colorComp.m_vertex[0]) = 0.8f;
-    std::get<0>(colorComp.m_vertex[1]) = 0.8f;
-    std::get<0>(colorComp.m_vertex[2]) = 0.8f;
-    std::get<0>(colorComp.m_vertex[3]) = 0.8f;
+    colorComp.m_vertex[0][0] = 0.8f;
+    colorComp.m_vertex[1][0] = 0.8f;
+    colorComp.m_vertex[2][0] = 0.8f;
+    colorComp.m_vertex[3][0] = 0.8f;
 }
 
 //===================================================================
@@ -208,10 +208,10 @@ void ColorDisplaySystem::unsetRedTransition()
     OptUint_t compNum = m_newComponentManager.getComponentEmplacement(*m_transitionNum, Components_e::COLOR_VERTEX_COMPONENT);
     assert(compNum);
     ColorVertexComponent &colorComp = m_componentsContainer.m_vectColorVertexComp[*compNum];
-    std::get<0>(colorComp.m_vertex[0]) = 0.0f;
-    std::get<0>(colorComp.m_vertex[1]) = 0.0f;
-    std::get<0>(colorComp.m_vertex[2]) = 0.0f;
-    std::get<0>(colorComp.m_vertex[3]) = 0.0f;
+    colorComp.m_vertex[0][0] = 0.0f;
+    colorComp.m_vertex[1][0] = 0.0f;
+    colorComp.m_vertex[2][0] = 0.0f;
+    colorComp.m_vertex[3][0] = 0.0f;
 }
 
 //===================================================================

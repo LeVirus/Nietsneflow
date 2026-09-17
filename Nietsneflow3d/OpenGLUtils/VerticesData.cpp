@@ -69,10 +69,10 @@ bool VerticesData::loadVertexColorComponent(const PositionVertexComponent &posCo
     {
         m_vertexBuffer.emplace_back(posComp.m_vertex[j].first);
         m_vertexBuffer.emplace_back(posComp.m_vertex[j].second);
-        m_vertexBuffer.emplace_back(std::get<0>(colorComp.m_vertex[j]));
-        m_vertexBuffer.emplace_back(std::get<1>(colorComp.m_vertex[j]));
-        m_vertexBuffer.emplace_back(std::get<2>(colorComp.m_vertex[j]));
-        m_vertexBuffer.emplace_back(std::get<3>(colorComp.m_vertex[j]));
+        m_vertexBuffer.emplace_back(colorComp.m_vertex[j][0]);
+        m_vertexBuffer.emplace_back(colorComp.m_vertex[j][1]);
+        m_vertexBuffer.emplace_back(colorComp.m_vertex[j][2]);
+        m_vertexBuffer.emplace_back(colorComp.m_vertex[j][3]);
     }
     if(sizeVertex > 4)
     {

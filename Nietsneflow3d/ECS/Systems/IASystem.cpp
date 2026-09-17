@@ -334,8 +334,8 @@ void IASystem::treatEnemyBehaviourAttack(uint32_t enemyEntity, MapCoordComponent
 
         while(enemyConfComp.m_stuck)
         {
-            if((enemyConfComp.m_attackPhase != std::get<0>(enemyConfComp.m_previousMove) &&
-                enemyConfComp.m_attackPhase != std::get<1>(enemyConfComp.m_previousMove)))
+            if((enemyConfComp.m_attackPhase != enemyConfComp.m_previousMove[0] &&
+                enemyConfComp.m_attackPhase != enemyConfComp.m_previousMove[1]))
             {
                 enemyConfComp.m_stuck = false;
                 timerComp.m_cycleCountE = 0;
@@ -352,8 +352,8 @@ void IASystem::treatEnemyBehaviourAttack(uint32_t enemyEntity, MapCoordComponent
                 }
             }
         }
-        std::swap(std::get<0>(enemyConfComp.m_previousMove), std::get<1>(enemyConfComp.m_previousMove));
-        std::get<0>(enemyConfComp.m_previousMove) = enemyConfComp.m_attackPhase;
+        std::swap(enemyConfComp.m_previousMove[0], enemyConfComp.m_previousMove[1]);
+        enemyConfComp.m_previousMove[0] = enemyConfComp.m_attackPhase;
 
         std::swap(enemyConfComp.m_previousMove[2], enemyConfComp.m_previousMove[1]);
         std::swap(enemyConfComp.m_previousMove[1], enemyConfComp.m_previousMove[0]);

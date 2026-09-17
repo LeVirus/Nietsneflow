@@ -219,16 +219,16 @@ void CollisionSystem::treatGeneralCrushing(uint32_t entityNum)
         //QuickFix
         if(collComp.m_tagA == CollisionTag_e::ENEMY_CT)
         {
-            mapComp.m_absoluteMapPositionPX.first += std::get<0>(m_memCrush[i]).first;
-            mapComp.m_absoluteMapPositionPX.second += std::get<0>(m_memCrush[i]).second;
+            mapComp.m_absoluteMapPositionPX.first += m_memCrush[i].m_moveEject.first;
+            mapComp.m_absoluteMapPositionPX.second += m_memCrush[i].m_moveEject.second;
         }
         //3 == direction
-        if(!crush && !std::get<1>(m_memCrush[i]))
+        if(!crush && !m_memCrush[i].m_angleBehaviour)
         {
             for(uint32_t j = 0; j < i; ++j)
             {
-                if((std::get<3>(m_memCrush[j]) || std::get<3>(m_memCrush[i])) &&
-                        opposingDirection(std::get<2>(m_memCrush[j]), std::get<2>(m_memCrush[i])))
+                if((m_memCrush[j].m_moveableWallDirection || m_memCrush[i].m_moveableWallDirection) &&
+                        opposingDirection(m_memCrush[j].m_direction, m_memCrush[i].m_direction))
                 {
                     crush = true;
                     treatCrushing(entityNum);
@@ -237,6 +237,11 @@ void CollisionSystem::treatGeneralCrushing(uint32_t entityNum)
             }
         }
     }
+
+    // PairFloat_t m_moveEject;
+    // bool m_angleBehaviour;
+    // Direction_e m_direction;
+    // std::optional<Direction_e> m_moveableWallDirection;
     if(collComp.m_tagA != CollisionTag_e::PLAYER_CT)
     {
         return;
@@ -1555,15 +1560,15 @@ void CollisionSystem::collisionCircleRectEject(CollisionArgs &args, float circle
     addEntityToZone(args.entityNumA, *getLevelCoord(mapComp.m_absoluteMapPositionPX));
     if(crushMode)
     {
-        std::get<1>(m_memCrush.back()) = angleBehavior;
-        std::get<2>(m_memCrush.back()) = getDirection(diffX, diffY);
+        m_memCrush.back().m_angleBehaviour = angleBehavior;
+        m_memCrush.back().m_direction = getDirection(diffX, diffY);
         OptUint_t compNum = m_newComponentManager.getComponentEmplacement(args.entityNumB, Components_e::MOVEABLE_WALL_CONF_COMPONENT);
         if(compNum)
         {
             MoveableWallConfComponent &moveWallComp = m_componentsContainer.m_vectMoveableWallConfComp[*compNum];
             if(moveWallComp.m_inMovement)
             {
-                std::get<3>(m_memCrush.back()) = moveWallComp.m_directionMove[moveWallComp.m_currentMove].first;
+                m_memCrush.back().m_moveableWallDirection = moveWallComp.m_directionMove[moveWallComp.m_currentMove].first;
             }
         }
     }
@@ -1767,7 +1772,7 @@ void CollisionSystem::collisionEject(MapCoordComponent &mapComp, float diffX, fl
     {
         if(crushCase)
         {
-            std::get<0>(m_memCrush.back()).second = diffY;
+            m_memCrush.back().m_moveEject.second = diffY;
         }
         mapComp.m_absoluteMapPositionPX.second += diffY;
         if(playerCase)
@@ -1779,7 +1784,7 @@ void CollisionSystem::collisionEject(MapCoordComponent &mapComp, float diffX, fl
     {
         if(crushCase)
         {
-            std::get<0>(m_memCrush.back()).first = diffX;
+            m_memCrush.back().m_moveEject.first = diffX;
         }
         mapComp.m_absoluteMapPositionPX.first += diffX;
         if(playerCase)

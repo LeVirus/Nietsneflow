@@ -424,9 +424,9 @@ void MapDisplaySystem::confPlayerComp(uint32_t playerNum)
     assert(compNum);
     VisionComponent &visionComp = m_componentsContainer.m_vectVisionComp[*compNum];
     visionComp.m_colorVertexComp.m_vertex.reserve(3);
-    visionComp.m_colorVertexComp.m_vertex.emplace_back(0.00f, 100.00f, 0.00f, 1.0f);
-    visionComp.m_colorVertexComp.m_vertex.emplace_back(0.00f, 10.00f, 0.00f, 1.0f);
-    visionComp.m_colorVertexComp.m_vertex.emplace_back(0.00f, 10.00f, 0.00f, 1.0f);
+    visionComp.m_colorVertexComp.m_vertex.emplace_back(ArrayTetraFloat{0.00f, 100.00f, 0.00f, 1.0f});
+    visionComp.m_colorVertexComp.m_vertex.emplace_back(ArrayTetraFloat{0.00f, 10.00f, 0.00f, 1.0f});
+    visionComp.m_colorVertexComp.m_vertex.emplace_back(ArrayTetraFloat{0.00f, 10.00f, 0.00f, 1.0f});
 }
 
 //===================================================================
