@@ -807,8 +807,8 @@ bool FirstPersonDisplaySystem::rayCasting(uint32_t observerEntity)
         currentCosRadiant = std::cos(currentRadiantAngle);
         currentSinRadiant = std::sin(currentRadiantAngle);
         currentHalfTanRadiant = std::tan(std::fmod(currentRadiantAngle, PI_HALF));
-        targetPoint = calcLineSegmentRaycast(mapCompCamera.m_absoluteMapPositionPX, true, {currentCosRadiant, currentSinRadiant}, currentHalfTanRadiant,
-                                             playerConfComp.m_crush);
+        targetPoint = calcLineSegmentRaycastOptimized(mapCompCamera.m_absoluteMapPositionPX, true, {currentCosRadiant, currentSinRadiant}, currentHalfTanRadiant,
+                                                      playerConfComp.m_crush);
         if(targetPoint)
         {
             m_memRaycastDist[j] = getCameraDistanceOptimized(mapCompCamera.m_absoluteMapPositionPX, targetPoint->m_position, m_currentPlayerDir.first, m_currentPlayerDir.second);
@@ -998,8 +998,7 @@ optionalTargetRaycast_t FirstPersonDisplaySystem::calcLineSegmentRaycast(const P
     else if(element && element->m_type == LevelCaseType_e::WALL_MOVE_LC)
     {
         assert(element->m_memMoveWall);
-        result = calcMovingWallSegmentRaycast(currentCosSinRadiant, lateralLeadCoef,
-                                              verticalLeadCoef, currentPoint, *element);
+        result = calcMovingWallSegmentRaycast(currentCosSinRadiant, lateralLeadCoef, verticalLeadCoef, currentPoint, *element);
         if(result)
         {
             return result;
@@ -1025,8 +1024,7 @@ optionalTargetRaycast_t FirstPersonDisplaySystem::calcLineSegmentRaycast(const P
             }
             else if(element->m_type == LevelCaseType_e::DOOR_LC)
             {
-                result = calcDoorSegmentRaycast(currentCosSinRadiant, lateralLeadCoef,
-                                                verticalLeadCoef, currentPoint, *element);
+                result = calcDoorSegmentRaycast(currentCosSinRadiant, lateralLeadCoef, verticalLeadCoef, currentPoint, *element);
                 if(result)
                 {
                     return result;
@@ -1065,6 +1063,170 @@ optionalTargetRaycast_t FirstPersonDisplaySystem::calcLineSegmentRaycast(const P
     {
         return TargetRaycast{currentPoint, EPSILON_FLOAT, {}};
     }
+}
+
+//===================================================================
+optionalTargetRaycast_t FirstPersonDisplaySystem::calcLineSegmentRaycastOptimized(const PairFloat_t &originPoint, bool visual, const PairFloat_t &currentCosSinRadiant,
+                                                                                  float halfTanRadiant, bool scratchMode)
+{
+    const std::optional<float> verticalLeadCoef = getLeadCoef(halfTanRadiant, currentCosSinRadiant, false),
+    lateralLeadCoef = getLeadCoef(halfTanRadiant, currentCosSinRadiant, true);
+    PairFloat_t origin = scratchMode ? getCorrectedPosition(originPoint, currentCosSinRadiant) : originPoint;
+
+    const float invTile = 1.0f / LEVEL_TILE_SIZE_PX;
+    const float rayDirX = currentCosSinRadiant.first;
+    const float rayDirY = -currentCosSinRadiant.second; // +Y monde quand sin < 0
+
+    float posX = origin.first  * invTile;
+    float posY = origin.second * invTile;
+
+    int32_t mapX = static_cast<int32_t>(posX);
+    int32_t mapY = static_cast<int32_t>(posY);
+    if(posX < 0.0f) mapX = -1;
+    if(posY < 0.0f) mapY = -1;
+
+    const float absDirX = std::abs(rayDirX);
+    const float absDirY = std::abs(rayDirY);
+    const float deltaDistX = (absDirX < 1e-8f) ? 1e30f : 1.0f / absDirX;
+    const float deltaDistY = (absDirY < 1e-8f) ? 1e30f : 1.0f / absDirY;
+
+    const int32_t stepX = (rayDirX < 0.0f) ? -1 : 1;
+    const int32_t stepY = (rayDirY < 0.0f) ? -1 : 1;
+
+    float sideDistX = (rayDirX < 0.0f)
+                          ? (posX - static_cast<float>(mapX)) * deltaDistX
+                          : (static_cast<float>(mapX) + 1.0f - posX) * deltaDistX;
+    float sideDistY = (rayDirY < 0.0f)
+                          ? (posY - static_cast<float>(mapY)) * deltaDistY
+                          : (static_cast<float>(mapY) + 1.0f - posY) * deltaDistY;
+    constexpr float EDGE = 1e-4f;
+
+    if(rayDirX < 0.0f && posX - static_cast<float>(mapX) < EDGE)
+        --mapX;
+    if(rayDirY < 0.0f && posY - static_cast<float>(mapY) < EDGE)
+        --mapY;
+    auto makeHitPoint = [&](bool lateral, float perpTiles) -> PairFloat_t
+    {
+        return {
+            origin.first  + rayDirX * perpTiles * LEVEL_TILE_SIZE_PX,
+            origin.second + rayDirY * perpTiles * LEVEL_TILE_SIZE_PX
+        };
+    };
+
+    auto treatCell = [&](PairFloat_t currentPoint,
+                         bool lateral,
+                         const PairUI_t &coord) -> optionalTargetRaycast_t
+    {
+        std::optional<ElementRaycast> element = Level::getElementCase(coord);
+        if(!element)
+        {
+            return std::nullopt;
+        }
+
+        if(element->m_type == LevelCaseType_e::WALL_LC)
+        {
+            const float textPos = getRaycastTexturePos(currentCosSinRadiant, lateral, currentPoint);
+            return TargetRaycast{currentPoint, textPos, element->m_numEntity};
+        }
+        if(element->m_type == LevelCaseType_e::DOOR_LC)
+        {
+            optionalTargetRaycast_t result = calcDoorSegmentRaycast(currentCosSinRadiant, lateralLeadCoef, verticalLeadCoef, currentPoint, *element);
+            if(result)
+            {
+                return result;
+            }
+        }
+        else if(element->m_type == LevelCaseType_e::WALL_MOVE_LC)
+        {
+            assert(element->m_memMoveWall);
+            optionalTargetRaycast_t result = calcMovingWallSegmentRaycast(currentCosSinRadiant, lateralLeadCoef, verticalLeadCoef, currentPoint, *element);
+            if(result)
+            {
+                return result;
+            }
+        }
+
+        if(visual && element->m_type == LevelCaseType_e::EMPTY_LC
+            && lateralLeadCoef && verticalLeadCoef)
+        {
+            const float fx = std::fmod(currentPoint.first,  LEVEL_TILE_SIZE_PX);
+            const float fy = std::fmod(currentPoint.second, LEVEL_TILE_SIZE_PX);
+            if(fx < 0.01f && fy < 0.01f)
+            {
+                optionalTargetRaycast_t corner = getTextureLimitCase(currentCosSinRadiant, *lateralLeadCoef, *verticalLeadCoef, coord, currentPoint, lateral);
+                if(corner)
+                {
+                    return corner;
+                }
+            }
+        }
+        return std::nullopt;
+    };
+
+    // Case de départ (même comportement qu'avant)
+    if(mapX >= 0 && mapY >= 0)
+    {
+        const PairUI_t startCoord{
+            static_cast<uint32_t>(mapX),
+            static_cast<uint32_t>(mapY)
+        };
+        const bool startLateral = raycastPointLateral(currentCosSinRadiant, halfTanRadiant, originPoint);
+        optionalTargetRaycast_t startHit = treatCell(origin, startLateral, startCoord);
+        if(startHit)
+        {
+            return startHit;
+        }
+    }
+
+    bool lateral = false;
+    for(uint32_t k = 0; k < RAYCAST_DEPTH; ++k)
+    {
+        if(sideDistX < sideDistY)
+        {
+            sideDistX += deltaDistX;
+            mapX += stepX;
+            lateral = false; // face E/W
+        }
+        else
+        {
+            sideDistY += deltaDistY;
+            mapY += stepY;
+            lateral = true;  // face N/S
+        }
+
+        if(mapX < 0 || mapY < 0)
+        {
+            break;
+        }
+
+        const PairUI_t coord{
+            static_cast<uint32_t>(mapX),
+            static_cast<uint32_t>(mapY)
+        };
+
+        // Distance jusqu'au bord qu'on vient de franchir
+        const float perpTiles = (lateral ? sideDistY - deltaDistY
+                                         : sideDistX - deltaDistX) - 1e-4f;
+        const PairFloat_t currentPoint = makeHitPoint(lateral, perpTiles);
+
+        if(!Level::getElementCase(coord))
+        {
+            break;
+        }
+
+        optionalTargetRaycast_t hit = treatCell(currentPoint, lateral, coord);
+        if(hit)
+        {
+            return hit;
+        }
+    }
+
+    if(visual)
+    {
+        return {};
+    }
+    const float endTiles = (lateral ? sideDistY : sideDistX) - (lateral ? deltaDistY : deltaDistX);
+    return TargetRaycast{makeHitPoint(lateral, endTiles), EPSILON_FLOAT, {}};
 }
 
 //===================================================================

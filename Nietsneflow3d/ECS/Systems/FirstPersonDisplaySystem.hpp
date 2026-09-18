@@ -79,6 +79,10 @@ public:
     //return target point, texture position and entity num if collision
     optionalTargetRaycast_t calcLineSegmentRaycast(const PairFloat_t &originPoint, bool visual,
                                                    const PairFloat_t &currentCosSinRadiant, float halfTanRadiant, bool scratchMode = false);
+    ////GROK
+    optionalTargetRaycast_t calcLineSegmentRaycastOptimized(const PairFloat_t &originPoint, bool visual,
+                                                   const PairFloat_t &currentCosSinRadiant, float halfTanRadiant, bool scratchMode = false);
+    ////GROK
 private:
     void setShader(Shader &shader);
     optionalTargetRaycast_t calcDoorSegmentRaycast(const PairFloat_t &radiantCosSin, std::optional<float> lateralLeadCoef,
