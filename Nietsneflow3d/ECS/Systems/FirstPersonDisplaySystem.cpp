@@ -414,65 +414,6 @@ float getLateralAngle(float centerAngleVision, float trigoAngle)
 }
 
 //===================================================================
-PairFloat_t getIntersectCoord(const PairFloat_t &observerPoint, const PairFloat_t &targetPoint,
-                              float centerAngleVision, bool outLeft, bool YIntersect)
-{
-    float angle, adj, diffAngle;
-    //X case
-    if(!YIntersect)
-    {
-        //look up
-        if(observerPoint.second > targetPoint.second)
-        {
-            angle = 90.0f;
-        }
-        //look down
-        else
-        {
-            angle = 270.0f;
-        }
-        adj = observerPoint.second - targetPoint.second;
-    }
-    //Y case
-    else
-    {
-        //look left
-        if(observerPoint.first > targetPoint.first)
-        {
-            angle = 180.0f;
-        }
-        //look right
-        else
-        {
-            angle = 0.0f;
-            if(std::abs(angle - centerAngleVision) > 180.0f)
-            {
-                centerAngleVision += 360.0f;
-            }
-        }
-        adj = observerPoint.first - targetPoint.first;
-    }
-    if(outLeft)
-    {
-        diffAngle = getRadiantAngle(angle - std::fmod(centerAngleVision + 45.0f, 360.0f));
-    }
-    else
-    {
-        diffAngle = getRadiantAngle(angle - std::fmod(centerAngleVision - 45.0f, 360.0f));
-    }
-    float diff;
-    diff = (adj * std::tan(diffAngle));
-    if(YIntersect)
-    {
-        return {targetPoint.first, (observerPoint.second - diff)};
-    }
-    else
-    {
-        return {(observerPoint.first + diff), targetPoint.second};
-    }
-}
-
-//===================================================================
 void removeSecondRect(PairFloat_t absolPos[], float distance[], uint32_t &distanceToTreat)
 {
     std::swap(distance[0], distance[1]);
@@ -846,7 +787,7 @@ bool FirstPersonDisplaySystem::rayCasting(uint32_t observerEntity)
     MoveableComponent &moveComp = m_componentsContainer.m_vectMoveableComp[*numCom];
     // float leftAngle = moveComp.m_degreeOrientation + HALF_CONE_VISION;
     float radiantObserverAngle = getRadiantAngle(moveComp.m_degreeOrientation);
-    float currentRadiantAngle, currentCosRadiant, currentSinRadiant, currentLateralScreen = -1.0f;
+    float currentRadiantAngle, currentCosRadiant, currentSinRadiant, currentHalfTanRadiant, currentLateralScreen = -1.0f;
     float rayOffset, cameraX;
     float distanceBrut;
     //mem entity num & distances
@@ -865,7 +806,8 @@ bool FirstPersonDisplaySystem::rayCasting(uint32_t observerEntity)
         ////////////////////Correction Grok
         currentCosRadiant = std::cos(currentRadiantAngle);
         currentSinRadiant = std::sin(currentRadiantAngle);
-        targetPoint = calcLineSegmentRaycast(currentRadiantAngle, mapCompCamera.m_absoluteMapPositionPX, true, {currentCosRadiant, currentSinRadiant},
+        currentHalfTanRadiant = std::tan(std::fmod(currentRadiantAngle, PI_HALF));
+        targetPoint = calcLineSegmentRaycast(mapCompCamera.m_absoluteMapPositionPX, true, {currentCosRadiant, currentSinRadiant}, currentHalfTanRadiant,
                                              playerConfComp.m_crush);
         if(targetPoint)
         {
@@ -1029,19 +971,19 @@ void FirstPersonDisplaySystem::calcVerticalBackgroundLineRaycast(const PairFloat
 }
 
 //===================================================================
-optionalTargetRaycast_t FirstPersonDisplaySystem::calcLineSegmentRaycast(float radiantAngle, const PairFloat_t &originPoint,
-                                                                         bool visual, const PairFloat_t &currentCosSinRadiant, bool scratchMode)
+optionalTargetRaycast_t FirstPersonDisplaySystem::calcLineSegmentRaycast(const PairFloat_t &originPoint,
+                                                                         bool visual, const PairFloat_t &currentCosSinRadiant, float halfTanRadiant, bool scratchMode)
 {
     std::optional<ElementRaycast> element;
     float textPos;
     bool lateral;
     std::optional<PairUI_t> currentCoord;
     std::optional<float> lateralLeadCoef, verticalLeadCoef;
-    verticalLeadCoef = getLeadCoef(radiantAngle, currentCosSinRadiant, false);
-    lateralLeadCoef = getLeadCoef(radiantAngle, currentCosSinRadiant, true);
+    verticalLeadCoef = getLeadCoef(halfTanRadiant, currentCosSinRadiant, false);
+    lateralLeadCoef = getLeadCoef(halfTanRadiant, currentCosSinRadiant, true);
     PairFloat_t currentPoint = scratchMode ? getCorrectedPosition(originPoint, currentCosSinRadiant) : originPoint;
     optionalTargetRaycast_t result;
-    lateral = raycastPointLateral(radiantAngle, currentCosSinRadiant, originPoint);
+    lateral = raycastPointLateral(currentCosSinRadiant, halfTanRadiant, originPoint);
     currentCoord = getCorrectedCoord(currentPoint, lateral, currentCosSinRadiant);
     element = Level::getElementCase(*currentCoord);
     if(element && element->m_type == LevelCaseType_e::DOOR_LC)
@@ -1568,14 +1510,14 @@ std::optional<float> getModulo(float sinCosAngle, float position, float modulo, 
 }
 
 //===================================================================
-bool raycastPointLateral(float radiantAngle, const PairFloat_t &currentCosSinRadiant, const PairFloat_t &cameraPoint)
+bool raycastPointLateral(const PairFloat_t &currentCosSinRadiant, float currentTanRadiant, const PairFloat_t &cameraPoint)
 {
     bool lateral;
-    if(!getLeadCoef(radiantAngle, currentCosSinRadiant, false))
+    if(!getLeadCoef(currentTanRadiant, currentCosSinRadiant, false))
     {
         lateral = true;
     }
-    else if(!getLeadCoef(radiantAngle, currentCosSinRadiant, true))
+    else if(!getLeadCoef(currentTanRadiant, currentCosSinRadiant, true))
     {
         lateral = false;
     }
@@ -1696,9 +1638,9 @@ int32_t getCoord(float value, float tileSize)
 }
 
 //===================================================================
-std::optional<float> getLeadCoef(float radiantAngle, const PairFloat_t &currentCosSinRadiant, bool lateral)
+std::optional<float> getLeadCoef(float halfTanRadiant, const PairFloat_t &currentCosSinRadiant, bool lateral)
 {
-    float tanRadiantAngleQuarter = std::tan(std::fmod(radiantAngle, PI_HALF)), result;
+    float tanRadiantAngleQuarter = halfTanRadiant, result;
     if((lateral && std::abs(currentCosSinRadiant.second) < 0.0001f) || (!lateral && std::abs(currentCosSinRadiant.first) < 0.0001f))
     {
         return {};
