@@ -674,8 +674,9 @@ void MainEngine::confPlayerBullet(PlayerConfComponent *playerComp,
 void confActionShape(MapCoordComponent &mapCompAction, GeneralCollisionComponent &genCompAction,
                      const MapCoordComponent &attackerMapComp, const MoveableComponent &attackerMoveComp)
 {
+    float radiantAngle = getRadiantAngle(attackerMoveComp.m_degreeOrientation);
     mapCompAction.m_absoluteMapPositionPX = attackerMapComp.m_absoluteMapPositionPX;
-    moveElementFromAngle(LEVEL_HALF_TILE_SIZE_PX, getRadiantAngle(attackerMoveComp.m_degreeOrientation),
+    moveElementFromAngle(LEVEL_HALF_TILE_SIZE_PX, {std::cos(radiantAngle), std::sin(radiantAngle)},
                          mapCompAction.m_absoluteMapPositionPX);
     genCompAction.m_active = true;
 }

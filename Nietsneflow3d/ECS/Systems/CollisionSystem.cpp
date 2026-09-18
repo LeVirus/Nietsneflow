@@ -456,7 +456,7 @@ void CollisionSystem::confImpactShots(uint32_t numBullet, CollisionTag_e targetT
         mapImpact.m_absoluteMapPositionPX = segmentBullet.m_points.first;
         float radiantAngle = getTrigoAngle(segmentBullet.m_points.first,
                                            segmentBullet.m_points.second, false);
-        moveElementFromAngle(m_memDistCurrentBulletColl.second, radiantAngle, mapImpact.m_absoluteMapPositionPX, true);
+        moveElementFromAngle(m_memDistCurrentBulletColl.second, {std::cos(radiantAngle), std::sin(radiantAngle)}, mapImpact.m_absoluteMapPositionPX, true);
     }
     genImpact.m_active = true;
     timerImpact.m_cycleCountA = 0;
@@ -1019,8 +1019,9 @@ bool CollisionSystem::treatCollisionPlayerVisibleShot(CollisionArgs &args, Recta
         {
             orientation -= 360.0f;
         }
+        float radiantAngle = getRadiantAngle(moveComp.m_degreeOrientation);
         //Back position
-        moveElementFromAngle(6.0f, getRadiantAngle(moveComp.m_degreeOrientation), args.mapCompA.m_absoluteMapPositionPX);
+        moveElementFromAngle(6.0f, {std::cos(radiantAngle), std::sin(radiantAngle)}, args.mapCompA.m_absoluteMapPositionPX);
         if(args.tagCompB.m_tagA == CollisionTag_e::DOOR_CT)
         {
             collision = treatDoorCollisionFirstCircle(args, circleCompA, rectCompB);
