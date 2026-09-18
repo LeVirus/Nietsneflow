@@ -63,7 +63,8 @@ void IASystem::treatEject()
             numCom = m_newComponentManager.getComponentEmplacement(m_vectMoveableEntities[i], Components_e::MAP_COORD_COMPONENT);
             assert(numCom);
             MapCoordComponent &mapComp = m_componentsContainer.m_vectMapCoordComp[*numCom];
-            moveElementFromAngle(moveComp.m_ejectData->first, getRadiantAngle(moveComp.m_currentDegreeMoveDirection),
+            float radiantAngle = getRadiantAngle(moveComp.m_currentDegreeMoveDirection);
+            moveElementFromAngle(moveComp.m_ejectData->first, {std::cos(radiantAngle), std::sin(radiantAngle)},
                                  mapComp.m_absoluteMapPositionPX);
         }
     }
@@ -197,7 +198,8 @@ void IASystem::treatVisibleShot(uint32_t numEntity)
     assert(numCom);
     MoveableComponent &ammoMoveComp = m_componentsContainer.m_vectMoveableComp[*numCom];
     assert(genColl.m_shape == CollisionShape_e::CIRCLE_C);
-    moveElementFromAngle(ammoMoveComp.m_velocity, getRadiantAngle(ammoMoveComp.m_degreeOrientation),
+    float radiantAngle = getRadiantAngle(ammoMoveComp.m_degreeOrientation);
+    moveElementFromAngle(ammoMoveComp.m_velocity, {std::cos(radiantAngle), std::sin(radiantAngle)},
                          ammoMapComp.m_absoluteMapPositionPX);
 }
 
@@ -380,7 +382,8 @@ void IASystem::treatEnemyBehaviourAttack(uint32_t enemyEntity, MapCoordComponent
     {
         if(enemyConfComp.m_attackPhase != EnemyAttackPhase_e::SHOOTED)
         {
-            moveElementFromAngle(moveComp.m_velocity, getRadiantAngle(moveComp.m_degreeOrientation),
+            float radiantAngle = getRadiantAngle(moveComp.m_degreeOrientation);
+            moveElementFromAngle(moveComp.m_velocity, {std::cos(radiantAngle), std::sin(radiantAngle)},
                                  enemyMapComp.m_absoluteMapPositionPX);
             numCom = m_newComponentManager.getComponentEmplacement(enemyEntity, Components_e::MAP_COORD_COMPONENT);
             assert(numCom);
@@ -452,7 +455,8 @@ void IASystem::confVisibleShoot(std::vector<uint32_t> &visibleShots, const PairF
     mapComp.m_coord = *coord;
     mapComp.m_absoluteMapPositionPX = point;
     m_mainEngine->addEntityToZone(visibleShots[currentShot], mapComp.m_coord);
-    moveElementFromAngle(LEVEL_THIRD_TILE_SIZE_PX , getRadiantAngle(degreeAngle),
+    float radiantAngle = getRadiantAngle(degreeAngle);
+    moveElementFromAngle(LEVEL_THIRD_TILE_SIZE_PX , {std::cos(radiantAngle), std::sin(radiantAngle)},
                          mapComp.m_absoluteMapPositionPX);
     ammoMoveComp.m_degreeOrientation = degreeAngle;
     ammoMoveComp.m_currentDegreeMoveDirection = degreeAngle;

@@ -456,8 +456,9 @@ void InputSystem::treatPlayerMove(PlayerConfComponent &playerComp, MoveableCompo
 //===================================================================
 void InputSystem::treatPlayerMove(float currentVelocity, MoveableComponent &moveComp, MapCoordComponent &mapComp, PlayerConfComponent &playerComp)
 {
+    float radiantAngle = getRadiantAngle(moveComp.m_currentDegreeMoveDirection);
     moveElementFromAngle(currentVelocity,
-                         getRadiantAngle(moveComp.m_currentDegreeMoveDirection),
+                         {std::cos(radiantAngle), std::sin(radiantAngle)},
                          mapComp.m_absoluteMapPositionPX);
     m_mainEngine->addEntityToZone(m_playerEntity,
                                   *getLevelCoord(mapComp.m_absoluteMapPositionPX));
