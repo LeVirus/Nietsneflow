@@ -113,9 +113,10 @@ void FirstPersonDisplaySystem::confCompVertexMemEntities()
         }
         m_memWallEntityDistances.clear();
         //draw wall and door
-        for(MapRayCastingData_t::const_iterator it = m_raycastingData.begin(); it != m_raycastingData.end(); ++it, ++numIteration)
+        buildRaycastingGroups();
+        for(uint32_t i = 0; i < m_raycastingGroups.size(); ++i, ++numIteration)
         {
-            writeVertexWallDoorRaycasting(*it, numIteration);
+            writeVertexWallDoorRaycasting(m_raycastingGroups[i], numIteration);
         }
         ++numIteration;
         //Draw simple element
@@ -758,7 +759,6 @@ bool FirstPersonDisplaySystem::rayCasting(uint32_t observerEntity)
 {
     optionalTargetRaycast_t targetPoint;
     //WORK FOR ONE PLAYER ONLY
-    m_raycastingData.clear();
     if(m_groundTiledTextBackground)
     {
         m_groundTiledTextVertice.clear();
@@ -790,6 +790,16 @@ bool FirstPersonDisplaySystem::rayCasting(uint32_t observerEntity)
     float currentRadiantAngle, currentCosRadiant, currentSinRadiant, currentHalfTanRadiant, currentLateralScreen = -1.0f;
     float rayOffset, cameraX;
     float distanceBrut;
+
+    ///GROK
+    // dans rayCasting(), avant la boucle
+    for(ColumnRayHit &h : m_columnHits)
+    {
+        h.m_valid = false;
+    }
+    m_raycastingGroups.clear();
+    ///GROK
+
     //mem entity num & distances
     for(uint32_t j = 0; j < RAYCAST_LINE_NUMBER; ++j)
     {
@@ -813,7 +823,17 @@ bool FirstPersonDisplaySystem::rayCasting(uint32_t observerEntity)
         {
             m_memRaycastDist[j] = getCameraDistanceOptimized(mapCompCamera.m_absoluteMapPositionPX, targetPoint->m_position, m_currentPlayerDir.first, m_currentPlayerDir.second);
             distanceBrut = getDistance(mapCompCamera.m_absoluteMapPositionPX, (targetPoint->m_position));
-            memRaycastDistance((*targetPoint->m_numEntity), j, m_memRaycastDist[j], targetPoint->m_textPos, distanceBrut);
+            ///GROK
+            // dans la boucle, quand targetPoint est valide :
+            m_columnHits[j].m_valid = true;
+            m_columnHits[j].m_entity = *targetPoint->m_numEntity;
+            m_columnHits[j].m_intersect = {
+                m_memRaycastDist[j],
+                targetPoint->m_textPos,
+                j,
+                distanceBrut
+            };
+            ///GROK
         }
         else
         {
@@ -827,6 +847,49 @@ bool FirstPersonDisplaySystem::rayCasting(uint32_t observerEntity)
         currentLateralScreen += SCREEN_HORIZ_BACKGROUND_GL_STEP;
     }
     return false;
+}
+
+//===================================================================
+void FirstPersonDisplaySystem::buildRaycastingGroups()
+{
+    m_raycastingGroups.clear();
+
+    // entity -> index dans m_raycastingGroups
+    // quelques dizaines de murs visibles : vector + recherche linéaire
+    // suffit largement et reste sans heap imprévisible
+    std::vector<uint32_t> entityToGroup;
+    entityToGroup.reserve(64);
+    m_raycastingGroups.reserve(64);
+
+    auto findGroup = [&](uint32_t entity) -> int32_t
+    {
+        for(uint32_t i = 0; i < entityToGroup.size(); ++i)
+        {
+            if(entityToGroup[i] == entity)
+            {
+                return static_cast<int32_t>(i);
+            }
+        }
+        return -1;
+    };
+
+    for(uint32_t j = 0; j < RAYCAST_LINE_NUMBER; ++j)
+    {
+        if(!m_columnHits[j].m_valid)
+        {
+            continue;
+        }
+        const uint32_t entity = m_columnHits[j].m_entity;
+        int32_t group = findGroup(entity);
+        if(group < 0)
+        {
+            entityToGroup.push_back(entity);
+            m_raycastingGroups.push_back({entity, {}});
+            m_raycastingGroups.back().second.reserve(32);
+            group = static_cast<int32_t>(m_raycastingGroups.size() - 1);
+        }
+        m_raycastingGroups[group].second.push_back(m_columnHits[j].m_intersect);
+    }
 }
 
 //===================================================================
@@ -1099,13 +1162,7 @@ optionalTargetRaycast_t FirstPersonDisplaySystem::calcLineSegmentRaycastOptimize
     float sideDistY = (rayDirY < 0.0f)
                           ? (posY - static_cast<float>(mapY)) * deltaDistY
                           : (static_cast<float>(mapY) + 1.0f - posY) * deltaDistY;
-    constexpr float EDGE = 1e-4f;
-
-    if(rayDirX < 0.0f && posX - static_cast<float>(mapX) < EDGE)
-        --mapX;
-    if(rayDirY < 0.0f && posY - static_cast<float>(mapY) < EDGE)
-        --mapY;
-    auto makeHitPoint = [&](bool lateral, float perpTiles) -> PairFloat_t
+    auto makeHitPoint = [&](float perpTiles) -> PairFloat_t
     {
         return {
             origin.first  + rayDirX * perpTiles * LEVEL_TILE_SIZE_PX,
@@ -1145,28 +1202,14 @@ optionalTargetRaycast_t FirstPersonDisplaySystem::calcLineSegmentRaycastOptimize
                 return result;
             }
         }
-
-        if(visual && element->m_type == LevelCaseType_e::EMPTY_LC
-            && lateralLeadCoef && verticalLeadCoef)
-        {
-            const float fx = std::fmod(currentPoint.first,  LEVEL_TILE_SIZE_PX);
-            const float fy = std::fmod(currentPoint.second, LEVEL_TILE_SIZE_PX);
-            if(fx < 0.01f && fy < 0.01f)
-            {
-                optionalTargetRaycast_t corner = getTextureLimitCase(currentCosSinRadiant, *lateralLeadCoef, *verticalLeadCoef, coord, currentPoint, lateral);
-                if(corner)
-                {
-                    return corner;
-                }
-            }
-        }
         return std::nullopt;
     };
 
     // Case de départ (même comportement qu'avant)
     if(mapX >= 0 && mapY >= 0)
     {
-        const PairUI_t startCoord{
+        const PairUI_t startCoord
+            {
             static_cast<uint32_t>(mapX),
             static_cast<uint32_t>(mapY)
         };
@@ -1207,7 +1250,7 @@ optionalTargetRaycast_t FirstPersonDisplaySystem::calcLineSegmentRaycastOptimize
         // Distance jusqu'au bord qu'on vient de franchir
         const float perpTiles = (lateral ? sideDistY - deltaDistY
                                          : sideDistX - deltaDistX) - 1e-4f;
-        const PairFloat_t currentPoint = makeHitPoint(lateral, perpTiles);
+        const PairFloat_t currentPoint = makeHitPoint(perpTiles);
 
         if(!Level::getElementCase(coord))
         {
@@ -1226,7 +1269,7 @@ optionalTargetRaycast_t FirstPersonDisplaySystem::calcLineSegmentRaycastOptimize
         return {};
     }
     const float endTiles = (lateral ? sideDistY : sideDistX) - (lateral ? deltaDistY : deltaDistX);
-    return TargetRaycast{makeHitPoint(lateral, endTiles), EPSILON_FLOAT, {}};
+    return TargetRaycast{makeHitPoint(endTiles), EPSILON_FLOAT, {}};
 }
 
 //===================================================================
@@ -1639,21 +1682,6 @@ std::optional<PairUI_t> getCorrectedCoord(const PairFloat_t &currentPoint,
         --point.first;
     }
     return getLevelCoord(point);
-}
-
-//===================================================================
-void FirstPersonDisplaySystem::memRaycastDistance(uint32_t numEntity, uint32_t lateralScreenPos,
-                                                  float distance, float texturePos, float distanceBrut)
-{
-    MapRayCastingData_t::iterator it = m_raycastingData.find(numEntity);
-    if(it == m_raycastingData.end())
-    {
-        m_raycastingData.insert({numEntity, {{distance, texturePos, lateralScreenPos, distanceBrut}}});
-    }
-    else
-    {
-        it->second.push_back({distance, texturePos, lateralScreenPos, distanceBrut});
-    }
 }
 
 //===================================================================
