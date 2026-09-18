@@ -222,10 +222,7 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent &gen
     uint32_t numEntity = visionComp.m_vectVisibleEntities[currentNormal].first;
     assert(visionComp.m_vectVisibleEntities.size() > currentNormal);
     PairFloat_t centerPosB = getCenterPosition(mapCompB, genCollComp, numEntity);
-    float radiantObserverAngle = getRadiantAngle(degreeObserverAngle),
-        cameraDistance = getCameraDistanceOptimized(mapCompA.m_absoluteMapPositionPX, mapCompB.m_absoluteMapPositionPX, m_currentPlayerDir.first, m_currentPlayerDir.second);
-    std::cos(radiantObserverAngle);
-    std::sin(radiantObserverAngle);
+    float cameraDistance = getCameraDistanceOptimized(mapCompA.m_absoluteMapPositionPX, mapCompB.m_absoluteMapPositionPX, m_currentPlayerDir.first, m_currentPlayerDir.second);
     float displayDistance = cameraDistance;
     if(cameraDistance > visionComp.m_distanceVisibility)
     {
@@ -263,7 +260,7 @@ void FirstPersonDisplaySystem::treatDisplayEntity(GeneralCollisionComponent &gen
 }
 
 //===================================================================
-bool FirstPersonDisplaySystem::elementBehindDoor(const ElementRaycast &elementCase, float radiantObserverAngle, const MapCoordComponent &mapComp)
+bool FirstPersonDisplaySystem::elementBehindDoor(const ElementRaycast &elementCase, const MapCoordComponent &mapComp)
 {
     if(m_memDoorDistance.find(elementCase.m_numEntity) != m_memDoorDistance.end())
     {
@@ -273,7 +270,7 @@ bool FirstPersonDisplaySystem::elementBehindDoor(const ElementRaycast &elementCa
         float m_lateralMod = std::fmod(mapComp.m_absoluteMapPositionPX.second, LEVEL_TILE_SIZE_PX);
         if(!doorComp.m_vertical)
         {
-            if((std::sin(radiantObserverAngle) > EPSILON_FLOAT) == (m_lateralMod < LEVEL_HALF_TILE_SIZE_PX))
+            if((m_currentPlayerDir.second > EPSILON_FLOAT) == (m_lateralMod < LEVEL_HALF_TILE_SIZE_PX))
             {
                 return true;
             }
@@ -281,7 +278,7 @@ bool FirstPersonDisplaySystem::elementBehindDoor(const ElementRaycast &elementCa
         else
         {
             float m_verticalMod = std::fmod(mapComp.m_absoluteMapPositionPX.first, LEVEL_TILE_SIZE_PX);
-            if((std::cos(radiantObserverAngle) > EPSILON_FLOAT) == (m_verticalMod > LEVEL_HALF_TILE_SIZE_PX))
+            if((m_currentPlayerDir.first > EPSILON_FLOAT) == (m_verticalMod > LEVEL_HALF_TILE_SIZE_PX))
             {
                 return true;
             }
@@ -849,7 +846,7 @@ bool FirstPersonDisplaySystem::rayCasting(uint32_t observerEntity)
     MoveableComponent &moveComp = m_componentsContainer.m_vectMoveableComp[*numCom];
     // float leftAngle = moveComp.m_degreeOrientation + HALF_CONE_VISION;
     float radiantObserverAngle = getRadiantAngle(moveComp.m_degreeOrientation);
-    float currentRadiantAngle /*= getRadiantAngle(leftAngle)*/, currentLateralScreen = -1.0f;
+    float currentRadiantAngle, currentCosRadiant, currentSinRadiant, currentLateralScreen = -1.0f;
     float rayOffset, cameraX;
     float distanceBrut;
     //mem entity num & distances
@@ -866,7 +863,9 @@ bool FirstPersonDisplaySystem::rayCasting(uint32_t observerEntity)
             currentRadiantAngle += PI_DOUBLE;
         }
         ////////////////////Correction Grok
-        targetPoint = calcLineSegmentRaycast(currentRadiantAngle, mapCompCamera.m_absoluteMapPositionPX, true,
+        currentCosRadiant = std::cos(currentRadiantAngle);
+        currentSinRadiant = std::sin(currentRadiantAngle);
+        targetPoint = calcLineSegmentRaycast(currentRadiantAngle, mapCompCamera.m_absoluteMapPositionPX, true, {currentCosRadiant, currentSinRadiant},
                                              playerConfComp.m_crush);
         if(targetPoint)
         {
@@ -880,7 +879,7 @@ bool FirstPersonDisplaySystem::rayCasting(uint32_t observerEntity)
         }
         if(m_backgroundRaycastActive)
         {
-            calcVerticalBackgroundLineRaycast(mapCompCamera.m_absoluteMapPositionPX, currentRadiantAngle, currentLateralScreen,
+            calcVerticalBackgroundLineRaycast(mapCompCamera.m_absoluteMapPositionPX, currentRadiantAngle, {currentCosRadiant, currentSinRadiant}, currentLateralScreen,
                                               radiantObserverAngle);
         }
         currentLateralScreen += SCREEN_HORIZ_BACKGROUND_GL_STEP;
@@ -947,7 +946,7 @@ bool FirstPersonDisplaySystem::isInsideWall(const PairFloat_t &pos)
 }
 
 //===================================================================
-void FirstPersonDisplaySystem::calcVerticalBackgroundLineRaycast(const PairFloat_t &observerPos, float currentRadiantAngle,
+void FirstPersonDisplaySystem::calcVerticalBackgroundLineRaycast(const PairFloat_t &observerPos, float currentRadiantAngle, const PairFloat_t &currentCosSinRadiant,
                                                                  float currentGLLatPos, float radiantObserverAngle)
 {
     PairFloat_t currentGroundGLA = {currentGLLatPos, -1.0f},
@@ -992,15 +991,13 @@ void FirstPersonDisplaySystem::calcVerticalBackgroundLineRaycast(const PairFloat
     }
     if(!m_memBackgroundDistance)
     {
-        float currentDirX = std::cos(currentRadiantAngle),
-            currentDirY = -std::sin(currentRadiantAngle);
         m_memBackgroundDistance = std::array<float, RAYCAST_GROUND_CEILING_NUMBER>();
         for(uint32_t i = 0; i < RAYCAST_GROUND_CEILING_NUMBER; ++i, currentGroundGLA.second += SCREEN_VERT_BACKGROUND_GL_STEP)
         {
             totalDistanceTarget = RAYCAST_GROUND_CEILING_FACTOR / std::abs(currentGroundGLA.second);////GROK
             currentPoint = observerPos;
             moveElementFromAngle(totalDistanceTarget, currentRadiantAngle, currentPoint, true);
-            (*m_memBackgroundDistance)[i] = getCameraDistanceOptimized(observerPos, currentPoint, currentDirX, currentDirY);
+            (*m_memBackgroundDistance)[i] = getCameraDistanceOptimized(observerPos, currentPoint, currentCosSinRadiant.first, -currentCosSinRadiant.second);
         }
         currentGroundGLA = {currentGLLatPos, -1.0f};
     }
@@ -1032,25 +1029,24 @@ void FirstPersonDisplaySystem::calcVerticalBackgroundLineRaycast(const PairFloat
 }
 
 //===================================================================
-optionalTargetRaycast_t FirstPersonDisplaySystem::calcLineSegmentRaycast(float radiantAngle,
-                                                                         const PairFloat_t &originPoint,
-                                                                         bool visual, bool scratchMode)
+optionalTargetRaycast_t FirstPersonDisplaySystem::calcLineSegmentRaycast(float radiantAngle, const PairFloat_t &originPoint,
+                                                                         bool visual, const PairFloat_t &currentCosSinRadiant, bool scratchMode)
 {
     std::optional<ElementRaycast> element;
     float textPos;
     bool lateral;
     std::optional<PairUI_t> currentCoord;
     std::optional<float> lateralLeadCoef, verticalLeadCoef;
-    verticalLeadCoef = getLeadCoef(radiantAngle, false);
-    lateralLeadCoef = getLeadCoef(radiantAngle, true);
-    PairFloat_t currentPoint = scratchMode ? getCorrectedPosition(originPoint, radiantAngle) : originPoint;
+    verticalLeadCoef = getLeadCoef(radiantAngle, currentCosSinRadiant, false);
+    lateralLeadCoef = getLeadCoef(radiantAngle, currentCosSinRadiant, true);
+    PairFloat_t currentPoint = scratchMode ? getCorrectedPosition(originPoint, currentCosSinRadiant) : originPoint;
     optionalTargetRaycast_t result;
-    lateral = raycastPointLateral(radiantAngle, originPoint);
-    currentCoord = getCorrectedCoord(currentPoint, lateral, radiantAngle);
+    lateral = raycastPointLateral(radiantAngle, currentCosSinRadiant, originPoint);
+    currentCoord = getCorrectedCoord(currentPoint, lateral, currentCosSinRadiant);
     element = Level::getElementCase(*currentCoord);
     if(element && element->m_type == LevelCaseType_e::DOOR_LC)
     {
-        result = calcDoorSegmentRaycast(radiantAngle, lateralLeadCoef,
+        result = calcDoorSegmentRaycast(currentCosSinRadiant, lateralLeadCoef,
                                         verticalLeadCoef, currentPoint, *element);
         if(result)
         {
@@ -1060,7 +1056,7 @@ optionalTargetRaycast_t FirstPersonDisplaySystem::calcLineSegmentRaycast(float r
     else if(element && element->m_type == LevelCaseType_e::WALL_MOVE_LC)
     {
         assert(element->m_memMoveWall);
-        result = calcMovingWallSegmentRaycast(radiantAngle, lateralLeadCoef,
+        result = calcMovingWallSegmentRaycast(currentCosSinRadiant, lateralLeadCoef,
                                               verticalLeadCoef, currentPoint, *element);
         if(result)
         {
@@ -1070,9 +1066,9 @@ optionalTargetRaycast_t FirstPersonDisplaySystem::calcLineSegmentRaycast(float r
     for(uint32_t k = 0; k < RAYCAST_DEPTH; ++k)//limit distance
     {
         //OOOOK get lateral dirty
-        currentPoint = getLimitPointRayCasting(currentPoint, radiantAngle,
+        currentPoint = getLimitPointRayCasting(currentPoint, currentCosSinRadiant,
                                                lateralLeadCoef, verticalLeadCoef, lateral);
-        currentCoord = getCorrectedCoord(currentPoint, lateral, radiantAngle);
+        currentCoord = getCorrectedCoord(currentPoint, lateral, currentCosSinRadiant);
         if(!currentCoord)
         {
             break;
@@ -1082,12 +1078,12 @@ optionalTargetRaycast_t FirstPersonDisplaySystem::calcLineSegmentRaycast(float r
         {
             if(element->m_type == LevelCaseType_e::WALL_LC)
             {
-                textPos = getRaycastTexturePos(radiantAngle, lateral, currentPoint);
+                textPos = getRaycastTexturePos(currentCosSinRadiant, lateral, currentPoint);
                 return TargetRaycast{currentPoint, textPos, element->m_numEntity};
             }
             else if(element->m_type == LevelCaseType_e::DOOR_LC)
             {
-                result = calcDoorSegmentRaycast(radiantAngle, lateralLeadCoef,
+                result = calcDoorSegmentRaycast(currentCosSinRadiant, lateralLeadCoef,
                                                 verticalLeadCoef, currentPoint, *element);
                 if(result)
                 {
@@ -1097,7 +1093,7 @@ optionalTargetRaycast_t FirstPersonDisplaySystem::calcLineSegmentRaycast(float r
             else if(element->m_type == LevelCaseType_e::WALL_MOVE_LC)
             {
                 assert(element->m_memMoveWall);
-                result = calcMovingWallSegmentRaycast(radiantAngle, lateralLeadCoef,
+                result = calcMovingWallSegmentRaycast(currentCosSinRadiant, lateralLeadCoef,
                                                       verticalLeadCoef, currentPoint, *element);
                 if(result)
                 {
@@ -1110,7 +1106,7 @@ optionalTargetRaycast_t FirstPersonDisplaySystem::calcLineSegmentRaycast(float r
                         std::fmod(currentPoint.second, LEVEL_TILE_SIZE_PX) < 0.01f)
                 {
                     optionalTargetRaycast_t result =
-                            getTextureLimitCase(radiantAngle, *lateralLeadCoef, *verticalLeadCoef, *currentCoord, currentPoint, lateral);
+                            getTextureLimitCase(currentCosSinRadiant, *lateralLeadCoef, *verticalLeadCoef, *currentCoord, currentPoint, lateral);
                     if(result)
                     {
                         return result;
@@ -1130,11 +1126,11 @@ optionalTargetRaycast_t FirstPersonDisplaySystem::calcLineSegmentRaycast(float r
 }
 
 //===================================================================
-float getRaycastTexturePos(float radiantObserverAngle, bool lateral, const PairFloat_t &pos)
+float getRaycastTexturePos(const PairFloat_t &radiantCosSin, bool lateral, const PairFloat_t &pos)
 {
     if(lateral)
     {
-        if(std::sin(radiantObserverAngle) >= 0.0f)
+        if(radiantCosSin.second >= 0.0f)
         {
             return std::fmod(pos.first, LEVEL_TILE_SIZE_PX);
         }
@@ -1145,7 +1141,7 @@ float getRaycastTexturePos(float radiantObserverAngle, bool lateral, const PairF
     }
     else
     {
-        if(std::cos(radiantObserverAngle) >= 0.0f)
+        if(radiantCosSin.first >= 0.0f)
         {
             return std::fmod(pos.second, LEVEL_TILE_SIZE_PX);
         }
@@ -1157,7 +1153,7 @@ float getRaycastTexturePos(float radiantObserverAngle, bool lateral, const PairF
 }
 
 //===================================================================
-optionalTargetRaycast_t FirstPersonDisplaySystem::getTextureLimitCase(float radiantAngle, float lateralLeadCoef, float verticalLeadCoef,
+optionalTargetRaycast_t FirstPersonDisplaySystem::getTextureLimitCase(const PairFloat_t &currentCosSinRadiant, float lateralLeadCoef, float verticalLeadCoef,
                                                                       const PairUI_t &currentCoord,
                                                                       const PairFloat_t &currentPoint, bool lateral)
 {
@@ -1175,14 +1171,14 @@ optionalTargetRaycast_t FirstPersonDisplaySystem::getTextureLimitCase(float radi
             (elementB && (elementB->m_type == LevelCaseType_e::WALL_LC ||
                           (elementB->m_type == LevelCaseType_e::WALL_MOVE_LC && elementB->m_moveableWallStopped))))
     {
-        textPos = getRaycastTexturePos(radiantAngle, lateral, {currentPoint.first + 1.0f, currentPoint.second + 1.0f});
+        textPos = getRaycastTexturePos(currentCosSinRadiant, lateral, {currentPoint.first + 1.0f, currentPoint.second + 1.0f});
         return TargetRaycast{currentPoint, textPos, elementA->m_numEntity};
     }
     return {};
 }
 
 //===================================================================
-optionalTargetRaycast_t FirstPersonDisplaySystem::calcMovingWallSegmentRaycast(float radiantAngle,
+optionalTargetRaycast_t FirstPersonDisplaySystem::calcMovingWallSegmentRaycast(const PairFloat_t &currentCosSinRadiant,
                                                                                std::optional<float> lateralLeadCoef,
                                                                                std::optional<float> verticalLeadCoef,
                                                                                PairFloat_t &currentPoint,
@@ -1212,29 +1208,29 @@ optionalTargetRaycast_t FirstPersonDisplaySystem::calcMovingWallSegmentRaycast(f
                                    mapComp.m_absoluteMapPositionPX.second +
                                    rectComp.m_size.second}};
         //exclude case
-        if((std::cos(radiantAngle) < 0.0f && currentPoint.first < wallPos[0].first) ||
-                (std::cos(radiantAngle) > 0.0f && currentPoint.first > wallPos[0].second))
+        if((currentCosSinRadiant.first < 0.0f && currentPoint.first < wallPos[0].first) ||
+                (currentCosSinRadiant.first > 0.0f && currentPoint.first > wallPos[0].second))
         {
             textPosWall = false;
         }
-        else if((std::sin(radiantAngle) > 0.0f && currentPoint.second < wallPos[1].first) ||
-                (std::sin(radiantAngle) < 0.0f && currentPoint.second > wallPos[1].second))
+        else if((currentCosSinRadiant.second > 0.0f && currentPoint.second < wallPos[1].first) ||
+                (currentCosSinRadiant.second < 0.0f && currentPoint.second > wallPos[1].second))
         {
             textPosWall = false;
         }
-        else if(lateralLeadCoef && treatLateralIntersectRect(currentPoint, wallPos, *lateralLeadCoef, radiantAngle))
+        else if(lateralLeadCoef && treatLateralIntersectRect(currentPoint, wallPos, *lateralLeadCoef, currentCosSinRadiant.first))
         {
             lateralColl = true;
             textPosWall = true;
         }
-        else if(verticalLeadCoef && treatVerticalIntersectRect(currentPoint, wallPos, *verticalLeadCoef, radiantAngle))
+        else if(verticalLeadCoef && treatVerticalIntersectRect(currentPoint, wallPos, *verticalLeadCoef, currentCosSinRadiant.second))
         {
             lateralColl = false;
             textPosWall = true;
         }
         if(textPosWall)
         {
-            float textPosWall = getRaycastTexturePos(radiantAngle, lateralColl,
+            float textPosWall = getRaycastTexturePos(currentCosSinRadiant, lateralColl,
             {std::abs(wallPos[0].first - currentPoint.first),
              std::abs(wallPos[1].first - currentPoint.second)});
             if(element.m_memMoveWall->size() > 1)
@@ -1260,14 +1256,14 @@ optionalTargetRaycast_t FirstPersonDisplaySystem::calcMovingWallSegmentRaycast(f
 }
 
 //===================================================================
-optionalTargetRaycast_t FirstPersonDisplaySystem::calcDoorSegmentRaycast(float radiantAngle,
+optionalTargetRaycast_t FirstPersonDisplaySystem::calcDoorSegmentRaycast(const PairFloat_t &radiantCosSin,
                                                                          std::optional<float> lateralLeadCoef,
                                                                          std::optional<float> verticalLeadCoef,
                                                                          PairFloat_t &currentPoint,
                                                                          const ElementRaycast &element)
 {
     bool textFace, textLateral;
-    std::optional<float> textPosDoor = treatDoorRaycast(element.m_numEntity, radiantAngle,
+    std::optional<float> textPosDoor = treatDoorRaycast(element.m_numEntity, radiantCosSin,
                                                         currentPoint, lateralLeadCoef,
                                                         verticalLeadCoef, textLateral,
                                                         textFace);
@@ -1279,7 +1275,7 @@ optionalTargetRaycast_t FirstPersonDisplaySystem::calcDoorSegmentRaycast(float r
         }
         else
         {
-            textPosDoor = getDoorRaycastTexturePos(*textPosDoor, radiantAngle, textLateral, currentPoint);
+            textPosDoor = getDoorRaycastTexturePos(*textPosDoor, radiantCosSin, textLateral, currentPoint);
         }
         return TargetRaycast{currentPoint, *textPosDoor, element.m_numEntity};
     }
@@ -1287,7 +1283,7 @@ optionalTargetRaycast_t FirstPersonDisplaySystem::calcDoorSegmentRaycast(float r
 }
 
 //===================================================================
-std::optional<float> FirstPersonDisplaySystem::treatDoorRaycast(uint32_t numEntity, float currentRadiantAngle,
+std::optional<float> FirstPersonDisplaySystem::treatDoorRaycast(uint32_t numEntity, const PairFloat_t &currentCosSinRadiant,
                                                                 PairFloat_t &currentPoint,
                                                                 std::optional<float> lateralLeadCoef,
                                                                 std::optional<float> verticalLeadCoef,
@@ -1310,7 +1306,7 @@ std::optional<float> FirstPersonDisplaySystem::treatDoorRaycast(uint32_t numEnti
                               {mapComp.m_absoluteMapPositionPX.second,
                                mapComp.m_absoluteMapPositionPX.second +
                                rectComp.m_size.second}};
-    ok = treatDisplayDoor(currentRadiantAngle, doorComp.m_vertical,currentPoint,
+    ok = treatDisplayDoor(currentCosSinRadiant, doorComp.m_vertical,currentPoint,
                           doorPos, verticalLeadCoef, lateralLeadCoef,
                           textLateral, textFace);
     if(ok)
@@ -1333,31 +1329,31 @@ std::optional<float> FirstPersonDisplaySystem::treatDoorRaycast(uint32_t numEnti
 }
 
 //===================================================================
-bool treatDisplayDoor(float currentRadiantAngle, bool doorVertical, PairFloat_t &currentPoint,
+bool treatDisplayDoor(const PairFloat_t &currentCosSinRadiant, bool doorVertical, PairFloat_t &currentPoint,
                       const PairFloat_t doorPos[], std::optional<float> verticalLeadCoef,
                       std::optional<float> lateralLeadCoef, bool &textLateral, bool &textFace,
                       bool bull)
 {
     //exclude case
-    if((!bull && std::cos(currentRadiantAngle) < 0.0f && currentPoint.first < doorPos[0].first) ||
-            (std::cos(currentRadiantAngle) > 0.0f && currentPoint.first > doorPos[0].second))
+    if((!bull && currentCosSinRadiant.first < 0.0f && currentPoint.first < doorPos[0].first) ||
+            (currentCosSinRadiant.first > 0.0f && currentPoint.first > doorPos[0].second))
     {
         return false;
     }
-    if((std::sin(currentRadiantAngle) > 0.0f && currentPoint.second < doorPos[1].first) ||
-            (std::sin(currentRadiantAngle) < 0.0f && currentPoint.second > doorPos[1].second))
+    if((currentCosSinRadiant.second > 0.0f && currentPoint.second < doorPos[1].first) ||
+            (currentCosSinRadiant.second < 0.0f && currentPoint.second > doorPos[1].second))
     {
         return false;
     }
     if(doorVertical)
     {
-        if(lateralLeadCoef && treatLateralIntersectRect(currentPoint, doorPos, *lateralLeadCoef, currentRadiantAngle))
+        if(lateralLeadCoef && treatLateralIntersectRect(currentPoint, doorPos, *lateralLeadCoef, currentCosSinRadiant.first))
         {
             //determine if this is face of the door
             textFace = false;
             return true;
         }
-        if(verticalLeadCoef && treatVerticalIntersectRect(currentPoint, doorPos, *verticalLeadCoef, currentRadiantAngle))
+        if(verticalLeadCoef && treatVerticalIntersectRect(currentPoint, doorPos, *verticalLeadCoef, currentCosSinRadiant.second))
         {
             textLateral = false;
             textFace = true;
@@ -1366,12 +1362,12 @@ bool treatDisplayDoor(float currentRadiantAngle, bool doorVertical, PairFloat_t 
     }
     else
     {
-        if(verticalLeadCoef && treatVerticalIntersectRect(currentPoint, doorPos, *verticalLeadCoef, currentRadiantAngle))
+        if(verticalLeadCoef && treatVerticalIntersectRect(currentPoint, doorPos, *verticalLeadCoef, currentCosSinRadiant.second))
         {
             textFace = false;
             return true;
         }
-        if(lateralLeadCoef && treatLateralIntersectRect(currentPoint, doorPos, *lateralLeadCoef, currentRadiantAngle))
+        if(lateralLeadCoef && treatLateralIntersectRect(currentPoint, doorPos, *lateralLeadCoef, currentCosSinRadiant.first))
         {
             textLateral = true;
             textFace = true;
@@ -1383,7 +1379,7 @@ bool treatDisplayDoor(float currentRadiantAngle, bool doorVertical, PairFloat_t 
 
 //===================================================================
 bool treatLateralIntersectRect(PairFloat_t &currentPoint, const PairFloat_t rectPos[],
-                               float lateralLeadCoef, float radiantAngle)
+                               float lateralLeadCoef, float radiantCosAngle)
 {
     bool upCase;
     if(currentPoint.second <= rectPos[1].first)
@@ -1401,7 +1397,7 @@ bool treatLateralIntersectRect(PairFloat_t &currentPoint, const PairFloat_t rect
     float diffLat;
     PairFloat_t tmpPos = currentPoint;
     tmpPos.second = (upCase) ? rectPos[1].first : rectPos[1].second;
-    if(std::abs(std::cos(radiantAngle)) > 0.0001f)
+    if(std::abs(radiantCosAngle) > 0.0001f)
     {
         diffLat = lateralLeadCoef * std::abs(tmpPos.second - currentPoint.second) /
                 LEVEL_TILE_SIZE_PX;
@@ -1417,7 +1413,7 @@ bool treatLateralIntersectRect(PairFloat_t &currentPoint, const PairFloat_t rect
 
 //===================================================================
 bool treatVerticalIntersectRect(PairFloat_t &currentPoint, const PairFloat_t rectPos[],
-                                float verticalLeadCoef, float radiantAngle)
+                                float verticalLeadCoef, float radiantSinAngle)
 {
     bool leftCase;
     if(currentPoint.first <= rectPos[0].first)
@@ -1435,7 +1431,7 @@ bool treatVerticalIntersectRect(PairFloat_t &currentPoint, const PairFloat_t rec
     float diffVert;
     PairFloat_t tmpPos = currentPoint;
     tmpPos.first = (leftCase) ? rectPos[0].first : rectPos[0].second;
-    if(std::abs(std::sin(radiantAngle)) > 0.001f)
+    if(std::abs(radiantSinAngle) > 0.001f)
     {
         diffVert = verticalLeadCoef * std::abs(tmpPos.first - currentPoint.first) /
                 LEVEL_TILE_SIZE_PX;
@@ -1451,7 +1447,7 @@ bool treatVerticalIntersectRect(PairFloat_t &currentPoint, const PairFloat_t rec
 
 //===================================================================
 std::optional<PairUI_t> getCorrectedCoord(const PairFloat_t &currentPoint,
-                                          bool lateral, float radiantAngle)
+                                          bool lateral, const PairFloat_t radiantCosSinAngle)
 {
     PairFloat_t point = currentPoint;
     bool fmodX = (std::fmod(point.first, LEVEL_TILE_SIZE_PX) <= 0.01f),
@@ -1462,10 +1458,10 @@ std::optional<PairUI_t> getCorrectedCoord(const PairFloat_t &currentPoint,
     {
         bool treat = false;
         std::optional<ElementRaycast> elementA, elementB;
-        if(std::cos(radiantAngle) < EPSILON_FLOAT)
+        if(radiantCosSinAngle.first < EPSILON_FLOAT)
         {
             //NORTH WEST
-            if(std::sin(radiantAngle) > EPSILON_FLOAT)
+            if(radiantCosSinAngle.second > EPSILON_FLOAT)
             {
                 elementA = Level::getElementCase(*getLevelCoord({point.first - 1, point.second}));
                 elementB = Level::getElementCase(*getLevelCoord({point.first, point.second - 1}));
@@ -1491,7 +1487,7 @@ std::optional<PairUI_t> getCorrectedCoord(const PairFloat_t &currentPoint,
         else
         {
             //NORTH EAST
-            if(std::sin(radiantAngle) > EPSILON_FLOAT)
+            if(radiantCosSinAngle.second > EPSILON_FLOAT)
             {
                 elementA = Level::getElementCase(*getLevelCoord(point));
                 elementB = Level::getElementCase(*getLevelCoord({point.first - 1, point.second - 1}));
@@ -1518,23 +1514,23 @@ std::optional<PairUI_t> getCorrectedCoord(const PairFloat_t &currentPoint,
         }
         if(!treat)
         {
-            if(std::cos(radiantAngle) < EPSILON_FLOAT)
+            if(radiantCosSinAngle.first < EPSILON_FLOAT)
             {
                 --point.first;
             }
-            if(std::sin(radiantAngle) > EPSILON_FLOAT)
+            if(radiantCosSinAngle.second > EPSILON_FLOAT)
             {
                 --point.second;
             }
         }
 
     }
-    else if(fmodY && std::sin(radiantAngle) > EPSILON_FLOAT &&
-            (lateral || std::abs(std::cos(radiantAngle)) < 0.0001f))
+    else if(fmodY && radiantCosSinAngle.second > EPSILON_FLOAT &&
+            (lateral || std::abs(radiantCosSinAngle.first) < 0.0001f))
     {
         --point.second;
     }
-    else if(fmodX && !lateral && std::cos(radiantAngle) < EPSILON_FLOAT)
+    else if(fmodX && !lateral && radiantCosSinAngle.first < EPSILON_FLOAT)
     {
         --point.first;
     }
@@ -1572,14 +1568,14 @@ std::optional<float> getModulo(float sinCosAngle, float position, float modulo, 
 }
 
 //===================================================================
-bool raycastPointLateral(float radiantAngle, const PairFloat_t &cameraPoint)
+bool raycastPointLateral(float radiantAngle, const PairFloat_t &currentCosSinRadiant, const PairFloat_t &cameraPoint)
 {
     bool lateral;
-    if(!getLeadCoef(radiantAngle, false))
+    if(!getLeadCoef(radiantAngle, currentCosSinRadiant, false))
     {
         lateral = true;
     }
-    else if(!getLeadCoef(radiantAngle, true))
+    else if(!getLeadCoef(radiantAngle, currentCosSinRadiant, true))
     {
         lateral = false;
     }
@@ -1591,16 +1587,14 @@ bool raycastPointLateral(float radiantAngle, const PairFloat_t &cameraPoint)
 }
 
 //===================================================================
-PairFloat_t getLimitPointRayCasting(const PairFloat_t &cameraPoint, float radiantAngle,
+PairFloat_t getLimitPointRayCasting(const PairFloat_t &cameraPoint, const PairFloat_t &radiantCosSinAngle,
                                     std::optional<float> lateralLeadCoef,
                                     std::optional<float> verticalLeadCoef, bool &lateral)
 {
-    float currentCos = std::cos(radiantAngle),
-            currentSin = std::sin(radiantAngle);
     std::optional<float> modulo;
     PairFloat_t prevLimitPoint = cameraPoint;
     int32_t coordX;
-    if(currentCos < 0.0f)
+    if(radiantCosSinAngle.first < 0.0f)
     {
         coordX = getCoord(prevLimitPoint.first, LEVEL_TILE_SIZE_PX);
     }
@@ -1612,13 +1606,13 @@ PairFloat_t getLimitPointRayCasting(const PairFloat_t &cameraPoint, float radian
     if(!verticalLeadCoef)
     {
         lateral = true;
-        modulo = getModulo(currentSin, cameraPoint.second, LEVEL_TILE_SIZE_PX, false);
+        modulo = getModulo(radiantCosSinAngle.second, cameraPoint.second, LEVEL_TILE_SIZE_PX, false);
         if(!modulo)
         {
             modulo = LEVEL_TILE_SIZE_PX;
         }
         //down
-        if(currentSin < 0.0f)
+        if(radiantCosSinAngle.second < 0.0f)
         {
             return {cameraPoint.first, cameraPoint.second + (LEVEL_TILE_SIZE_PX - *modulo)};
         }
@@ -1632,13 +1626,13 @@ PairFloat_t getLimitPointRayCasting(const PairFloat_t &cameraPoint, float radian
     else if(!lateralLeadCoef)
     {
         lateral = false;
-        modulo = getModulo(currentCos, cameraPoint.first, LEVEL_TILE_SIZE_PX, true);
+        modulo = getModulo(radiantCosSinAngle.first, cameraPoint.first, LEVEL_TILE_SIZE_PX, true);
         if(!modulo)
         {
             modulo = LEVEL_TILE_SIZE_PX;
         }
         //left
-        if(currentCos < 0.0f)
+        if(radiantCosSinAngle.first < 0.0f)
         {
             return {cameraPoint.first - *modulo, cameraPoint.second};
         }
@@ -1650,18 +1644,18 @@ PairFloat_t getLimitPointRayCasting(const PairFloat_t &cameraPoint, float radian
     }
     float diffVert, diffLat;
     //check if lateral diff is out of case=================================
-    modulo = getModulo(currentSin, cameraPoint.second, LEVEL_TILE_SIZE_PX, false);
+    modulo = getModulo(radiantCosSinAngle.second, cameraPoint.second, LEVEL_TILE_SIZE_PX, false);
     if(!modulo)
     {
         diffVert = LEVEL_TILE_SIZE_PX;
-        if(currentSin > 0.0f)
+        if(radiantCosSinAngle.second > 0.0f)
         {
             diffVert = -diffVert;
         }
     }
     else
     {
-        diffVert = (currentSin < 0.0f) ? LEVEL_TILE_SIZE_PX - *modulo : -(*modulo);
+        diffVert = (radiantCosSinAngle.second < 0.0f) ? LEVEL_TILE_SIZE_PX - *modulo : -(*modulo);
     }
     diffLat = *lateralLeadCoef * std::abs(diffVert) / LEVEL_TILE_SIZE_PX;
     //if lateral diff is in the same case
@@ -1674,14 +1668,14 @@ PairFloat_t getLimitPointRayCasting(const PairFloat_t &cameraPoint, float radian
     }
     prevLimitPoint = cameraPoint;
     //check if vertical diff is out of case=================================
-    modulo = getModulo(currentCos, cameraPoint.first, LEVEL_TILE_SIZE_PX, true);
+    modulo = getModulo(radiantCosSinAngle.first, cameraPoint.first, LEVEL_TILE_SIZE_PX, true);
     if(!modulo)
     {
-        diffLat = (currentCos < 0.0f) ? -LEVEL_TILE_SIZE_PX : LEVEL_TILE_SIZE_PX;
+        diffLat = (radiantCosSinAngle.first < 0.0f) ? -LEVEL_TILE_SIZE_PX : LEVEL_TILE_SIZE_PX;
     }
     else
     {
-        diffLat = (currentCos < 0.0f) ? -(*modulo) : (LEVEL_TILE_SIZE_PX - *modulo);
+        diffLat = (radiantCosSinAngle.first < 0.0f) ? -(*modulo) : (LEVEL_TILE_SIZE_PX - *modulo);
     }
     diffVert = *verticalLeadCoef * std::abs(diffLat) / LEVEL_TILE_SIZE_PX;
     prevLimitPoint.first += diffLat;
@@ -1702,17 +1696,15 @@ int32_t getCoord(float value, float tileSize)
 }
 
 //===================================================================
-std::optional<float> getLeadCoef(float radiantAngle, bool lateral)
+std::optional<float> getLeadCoef(float radiantAngle, const PairFloat_t &currentCosSinRadiant, bool lateral)
 {
-    float tanRadiantAngleQuarter = std::tan(std::fmod(radiantAngle, PI_HALF)),
-            sinus = std::sin(radiantAngle),
-            cosinus = std::cos(radiantAngle), result;
-    if((lateral && std::abs(sinus) < 0.0001f) || (!lateral && std::abs(cosinus) < 0.0001f))
+    float tanRadiantAngleQuarter = std::tan(std::fmod(radiantAngle, PI_HALF)), result;
+    if((lateral && std::abs(currentCosSinRadiant.second) < 0.0001f) || (!lateral && std::abs(currentCosSinRadiant.first) < 0.0001f))
     {
         return {};
     }
-    bool sinusPos = (sinus > 0.0f),
-    cosinusPos = (cosinus > 0.0f);
+    bool sinusPos = (currentCosSinRadiant.second > 0.0f),
+    cosinusPos = (currentCosSinRadiant.first > 0.0f);
     if((lateral && sinusPos == cosinusPos) || (!lateral && cosinusPos != sinusPos))
     {
         result = LEVEL_TILE_SIZE_PX / tanRadiantAngleQuarter;
@@ -1721,7 +1713,7 @@ std::optional<float> getLeadCoef(float radiantAngle, bool lateral)
     {
         result = tanRadiantAngleQuarter * LEVEL_TILE_SIZE_PX;
     }
-    if((lateral && cosinus < 0.0f) || (!lateral && sinus > 0.0f))
+    if((lateral && currentCosSinRadiant.first < 0.0f) || (!lateral && currentCosSinRadiant.second > 0.0f))
     {
         result *= -1.0f;
     }
@@ -1748,33 +1740,12 @@ PairFloat_t FirstPersonDisplaySystem::getCenterPosition(const MapCoordComponent 
 }
 
 //===================================================================
-uint32_t getMinValueFromEntries(const float distance[])
-{
-    uint32_t val = 0;
-    val = (distance[0] < distance[1]) ? 0 : 1;
-    val = (distance[val] < distance[2]) ? val : 2;
-    val = (distance[val] < distance[3]) ? val : 3;
-    return val;
-}
-
-//===================================================================
-uint32_t getMaxValueFromEntries(const float distance[])
-{
-    uint32_t val = 0;
-    val = (distance[0] > distance[1]) ? 0 : 1;
-    val = (distance[val] > distance[2]) ? val : 2;
-    val = (distance[val] > distance[3]) ? val : 3;
-    return val;
-}
-
-//===================================================================
-PairFloat_t getCorrectedPosition(const PairFloat_t &initPos, float radiantAngle)
+PairFloat_t getCorrectedPosition(const PairFloat_t &initPos, const PairFloat_t &currentCosSinradiant)
 {
     PairFloat_t finalPos = initPos;
-    float cosVal = std::cos(radiantAngle), sinVal = std::sin(radiantAngle);
-    if(std::abs(cosVal) > 0.1f && static_cast<uint32_t>(std::fmod(initPos.first, LEVEL_TILE_SIZE_PX)) == 0)
+    if(std::abs(currentCosSinradiant.first) > 0.1f && static_cast<uint32_t>(std::fmod(initPos.first, LEVEL_TILE_SIZE_PX)) == 0)
     {
-        if(cosVal > EPSILON_FLOAT)
+        if(currentCosSinradiant.first > EPSILON_FLOAT)
         {
             --finalPos.first;
         }
@@ -1783,9 +1754,9 @@ PairFloat_t getCorrectedPosition(const PairFloat_t &initPos, float radiantAngle)
             ++finalPos.first;
         }
     }
-    if(std::abs(sinVal) > 0.1f && static_cast<uint32_t>(std::fmod(initPos.second, LEVEL_TILE_SIZE_PX)) == 0)
+    if(std::abs(currentCosSinradiant.second) > 0.1f && static_cast<uint32_t>(std::fmod(initPos.second, LEVEL_TILE_SIZE_PX)) == 0)
     {
-        if(sinVal < EPSILON_FLOAT)
+        if(currentCosSinradiant.second < EPSILON_FLOAT)
         {
             --finalPos.second;
         }
@@ -1798,11 +1769,11 @@ PairFloat_t getCorrectedPosition(const PairFloat_t &initPos, float radiantAngle)
 }
 
 //===================================================================
-float getDoorRaycastTexturePos(float textDoor, float radiantObserverAngle, bool lateral, const PairFloat_t &pos)
+float getDoorRaycastTexturePos(float textDoor, const PairFloat_t &radiantCosSin, bool lateral, const PairFloat_t &pos)
 {
-    float textPos = getRaycastTexturePos(radiantObserverAngle, lateral, pos);
-    if((lateral && std::sin(radiantObserverAngle) >= 0.0f) ||
-            (!lateral && std::cos(radiantObserverAngle) >= 0.0f))
+    float textPos = getRaycastTexturePos(radiantCosSin, lateral, pos);
+    if((lateral && radiantCosSin.second >= 0.0f) ||
+            (!lateral && radiantCosSin.first >= 0.0f))
     {
         return textPos + textDoor;
     }

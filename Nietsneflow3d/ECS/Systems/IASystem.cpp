@@ -150,7 +150,8 @@ bool IASystem::checkEnemyTriggerAttackMode(float radiantAngle, float distancePla
     }
     optionalTargetRaycast_t result = mptrSystemManager->searchSystemByType<FirstPersonDisplaySystem>(
                 static_cast<uint32_t>(Systems_e::FIRST_PERSON_DISPLAY_SYSTEM))->
-            calcLineSegmentRaycast(radiantAngle, enemyMapComp.m_absoluteMapPositionPX, false);
+            calcLineSegmentRaycast(radiantAngle, enemyMapComp.m_absoluteMapPositionPX, false,
+                                                                  {std::cos(radiantAngle), std::sin(radiantAngle)});
     return (getDistance(enemyMapComp.m_absoluteMapPositionPX, result->m_position) > distancePlayer);
 }
 

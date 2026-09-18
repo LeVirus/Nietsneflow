@@ -77,25 +77,26 @@ public:
         m_playerEntity = playerEntity;
     }
     //return target point, texture position and entity num if collision
-    optionalTargetRaycast_t calcLineSegmentRaycast(float radiantAngle, const PairFloat_t &originPoint, bool visual, bool scratchMode = false);
+    optionalTargetRaycast_t calcLineSegmentRaycast(float radiantAngle, const PairFloat_t &originPoint, bool visual,
+                                                   const PairFloat_t &currentCosSinRadiant, bool scratchMode = false);
 private:
     void setShader(Shader &shader);
-    optionalTargetRaycast_t calcDoorSegmentRaycast(float radiantAngle, std::optional<float> lateralLeadCoef,
+    optionalTargetRaycast_t calcDoorSegmentRaycast(const PairFloat_t &radiantCosSin, std::optional<float> lateralLeadCoef,
                                                    std::optional<float> verticalLeadCoef, PairFloat_t &currentPoint,
                                                    const ElementRaycast &element);
-    optionalTargetRaycast_t calcMovingWallSegmentRaycast(float radiantAngle, std::optional<float> lateralLeadCoef,
+    optionalTargetRaycast_t calcMovingWallSegmentRaycast(const PairFloat_t &currentCosSinRadiant, std::optional<float> lateralLeadCoef,
                                                          std::optional<float> verticalLeadCoef, PairFloat_t &currentPoint,
                                                          const ElementRaycast &element);
-    optionalTargetRaycast_t getTextureLimitCase(float radiantAngle, float lateralLeadCoef, float verticalLeadCoef,
+    optionalTargetRaycast_t getTextureLimitCase(const PairFloat_t &radiantAngle, float lateralLeadCoef, float verticalLeadCoef,
                                                 const PairUI_t &currentCoord,
                                                 const PairFloat_t &currentPoint, bool lateral);
     std::optional<float> getCloserRaycastDistance(const MapCoordComponent *mapCompObserver, const MapCoordComponent *mapCompTarget, float distance,
                               float radiantObserverAngle, uint32_t targetEntity);
     bool rayCasting(uint32_t observerEntity);
     bool isInsideWall(const PairFloat_t &pos);
-    void calcVerticalBackgroundLineRaycast(const PairFloat_t &observerPos, float currentRadiantAngle,
-                                              float currentGLLatPos, float radiantObserverAngle);
-    std::optional<float> treatDoorRaycast(uint32_t numEntity, float currentRadiantAngle,
+    void calcVerticalBackgroundLineRaycast(const PairFloat_t &observerPos, float currentRadiantAngle, const PairFloat_t &currentCosSinRadiant,
+                                           float currentGLLatPos, float radiantObserverAngle);
+    std::optional<float> treatDoorRaycast(uint32_t numEntity, const PairFloat_t &currentCosSinRadiant,
                                           PairFloat_t &currentPoint, std::optional<float> lateralLeadCoef,
                                           std::optional<float> verticalLeadCoef, bool &textLateral, bool &textFace);
     void memRaycastDistance(uint32_t numEntity, uint32_t lateralScreenPos, float distance, float texturePos, float distanceBrut);
@@ -105,7 +106,7 @@ private:
     void treatDisplayEntity(GeneralCollisionComponent &genCollComp, MapCoordComponent &mapCompA,
                             MapCoordComponent &mapCompB, VisionComponent &visionComp,
                             uint32_t &toRemove, float degreeObserverAngle, uint32_t numIteration, uint32_t currentNormal);
-    bool elementBehindDoor(const ElementRaycast &elementCase, float radiantObserverAngle, const MapCoordComponent &mapComp);
+    bool elementBehindDoor(const ElementRaycast &elementCase, const MapCoordComponent &mapComp);
     bool confNormalEntityVertex(const std::pair<uint32_t, bool> &entityData, CollisionTag_e tag, float lateralPosGL, float distance, float distanceBrut);
     void drawVertex();
     void drawTextureBackground();
@@ -143,31 +144,29 @@ private:
 
 const float m_tanHalfFov = std::tan(getRadiantAngle(HALF_CONE_VISION));
 float getFogIntensity(float distance);
-float getRaycastTexturePos(float radiantObserverAngle, bool lateral, const PairFloat_t &pos);
-float getDoorRaycastTexturePos(float textDoor, float radiantObserverAngle, bool lateral, const PairFloat_t &pos);
+float getRaycastTexturePos(const PairFloat_t &radiantCosSin, bool lateral, const PairFloat_t &pos);
+float getDoorRaycastTexturePos(float textDoor, const PairFloat_t &radiantCosSin, bool lateral, const PairFloat_t &pos);
 //if player pos is on limit case modify position to prevent display issue
-PairFloat_t getCorrectedPosition(const PairFloat_t &initPos, float radiantAngle);
+PairFloat_t getCorrectedPosition(const PairFloat_t &initPos, const PairFloat_t &currentCosSinradiant);
 float getQuarterAngle(float angle);
-uint32_t getMaxValueFromEntries(const float distance[4]);
-uint32_t getMinValueFromEntries(const float distance[4]);
 std::optional<uint32_t> getLimitIndex(const bool pointIn[], const float distanceReal[], uint32_t i);
 float getLateralAngle(float centerAngleVision, float trigoAngle);
 PairFloat_t getIntersectCoord(const PairFloat_t &observerPoint, const PairFloat_t &targetPoint,
                               float centerAngleVision, bool outLeft, bool YIntersect);
-bool treatDisplayDoor(float currentRadiantAngle, bool doorVertical, PairFloat_t &currentPoint,
+bool treatDisplayDoor(const PairFloat_t &currentCosSinRadiant, bool doorVertical, PairFloat_t &currentPoint,
                       const PairFloat_t doorPos[], std::optional<float> verticalLeadCoef,
                       std::optional<float> lateralLeadCoef, bool &textLateral, bool &textFace, bool bull = false);
-bool treatVerticalIntersectRect(PairFloat_t &currentPoint, const PairFloat_t rectPos[], float verticalLeadCoef, float radiantAngle);
+bool treatVerticalIntersectRect(PairFloat_t &currentPoint, const PairFloat_t rectPos[], float verticalLeadCoef, float radiantSinAngle);
 //return true if door collision
-bool treatLateralIntersectRect(PairFloat_t &currentPoint, const PairFloat_t rectPos[], float lateralLeadCoef, float radiantAngle);
+bool treatLateralIntersectRect(PairFloat_t &currentPoint, const PairFloat_t rectPos[], float lateralLeadCoef, float radiantCosAngle);
 void treatLimitAngle(float &degreeAngleA, float &degreeAngleB);
 void removeSecondRect(PairFloat_t absolPos[], float distance[], uint32_t &distanceToTreat);
 float getDoorDistance(const MapCoordComponent *mapCompCamera, const MapCoordComponent *mapCompDoor, const DoorComponent *doorComp);
 float getMiddleDoorDistance(const PairFloat_t &camera, const PairFloat_t &element, bool vertical);
 std::optional<float> getModulo(float sinCosAngle, float position, float modulo, bool lateral);
 //lateral == false vertical
-std::optional<float> getLeadCoef(float radiantAngle, bool lateral);
-bool raycastPointLateral(float radiantAngle, const PairFloat_t &cameraPoint);
-PairFloat_t getLimitPointRayCasting(const PairFloat_t &cameraPoint, float radiantAngle, std::optional<float> lateralLeadCoef, std::optional<float> verticalLeadCoef, bool &lateral);
+std::optional<float> getLeadCoef(float radiantAngle, const PairFloat_t &currentCosSinRadiant, bool lateral);
+bool raycastPointLateral(float radiantAngle, const PairFloat_t &currentCosSinRadiant, const PairFloat_t &cameraPoint);
+PairFloat_t getLimitPointRayCasting(const PairFloat_t &cameraPoint, const PairFloat_t &radiantCosSinAngle, std::optional<float> lateralLeadCoef, std::optional<float> verticalLeadCoef, bool &lateral);
 int32_t getCoord(float value, float tileSize);
-std::optional<PairUI_t> getCorrectedCoord(const PairFloat_t &currentPoint, bool lateral, float radiantAngle);
+std::optional<PairUI_t> getCorrectedCoord(const PairFloat_t &currentPoint, bool lateral, const PairFloat_t radiantCosSinAngle);

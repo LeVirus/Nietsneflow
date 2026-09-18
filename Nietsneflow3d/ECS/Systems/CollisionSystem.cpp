@@ -1165,7 +1165,7 @@ bool CollisionSystem::circleDamageObstructed(const CollisionArgs &args)const
     float radiantAngle = getTrigoAngle(args.mapCompA.m_absoluteMapPositionPX, args.mapCompB.m_absoluteMapPositionPX, false);
     optionalTargetRaycast_t result = mptrSystemManager->searchSystemByType<FirstPersonDisplaySystem>(
                 static_cast<uint32_t>(Systems_e::FIRST_PERSON_DISPLAY_SYSTEM))->
-            calcLineSegmentRaycast(radiantAngle, args.mapCompA.m_absoluteMapPositionPX, false);
+                                     calcLineSegmentRaycast(radiantAngle, args.mapCompA.m_absoluteMapPositionPX, false, {std::cos(radiantAngle), std::sin(radiantAngle)});
     if(result && result->m_textPos > 0.1f && getDistance(result->m_position, args.mapCompB.m_absoluteMapPositionPX) <
             getDistance(args.mapCompA.m_absoluteMapPositionPX, args.mapCompB.m_absoluteMapPositionPX))
     {
@@ -1508,7 +1508,8 @@ void CollisionSystem::calcBulletSegment(SegmentCollisionComponent &segmentCompA)
     float radiantAngle = getRadiantAngle(segmentCompA.m_degreeOrientation);
     optionalTargetRaycast_t result = mptrSystemManager->searchSystemByType<FirstPersonDisplaySystem>(
                 static_cast<uint32_t>(Systems_e::FIRST_PERSON_DISPLAY_SYSTEM))->
-            calcLineSegmentRaycast(radiantAngle, segmentCompA.m_points.first, false);
+                                     calcLineSegmentRaycast(radiantAngle, segmentCompA.m_points.first, false,
+                                                                  {std::cos(radiantAngle), std::sin(radiantAngle)});
     segmentCompA.m_points.second = result->m_position;
     m_memDistCurrentBulletColl = {result->m_numEntity, 10000.0f};
 }
