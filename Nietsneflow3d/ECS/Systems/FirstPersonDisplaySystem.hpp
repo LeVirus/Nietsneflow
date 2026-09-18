@@ -60,6 +60,12 @@ struct EntityData
     }
 };
 
+struct ColumnRayHit
+{
+    bool m_valid = false;
+    uint32_t m_entity = 0;
+    RayCastingIntersect m_intersect{};
+};
 
 class FirstPersonDisplaySystem : public ecs::System
 {
@@ -103,7 +109,6 @@ private:
     std::optional<float> treatDoorRaycast(uint32_t numEntity, const PairFloat_t &currentCosSinRadiant,
                                           PairFloat_t &currentPoint, std::optional<float> lateralLeadCoef,
                                           std::optional<float> verticalLeadCoef, bool &textLateral, bool &textFace);
-    void memRaycastDistance(uint32_t numEntity, uint32_t lateralScreenPos, float distance, float texturePos, float distanceBrut);
     void setUsedComponents();
     void confCompVertexMemEntities();
     void writeVertexWallDoorRaycasting(const pairRaycastingData_t &entityData, uint32_t numIteration);
@@ -119,6 +124,7 @@ private:
     VerticesData &getClearedVertice(uint32_t index);
     void confSimpleTextVertexGroundCeiling(float observerAngle);
     void writeSimpleTextVertexGroundCeiling();
+    void buildRaycastingGroups();
 private:
     uint32_t m_playerEntity;
     NewComponentManager &m_newComponentManager;
@@ -131,7 +137,6 @@ private:
     VerticesData m_groundSimpleTextVertice, m_groundTiledTextVertice, m_ceilingSimpleVertice, m_ceilingTiledVertice;
     std::optional<PairFloat_t> m_ceilingTextureSize, m_groundTextureSize;
     std::vector<Texture> *m_ptrVectTexture = nullptr;
-    MapRayCastingData_t m_raycastingData;
     //number of entity to draw per player
     vectUI_t m_numVertexToDraw;
     float m_stepAngle = getRadiantAngle(CONE_VISION / static_cast<float>(RAYCAST_LINE_NUMBER));
@@ -144,6 +149,9 @@ private:
     //first coloredTexture, second texture
     std::pair<Shader*, Shader*> m_memShaders;
     PairFloat_t m_currentPlayerDir;
+    // plus besoin de MapRayCastingData_t comme stockage interne
+    std::array<ColumnRayHit, RAYCAST_LINE_NUMBER> m_columnHits;
+    std::vector<pairRaycastingData_t> m_raycastingGroups;
 };
 
 const float m_tanHalfFov = std::tan(getRadiantAngle(HALF_CONE_VISION));
