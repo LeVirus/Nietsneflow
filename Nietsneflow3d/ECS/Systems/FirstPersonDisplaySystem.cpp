@@ -778,6 +778,9 @@ void FirstPersonDisplaySystem::memGroundBackgroundEntity(uint32_t entity, bool s
     {
         m_groundTiledTextBackground = entity;
         m_backgroundRaycastActive = true;
+        m_groundTiledTextVertice.reserveVertex(RAYCAST_LINE_NUMBER *
+                                               RAYCAST_GROUND_CEILING_NUMBER * 16);
+        m_groundTiledTextVertice.reserveIndices(RAYCAST_LINE_NUMBER * RAYCAST_GROUND_CEILING_NUMBER * 6);
     }
 }
 
@@ -793,6 +796,9 @@ void FirstPersonDisplaySystem::memCeilingBackgroundEntity(uint32_t entity, bool 
     {
         m_ceilingTiledTextBackground = entity;
         m_backgroundRaycastActive = true;
+        m_ceilingTiledVertice.reserveVertex(RAYCAST_LINE_NUMBER *
+                                            RAYCAST_GROUND_CEILING_NUMBER * 16);
+        m_ceilingTiledVertice.reserveIndices(RAYCAST_LINE_NUMBER * RAYCAST_GROUND_CEILING_NUMBER * 6);
     }
 }
 
@@ -846,18 +852,6 @@ bool FirstPersonDisplaySystem::rayCasting(uint32_t observerEntity)
     float currentRadiantAngle /*= getRadiantAngle(leftAngle)*/, currentLateralScreen = -1.0f;
     float rayOffset, cameraX;
     float distanceBrut;
-    if(m_groundTiledTextBackground)
-    {
-        m_groundTiledTextVertice.reserveVertex(RAYCAST_LINE_NUMBER *
-                                               RAYCAST_GROUND_CEILING_NUMBER * 16);
-        m_groundTiledTextVertice.reserveIndices(RAYCAST_LINE_NUMBER * RAYCAST_GROUND_CEILING_NUMBER * 6);
-    }
-    if(m_ceilingTiledTextBackground)
-    {
-        m_ceilingTiledVertice.reserveVertex(RAYCAST_LINE_NUMBER *
-                                            RAYCAST_GROUND_CEILING_NUMBER * 16);
-        m_ceilingTiledVertice.reserveIndices(RAYCAST_LINE_NUMBER * RAYCAST_GROUND_CEILING_NUMBER * 6);
-    }
     //mem entity num & distances
     for(uint32_t j = 0; j < RAYCAST_LINE_NUMBER; ++j)
     {
