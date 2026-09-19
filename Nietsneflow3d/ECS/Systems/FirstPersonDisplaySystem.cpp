@@ -817,7 +817,7 @@ bool FirstPersonDisplaySystem::rayCasting(uint32_t observerEntity)
         currentCosRadiant = std::cos(currentRadiantAngle);
         currentSinRadiant = std::sin(currentRadiantAngle);
         currentHalfTanRadiant = std::tan(std::fmod(currentRadiantAngle, PI_HALF));
-        targetPoint = calcLineSegmentRaycastOptimized(mapCompCamera.m_absoluteMapPositionPX, true, {currentCosRadiant, currentSinRadiant}, currentHalfTanRadiant,
+        targetPoint = calcLineSegmentRaycast/*Optimized*/(mapCompCamera.m_absoluteMapPositionPX, true, {currentCosRadiant, currentSinRadiant}, currentHalfTanRadiant,
                                                       playerConfComp.m_crush);
         if(targetPoint)
         {
