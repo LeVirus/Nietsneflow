@@ -372,7 +372,7 @@ void IASystem::treatEnemyBehaviourAttack(uint32_t enemyEntity, MapCoordComponent
         }
         if(!checkEnemyTriggerAttackMode(radiantAnglePlayerDirection, distancePlayer, enemyMapComp))
         {
-            if(++enemyConfComp.m_countPlayerInvisibility > 5)
+            if(++enemyConfComp.m_countPlayerInvisibility > 20)
             {
                 enemyConfComp.m_behaviourMode = EnemyBehaviourMode_e::PASSIVE;
                 timerComp.m_cycleCountC = 0;
