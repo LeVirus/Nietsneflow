@@ -219,6 +219,7 @@ bool GraphicEngine::windowShouldClose()
 void GraphicEngine::updateSaveNum(uint32_t levelNum, uint32_t saveNum, std::optional<uint32_t> checkpointNum,
                                   const std::string &date, bool beginLevel)
 {
+    m_memExistingLevelSave[saveNum - 1] = DataLevelWriteMenu();
     m_memExistingLevelSave[saveNum - 1]->m_levelNum = levelNum;
     if(!date.empty())
     {
