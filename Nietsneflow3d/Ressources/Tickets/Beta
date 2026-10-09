@@ -18,9 +18,6 @@ Dans display le valid doit retourner au menu précédant
 L'anim arrive aprés le tir des ennemies
 Décaller le tir effectif de l'anim
 
-))
-Changer la disposition des cartes d'acces sur le coté
-
 ----------------------------------------------------------
 
 ))
@@ -33,6 +30,9 @@ Virer l'entrée Custom Level??
 Contraste entre les niveau Doom et Backrooms?
 
 ======================================================================
+
+))
+Changer la disposition des cartes d'acces sur le coté======================OK
 
 ))
 Niveau 6 Clarifier le mur qui écrase au début===================OK
