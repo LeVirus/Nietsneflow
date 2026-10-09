@@ -264,38 +264,6 @@ texturePosY = 0.0
 textureWeight = 0.481
 textureHeight = 1.0
 
-#4388 42
-[SpriteSimetraCardBlue]
-texture = 7
-texturePosX = 0.9396
-texturePosY = 0.02
-textureWeight = 0.0182
-textureHeight = 0.0622
-
-#4489
-[SpriteSimetraCardGreen]
-texture = 7
-texturePosX = 0.9612
-texturePosY = 0.02
-textureWeight = 0.0182
-textureHeight = 0.0622
-
-#4582
-[SpriteSimetraCardPurple]
-texture = 7
-texturePosX = 0.9811
-texturePosY = 0.02
-textureWeight = 0.0182
-textureHeight = 0.0622
-
-#4284 42  85 130  4369 172
-[SpriteSimetraCardGold]
-texture = 7
-texturePosX = 0.9173
-texturePosY = 0.02
-textureWeight = 0.0182
-textureHeight = 0.0622
-
 #4280 209  4410 283
 [SpritePannel]
 texture = 7
@@ -2418,3 +2386,31 @@ texturePosX = 0.82602
 texturePosY = 0.50237
 textureWeight = 0.15047
 textureHeight = 0.236967
+
+[SpriteSimetraCardPurple]
+texture = 7
+texturePosX = 0.931692
+texturePosY = 0.334928
+textureWeight = 0.027409
+textureHeight = 0.0397129
+
+[SpriteSimetraCardGreen]
+texture = 7
+texturePosX = 0.931692
+texturePosY = 0.376555
+textureWeight = 0.027409
+textureHeight = 0.0397129
+
+[SpriteSimetraCardBlue]
+texture = 7
+texturePosX = 0.931692
+texturePosY = 0.418182
+textureWeight = 0.027409
+textureHeight = 0.0397129
+
+[SpriteSimetraCardGold]
+texture = 7
+texturePosX = 0.931692
+texturePosY = 0.459809
+textureWeight = 0.027409
+textureHeight = 0.0397129
