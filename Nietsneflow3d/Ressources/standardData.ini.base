@@ -613,7 +613,7 @@ Containing = 10
 [ObjectPurpleCard]
 CardName = Purple Card
 Sprite = SpriteSimetraCardPurple
-SpriteWeightGame = 0.07
+SpriteWeightGame = 0.11
 SpriteHeightGame = 0.21
 Type = 3
 CardID = 0
@@ -621,7 +621,7 @@ CardID = 0
 [ObjectBlueCard]
 CardName = Blue Card
 Sprite = SpriteSimetraCardBlue
-SpriteWeightGame = 0.07
+SpriteWeightGame = 0.11
 SpriteHeightGame = 0.21
 Type = 3
 CardID = 1
@@ -629,7 +629,7 @@ CardID = 1
 [ObjectGreenCard]
 CardName = Green Card
 Sprite = SpriteSimetraCardGreen
-SpriteWeightGame = 0.07
+SpriteWeightGame = 0.11
 SpriteHeightGame = 0.21
 Type = 3
 CardID = 2
@@ -637,7 +637,7 @@ CardID = 2
 [ObjectGoldCard]
 CardName = Gold Card
 Sprite = SpriteSimetraCardGold
-SpriteWeightGame = 0.07
+SpriteWeightGame = 0.11
 SpriteHeightGame = 0.21
 Type = 3
 CardID = 3
