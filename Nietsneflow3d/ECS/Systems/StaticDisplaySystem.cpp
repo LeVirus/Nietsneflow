@@ -426,7 +426,7 @@ void StaticDisplaySystem::updateMenuEntryFullscreen(bool displayMenufullscreenMo
         writeComp.m_vectMessage.resize(1);
         writeComp.m_vectMessage[0].first = writeComp.m_upLeftPositionGL.first;
     }
-    writeComp.m_vectMessage[0].second = displayMenufullscreenMode ? "X" : "";
+    writeComp.m_vectMessage[0].second = displayMenufullscreenMode ? "ON" : "OFF";
     compNum = m_newComponentManager.getComponentEmplacement(m_fullscreenMenuEntity, Components_e::POSITION_VERTEX_COMPONENT);
     assert(compNum);
     PositionVertexComponent &posComp = m_componentsContainer.m_vectPositionVertexComp[*compNum];
