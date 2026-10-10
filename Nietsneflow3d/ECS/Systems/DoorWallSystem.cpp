@@ -217,6 +217,10 @@ void DoorWallSystem::treatTriggers()
             }
         }
         m_refMainEngine->playTriggerSound();
+        OptUint_t compNum = m_newComponentManager.getComponentEmplacement(m_playerEntity, Components_e::PLAYER_CONF_COMPONENT);
+        assert(compNum);
+        PlayerConfComponent &playerComp = m_componentsContainer.m_vectPlayerConfComp[*compNum];
+        playerComp.m_infoWriteData = {true, "Walls Activated"};
         //Wall Shape loop
         for(std::map<uint32_t, std::vector<uint32_t>>::const_iterator it = triggerComp.m_mapElementEntities.begin();
             it != triggerComp.m_mapElementEntities.end();)
