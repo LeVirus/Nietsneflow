@@ -47,6 +47,7 @@ void PhysicalEngine::memPlayerEntity(uint32_t playerEntity)
     m_iaSystem->memPlayerDatas(playerEntity);
     m_collisionSystem->memPlayerDatas(playerEntity);
     m_inputSystem->memPlayerEntity(playerEntity);
+    m_doorSystem->memPlayerEntity(playerEntity);
 }
 
 //===================================================================

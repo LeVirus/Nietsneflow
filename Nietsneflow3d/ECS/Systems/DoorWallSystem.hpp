@@ -17,6 +17,10 @@ public:
     void execSystem()override;
     void clearSystem();
     void memRefMainEngine(MainEngine *mainEngine);
+    inline void memPlayerEntity(uint32_t playerEntity)
+    {
+        m_playerEntity = playerEntity;
+    }
 private:
     void treatDoorMovementSize(DoorComponent &doorComp, uint32_t entityNum);
     void updateEntities();
@@ -35,6 +39,7 @@ private:
     std::vector<uint32_t> m_vectMoveableWall, m_vectTrigger;
     ECSManager const *m_ECSManager;
     MainEngine *m_refMainEngine;
+    uint32_t m_playerEntity;
 };
 
 Direction_e getReverseDirection(Direction_e dir);
