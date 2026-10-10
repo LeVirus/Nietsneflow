@@ -1391,6 +1391,7 @@ void CollisionSystem::treatPlayerTeleport(CollisionArgs &args)
     mapPlayerComp.m_coord = teleportComp.m_targetPos;
     mapPlayerComp.m_absoluteMapPositionPX = getCenteredAbsolutePosition(mapPlayerComp.m_coord);
     playerComp.m_teleported = true;
+    playerComp.m_velocityInertie = INIERTIE_FACTOR;
     genTeleportComp.m_active = true;
     timerComp.m_cycleCountA = 0;
     timerComp.m_cycleCountB = 0;
