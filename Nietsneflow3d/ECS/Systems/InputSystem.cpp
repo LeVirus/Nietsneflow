@@ -1326,6 +1326,8 @@ void InputSystem::treatEnterPressedDisplayMenu(PlayerConfComponent &playerComp)
     else if(menuPos == DisplayMenuCursorPos_e::VALID)
     {
         m_mainEngine->validDisplayMenu();
+        playerComp.m_menuMode = playerComp.m_firstMenu ? MenuMode_e::TITLE : MenuMode_e::BASE;
+        m_mainEngine->setMenuEntries(playerComp);
     }
 }
 

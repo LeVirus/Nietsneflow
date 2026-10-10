@@ -11,10 +11,6 @@ Uniquement dans le menu principal
 Transition trop rapide -----WINDOWS
 
 ))
-Changer l'option plein ecran en yes/no
-Dans display le valid doit retourner au menu précédant
-
-))
 L'anim arrive aprés le tir des ennemies
 Décaller le tir effectif de l'anim
 
@@ -30,6 +26,10 @@ Virer l'entrée Custom Level??
 Contraste entre les niveau Doom et Backrooms?
 
 ======================================================================
+
+))
+Changer l'option plein ecran en yes/no=======================OK
+Dans display le valid doit retourner au menu précédant============OK
 
 ))
 Changer la disposition des cartes d'acces sur le coté======================OK
