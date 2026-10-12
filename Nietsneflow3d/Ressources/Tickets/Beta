@@ -11,48 +11,34 @@ Uniquement dans le menu principal
 Transition trop rapide -----WINDOWS
 
 ))
-Add stop when teleport
+Carte niveau 3 modifier labyrinthe simplifier
 
 ))
-Carte niveau 3 modifier labyrinthe
-
-))
-Préciser pour les murs écrasant
-
-))
-Ajouter un log lors de l'action des murs
-
-))
-Changer l'option plein ecran en yes/no
-Dans display le valid doit retourner au menu précédant
+Préciser pour les murs écrasant Effet sonore?
 
 ))
 L'anim arrive aprés le tir des ennemies
 Décaller le tir effectif de l'anim
 
 ))
-Ajouter un rappel de la carte dans les niveaux backrooms
-
-))
-Virer teleport fin de niveau 7
+Quand plus de munition machine gun changer sprite par défaut
 
 ))
 Stoper l'anim de tir quand on meurt
 
 ))
-Boss niveau 10 trop dur?
-
-))
-Niveau 11 obstacle teleport virer le premier à droite
-
-))
-Quand plus de munition machine gun changer sprite par défaut
-
-))
-Les murs blancs font mal aux yeux??
+Rééquilibrer les boss ==> diminuer la vie
 
 ))
 Mettre la vie des boss?
+
+))
+Editeur de niveau
+
+----------------------------------------------------------
+
+))
+Les murs blancs font mal aux yeux??
 
 ))
 Durée de vie??
@@ -60,11 +46,6 @@ Augmenter difficulté?
 
 ))
 early access?? 5€
-
-))
-Editeur de niveau
-
-----------------------------------------------------------
 
 ))
 Les lettre clavier ne correspondent pas au touche réelle en azerty ??
@@ -76,6 +57,25 @@ Virer l'entrée Custom Level??
 Contraste entre les niveau Doom et Backrooms?
 
 ======================================================================
+
+))
+Ajouter un rappel de la carte dans les niveaux backrooms=================OK
+
+))
+Ajouter un log lors de l'action des murs==================OK
+
+))
+Niveau 11 obstacle teleport virer le premier à droite===================OK
+
+))
+Changer l'option plein ecran en yes/no================OK
+Dans display le valid doit retourner au menu précédant===============OK
+
+))
+Virer teleport fin de niveau 7===================OK
+
+))
+Add stop when teleport=================OK
 
 ))
 Changer l'option plein ecran en yes/no=======================OK
