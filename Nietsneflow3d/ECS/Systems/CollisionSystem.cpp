@@ -304,6 +304,19 @@ void CollisionSystem::treatEnemyTakeDamage(uint32_t enemyEntityNum, uint32_t dam
             confDropedObject(*enemyConfCompB.m_dropedObjectEntity, enemyEntityNum);
         }
     }
+    else
+    {
+        if(enemyConfCompB.m_visibleShot)
+        {
+            compNum = m_newComponentManager.getComponentEmplacement(enemyConfCompB.m_visibleAmmo[0], Components_e::SHOT_CONF_COMPONENT);
+            assert(compNum);
+            ShotConfComponent &shotComp = m_componentsContainer.m_vectShotConfComp[*compNum];
+            if(shotComp.m_damage >= 20)
+            {
+                playerComp.m_infoWriteData = {true, std::to_string(enemyConfCompB.m_life) + " / " + std::to_string(enemyConfCompB.m_maxLife)};
+            }
+        }
+    }
 }
 
 //===================================================================

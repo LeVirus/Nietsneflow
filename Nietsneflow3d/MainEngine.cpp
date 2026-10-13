@@ -1642,6 +1642,7 @@ bool MainEngine::createEnemy(const LevelManager &levelManager, const SpriteData 
                                            getComponentsContainer().m_vectCircleCollisionComp[*compNum];
     circleComp.m_ray = collisionRay;
     enemyComp.m_life = enemyData.m_life;
+    enemyComp.m_maxLife = enemyData.m_life;
     enemyComp.m_visibleShot = !(enemyData.m_visibleShootID.empty());
     enemyComp.m_countTillLastAttack = 0;
     enemyComp.m_meleeOnly = enemyData.m_meleeOnly;
