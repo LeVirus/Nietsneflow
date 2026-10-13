@@ -57,6 +57,12 @@ void MainEngine::init(Game *refGame)
 //===================================================================
 LevelState MainEngine::displayTitleMenu(const LevelManager &levelManager)
 {
+    //PREVENT BLACK SCREEN ON WINDOWS
+    if(!m_graphicEngine.fullscreenMode())
+    {
+        m_graphicEngine.toogleFullScreen();
+        m_graphicEngine.toogleFullScreen();
+    }
     uint16_t genericBackgroundMenuSpriteId = *levelManager.getPictureData().getIdentifier(levelManager.getGenericMenuSpriteName()),
             titleBackgroundMenuSpriteId = *levelManager.getPictureData().getIdentifier(levelManager.getTitleMenuSpriteName()),
             leftBackgroundMenuSpriteId = *levelManager.getPictureData().getIdentifier(levelManager.getLeftMenuSpriteName()),
