@@ -1,9 +1,6 @@
 BETA TEST================================================
 
 ))
-Sous windows le premier lancement n'affiche pas avant d'appuyer sur F12-----WINDOWS
-
-))
 Le changement de son sous windows est trop rapide-----WINDOWS
 Uniquement dans le menu principal
 
@@ -29,7 +26,10 @@ Editeur de niveau
 ----------------------------------------------------------
 
 ))
-Quand plus de munition machine gun changer sprite par défaut=============A VERIFIER SUR WINDOWS
+Sous windows le premier lancement n'affiche pas avant d'appuyer sur F12-----WINDOWS----A TESTER
+
+))
+Quand plus de munition machine gun changer sprite par défaut=============LINUX OK -- A VERIFIER SUR WINDOWS
 
 ))
 Les murs blancs font mal aux yeux??
