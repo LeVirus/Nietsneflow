@@ -18,12 +18,6 @@ L'anim arrive aprés le tir des ennemies
 Décaller le tir effectif de l'anim
 
 ))
-Quand plus de munition machine gun changer sprite par défaut
-
-))
-Stoper l'anim de tir quand on meurt
-
-))
 Rééquilibrer les boss ==> diminuer la vie
 
 ))
@@ -35,14 +29,14 @@ Editeur de niveau
 ----------------------------------------------------------
 
 ))
+Quand plus de munition machine gun changer sprite par défaut=============A VERIFIER SUR WINDOWS
+
+))
 Les murs blancs font mal aux yeux??
 
 ))
 Durée de vie??
 Augmenter difficulté?
-
-))
-early access?? 5€
 
 ))
 Les lettre clavier ne correspondent pas au touche réelle en azerty ??
@@ -53,7 +47,13 @@ Virer l'entrée Custom Level??
 ))
 Contraste entre les niveau Doom et Backrooms?
 
+))
+early access?? 5€
+
 ======================================================================
+
+))
+Stoper l'anim de tir quand on meurt====================OK
 
 ))
 Ajouter un rappel de la carte dans les niveaux backrooms=================OK
