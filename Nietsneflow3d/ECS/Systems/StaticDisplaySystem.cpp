@@ -630,6 +630,10 @@ void StaticDisplaySystem::treatWeaponShootAnimation(PlayerConfComponent &playerC
     OptUint_t compNum = m_newComponentManager.getComponentEmplacement(
         playerComp.m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::WEAPON)], Components_e::WEAPON_COMPONENT);
     assert(compNum);
+    if(playerComp.m_life == 0)
+    {
+        return;
+    }
     WeaponComponent &weaponComp = m_componentsContainer.m_vectWeaponComp[*compNum];
     const WeaponData &currentWeapon = weaponComp.m_weaponsData[weaponComp.m_currentWeapon];
     uint32_t spriteFirstAnim = currentWeapon.m_memPosSprite.first, spriteNumLastAnim = currentWeapon.m_lastAnimNum;
