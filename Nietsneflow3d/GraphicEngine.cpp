@@ -177,7 +177,6 @@ void GraphicEngine::mainDisplay(bool gamePaused)
 //===================================================================
 void GraphicEngine::toogleFullScreen()
 {
-    std::cerr << "AA ";
     m_fullscreenMode = !m_fullscreenMode;
     m_displayMenuFullscreenMode = m_fullscreenMode;
     m_staticDisplaySystem->updateMenuEntryFullscreen(m_fullscreenMode);
