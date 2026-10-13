@@ -11,9 +11,6 @@ Uniquement dans le menu principal
 Transition trop rapide -----WINDOWS
 
 ))
-Carte niveau 3 modifier labyrinthe simplifier
-
-))
 Préciser pour les murs écrasant Effet sonore?
 
 ))
@@ -66,6 +63,9 @@ Ajouter un log lors de l'action des murs==================OK
 
 ))
 Niveau 11 obstacle teleport virer le premier à droite===================OK
+
+))
+Carte niveau 3 modifier labyrinthe simplifier===============OK
 
 ))
 Changer l'option plein ecran en yes/no================OK
