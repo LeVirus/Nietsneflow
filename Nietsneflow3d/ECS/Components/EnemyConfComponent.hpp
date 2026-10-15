@@ -64,7 +64,7 @@ struct EnemyConfComponent : public ecs::Component
             return true;
         }
     }
-    bool m_stuck = false, m_touched = false, m_visibleShot, m_endLevel = false, m_meleeOnly, m_frozenOnAttack, m_playDeathSound = false;
+    bool m_stuck = false, m_touched = false, m_visibleShot, m_endLevel = false, m_meleeOnly, m_frozenOnAttack, m_playDeathSound = false, m_currentAnimShot = false;
     uint32_t m_life, m_maxLife, m_countPlayerInvisibility = 0, m_currentSprite, m_cycleNumberSpriteUpdate = 0.2 / FPS_VALUE,
     m_cycleNumberDyingInterval = 0.11 / FPS_VALUE, m_cycleNumberAttackInterval = 0.15f / FPS_VALUE, m_standardSpriteInterval = 0.5 / FPS_VALUE,
     m_countTillLastAttack = 0, m_simultaneousShot;

@@ -307,6 +307,23 @@ void IASystem::treatEnemyBehaviourAttack(uint32_t enemyEntity, MapCoordComponent
     numCom = m_newComponentManager.getComponentEmplacement(enemyEntity, Components_e::TIMER_COMPONENT);
     assert(numCom);
     TimerComponent &timerComp = m_componentsContainer.m_vectTimerComp[*numCom];
+    //treat current shoot
+    if(enemyConfComp.m_attackPhase == EnemyAttackPhase_e::SHOOT)
+    {
+        if(enemyConfComp.m_currentAnimShot)
+        {
+            return;
+        }
+        else
+        {
+            //reinit
+            timerComp.m_cycleCountB = 300;
+            updateEnemyDirection(enemyConfComp, moveComp, enemyMapComp);
+            timerComp.m_cycleCountD = 0;
+            enemyShoot(enemyConfComp, moveComp, enemyMapComp, distancePlayer);
+            activeSound(enemyEntity, static_cast<uint32_t>(EnemySoundEffect_e::ATTACK));
+        }
+    }
     ++timerComp.m_cycleCountD;
     if(!enemyConfComp.m_stuck)
     {
@@ -333,9 +350,13 @@ void IASystem::treatEnemyBehaviourAttack(uint32_t enemyEntity, MapCoordComponent
                                                                            static_cast<uint32_t>(EnemyAttackPhase_e::SHOOT) + 1;
             enemyConfComp.m_attackPhase = static_cast<EnemyAttackPhase_e>(std::rand() / ((RAND_MAX + 1u) / modulo));
         }
-        enemyConfComp.m_countTillLastAttack =
-                (enemyConfComp.m_attackPhase == EnemyAttackPhase_e::SHOOT) ? 0 : ++enemyConfComp.m_countTillLastAttack;
-
+        bool currentShot = (enemyConfComp.m_attackPhase == EnemyAttackPhase_e::SHOOT);
+        enemyConfComp.m_countTillLastAttack = currentShot ? 0 : ++enemyConfComp.m_countTillLastAttack;
+        if(currentShot)
+        {
+            enemyConfComp.m_currentAnimShot = true;
+            return;
+        }
         while(enemyConfComp.m_stuck)
         {
             if((enemyConfComp.m_attackPhase != enemyConfComp.m_previousMove[0] &&
@@ -363,13 +384,6 @@ void IASystem::treatEnemyBehaviourAttack(uint32_t enemyEntity, MapCoordComponent
         std::swap(enemyConfComp.m_previousMove[1], enemyConfComp.m_previousMove[0]);
         enemyConfComp.m_previousMove[0] = enemyConfComp.m_attackPhase;
         timerComp.m_cycleCountB = 0;
-        updateEnemyDirection(enemyConfComp, moveComp, enemyMapComp);
-        if(enemyConfComp.m_attackPhase == EnemyAttackPhase_e::SHOOT)
-        {
-            timerComp.m_cycleCountD = 0;
-            enemyShoot(enemyConfComp, moveComp, enemyMapComp, distancePlayer);
-            activeSound(enemyEntity, static_cast<uint32_t>(EnemySoundEffect_e::ATTACK));
-        }
         if(!checkEnemyTriggerAttackMode(radiantAnglePlayerDirection, distancePlayer, enemyMapComp))
         {
             if(++enemyConfComp.m_countPlayerInvisibility > 20)

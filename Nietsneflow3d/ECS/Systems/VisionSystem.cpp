@@ -457,11 +457,15 @@ void updateEnemyAttackSprite(EnemyConfComponent &enemyConfComp, TimerComponent &
     //if last animation
     if(enemyConfComp.m_currentSprite == it->second.second)
     {
+        if(++timerComp.m_cycleCountC >= enemyConfComp.m_cycleNumberAttackInterval)
+        {
+            enemyConfComp.m_currentAnimShot = false;
+        }
         return;
     }
     if(enemyConfComp.m_currentSprite >= it->second.first &&
             enemyConfComp.m_currentSprite <= it->second.second)
-    {        
+    {
         if(++timerComp.m_cycleCountC >= enemyConfComp.m_cycleNumberAttackInterval)
         {
             ++enemyConfComp.m_currentSprite;
