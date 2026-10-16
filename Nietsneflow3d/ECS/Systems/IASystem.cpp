@@ -384,6 +384,7 @@ void IASystem::treatEnemyBehaviourAttack(uint32_t enemyEntity, MapCoordComponent
         std::swap(enemyConfComp.m_previousMove[1], enemyConfComp.m_previousMove[0]);
         enemyConfComp.m_previousMove[0] = enemyConfComp.m_attackPhase;
         timerComp.m_cycleCountB = 0;
+        updateEnemyDirection(enemyConfComp, moveComp, enemyMapComp);
         if(!checkEnemyTriggerAttackMode(radiantAnglePlayerDirection, distancePlayer, enemyMapComp))
         {
             if(++enemyConfComp.m_countPlayerInvisibility > 20)
