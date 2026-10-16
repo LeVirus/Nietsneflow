@@ -457,7 +457,7 @@ void updateEnemyAttackSprite(EnemyConfComponent &enemyConfComp, TimerComponent &
     //if last animation
     if(enemyConfComp.m_currentSprite == it->second.second)
     {
-        if(++timerComp.m_cycleCountC >= enemyConfComp.m_cycleNumberAttackInterval)
+        if(++timerComp.m_cycleCountC >= 3)
         {
             enemyConfComp.m_currentAnimShot = false;
         }
