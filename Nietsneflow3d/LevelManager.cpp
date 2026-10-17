@@ -963,6 +963,10 @@ void LevelManager::loadGeneralSoundData()
     assert(val);
     m_triggerSound = *val;
     assert(!m_triggerSound.empty());
+    val = m_ini.getValue("SoundUtils", "ScratchSound");
+    assert(val);
+    m_scratchDamageSound = *val;
+    assert(!m_scratchDamageSound.empty());
 }
 
 //===================================================================

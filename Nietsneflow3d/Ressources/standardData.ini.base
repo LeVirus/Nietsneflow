@@ -5,6 +5,7 @@ HitSound = FistAttack.wav
 TeleportSound = Teleport.wav
 PlayerDeathSound = Death.wav
 TriggerSound = Trigger.flac
+ScratchSound = DamageScratch.flac
 
 [GraphicUtils]
 GenericMenuSprite = SpriteBackgroundGenericMenu
