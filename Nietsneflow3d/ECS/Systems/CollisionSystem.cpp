@@ -256,6 +256,11 @@ void CollisionSystem::treatGeneralCrushing(uint32_t entityNum)
     if(playerComp.m_crush)
     {
         playerComp.takeDamage(1);
+        OptUint_t compNum = m_newComponentManager.getComponentEmplacement(m_playerEntity, Components_e::AUDIO_COMPONENT);
+        assert(compNum);
+        AudioComponent &audioComp = m_componentsContainer.m_vectAudioComp[*compNum];
+        //play death sound
+        audioComp.m_soundElements[3]->m_toPlay = true;
     }
 }
 
