@@ -5,19 +5,15 @@ Le changement de son sous windows est trop rapide-----WINDOWS
 Uniquement dans le menu principal
 
 ))
-Transition trop rapide -----WINDOWS
-
-))
-Préciser pour les murs écrasant Effet sonore?
-
-))
-L'anim arrive aprés le tir des ennemies==============OK
-Décaller le tir effectif de l'anim
-
-))
 Editeur de niveau
 
 ----------------------------------------------------------
+
+))
+Transition trop rapide -----WINDOWS====================OK----A TESTER
+
+))
+Préciser pour les murs écrasant Effet sonore?====================OK=====VOIR EFFET SONORE
 
 ))
 Rééquilibrer les boss ==> diminuer la vie====================OK==A TESTER
@@ -48,6 +44,10 @@ Contraste entre les niveau Doom et Backrooms?
 early access?? 5€
 
 ======================================================================
+
+))
+L'anim arrive aprés le tir des ennemies==============OK
+Décaller le tir effectif de l'anim
 
 ))
 Stoper l'anim de tir quand on meurt====================OK
