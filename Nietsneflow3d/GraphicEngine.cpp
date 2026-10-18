@@ -157,8 +157,19 @@ void GraphicEngine::setTransition(bool gamePaused, bool redTransition)
 //===================================================================
 void GraphicEngine::unsetTransition(bool gamePaused, bool unsetRedTransition)
 {
+    std::chrono::duration<double> elapsed_seconds;
+    std::chrono::time_point<std::chrono::system_clock> clock = std::chrono::system_clock::now();
     for(uint32_t i = m_transitionFrameNumber; i > 0; --i)
     {
+        do
+        {
+            elapsed_seconds = std::chrono::system_clock::now() - clock;
+            if(elapsed_seconds.count() >= FPS_VALUE)
+            {
+                break;
+            }
+        }while(true);
+        clock = std::chrono::system_clock::now();
         m_inputSystem->getGamepadInputs();
         preDisplay();
         mainDisplay(gamePaused);
