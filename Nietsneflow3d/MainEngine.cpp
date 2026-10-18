@@ -148,7 +148,7 @@ LevelState MainEngine::mainLoop(uint32_t levelNum, LevelState_e levelState, bool
     do
     {
         elapsed_seconds = std::chrono::system_clock::now() - clock;
-        if(FPS_VALUE > elapsed_seconds.count())
+        if(elapsed_seconds.count() < FPS_VALUE)
         {
             continue;
         }
