@@ -1,5 +1,5 @@
-#include <glad/glad.h>
 #include <cassert>
+#include <glad/glad.h>
 #include <fstream>
 #include <sstream>
 #include <iostream>
