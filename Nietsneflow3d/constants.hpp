@@ -447,7 +447,8 @@ inline const double WRITE_LETTER_GL_OFFSET = 0.01;
 // inline const std::string RESSOURCES_DIR_STR = std::string(getenv("HOME")) + "/.local/share/Arnihs/";
 //OOOOOOOK
 // inline const std::string RESSOURCES_DIR_STR = "../../Ressources/";
-inline const std::string RESSOURCES_DIR_STR = "../../Nietsneflow3d/Ressources/";
+// inline const std::string RESSOURCES_DIR_STR = "../../Nietsneflow3d/Ressources/";
+inline const std::string RESSOURCES_DIR_STR = "./Ressources/";
 inline const std::string SHADER_DIR_STR = RESSOURCES_DIR_STR + "Shader/";
 inline const std::string TEXTURES_DIR_STR = RESSOURCES_DIR_STR + "Textures/";
 inline const std::map<MenuMode_e, PairPairFloatStr_t> MAP_MENU_DATA =
