@@ -429,7 +429,7 @@ ReloadSound = ShotgunReloadB.wav
 Offset = 0.3
 
 [WeaponPlasmaRifle]
-WeaponName = Pasma Rifle
+WeaponName = Plasma Rifle
 Order = 3
 StaticSprite = SpritePlasmaAttackA 
 AttackSprite = SpritePlasmaAttackB SpritePlasmaAttackC SpritePlasmaAttackC
