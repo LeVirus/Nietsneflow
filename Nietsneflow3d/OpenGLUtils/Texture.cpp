@@ -1,3 +1,4 @@
+#include <cassert>
 #include <OpenGLUtils/Texture.hpp>
 #include <OpenGLUtils/glheaders.hpp>
 #define STB_IMAGE_IMPLEMENTATION
