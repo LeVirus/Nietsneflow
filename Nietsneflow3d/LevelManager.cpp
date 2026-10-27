@@ -967,6 +967,10 @@ void LevelManager::loadGeneralSoundData()
     assert(val);
     m_scratchDamageSound = *val;
     assert(!m_scratchDamageSound.empty());
+    val = m_ini.getValue("SoundUtils", "DoorAccessGranted");
+    assert(val);
+    m_doorAccessGrantedSound = *val;
+    assert(!m_doorAccessGrantedSound.empty());
 }
 
 //===================================================================

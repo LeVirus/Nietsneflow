@@ -1,6 +1,7 @@
 [SoundUtils]
 PickUpObjectSound = ItemPick.wav
 DoorOpeningSound = DoorOpening.wav
+DoorAccessGranted = DoorAccessGranted.flac
 HitSound = FistAttack.wav
 TeleportSound = Teleport.wav
 PlayerDeathSound = Death.wav

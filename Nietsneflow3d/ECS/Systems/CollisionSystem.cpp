@@ -1226,6 +1226,7 @@ void CollisionSystem::treatActionPlayerRect(CollisionArgs &args)
 {
     if(args.tagCompB.m_tagA == CollisionTag_e::DOOR_CT)
     {
+        bool cardUsed = false;
         OptUint_t compNum = m_newComponentManager.getComponentEmplacement(args.entityNumB, Components_e::DOOR_COMPONENT);
         assert(compNum);
         DoorComponent &doorComp = m_componentsContainer.m_vectDoorComp[*compNum];
@@ -1244,12 +1245,24 @@ void CollisionSystem::treatActionPlayerRect(CollisionArgs &args)
             else
             {
                 writePlayerInfo((*doorComp.m_cardID).second + " Used");
+                cardUsed = true;
             }
         }
         if(doorComp.m_currentState == DoorState_e::STATIC_CLOSED || doorComp.m_currentState == DoorState_e::MOVE_CLOSE)
         {
             doorComp.m_currentState = DoorState_e::MOVE_OPEN;
-            activeSound(args.entityNumB);
+            if(!cardUsed)
+            {
+                activeSound(args.entityNumB);
+            }
+            else
+            {
+                OptUint_t compNum = m_newComponentManager.getComponentEmplacement(m_playerEntity, Components_e::AUDIO_COMPONENT);
+                assert(compNum);
+                AudioComponent &audioComp = m_componentsContainer.m_vectAudioComp[*compNum];
+                //play death sound
+                audioComp.m_soundElements[4]->m_toPlay = true;
+            }
         }
     }
     else if(args.tagCompB.m_tagB == CollisionTag_e::TRIGGER_CT)
