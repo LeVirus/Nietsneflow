@@ -283,6 +283,10 @@ public:
     {
         return m_playerDeathSound;
     }
+    inline std::string getDoorAccessGrantedFile()const
+    {
+        return m_doorAccessGrantedSound;
+    }
     inline std::string getPlayerScratchSoundFile()const
     {
         return m_scratchDamageSound;
@@ -433,7 +437,7 @@ private:
     MapVisibleShotData_t m_visibleShootINIData;
     MapImpactData_t m_impactINIData;
     SettingsData m_settingsData;
-    std::string m_pickObjectSound, m_doorOpeningSound, m_hitSound, m_teleportSound, m_playerDeathSound, m_triggerSound, m_scratchDamageSound;
+    std::string m_pickObjectSound, m_doorOpeningSound, m_hitSound, m_teleportSound, m_playerDeathSound, m_triggerSound, m_scratchDamageSound, m_doorAccessGrantedSound;
     const std::array<std::string, static_cast<uint32_t>(ControlKey_e::TOTAL)> m_inputIDString = {
         "moveForward", "moveBackward", "strafeLeft", "strafeRight", "turnLeft", "turnRight", "action", "shoot", "previousWeapon", "nextWeapon"
     };

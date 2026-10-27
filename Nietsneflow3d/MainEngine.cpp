@@ -3112,11 +3112,12 @@ void MainEngine::confPlayerEntity(const LevelManager &levelManager, uint32_t ent
     compNum = m_ecsManager.getComponentManager().getComponentEmplacement(entityNum, Components_e::AUDIO_COMPONENT);
     assert(compNum);
     AudioComponent &audioComp = m_ecsManager.getComponentManager().getComponentsContainer().m_vectAudioComp[*compNum];
-    audioComp.m_soundElements.reserve(3);
+    audioComp.m_soundElements.reserve(5);
     audioComp.m_soundElements.emplace_back(loadSound(levelManager.getPickObjectSoundFile()));
     audioComp.m_soundElements.emplace_back(loadSound(levelManager.getPlayerDeathSoundFile()));
     audioComp.m_soundElements.emplace_back(loadSound(levelManager.getTriggerSoundFile()));
     audioComp.m_soundElements.emplace_back(loadSound(levelManager.getPlayerScratchSoundFile()));
+    audioComp.m_soundElements.emplace_back(loadSound(levelManager.getDoorAccessGrantedFile()));
     compNum = m_ecsManager.getComponentManager().getComponentEmplacement(
         playerConf.m_vectEntities[static_cast<uint32_t>(PlayerEntities_e::WEAPON)], Components_e::WEAPON_COMPONENT);
     assert(compNum);
