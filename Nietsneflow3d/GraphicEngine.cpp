@@ -594,10 +594,10 @@ void GraphicEngine::memGraphicResolutions()
     const GLFWvidmode* modes = glfwGetVideoModes(monitors[0], &resolutionCount);
     m_memGraphicResolution.reserve(resolutionCount);
     pairI_t pair;
-    for (int i = 0; i < resolutionCount; i++)
+    for(int i = 0; i < resolutionCount; ++i)
     {
         pair = {modes[i].width, modes[i].height};
-        if(i > 0 && pair == m_memGraphicResolution.back().first)
+        if((i > 0 && pair == m_memGraphicResolution.back().first) || (pair.first < 600))
         {
             continue;
         }
