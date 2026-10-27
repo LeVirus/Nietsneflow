@@ -194,13 +194,13 @@ void InputSystem::treatPlayerInput()
                               (m_rotationSensibility) / DIFF_TOTAL_SENSITIVITY);
             if(checkPlayerKeyTriggered(ControlKey_e::TURN_RIGHT))
             {
-                moveComp.m_degreeOrientation -= diffBase * 2;
+                moveComp.m_degreeOrientation -= diffBase * 1.6f;
             }
             else
             {
-                if(*mouseXdiff > 30.0)
+                if(*mouseXdiff > 20.0)
                 {
-                    *mouseXdiff = 30.0;
+                    *mouseXdiff = 20.0;
                 }
                 moveComp.m_degreeOrientation -= diffBase * (*mouseXdiff) / 8;
             }
@@ -216,13 +216,13 @@ void InputSystem::treatPlayerInput()
                               (m_rotationSensibility) / DIFF_TOTAL_SENSITIVITY);
             if(checkPlayerKeyTriggered(ControlKey_e::TURN_LEFT))
             {
-                moveComp.m_degreeOrientation += diffBase * 2;
+                moveComp.m_degreeOrientation += diffBase * 1.6f;
             }
             else
             {
-                if(*mouseXdiff < -30.0)
+                if(*mouseXdiff < -20.0)
                 {
-                    *mouseXdiff = -30.0;
+                    *mouseXdiff = -20.0;
                 }
                 moveComp.m_degreeOrientation -= diffBase * (*mouseXdiff) / 8;
             }
