@@ -315,6 +315,10 @@ public:
     {
         return m_weaponsPreviewData;
     }
+    inline bool customSettingsFileExists()const
+    {
+        return m_customSettingsFileExists;
+    }
     bool checkSavedGameExists(uint32_t saveNum)const;
 private:
     std::string getGamepadKeyIniString(const GamepadInputState &gamepadInputState)const;
@@ -394,6 +398,7 @@ private:
                                                               const std::string &propertyName);
     VectPairUI_t getPositionData(const std::string & sectionName, const std::string &propertyName);
 private:
+    bool m_customSettingsFileExists;
     std::vector<std::string> m_existingCustomLevelsFilename;
     inipp::Ini<char> m_ini;
     std::ofstream m_outputStream;

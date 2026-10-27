@@ -1912,10 +1912,7 @@ void LevelManager::clearExistingPositionsElement()
 //===================================================================
 bool LevelManager::loadSettingsData()
 {
-    if(!loadIniFile(RESSOURCES_DIR_STR + "Saves/CustomSettings.ini", {}))
-    {
-        assert("Error while reading INI file.");
-    }
+    m_customSettingsFileExists = loadIniFile(RESSOURCES_DIR_STR + "Saves/CustomSettings.ini", {});
     //AUDIO
     std::optional<std::string> val = m_ini.getValue("Audio", "musicVolume");
     if(val)
@@ -2073,6 +2070,7 @@ void LevelManager::fillSettingsFileFromMemory()
 //===================================================================
 void LevelManager::saveAudioSettings(uint32_t musicVolume, uint32_t effectVolume)
 {
+    m_customSettingsFileExists = true;
     m_outputStream.open(RESSOURCES_DIR_STR + "Saves/CustomSettings.ini");
     fillSettingsFileFromMemory();
     m_ini.setValue("Audio", "musicVolume", std::to_string(musicVolume));
@@ -2086,6 +2084,7 @@ void LevelManager::saveAudioSettings(uint32_t musicVolume, uint32_t effectVolume
 //===================================================================
 void LevelManager::saveDisplaySettings(const pairI_t &resolution, bool fullscreen)
 {
+    m_customSettingsFileExists = true;
     m_outputStream.open(RESSOURCES_DIR_STR + "Saves/CustomSettings.ini");
     fillSettingsFileFromMemory();
     m_ini.setValue("Display", "resolutionWidth", std::to_string(resolution.first));
@@ -2102,6 +2101,7 @@ void LevelManager::saveDisplaySettings(const pairI_t &resolution, bool fullscree
 void LevelManager::saveInputSettings(const std::map<ControlKey_e, GamepadInputState> &gamepadArray,
                                      const std::map<ControlKey_e, MouseKeyboardInputState> &keyboardArray)
 {
+    m_customSettingsFileExists = true;
     m_outputStream.open(RESSOURCES_DIR_STR + "Saves/CustomSettings.ini");
     fillSettingsFileFromMemory();
     uint32_t currentIndex;
@@ -2132,6 +2132,7 @@ void LevelManager::saveInputSettings(const std::map<ControlKey_e, GamepadInputSt
 //===================================================================
 void LevelManager::saveTurnSensitivitySettings(uint32_t sensitivity)
 {
+    m_customSettingsFileExists = true;
     m_outputStream.open(RESSOURCES_DIR_STR + "Saves/CustomSettings.ini");
     fillSettingsFileFromMemory();
     m_ini.setValue("Input", "TurnSensitivity", std::to_string(sensitivity));
