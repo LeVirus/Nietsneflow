@@ -127,6 +127,17 @@ void InputSystem::treatPlayerInput()
         {
             m_F12Pressed = false;
         }
+        if(!m_AltEnterPressed && glfwGetKey(m_window, GLFW_KEY_LEFT_ALT) == GLFW_PRESS && glfwGetKey(m_window, GLFW_KEY_ENTER) == GLFW_PRESS)
+        {
+            m_toggleSignal = true;
+            m_AltEnterPressed = true;
+            m_enterPressed = true;
+        }
+        else if((m_AltEnterPressed && glfwGetKey(m_window, GLFW_KEY_LEFT_ALT) == GLFW_RELEASE) || (m_enterPressed && glfwGetKey(m_window, GLFW_KEY_ENTER) == GLFW_RELEASE))
+        {
+            m_AltEnterPressed = false;
+            m_enterPressed = false;
+        }
         if(m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_B] && !checkStandardButtonGamepadKeyStatus(GLFW_GAMEPAD_BUTTON_B, GLFW_PRESS))
         {
             m_gamepadButtonsKeyPressed[GLFW_GAMEPAD_BUTTON_B] = false;
