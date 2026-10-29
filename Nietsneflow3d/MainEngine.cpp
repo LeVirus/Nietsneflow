@@ -57,11 +57,6 @@ void MainEngine::init(Game *refGame)
 //===================================================================
 LevelState MainEngine::displayTitleMenu(const LevelManager &levelManager)
 {
-    //FULL SCREEN DEFAULT
-    if(!levelManager.customSettingsFileExists())
-    {
-        m_graphicEngine.toogleFullScreen();
-    }
     //PREVENT BLACK SCREEN ON WINDOWS
     if(!m_graphicEngine.fullscreenMode())
     {
@@ -2291,7 +2286,8 @@ void MainEngine::confGlobalSettings(const SettingsData &settingsData)
         }
     }
     //DISPLAY
-    if(settingsData.m_fullscreen && *settingsData.m_fullscreen)
+    //IF FULLSCREEN ENTRY IS NOT SET ==> FULL SCREEN
+    if(!settingsData.m_fullscreen || (settingsData.m_fullscreen && *settingsData.m_fullscreen))
     {
         m_graphicEngine.toogleFullScreen();
     }
