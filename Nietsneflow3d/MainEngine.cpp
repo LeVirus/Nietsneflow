@@ -83,8 +83,16 @@ LevelState MainEngine::displayTitleMenu(const LevelManager &levelManager)
     //prevent to exit
     m_currentLevelState = LevelState_e::EXIT;
     //game paused
+    std::chrono::duration<double> elapsed_seconds;
+    std::chrono::time_point<std::chrono::system_clock> clock;
+    clock = std::chrono::system_clock::now();
     do
     {
+        elapsed_seconds = std::chrono::system_clock::now() - clock;
+        if(elapsed_seconds.count() < FPS_VALUE)
+        {
+            continue;
+        }
         m_graphicEngine.runIteration(m_gamePaused);
         m_physicalEngine.runIteration(m_gamePaused);
         if(m_graphicEngine.windowShouldClose())
