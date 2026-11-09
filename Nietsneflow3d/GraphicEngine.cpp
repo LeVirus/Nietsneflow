@@ -14,6 +14,13 @@
 #include <ECS/Components/WriteComponent.hpp>
 #include <ECS/Components/WeaponComponent.hpp>
 
+#ifdef _WIN32
+extern "C" {
+__declspec(dllexport) unsigned long NvOptimusEnablement = 0x00000001;
+__declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
+}
+#endif
+
 //===================================================================
 GraphicEngine::GraphicEngine()
 {
@@ -664,6 +671,7 @@ void GraphicEngine::initGLWindow()
 {
     // glfw: initialize and configure
     // ------------------------------
+    glfwSetErrorCallback(glfw_error_callback);
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -684,6 +692,12 @@ void GraphicEngine::initGLWindow()
     }
     glfwMakeContextCurrent(m_window);
     glfwSetFramebufferSizeCallback(m_window, framebuffer_size_callback);
+}
+
+//===================================================================
+void glfw_error_callback(int error, const char* description)
+{
+    std::cerr << "GLFW Error " << error << ": " << description << std::endl;
 }
 
 //===================================================================

@@ -192,6 +192,7 @@ private:
     };
 };
 
+void glfw_error_callback(int error, const char* description);
 //first lineNumber ==> 0
 //return string + position selected
 std::pair<std::string, PairUI_t> getLineFromList(const std::string &str, uint32_t lineNumber);
