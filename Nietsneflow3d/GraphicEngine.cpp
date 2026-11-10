@@ -687,6 +687,9 @@ void GraphicEngine::initGLWindow()
                                 m_memGraphicResolution[m_currentResolution].first.second, "Nietsneflow", nullptr, nullptr);
     if(!m_window)
     {
+        int w = m_memGraphicResolution[m_currentResolution].first.first;
+        int h = m_memGraphicResolution[m_currentResolution].first.second;
+        std::cout << "Try to create window: " << w << "x" << h << std::endl;
         std::cout << "Failed to create GLFW window" << std::endl;
         glfwTerminate();
     }
